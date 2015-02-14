@@ -28,10 +28,10 @@ class NxFitbit
         require_once(dirname(__FILE__) . "/../library/medoo.php");
         $this->setDatabase(new medoo([
             'database_type' => 'mysql',
-            'database_name' => $this->getSettings()->get("db_name"),
-            'server' => $this->getSettings()->get("db_server"),
-            'username' => $this->getSettings()->get("db_username"),
-            'password' => $this->getSettings()->get("db_password"),
+            'database_name' => $this->getSetting("db_name"),
+            'server' => $this->getSetting("db_server"),
+            'username' => $this->getSetting("db_username"),
+            'password' => $this->getSetting("db_password"),
             'charset' => 'utf8'
         ]));
 
@@ -88,7 +88,7 @@ class NxFitbit
      */
     public function getCronJobs()
     {
-        return $this->getDatabase()->select($this->getSettings()->get("db_prefix", null, false) . "queue", "*", ["ORDER" => "date ASC"]);
+        return $this->getDatabase()->select($this->getSetting("db_prefix", null, false) . "queue", "*", ["ORDER" => "date ASC"]);
     }
 
     /**
@@ -99,12 +99,12 @@ class NxFitbit
      */
     public function delCronJob($user_fitbit_id, $trigger)
     {
-        if ($this->getDatabase()->has($this->getSettings()->get("db_prefix", null, false) . "queue", ["AND" => [
+        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", ["AND" => [
             "user" => $user_fitbit_id,
             "trigger" => $trigger
         ]])
         ) {
-            return $this->getDatabase()->delete($this->getSettings()->get("db_prefix", null, false) . "queue", [
+            return $this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", [
                 "AND" => [
                     "user" => $user_fitbit_id,
                     "trigger" => $trigger
@@ -121,7 +121,7 @@ class NxFitbit
      */
     public function isUser($user_fitbit_id)
     {
-        if ($this->getDatabase()->has($this->getSettings()->get("db_prefix", null, false) . "users", ["fuid" => $user_fitbit_id])) {
+        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", ["fuid" => $user_fitbit_id])) {
             return true;
         } else {
             return false;
@@ -129,9 +129,30 @@ class NxFitbit
     }
 
     /**
+     * Get settings from config class
+     * @param $key
+     * @param null $default
+     * @param bool $query_db
+     * @return string
+     */
+    public function getSetting($key, $default = NULL, $query_db = true) {
+        return $this->getSettings()->get($key, $default, $query_db);
+    }
+
+    /**
+     * Set value in database/config class
+     * @param $key
+     * @param $value
+     * @return bool
+     */
+    public function setSetting($key, $value) {
+        return $this->getSettings()->set($key, $value);
+    }
+
+    /**
      * @return config
      */
-    public function getSettings()
+    private function getSettings()
     {
         return $this->settings;
     }
