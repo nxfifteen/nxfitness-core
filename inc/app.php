@@ -43,7 +43,7 @@ class NxFitbit
      * @return array|bool
      */
     public function getCronJobs() {
-        return $this->getDatabase()->select($this->getSettings()->get("db_prefix") . "queue", "*");
+        return $this->getDatabase()->select($this->getSettings()->get("db_prefix") . "queue", "*", ["ORDER" => "date ASC"]);
     }
 
     /**
