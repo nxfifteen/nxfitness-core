@@ -24,7 +24,7 @@ if (count($queuedJobs) > 0) {
                     $cooldown = $fitbitApp->getUserCooldown($job['user']);
                     if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
                         nxr("Processing queue item " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
-                        $fitbitApp->api_pull($job['user'], $job['trigger']);
+                        $fitbitApp->getFitbitapi()->pull($job['user'], $job['trigger']);
                         $fitbitApp->delCronJob($job['user'], $job['trigger']);
                     } else {
                         nxr("Can not process " . $fitbitApp->supportedApi($job['trigger']) . ". API limit reached for " . $job['user'], WATCHDOG_WARNING);
