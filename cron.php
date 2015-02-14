@@ -20,7 +20,7 @@ if (count($queuedJobs) > 0) {
     foreach ($queuedJobs as $job) {
         if (time() < $end) {
             if ($fitbitApp->isUser($job['user'])) {
-                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $job['trigger'], false)) {
+                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $job['trigger'], true)) { //TODO: Set top false by default
                     $cooldown = $fitbitApp->getUserCooldown($job['user']);
                     if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
                         nxr("Processing queue item " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
