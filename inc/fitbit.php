@@ -12,15 +12,15 @@ class fitbit {
      */
     protected $fitbitapi;
 
-    public function __construct()
+    public function __construct($consumer_key, $consumer_secret, $debug = 1, $user_agent = null, $response_format = 'xml')
     {
         require_once(dirname(__FILE__) . "/../library/fitbitphp.php");
-        $this->setFitbitapi(new FitBitPHP(
-            $this->getSetting("fitbit_consumer_key", null, false),
-            $this->getSetting("fitbit_consumer_secret", null, false),
-            $this->getSetting("fitbit_debug", false, false),
-            $this->getSetting("fitbit_user_agent", null, false),
-            $this->getSetting("fitbit_response_format", "xml", false)));
+        $this->setFitbitapi(new FitBitPHP($consumer_key, $consumer_secret, $debug, $user_agent, $response_format));
+
+    }
+
+    public function pull($user, $trigger)
+    {
 
     }
 
