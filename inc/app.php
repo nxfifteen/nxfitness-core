@@ -43,30 +43,31 @@ class NxFitbit
      * @param null $key
      * @return array|null|string
      */
-    public function supportedApi($key = NULL) {
+    public function supportedApi($key = NULL)
+    {
         $database_array = array(
-            'all'                  => 'Everything',
-            'floors'               => 'Floors Climed',
-            'foods'                => 'Calorie Intake',
-            'badges'               => 'Badges',
-            'sleep'                => 'Sleep Records',
-            'body'                 => 'Weight & Body Fat Records',
-            'goals'                => 'Personal Goals',
-            'water'                => 'Water Intake',
-            'activities'           => 'Pedomitor & Activities',
-            'leaderboard'          => 'Friends',
-            'devices'              => 'Device Status',
-            'caloriesOut'          => 'Calories Out',
-            'goals_calories'       => 'Calorie Goals',
-            'minutesVeryActive'    => 'Minutes Very Active',
-            'minutesFairlyActive'  => 'Minutes Fairly Active',
+            'all' => 'Everything',
+            'floors' => 'Floors Climed',
+            'foods' => 'Calorie Intake',
+            'badges' => 'Badges',
+            'sleep' => 'Sleep Records',
+            'body' => 'Weight & Body Fat Records',
+            'goals' => 'Personal Goals',
+            'water' => 'Water Intake',
+            'activities' => 'Pedomitor & Activities',
+            'leaderboard' => 'Friends',
+            'devices' => 'Device Status',
+            'caloriesOut' => 'Calories Out',
+            'goals_calories' => 'Calorie Goals',
+            'minutesVeryActive' => 'Minutes Very Active',
+            'minutesFairlyActive' => 'Minutes Fairly Active',
             'minutesLightlyActive' => 'Minutes Lightly Active',
-            'minutesSedentary'     => 'Minutes Sedentary',
-            'elevation'            => 'Elevation',
-            'distance'             => 'Distance Traveled',
-            'pedomitor'            => 'Steps Taken',
-            'profile'              => 'User Profile',
-            'heart'                => 'Heart Rates',
+            'minutesSedentary' => 'Minutes Sedentary',
+            'elevation' => 'Elevation',
+            'distance' => 'Distance Traveled',
+            'pedomitor' => 'Steps Taken',
+            'profile' => 'User Profile',
+            'heart' => 'Heart Rates',
         );
         asort($database_array);
 
@@ -85,15 +86,41 @@ class NxFitbit
      * Get list of pending cron jobs from database
      * @return array|bool
      */
-    public function getCronJobs() {
+    public function getCronJobs()
+    {
         return $this->getDatabase()->select($this->getSettings()->get("db_prefix", null, false) . "queue", "*", ["ORDER" => "date ASC"]);
+    }
+
+    /**
+     * Delete cron jobs from queue
+     * @param $user_fitbit_id
+     * @param $trigger
+     * @return bool|int
+     */
+    public function delCronJob($user_fitbit_id, $trigger)
+    {
+        if ($this->getDatabase()->has($this->getSettings()->get("db_prefix", null, false) . "queue", ["AND" => [
+            "user" => $user_fitbit_id,
+            "trigger" => $trigger
+        ]])
+        ) {
+            return $this->getDatabase()->delete($this->getSettings()->get("db_prefix", null, false) . "queue", [
+                "AND" => [
+                    "user" => $user_fitbit_id,
+                    "trigger" => $trigger
+                ]
+            ]);
+        } else {
+            return false;
+        }
     }
 
     /**
      * @param string $user_fitbit_id
      * @return bool
      */
-    public function isUser($user_fitbit_id) {
+    public function isUser($user_fitbit_id)
+    {
         if ($this->getDatabase()->has($this->getSettings()->get("db_prefix", null, false) . "users", ["fuid" => $user_fitbit_id])) {
             return true;
         } else {
