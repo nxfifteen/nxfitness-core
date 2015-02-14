@@ -43,7 +43,19 @@ class NxFitbit
      * @return array|bool
      */
     public function getCronJobs() {
-        return $this->getDatabase()->select($this->getSettings()->get("db_prefix") . "queue", "*", ["ORDER" => "date ASC"]);
+        return $this->getDatabase()->select($this->getSettings()->get("db_prefix", null, false) . "queue", "*", ["ORDER" => "date ASC"]);
+    }
+
+    /**
+     * @param string $user_fitbit_id
+     * @return bool
+     */
+    public function isUser($user_fitbit_id) {
+        if ($this->getDatabase()->has($this->getSettings()->get("db_prefix", null, false) . "users", ["fuid" => $user_fitbit_id])) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
