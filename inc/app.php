@@ -26,6 +26,11 @@ class NxFitbit
      */
     protected $database;
 
+    /**
+     * @var fitbit
+     */
+    protected $fitbitapi;
+
     public function __construct()
     {
         require_once(dirname(__FILE__) . "/config.php");
@@ -129,6 +134,28 @@ class NxFitbit
     }
 
     /**
+     * Add new cron jobs to queue
+     * @param $user_fitbit_id
+     * @param $trigger
+     */
+    public function addCronJob($user_fitbit_id, $trigger)
+    {
+        if (!$this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", ["AND" => [
+            "user" => $user_fitbit_id,
+            "trigger" => $trigger
+        ]])
+        ) {
+            $this->getDatabase()->insert($this->getSetting("db_prefix", null, false) . "queue", [
+                "user" => $user_fitbit_id,
+                "trigger" => $trigger,
+                "date" => date("Y-m-d H:i:s")
+            ]);
+        } else {
+            nxr("Cron job already present");
+        }
+    }
+
+    /**
      * Users
      */
 
@@ -212,5 +239,25 @@ class NxFitbit
         $this->database = $database;
     }
 
+    /**
+     * @return fitbit
+     */
+    public function getFitbitapi()
+    {
+        if (is_null($this->fitbitapi)) {
+            require_once(dirname(__FILE__) . "/fitbit.php");
+            $this->setFitbitapi(new fitbit());
+        }
+
+        return $this->fitbitapi;
+    }
+
+    /**
+     * @param fitbit $fitbitapi
+     */
+    public function setFitbitapi($fitbitapi)
+    {
+        $this->fitbitapi = $fitbitapi;
+    }
 
 }
