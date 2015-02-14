@@ -15,11 +15,6 @@ class fitbit {
     protected $fitbitapi;
 
     /**
-     * @var bool
-     */
-    protected $authorised;
-
-    /**
      * @var NxFitbit
      */
     protected $AppClass;
@@ -37,29 +32,146 @@ class fitbit {
         $this->setAppClass($fitbitApp);
 
         require_once(dirname(__FILE__) . "/../library/fitbitphp.php");
-        $this->setFitbitapi(new FitBitPHP($consumer_key, $consumer_secret, $debug, $user_agent, $response_format));
-        $this->setAuthorised(false);
+        $this->setLibrary(new FitBitPHP($consumer_key, $consumer_secret, $debug, $user_agent, $response_format));
     }
 
+    public function oAuthorise($user) {
+        $oAuth = $this->get_oauth($user);
+        if (!$oAuth OR !is_array($oAuth) OR $oAuth['token'] == "" OR $oAuth['secret'] == "") {
+            nxr('Unable to setup the user OAuth credentials. Have they authorised this app?');
+            exit;
+        }
+        $this->getLibrary()->setOAuthDetails($oAuth['token'], $oAuth['secret']);
+    }
+
+    /**
+     * @param $user
+     * @param $trigger
+     * @return mixed|null|SimpleXMLElement|string
+     */
     public function pull($user, $trigger)
     {
+        $xml = "failed";
+
         nxr("API request for $user getting $trigger");
         if ($this->getAppClass()->isUser($user)) {
             if (!$this->isAuthorised()) {
-                $oAuth = $this->get_oauth($user);
-                if (!$oAuth OR !is_array($oAuth) OR $oAuth['token'] == "" OR $oAuth['secret'] == "") {
-                    nxr('Unable to setup the user OAuth credentials. Have they authorised this app?');
-                    exit;
-                }
-                $this->getFitbitapi()->setOAuthDetails($oAuth['token'], $oAuth['secret']);
-                $this->setAuthorised(true);
+                $this->oAuthorise($user);
             }
+
+            if ($trigger == "profile") {
+                $xml = $this->api_pull_profile($user);
+            }
+        }
+
+        return $xml;
+    }
+
+    /**
+     * @param $user
+     * @return mixed|null|SimpleXMLElement|string
+     */
+    private function api_pull_profile($user) {
+        if ($this->api_isCooled("profile", $user)) {
+            try {
+                $userProfile = $this->getLibrary()->getProfile();
+            } catch (Exception $E) {
+                echo "<pre>";
+                echo $user . "\n\n";
+                print_r($E);
+                echo "</pre>";
+                return null;
+            }
+
+            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "users", array(
+                "avatar" => $userProfile->user->avatar150,
+                "city" => $userProfile->user->city,
+                "country" => $userProfile->user->country,
+                "name" => $userProfile->user->fullName,
+                "gender" => $userProfile->user->gender,
+                "height" => $userProfile->user->height,
+                "seen" => $userProfile->user->memberSince,
+                "stride_running" => $userProfile->user->strideLengthRunning,
+                "stride_walking" => $userProfile->user->strideLengthWalking,
+            ), array("fuid" => $user));
+
+            $this->api_setLastrun("profile", $user, NULL, true);
+
+            return $userProfile;
+        } else {
+            echo "Still too hot";
+            return null;
         }
     }
 
+    /**
+     * @param $trigger
+     * @param $user
+     * @param bool $reset
+     * @return bool
+     */
+    private function api_isCooled($trigger, $user, $reset = false) {
+        $currentDate = new DateTime ('now');
+        $lastRun     = $this->api_getLastrun($trigger, $user, $reset);
+        if ($lastRun->format("U") < $currentDate->format("U") - $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger . '_timeout', 5400)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $activity
+     * @param $username
+     * @param bool $reset
+     * @return DateTime
+     */
+    private function api_getLastrun($activity, $username, $reset = false) {
+        if ($reset)
+            return new DateTime ("1970-01-01");
+
+        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "runlog", array("AND" => array("user" => $username, "activity" => $activity)))) {
+            return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, false) . "runlog", "date", array("AND" => array("user" => $username, "activity" => $activity))));
+        } else {
+            return new DateTime ("1970-01-01");
+        }
+    }
+
+    /**
+     * @param $activity
+     * @param $username
+     * @param null $cron_delay
+     * @param bool $clean
+     */
+    private function api_setLastrun($activity, $username, $cron_delay = NULL, $clean = false) {
+        if (is_null($cron_delay)) {
+            $cron_delay_holder = 'nx_fitbit_ds_' . $activity . '_timeout';
+            $cron_delay        = $this->getAppClass()->getSetting($cron_delay_holder, 5400);
+        }
+
+        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "runlog", array("AND" => array("user" => $username, "activity" => $activity)))) {
+            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "runlog", array(
+                "date" => date("Y-m-d H:i:s"),
+                "cooldown" => date("Y-m-d H:i:s", time() + $cron_delay)
+            ), array("AND" => array("user" => $username, "activity" => $activity)));
+        } else {
+            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "runlog", array(
+                "user" => $username,
+                "activity" => $activity,
+                "date" => date("Y-m-d H:i:s"),
+                "lastrun" => date("Y-m-d H:i:s"),
+                "cooldown" => date("Y-m-d H:i:s", time() + $cron_delay)
+            ));
+        }
+    }
+
+    /**
+     * @param $user
+     * @return array
+     */
     private function get_oauth($user)
     {
-        $userArray = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "users", ['token', 'secret'], ["fuid" => $user]);
+        $userArray = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "users", array('token', 'secret'), array("fuid" => $user));
         if (is_array($userArray)) {
             return $userArray;
         } else {
@@ -69,9 +181,27 @@ class fitbit {
     }
 
     /**
+     * @deprecated Use getLibrary() instead
      * @return FitBitPHP
      */
     public function getFitbitapi()
+    {
+        return $this->getLibrary();
+    }
+
+    /**
+     * @deprecated Use setLibrary() instead
+     * @param FitBitPHP $fitbitapi
+     */
+    public function setFitbitapi($fitbitapi)
+    {
+        $this->setLibrary($fitbitapi);
+    }
+
+    /**
+     * @return FitBitPHP
+     */
+    public function getLibrary()
     {
         return $this->fitbitapi;
     }
@@ -79,7 +209,7 @@ class fitbit {
     /**
      * @param FitBitPHP $fitbitapi
      */
-    public function setFitbitapi($fitbitapi)
+    public function setLibrary($fitbitapi)
     {
         $this->fitbitapi = $fitbitapi;
     }
@@ -89,15 +219,11 @@ class fitbit {
      */
     private function isAuthorised()
     {
-        return $this->authorised;
-    }
-
-    /**
-     * @param boolean $authorised
-     */
-    private function setAuthorised($authorised)
-    {
-        $this->authorised = $authorised;
+        if ($this->getLibrary()->getOAuthToken() != "" AND $this->getLibrary()->getOAuthSecret() != "") {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -109,7 +235,7 @@ class fitbit {
     }
 
     /**
-     * @param NxFitbit $fitbitApp
+     * @param $AppClass
      */
     private function setAppClass($AppClass)
     {
