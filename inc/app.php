@@ -246,7 +246,7 @@ class NxFitbit
     {
         if (is_null($this->fitbitapi)) {
             require_once(dirname(__FILE__) . "/fitbit.php");
-            $this->setFitbitapi(new fitbit(
+            $this->setFitbitapi(new fitbit($this,
                 $this->getSetting("fitbit_consumer_key", null, false),
                 $this->getSetting("fitbit_consumer_secret", null, false),
                 $this->getSetting("fitbit_debug", false, false),
