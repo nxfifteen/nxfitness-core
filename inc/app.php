@@ -2,6 +2,10 @@
 
 date_default_timezone_set('Europe/London');
 
+function nxr($msg) {
+    echo $msg . "\n";
+}
+
 /**
  * NxFitbit
  * @version 0.0.1
@@ -101,7 +105,6 @@ class NxFitbit
      * Delete cron jobs from queue
      * @param $user_fitbit_id
      * @param $trigger
-     * @return bool|int
      */
     public function delCronJob($user_fitbit_id, $trigger)
     {
@@ -110,14 +113,18 @@ class NxFitbit
             "trigger" => $trigger
         ]])
         ) {
-            return $this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", [
+            if ($this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", [
                 "AND" => [
                     "user" => $user_fitbit_id,
                     "trigger" => $trigger
                 ]
-            ]);
+            ])) {
+                nxr("Cron job deleted");
+            } else {
+                nxr("Failed to delete Cron job");
+            }
         } else {
-            return false;
+            nxr("Failed to delete Cron job");
         }
     }
 
