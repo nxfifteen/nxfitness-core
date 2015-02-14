@@ -49,9 +49,9 @@ class fitbit {
      * @param $trigger
      * @return mixed|null|SimpleXMLElement|string
      */
-    public function pull($user, $trigger)
+    public function pull($user, $trigger, $return = false)
     {
-        $xml = "failed";
+        $xml = null;
 
         //nxr("API request for $user getting $trigger");
         if ($this->getAppClass()->isUser($user)) {
@@ -59,12 +59,16 @@ class fitbit {
                 $this->oAuthorise($user);
             }
 
-            if ($trigger == "profile") {
+            if ($trigger == "all" || $trigger == "profile") {
                 $xml = $this->api_pull_profile($user);
             }
         }
 
-        return $xml;
+        if ($return) {
+            return $xml;
+        } else {
+            return true;
+        }
     }
 
     /**
