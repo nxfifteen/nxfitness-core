@@ -37,10 +37,10 @@ class config
      */
     public function set($key, $value)
     {
-        if ($this->database->has($this->get("db_prefix", false) . "settings", ["var" => $key])) {
-            return $this->database->update($this->get("db_prefix", false) . "settings", ["data" => $value], ["var" => $key]);
+        if ($this->database->has($this->get("db_prefix", false) . "settings", array("var" => $key))) {
+            return $this->database->update($this->get("db_prefix", false) . "settings", array("data" => $value), array("var" => $key));
         } else {
-            return $this->database->insert($this->get("db_prefix", false) . "settings", ["data" => $value, "var" => $key]);
+            return $this->database->insert($this->get("db_prefix", false) . "settings", array("data" => $value, "var" => $key));
         }
     }
 
@@ -54,8 +54,8 @@ class config
     {
         if (array_key_exists($key, $this->settings)) {
             return $this->settings[$key];
-        } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, false) . "settings", ["var" => $key])) {
-            return $this->database->get($this->get("db_prefix", NULL, false) . "settings", "data", ["var" => $key]);
+        } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, false) . "settings", array("var" => $key))) {
+            return $this->database->get($this->get("db_prefix", NULL, false) . "settings", "data", array("var" => $key));
         } else {
             if (!is_null($default)) {
                 $this->set($key, $default);

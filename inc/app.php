@@ -37,14 +37,14 @@ class NxFitbit
         $this->setSettings(new config());
 
         require_once(dirname(__FILE__) . "/../library/medoo.php");
-        $this->setDatabase(new medoo([
+        $this->setDatabase(new medoo(array(
             'database_type' => 'mysql',
             'database_name' => $this->getSetting("db_name"),
             'server' => $this->getSetting("db_server"),
             'username' => $this->getSetting("db_username"),
             'password' => $this->getSetting("db_password"),
             'charset' => 'utf8'
-        ]));
+        )));
 
         $this->getSettings()->setDatabase($this->getDatabase());
     }
@@ -103,7 +103,7 @@ class NxFitbit
      */
     public function getCronJobs()
     {
-        return $this->getDatabase()->select($this->getSetting("db_prefix", null, false) . "queue", "*", ["ORDER" => "date ASC"]);
+        return $this->getDatabase()->select($this->getSetting("db_prefix", null, false) . "queue", "*", array("ORDER" => "date ASC"));
     }
 
     /**
@@ -113,17 +113,17 @@ class NxFitbit
      */
     public function delCronJob($user_fitbit_id, $trigger)
     {
-        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", ["AND" => [
+        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array("AND" => array(
             "user" => $user_fitbit_id,
             "trigger" => $trigger
-        ]])
+            )))
         ) {
-            if ($this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", [
-                "AND" => [
+            if ($this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", array(
+                "AND" => array(
                     "user" => $user_fitbit_id,
                     "trigger" => $trigger
-                ]
-            ])) {
+            )
+            ))) {
                 nxr("Cron job deleted");
             } else {
                 nxr("Failed to delete Cron job");
@@ -140,16 +140,18 @@ class NxFitbit
      */
     public function addCronJob($user_fitbit_id, $trigger)
     {
-        if (!$this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", ["AND" => [
-            "user" => $user_fitbit_id,
-            "trigger" => $trigger
-        ]])
+        if (!$this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
+            "AND" => array(
+                "user" => $user_fitbit_id,
+                "trigger" => $trigger
+            )
+        ))
         ) {
-            $this->getDatabase()->insert($this->getSetting("db_prefix", null, false) . "queue", [
+            $this->getDatabase()->insert($this->getSetting("db_prefix", null, false) . "queue", array(
                 "user" => $user_fitbit_id,
                 "trigger" => $trigger,
                 "date" => date("Y-m-d H:i:s")
-            ]);
+            ));
         } else {
             nxr("Cron job already present");
         }
@@ -165,7 +167,7 @@ class NxFitbit
      */
     public function isUser($user_fitbit_id)
     {
-        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", ["fuid" => $user_fitbit_id])) {
+        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array("fuid" => $user_fitbit_id))) {
             return true;
         } else {
             return false;
@@ -174,7 +176,7 @@ class NxFitbit
 
     public function getUserCooldown($user_fitbit_id) {
         if ($this->isUser($user_fitbit_id)) {
-            return $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "cooldown", ["fuid" => $user_fitbit_id]);
+            return $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "cooldown", array("fuid" => $user_fitbit_id));
         }
     }
 
