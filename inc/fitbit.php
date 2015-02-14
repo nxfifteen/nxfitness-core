@@ -47,6 +47,7 @@ class fitbit {
     /**
      * @param $user
      * @param $trigger
+     * @param bool $return
      * @return mixed|null|SimpleXMLElement|string
      */
     public function pull($user, $trigger, $return = false)

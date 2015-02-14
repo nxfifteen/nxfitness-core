@@ -41,7 +41,7 @@ if ($fitbitApp->isUser($fibit_id)) {
             } else {
                 $fitbitApp->getFitbitapi()->oAuthorise($fibit_id);
 
-                $profile = $fitbitApp->getFitbitapi()->pull($fibit_id, "profile");
+                $profile = $fitbitApp->getFitbitapi()->pull($fibit_id, "profile", true);
                 if (is_numeric($profile) AND $profile < 0) {
                     echo "Error profile: " . $fitbitApp->lookupErrorCode($profile);
                 } else {
