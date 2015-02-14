@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Europe/London');
+
 /**
  * NxFitbit
  * @version 0.0.1
@@ -83,6 +85,10 @@ class NxFitbit
     }
 
     /**
+     * Cron job / queue management
+     */
+
+    /**
      * Get list of pending cron jobs from database
      * @return array|bool
      */
@@ -116,6 +122,10 @@ class NxFitbit
     }
 
     /**
+     * Users
+     */
+
+    /**
      * @param string $user_fitbit_id
      * @return bool
      */
@@ -127,6 +137,16 @@ class NxFitbit
             return false;
         }
     }
+
+    public function getUserCooldown($user_fitbit_id) {
+        if ($this->isUser($user_fitbit_id)) {
+            return $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "cooldown", ["fuid" => $user_fitbit_id]);
+        }
+    }
+
+    /**
+     * Settings and configuration
+     */
 
     /**
      * Get settings from config class
@@ -164,6 +184,10 @@ class NxFitbit
     {
         $this->settings = $settings;
     }
+
+    /**
+     * Database functions
+     */
 
     /**
      * @return medoo
