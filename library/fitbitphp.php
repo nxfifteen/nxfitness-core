@@ -43,7 +43,7 @@ class FitBitPHP
      */
     public function __construct($consumer_key, $consumer_secret, $debug = 1, $user_agent = null, $response_format = 'xml')
     {
-        $this->initUrls();
+        $this->initUrls(true, true);
 
         $this->consumer_key = $consumer_key;
         $this->consumer_secret = $consumer_secret;
