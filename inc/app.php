@@ -273,4 +273,11 @@ class NxFitbit
         $this->fitbitapi = $fitbitapi;
     }
 
+    public function lookupErrorCode($errCode) {
+        switch($errCode) {
+            case "-143":
+                return "API cool down in effect. You cannot call the same API too often.";
+        }
+    }
+
 }

@@ -53,7 +53,7 @@ class fitbit {
     {
         $xml = "failed";
 
-        nxr("API request for $user getting $trigger");
+        //nxr("API request for $user getting $trigger");
         if ($this->getAppClass()->isUser($user)) {
             if (!$this->isAuthorised()) {
                 $this->oAuthorise($user);
@@ -115,8 +115,7 @@ class fitbit {
 
             return $userProfile;
         } else {
-            echo "Still too hot";
-            return null;
+            return "-143";
         }
     }
 
