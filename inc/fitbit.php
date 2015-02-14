@@ -83,6 +83,22 @@ class fitbit {
                 return null;
             }
 
+            if (!isset($userProfile->user->height)) {
+                $userProfile->user->height = NULL;
+            }
+            if (!isset($userProfile->user->strideLengthRunning)) {
+                $userProfile->user->strideLengthRunning = NULL;
+            }
+            if (!isset($userProfile->user->strideLengthWalking)) {
+                $userProfile->user->strideLengthWalking = NULL;
+            }
+            if (!isset($userProfile->user->city)) {
+                $userProfile->user->city = NULL;
+            }
+            if (!isset($userProfile->user->country)) {
+                $userProfile->user->country = NULL;
+            }
+
             $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "users", array(
                 "avatar" => $userProfile->user->avatar150,
                 "city" => $userProfile->user->city,
