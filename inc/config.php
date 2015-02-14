@@ -57,6 +57,9 @@ class config
         } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, false) . "settings", ["var" => $key])) {
             return $this->database->get($this->get("db_prefix", NULL, false) . "settings", "data", ["var" => $key]);
         } else {
+            if (!is_null($default)) {
+                $this->set($key, $default);
+            }
             return $default;
         }
     }
