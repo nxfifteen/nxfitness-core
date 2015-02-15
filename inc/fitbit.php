@@ -54,21 +54,245 @@ class fitbit {
     {
         $xml = null;
 
-        //nxr("API request for $user getting $trigger");
         if ($this->getAppClass()->isUser($user)) {
             if (!$this->isAuthorised()) {
                 $this->oAuthorise($user);
             }
 
-            if ($trigger == "all" || $trigger == "profile") {
-                $xml = $this->api_pull_profile($user);
+            /*if ($trigger == "all" || $trigger == "profile") {
+                $pull = $this->api_pull_profile($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                }
+            }*/
+
+            /*if ($trigger == "all" || $trigger == "devices") {
+                $pull = $this->api_pull_devices($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error devices: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                }
+            }*/
+
+            if ($trigger == "all" || $trigger == "badges") {
+                if ($this->isApiError($this->api_pull_badges($user))) {
+                    echo "Error badges: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
             }
+
+            /*if ($trigger == "all" || $trigger == "leaderboard") {
+                if ($this->isApiError($this->api_pull_profile($user))) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
+            }*/
+
+            /*if ($trigger == "all" || $trigger == "foods") {
+                //nx_fitbit_api_goals_calories($username, $fitbit);
+
+                if ($this->isApiError($this->api_pull_profile($user))) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
+            }*/
+
+            /*if ($trigger == "all" || $trigger == "sleep") {
+                if ($this->isApiError($this->api_pull_profile($user))) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
+            }*/
+
+            /*if ($trigger == "all" || $trigger == "body") {
+                if ($this->isApiError($this->api_pull_profile($user))) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
+            }*/
+
+            /*if ($trigger == "all" || $trigger == "heart") {
+                if ($this->isApiError($this->api_pull_profile($user))) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
+            }*/
+
+            /*if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
+                if ($this->isApiError($this->api_pull_profile($user))) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
+            }*/
+
+            /*if ($trigger == "all" || $trigger == "goals") {
+                if ($this->isApiError($this->api_pull_profile($user))) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
+            }*/
+
+            /*if ($trigger == "all" || $trigger == "activities") {
+                if ($this->isApiError($this->api_pull_profile($user))) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                }
+            }*/
         }
 
         if ($return) {
             return $xml;
         } else {
             return true;
+        }
+    }
+
+    /**
+     * @param $xml
+     * @return bool
+     */
+    private function isApiError($xml) {
+        if (is_numeric($xml) AND $xml < 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Download information of badges the user has aquired
+     * @param $user
+     * @return mixed|null|SimpleXMLElement|string
+     */
+    private function api_pull_badges($user) {
+        if ($this->api_isCooled("badges", $user)) {
+            $badgeFolder = dirname(__FILE__) . "/../images/badges/";
+            if(file_exists($badgeFolder) AND is_writable($badgeFolder)) {
+                try {
+                    $userBadges = $this->getLibrary()->getBadges();
+                } catch (Exception $E) {
+                    echo "<pre>";
+                    echo $user . "\n\n";
+                    print_r($E);
+                    echo "</pre>";
+                    return null;
+                }
+
+                if (isset($userBadges)) {
+                    foreach ($userBadges->badges->badge as $badge) {
+                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "bages", array(
+                            "AND" => array(
+                                "badgeType" => (String)$badge->badgeType,
+                                "value" => (String)$badge->value
+                            )
+                        ))) {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "bages", array(
+                                'badgeType' => (String)$badge->badgeType,
+                                'value' => (String)$badge->value,
+                                'image' => basename((String)$badge->image50px),
+                                'badgeGradientEndColor' => (String)$badge->badgeGradientEndColor,
+                                'badgeGradientStartColor' => (String)$badge->badgeGradientStartColor,
+                                'earnedMessage' => (String)$badge->earnedMessage,
+                                'marketingDescription' => (String)$badge->marketingDescription,
+                                'name' => (String)$badge->name
+                            ));
+                        }
+
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "lnk_badge2usr", array("AND" => array(
+                            "user" => $user,
+                            "badgeType" => (String)$badge->badgeType,
+                            "value" => (String)$badge->value
+                        )))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "lnk_badge2usr", array(
+                                'dateTime' => (String)$badge->dateTime,
+                                'timesAchieved' => (String)$badge->timesAchieved
+                            ));
+                        } else {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "lnk_badge2usr", array(
+                                'user' => $user,
+                                'badgeType' => (String)$badge->badgeType,
+                                'dateTime' => (String)$badge->dateTime,
+                                'timesAchieved' => (String)$badge->timesAchieved,
+                                'value' => (String)$badge->value,
+                                'unit' => (String)$badge->unit
+                            ));
+                        }
+
+                        $imageFileName = basename((String)$badge->image50px);
+                        if(!file_exists($badgeFolder . "/" . $imageFileName)) {
+                            file_put_contents($badgeFolder . "/" . $imageFileName, fopen((String)$badge->image50px, 'r'));
+                        }
+
+                        if(!file_exists($badgeFolder . "/75px")) { mkdir($badgeFolder . "/75px", 0755, true); }
+                        if(!file_exists($badgeFolder . "/75px/" . $imageFileName)) {
+                            file_put_contents($badgeFolder . "/75px/" . $imageFileName, fopen((String)$badge->image75px, 'r'));
+                        }
+
+                        if(!file_exists($badgeFolder . "/100px")) { mkdir($badgeFolder . "/100px", 0755, true); }
+                        if(!file_exists($badgeFolder . "/100px/" . $imageFileName)) {
+                            file_put_contents($badgeFolder . "/100px/" . $imageFileName, fopen((String)$badge->image100px, 'r'));
+                        }
+
+                        if(!file_exists($badgeFolder . "/125px")) { mkdir($badgeFolder . "/125px", 0755, true); }
+                        if(!file_exists($badgeFolder . "/125px/" . $imageFileName)) {
+                            file_put_contents($badgeFolder . "/125px/" . $imageFileName, fopen((String)$badge->image125px, 'r'));
+                        }
+
+                        if(!file_exists($badgeFolder . "/300px")) { mkdir($badgeFolder . "/300px", 0755, true); }
+                        if(!file_exists($badgeFolder . "/300px/" . $imageFileName)) {
+                            file_put_contents($badgeFolder . "/300px/" . $imageFileName, fopen((String)$badge->image300px, 'r'));
+                        }
+
+                    }
+                }
+
+                $this->api_setLastrun("badges", $user, NULL, true);
+
+                return $userBadges;
+            } else {
+                echo "Missing: $badgeFolder\n";
+                return "-142";
+            }
+        } else {
+            return "-143";
+        }
+    }
+
+    /**
+     * Download information about devices associated with the users account. This is then stored in the database
+     * @param $user
+     * @return mixed|null|SimpleXMLElement|string
+     */
+    private function api_pull_devices($user) {
+        if ($this->api_isCooled("devices", $user)) {
+            try {
+                $userDevices = $this->getLibrary()->getDevices();
+            } catch (Exception $E) {
+                echo "<pre>";
+                echo $user . "\n\n";
+                print_r($E);
+                echo "</pre>";
+                return null;
+            }
+
+            foreach ($userDevices->device as $device) {
+                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "devices", array("AND" => array("id" => (String)$device->id)))) {
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "devices", array(
+                        'lastSyncTime' => (String)$device->lastSyncTime,
+                        'battery' => (String)$device->battery
+                    ), array("id" => (String)$device->id));
+                } else {
+                    echo $this->getAppClass()->getDatabase()->last_query();
+
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "devices", array(
+                        'id' => (String)$device->id,
+                        'deviceVersion' => (String)$device->deviceVersion,
+                        'type' => (String)$device->type,
+                        'lastSyncTime' => (String)$device->lastSyncTime,
+                        'battery' => (String)$device->battery
+                    ));
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "dev2usr", array(
+                        'user' => $user,
+                        'device' => (String)$device->id
+                    ));
+                }
+            }
+
+            $this->api_setLastrun("devices", $user, NULL, true);
+
+            return $userDevices;
+        } else {
+            return "-143";
         }
     }
 
@@ -105,16 +329,20 @@ class fitbit {
             }
 
             $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "users", array(
-                "avatar" => $userProfile->user->avatar150,
-                "city" => $userProfile->user->city,
-                "country" => $userProfile->user->country,
-                "name" => $userProfile->user->fullName,
-                "gender" => $userProfile->user->gender,
-                "height" => $userProfile->user->height,
-                "seen" => $userProfile->user->memberSince,
-                "stride_running" => $userProfile->user->strideLengthRunning,
-                "stride_walking" => $userProfile->user->strideLengthWalking,
+                "avatar" => (String)$userProfile->user->avatar150,
+                "city" => (String)$userProfile->user->city,
+                "country" => (String)$userProfile->user->country,
+                "name" => (String)$userProfile->user->fullName,
+                "gender" => (String)$userProfile->user->gender,
+                "height" => (String)$userProfile->user->height,
+                "seen" => (String)$userProfile->user->memberSince,
+                "stride_running" => (String)$userProfile->user->strideLengthRunning,
+                "stride_walking" => (String)$userProfile->user->strideLengthWalking
             ), array("fuid" => $user));
+
+            if(!file_exists(dirname(__FILE__) . "/../images/avatars/" . $user . ".jpg")) {
+                file_put_contents(dirname(__FILE__) . "/../images/avatars/" . $user . ".jpg", fopen((String)$userProfile->user->avatar150, 'r'));
+            }
 
             $this->api_setLastrun("profile", $user, NULL, true);
 
