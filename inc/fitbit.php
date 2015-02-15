@@ -73,59 +73,66 @@ class fitbit {
                 }
             }*/
 
-            if ($trigger == "all" || $trigger == "badges") {
-                if ($this->isApiError($this->api_pull_badges($user))) {
-                    echo "Error badges: " . $this->getAppClass()->lookupErrorCode($xml);
+            /*if ($trigger == "all" || $trigger == "badges") {
+                $pull = $this->api_pull_badges($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error badges: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
-            }
+            }*/
 
             /*if ($trigger == "all" || $trigger == "leaderboard") {
-                if ($this->isApiError($this->api_pull_profile($user))) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                $pull = $this->api_pull_leaderboard($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
             }*/
 
             /*if ($trigger == "all" || $trigger == "foods") {
-                //nx_fitbit_api_goals_calories($username, $fitbit);
-
-                if ($this->isApiError($this->api_pull_profile($user))) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                $pull = $this->api_pull_goals_calories($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
             }*/
 
             /*if ($trigger == "all" || $trigger == "sleep") {
-                if ($this->isApiError($this->api_pull_profile($user))) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                $pull = $this->api_pull_leaderboard($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
             }*/
 
             /*if ($trigger == "all" || $trigger == "body") {
-                if ($this->isApiError($this->api_pull_profile($user))) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                $pull = $this->api_pull_leaderboard($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
             }*/
 
             /*if ($trigger == "all" || $trigger == "heart") {
-                if ($this->isApiError($this->api_pull_profile($user))) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                $pull = $this->api_pull_leaderboard($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
             }*/
 
             /*if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
-                if ($this->isApiError($this->api_pull_profile($user))) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                $pull = $this->api_pull_leaderboard($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
             }*/
 
             /*if ($trigger == "all" || $trigger == "goals") {
-                if ($this->isApiError($this->api_pull_profile($user))) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                $pull = $this->api_pull_leaderboard($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
             }*/
 
             /*if ($trigger == "all" || $trigger == "activities") {
-                if ($this->isApiError($this->api_pull_profile($user))) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($xml);
+                $pull = $this->api_pull_leaderboard($user);
+                if ($this->isApiError($pull)) {
+                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull);
                 }
             }*/
         }
@@ -294,6 +301,151 @@ class fitbit {
         } else {
             return "-143";
         }
+    }
+
+    /**
+     * @param $user
+     * @return mixed|null|SimpleXMLElement|string
+     */
+    private function api_pull_leaderboard($user) {
+        if ($this->api_isCooled("leaderboard", $user)) {
+            try {
+                $userFriends = $this->getLibrary()->getFriendsLeaderboard();
+            } catch (Exception $E) {
+                echo $user . "\n\n";
+                print_r($E);
+                return null;
+            }
+
+            if (isset($userFriends)) {
+                $userFriends = get_object_vars($userFriends->friends);
+                if (is_array($userFriends) and count($userFriends) > 0) {
+                    $youRank     = 0;
+                    $youDistance = 0;
+                    $lastSteps   = 0;
+                    foreach ($userFriends['friend'] as $friend) {
+                        $lifetime = floatval($friend->lifetime->steps);
+                        $steps    = floatval($friend->summary->steps);
+
+                        if ($friend->user->encodedId == $user) {
+                            $displayName = "* YOU * are";
+                            if ($steps == 0) {
+                                $youRank = count($userFriends['friend']);
+                            } else {
+                                $youRank     = (String)$friend->rank->steps;
+                            }
+                            $youDistance = ($lastSteps - $steps);
+                            if ($youDistance < 0) $youDistance = 0;
+                        } else {
+                            $displayName = $friend->user->displayName . " is";
+                            $lastSteps   = $steps;
+                        }
+
+                        nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
+                    }
+
+                    nxr("  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends['friend']) . " friends");
+
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "users", array(
+                        'rank' => $youRank,
+                        'friends' => count($userFriends['friend']),
+                        'distance' => $youDistance
+                    ), array("fuid" => $user));
+
+                }
+            }
+
+            $this->api_setLastrun("leaderboard", $user, NULL, true);
+
+            return $userFriends;
+        } else {
+            return "-143";
+        }
+
+    }
+
+    /**
+     * @param $user
+     * @return mixed|null|SimpleXMLElement|string
+     */
+    private function api_pull_goals_calories($user) {
+        if ($this->api_isCooled("goals_calories", $user)) {
+            try {
+                $userCaloriesGoals = $this->getLibrary()->customCall("user/-/foods/log/goal.xml", NULL, OAUTH_HTTP_METHOD_GET);
+            } catch (Exception $E) {
+                echo $user . "\n\n";
+                print_r($E);
+                return null;
+            }
+
+            if (isset($userCaloriesGoals)) {
+                $userCaloriesGoals = simplexml_load_string($userCaloriesGoals->response);
+                $fallback = false;
+
+                /** @noinspection PhpUndefinedFieldInspection */
+                $usr_goals = $userCaloriesGoals->goals;
+                /** @noinspection PhpUndefinedFieldInspection */
+                $usr_foodplan = $userCaloriesGoals->foodPlan;
+
+                if (empty($usr_goals->calories)) {
+                    $usr_goals_calories = 0;
+                    $fallback           = true;
+                } else {
+                    $usr_goals_calories = (int)$usr_goals->calories;
+                }
+
+                if (empty($usr_foodplan->intensity)) {
+                    $usr_foodplan_intensity = "Unset";
+                    $fallback               = true;
+                } else {
+                    $usr_foodplan_intensity = (string)$usr_foodplan->intensity;
+                }
+
+                $currentDate = new DateTime ('now');
+                if (empty($usr_foodplan->estimatedDate)) {
+                    $usr_foodplan_estimatedDate = $currentDate->format("Y-m-d");
+                    $fallback                   = true;
+                } else {
+                    $usr_foodplan_estimatedDate = (string)$usr_foodplan->estimatedDate;
+                }
+
+                if (empty($usr_foodplan->personalized)) {
+                    $usr_foodplan_personalized = "false";
+                    $fallback                  = true;
+                } else {
+                    $usr_foodplan_personalized = (string)$usr_foodplan->personalized;
+                }
+
+                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "goals_calories", array("AND" => array("user" => $user, "date" => $currentDate->format("Y-m-d"))))) {
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "goals_calories", array(
+                        'calories'      => $usr_goals_calories,
+                        'intensity'     => $usr_foodplan_intensity,
+                        'estimatedDate' => $usr_foodplan_estimatedDate,
+                        'personalized'  => $usr_foodplan_personalized,
+                    ), array("AND" => array("user" => $user, "date" => $currentDate->format("Y-m-d"))));
+                } else {
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "goals_calories", array(
+                        'user'          => $user,
+                        'date'          => $currentDate->format("Y-m-d"),
+                        'calories'      => $usr_goals_calories,
+                        'intensity'     => $usr_foodplan_intensity,
+                        'estimatedDate' => $usr_foodplan_estimatedDate,
+                        'personalized'  => $usr_foodplan_personalized,
+                    ));
+                }
+
+                if ($fallback) {
+                    $this->api_setLastrun("goals_calories", $user);
+                } else {
+                    $this->api_setLastrun("goals_calories", $user, NULL, true);
+                }
+            }
+
+            return $userCaloriesGoals;
+        } else {
+            return "-143";
+        }
+
     }
 
     /**
