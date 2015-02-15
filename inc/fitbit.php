@@ -152,7 +152,7 @@ class fitbit {
                 }
             }
 
-            if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
+            if (1 == 2 AND $trigger == "all" || $trigger == "water" || $trigger == "foods") {
                 if ($this->api_isCooled("water", $user)) {
                     $period = new DatePeriod ($this->api_getLastCleanrun("water", $user), $interval, $currentDate);
                     /**
@@ -202,6 +202,39 @@ class fitbit {
         } else {
             return false;
         }
+    }
+
+    private function api_pull_food_water($user, $targetDate) {
+        $targetDateTime = new DateTime ($targetDate);
+        try {
+            $userWaterLog = $this->getLibrary()->getWater($targetDateTime);
+        } catch (Exception $E) {
+            echo $user . "\n\n";
+            print_r($E);
+            return null;
+        }
+
+        if (isset($userWaterLog)) {
+            if (isset($userWaterLog->summary->water)) {
+
+                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "water", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "water", array(
+                        'id'  => $targetDateTime->format("U"),
+                        'liquid'   => (String)$userWaterLog->summary->water
+                    ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+                } else {
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "water", array(
+                        'user' => $user,
+                        'date' => $targetDate,
+                        'id'  => $targetDateTime->format("U"),
+                        'liquid'   => (String)$userWaterLog->summary->water
+                    ));
+                }
+
+                $this->api_setLastCleanrun("water", $user, $targetDateTime);
+            }
+        }
+        return $userWaterLog;
     }
 
     private function api_pull_body_heart($user, $targetDate) {
