@@ -59,88 +59,116 @@ class fitbit {
                 $this->oAuthorise($user);
             }
 
-            /*if ($trigger == "all" || $trigger == "profile") {
+            if (1 == 2 AND $trigger == "all" || $trigger == "profile") {
                 $pull = $this->api_pull_profile($user);
                 if ($this->isApiError($pull)) {
                     echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
-            }*/
+            }
 
-            /*if ($trigger == "all" || $trigger == "devices") {
+            if (1 == 2 AND $trigger == "all" || $trigger == "devices") {
                 $pull = $this->api_pull_devices($user);
                 if ($this->isApiError($pull)) {
                     echo "Error devices: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
-            }*/
+            }
 
-            /*if ($trigger == "all" || $trigger == "badges") {
+            if (1 == 2 AND $trigger == "all" || $trigger == "badges") {
                 $pull = $this->api_pull_badges($user);
                 if ($this->isApiError($pull)) {
                     echo "Error badges: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
-            }*/
+            }
 
-            /*if ($trigger == "all" || $trigger == "leaderboard") {
+            if (1 == 2 AND $trigger == "all" || $trigger == "leaderboard") {
                 $pull = $this->api_pull_leaderboard($user);
                 if ($this->isApiError($pull)) {
                     echo "Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
-            }*/
+            }
 
-            /*if ($trigger == "all" || $trigger == "foods") {
+            if (1 == 2 AND $trigger == "all" || $trigger == "foods") {
                 $pull = $this->api_pull_goals_calories($user);
                 if ($this->isApiError($pull)) {
                     echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
-            }*/
+            }
 
             // Set variables require bellow
             $currentDate = new DateTime ('now');
             $interval = DateInterval::createFromDateString('1 day');
 
-            /*if ($trigger == "all" || $trigger == "sleep") {
-                $period = new DatePeriod ($this->api_getLastCleanrun("sleep", $user), $interval, $currentDate);
-                foreach ($period as $dt) {
-                    nxr(' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
-                    $pull = $this->api_pull_sleep_logs($user, $dt->format("Y-m-d"));
-                    if ($this->isApiError($pull)) {
-                        echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+            if (1 == 2 AND $trigger == "all" || $trigger == "sleep") {
+                if ($this->api_isCooled("sleep", $user)) {
+                    $period = new DatePeriod ($this->api_getLastCleanrun("sleep", $user), $interval, $currentDate);
+                    /**
+                     * @var DateTime $dt
+                     */
+                    foreach ($period as $dt) {
+                        nxr(' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
+                        $pull = $this->api_pull_sleep_logs($user, $dt->format("Y-m-d"));
+                        if ($this->isApiError($pull)) {
+                            echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        }
                     }
-                }
-
-            }*/
-
-            /*if ($trigger == "all" || $trigger == "body") {
-                $period = new DatePeriod ($this->api_getLastCleanrun("body", $user), $interval, $currentDate);
-                foreach ($period as $dt) {
-                    nxr(' Downloading Body Logs for ' . $dt->format("l jS M Y"));
-                    $pull = $this->api_pull_body($user, $dt->format("Y-m-d"));
-                    if ($this->isApiError($pull)) {
-                        echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
-                    }
-                }
-            }*/
-
-            if ($trigger == "all" || $trigger == "heart") {
-                $period = new DatePeriod ($this->api_getLastCleanrun("heart", $user), $interval, $currentDate);
-                /**
-                 * @var DateTime $dt
-                 */
-                foreach ($period as $dt) {
-                    nxr(' Downloading Heart Rate Logs for ' . $dt->format("l jS M Y"));
-                    $pull = $this->api_pull_body_heart($user, $dt->format("Y-m-d"));
-                    if ($this->isApiError($pull)) {
-                        echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
-                    }
+                } else {
+                    echo "  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
                 }
             }
 
-            /*if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
-                $pull = $this->api_pull_leaderboard($user);
-                if ($this->isApiError($pull)) {
-                    echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+            if (1 == 2 AND $trigger == "all" || $trigger == "body") {
+                if ($this->api_isCooled("body", $user)) {
+                    $period = new DatePeriod ($this->api_getLastCleanrun("body", $user), $interval, $currentDate);
+                    /**
+                     * @var DateTime $dt
+                     */
+                    foreach ($period as $dt) {
+                        nxr(' Downloading Body Logs for ' . $dt->format("l jS M Y"));
+                        $pull = $this->api_pull_body($user, $dt->format("Y-m-d"));
+                        if ($this->isApiError($pull)) {
+                            echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        }
+                    }
+                } else {
+                    echo "  Error body: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
                 }
-            }*/
+            }
+
+            if (1 == 2 AND $trigger == "all" || $trigger == "heart") {
+                if ($this->api_isCooled("heart", $user)) {
+                    $period = new DatePeriod ($this->api_getLastCleanrun("heart", $user), $interval, $currentDate);
+                    /**
+                     * @var DateTime $dt
+                     */
+                    foreach ($period as $dt) {
+                        nxr(' Downloading Heart Rate Logs for ' . $dt->format("l jS M Y"));
+                        $pull = $this->api_pull_body_heart($user, $dt->format("Y-m-d"));
+                        if ($this->isApiError($pull)) {
+                            echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        }
+                    }
+                } else {
+                    echo "  Error heart: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                }
+            }
+
+            if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
+                if ($this->api_isCooled("water", $user)) {
+                    $period = new DatePeriod ($this->api_getLastCleanrun("water", $user), $interval, $currentDate);
+                    /**
+                     * @var DateTime $dt
+                     */
+                    foreach ($period as $dt) {
+                        nxr(' Downloading Water Logs for ' . $dt->format("l jS M Y"));
+                        $pull = $this->api_pull_food_water($user, $dt->format("Y-m-d"));
+                        if ($this->isApiError($pull)) {
+                            echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        }
+                    }
+                } else {
+                    echo "  Error water: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                }
+            }
 
             /*if ($trigger == "all" || $trigger == "goals") {
                 $pull = $this->api_pull_leaderboard($user);
@@ -176,111 +204,161 @@ class fitbit {
         }
     }
 
-    
+    private function api_pull_body_heart($user, $targetDate) {
+        $targetDateTime = new DateTime ($targetDate);
+        try {
+            $userBodyHeart = $this->getLibrary()->getHeartRate($targetDateTime);
+        } catch (Exception $E) {
+            echo $user . "\n\n";
+            print_r($E);
+            return null;
+        }
 
-    private function api_pull_body($user, $targetDate) {
-        if ($this->api_isCooled("body", $user)) {
-            $targetDateTime = new DateTime ($targetDate);
-            try {
-                $userBodyLog = $this->getLibrary()->getBody($targetDateTime);
-            } catch (Exception $E) {
-                echo $user . "\n\n";
-                print_r($E);
-                return null;
-            }
+        if (isset($userBodyHeart)) {
+            if (count($userBodyHeart->average->heartAverage) == 3) {
+                $resting = 0;
+                $normal = 0;
+                $exertive = 0;
 
-            if (isset($userBodyLog)) {
-                $fallback = false;
-                $currentDate = new DateTime ();
-                if ($currentDate->format("Y-m-d") == $targetDate and ($userBodyLog->body->weight == "0" OR $userBodyLog->body->fat == "0" OR
-                        $userBodyLog->body->bmi == "0" OR $userBodyLog->goals->weight == "0" OR
-                        $userBodyLog->goals->fat == "0")
-                ) {
-                    $this->getAppClass()->addCronJob($user, "body");
-                    $fallback = true;
-                }
-
-                if (!isset($userBodyLog->body->weight) or $userBodyLog->body->weight == "0") {
-                    nxr('  Weight unrecorded, reverting to previous record');
-                    $weight   = $this->getDBCurrentBody($user, "weight");
-                    $fallback = true;
-                } else {
-                    $weight = (float)$userBodyLog->body->weight;
-                }
-                if (!isset($userBodyLog->body->fat) or $userBodyLog->body->fat == "0") {
-                    nxr('  Body Fat unrecorded, reverting to previous record');
-                    $fat      = $this->getDBCurrentBody($user, "fat");
-                    $fallback = true;
-                } else {
-                    $fat = (float)$userBodyLog->body->fat;
-                }
-                if (!isset($userBodyLog->body->bmi) or $userBodyLog->body->bmi == "0") {
-                    nxr('  BMI unrecorded, reverting to previous record');
-                    $bmi      = $this->getDBCurrentBody($user, "bmi");
-                    $fallback = true;
-                } else {
-                    $bmi = (float)$userBodyLog->body->bmi;
+                foreach ($userBodyHeart->average->heartAverage as $heartAverage) {
+                    switch ($heartAverage->tracker) {
+                        case "Resting Heart Rate":
+                            $resting = (string)$heartAverage->heartRate;
+                            break;
+                        case "Normal Heart Rate":
+                            $normal = (string)$heartAverage->heartRate;
+                            break;
+                        case "Exertive Heart Rate":
+                            $exertive = (string)$heartAverage->heartRate;
+                            break;
+                    }
                 }
 
-                if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
-                    nxr('  Weight Goal unset, reverting to 0');
-                    $goalsweight = $this->getDBCurrentBody($user, "weight", true);
-                    $fallback    = true;
-                } else {
-                    $goalsweight = (float)$userBodyLog->goals->weight;
-                }
-
-                if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
-                    nxr('  Body Fat Goal unset, reverting to 0');
-                    $goalsfat = $this->getDBCurrentBody($user, "fat", true);
-                    $fallback = true;
-                } else {
-                    $goalsfat = (float)$userBodyLog->goals->fat;
-                }
-                
-                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "body", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
-                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "body", array(
-                        "weight" => $weight,
-                        "weightGoal" => $goalsweight,
-                        "fat" => $fat,
-                        "fatGoal" => $goalsfat,
-                        "bmi" => $bmi,
-                        "bicep" => (String)$userBodyLog->body->bicep,
-                        "calf" => (String)$userBodyLog->body->calf,
-                        "chest" => (String)$userBodyLog->body->chest,
-                        "forearm" => (String)$userBodyLog->body->forearm,
-                        "hips" => (String)$userBodyLog->body->hips,
-                        "neck" => (String)$userBodyLog->body->neck,
-                        "thigh" => (String)$userBodyLog->body->thigh,
-                        "waist" => (String)$userBodyLog->body->waist
+                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "heartAverage", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "heartAverage", array(
+                        'resting'  => $resting,
+                        'normal'   => $normal,
+                        'exertive' => $exertive
                     ), array("AND" => array('user' => $user, 'date' => $targetDate)));
                 } else {
-                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "body", array(
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "heartAverage", array(
                         'user' => $user,
                         'date' => $targetDate,
-                        "weight" => $weight,
-                        "weightGoal" => $goalsweight,
-                        "fat" => $fat,
-                        "fatGoal" => $goalsfat,
-                        "bmi" => $bmi,
-                        "bicep" => (String)$userBodyLog->body->bicep,
-                        "calf" => (String)$userBodyLog->body->calf,
-                        "chest" => (String)$userBodyLog->body->chest,
-                        "forearm" => (String)$userBodyLog->body->forearm,
-                        "hips" => (String)$userBodyLog->body->hips,
-                        "neck" => (String)$userBodyLog->body->neck,
-                        "thigh" => (String)$userBodyLog->body->thigh,
-                        "waist" => (String)$userBodyLog->body->waist
+                        'resting'  => $resting,
+                        'normal'   => $normal,
+                        'exertive' => $exertive
                     ));
                 }
 
-                if (!$fallback) $this->api_setLastCleanrun("body", $user, new DateTime ($targetDate));
+                if ($resting > 0 or $normal > 0 or $exertive > 0) {
+                    $this->api_setLastCleanrun("heart", $user, new DateTime ($targetDate));
+                } else {
+                    $this->api_setLastCleanrun("heart", $user, new DateTime ($targetDate), 7);
+                }
+            }
+        }
+        return $userBodyHeart;
+    }
+
+    private function api_pull_body($user, $targetDate) {
+        $targetDateTime = new DateTime ($targetDate);
+        try {
+            $userBodyLog = $this->getLibrary()->getBody($targetDateTime);
+        } catch (Exception $E) {
+            echo $user . "\n\n";
+            print_r($E);
+            return null;
+        }
+
+        if (isset($userBodyLog)) {
+            $fallback = false;
+            $currentDate = new DateTime ();
+            if ($currentDate->format("Y-m-d") == $targetDate and ($userBodyLog->body->weight == "0" OR $userBodyLog->body->fat == "0" OR
+                    $userBodyLog->body->bmi == "0" OR $userBodyLog->goals->weight == "0" OR
+                    $userBodyLog->goals->fat == "0")
+            ) {
+                $this->getAppClass()->addCronJob($user, "body");
+                $fallback = true;
             }
 
-            return $userBodyLog;
-        } else {
-            return "-143";
+            if (!isset($userBodyLog->body->weight) or $userBodyLog->body->weight == "0") {
+                nxr('  Weight unrecorded, reverting to previous record');
+                $weight   = $this->getDBCurrentBody($user, "weight");
+                $fallback = true;
+            } else {
+                $weight = (float)$userBodyLog->body->weight;
+            }
+            if (!isset($userBodyLog->body->fat) or $userBodyLog->body->fat == "0") {
+                nxr('  Body Fat unrecorded, reverting to previous record');
+                $fat      = $this->getDBCurrentBody($user, "fat");
+                $fallback = true;
+            } else {
+                $fat = (float)$userBodyLog->body->fat;
+            }
+            if (!isset($userBodyLog->body->bmi) or $userBodyLog->body->bmi == "0") {
+                nxr('  BMI unrecorded, reverting to previous record');
+                $bmi      = $this->getDBCurrentBody($user, "bmi");
+                $fallback = true;
+            } else {
+                $bmi = (float)$userBodyLog->body->bmi;
+            }
+
+            if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
+                nxr('  Weight Goal unset, reverting to 0');
+                $goalsweight = $this->getDBCurrentBody($user, "weight", true);
+                $fallback    = true;
+            } else {
+                $goalsweight = (float)$userBodyLog->goals->weight;
+            }
+
+            if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
+                nxr('  Body Fat Goal unset, reverting to 0');
+                $goalsfat = $this->getDBCurrentBody($user, "fat", true);
+                $fallback = true;
+            } else {
+                $goalsfat = (float)$userBodyLog->goals->fat;
+            }
+
+            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "body", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null, false) . "body", array(
+                    "weight" => $weight,
+                    "weightGoal" => $goalsweight,
+                    "fat" => $fat,
+                    "fatGoal" => $goalsfat,
+                    "bmi" => $bmi,
+                    "bicep" => (String)$userBodyLog->body->bicep,
+                    "calf" => (String)$userBodyLog->body->calf,
+                    "chest" => (String)$userBodyLog->body->chest,
+                    "forearm" => (String)$userBodyLog->body->forearm,
+                    "hips" => (String)$userBodyLog->body->hips,
+                    "neck" => (String)$userBodyLog->body->neck,
+                    "thigh" => (String)$userBodyLog->body->thigh,
+                    "waist" => (String)$userBodyLog->body->waist
+                ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+            } else {
+                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "body", array(
+                    'user' => $user,
+                    'date' => $targetDate,
+                    "weight" => $weight,
+                    "weightGoal" => $goalsweight,
+                    "fat" => $fat,
+                    "fatGoal" => $goalsfat,
+                    "bmi" => $bmi,
+                    "bicep" => (String)$userBodyLog->body->bicep,
+                    "calf" => (String)$userBodyLog->body->calf,
+                    "chest" => (String)$userBodyLog->body->chest,
+                    "forearm" => (String)$userBodyLog->body->forearm,
+                    "hips" => (String)$userBodyLog->body->hips,
+                    "neck" => (String)$userBodyLog->body->neck,
+                    "thigh" => (String)$userBodyLog->body->thigh,
+                    "waist" => (String)$userBodyLog->body->waist
+                ));
+            }
+
+            if (!$fallback) $this->api_setLastCleanrun("body", $user, new DateTime ($targetDate));
         }
+
+        return $userBodyLog;
         
     }
     
@@ -290,63 +368,59 @@ class fitbit {
      * @return mixed|null|SimpleXMLElement|string
      */
     private function api_pull_sleep_logs($user, $targetDate) {
-        if ($this->api_isCooled("sleep", $user)) {
-            $targetDateTime = new DateTime ($targetDate);
-            try {
-                $userSleepLog = $this->getLibrary()->getSleep($targetDateTime);
-            } catch (Exception $E) {
-                echo $user . "\n\n";
-                print_r($E);
-                return null;
-            }
+        $targetDateTime = new DateTime ($targetDate);
+        try {
+            $userSleepLog = $this->getLibrary()->getSleep($targetDateTime);
+        } catch (Exception $E) {
+            echo $user . "\n\n";
+            print_r($E);
+            return null;
+        }
 
-            if (isset($userSleepLog) and is_object($userSleepLog) and is_object($userSleepLog->sleep) and is_object($userSleepLog->sleep->sleepLog)) {
-                $startTime = new DateTime ((String)$userSleepLog->sleep->sleepLog->startTime);
+        if (isset($userSleepLog) and is_object($userSleepLog) and is_object($userSleepLog->sleep) and is_object($userSleepLog->sleep->sleepLog)) {
+            $startTime = new DateTime ((String)$userSleepLog->sleep->sleepLog->startTime);
 
-                if ($userSleepLog->sleep->sleepLog->logId != 0) {
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "logSleep", array("logId" => (String)$userSleepLog->sleep->sleepLog->logId))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "logSleep", array(
-                            "logId"               => (String)$userSleepLog->sleep->sleepLog->logId,
-                            'awakeningsCount'     => (String)$userSleepLog->sleep->sleepLog->awakeningsCount,
-                            'duration'            => (String)$userSleepLog->sleep->sleepLog->duration,
-                            'efficiency'          => (String)$userSleepLog->sleep->sleepLog->efficiency,
-                            'isMainSleep'         => (String)$userSleepLog->sleep->sleepLog->isMainSleep,
-                            'minutesAfterWakeup'  => (String)$userSleepLog->sleep->sleepLog->minutesAfterWakeup,
-                            'minutesAsleep'       => (String)$userSleepLog->sleep->sleepLog->minutesAsleep,
-                            'minutesAwake'        => (String)$userSleepLog->sleep->sleepLog->minutesAwake,
-                            'minutesToFallAsleep' => (String)$userSleepLog->sleep->sleepLog->minutesToFallAsleep,
-                            'startTime'           => (String)$userSleepLog->sleep->sleepLog->startTime,
-                            'timeInBed'           => (String)$userSleepLog->sleep->sleepLog->timeInBed
-                        ));
-                    }
+            if ($userSleepLog->sleep->sleepLog->logId != 0) {
+                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "logSleep", array("logId" => (String)$userSleepLog->sleep->sleepLog->logId))) {
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "logSleep", array(
+                        "logId"               => (String)$userSleepLog->sleep->sleepLog->logId,
+                        'awakeningsCount'     => (String)$userSleepLog->sleep->sleepLog->awakeningsCount,
+                        'duration'            => (String)$userSleepLog->sleep->sleepLog->duration,
+                        'efficiency'          => (String)$userSleepLog->sleep->sleepLog->efficiency,
+                        'isMainSleep'         => (String)$userSleepLog->sleep->sleepLog->isMainSleep,
+                        'minutesAfterWakeup'  => (String)$userSleepLog->sleep->sleepLog->minutesAfterWakeup,
+                        'minutesAsleep'       => (String)$userSleepLog->sleep->sleepLog->minutesAsleep,
+                        'minutesAwake'        => (String)$userSleepLog->sleep->sleepLog->minutesAwake,
+                        'minutesToFallAsleep' => (String)$userSleepLog->sleep->sleepLog->minutesToFallAsleep,
+                        'startTime'           => (String)$userSleepLog->sleep->sleepLog->startTime,
+                        'timeInBed'           => (String)$userSleepLog->sleep->sleepLog->timeInBed
+                    ));
+                }
 
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "lnk_sleep2usr", array("AND" => array('user' => $user, 'sleeplog' => (String)$userSleepLog->sleep->sleepLog->logId)))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "lnk_sleep2usr", array(
-                            'user'               => $user,
-                            'sleeplog'           => (String)$userSleepLog->sleep->sleepLog->logId,
-                            'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
-                            'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
-                            'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
-                        ));
-                    }
+                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null, false) . "lnk_sleep2usr", array("AND" => array('user' => $user, 'sleeplog' => (String)$userSleepLog->sleep->sleepLog->logId)))) {
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "lnk_sleep2usr", array(
+                        'user'               => $user,
+                        'sleeplog'           => (String)$userSleepLog->sleep->sleepLog->logId,
+                        'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
+                        'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
+                        'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
+                    ));
+                }
 
-                    if ($startTime->format("U") < $targetDateTime->format("U")) {
-                        $currentDate = new DateTime ();
-                        if ($currentDate->format("U") > ((int)$targetDateTime->format("U") + 1209600)) {
-                            $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
-                            $this->api_setLastrun("sleep", $user, 7200);
-                        }
-                    } else {
+                if ($startTime->format("U") < $targetDateTime->format("U")) {
+                    $currentDate = new DateTime ();
+                    if ($currentDate->format("U") > ((int)$targetDateTime->format("U") + 1209600)) {
                         $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
-                        $this->api_setLastrun("sleep", $user, NULL, true);
+                        $this->api_setLastrun("sleep", $user, 7200);
                     }
+                } else {
+                    $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
+                    $this->api_setLastrun("sleep", $user, NULL, true);
                 }
             }
-
-            return $userSleepLog;
-        } else {
-            return "-143";
         }
+
+        return $userSleepLog;
 
     }
 
