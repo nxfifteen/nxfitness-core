@@ -277,6 +277,8 @@ class NxFitbit
         switch($errCode) {
             case "-143":
                 return "API cool down in effect. You cannot call the same API too often.";
+            case "-142":
+                return "Unable to create required directory.";
             default:
                 return $errCode;
         }
