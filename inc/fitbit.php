@@ -59,35 +59,37 @@ class fitbit {
                 $this->oAuthorise($user);
             }
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "profile") {
+            $block = true;
+
+            if ($block AND $trigger == "all" || $trigger == "profile") {
                 $pull = $this->api_pull_profile($user);
                 if ($this->isApiError($pull)) {
                     echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
             }
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "devices") {
+            if ($block AND $trigger == "all" || $trigger == "devices") {
                 $pull = $this->api_pull_devices($user);
                 if ($this->isApiError($pull)) {
                     echo "Error devices: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
             }
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "badges") {
+            if ($block AND $trigger == "all" || $trigger == "badges") {
                 $pull = $this->api_pull_badges($user);
                 if ($this->isApiError($pull)) {
                     echo "Error badges: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
             }
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "leaderboard") {
+            if ($block AND $trigger == "all" || $trigger == "leaderboard") {
                 $pull = $this->api_pull_leaderboard($user);
                 if ($this->isApiError($pull)) {
                     echo "Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                 }
             }
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "foods") {
+            if ($block AND $trigger == "all" || $trigger == "foods") {
                 $pull = $this->api_pull_goals_calories($user);
                 if ($this->isApiError($pull)) {
                     echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
@@ -98,7 +100,7 @@ class fitbit {
             $currentDate = new DateTime ('now');
             $interval = DateInterval::createFromDateString('1 day');
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "sleep") {
+            if ($block AND $trigger == "all" || $trigger == "sleep") {
                 if ($this->api_isCooled("sleep", $user)) {
                     $period = new DatePeriod ($this->api_getLastCleanrun("sleep", $user), $interval, $currentDate);
                     /**
@@ -116,7 +118,7 @@ class fitbit {
                 }
             }
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "body") {
+            if ($block AND $trigger == "all" || $trigger == "body") {
                 if ($this->api_isCooled("body", $user)) {
                     $period = new DatePeriod ($this->api_getLastCleanrun("body", $user), $interval, $currentDate);
                     /**
@@ -134,7 +136,7 @@ class fitbit {
                 }
             }
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "heart") {
+            if ($block AND $trigger == "all" || $trigger == "heart") {
                 if ($this->api_isCooled("heart", $user)) {
                     $period = new DatePeriod ($this->api_getLastCleanrun("heart", $user), $interval, $currentDate);
                     /**
@@ -152,7 +154,7 @@ class fitbit {
                 }
             }
 
-            if (1 == 2 AND $trigger == "all" || $trigger == "water" || $trigger == "foods") {
+            if ($block AND $trigger == "all" || $trigger == "water" || $trigger == "foods") {
                 if ($this->api_isCooled("water", $user)) {
                     $period = new DatePeriod ($this->api_getLastCleanrun("water", $user), $interval, $currentDate);
                     /**
