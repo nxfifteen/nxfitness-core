@@ -289,7 +289,7 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_users` (
 `uid` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
   `fuid` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
   `lastrun` varchar(20) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `name` varchar(25) NOT NULL COMMENT 'TODO: please describe this field!',
+  `name` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!',
   `rank` int(11) NOT NULL DEFAULT '-1' COMMENT 'TODO: please describe this field!',
   `friends` int(11) NOT NULL DEFAULT '-1' COMMENT 'TODO: please describe this field!',
   `distance` int(11) NOT NULL DEFAULT '-1' COMMENT 'TODO: please describe this field!',
