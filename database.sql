@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_bages` (
   `badgeType` varchar(120) NOT NULL COMMENT 'TODO: please describe this field!',
   `value` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
   `image50px` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!',
-  `image75px` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!'
+  `image75px` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!',
+  `image300px` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
 
 -- --------------------------------------------------------
