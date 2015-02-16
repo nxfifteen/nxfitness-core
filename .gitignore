@@ -1,3 +1,6 @@
 # Created by .gitignore support plugin (hsz.mobi)
 .idea
 config.inc.php
+images/badges/*.png
+images/badges/*/*.png
+images/avatars/*.jpg
