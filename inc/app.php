@@ -120,7 +120,7 @@
                 'minutesSedentary'     => 'Minutes Sedentary',
                 'elevation'            => 'Elevation',
                 'distance'             => 'Distance Traveled',
-                'pedomitor'            => 'Steps Taken',
+                'steps'                => 'Steps Taken',
                 'profile'              => 'User Profile',
                 'heart'                => 'Heart Rates',
             );
