@@ -20,6 +20,11 @@
         protected $AppClass;
 
         /**
+         * @var bool
+         */
+        protected $forceSync;
+
+        /**
          * @param $fitbitApp
          * @param $consumer_key
          * @param $consumer_secret
@@ -32,6 +37,8 @@
 
             require_once(dirname(__FILE__) . "/../library/fitbitphp.php");
             $this->setLibrary(new FitBitPHP($consumer_key, $consumer_secret, $debug, $user_agent, $response_format));
+
+            $this->forceSync = false;
         }
 
         /**
@@ -60,6 +67,10 @@
             if ($this->getAppClass()->isUser($user)) {
                 if (!$this->isAuthorised()) {
                     $this->oAuthorise($user);
+                }
+
+                if ($trigger == "all") {
+                    $this->forceSync = true;
                 }
 
                 if ($trigger == "all" || $trigger == "profile") {
@@ -348,12 +359,16 @@
          * @return bool
          */
         private function api_isCooled($trigger, $user, $reset = FALSE) {
-            $currentDate = new DateTime ('now');
-            $lastRun = $this->api_getLastrun($trigger, $user, $reset);
-            if ($lastRun->format("U") < $currentDate->format("U") - $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger . '_timeout', 5400)) {
-                return TRUE;
+            if ($this->forceSync) {
+                return true;
             } else {
-                return FALSE;
+                $currentDate = new DateTime ('now');
+                $lastRun = $this->api_getLastrun($trigger, $user, $reset);
+                if ($lastRun->format("U") < $currentDate->format("U") - $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger . '_timeout', 5400)) {
+                    return TRUE;
+                } else {
+                    return FALSE;
+                }
             }
         }
 
