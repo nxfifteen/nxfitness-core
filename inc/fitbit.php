@@ -296,7 +296,7 @@
                      * @var FitBitException $E
                      */
                     echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                     print_r($E);
                     die();
                 }
@@ -437,7 +437,7 @@
                      * @var FitBitException $E
                      */
                     echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                     print_r($E);
                     die();
                 }
@@ -489,7 +489,7 @@
                          * @var FitBitException $E
                          */
                         echo $user . "\n";
-                        echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                        echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                         print_r($E);
                         die();
                     }
@@ -598,7 +598,7 @@
                      * @var FitBitException $E
                      */
                     echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                     print_r($E);
                     die();
                 }
@@ -663,7 +663,7 @@
                      * @var FitBitException $E
                      */
                     echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                     print_r($E);
                     die();
                 }
@@ -765,7 +765,7 @@
                  * @var FitBitException $E
                  */
                 echo $user . "\n";
-                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
                 die();
             }
@@ -859,7 +859,7 @@
                  * @var FitBitException $E
                  */
                 echo $user . "\n";
-                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
                 die();
             }
@@ -987,7 +987,7 @@
                  * @var FitBitException $E
                  */
                 echo $user . "\n";
-                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
                 die();
             }
@@ -1053,7 +1053,7 @@
                  * @var FitBitException $E
                  */
                 echo $user . "\n";
-                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
                 die();
             }
@@ -1096,7 +1096,7 @@
                  * @var FitBitException $E
                  */
                 echo $user . "\n";
-                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
                 die();
             }
@@ -1150,7 +1150,7 @@
                  * @var FitBitException $E
                  */
                 echo $user . "\n";
-                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
                 die();
             }
@@ -1280,7 +1280,7 @@
                  * @var FitBitException $E
                  */
                 echo $user . "\n";
-                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
                 die();
             }
@@ -1345,7 +1345,7 @@
                  * @var FitBitException $E
                  */
                 echo $user . "\n";
-                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
                 die();
             }
