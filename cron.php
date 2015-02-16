@@ -25,7 +25,7 @@
                         if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
                             nxr("Processing queue item " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
                             $fitbitApp->getFitbitapi()->pull($job['user'], $job['trigger']);
-                            //$fitbitApp->delCronJob($job['user'], $job['trigger']);
+                            $fitbitApp->delCronJob($job['user'], $job['trigger']);
                         } else {
                             nxr("Can not process " . $fitbitApp->supportedApi($job['trigger']) . ". API limit reached for " . $job['user'], WATCHDOG_WARNING);
                         }
@@ -44,15 +44,15 @@
         $repopulate_queue = TRUE;
     }
 
-    /*if (time() < $end) {
-        $repopulate_queue = true;
+    if (time() < $end) {
+        $repopulate_queue = TRUE;
     }
 
     if ($repopulate_queue) {
         nxr("Ready to repopulate the queue");
 
         $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
-        SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", null, false) . "users where
+        SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where
         UNIX_TIMESTAMP(str_to_date(lastrun,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s", strtotime('-1 day')) . "') AND
         UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
 
@@ -68,7 +68,7 @@
         } else {
             $allowed_triggers = Array();
             foreach ($fitbitApp->supportedApi() as $key => $name) {
-                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', false)) {
+                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', FALSE)) {
                     $allowed_triggers[] = $key;
                 }
             }
@@ -77,7 +77,7 @@
                 nxr("I am not allowed to requeue anything so will requeue with empty records");
             } else {
                 $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
-                SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", null, false) . "users where
+                SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where
                 UNIX_TIMESTAMP(str_to_date(lastrun,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s", strtotime('-1 minute')) . "') AND
                 UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
 
@@ -94,5 +94,5 @@
 
         }
 
-    }*/
+    }
 

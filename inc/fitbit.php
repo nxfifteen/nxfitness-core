@@ -1066,71 +1066,6 @@
          * @param $targetDate
          * @return mixed
          */
-        private function api_pull_goals($user, $targetDate) {
-            try {
-                $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.xml", NULL, OAUTH_HTTP_METHOD_GET);
-            } catch (Exception $E) {
-                echo $user . "\n\n";
-                print_r($E);
-
-                return NULL;
-            }
-
-            if (isset($userGoals)) {
-                $userGoals = simplexml_load_string($userGoals->response);
-                $usr_goals         = $userGoals->goals;
-                if (is_object($usr_goals)) {
-                    $fallback = FALSE;
-
-                    if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
-                        $this->getAppClass()->addCronJob($user, "goals");
-
-                        if ($usr_goals->caloriesOut == "") $usr_goals->caloriesOut = -1;
-                        if ($usr_goals->distance == "") $usr_goals->distance = -1;
-                        if ($usr_goals->floors == "") $usr_goals->floors = -1;
-                        if ($usr_goals->activeMinutes == "") $usr_goals->activeMinutes = -1;
-                        if ($usr_goals->steps == "") $usr_goals->steps = -1;
-                        $fallback = true;
-                    }
-
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
-                            'caloriesOut'   => (String)$usr_goals->caloriesOut,
-                            'distance'      => (String)$usr_goals->distance,
-                            'floors'        => (String)$usr_goals->floors,
-                            'activeMinutes' => (String)$usr_goals->activeMinutes,
-                            'steps'         => (String)$usr_goals->steps,
-                            'syncd'         => date("Y-m-d H:i:s")
-                        ), array("AND" => array('user' => $user, 'date' => $targetDate)));
-                    } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
-                            'user' => $user,
-                            'date' => $targetDate,
-                            'caloriesOut'   => (String)$usr_goals->caloriesOut,
-                            'distance'      => (String)$usr_goals->distance,
-                            'floors'        => (String)$usr_goals->floors,
-                            'activeMinutes' => (String)$usr_goals->activeMinutes,
-                            'steps'         => (String)$usr_goals->steps,
-                            'syncd'         => date("Y-m-d H:i:s")
-                        ));
-                    }
-
-                    if (!$fallback) $this->api_setLastCleanrun("goals", $user, new DateTime($targetDate));
-                }
-
-                $currentDate = new DateTime();
-                if ($currentDate->format("Y-m-d") == $targetDate)
-                    $this->api_setLastrun("goals", $user);
-            }
-
-            return $userGoals;
-        }
-
-        /**
-         * @param $user
-         * @param $targetDate
-         * @return mixed
-         */
         private function api_pull_food_eaten($user, $targetDate) {
             $targetDateTime = new DateTime ($targetDate);
             try {
@@ -1158,9 +1093,9 @@
                             ), array("AND" => array('user' => $user, 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)));
                         } else {
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
-                                'user' => $user,
-                                'date' => $targetDate,
-                                'meal' => (String)$meal->loggedFood->name,
+                                'user'     => $user,
+                                'date'     => $targetDate,
+                                'meal'     => (String)$meal->loggedFood->name,
                                 'calories' => (String)$meal->nutritionalValues->calories,
                                 'carbs'    => (String)$meal->nutritionalValues->carbs,
                                 'fat'      => (String)$meal->nutritionalValues->fat,
@@ -1180,13 +1115,78 @@
 
         /**
          * @param $user
+         * @param $targetDate
+         * @return mixed
+         */
+        private function api_pull_goals($user, $targetDate) {
+            try {
+                $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.xml", NULL, OAUTH_HTTP_METHOD_GET);
+            } catch (Exception $E) {
+                echo $user . "\n\n";
+                print_r($E);
+
+                return NULL;
+            }
+
+            if (isset($userGoals)) {
+                $userGoals = simplexml_load_string($userGoals->response);
+                $usr_goals = $userGoals->goals;
+                if (is_object($usr_goals)) {
+                    $fallback = FALSE;
+
+                    if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
+                        $this->getAppClass()->addCronJob($user, "goals");
+
+                        if ($usr_goals->caloriesOut == "") $usr_goals->caloriesOut = -1;
+                        if ($usr_goals->distance == "") $usr_goals->distance = -1;
+                        if ($usr_goals->floors == "") $usr_goals->floors = -1;
+                        if ($usr_goals->activeMinutes == "") $usr_goals->activeMinutes = -1;
+                        if ($usr_goals->steps == "") $usr_goals->steps = -1;
+                        $fallback = TRUE;
+                    }
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
+                            'caloriesOut'   => (String)$usr_goals->caloriesOut,
+                            'distance'      => (String)$usr_goals->distance,
+                            'floors'        => (String)$usr_goals->floors,
+                            'activeMinutes' => (String)$usr_goals->activeMinutes,
+                            'steps'         => (String)$usr_goals->steps,
+                            'syncd'         => date("Y-m-d H:i:s")
+                        ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
+                            'user'          => $user,
+                            'date'          => $targetDate,
+                            'caloriesOut'   => (String)$usr_goals->caloriesOut,
+                            'distance'      => (String)$usr_goals->distance,
+                            'floors'        => (String)$usr_goals->floors,
+                            'activeMinutes' => (String)$usr_goals->activeMinutes,
+                            'steps'         => (String)$usr_goals->steps,
+                            'syncd'         => date("Y-m-d H:i:s")
+                        ));
+                    }
+
+                    if (!$fallback) $this->api_setLastCleanrun("goals", $user, new DateTime($targetDate));
+                }
+
+                $currentDate = new DateTime();
+                if ($currentDate->format("Y-m-d") == $targetDate)
+                    $this->api_setLastrun("goals", $user);
+            }
+
+            return $userGoals;
+        }
+
+        /**
+         * @param $user
          * @param $trigger
          */
         private function api_pull_time_series($user, $trigger) {
             if ($this->api_isCooled($trigger, $user)) {
                 $currentDate = new DateTime();
 
-                $lastrun   = $this->api_getLastCleanrun($trigger, $user);
+                $lastrun = $this->api_getLastCleanrun($trigger, $user);
                 $daysSince = (strtotime($currentDate->format("Y-m-d")) - strtotime($lastrun->format("l jS M Y"))) / (60 * 60 * 24);
 
                 nxr("  Last download: $daysSince days ago. ");
@@ -1209,7 +1209,7 @@
                 $this->api_pull_time_series_by_trigger($user, $trigger, $daysSince);
                 $this->api_setLastrun($trigger, $user);
             } else {
-                echo "   Error ".$trigger.": " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                echo "   Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
             }
         }
 
@@ -1233,6 +1233,53 @@
                 case "minutesFairlyActive":
                     $this->api_pull_time_series_for_activity($user, $trigger, $daysSince);
                     break;
+            }
+        }
+
+        /**
+         * @param $user
+         * @param $trigger
+         * @param $daysSince
+         */
+        private function api_pull_time_series_for_steps($user, $trigger, $daysSince) {
+            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records');
+
+            $currentDate = new DateTime ('now');
+
+            try {
+                $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
+            } catch (Exception $E) {
+                echo $user . "\n\n";
+                print_r($E);
+
+                return NULL;
+            }
+
+            if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+                foreach ($userTimeSeries as $steps) {
+                    if ($steps->value == 0) {
+                        nxr("   No recorded data for " . $steps->dateTime);
+                    } else {
+                        nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
+                    }
+
+                    if ($steps->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($steps->dateTime));
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                            $trigger => (String)$steps->value,
+                            'syncd'  => $currentDate->format('Y-m-d H:m:s')
+                        ), array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                            'user'   => $user,
+                            'date'   => (String)$steps->dateTime,
+                            $trigger => (String)$steps->value,
+                            'syncd'  => $currentDate->format('Y-m-d H:m:s')
+                        ));
+                    }
+
+                }
             }
         }
 
@@ -1279,67 +1326,19 @@
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)))) {
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
                             $databaseColumn => (String)$series->value,
-                            'syncd' => $currentDate->format('Y-m-d H:m:s')
+                            'syncd'         => $currentDate->format('Y-m-d H:m:s')
                         ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
                     } else {
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                            'user' => $user,
-                            'date' => (String)$series->dateTime,
+                            'user'          => $user,
+                            'date'          => (String)$series->dateTime,
                             $databaseColumn => (String)$series->value,
-                            'syncd' => $currentDate->format('Y-m-d H:m:s')
+                            'syncd'         => $currentDate->format('Y-m-d H:m:s')
                         ));
                     }
                 }
             }
         }
-
-        /**
-         * @param $user
-         * @param $trigger
-         * @param $daysSince
-         */
-        private function api_pull_time_series_for_steps($user, $trigger, $daysSince) {
-            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records');
-
-            $currentDate = new DateTime ('now');
-
-            try {
-                $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
-            } catch (Exception $E) {
-                echo $user . "\n\n";
-                print_r($E);
-
-                return NULL;
-            }
-
-            if (isset($userTimeSeries) and is_array($userTimeSeries)) {
-                foreach ($userTimeSeries as $steps) {
-                    if ($steps->value == 0) {
-                        nxr("   No recorded data for " . $steps->dateTime);
-                    } else {
-                        nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
-                    }
-
-                    if ($steps->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($steps->dateTime));
-
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
-                            $trigger => (String)$steps->value,
-                            'syncd' => $currentDate->format('Y-m-d H:m:s')
-                        ), array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)));
-                    } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
-                            'user' => $user,
-                            'date' => (String)$steps->dateTime,
-                            $trigger => (String)$steps->value,
-                            'syncd' => $currentDate->format('Y-m-d H:m:s')
-                        ));
-                    }
-
-                }
-            }
-        }
-        
 
         /**
          * @deprecated Use getLibrary() instead
