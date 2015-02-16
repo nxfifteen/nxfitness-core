@@ -292,12 +292,13 @@
                 try {
                     $userProfile = $this->getLibrary()->getProfile();
                 } catch (Exception $E) {
-                    echo "<pre>";
-                    echo $user . "\n\n";
+                    /**
+                     * @var FitBitException $E
+                     */
+                    echo $user . "\n";
+                    echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                     print_r($E);
-                    echo "</pre>";
-
-                    return NULL;
+                    die();
                 }
 
                 if (!isset($userProfile->user->height)) {
@@ -432,12 +433,13 @@
                 try {
                     $userDevices = $this->getLibrary()->getDevices();
                 } catch (Exception $E) {
-                    echo "<pre>";
-                    echo $user . "\n\n";
+                    /**
+                     * @var FitBitException $E
+                     */
+                    echo $user . "\n";
+                    echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                     print_r($E);
-                    echo "</pre>";
-
-                    return NULL;
+                    die();
                 }
 
                 foreach ($userDevices->device as $device) {
@@ -483,12 +485,13 @@
                     try {
                         $userBadges = $this->getLibrary()->getBadges();
                     } catch (Exception $E) {
-                        echo "<pre>";
-                        echo $user . "\n\n";
+                        /**
+                         * @var FitBitException $E
+                         */
+                        echo $user . "\n";
+                        echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                         print_r($E);
-                        echo "</pre>";
-
-                        return NULL;
+                        die();
                     }
 
                     if (isset($userBadges)) {
@@ -591,10 +594,13 @@
                 try {
                     $userFriends = $this->getLibrary()->getFriendsLeaderboard();
                 } catch (Exception $E) {
-                    echo $user . "\n\n";
+                    /**
+                     * @var FitBitException $E
+                     */
+                    echo $user . "\n";
+                    echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                     print_r($E);
-
-                    return NULL;
+                    die();
                 }
 
                 if (isset($userFriends)) {
@@ -653,10 +659,13 @@
                 try {
                     $userCaloriesGoals = $this->getLibrary()->customCall("user/-/foods/log/goal.xml", NULL, OAUTH_HTTP_METHOD_GET);
                 } catch (Exception $E) {
-                    echo $user . "\n\n";
+                    /**
+                     * @var FitBitException $E
+                     */
+                    echo $user . "\n";
+                    echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                     print_r($E);
-
-                    return NULL;
+                    die();
                 }
 
                 if (isset($userCaloriesGoals)) {
@@ -752,10 +761,13 @@
             try {
                 $userSleepLog = $this->getLibrary()->getSleep($targetDateTime);
             } catch (Exception $E) {
-                echo $user . "\n\n";
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
-
-                return NULL;
+                die();
             }
 
             if (isset($userSleepLog) and is_object($userSleepLog) and is_object($userSleepLog->sleep) and is_object($userSleepLog->sleep->sleepLog)) {
@@ -843,10 +855,13 @@
             try {
                 $userBodyLog = $this->getLibrary()->getBody($targetDateTime);
             } catch (Exception $E) {
-                echo $user . "\n\n";
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
-
-                return NULL;
+                die();
             }
 
             if (isset($userBodyLog)) {
@@ -968,10 +983,13 @@
             try {
                 $userBodyHeart = $this->getLibrary()->getHeartRate($targetDateTime);
             } catch (Exception $E) {
-                echo $user . "\n\n";
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
-
-                return NULL;
+                die();
             }
 
             if (isset($userBodyHeart)) {
@@ -1031,10 +1049,13 @@
             try {
                 $userWaterLog = $this->getLibrary()->getWater($targetDateTime);
             } catch (Exception $E) {
-                echo $user . "\n\n";
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
-
-                return NULL;
+                die();
             }
 
             if (isset($userWaterLog)) {
@@ -1071,10 +1092,13 @@
             try {
                 $userFoodLog = $this->getLibrary()->getFoods($targetDateTime);
             } catch (Exception $E) {
-                echo $user . "\n\n";
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
-
-                return NULL;
+                die();
             }
 
             if (isset($userFoodLog)) {
@@ -1122,10 +1146,13 @@
             try {
                 $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.xml", NULL, OAUTH_HTTP_METHOD_GET);
             } catch (Exception $E) {
-                echo $user . "\n\n";
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
-
-                return NULL;
+                die();
             }
 
             if (isset($userGoals)) {
@@ -1249,10 +1276,13 @@
             try {
                 $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
             } catch (Exception $E) {
-                echo $user . "\n\n";
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
-
-                return NULL;
+                die();
             }
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
@@ -1311,10 +1341,13 @@
             try {
                 $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
             } catch (Exception $E) {
-                echo $user . "\n\n";
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . ") :" . $this->getAppClass()->lookupErrorCode($E->httpcode) . "\n\n";
                 print_r($E);
-
-                return NULL;
+                die();
             }
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
