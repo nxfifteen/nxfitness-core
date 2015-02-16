@@ -267,6 +267,8 @@
                     return "API cool down in effect. You cannot call the same API too often.";
                 case "-142":
                     return "Unable to create required directory.";
+                case "429":
+                    return "Either you hit the rate limiting quota for the client or for the viewer";
                 default:
                     return $errCode;
             }
