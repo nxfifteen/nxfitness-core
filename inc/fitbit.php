@@ -62,37 +62,35 @@
                     $this->oAuthorise($user);
                 }
 
-                $block = FALSE;
-
-                if ($block AND $trigger == "all" || $trigger == "profile") {
+                if ($trigger == "all" || $trigger == "profile") {
                     $pull = $this->api_pull_profile($user);
                     if ($this->isApiError($pull)) {
                         echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
-                if ($block AND $trigger == "all" || $trigger == "devices") {
+                if ($trigger == "all" || $trigger == "devices") {
                     $pull = $this->api_pull_devices($user);
                     if ($this->isApiError($pull)) {
                         echo "Error devices: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
-                if ($block AND $trigger == "all" || $trigger == "badges") {
+                if ($trigger == "all" || $trigger == "badges") {
                     $pull = $this->api_pull_badges($user);
                     if ($this->isApiError($pull)) {
                         echo "Error badges: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
-                if ($block AND $trigger == "all" || $trigger == "leaderboard") {
+                if ($trigger == "all" || $trigger == "leaderboard") {
                     $pull = $this->api_pull_leaderboard($user);
                     if ($this->isApiError($pull)) {
                         echo "Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
-                if ($block AND $trigger == "all" || $trigger == "foods") {
+                if ($trigger == "all" || $trigger == "foods") {
                     $pull = $this->api_pull_goals_calories($user);
                     if ($this->isApiError($pull)) {
                         echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
@@ -103,7 +101,7 @@
                 $currentDate = new DateTime ('now');
                 $interval = DateInterval::createFromDateString('1 day');
 
-                if ($block AND $trigger == "all" || $trigger == "sleep") {
+                if ($trigger == "all" || $trigger == "sleep") {
                     if ($this->api_isCooled("sleep", $user)) {
                         $period = new DatePeriod ($this->api_getLastCleanrun("sleep", $user), $interval, $currentDate);
                         /**
@@ -121,7 +119,7 @@
                     }
                 }
 
-                if ($block AND $trigger == "all" || $trigger == "body") {
+                if ($trigger == "all" || $trigger == "body") {
                     if ($this->api_isCooled("body", $user)) {
                         $period = new DatePeriod ($this->api_getLastCleanrun("body", $user), $interval, $currentDate);
                         /**
@@ -139,7 +137,7 @@
                     }
                 }
 
-                if ($block AND $trigger == "all" || $trigger == "heart") {
+                if ($trigger == "all" || $trigger == "heart") {
                     if ($this->api_isCooled("heart", $user)) {
                         $period = new DatePeriod ($this->api_getLastCleanrun("heart", $user), $interval, $currentDate);
                         /**
@@ -157,7 +155,7 @@
                     }
                 }
 
-                if ($block AND $trigger == "all" || $trigger == "water" || $trigger == "foods") {
+                if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
                     if ($this->api_isCooled("water", $user)) {
                         $period = new DatePeriod ($this->api_getLastCleanrun("water", $user), $interval, $currentDate);
                         /**
@@ -175,19 +173,59 @@
                     }
                 }
 
-                /*if ($trigger == "all" || $trigger == "goals") {
-                    $pull = $this->api_pull_leaderboard($user);
-                    if ($this->isApiError($pull)) {
-                        echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                if ($trigger == "all" || $trigger == "foods") {
+                    if ($this->api_isCooled("foods", $user)) {
+                        $period = new DatePeriod ($this->api_getLastCleanrun("foods", $user), $interval, $currentDate);
+                        /**
+                         * @var DateTime $dt
+                         */
+                        foreach ($period as $dt) {
+                            nxr(' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
+                            $pull = $this->api_pull_food_eaten($user, $dt->format("Y-m-d"));
+                            if ($this->isApiError($pull)) {
+                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                            }
+                        }
+                    } else {
+                        echo "  Error foods: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
                     }
-                }*/
+                }
 
-                /*if ($trigger == "all" || $trigger == "activities") {
-                    $pull = $this->api_pull_leaderboard($user);
-                    if ($this->isApiError($pull)) {
-                        echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                if ($trigger == "all" || $trigger == "goals") {
+                    if ($this->api_isCooled("goals", $user)) {
+                        $period = new DatePeriod ($this->api_getLastCleanrun("goals", $user), $interval, $currentDate);
+                        /**
+                         * @var DateTime $dt
+                         */
+                        foreach ($period as $dt) {
+                            nxr(' Downloading Goals Logs for ' . $dt->format("l jS M Y"));
+                            $pull = $this->api_pull_goals($user, $dt->format("Y-m-d"));
+                            if ($this->isApiError($pull)) {
+                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                            }
+                        }
+                    } else {
+                        echo "  Error Goals: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
                     }
-                }*/
+                }
+
+                $timeSeries = Array("steps"                => "300",
+                                    "distance"             => "300",
+                                    "floors"               => "300",
+                                    "elevation"            => "300",
+                                    "minutesSedentary"     => "1800",
+                                    "minutesLightlyActive" => "1800",
+                                    "minutesFairlyActive"  => "1800",
+                                    "minutesVeryActive"    => "1800",
+                                    "caloriesOut"          => "1800");
+                if ($trigger == "all" || $trigger == "activities") {
+                    nxr(" Downloading Series Info");
+                    foreach ($timeSeries as $activity => $timeout) {
+                        $this->api_pull_time_series($user, $activity);
+                    }
+                } else if (array_key_exists($trigger, $timeSeries)) {
+                    $this->api_pull_time_series($user, $trigger);
+                }
             }
 
             if ($return) {
@@ -1022,6 +1060,286 @@
 
             return $userWaterLog;
         }
+
+        /**
+         * @param $user
+         * @param $targetDate
+         * @return mixed
+         */
+        private function api_pull_goals($user, $targetDate) {
+            try {
+                $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.xml", NULL, OAUTH_HTTP_METHOD_GET);
+            } catch (Exception $E) {
+                echo $user . "\n\n";
+                print_r($E);
+
+                return NULL;
+            }
+
+            if (isset($userGoals)) {
+                $userGoals = simplexml_load_string($userGoals->response);
+                $usr_goals         = $userGoals->goals;
+                if (is_object($usr_goals)) {
+                    $fallback = FALSE;
+
+                    if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
+                        $this->getAppClass()->addCronJob($user, "goals");
+
+                        if ($usr_goals->caloriesOut == "") $usr_goals->caloriesOut = -1;
+                        if ($usr_goals->distance == "") $usr_goals->distance = -1;
+                        if ($usr_goals->floors == "") $usr_goals->floors = -1;
+                        if ($usr_goals->activeMinutes == "") $usr_goals->activeMinutes = -1;
+                        if ($usr_goals->steps == "") $usr_goals->steps = -1;
+                        $fallback = true;
+                    }
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
+                            'caloriesOut'   => (String)$usr_goals->caloriesOut,
+                            'distance'      => (String)$usr_goals->distance,
+                            'floors'        => (String)$usr_goals->floors,
+                            'activeMinutes' => (String)$usr_goals->activeMinutes,
+                            'steps'         => (String)$usr_goals->steps,
+                            'syncd'         => date("Y-m-d H:i:s")
+                        ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
+                            'user' => $user,
+                            'date' => $targetDate,
+                            'caloriesOut'   => (String)$usr_goals->caloriesOut,
+                            'distance'      => (String)$usr_goals->distance,
+                            'floors'        => (String)$usr_goals->floors,
+                            'activeMinutes' => (String)$usr_goals->activeMinutes,
+                            'steps'         => (String)$usr_goals->steps,
+                            'syncd'         => date("Y-m-d H:i:s")
+                        ));
+                    }
+
+                    if (!$fallback) $this->api_setLastCleanrun("goals", $user, new DateTime($targetDate));
+                }
+
+                $currentDate = new DateTime();
+                if ($currentDate->format("Y-m-d") == $targetDate)
+                    $this->api_setLastrun("goals", $user);
+            }
+
+            return $userGoals;
+        }
+
+        /**
+         * @param $user
+         * @param $targetDate
+         * @return mixed
+         */
+        private function api_pull_food_eaten($user, $targetDate) {
+            $targetDateTime = new DateTime ($targetDate);
+            try {
+                $userFoodLog = $this->getLibrary()->getFoods($targetDateTime);
+            } catch (Exception $E) {
+                echo $user . "\n\n";
+                print_r($E);
+
+                return NULL;
+            }
+
+            if (isset($userFoodLog)) {
+                if (count($userFoodLog->foods->apiFoodLogImplV1) > 0) {
+                    foreach ($userFoodLog->foods->apiFoodLogImplV1 as $meal) {
+                        nxr("  Logging meal " . $meal->loggedFood->name);
+
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array("AND" => array('user' => $user, 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
+                                'calories' => (String)$meal->nutritionalValues->calories,
+                                'carbs'    => (String)$meal->nutritionalValues->carbs,
+                                'fat'      => (String)$meal->nutritionalValues->fat,
+                                'fiber'    => (String)$meal->nutritionalValues->fiber,
+                                'protein'  => (String)$meal->nutritionalValues->protein,
+                                'sodium'   => (String)$meal->nutritionalValues->sodium
+                            ), array("AND" => array('user' => $user, 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)));
+                        } else {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
+                                'user' => $user,
+                                'date' => $targetDate,
+                                'meal' => (String)$meal->loggedFood->name,
+                                'calories' => (String)$meal->nutritionalValues->calories,
+                                'carbs'    => (String)$meal->nutritionalValues->carbs,
+                                'fat'      => (String)$meal->nutritionalValues->fat,
+                                'fiber'    => (String)$meal->nutritionalValues->fiber,
+                                'protein'  => (String)$meal->nutritionalValues->protein,
+                                'sodium'   => (String)$meal->nutritionalValues->sodium
+                            ));
+                        }
+
+                        $this->api_setLastCleanrun("foods", $user, $targetDateTime);
+                    }
+                }
+            }
+
+            return $userFoodLog;
+        }
+
+        /**
+         * @param $user
+         * @param $trigger
+         */
+        private function api_pull_time_series($user, $trigger) {
+            if ($this->api_isCooled($trigger, $user)) {
+                $currentDate = new DateTime();
+
+                $lastrun   = $this->api_getLastCleanrun($trigger, $user);
+                $daysSince = (strtotime($currentDate->format("Y-m-d")) - strtotime($lastrun->format("l jS M Y"))) / (60 * 60 * 24);
+
+                nxr("  Last download: $daysSince days ago. ");
+
+                if ($daysSince < 2) {
+                    $daysSince = "1d";
+                } elseif ($daysSince < 8) {
+                    $daysSince = "7d";
+                } elseif ($daysSince < 30) {
+                    $daysSince = "30d";
+                } elseif ($daysSince < 90) {
+                    $daysSince = "3m";
+                } elseif ($daysSince < 180) {
+                    $daysSince = "6m";
+                } else {
+                    $daysSince = "1y";
+                }
+
+                nxr("  Requesting $trigger data for $daysSince days");
+                $this->api_pull_time_series_by_trigger($user, $trigger, $daysSince);
+                $this->api_setLastrun($trigger, $user);
+            } else {
+                echo "   Error ".$trigger.": " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+            }
+        }
+
+        /**
+         * @param $user
+         * @param $trigger
+         * @param $daysSince
+         */
+        private function api_pull_time_series_by_trigger($user, $trigger, $daysSince) {
+            switch ($trigger) {
+                case "steps":
+                case "distance":
+                case "floors":
+                case "elevation":
+                case "caloriesOut":
+                    $this->api_pull_time_series_for_steps($user, $trigger, $daysSince);
+                    break;
+                case "minutesVeryActive":
+                case "minutesSedentary":
+                case "minutesLightlyActive":
+                case "minutesFairlyActive":
+                    $this->api_pull_time_series_for_activity($user, $trigger, $daysSince);
+                    break;
+            }
+        }
+
+        /**
+         * @param $user
+         * @param $trigger
+         * @param $daysSince
+         */
+        private function api_pull_time_series_for_activity($user, $trigger, $daysSince) {
+            switch ($trigger) {
+                case "minutesVeryActive":
+                    $databaseColumn = "veryactive";
+                    break;
+                case "minutesSedentary":
+                    $databaseColumn = "sedentary";
+                    break;
+                case "minutesLightlyActive":
+                    $databaseColumn = "lightlyactive";
+                    break;
+                case "minutesFairlyActive":
+                    $databaseColumn = "fairlyactive";
+                    break;
+            }
+
+            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records');
+
+            $currentDate = new DateTime ('now');
+
+            try {
+                $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
+            } catch (Exception $E) {
+                echo $user . "\n\n";
+                print_r($E);
+
+                return NULL;
+            }
+
+            if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+                foreach ($userTimeSeries as $series) {
+                    nxr("   " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
+
+                    if ($series->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($series->dateTime));
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                            $databaseColumn => (String)$series->value,
+                            'syncd' => $currentDate->format('Y-m-d H:m:s')
+                        ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                            'user' => $user,
+                            'date' => (String)$series->dateTime,
+                            $databaseColumn => (String)$series->value,
+                            'syncd' => $currentDate->format('Y-m-d H:m:s')
+                        ));
+                    }
+                }
+            }
+        }
+
+        /**
+         * @param $user
+         * @param $trigger
+         * @param $daysSince
+         */
+        private function api_pull_time_series_for_steps($user, $trigger, $daysSince) {
+            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records');
+
+            $currentDate = new DateTime ('now');
+
+            try {
+                $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
+            } catch (Exception $E) {
+                echo $user . "\n\n";
+                print_r($E);
+
+                return NULL;
+            }
+
+            if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+                foreach ($userTimeSeries as $steps) {
+                    if ($steps->value == 0) {
+                        nxr("   No recorded data for " . $steps->dateTime);
+                    } else {
+                        nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
+                    }
+
+                    if ($steps->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($steps->dateTime));
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                            $trigger => (String)$steps->value,
+                            'syncd' => $currentDate->format('Y-m-d H:m:s')
+                        ), array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                            'user' => $user,
+                            'date' => (String)$steps->dateTime,
+                            $trigger => (String)$steps->value,
+                            'syncd' => $currentDate->format('Y-m-d H:m:s')
+                        ));
+                    }
+
+                }
+            }
+        }
+        
 
         /**
          * @deprecated Use getLibrary() instead
