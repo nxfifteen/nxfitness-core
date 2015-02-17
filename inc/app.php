@@ -178,24 +178,29 @@
 
         /**
          * Add new cron jobs to queue
-         * @param $user_fitbit_id
-         * @param $trigger
+         * @param string $user_fitbit_id
+         * @param string $trigger
+         * @param bool $force
          */
-        public function addCronJob($user_fitbit_id, $trigger) {
-            if (!$this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
-                "AND" => array(
-                    "user"    => $user_fitbit_id,
-                    "trigger" => $trigger
-                )
-            ))
-            ) {
-                $this->getDatabase()->insert($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
-                    "user"    => $user_fitbit_id,
-                    "trigger" => $trigger,
-                    "date"    => date("Y-m-d H:i:s")
-                ));
+        public function addCronJob($user_fitbit_id, $trigger, $force = false) {
+            if ($force || $this->getSetting('nx_fitbit_ds_' . $trigger . '_cron', FALSE)) {
+                if (!$this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
+                    "AND" => array(
+                        "user"    => $user_fitbit_id,
+                        "trigger" => $trigger
+                    )
+                ))
+                ) {
+                    $this->getDatabase()->insert($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
+                        "user"    => $user_fitbit_id,
+                        "trigger" => $trigger,
+                        "date"    => date("Y-m-d H:i:s")
+                    ));
+                } else {
+                    nxr("Cron job already present");
+                }
             } else {
-                nxr("Cron job already present");
+                nxr("I am not allowed to queue $trigger");
             }
         }
 
