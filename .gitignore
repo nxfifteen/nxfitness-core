@@ -4,3 +4,7 @@ config.inc.php
 images/badges/*.png
 images/badges/*/*.png
 images/avatars/*.jpg
+composer.phar
+composer.lock
+vendor
+composer.json
