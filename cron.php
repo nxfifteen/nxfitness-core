@@ -12,7 +12,7 @@
     require_once(dirname(__FILE__) . "/inc/app.php");
     $fitbitApp = new NxFitbit();
 
-    $end = time() + 3;
+    $end = time() + 60;
     $queuedJobs = $fitbitApp->getCronJobs();
 
     $repopulate_queue = FALSE;
