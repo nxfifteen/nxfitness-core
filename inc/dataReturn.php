@@ -141,14 +141,13 @@ class dataReturn {
     }
 
     public function returnUserRecordWater() {
-        $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water",
+        $dbWater = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water",
             array('date','liquid'),
             $this->dbWhere());
 
-        //echo $this->getAppClass()->getDatabase()->last_query();
-
-        $dbSteps[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
-        return $dbSteps;
+        $dbWater[0]['liquid'] = (String)round($dbWater[0]['liquid'], 2);
+        $dbWater[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
+        return $dbWater;
     }
 
     public function returnUserRecordSteps() {
@@ -156,7 +155,7 @@ class dataReturn {
             array('date','distance','floors','steps'),
             $this->dbWhere());
 
-        //echo $this->getAppClass()->getDatabase()->last_query();
+        $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
 
         return $dbSteps;
     }
@@ -166,7 +165,7 @@ class dataReturn {
             array('date','distance','floors','steps'),
             $this->dbWhere());
 
-        //echo $this->getAppClass()->getDatabase()->last_query();
+        $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
         return $dbGoals;
     }
@@ -175,8 +174,6 @@ class dataReturn {
         $return = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
             array('date','weight','weightGoal','fat','fatGoal','bmi','calf','bicep','chest','forearm','hips','neck','thigh','waist'),
             $this->dbWhere());
-
-        //echo $this->getAppClass()->getDatabase()->last_query();
 
         return $return;
     }
