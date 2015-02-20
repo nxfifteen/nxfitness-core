@@ -141,6 +141,8 @@ class dataReturn {
     }
 
     public function returnUserRecordFood() {
+        //TODO Added support for multi record returned
+        
         $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
             array('meal','calories'),
             $this->dbWhere(4));
@@ -173,13 +175,24 @@ class dataReturn {
     }
 
     public function returnUserRecordSteps() {
+        //TODO Added support for multi record returned
+
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
-            array('date','distance','floors','steps'),
+            array('distance','floors','steps'),
             $this->dbWhere());
 
-        $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
+        if (count($dbSteps) > 0) {
+            $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+                array('distance','floors','steps'),
+                $this->dbWhere());
 
-        return $dbSteps;
+            $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
+            $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
+
+            return array('recorded' => $dbSteps[0], 'goal' => $dbGoals[0]);
+        } else {
+            return array("error" => "true", "code" => 104, "msg" => "No results for given date");
+        }
     }
 
     public function returnUserRecordStepsGoal() {
