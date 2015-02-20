@@ -142,7 +142,7 @@ class dataReturn {
 
     public function returnUserRecordFood() {
         //TODO Added support for multi record returned
-        
+
         $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
             array('meal','calories'),
             $this->dbWhere(4));
