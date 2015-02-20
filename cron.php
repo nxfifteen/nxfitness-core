@@ -67,7 +67,7 @@
         } else {
             $allowed_triggers = Array();
             foreach ($fitbitApp->supportedApi() as $key => $name) {
-                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', FALSE)) {
+                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', FALSE) && $key != "all") {
                     $allowed_triggers[] = $key;
                 }
             }
