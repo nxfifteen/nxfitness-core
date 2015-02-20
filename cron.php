@@ -92,6 +92,8 @@
                             }
                         }
                     }
+                } else {
+                    nxr("There is nothing to queue");
                 }
             }
 
