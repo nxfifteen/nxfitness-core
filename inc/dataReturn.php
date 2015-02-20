@@ -102,16 +102,16 @@ class dataReturn {
         $this->paramPeriod = $paramPeriod;
     }
 
-    public function dbWhere() {
+    public function dbWhere($limit = 1) {
         if ($this->getParamPeriod() == "single") {
-            return array("AND" => array("user" => $this->getUserID(), "date" => $this->getParamDate()), "LIMIT" => 1);
+            return array("AND" => array("user" => $this->getUserID(), "date" => $this->getParamDate()), "LIMIT" => $limit);
         } else if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
             $days = $this->getParamPeriod();
             $days = str_ireplace("last", "", $days);
             $then = date('Y-m-d', strtotime($this->getParamDate() . " -".$days." day"));
             return array("AND" => array("user" => $this->getUserID(), "date[<=]" => $this->getParamDate(), "date[>=]" => $then), "ORDER" => "date DESC", "LIMIT" => $days);
         } else {
-            return array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1);
+            return array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => $limit);
         }
     }
 
@@ -137,6 +137,28 @@ class dataReturn {
             return $resultsArray;
         } else {
             return array("error" => "true", "code" => 103, "msg" => "Unknown dataset");
+        }
+    }
+
+    public function returnUserRecordFood() {
+        $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
+            array('meal','calories'),
+            $this->dbWhere(4));
+
+        if (count($dbFoodLog) > 0) {
+            $total = 0;
+            foreach ($dbFoodLog as $meal) {
+                $total = $total + $meal['calories'];
+            }
+
+
+            $dbFoodGoal = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories",
+                array('calories'),
+                $this->dbWhere());
+
+            return array('goal' => $dbFoodGoal[0]['calories'], 'total' => $total, "meals" => $dbFoodLog);
+        } else {
+            return array("error" => "true", "code" => 104, "msg" => "No results for given date");
         }
     }
 
