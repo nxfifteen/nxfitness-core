@@ -140,6 +140,17 @@ class dataReturn {
         }
     }
 
+    public function returnUserRecordWater() {
+        $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water",
+            array('date','liquid'),
+            $this->dbWhere());
+
+        //echo $this->getAppClass()->getDatabase()->last_query();
+
+        $dbSteps[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
+        return $dbSteps;
+    }
+
     public function returnUserRecordSteps() {
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
             array('date','distance','floors','steps'),
