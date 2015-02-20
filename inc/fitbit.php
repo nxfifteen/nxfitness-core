@@ -76,35 +76,35 @@
                 if ($trigger == "all" || $trigger == "profile") {
                     $pull = $this->api_pull_profile($user);
                     if ($this->isApiError($pull)) {
-                        echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "devices") {
                     $pull = $this->api_pull_devices($user);
                     if ($this->isApiError($pull)) {
-                        echo "Error devices: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        echo "  Error devices: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "badges") {
                     $pull = $this->api_pull_badges($user);
                     if ($this->isApiError($pull)) {
-                        echo "Error badges: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        echo "  Error badges: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "leaderboard") {
                     $pull = $this->api_pull_leaderboard($user);
                     if ($this->isApiError($pull)) {
-                        echo "Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        echo "  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "foods") {
                     $pull = $this->api_pull_goals_calories($user);
                     if ($this->isApiError($pull)) {
-                        echo "Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
                     }
                 }
 
@@ -237,6 +237,13 @@
                 } else if (array_key_exists($trigger, $timeSeries)) {
                     $this->api_pull_time_series($user, $trigger);
                 }
+
+                if ($trigger == "all") {
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                        "lastrun"         => $currentDate->format("Y-m-d H:i:s")
+                    ), array("fuid" => $user));
+                }
+
             }
 
             if ($return) {
@@ -358,17 +365,37 @@
          * @param bool $reset
          * @return bool
          */
-        private function api_isCooled($trigger, $user, $reset = FALSE) {
+        public function api_isCooled($trigger, $user, $reset = FALSE) {
             if ($this->forceSync) {
                 return true;
             } else {
                 $currentDate = new DateTime ('now');
-                $lastRun = $this->api_getLastrun($trigger, $user, $reset);
-                if ($lastRun->format("U") < $currentDate->format("U") - $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger . '_timeout', 5400)) {
+                $lastRun = $this->api_getCoolDown($trigger, $user, $reset);
+
+                //nxr($currentDate->format("Y-m-d H:i:s") . ": CoolDown test for $trigger - cooled at " . $lastRun->format("Y-m-d H:i:s"));
+
+                if ($lastRun->format("U") < $currentDate->format("U")) {
                     return TRUE;
                 } else {
                     return FALSE;
                 }
+            }
+        }
+
+        /**
+         * @param $activity
+         * @param $username
+         * @param bool $reset
+         * @return DateTime
+         */
+        private function api_getCoolDown($activity, $username, $reset = FALSE) {
+            if ($reset)
+                return new DateTime ("1970-01-01");
+
+            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $username, "activity" => $activity)))) {
+                return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "cooldown", array("AND" => array("user" => $username, "activity" => $activity))));
+            } else {
+                return new DateTime ("1970-01-01");
             }
         }
 
@@ -815,16 +842,7 @@
                         ));
                     }
 
-                    if ($startTime->format("U") < $targetDateTime->format("U")) {
-                        $currentDate = new DateTime ();
-                        if ($currentDate->format("U") > ((int)$targetDateTime->format("U") + 1209600)) {
-                            $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
-                            $this->api_setLastrun("sleep", $user, 7200);
-                        }
-                    } else {
-                        $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
-                        $this->api_setLastrun("sleep", $user, NULL, TRUE);
-                    }
+                    $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
                 }
             }
 
@@ -858,6 +876,8 @@
                     'lastrun'  => $date->format("Y-m-d H:i:s")
                 ));
             }
+
+            if ($delay == 0) $this->api_setLastrun($activity, $user, NULL, TRUE);
         }
 
         /**
@@ -1047,6 +1067,7 @@
                         $this->api_setLastCleanrun("heart", $user, new DateTime ($targetDate));
                     } else {
                         $this->api_setLastCleanrun("heart", $user, new DateTime ($targetDate), 7);
+                        $this->api_setLastrun("heart", $user);
                     }
                 }
             }
