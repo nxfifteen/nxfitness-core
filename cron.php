@@ -12,7 +12,7 @@
     require_once(dirname(__FILE__) . "/inc/app.php");
     $fitbitApp = new NxFitbit();
 
-    $end = time() + 60;
+    $end = time() + 500;
     $queuedJobs = $fitbitApp->getCronJobs();
 
     $repopulate_queue = FALSE;
@@ -31,6 +31,7 @@
                         }
                     } else {
                         nxr(" " . $fitbitApp->supportedApi($job['trigger']) . " has been disabled");
+                        $fitbitApp->delCronJob($job['user'], $job['trigger']);
                     }
                 } else {
                     nxr("  Can not process " . $fitbitApp->supportedApi($job['trigger']) . " since " . $job['user'] . " is no longer a user.");
@@ -56,9 +57,7 @@
         UNIX_TIMESTAMP(str_to_date(lastrun,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s", strtotime('-1 day')) . "') AND
         UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
 
-        unset($unfinishedUsers);
-
-        if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0) {
+        if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0 and $fitbitApp->getSetting('nx_fitbit_ds_all_cron', TRUE)) {
             foreach ($unfinishedUsers as $user) {
                 if (time() < $end) {
                     nxr("Adding all to Q for " . $user['name']);
@@ -86,7 +85,11 @@
                         nxr("Repopulating queue for " . $user['name']);
 
                         foreach ($allowed_triggers as $trigger) {
-                            $fitbitApp->addCronJob($user['fuid'], $trigger);
+                            if ($fitbitApp->getFitbitapi()->api_isCooled($trigger, $user['fuid'])) {
+                                $fitbitApp->addCronJob($user['fuid'], $trigger);
+                            } else {
+                                nxr("  " . $fitbitApp->supportedApi($trigger) . " isn't cool enought yet");
+                            }
                         }
                     }
                 }
