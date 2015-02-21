@@ -537,7 +537,7 @@
                     }
 
                     if (isset($userBadges)) {
-                        foreach ($userBadges->badges->badge as $badge) {
+                        foreach ($userBadges->badges as $badge) {
                             if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
                                 "AND" => array(
                                     "badgeType" => (String)$badge->badgeType,
@@ -566,7 +566,11 @@
                                 $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
                                     'dateTime'      => (String)$badge->dateTime,
                                     'timesAchieved' => (String)$badge->timesAchieved
-                                ));
+                                ), array("AND" => array(
+                                    "user"      => $user,
+                                    "badgeType" => (String)$badge->badgeType,
+                                    "value"     => (String)$badge->value
+                                )));
                             } else {
                                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
                                     'user'          => $user,
