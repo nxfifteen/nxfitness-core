@@ -829,8 +829,6 @@
             }
 
             if (isset($userSleepLog) and is_object($userSleepLog) and is_object($userSleepLog->sleep) and is_object($userSleepLog->sleep->sleepLog)) {
-                $startTime = new DateTime ((String)$userSleepLog->sleep->sleepLog->startTime);
-
                 if ($userSleepLog->sleep->sleepLog->logId != 0) {
                     if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$userSleepLog->sleep->sleepLog->logId))) {
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
@@ -1214,18 +1212,25 @@
                 if (is_object($usr_goals)) {
                     $fallback = FALSE;
 
+                    /** @noinspection PhpUndefinedFieldInspection */
                     if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
                         $this->getAppClass()->addCronJob($user, "goals");
 
+                        /** @noinspection PhpUndefinedFieldInspection */
                         if ($usr_goals->caloriesOut == "") $usr_goals->caloriesOut = -1;
+                        /** @noinspection PhpUndefinedFieldInspection */
                         if ($usr_goals->distance == "") $usr_goals->distance = -1;
+                        /** @noinspection PhpUndefinedFieldInspection */
                         if ($usr_goals->floors == "") $usr_goals->floors = -1;
+                        /** @noinspection PhpUndefinedFieldInspection */
                         if ($usr_goals->activeMinutes == "") $usr_goals->activeMinutes = -1;
+                        /** @noinspection PhpUndefinedFieldInspection */
                         if ($usr_goals->steps == "") $usr_goals->steps = -1;
                         $fallback = TRUE;
                     }
 
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                        /** @noinspection PhpUndefinedFieldInspection */
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
                             'caloriesOut'   => (String)$usr_goals->caloriesOut,
                             'distance'      => (String)$usr_goals->distance,
@@ -1235,6 +1240,7 @@
                             'syncd'         => date("Y-m-d H:i:s")
                         ), array("AND" => array('user' => $user, 'date' => $targetDate)));
                     } else {
+                        /** @noinspection PhpUndefinedFieldInspection */
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
                             'user'          => $user,
                             'date'          => $targetDate,
@@ -1385,6 +1391,8 @@
                 case "minutesFairlyActive":
                     $databaseColumn = "fairlyactive";
                     break;
+                default:
+                    return false;
             }
 
             nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records');
@@ -1424,6 +1432,7 @@
                     }
                 }
             }
+            return true;
         }
 
         /**
