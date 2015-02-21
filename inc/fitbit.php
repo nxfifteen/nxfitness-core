@@ -30,13 +30,12 @@
          * @param $consumer_secret
          * @param int $debug
          * @param null $user_agent
-         * @param string $response_format
          */
-        public function __construct($fitbitApp, $consumer_key, $consumer_secret, $debug = 1, $user_agent = NULL, $response_format = 'xml') {
+        public function __construct($fitbitApp, $consumer_key, $consumer_secret, $debug = 1, $user_agent = NULL) {
             $this->setAppClass($fitbitApp);
 
             require_once(dirname(__FILE__) . "/../library/fitbitphp.php");
-            $this->setLibrary(new FitBitPHP($consumer_key, $consumer_secret, $debug, $user_agent, $response_format));
+            $this->setLibrary(new FitBitPHP($consumer_key, $consumer_secret, $debug, $user_agent));
 
             $this->forceSync = false;
         }

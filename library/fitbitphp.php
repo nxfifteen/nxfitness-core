@@ -38,9 +38,8 @@
          * @param string $consumer_secret Application secret
          * @param int $debug Debug mode (0/1) enables OAuth internal debug
          * @param string $user_agent User-agent to use in API calls
-         * @param string $response_format Response format (json or xml) to use in API calls
          */
-        public function __construct($consumer_key, $consumer_secret, $debug = 1, $user_agent = NULL, $response_format = 'xml') {
+        public function __construct($consumer_key, $consumer_secret, $debug = 1, $user_agent = NULL) {
             $this->initUrls(TRUE, TRUE);
 
             $this->consumer_key = $consumer_key;
@@ -54,7 +53,7 @@
             if (isset($user_agent))
                 $this->userAgent = $user_agent;
 
-            $this->responseFormat = $response_format;
+            $this->responseFormat = 'json';
         }
 
         private function initUrls($https = TRUE, $httpsApi = FALSE) {

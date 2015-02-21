@@ -252,8 +252,7 @@
                     $this->getSetting("fitbit_consumer_key", NULL, FALSE),
                     $this->getSetting("fitbit_consumer_secret", NULL, FALSE),
                     $this->getSetting("fitbit_debug", FALSE, FALSE),
-                    $this->getSetting("fitbit_user_agent", NULL, FALSE),
-                    $this->getSetting("fitbit_response_format", "xml", FALSE));
+                    $this->getSetting("fitbit_user_agent", NULL, FALSE));
             }
 
             return $this->fitbitapi;
