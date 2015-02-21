@@ -12,11 +12,30 @@ class tracking {
 
     protected $PiwikTracker;
 
+    /**
+     * @param $trackingId
+     * @param $api_url
+     */
     public function __construct($trackingId, $api_url) {
         $this->setSiteId($trackingId);
         require_once(dirname(__FILE__) . "/../library/PiwikTracker.php");
 
         $this->PiwikTracker = new PiwikTracker($this->getSiteId(), $api_url);
+
+        if($_SERVER["HTTPS"] == "on") {
+            $protical = "https://";
+        } else {
+            $protical = "http://";
+        }
+        $this->PiwikTracker->setUrl($protical . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+
+        //Sets the Browser language.
+        $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        $lang = explode(',', $lang);
+        $this->PiwikTracker->setBrowserLanguage($lang[0]);
+
+        //Sets the user agent, used to detect OS and browser.
+        $this->PiwikTracker->setUserAgent($_SERVER['HTTP_USER_AGENT']);
     }
 
     /**
@@ -33,7 +52,6 @@ class tracking {
      * @param string $documentTitle Page title as it will appear in the Actions > Page titles report
      */
     public function endEvent($documentTitle) {
-        $this->PiwikTracker->setUrl($_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
         $this->PiwikTracker->doTrackPageView($documentTitle);
     }
 
