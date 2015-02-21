@@ -234,6 +234,7 @@
                     foreach ($timeSeries as $activity => $timeout) {
                         $this->api_pull_time_series($user, $activity);
                     }
+                    $this->api_setLastrun("activities", $user, NULL, true);
                 } else if (array_key_exists($trigger, $timeSeries)) {
                     $this->api_pull_time_series($user, $trigger);
                 }
