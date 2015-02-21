@@ -661,19 +661,19 @@
                 }
 
                 if (isset($userFriends)) {
-                    $userFriends = get_object_vars($userFriends->friends);
+                    $userFriends = $userFriends->friends;
                     if (is_array($userFriends) and count($userFriends) > 0) {
                         $youRank = 0;
                         $youDistance = 0;
                         $lastSteps = 0;
-                        foreach ($userFriends['friend'] as $friend) {
+                        foreach ($userFriends as $friend) {
                             $lifetime = floatval($friend->lifetime->steps);
                             $steps = floatval($friend->summary->steps);
 
                             if ($friend->user->encodedId == $user) {
                                 $displayName = "* YOU * are";
                                 if ($steps == 0) {
-                                    $youRank = count($userFriends['friend']);
+                                    $youRank = count($userFriends);
                                 } else {
                                     $youRank = (String)$friend->rank->steps;
                                 }
@@ -687,11 +687,11 @@
                             nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
                         }
 
-                        nxr("  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends['friend']) . " friends");
+                        nxr("  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
 
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
                             'rank'     => $youRank,
-                            'friends'  => count($userFriends['friend']),
+                            'friends'  => count($userFriends),
                             'distance' => $youDistance
                         ), array("fuid" => $user));
 
