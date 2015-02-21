@@ -491,7 +491,7 @@
                     die();
                 }
 
-                foreach ($userDevices->device as $device) {
+                foreach ($userDevices as $device) {
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array("AND" => array("id" => (String)$device->id)))) {
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
                             'lastSyncTime' => (String)$device->lastSyncTime,
@@ -511,6 +511,10 @@
                             'user'   => $user,
                             'device' => (String)$device->id
                         ));
+                    }
+
+                    if (!file_exists(dirname(__FILE__) . "/../images/devices/" . (String)$device->deviceVersion . ".png")) {
+                        nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
                     }
                 }
 
