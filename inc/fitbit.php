@@ -410,23 +410,6 @@
         /**
          * @param $activity
          * @param $username
-         * @param bool $reset
-         * @return DateTime
-         */
-        private function api_getLastrun($activity, $username, $reset = FALSE) {
-            if ($reset)
-                return new DateTime ("1970-01-01");
-
-            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $username, "activity" => $activity)))) {
-                return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "date", array("AND" => array("user" => $username, "activity" => $activity))));
-            } else {
-                return new DateTime ("1970-01-01");
-            }
-        }
-
-        /**
-         * @param $activity
-         * @param $username
          * @param null $cron_delay
          * @param bool $clean
          */
