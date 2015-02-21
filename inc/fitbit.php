@@ -1031,6 +1031,7 @@
         private function api_pull_body_heart($user, $targetDate) {
             $targetDateTime = new DateTime ($targetDate);
             try {
+                //TODO Soon to be deprecated API
                 $userBodyHeart = $this->getLibrary()->getHeartRate($targetDateTime);
             } catch (Exception $E) {
                 /**
@@ -1043,12 +1044,12 @@
             }
 
             if (isset($userBodyHeart)) {
-                if (count($userBodyHeart->average->heartAverage) == 3) {
+                if (count($userBodyHeart->average) == 3) {
                     $resting = 0;
                     $normal = 0;
                     $exertive = 0;
 
-                    foreach ($userBodyHeart->average->heartAverage as $heartAverage) {
+                    foreach ($userBodyHeart->average as $heartAverage) {
                         switch ($heartAverage->tracker) {
                             case "Resting Heart Rate":
                                 $resting = (string)$heartAverage->heartRate;
