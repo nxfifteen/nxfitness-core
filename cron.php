@@ -15,7 +15,7 @@
     $end = time() + 500;
     $queuedJobs = $fitbitApp->getCronJobs();
 
-    $repopulate_queue = FALSE;
+    $repopulate_queue = TRUE;
     if (count($queuedJobs) > 0) {
         foreach ($queuedJobs as $job) {
             if (time() < $end) {
@@ -39,14 +39,15 @@
                 }
             } else {
                 nxr("Timeout reached skipping " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
+                $repopulate_queue = FALSE;
+            }
+
+            $lastrun = strtotime($fitbitApp->getDatabase()->get($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users", "lastrun", array("fuid" => $job['user'])));
+            if ($lastrun < (strtotime('now') - (60 * 60 * 24))) {
+                $fitbitApp->addCronJob($job['fuid'], 'all');
+                $repopulate_queue = FALSE;
             }
         }
-    } else {
-        $repopulate_queue = TRUE;
-    }
-
-    if (time() < $end) {
-        $repopulate_queue = TRUE;
     }
 
     if ($repopulate_queue) {
