@@ -266,13 +266,19 @@
             $this->fitbitapi = $fitbitapi;
         }
 
-        public function lookupErrorCode($errCode) {
+        public function lookupErrorCode($errCode, $user = NULL) {
             switch ($errCode) {
                 case "-143":
                     return "API cool down in effect.";
                 case "-142":
                     return "Unable to create required directory.";
                 case "429":
+                    if (!is_null($user)) {
+                        $hour = date("H") + 1;
+                        $this->getDatabase()->update($this->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                            'cooldown'     => date("Y-m-d " . $hour . ":01:00"),
+                        ), array('fuid' => $user));
+                    }
                     return "Either you hit the rate limiting quota for the client or for the viewer";
                 default:
                     return $errCode;
