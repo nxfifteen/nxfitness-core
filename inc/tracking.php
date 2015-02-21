@@ -22,7 +22,7 @@ class tracking {
 
         $this->PiwikTracker = new PiwikTracker($this->getSiteId(), $api_url);
 
-        if($_SERVER["HTTPS"] == "on") {
+        if(array_key_exists("HTTPS",$_SERVER) && $_SERVER["HTTPS"] == "on") {
             $protical = "https://";
         } else {
             $protical = "http://";
