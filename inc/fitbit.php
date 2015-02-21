@@ -101,7 +101,7 @@
                     }
                 }
 
-                if ($trigger == "all" || $trigger == "foods") {
+                if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
                     $pull = $this->api_pull_goals_calories($user);
                     if ($this->isApiError($pull)) {
                         echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
@@ -397,6 +397,13 @@
             } else {
                 return new DateTime ("1970-01-01");
             }
+        }
+
+        /**
+         * @param boolean $forceSync
+         */
+        public function setForceSync($forceSync) {
+            $this->forceSync = $forceSync;
         }
 
         /**
@@ -1142,8 +1149,8 @@
             }
 
             if (isset($userFoodLog)) {
-                if (count($userFoodLog->foods->apiFoodLogImplV1) > 0) {
-                    foreach ($userFoodLog->foods->apiFoodLogImplV1 as $meal) {
+                if (count($userFoodLog->foods) > 0) {
+                    foreach ($userFoodLog->foods as $meal) {
                         nxr("  Logging meal " . $meal->loggedFood->name);
 
                         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array("AND" => array('user' => $user, 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
