@@ -237,6 +237,39 @@ class dataReturn {
         return $return;
     }
 
+    public function returnUserRecordDashboard() {
+        $dbBody = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
+            array('weight'),
+            $this->dbWhere());
+
+        $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+            array('distance','floors','steps'),
+            $this->dbWhere());
+
+        $then = date('Y-m-d', strtotime($this->getParamDate() . " -30 day"));
+        $where = array("AND" => array("user" => $this->getUserID(), "date[<=]" => $this->getParamDate(), "date[>=]" => $then), "ORDER" => "date DESC", "LIMIT" => 30);
+
+        $dbWeight = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
+            array('weight','weightGoal'),
+            $where);
+
+        $weights = array();
+        $weightGoal = array();
+        foreach($dbWeight as $db) {
+            array_push($weights, $db['weight']);
+            array_push($weightGoal, $db['weightGoal']);
+        }
+
+        $return = array('weight' => $dbBody[0]['weight'],
+                        'distance' => round($dbSteps[0]['distance'], 2),
+                        'floors' => $dbSteps[0]['floors'],
+                        'steps' => $dbSteps[0]['steps'],
+                        'graph_weight' => $weights,
+                        'graph_weightGoal' => $weightGoal);
+
+        return $return;
+    }
+
     /**
      * @return tracking
      */
