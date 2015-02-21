@@ -1200,15 +1200,20 @@
                         $this->getAppClass()->addCronJob($user, "goals");
 
                         /** @noinspection PhpUndefinedFieldInspection */
-                        if ($usr_goals->caloriesOut == "") $usr_goals->caloriesOut = -1;
+                        if ($usr_goals->caloriesOut == "") /** @noinspection PhpUndefinedFieldInspection */
+                            $usr_goals->caloriesOut = -1;
                         /** @noinspection PhpUndefinedFieldInspection */
-                        if ($usr_goals->distance == "") $usr_goals->distance = -1;
+                        if ($usr_goals->distance == "") /** @noinspection PhpUndefinedFieldInspection */
+                            $usr_goals->distance = -1;
                         /** @noinspection PhpUndefinedFieldInspection */
-                        if ($usr_goals->floors == "") $usr_goals->floors = -1;
+                        if ($usr_goals->floors == "") /** @noinspection PhpUndefinedFieldInspection */
+                            $usr_goals->floors = -1;
                         /** @noinspection PhpUndefinedFieldInspection */
-                        if ($usr_goals->activeMinutes == "") $usr_goals->activeMinutes = -1;
+                        if ($usr_goals->activeMinutes == "") /** @noinspection PhpUndefinedFieldInspection */
+                            $usr_goals->activeMinutes = -1;
                         /** @noinspection PhpUndefinedFieldInspection */
-                        if ($usr_goals->steps == "") $usr_goals->steps = -1;
+                        if ($usr_goals->steps == "") /** @noinspection PhpUndefinedFieldInspection */
+                            $usr_goals->steps = -1;
                         $fallback = TRUE;
                     }
 
