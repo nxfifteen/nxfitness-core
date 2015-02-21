@@ -24,6 +24,11 @@ class dataReturn {
     protected $paramPeriod;
 
     /**
+     * @var tracking
+     */
+    protected $tracking;
+
+    /**
      * @var String
      */
     protected $paramDate;
@@ -31,8 +36,10 @@ class dataReturn {
     public function __construct($userFid) {
         require_once(dirname(__FILE__) . "/app.php");
         $this->setAppClass(new NxFitbit());
-
         $this->setUserID($userFid);
+
+        require_once(dirname(__FILE__) . "/tracking.php");
+        $this->setTracking(new tracking($this->getAppClass()->getSetting("trackingId")), "http://localhost");
     }
 
     public function isUser() {
@@ -134,8 +141,13 @@ class dataReturn {
             $resultsArray = array("error" => "false", "user" => $this->getUserID(), "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
             $resultsArray['results'] = $this->$functionName();
 
+            $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+
             return $resultsArray;
         } else {
+            $this->getTracking()->track("Error", 103);
+            $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+
             return array("error" => "true", "code" => 103, "msg" => "Unknown dataset");
         }
     }
@@ -158,6 +170,9 @@ class dataReturn {
                 array('calories'),
                 $this->dbWhere());
 
+            $this->getTracking()->track("JSON Get", $this->getUserID(), "Food");
+            $this->getTracking()->track("JSON Goal", $this->getUserID(), "Food");
+
             return array('goal' => $dbFoodGoal[0]['calories'], 'total' => $total, "meals" => $dbFoodLog);
         } else {
             return array("error" => "true", "code" => 104, "msg" => "No results for given date");
@@ -171,6 +186,10 @@ class dataReturn {
 
         $dbWater[0]['liquid'] = (String)round($dbWater[0]['liquid'], 2);
         $dbWater[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
+
+        $this->getTracking()->track("JSON Get", $this->getUserID(), "Water");
+        $this->getTracking()->track("JSON Goal", $this->getUserID(), "Water");
+
         return $dbWater;
     }
 
@@ -189,6 +208,9 @@ class dataReturn {
             $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
             $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
 
+            $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
+            $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+
             return array('recorded' => $dbSteps[0], 'goal' => $dbGoals[0]);
         } else {
             return array("error" => "true", "code" => 104, "msg" => "No results for given date");
@@ -202,6 +224,8 @@ class dataReturn {
 
         $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
+        $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+
         return $dbGoals;
     }
 
@@ -211,5 +235,19 @@ class dataReturn {
             $this->dbWhere());
 
         return $return;
+    }
+
+    /**
+     * @return tracking
+     */
+    public function getTracking() {
+        return $this->tracking;
+    }
+
+    /**
+     * @param tracking $tracking
+     */
+    public function setTracking($tracking) {
+        $this->tracking = $tracking;
     }
 } 

@@ -1,0 +1,53 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: nxad
+ * Date: 21/02/15
+ * Time: 13:47
+ */
+
+class tracking {
+
+    protected $siteId;
+
+    protected $PiwikTracker;
+
+    public function __construct($trackingId) {
+        $this->setSiteId($trackingId);
+        require_once(dirname(__FILE__) . "/../library/PiwikTracker.php");
+        PiwikTracker::$URL = $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+
+        $this->PiwikTracker = new PiwikTracker($this->getSiteId());
+    }
+
+    /**
+     * @param string $category The Event Category (Videos, Music, Games...)
+     * @param string $action The Event's Action (Play, Pause, Duration, Add Playlist, Downloaded, Clicked...)
+     * @param string|bool $name (optional) The Event's object Name (a particular Movie name, or Song name, or File name...)
+     * @param float|bool $value (optional) The Event's value
+     */
+    public function track($category, $action, $name = false, $value = false) {
+        $this->PiwikTracker->doTrackEvent($category, $action, $name, $value);
+    }
+
+    /**
+     * @param string $documentTitle Page title as it will appear in the Actions > Page titles report
+     */
+    public function endEvent($documentTitle) {
+        $this->PiwikTracker->doTrackPageView($documentTitle);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getSiteId() {
+        return $this->siteId;
+    }
+
+    /**
+     * @param mixed $siteId
+     */
+    private function setSiteId($siteId) {
+        $this->siteId = $siteId;
+    }
+} 
