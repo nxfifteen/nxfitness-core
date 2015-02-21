@@ -39,7 +39,7 @@ class dataReturn {
         $this->setUserID($userFid);
 
         require_once(dirname(__FILE__) . "/tracking.php");
-        $this->setTracking(new tracking($this->getAppClass()->getSetting("trackingId")), "http://localhost");
+        $this->setTracking(new tracking($this->getAppClass()->getSetting("trackingId"), $this->getAppClass()->getSetting("trackingPath")));
     }
 
     public function isUser() {
