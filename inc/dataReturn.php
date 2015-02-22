@@ -238,34 +238,58 @@ class dataReturn {
     }
 
     public function returnUserRecordDashboard() {
-        $dbBody = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
-            array('weight'),
-            $this->dbWhere());
+        $dbUser = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users",
+            array('name','rank','friends'),
+            array("fuid" => $this->getUserID()));
 
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
             array('distance','floors','steps'),
             $this->dbWhere());
 
-        $then = date('Y-m-d', strtotime($this->getParamDate() . " -30 day"));
-        $where = array("AND" => array("user" => $this->getUserID(), "date[<=]" => $this->getParamDate(), "date[>=]" => $then), "ORDER" => "date DESC", "LIMIT" => 30);
+        $dbStepsAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+            'steps',
+            array("user" => $this->getUserID()));
+
+        $dbDistanceAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+            'distance',
+            array("user" => $this->getUserID()));
+
+        $dbFloorsAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+            'floors',
+            array("user" => $this->getUserID()));
 
         $dbWeight = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
-            array('weight','weightGoal'),
-            $where);
+            array('weight','weightGoal','fat','fatGoal'),
+            array("AND" => array("user" => $this->getUserID(), "date[<=]" => $this->getParamDate(), "date[>=]" => date('Y-m-d', strtotime($this->getParamDate() . " -30 day"))), "ORDER" => "date DESC", "LIMIT" => 30));
 
         $weights = array();
         $weightGoal = array();
+        $fat = array();
+        $fatGoal = array();
         foreach($dbWeight as $db) {
             array_push($weights, $db['weight']);
             array_push($weightGoal, $db['weightGoal']);
+            array_push($fat, $db['fat']);
+            array_push($fatGoal, $db['fatGoal']);
         }
 
-        $return = array('weight' => $dbBody[0]['weight'],
-                        'distance' => round($dbSteps[0]['distance'], 2),
-                        'floors' => $dbSteps[0]['floors'],
-                        'steps' => $dbSteps[0]['steps'],
+        $thisDate = $this->getParamDate();
+        $thisDate = explode("-", $thisDate);
+
+        $return = array('username' => $dbUser[0]['name'],
+                        'rank' => $dbUser[0]['rank'],
+                        'friends' => $dbUser[0]['friends'],
+                        'returnDate' => $thisDate,
+                        'distance' => number_format($dbSteps[0]['distance'], 2),
+                        'floors' => number_format($dbSteps[0]['floors'], 0),
+                        'steps' => number_format($dbSteps[0]['steps'], 0),
+                        'distanceAllTime' => number_format($dbDistanceAllTime, 2),
+                        'floorsAllTime' => number_format($dbFloorsAllTime, 0),
+                        'stepsAllTime' => number_format($dbStepsAllTime, 0),
                         'graph_weight' => $weights,
-                        'graph_weightGoal' => $weightGoal);
+                        'graph_weightGoal' => $weightGoal,
+                        'graph_fat' => $fat,
+                        'graph_fatGoal' => $fatGoal);
 
         return $return;
     }
