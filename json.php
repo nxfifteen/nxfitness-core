@@ -5,9 +5,9 @@
         $dataReturnClass = new dataReturn($_GET['user']);
         if ($dataReturnClass->isUser()) {
             echo json_encode($dataReturnClass->returnUserRecords($_GET));
-            /*echo "<pre>";
-            print_r($dataReturnClass->returnUserRecords($_GET));
-            echo "</pre>";*/
+            //echo "<pre>";
+            //print_r($dataReturnClass->returnUserRecords($_GET));
+            //echo "</pre>";
         } else {
             echo json_error(101);
         }
