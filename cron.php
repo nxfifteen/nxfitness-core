@@ -33,18 +33,18 @@
                         nxr(" " . $fitbitApp->supportedApi($job['trigger']) . " has been disabled");
                         $fitbitApp->delCronJob($job['user'], $job['trigger']);
                     }
+
+                    $lastrun = strtotime($fitbitApp->getDatabase()->get($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users", "lastrun", array("fuid" => $job['user'])));
+                    if ($lastrun < (strtotime('now') - (60 * 60 * 24))) {
+                        $fitbitApp->addCronJob($job['fuid'], 'all');
+                        $repopulate_queue = FALSE;
+                    }
                 } else {
                     nxr("  Can not process " . $fitbitApp->supportedApi($job['trigger']) . " since " . $job['user'] . " is no longer a user.");
                     $fitbitApp->delCronJob($job['user'], $job['trigger']);
                 }
             } else {
                 nxr("Timeout reached skipping " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
-                $repopulate_queue = FALSE;
-            }
-
-            $lastrun = strtotime($fitbitApp->getDatabase()->get($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users", "lastrun", array("fuid" => $job['user'])));
-            if ($lastrun < (strtotime('now') - (60 * 60 * 24))) {
-                $fitbitApp->addCronJob($job['fuid'], 'all');
                 $repopulate_queue = FALSE;
             }
         }
