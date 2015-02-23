@@ -481,8 +481,6 @@
                             'battery'      => (String)$device->battery
                         ), array("id" => (String)$device->id));
                     } else {
-                        echo $this->getAppClass()->getDatabase()->last_query();
-
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
                             'id'            => (String)$device->id,
                             'deviceVersion' => (String)$device->deviceVersion,
@@ -490,13 +488,13 @@
                             'lastSyncTime'  => (String)$device->lastSyncTime,
                             'battery'       => (String)$device->battery
                         ));
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "dev2usr", array(
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr", array(
                             'user'   => $user,
                             'device' => (String)$device->id
                         ));
                     }
 
-                    if (!file_exists(dirname(__FILE__) . "/../images/devices/" . (String)$device->deviceVersion . ".png")) {
+                    if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
                         nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
                     }
                 }
