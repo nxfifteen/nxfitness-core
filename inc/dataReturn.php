@@ -254,6 +254,7 @@ class dataReturn {
 
         foreach ($userActivity as $key => $value) {
             $userActivity[$key]['distance'] = (String)round($value['distance'], 2);
+            $userActivity[$key]['returnDate'] = explode("-", $value['date']);
         }
 
         return $userActivity;
