@@ -237,6 +237,16 @@ class dataReturn {
         return $return;
     }
 
+    public function returnUserRecordActivity() {
+        $userActivity = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity",
+            array('sedentary', 'lightlyactive', 'fairlyactive', 'veryactive'),
+            $this->dbWhere());
+
+        $userActivity['total'] = $userActivity['sedentary'] + $userActivity['lightlyactive'] + $userActivity['fairlyactive'] + $userActivity['veryactive'];
+
+        return $userActivity;
+    }
+
     public function returnUserRecordTopBadges() {
         $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr",
             array('badgeType', 'value', 'dateTime', 'timesAchieved'),
@@ -305,7 +315,7 @@ class dataReturn {
         $dbUser = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('name'), array("fuid" => $this->getUserID()));
 
         // Achivment
-        $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance','floors','steps'), $this->dbWhere());
+        $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance','floors','steps', 'syncd'), $this->dbWhere());
         $dbStepsGoal = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance','floors','steps'), $this->dbWhere());
 
         // Life time sum
@@ -350,6 +360,7 @@ class dataReturn {
 
         $return = array('username' => $dbUser['name'],
                         'returnDate' => $thisDate,
+                        'syncd' => $dbSteps['syncd'],
                         'distance' => number_format($dbSteps['distance'], 2),
                         'floors' => number_format($dbSteps['floors'], 0),
                         'steps' => number_format($dbSteps['steps'], 0),
