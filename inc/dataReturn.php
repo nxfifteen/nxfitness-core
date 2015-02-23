@@ -247,6 +247,18 @@ class dataReturn {
         return $userActivity;
     }
 
+    public function returnUserRecordWeekPedometer() {
+        $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+            array('date', 'steps', 'distance', 'floors'),
+            $this->dbWhere());
+
+        foreach ($userActivity as $key => $value) {
+            $userActivity[$key]['distance'] = (String)round($value['distance'], 2);
+        }
+
+        return $userActivity;
+    }
+
     public function returnUserRecordTopBadges() {
         $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr",
             array('badgeType', 'value', 'dateTime', 'timesAchieved'),
