@@ -278,13 +278,24 @@ class dataReturn {
         $trendArray['fatToLose'] = $currentWeight['fat'] - $currentWeight['fatGoal'];
 
         $currentWeight = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array('estimatedDate'), array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
-        $trendArray['estimatedDate'] = $currentWeight['estimatedDate'];
+        $trendArray['estimatedDate'] = date("l", strtotime($currentWeight['estimatedDate'])) . " the " . date("jS \of F Y", strtotime($currentWeight['estimatedDate']));
         $trendArray['estimatedWeeks'] = round(abs(strtotime($currentWeight['estimatedDate']) - strtotime($this->getParamDate())) / 604800, 0);
 
-        $dbUser = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('rank','friends', 'distance'), array("fuid" => $this->getUserID()));
+        $dbUser = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('name', 'rank','friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
         $trendArray['rank'] = $dbUser['rank'];
         $trendArray['friends'] = $dbUser['friends'];
-        $trendArray['nextRank'] = $dbUser['distance'];
+        $trendArray['nextRank'] = number_format($dbUser['distance'],0);
+
+        $trendArray['name'] = explode(" ", $dbUser['name']);
+        $trendArray['name'] = $trendArray['name'][0];
+
+        if ($dbUser['gender'] == "MALE") {
+            $trendArray['he'] = "he";
+            $trendArray['his'] = "his";
+        } else {
+            $trendArray['he'] = "she";
+            $trendArray['his'] = "her";
+        }
 
         return $trendArray;
     }
