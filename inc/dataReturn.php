@@ -320,14 +320,31 @@ class dataReturn {
         $thisDate = $this->getParamDate();
         $thisDate = explode("-", $thisDate);
 
+
+        if ($dbSteps['distance'] > 0 && $dbStepsGoal['distance'] > 0) {
+            $progdistance = number_format((($dbSteps['distance']/$dbStepsGoal['distance'])*100), 2);
+        } else {
+            $progdistance = 0;
+        }
+        if ($dbSteps['floors'] > 0 && $dbStepsGoal['floors'] > 0) {
+            $progfloors = number_format((($dbSteps['floors']/$dbStepsGoal['floors'])*100), 2);
+        } else {
+            $progfloors = 0;
+        }
+        if ($dbSteps['steps'] > 0 && $dbStepsGoal['steps'] > 0) {
+            $progsteps = number_format((($dbSteps['steps']/$dbStepsGoal['steps'])*100), 2);
+        } else {
+            $progsteps = 0;
+        }
+
         $return = array('username' => $dbUser['name'],
                         'returnDate' => $thisDate,
                         'distance' => number_format($dbSteps['distance'], 2),
                         'floors' => number_format($dbSteps['floors'], 0),
                         'steps' => number_format($dbSteps['steps'], 0),
-                        'progdistance' => number_format((($dbSteps['distance']/$dbStepsGoal['distance'])*100), 2),
-                        'progfloors' => number_format((($dbSteps['floors']/$dbStepsGoal['floors'])*100), 2),
-                        'progsteps' => number_format((($dbSteps['steps']/$dbStepsGoal['steps'])*100), 2),
+                        'progdistance' => $progdistance,
+                        'progfloors' => $progfloors,
+                        'progsteps' => $progsteps,
                         'distanceAllTime' => number_format($dbDistanceAllTime, 2),
                         'floorsAllTime' => number_format($dbFloorsAllTime, 0),
                         'stepsAllTime' => number_format($dbStepsAllTime, 0),
