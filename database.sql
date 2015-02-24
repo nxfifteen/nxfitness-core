@@ -491,8 +491,7 @@ ALTER TABLE `nx_fitbit_activity` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_
 ALTER TABLE `nx_fitbit_water` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_fitbit_users`(`fuid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE `nx_fitbit_body` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_fitbit_users`(`fuid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE `nx_fitbit_activity_log`
-ADD PRIMARY KEY (`user`,`activityId`), ADD UNIQUE KEY `logId` (`logId`,`startDate`,`startTime`);
+ALTER TABLE `nx_fitbit_activity_log` ADD PRIMARY KEY (`user`,`logId`,`activityId`,`startDate`,`startTime`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
