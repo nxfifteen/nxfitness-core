@@ -129,24 +129,6 @@
                     }
                 }
 
-                if ($trigger == "all" || $trigger == "activity_log") {
-                    if ($this->api_isCooled("activity_log", $user)) {
-                        $period = new DatePeriod ($this->api_getLastCleanrun("activity_log", $user), $interval, $currentDate);
-                        /**
-                         * @var DateTime $dt
-                         */
-                        foreach ($period as $dt) {
-                            nxr(' Downloading activities for ' . $dt->format("l jS M Y"));
-                            $pull = $this->api_pull_activity_log($user, $dt->format("Y-m-d"));
-                            if ($this->isApiError($pull)) {
-                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
-                            }
-                        }
-                    } else {
-                        echo "  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
-                    }
-                }
-
                 if ($trigger == "all" || $trigger == "body") {
                     if ($this->api_isCooled("body", $user)) {
                         $period = new DatePeriod ($this->api_getLastCleanrun("body", $user), $interval, $currentDate);
@@ -254,6 +236,24 @@
                     $this->api_setLastrun("activities", $user, NULL, true);
                 } else if (array_key_exists($trigger, $timeSeries)) {
                     $this->api_pull_time_series($user, $trigger);
+                }
+
+                if ($trigger == "all" || $trigger == "activity_log") {
+                    if ($this->api_isCooled("activity_log", $user)) {
+                        $period = new DatePeriod ($this->api_getLastCleanrun("activity_log", $user), $interval, $currentDate);
+                        /**
+                         * @var DateTime $dt
+                         */
+                        foreach ($period as $dt) {
+                            nxr(' Downloading activities for ' . $dt->format("l jS M Y"));
+                            $pull = $this->api_pull_activity_log($user, $dt->format("Y-m-d"));
+                            if ($this->isApiError($pull)) {
+                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                            }
+                        }
+                    } else {
+                        echo "  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                    }
                 }
 
                 if ($trigger == "all") {
