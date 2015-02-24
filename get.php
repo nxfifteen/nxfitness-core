@@ -29,6 +29,8 @@
                 nxr("Unknown trigger " . $_GET['get']. ". Supported calls are:");
                 print_r($fitbitApp->supportedApi());
             }
+        } else {
+            nxr("Can not process " . $fitbitApp->supportedApi($_GET['get']) . ". API limit reached for " . $_GET['user'] . ". Cooldown period ends " . $cooldown);
         }
     } else {
         nxr("Can not process " . $fitbitApp->supportedApi($_GET['get']) . " since " . $_GET['user'] . " is no longer a user.");

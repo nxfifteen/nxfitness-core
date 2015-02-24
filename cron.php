@@ -27,7 +27,7 @@
                             $fitbitApp->getFitbitapi()->pull($job['user'], $job['trigger']);
                             $fitbitApp->delCronJob($job['user'], $job['trigger']);
                         } else {
-                            nxr("Can not process " . $fitbitApp->supportedApi($job['trigger']) . ". API limit reached for " . $job['user'], WATCHDOG_WARNING);
+                            nxr("Can not process " . $fitbitApp->supportedApi($job['trigger']) . ". API limit reached for " . $job['user'] . ". Cooldown period ends " . $cooldown);
                         }
                     } else {
                         nxr(" " . $fitbitApp->supportedApi($job['trigger']) . " has been disabled");
