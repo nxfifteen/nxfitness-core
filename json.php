@@ -1,4 +1,7 @@
 <?php
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+    header('Content-type: application/json');
 
     if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
         require_once(dirname(__FILE__) . "/inc/dataReturn.php");
