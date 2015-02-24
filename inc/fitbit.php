@@ -828,7 +828,11 @@
 
             if (isset($userActivityLog) and is_object($userActivityLog) and is_array($userActivityLog->activities)) {
                 foreach ($userActivityLog->activities as $activity) {
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $user, "logId" => (String)$activity->logId)))) {
+                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $user,
+                                                                                                                                                                    "logId" => (String)$activity->logId,
+                                                                                                                                                                    "activityId" => (String)$activity->activityId,
+                                                                                                                                                                    "startDate" => (String)$activity->startDate,
+                                                                                                                                                                    "startTime" => (String)$activity->startTime)))) {
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
                             "activityId"               => (String)$activity->activityId,
                             "activityParentId"               => (String)$activity->activityParentId,
