@@ -18,14 +18,14 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `nx_fitbit_activity`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_activity` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `sedentary` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `lightlyactive` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `fairlyactive` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `veryactive` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `syncd` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `date` varchar(10) NOT NULL,
+  `sedentary` int(11) DEFAULT NULL,
+  `lightlyactive` int(11) DEFAULT NULL,
+  `fairlyactive` int(11) DEFAULT NULL,
+  `veryactive` int(11) DEFAULT NULL,
+  `syncd` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -35,11 +35,21 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_activity` (
 
 DROP TABLE IF EXISTS `nx_fitbit_activity_log`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_activity_log` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(19) NOT NULL COMMENT 'TODO: please describe this field!',
-  `action` varchar(225) NOT NULL COMMENT 'TODO: please describe this field!',
-  `time_spent` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `date` varchar(19) NOT NULL,
+  `logId` int(11) NOT NULL,
+  `activityId` int(11) NOT NULL,
+  `activityParentId` int(11) NOT NULL,
+  `activityParentName` varchar(225) NOT NULL,
+  `name` varchar(225) NOT NULL,
+  `description` longtext,
+  `calories` int(4) NOT NULL,
+  `duration` int(8) NOT NULL,
+  `startDate` varchar(10) NOT NULL,
+  `startTime` varchar(5) NOT NULL,
+  `hasStartTime` int(1) NOT NULL,
+  `isFavorite` int(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -49,12 +59,12 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_activity_log` (
 
 DROP TABLE IF EXISTS `nx_fitbit_bages`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_bages` (
-  `badgeType` varchar(120) NOT NULL COMMENT 'TODO: please describe this field!',
-  `value` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `image50px` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!',
-  `image75px` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!',
-  `image300px` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `badgeType` varchar(120) NOT NULL,
+  `value` int(11) NOT NULL,
+  `image50px` varchar(255) NOT NULL,
+  `image75px` varchar(255) NOT NULL,
+  `image300px` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -64,14 +74,14 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_bages` (
 
 DROP TABLE IF EXISTS `nx_fitbit_body`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_body` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `weight` decimal(5,2) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `weightGoal` decimal(5,2) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `fat` decimal(5,2) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `fatGoal` decimal(5,2) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `bmi` decimal(5,2) DEFAULT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `date` varchar(10) NOT NULL,
+  `weight` decimal(5,2) DEFAULT NULL,
+  `weightGoal` decimal(5,2) DEFAULT NULL,
+  `fat` decimal(5,2) DEFAULT NULL,
+  `fatGoal` decimal(5,2) DEFAULT NULL,
+  `bmi` decimal(5,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -81,12 +91,12 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_body` (
 
 DROP TABLE IF EXISTS `nx_fitbit_devices`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_devices` (
-  `id` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!',
-  `deviceVersion` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `type` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `lastSyncTime` varchar(23) NOT NULL COMMENT 'TODO: please describe this field!',
-  `battery` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `id` varchar(20) NOT NULL,
+  `deviceVersion` varchar(10) NOT NULL,
+  `type` varchar(10) NOT NULL,
+  `lastSyncTime` varchar(23) NOT NULL,
+  `battery` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -96,13 +106,13 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_devices` (
 
 DROP TABLE IF EXISTS `nx_fitbit_goals_calories`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_goals_calories` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `calories` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `intensity` varchar(12) NOT NULL COMMENT 'TODO: please describe this field!',
-  `estimatedDate` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `personalized` varchar(5) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `date` varchar(10) NOT NULL,
+  `calories` int(11) NOT NULL,
+  `intensity` varchar(12) NOT NULL,
+  `estimatedDate` varchar(10) NOT NULL,
+  `personalized` varchar(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -112,12 +122,12 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_goals_calories` (
 
 DROP TABLE IF EXISTS `nx_fitbit_heartAverage`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_heartAverage` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!',
-  `resting` decimal(5,2) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `normal` decimal(5,2) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `exertive` decimal(5,2) DEFAULT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `date` varchar(20) NOT NULL,
+  `resting` decimal(5,2) DEFAULT NULL,
+  `normal` decimal(5,2) DEFAULT NULL,
+  `exertive` decimal(5,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -127,13 +137,13 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_heartAverage` (
 
 DROP TABLE IF EXISTS `nx_fitbit_lnk_badge2usr`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_badge2usr` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `badgeType` varchar(120) NOT NULL COMMENT 'TODO: please describe this field!',
-  `dateTime` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!',
-  `timesAchieved` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `value` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `unit` varchar(50) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `badgeType` varchar(120) NOT NULL,
+  `dateTime` varchar(20) NOT NULL,
+  `timesAchieved` int(11) NOT NULL,
+  `value` int(11) NOT NULL,
+  `unit` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -143,9 +153,9 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_badge2usr` (
 
 DROP TABLE IF EXISTS `nx_fitbit_lnk_dev2usr`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_dev2usr` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `device` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `device` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -155,12 +165,12 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_dev2usr` (
 
 DROP TABLE IF EXISTS `nx_fitbit_lnk_sleep2usr`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_sleep2usr` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `sleeplog` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `totalMinutesAsleep` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `totalSleepRecords` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `totalTimeInBed` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `sleeplog` int(11) NOT NULL,
+  `totalMinutesAsleep` int(11) DEFAULT NULL,
+  `totalSleepRecords` int(11) DEFAULT NULL,
+  `totalTimeInBed` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -170,16 +180,16 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_sleep2usr` (
 
 DROP TABLE IF EXISTS `nx_fitbit_logFood`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_logFood` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `meal` varchar(30) NOT NULL COMMENT 'TODO: please describe this field!',
-  `calories` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `carbs` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `fat` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `fiber` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `protein` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `sodium` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `date` varchar(10) NOT NULL,
+  `meal` varchar(30) NOT NULL,
+  `calories` int(11) DEFAULT NULL,
+  `carbs` int(11) DEFAULT NULL,
+  `fat` int(11) DEFAULT NULL,
+  `fiber` int(11) DEFAULT NULL,
+  `protein` int(11) DEFAULT NULL,
+  `sodium` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -189,19 +199,19 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_logFood` (
 
 DROP TABLE IF EXISTS `nx_fitbit_logSleep`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_logSleep` (
-  `logId` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `awakeningsCount` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `duration` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `efficiency` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `isMainSleep` varchar(5) NOT NULL COMMENT 'TODO: please describe this field!',
-  `minutesAfterWakeup` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `minutesAsleep` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `minutesAwake` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `minutesToFallAsleep` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `startTime` varchar(25) NOT NULL COMMENT 'TODO: please describe this field!',
-  `timeInBed` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `minuteData` longtext COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `logId` int(11) NOT NULL,
+  `awakeningsCount` int(11) NOT NULL,
+  `duration` int(11) NOT NULL,
+  `efficiency` int(11) NOT NULL,
+  `isMainSleep` varchar(5) NOT NULL,
+  `minutesAfterWakeup` int(11) NOT NULL,
+  `minutesAsleep` int(11) NOT NULL,
+  `minutesAwake` int(11) NOT NULL,
+  `minutesToFallAsleep` int(11) NOT NULL,
+  `startTime` varchar(25) NOT NULL,
+  `timeInBed` int(11) NOT NULL,
+  `minuteData` longtext
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -211,10 +221,10 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_logSleep` (
 
 DROP TABLE IF EXISTS `nx_fitbit_queue`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_queue` (
-  `user` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!',
-  `trigger` varchar(30) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(10) NOT NULL,
+  `date` varchar(20) NOT NULL,
+  `trigger` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -224,12 +234,12 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_queue` (
 
 DROP TABLE IF EXISTS `nx_fitbit_runlog`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_runlog` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!',
-  `activity` varchar(30) NOT NULL COMMENT 'TODO: please describe this field!',
-  `cooldown` varchar(20) NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT 'TODO: please describe this field!',
-  `lastrun` varchar(20) NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `date` varchar(20) NOT NULL,
+  `activity` varchar(30) NOT NULL,
+  `cooldown` varchar(20) NOT NULL DEFAULT '1970-01-01 00:00:00',
+  `lastrun` varchar(20) NOT NULL DEFAULT '1970-01-01 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -251,15 +261,15 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_settings` (
 
 DROP TABLE IF EXISTS `nx_fitbit_steps`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_steps` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `distance` decimal(21,16) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `floors` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `elevation` decimal(9,5) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(10) NOT NULL DEFAULT '' COMMENT 'TODO: please describe this field!',
-  `steps` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `caloriesOut` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `syncd` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `distance` decimal(21,16) DEFAULT NULL,
+  `floors` int(11) DEFAULT NULL,
+  `elevation` decimal(9,5) DEFAULT NULL,
+  `date` varchar(10) NOT NULL DEFAULT '',
+  `steps` int(11) DEFAULT NULL,
+  `caloriesOut` int(11) DEFAULT NULL,
+  `syncd` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -269,15 +279,15 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_steps` (
 
 DROP TABLE IF EXISTS `nx_fitbit_steps_goals`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_steps_goals` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `distance` decimal(21,16) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `floors` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `activeMinutes` decimal(9,5) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `steps` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `caloriesOut` int(11) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `syncd` varchar(20) NOT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `distance` decimal(21,16) DEFAULT NULL,
+  `floors` int(11) DEFAULT NULL,
+  `activeMinutes` decimal(9,5) DEFAULT NULL,
+  `date` varchar(10) NOT NULL,
+  `steps` int(11) DEFAULT NULL,
+  `caloriesOut` int(11) DEFAULT NULL,
+  `syncd` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -287,25 +297,25 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_steps_goals` (
 
 DROP TABLE IF EXISTS `nx_fitbit_users`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_users` (
-`uid` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `fuid` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `lastrun` varchar(20) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `name` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!',
-  `rank` int(11) NOT NULL DEFAULT '-1' COMMENT 'TODO: please describe this field!',
-  `friends` int(11) NOT NULL DEFAULT '-1' COMMENT 'TODO: please describe this field!',
-  `distance` int(11) NOT NULL DEFAULT '-1' COMMENT 'TODO: please describe this field!',
-  `avatar` varchar(255) NOT NULL COMMENT 'TODO: please describe this field!',
-  `seen` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `token` varchar(40) NOT NULL COMMENT 'TODO: please describe this field!',
-  `secret` varchar(40) NOT NULL COMMENT 'TODO: please describe this field!',
-  `gender` varchar(6) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `cooldown` varchar(20) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `height` decimal(6,2) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `stride_running` decimal(20,14) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `stride_walking` decimal(20,14) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `city` varchar(25) DEFAULT NULL COMMENT 'TODO: please describe this field!',
-  `country` varchar(3) DEFAULT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+`uid` int(11) NOT NULL,
+  `fuid` varchar(8) NOT NULL,
+  `lastrun` varchar(20) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `rank` int(11) NOT NULL DEFAULT '-1',
+  `friends` int(11) NOT NULL DEFAULT '-1',
+  `distance` int(11) NOT NULL DEFAULT '-1',
+  `avatar` varchar(255) NOT NULL,
+  `seen` varchar(10) NOT NULL,
+  `token` varchar(40) NOT NULL,
+  `secret` varchar(40) NOT NULL,
+  `gender` varchar(6) DEFAULT NULL,
+  `cooldown` varchar(20) DEFAULT NULL,
+  `height` decimal(6,2) DEFAULT NULL,
+  `stride_running` decimal(20,14) DEFAULT NULL,
+  `stride_walking` decimal(20,14) DEFAULT NULL,
+  `city` varchar(25) DEFAULT NULL,
+  `country` varchar(3) DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -315,7 +325,7 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_users` (
 
 DROP TABLE IF EXISTS `nx_fitbit_users_settings`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_users_settings` (
-  `fuid` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
+  `fuid` varchar(8) NOT NULL,
   `name` varchar(128) NOT NULL DEFAULT '' COMMENT 'The name of the variable.',
   `value` longtext NOT NULL COMMENT 'The value of the variable.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Named variable/value pairs created.';
@@ -328,11 +338,11 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_users_settings` (
 
 DROP TABLE IF EXISTS `nx_fitbit_water`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_water` (
-  `user` varchar(8) NOT NULL COMMENT 'TODO: please describe this field!',
-  `date` varchar(10) NOT NULL COMMENT 'TODO: please describe this field!',
-  `id` int(11) NOT NULL COMMENT 'TODO: please describe this field!',
-  `liquid` decimal(18,12) DEFAULT NULL COMMENT 'TODO: please describe this field!'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
+  `user` varchar(8) NOT NULL,
+  `date` varchar(10) NOT NULL,
+  `id` int(11) NOT NULL,
+  `liquid` decimal(18,12) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Indexes for dumped tables
@@ -466,7 +476,7 @@ ALTER TABLE `nx_fitbit_water`
 -- AUTO_INCREMENT for table `nx_fitbit_users`
 --
 ALTER TABLE `nx_fitbit_users`
-MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'TODO: please describe this field!',AUTO_INCREMENT=29;
+MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=29;
 --
 -- Constraints for dumped tables
 --
@@ -480,6 +490,8 @@ ADD CONSTRAINT `nx_fitbit_users_settings_ibfk_1` FOREIGN KEY (`fuid`) REFERENCES
 ALTER TABLE `nx_fitbit_activity` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_fitbit_users`(`fuid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE `nx_fitbit_water` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_fitbit_users`(`fuid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE `nx_fitbit_body` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_fitbit_users`(`fuid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE `nx_fitbit_activity_log` ADD PRIMARY KEY (`user`,`activityId`), ADD UNIQUE KEY `logId` (`logId`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
