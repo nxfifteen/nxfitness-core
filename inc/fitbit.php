@@ -129,6 +129,24 @@
                     }
                 }
 
+                if ($trigger == "all" || $trigger == "activity_log") {
+                    if ($this->api_isCooled("activity_log", $user)) {
+                        $period = new DatePeriod ($this->api_getLastCleanrun("activity_log", $user), $interval, $currentDate);
+                        /**
+                         * @var DateTime $dt
+                         */
+                        foreach ($period as $dt) {
+                            nxr(' Downloading activities for ' . $dt->format("l jS M Y"));
+                            $pull = $this->api_pull_activity_log($user, $dt->format("Y-m-d"));
+                            if ($this->isApiError($pull)) {
+                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                            }
+                        }
+                    } else {
+                        echo "  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                    }
+                }
+
                 if ($trigger == "all" || $trigger == "body") {
                     if ($this->api_isCooled("body", $user)) {
                         $period = new DatePeriod ($this->api_getLastCleanrun("body", $user), $interval, $currentDate);
@@ -785,8 +803,55 @@
             if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
                 return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "lastrun", array("AND" => array("user" => $user, "activity" => $activity))));
             } else {
-                return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "lastrun", array("fuid" => $user)));
+                return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
             }
+        }
+
+        /**
+         * @param $user
+         * @param $targetDate
+         * @return bool
+         */
+        private function api_pull_activity_log($user, $targetDate) {
+            $targetDateTime = new DateTime ($targetDate);
+            try {
+                $userActivityLog = $this->getLibrary()->getActivities($targetDateTime);
+            } catch (Exception $E) {
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
+                print_r($E);
+                die();
+            }
+
+            if (isset($userActivityLog) and is_object($userActivityLog) and is_array($userActivityLog->activities)) {
+                foreach ($userActivityLog->activities as $activity) {
+                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $user, "logId" => (String)$activity->logId)))) {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
+                            "activityId"               => (String)$activity->activityId,
+                            "activityParentId"               => (String)$activity->activityParentId,
+                            "activityParentName"               => (String)$activity->activityParentName,
+                            "calories"               => (String)$activity->calories,
+                            "description"               => (String)$activity->description,
+                            "duration"               => (String)$activity->duration,
+                            "hasStartTime"               => (String)$activity->hasStartTime,
+                            "isFavorite"               => (String)$activity->isFavorite,
+                            "logId"               => (String)$activity->logId,
+                            "name"               => (String)$activity->name,
+                            "startDate"               => (String)$activity->startDate,
+                            "startTime"               => (String)$activity->startTime,
+                            "user"               => $user,
+                            "date"               => $targetDate
+                        ));
+                    }
+
+                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
+                }
+            }
+
+            return true;
         }
 
         /**
@@ -871,7 +936,7 @@
                 ));
             }
 
-            if ($delay == 0) $this->api_setLastrun($activity, $user, NULL, TRUE);
+            if ($delay == 0) $this->api_setLastrun($activity, $user, NULL, FALSE);
         }
 
         /**
