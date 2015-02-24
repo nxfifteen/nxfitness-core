@@ -346,26 +346,29 @@
         public function returnUserRecordTrend() {
             $trendArray = array();
 
-            $dbUser = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array('date', 'weight'), array("user" => $this->getUserID(), "ORDER" => "date  ASC", "LIMIT" => 1));
-            $trendArray['weeksWeightTracked'] = round(abs(strtotime($this->getParamDate()) - strtotime($dbUser['date'])) / 604800, 0);
+            $dbBody = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'), array("user" => $this->getUserID(), "ORDER" => "date  ASC", "LIMIT" => 1));
+            $trendArray['weeksWeightTracked'] = round(abs(strtotime($this->getParamDate()) - strtotime($dbBody['date'])) / 604800, 0);
 
-            $currentWeight = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array('weight', 'weightGoal', 'fat', 'fatGoal'), array("user" => $this->getUserID(), "ORDER" => "date   DESC", "LIMIT" => 1));
-            $trendArray['weightToLose'] = $currentWeight['weight'] - $currentWeight['weightGoal'];
-            $trendArray['fatToLose'] = $currentWeight['fat'] - $currentWeight['fatGoal'];
+            $trendArray['weightToLose'] = $dbBody['weight'] - $dbBody['weightGoal'];
+            $trendArray['fatToLose'] = $dbBody['fat'] - $dbBody['fatGoal'];
 
-            $currentWeight = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array('estimatedDate'), array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
-            $trendArray['estimatedDate'] = date("l", strtotime($currentWeight['estimatedDate'])) . " the " . date("jS \of F Y", strtotime($currentWeight['estimatedDate']));
-            $trendArray['estimatedWeeks'] = round(abs(strtotime($currentWeight['estimatedDate']) - strtotime($this->getParamDate())) / 604800, 0);
+            $dbGoalsCalories = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array('estimatedDate'), array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
+            $trendArray['estimatedDate'] = date("l", strtotime($dbGoalsCalories['estimatedDate'])) . " the " . date("jS \of F Y", strtotime($dbGoalsCalories['estimatedDate']));
+            $trendArray['estimatedWeeks'] = round(abs(strtotime($dbGoalsCalories['estimatedDate']) - strtotime($this->getParamDate())) / 604800, 0);
 
-            $dbUser = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('name', 'rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
-            $trendArray['rank'] = $dbUser['rank'];
-            $trendArray['friends'] = $dbUser['friends'];
-            $trendArray['nextRank'] = number_format($dbUser['distance'], 0);
-
-            $trendArray['name'] = explode(" ", $dbUser['name']);
+            $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('name', 'rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
+            $trendArray['rank'] = $dbUsers['rank'];
+            $trendArray['friends'] = $dbUsers['friends'];
+            $trendArray['nextRank'] = number_format($dbUsers['distance'], 0);
+            $trendArray['name'] = explode(" ", $dbUsers['name']);
             $trendArray['name'] = $trendArray['name'][0];
 
-            if ($dbUser['gender'] == "MALE") {
+            $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('caloriesOut'), array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
+            $dbLogFood = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array('calories'), array("AND" => array("user" => $this->getUserID(), "date" => $this->getParamDate()), "ORDER" => "date DESC", "LIMIT" => 1));
+
+            $trendArray['caldef'] = (String)($dbSteps['caloriesOut'] - $dbLogFood);
+
+            if ($dbUsers['gender'] == "MALE") {
                 $trendArray['he'] = "he";
                 $trendArray['his'] = "his";
             } else {
