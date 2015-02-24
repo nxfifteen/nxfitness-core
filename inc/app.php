@@ -123,6 +123,7 @@
                 'steps'                => 'Steps Taken',
                 'profile'              => 'User Profile',
                 'heart'                => 'Heart Rates',
+                'activity_log'         => 'Activities'
             );
             asort($database_array);
 
