@@ -41,8 +41,10 @@
             $this->setAppClass(new NxFitbit());
             $this->setUserID($userFid);
 
-            require_once(dirname(__FILE__) . "/tracking.php");
-            $this->setTracking(new tracking($this->getAppClass()->getSetting("trackingId"), $this->getAppClass()->getSetting("trackingPath")));
+            if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
+                require_once(dirname(__FILE__) . "/tracking.php");
+                $this->setTracking(new tracking($this->getAppClass()->getSetting("trackingId"), $this->getAppClass()->getSetting("trackingPath")));
+            }
         }
 
         /**
@@ -99,12 +101,15 @@
                 $resultsArray = array("error" => "false", "user" => $this->getUserID(), "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
                 $resultsArray['results'] = $this->$functionName();
 
-                $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+                if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
+                    $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
 
                 return $resultsArray;
             } else {
-                $this->getTracking()->track("Error", 103);
-                $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+                if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
+                    $this->getTracking()->track("Error", 103);
+                    $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+                }
 
                 return array("error" => "true", "code" => 103, "msg" => "Unknown dataset");
             }
@@ -395,24 +400,8 @@
             $dbDistanceAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'distance', array("user" => $this->getUserID()));
             $dbFloorsAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors', array("user" => $this->getUserID()));
 
-            $dbWeight = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
-                array('weight', 'weightGoal', 'fat', 'fatGoal'),
-                array("AND" => array("user" => $this->getUserID(), "date[<=]" => $this->getParamDate(), "date[>=]" => date('Y-m-d', strtotime($this->getParamDate() . " -30 day"))), "ORDER" => "date DESC", "LIMIT" => 30));
-
-            $weights = array();
-            $weightGoal = array();
-            $fat = array();
-            $fatGoal = array();
-            foreach ($dbWeight as $db) {
-                array_push($weights, $db['weight']);
-                array_push($weightGoal, $db['weightGoal']);
-                array_push($fat, $db['fat']);
-                array_push($fatGoal, $db['fatGoal']);
-            }
-
             $thisDate = $this->getParamDate();
             $thisDate = explode("-", $thisDate);
-
 
             if ($dbSteps['distance'] > 0 && $dbStepsGoal['distance'] > 0) {
                 $progdistance = number_format((($dbSteps['distance'] / $dbStepsGoal['distance']) * 100), 2);
@@ -441,12 +430,152 @@
                             'progsteps'        => $progsteps,
                             'distanceAllTime'  => number_format($dbDistanceAllTime, 2),
                             'floorsAllTime'    => number_format($dbFloorsAllTime, 0),
-                            'stepsAllTime'     => number_format($dbStepsAllTime, 0),
-                            'graph_weight'     => $weights,
-                            'graph_weightGoal' => $weightGoal,
-                            'graph_fat'        => $fat,
-                            'graph_fatGoal'    => $fatGoal);
+                            'stepsAllTime'     => number_format($dbStepsAllTime, 0));
 
             return $return;
+        }
+
+        /**
+         * @return array
+         */
+        public function returnUserRecordWeight() {
+            $days = 7;
+            $returnWeight = array();
+
+            if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
+                $days = $this->getParamPeriod();
+                $days = str_ireplace("last", "", $days);
+            }
+
+            $dbWeight = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
+                array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
+                array("AND" => array("user" => $this->getUserID(),
+                                     "date[<=]" => $this->getParamDate(),
+                                     "date[>=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day"))
+                ), "ORDER" => "date DESC", "LIMIT" => $days));
+
+            $latestDate = 0;
+            foreach ($dbWeight as $daysWeight) {
+                if (strtotime($daysWeight['date']) > strtotime($latestDate)) {
+                    $latestDate = $daysWeight['date'];
+                }
+
+                $returnWeight[$daysWeight['date']] = $daysWeight;
+                $returnWeight[$daysWeight['date']]['source'] = "Database";
+            }
+
+            if (count($dbWeight) == 0) {
+                /** @var DateTime $currentDate */
+                $currentDate = new DateTime (date('Y-m-d', strtotime($this->getParamDate() . " +1 day")));
+                /** @var DateTime $sevenDaysAgo */
+                $sevenDaysAgo = new DateTime(date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day")));
+                $interval = DateInterval::createFromDateString('1 day');
+                $period = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
+
+                $weight = $this->getAppClass()->getFitbitapi()->getDBCurrentBody($this->getUserID(), "weight");
+                $weightGoal = $this->getAppClass()->getFitbitapi()->getDBCurrentBody($this->getUserID(), "weightGoal");
+                $fat = $this->getAppClass()->getFitbitapi()->getDBCurrentBody($this->getUserID(), "fat");
+                $fatGoal = $this->getAppClass()->getFitbitapi()->getDBCurrentBody($this->getUserID(), "fatGoal");
+
+                foreach ($period as $dt) {
+                    /** @var DateTime $dt */
+                    $returnWeight[$dt->format("Y-m-d")] = array("date" => $dt->format("Y-m-d"),
+                                                                "weight" => $weight,
+                                                                "weightGoal" => $weightGoal,
+                                                                "fat" => $fat,
+                                                                "fatGoal" => $fatGoal,
+                                                                "source" => "LatestRecord");
+                }
+
+            } else if (count($dbWeight) < $days) {
+                /** @var DateTime $currentDate */
+                $currentDate = new DateTime (date('Y-m-d', strtotime($this->getParamDate() . " +1 day")));
+                /** @var DateTime $sevenDaysAgo */
+                $sevenDaysAgo = new DateTime(date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day")));
+                $interval = DateInterval::createFromDateString('1 day');
+                $period = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
+
+                $missingDays = 0;
+                $lastRecord = array();
+                foreach ($period as $dt) {
+                    /** @var DateTime $dt */
+                    if (!array_key_exists($dt->format("Y-m-d"), $returnWeight)) {
+                        if (strtotime($dt->format("Y-m-d")) > strtotime($latestDate)) {
+                            $returnWeight[$dt->format("Y-m-d")] = $lastRecord;
+                            $returnWeight[$dt->format("Y-m-d")]['source'] = "LatestRecord";
+                        } else {
+                            $missingDays = $missingDays + 1;
+                            $returnWeight[$dt->format("Y-m-d")] = 'Calc deviation';
+                        }
+                    } else {
+                        $lastRecord = $returnWeight[$dt->format("Y-m-d")];
+                    }
+                }
+
+                if ($missingDays > 0) {
+                    ksort($returnWeight);
+
+                    $minAndMax = array();
+                    $minAndMax['startGap'] = 0;
+                    $minAndMax['endGap'] = 0;
+                    $markFound = false;
+                    foreach ($returnWeight as $dateKey => $daysWeight) {
+                        if (is_array($daysWeight) && array_key_exists("weight", $daysWeight)) {
+                            if (!$markFound) {
+                                $minAndMax['startGap'] = $returnWeight[$dateKey];
+                            } else {
+                                $minAndMax['endGap'] = $returnWeight[$dateKey];
+                            }
+                        } else {
+                            $markFound = true;
+                        }
+                    }
+
+                    $xDistance = $missingDays + 1;
+
+                    $yStartWeight = $minAndMax['startGap']['weight'];
+                    $yEndWeight = $minAndMax['endGap']['weight'];
+                    $dailyChangeWeight = ($yEndWeight - $yStartWeight) / $xDistance;
+
+                    $yStartFat = $minAndMax['startGap']['fat'];
+                    $yEndFat = $minAndMax['endGap']['fat'];
+                    $dailyChangeFat = ($yEndFat - $yStartFat) / $xDistance;
+
+                    $dayNumber = 0;
+                    foreach ($returnWeight as $dateKey => $daysWeight) {
+                        if (!is_array($daysWeight) && $daysWeight == "Calc deviation") {
+                            $dayNumber = $dayNumber + 1;
+                            $calcWeight = ($dailyChangeWeight * $dayNumber) + $minAndMax['startGap']['weight'];
+                            $calcFat = ($dailyChangeFat * $dayNumber) + $minAndMax['startGap']['fat'];
+                            $returnWeight[$dateKey] = array("date" => $dateKey,
+                                                            "weight" => $calcWeight,
+                                                            "weightGoal" => $minAndMax['endGap']['weightGoal'],
+                                                            "fat" => $calcFat,
+                                                            "fatGoal" => $minAndMax['endGap']['fatGoal'],
+                                                            "source" => "CalcDeviation");
+                        }
+                    }
+                }
+
+                ksort($returnWeight);
+                $returnWeight = array_reverse($returnWeight);
+            }
+
+            $weights = array();
+            $weightGoal = array();
+            $fat = array();
+            $fatGoal = array();
+            foreach ($returnWeight as $db) {
+                array_push($weights, (String)$db['weight']);
+                array_push($weightGoal, (String)$db['weightGoal']);
+                array_push($fat, (String)$db['fat']);
+                array_push($fatGoal, (String)$db['fatGoal']);
+            }
+
+            return array('returnDate'       => explode("-", $this->getParamDate()),
+                         'graph_weight'     => $weights,
+                         'graph_weightGoal' => $weightGoal,
+                         'graph_fat'        => $fat,
+                         'graph_fatGoal'    => $fatGoal);
         }
     }
