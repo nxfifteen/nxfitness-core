@@ -973,20 +973,39 @@
                     $fallback = TRUE;
                 }
 
+                $insertToDB = FALSE;
+                $goalsweight = 0;
+                $goalsfat = 0;
                 if (!isset($userBodyLog->body->weight) or $userBodyLog->body->weight == "0") {
                     nxr('  Weight unrecorded, reverting to previous record');
                     $weight = $this->getDBCurrentBody($user, "weight");
+                    if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
+                        nxr('  Weight Goal unset, reverting to 0');
+                        $goalsweight = $this->getDBCurrentBody($user, "weightGoal", TRUE);
+                    } else {
+                        $goalsweight = (float)$userBodyLog->goals->weight;
+                    }
                     $fallback = TRUE;
                 } else {
                     $weight = (float)$userBodyLog->body->weight;
+                    $insertToDB = TRUE;
                 }
+
                 if (!isset($userBodyLog->body->fat) or $userBodyLog->body->fat == "0") {
                     nxr('  Body Fat unrecorded, reverting to previous record');
                     $fat = $this->getDBCurrentBody($user, "fat");
+                    if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
+                        nxr('  Body Fat Goal unset, reverting to 0');
+                        $goalsfat = $this->getDBCurrentBody($user, "fatGoal", TRUE);
+                    } else {
+                        $goalsfat = (float)$userBodyLog->goals->fat;
+                    }
                     $fallback = TRUE;
                 } else {
                     $fat = (float)$userBodyLog->body->fat;
+                    $insertToDB = TRUE;
                 }
+
                 if (!isset($userBodyLog->body->bmi) or $userBodyLog->body->bmi == "0") {
                     nxr('  BMI unrecorded, reverting to previous record');
                     $bmi = $this->getDBCurrentBody($user, "bmi");
@@ -995,59 +1014,45 @@
                     $bmi = (float)$userBodyLog->body->bmi;
                 }
 
-                if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
-                    nxr('  Weight Goal unset, reverting to 0');
-                    $goalsweight = $this->getDBCurrentBody($user, "weight", TRUE);
-                    $fallback = TRUE;
-                } else {
-                    $goalsweight = (float)$userBodyLog->goals->weight;
-                }
+                if ($insertToDB) {
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array(
+                            "weight"     => $weight,
+                            "weightGoal" => $goalsweight,
+                            "fat"        => $fat,
+                            "fatGoal"    => $goalsfat,
+                            "bmi"        => $bmi,
+                            "bicep"      => (String)$userBodyLog->body->bicep,
+                            "calf"       => (String)$userBodyLog->body->calf,
+                            "chest"      => (String)$userBodyLog->body->chest,
+                            "forearm"    => (String)$userBodyLog->body->forearm,
+                            "hips"       => (String)$userBodyLog->body->hips,
+                            "neck"       => (String)$userBodyLog->body->neck,
+                            "thigh"      => (String)$userBodyLog->body->thigh,
+                            "waist"      => (String)$userBodyLog->body->waist
+                        ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array(
+                            'user'       => $user,
+                            'date'       => $targetDate,
+                            "weight"     => $weight,
+                            "weightGoal" => $goalsweight,
+                            "fat"        => $fat,
+                            "fatGoal"    => $goalsfat,
+                            "bmi"        => $bmi,
+                            "bicep"      => (String)$userBodyLog->body->bicep,
+                            "calf"       => (String)$userBodyLog->body->calf,
+                            "chest"      => (String)$userBodyLog->body->chest,
+                            "forearm"    => (String)$userBodyLog->body->forearm,
+                            "hips"       => (String)$userBodyLog->body->hips,
+                            "neck"       => (String)$userBodyLog->body->neck,
+                            "thigh"      => (String)$userBodyLog->body->thigh,
+                            "waist"      => (String)$userBodyLog->body->waist
+                        ));
+                    }
 
-                if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
-                    nxr('  Body Fat Goal unset, reverting to 0');
-                    $goalsfat = $this->getDBCurrentBody($user, "fat", TRUE);
-                    $fallback = TRUE;
-                } else {
-                    $goalsfat = (float)$userBodyLog->goals->fat;
+                    if (!$fallback) $this->api_setLastCleanrun("body", $user, new DateTime ($targetDate));
                 }
-
-                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
-                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array(
-                        "weight"     => $weight,
-                        "weightGoal" => $goalsweight,
-                        "fat"        => $fat,
-                        "fatGoal"    => $goalsfat,
-                        "bmi"        => $bmi,
-                        "bicep"      => (String)$userBodyLog->body->bicep,
-                        "calf"       => (String)$userBodyLog->body->calf,
-                        "chest"      => (String)$userBodyLog->body->chest,
-                        "forearm"    => (String)$userBodyLog->body->forearm,
-                        "hips"       => (String)$userBodyLog->body->hips,
-                        "neck"       => (String)$userBodyLog->body->neck,
-                        "thigh"      => (String)$userBodyLog->body->thigh,
-                        "waist"      => (String)$userBodyLog->body->waist
-                    ), array("AND" => array('user' => $user, 'date' => $targetDate)));
-                } else {
-                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array(
-                        'user'       => $user,
-                        'date'       => $targetDate,
-                        "weight"     => $weight,
-                        "weightGoal" => $goalsweight,
-                        "fat"        => $fat,
-                        "fatGoal"    => $goalsfat,
-                        "bmi"        => $bmi,
-                        "bicep"      => (String)$userBodyLog->body->bicep,
-                        "calf"       => (String)$userBodyLog->body->calf,
-                        "chest"      => (String)$userBodyLog->body->chest,
-                        "forearm"    => (String)$userBodyLog->body->forearm,
-                        "hips"       => (String)$userBodyLog->body->hips,
-                        "neck"       => (String)$userBodyLog->body->neck,
-                        "thigh"      => (String)$userBodyLog->body->thigh,
-                        "waist"      => (String)$userBodyLog->body->waist
-                    ));
-                }
-
-                if (!$fallback) $this->api_setLastCleanrun("body", $user, new DateTime ($targetDate));
             }
 
             return $userBodyLog;
