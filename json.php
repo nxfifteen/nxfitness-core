@@ -4,7 +4,7 @@
     header('Content-type: application/json');
 
     if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
-        if (is_writable('cache')) {
+        if (is_writable('cache') && (!array_key_exists("cache", $_GET) || $_GET['cache'] != "false")) {
             // cache files are created like cache/abcdef123456...
             $cacheFile = 'cache' . DIRECTORY_SEPARATOR . md5($_SERVER['REQUEST_URI']);
 
