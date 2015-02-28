@@ -566,9 +566,9 @@
             $fat = array();
             $fatGoal = array();
             foreach ($returnWeight as $db) {
-                array_push($weights, (String)$db['weight']);
+                array_push($weights, (String)round($db['weight'],2));
                 array_push($weightGoal, (String)$db['weightGoal']);
-                array_push($fat, (String)$db['fat']);
+                array_push($fat, (String)round($db['fat'],2));
                 array_push($fatGoal, (String)$db['fatGoal']);
             }
 
