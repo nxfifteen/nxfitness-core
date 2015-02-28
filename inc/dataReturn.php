@@ -542,19 +542,40 @@
                 $returnWeight = array_reverse($returnWeight);
             }
 
+            $fatMin = 0;
+            $fatMax = 0;
             $fat = array();
             $fatGoal = array();
+            $weightMin = 0;
+            $weightMax = 0;
             $weights = array();
             $weightGoal = array();
             foreach ($returnWeight as $db) {
                 //array_push($weights, (String)round($db['weight'], 2) . " " . $db['source']);
+                if ($db['weight'] < $weightMin || $weightMin == 0) {
+                    $weightMin = $db['weight'];
+                }
+                if ($db['weight'] > $weightMax || $weightMax == 0) {
+                    $weightMax = $db['weight'];
+                }
                 array_push($weights, (String)round($db['weight'], 2));
                 array_push($weightGoal, (String)$db['weightGoal']);
+
+                if ($db['fat'] < $fatMin || $fatMin == 0) {
+                    $fatMin = $db['fat'];
+                }
+                if ($db['fat'] > $fatMax || $fatMax == 0) {
+                    $fatMax = $db['fat'];
+                }
                 array_push($fat, (String)round($db['fat'], 2));
                 array_push($fatGoal, (String)$db['fatGoal']);
             }
 
             return array('returnDate'       => explode("-", $this->getParamDate()),
+                         'graph_weight_min' => $weightMin,
+                         'graph_weight_max' => $weightMax,
+                         'graph_fat_min'    => $fatMin,
+                         'graph_fat_max'    => $fatMax,
                          'graph_weight'     => $weights,
                          'graph_weightGoal' => $weightGoal,
                          'graph_fat'        => $fat,
