@@ -465,6 +465,10 @@
             }
 
             if (count($dbWeight) == 0) {
+                /*
+                 * If no weights are returned by the we use the last recored weight and just propegate it forward
+                 */
+
                 /** @var DateTime $currentDate */
                 $currentDate = new DateTime (date('Y-m-d', strtotime($this->getParamDate() . " +1 day")));
                 /** @var DateTime $sevenDaysAgo */
@@ -488,6 +492,10 @@
                 }
 
             } else if (count($dbWeight) < $days) {
+                /*
+                 * If there are missing records try filling in the blanks
+                 */
+
                 /** @var DateTime $currentDate */
                 $currentDate = new DateTime (date('Y-m-d', strtotime($this->getParamDate() . " +1 day")));
                 /** @var DateTime $sevenDaysAgo */
@@ -495,8 +503,10 @@
                 $interval = DateInterval::createFromDateString('1 day');
                 $period = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
 
-                $missingDays = 0;
+                $recordsLoopedThru = 0;
                 $lastRecord = array();
+                $foundMissingRecord = false;
+                $arrayOfMissingDays = array();
                 foreach ($period as $dt) {
                     /** @var DateTime $dt */
                     if (!array_key_exists($dt->format("Y-m-d"), $returnWeight)) {
@@ -504,69 +514,30 @@
                             $returnWeight[$dt->format("Y-m-d")] = $lastRecord;
                             $returnWeight[$dt->format("Y-m-d")]['source'] = "LatestRecord";
                         } else {
-                            $missingDays = $missingDays + 1;
+                            $foundMissingRecord = true;
+                            array_push($arrayOfMissingDays, $dt->format("Y-m-d"));
                             $returnWeight[$dt->format("Y-m-d")] = 'Calc deviation';
                         }
                     } else {
+                        if ($foundMissingRecord) {
+                            //echo "lastRecord -> "; print_r($lastRecord); echo "\n";
+                            //echo "arrayOfMissingDays -> "; print_r($arrayOfMissingDays); echo "\n";
+                            //echo "nextRecord -> "; print_r($returnWeight[$dt->format("Y-m-d")]); echo "\n";
+                            $returnWeight = $this->fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $returnWeight[$dt->format("Y-m-d")]);
+                            //echo "\n\n\n";
+
+                            $foundMissingRecord = false;
+                            $arrayOfMissingDays = array();
+                        }
                         $lastRecord = $returnWeight[$dt->format("Y-m-d")];
                     }
+                    $recordsLoopedThru = $recordsLoopedThru + 1;
                 }
+                ksort($returnWeight);
 
-                if ($missingDays > 0) {
-                    ksort($returnWeight);
-
-                    $minAndMax = array();
-                    $minAndMax['startGap'] = 0;
-                    $minAndMax['endGap'] = 0;
-                    $markFound = false;
-                    foreach ($returnWeight as $dateKey => $daysWeight) {
-                        if (is_array($daysWeight) && array_key_exists("weight", $daysWeight)) {
-                            if (!$markFound) {
-                                $minAndMax['startGap'] = $returnWeight[$dateKey];
-                            } else {
-                                $minAndMax['endGap'] = $returnWeight[$dateKey];
-                            }
-                        } else {
-                            $markFound = true;
-                        }
-                    }
-
-                    if (!is_array($minAndMax['startGap'])) {
-                        $minAndMax['startGap'] = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
-                            array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
-                            array("AND" => array("user" => $this->getUserID(),
-                                                 "date[<=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day"))
-                            ), "ORDER" => "date DESC", "LIMIT" => 1));
-                    }
-
-                    print_r($minAndMax['startGap']);echo "\n";
-                    print_r($minAndMax['endGap']);echo "\n";
-
-                    $xDistance = $missingDays + 1;
-
-                    $yStartWeight = $minAndMax['startGap']['weight'];
-                    $yEndWeight = $minAndMax['endGap']['weight'];
-                    $dailyChangeWeight = ($yEndWeight - $yStartWeight) / $xDistance;
-
-                    $yStartFat = $minAndMax['startGap']['fat'];
-                    $yEndFat = $minAndMax['endGap']['fat'];
-                    $dailyChangeFat = ($yEndFat - $yStartFat) / $xDistance;
-
-                    $dayNumber = 0;
-                    foreach ($returnWeight as $dateKey => $daysWeight) {
-                        if (!is_array($daysWeight) && $daysWeight == "Calc deviation") {
-                            $dayNumber = $dayNumber + 1;
-                            $calcWeight = ($dailyChangeWeight * $dayNumber) + $minAndMax['startGap']['weight'];
-                            $calcFat = ($dailyChangeFat * $dayNumber) + $minAndMax['startGap']['fat'];
-                            $returnWeight[$dateKey] = array("date" => $dateKey,
-                                                            "weight" => $calcWeight,
-                                                            "weightGoal" => $minAndMax['endGap']['weightGoal'],
-                                                            "fat" => $calcFat,
-                                                            "fatGoal" => $minAndMax['endGap']['fatGoal'],
-                                                            "source" => "CalcDeviation");
-                        }
-                    }
-                }
+                print_r($returnWeight);
+                echo "\n";
+                die();
 
                 ksort($returnWeight);
                 $returnWeight = array_reverse($returnWeight);
@@ -577,18 +548,52 @@
             $fat = array();
             $fatGoal = array();
             foreach ($returnWeight as $db) {
-                array_push($weights, (String)round($db['weight'],2));
+                array_push($weights, (String)round($db['weight'],2) . " " . $db['source']);
                 array_push($weightGoal, (String)$db['weightGoal']);
                 array_push($fat, (String)round($db['fat'],2));
                 array_push($fatGoal, (String)$db['fatGoal']);
             }
 
-            return array('returnDate'       => explode("-", $this->getParamDate()),
-                         'graph_weight'     => $weights,
-                         'graph_weightGoal' => $weightGoal,
-                         'graph_fat'        => $fat,
-                         'graph_fatGoal'    => $fatGoal);
+            //return array('returnDate'       => explode("-", $this->getParamDate()),
+            //             'graph_weight'     => $weights,
+            //             'graph_weightGoal' => $weightGoal,
+            //             'graph_fat'        => $fat,
+            //             'graph_fatGoal'    => $fatGoal);
 
-            //return array('graph_weight'     => $weights);
+            return array('graph_weight'     => $weights);
+        }
+
+        /**
+         * @param array $returnWeight
+         * @param array $arrayOfMissingDays
+         * @param array $lastRecord
+         * @param array $nextRecord
+         * @return array
+         */
+        private function fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $nextRecord) {
+            $xDistance = count($arrayOfMissingDays) + 1;
+
+            $yStartWeight = $lastRecord['weight'];
+            $yEndWeight = $nextRecord['weight'];
+            $dailyChangeWeight = ($yEndWeight - $yStartWeight) / $xDistance;
+
+            echo "Starting weight was " . $yStartWeight . "\n";
+            echo "Finishin weight is " . $yEndWeight . "\n";
+            echo "Over " . $xDistance . " days\n";
+            echo "Daily change weight is " . $dailyChangeWeight . "\n";
+
+            $dayNumber = 0;
+            foreach ($arrayOfMissingDays as $date) {
+                $dayNumber = $dayNumber + 1;
+                $calcWeight = (String)round(($dailyChangeWeight * $dayNumber) + $yStartWeight,2);
+                $returnWeight[$date] = array("date" => $date,
+                                             "weight" => $calcWeight,
+                                             "weightGoal" => $nextRecord['weightGoal'],
+                                             "fat" => 0,
+                                             "fatGoal" => $nextRecord['fatGoal'],
+                                             "source" => "CalcDeviation");
+            }
+
+            return $returnWeight;
         }
     }
