@@ -19,6 +19,9 @@
          */
         private $database;
 
+        /**
+         *
+         */
         public function __construct() {
             require_once(dirname(__FILE__) . "/../config.inc.php");
             if (isset($config)) {

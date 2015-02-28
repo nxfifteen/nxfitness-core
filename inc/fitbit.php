@@ -296,6 +296,9 @@
             return $this->fitbitapi;
         }
 
+        /**
+         * @param $user
+         */
         public function oAuthorise($user) {
             $oAuth = $this->get_oauth($user);
             if (!$oAuth OR !is_array($oAuth) OR $oAuth['token'] == "" OR $oAuth['secret'] == "") {

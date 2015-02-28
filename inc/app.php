@@ -2,6 +2,9 @@
 
     date_default_timezone_set('Europe/London');
 
+    /**
+     * @param $msg
+     */
     function nxr($msg) {
         echo $msg . "\n";
     }
@@ -30,6 +33,9 @@
          */
         protected $fitbitapi;
 
+        /**
+         *
+         */
         public function __construct() {
             require_once(dirname(__FILE__) . "/config.php");
             $this->setSettings(new config());
@@ -266,6 +272,11 @@
             $this->fitbitapi = $fitbitapi;
         }
 
+        /**
+         * @param $errCode
+         * @param null $user
+         * @return string
+         */
         public function lookupErrorCode($errCode, $user = NULL) {
             switch ($errCode) {
                 case "-143":

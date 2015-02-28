@@ -8,8 +8,14 @@
      */
     class tracking {
 
+        /**
+         * @var string
+         */
         protected $siteId;
 
+        /**
+         * @var PiwikTracker
+         */
         protected $PiwikTracker;
 
         /**
