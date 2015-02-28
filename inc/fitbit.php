@@ -877,35 +877,45 @@
                 die();
             }
 
-            if (isset($userSleepLog) and is_object($userSleepLog) and is_object($userSleepLog->sleep) and is_object($userSleepLog->sleep->sleepLog)) {
-                if ($userSleepLog->sleep->sleepLog->logId != 0) {
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$userSleepLog->sleep->sleepLog->logId))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
-                            "logId"               => (String)$userSleepLog->sleep->sleepLog->logId,
-                            'awakeningsCount'     => (String)$userSleepLog->sleep->sleepLog->awakeningsCount,
-                            'duration'            => (String)$userSleepLog->sleep->sleepLog->duration,
-                            'efficiency'          => (String)$userSleepLog->sleep->sleepLog->efficiency,
-                            'isMainSleep'         => (String)$userSleepLog->sleep->sleepLog->isMainSleep,
-                            'minutesAfterWakeup'  => (String)$userSleepLog->sleep->sleepLog->minutesAfterWakeup,
-                            'minutesAsleep'       => (String)$userSleepLog->sleep->sleepLog->minutesAsleep,
-                            'minutesAwake'        => (String)$userSleepLog->sleep->sleepLog->minutesAwake,
-                            'minutesToFallAsleep' => (String)$userSleepLog->sleep->sleepLog->minutesToFallAsleep,
-                            'startTime'           => (String)$userSleepLog->sleep->sleepLog->startTime,
-                            'timeInBed'           => (String)$userSleepLog->sleep->sleepLog->timeInBed
-                        ));
-                    }
+            if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep)) {
+                foreach ($userSleepLog->sleep as $loggedSleep) {
+                    if (is_object($loggedSleep)) {
+                        if ($loggedSleep->logId != 0) {
+                            if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$loggedSleep->logId))) {
+                                if ($loggedSleep->isMainSleep == 1) {
+                                    $loggedSleep->isMainSleep = "true";
+                                } else {
+                                    $loggedSleep->isMainSleep = "false";
+                                }
 
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array("AND" => array('user' => $user, 'sleeplog' => (String)$userSleepLog->sleep->sleepLog->logId)))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array(
-                            'user'               => $user,
-                            'sleeplog'           => (String)$userSleepLog->sleep->sleepLog->logId,
-                            'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
-                            'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
-                            'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
-                        ));
-                    }
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
+                                    "logId"               => (String)$loggedSleep->logId,
+                                    'awakeningsCount'     => (String)$loggedSleep->awakeningsCount,
+                                    'duration'            => (String)$loggedSleep->duration,
+                                    'efficiency'          => (String)$loggedSleep->efficiency,
+                                    'isMainSleep'         => (String)$loggedSleep->isMainSleep,
+                                    'minutesAfterWakeup'  => (String)$loggedSleep->minutesAfterWakeup,
+                                    'minutesAsleep'       => (String)$loggedSleep->minutesAsleep,
+                                    'minutesAwake'        => (String)$loggedSleep->minutesAwake,
+                                    'minutesToFallAsleep' => (String)$loggedSleep->minutesToFallAsleep,
+                                    'startTime'           => (String)$loggedSleep->startTime,
+                                    'timeInBed'           => (String)$loggedSleep->timeInBed
+                                ));
+                            }
 
-                    $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
+                            if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array("AND" => array('user' => $user, 'sleeplog' => (String)$loggedSleep->logId)))) {
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array(
+                                    'user'               => $user,
+                                    'sleeplog'           => (String)$loggedSleep->logId,
+                                    'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
+                                    'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
+                                    'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
+                                ));
+                            }
+
+                            $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
+                        }
+                    }
                 }
             }
 
