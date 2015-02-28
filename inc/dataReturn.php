@@ -126,7 +126,7 @@
                 $now = time(); // or your date as well
                 $your_date = strtotime($dbUserFirstSeen);
                 $datediff = $now - $your_date;
-                $this->paramPeriod = "last" . floor($datediff/(60*60*24));
+                $this->paramPeriod = "last" . floor($datediff / (60 * 60 * 24));
             }
 
             return $this->paramPeriod;

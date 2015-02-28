@@ -15,7 +15,8 @@
                 // if data was cached recently, return cached data
                 if ($cacheTime > strtotime('-15 minutes')) {
                     echo fread($fh, filesize($cacheFile));
-                    return true;
+
+                    return TRUE;
                 }
 
                 // else delete cache file
@@ -50,6 +51,7 @@
             return $json;
         } else {
             echo json_error(101);
+
             return "";
         }
     }

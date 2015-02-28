@@ -183,7 +183,7 @@
          * @param string $trigger
          * @param bool $force
          */
-        public function addCronJob($user_fitbit_id, $trigger, $force = false) {
+        public function addCronJob($user_fitbit_id, $trigger, $force = FALSE) {
             if ($force || $this->getSetting('nx_fitbit_ds_' . $trigger . '_cron', FALSE)) {
                 if (!$this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
                     "AND" => array(
@@ -276,9 +276,10 @@
                     if (!is_null($user)) {
                         $hour = date("H") + 1;
                         $this->getDatabase()->update($this->getSetting("db_prefix", NULL, FALSE) . "users", array(
-                            'cooldown'     => date("Y-m-d " . $hour . ":01:00"),
+                            'cooldown' => date("Y-m-d " . $hour . ":01:00"),
                         ), array('fuid' => $user));
                     }
+
                     return "Either you hit the rate limiting quota for the client or for the viewer";
                 default:
                     return $errCode;

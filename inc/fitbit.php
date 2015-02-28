@@ -37,7 +37,7 @@
             require_once(dirname(__FILE__) . "/../library/fitbitphp.php");
             $this->setLibrary(new FitBitPHP($consumer_key, $consumer_secret, $debug, $user_agent));
 
-            $this->forceSync = false;
+            $this->forceSync = FALSE;
         }
 
         /**
@@ -69,7 +69,7 @@
                 }
 
                 if ($trigger == "all") {
-                    $this->forceSync = true;
+                    $this->forceSync = TRUE;
                 }
 
                 if ($trigger == "all" || $trigger == "profile") {
@@ -233,7 +233,7 @@
                     foreach ($timeSeries as $activity => $timeout) {
                         $this->api_pull_time_series($user, $activity);
                     }
-                    $this->api_setLastrun("activities", $user, NULL, true);
+                    $this->api_setLastrun("activities", $user, NULL, TRUE);
                 } else if (array_key_exists($trigger, $timeSeries)) {
                     $this->api_pull_time_series($user, $trigger);
                 }
@@ -258,7 +258,7 @@
 
                 if ($trigger == "all") {
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
-                        "lastrun"         => $currentDate->format("Y-m-d H:i:s")
+                        "lastrun" => $currentDate->format("Y-m-d H:i:s")
                     ), array("fuid" => $user));
                 }
 
@@ -385,7 +385,7 @@
          */
         public function api_isCooled($trigger, $user, $reset = FALSE) {
             if ($this->forceSync) {
-                return true;
+                return TRUE;
             } else {
                 $currentDate = new DateTime ('now');
                 $lastRun = $this->api_getCoolDown($trigger, $user, $reset);
@@ -415,13 +415,6 @@
             } else {
                 return new DateTime ("1970-01-01");
             }
-        }
-
-        /**
-         * @param boolean $forceSync
-         */
-        public function setForceSync($forceSync) {
-            $this->forceSync = $forceSync;
         }
 
         /**
@@ -805,57 +798,6 @@
             } else {
                 return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
             }
-        }
-
-        /**
-         * @param $user
-         * @param $targetDate
-         * @return bool
-         */
-        private function api_pull_activity_log($user, $targetDate) {
-            $targetDateTime = new DateTime ($targetDate);
-            try {
-                $userActivityLog = $this->getLibrary()->getActivities($targetDateTime);
-            } catch (Exception $E) {
-                /**
-                 * @var FitBitException $E
-                 */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
-                die();
-            }
-
-            if (isset($userActivityLog) and is_object($userActivityLog) and is_array($userActivityLog->activities)) {
-                foreach ($userActivityLog->activities as $activity) {
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $user,
-                                                                                                                                                                    "logId" => (String)$activity->logId,
-                                                                                                                                                                    "activityId" => (String)$activity->activityId,
-                                                                                                                                                                    "startDate" => (String)$activity->startDate,
-                                                                                                                                                                    "startTime" => (String)$activity->startTime)))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
-                            "activityId"               => (String)$activity->activityId,
-                            "activityParentId"               => (String)$activity->activityParentId,
-                            "activityParentName"               => (String)$activity->activityParentName,
-                            "calories"               => (String)$activity->calories,
-                            "description"               => (String)$activity->description,
-                            "duration"               => (String)$activity->duration,
-                            "hasStartTime"               => (String)$activity->hasStartTime,
-                            "isFavorite"               => (String)$activity->isFavorite,
-                            "logId"               => (String)$activity->logId,
-                            "name"               => (String)$activity->name,
-                            "startDate"               => (String)$activity->startDate,
-                            "startTime"               => (String)$activity->startTime,
-                            "user"               => $user,
-                            "date"               => $targetDate
-                        ));
-                    }
-
-                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
-                }
-            }
-
-            return true;
         }
 
         /**
@@ -1461,7 +1403,7 @@
                     $databaseColumn = "fairlyactive";
                     break;
                 default:
-                    return false;
+                    return FALSE;
             }
 
             nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records');
@@ -1501,7 +1443,67 @@
                     }
                 }
             }
-            return true;
+
+            return TRUE;
+        }
+
+        /**
+         * @param $user
+         * @param $targetDate
+         * @return bool
+         */
+        private function api_pull_activity_log($user, $targetDate) {
+            $targetDateTime = new DateTime ($targetDate);
+            try {
+                $userActivityLog = $this->getLibrary()->getActivities($targetDateTime);
+            } catch (Exception $E) {
+                /**
+                 * @var FitBitException $E
+                 */
+                echo $user . "\n";
+                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
+                print_r($E);
+                die();
+            }
+
+            if (isset($userActivityLog) and is_object($userActivityLog) and is_array($userActivityLog->activities)) {
+                foreach ($userActivityLog->activities as $activity) {
+                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user"       => $user,
+                                                                                                                                                                    "logId"      => (String)$activity->logId,
+                                                                                                                                                                    "activityId" => (String)$activity->activityId,
+                                                                                                                                                                    "startDate"  => (String)$activity->startDate,
+                                                                                                                                                                    "startTime"  => (String)$activity->startTime)))
+                    ) {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
+                            "activityId"         => (String)$activity->activityId,
+                            "activityParentId"   => (String)$activity->activityParentId,
+                            "activityParentName" => (String)$activity->activityParentName,
+                            "calories"           => (String)$activity->calories,
+                            "description"        => (String)$activity->description,
+                            "duration"           => (String)$activity->duration,
+                            "hasStartTime"       => (String)$activity->hasStartTime,
+                            "isFavorite"         => (String)$activity->isFavorite,
+                            "logId"              => (String)$activity->logId,
+                            "name"               => (String)$activity->name,
+                            "startDate"          => (String)$activity->startDate,
+                            "startTime"          => (String)$activity->startTime,
+                            "user"               => $user,
+                            "date"               => $targetDate
+                        ));
+                    }
+
+                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
+                }
+            }
+
+            return TRUE;
+        }
+
+        /**
+         * @param boolean $forceSync
+         */
+        public function setForceSync($forceSync) {
+            $this->forceSync = $forceSync;
         }
 
         /**
