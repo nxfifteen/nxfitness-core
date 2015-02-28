@@ -531,6 +531,17 @@
                         }
                     }
 
+                    if (!is_array($minAndMax['startGap'])) {
+                        $minAndMax['startGap'] = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
+                            array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
+                            array("AND" => array("user" => $this->getUserID(),
+                                                 "date[<=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day"))
+                            ), "ORDER" => "date DESC", "LIMIT" => 1));
+                    }
+
+                    print_r($minAndMax['startGap']);echo "\n";
+                    print_r($minAndMax['endGap']);echo "\n";
+
                     $xDistance = $missingDays + 1;
 
                     $yStartWeight = $minAndMax['startGap']['weight'];
@@ -577,5 +588,7 @@
                          'graph_weightGoal' => $weightGoal,
                          'graph_fat'        => $fat,
                          'graph_fatGoal'    => $fatGoal);
+
+            //return array('graph_weight'     => $weights);
         }
     }
