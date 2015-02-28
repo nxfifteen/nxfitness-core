@@ -456,8 +456,15 @@
             foreach ($dbDevices as $key => $dev) {
                 $dbDevices[$key]['image'] = 'images/devices/' . str_ireplace(" ","",$dbDevices[$key]['deviceVersion']) . ".png";
                 $dbDevices[$key]['imageSmall'] = 'images/devices/' . str_ireplace(" ","",$dbDevices[$key]['deviceVersion']) . "_small.png";
+                if (strtolower($dbDevices[$key]['battery']) == "high") {
+                    $dbDevices[$key]['precentage'] = 100;
+                } else if (strtolower($dbDevices[$key]['battery']) == "medium") {
+                    $dbDevices[$key]['precentage'] = 50;
+                } else if (strtolower($dbDevices[$key]['battery']) == "low") {
+                    $dbDevices[$key]['precentage'] = 10;
+                }
             }
-            
+
             return $dbDevices;
         }
 
