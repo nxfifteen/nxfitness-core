@@ -1070,21 +1070,22 @@
                                 break;
                         }
                     }
-
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array(
-                            'resting'  => $resting,
-                            'normal'   => $normal,
-                            'exertive' => $exertive
-                        ), array("AND" => array('user' => $user, 'date' => $targetDate)));
-                    } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array(
-                            'user'     => $user,
-                            'date'     => $targetDate,
-                            'resting'  => $resting,
-                            'normal'   => $normal,
-                            'exertive' => $exertive
-                        ));
+                    if ($resting > 0 or $normal > 0 or $exertive > 0) {
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array(
+                                'resting'  => $resting,
+                                'normal'   => $normal,
+                                'exertive' => $exertive
+                            ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+                        } else {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array(
+                                'user'     => $user,
+                                'date'     => $targetDate,
+                                'resting'  => $resting,
+                                'normal'   => $normal,
+                                'exertive' => $exertive
+                            ));
+                        }
                     }
 
                     if ($resting > 0 or $normal > 0 or $exertive > 0) {
