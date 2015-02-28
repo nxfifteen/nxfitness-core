@@ -419,18 +419,18 @@
                 $progsteps = 0;
             }
 
-            $return = array('username'         => $dbUser['name'],
-                            'returnDate'       => $thisDate,
-                            'syncd'            => $dbSteps['syncd'],
-                            'distance'         => number_format($dbSteps['distance'], 2),
-                            'floors'           => number_format($dbSteps['floors'], 0),
-                            'steps'            => number_format($dbSteps['steps'], 0),
-                            'progdistance'     => $progdistance,
-                            'progfloors'       => $progfloors,
-                            'progsteps'        => $progsteps,
-                            'distanceAllTime'  => number_format($dbDistanceAllTime, 2),
-                            'floorsAllTime'    => number_format($dbFloorsAllTime, 0),
-                            'stepsAllTime'     => number_format($dbStepsAllTime, 0));
+            $return = array('username'        => $dbUser['name'],
+                            'returnDate'      => $thisDate,
+                            'syncd'           => $dbSteps['syncd'],
+                            'distance'        => number_format($dbSteps['distance'], 2),
+                            'floors'          => number_format($dbSteps['floors'], 0),
+                            'steps'           => number_format($dbSteps['steps'], 0),
+                            'progdistance'    => $progdistance,
+                            'progfloors'      => $progfloors,
+                            'progsteps'       => $progsteps,
+                            'distanceAllTime' => number_format($dbDistanceAllTime, 2),
+                            'floorsAllTime'   => number_format($dbFloorsAllTime, 0),
+                            'stepsAllTime'    => number_format($dbStepsAllTime, 0));
 
             return $return;
         }
@@ -449,10 +449,10 @@
 
             $dbWeight = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
                 array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
-                array("AND" => array("user" => $this->getUserID(),
+                array("AND" => array("user"     => $this->getUserID(),
                                      "date[<=]" => $this->getParamDate(),
                                      "date[>=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day"))
-                ), "ORDER" => "date DESC", "LIMIT" => $days));
+                ), "ORDER"  => "date DESC", "LIMIT" => $days));
 
             $latestDate = 0;
             foreach ($dbWeight as $daysWeight) {
@@ -483,12 +483,12 @@
 
                 foreach ($period as $dt) {
                     /** @var DateTime $dt */
-                    $returnWeight[$dt->format("Y-m-d")] = array("date" => $dt->format("Y-m-d"),
-                                                                "weight" => $weight,
+                    $returnWeight[$dt->format("Y-m-d")] = array("date"       => $dt->format("Y-m-d"),
+                                                                "weight"     => $weight,
                                                                 "weightGoal" => $weightGoal,
-                                                                "fat" => $fat,
-                                                                "fatGoal" => $fatGoal,
-                                                                "source" => "LatestRecord");
+                                                                "fat"        => $fat,
+                                                                "fatGoal"    => $fatGoal,
+                                                                "source"     => "LatestRecord");
                 }
 
             } else if (count($dbWeight) < $days) {
@@ -504,8 +504,8 @@
                 $period = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
 
                 $recordsLoopedThru = 0;
-                $lastRecord = array();
-                $foundMissingRecord = false;
+                $lastRecord = NULL;
+                $foundMissingRecord = FALSE;
                 $arrayOfMissingDays = array();
                 foreach ($period as $dt) {
                     /** @var DateTime $dt */
@@ -514,19 +514,23 @@
                             $returnWeight[$dt->format("Y-m-d")] = $lastRecord;
                             $returnWeight[$dt->format("Y-m-d")]['source'] = "LatestRecord";
                         } else {
-                            $foundMissingRecord = true;
+                            $foundMissingRecord = TRUE;
                             array_push($arrayOfMissingDays, $dt->format("Y-m-d"));
                             $returnWeight[$dt->format("Y-m-d")] = 'Calc deviation';
                         }
                     } else {
                         if ($foundMissingRecord) {
-                            //echo "lastRecord -> "; print_r($lastRecord); echo "\n";
-                            //echo "arrayOfMissingDays -> "; print_r($arrayOfMissingDays); echo "\n";
-                            //echo "nextRecord -> "; print_r($returnWeight[$dt->format("Y-m-d")]); echo "\n";
-                            $returnWeight = $this->fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $returnWeight[$dt->format("Y-m-d")]);
-                            //echo "\n\n\n";
+                            if (is_null($lastRecord)) {
+                                $lastRecord = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
+                                    array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
+                                    array("AND" => array("user"     => $this->getUserID(),
+                                                         "date[<=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day"))
+                                    ), "ORDER"  => "date DESC", "LIMIT" => 1));
+                            }
 
-                            $foundMissingRecord = false;
+                            $returnWeight = $this->fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $returnWeight[$dt->format("Y-m-d")]);
+
+                            $foundMissingRecord = FALSE;
                             $arrayOfMissingDays = array();
                         }
                         $lastRecord = $returnWeight[$dt->format("Y-m-d")];
@@ -535,38 +539,32 @@
                 }
                 ksort($returnWeight);
 
-                print_r($returnWeight);
-                echo "\n";
-                die();
-
-                ksort($returnWeight);
                 $returnWeight = array_reverse($returnWeight);
             }
 
-            $weights = array();
-            $weightGoal = array();
             $fat = array();
             $fatGoal = array();
+            $weights = array();
+            $weightGoal = array();
             foreach ($returnWeight as $db) {
-                array_push($weights, (String)round($db['weight'],2) . " " . $db['source']);
+                //array_push($weights, (String)round($db['weight'], 2) . " " . $db['source']);
+                array_push($weights, (String)round($db['weight'], 2));
                 array_push($weightGoal, (String)$db['weightGoal']);
-                array_push($fat, (String)round($db['fat'],2));
+                array_push($fat, (String)round($db['fat'], 2));
                 array_push($fatGoal, (String)$db['fatGoal']);
             }
 
-            //return array('returnDate'       => explode("-", $this->getParamDate()),
-            //             'graph_weight'     => $weights,
-            //             'graph_weightGoal' => $weightGoal,
-            //             'graph_fat'        => $fat,
-            //             'graph_fatGoal'    => $fatGoal);
-
-            return array('graph_weight'     => $weights);
+            return array('returnDate'       => explode("-", $this->getParamDate()),
+                         'graph_weight'     => $weights,
+                         'graph_weightGoal' => $weightGoal,
+                         'graph_fat'        => $fat,
+                         'graph_fatGoal'    => $fatGoal);
         }
 
         /**
          * @param array $returnWeight
          * @param array $arrayOfMissingDays
-         * @param array $lastRecord
+         * @param array|NULL $lastRecord
          * @param array $nextRecord
          * @return array
          */
@@ -577,21 +575,21 @@
             $yEndWeight = $nextRecord['weight'];
             $dailyChangeWeight = ($yEndWeight - $yStartWeight) / $xDistance;
 
-            echo "Starting weight was " . $yStartWeight . "\n";
-            echo "Finishin weight is " . $yEndWeight . "\n";
-            echo "Over " . $xDistance . " days\n";
-            echo "Daily change weight is " . $dailyChangeWeight . "\n";
+            $yStartFat = $lastRecord['fat'];
+            $yEndFat = $nextRecord['fat'];
+            $dailyChangeFat = ($yEndFat - $yStartFat) / $xDistance;
 
             $dayNumber = 0;
             foreach ($arrayOfMissingDays as $date) {
                 $dayNumber = $dayNumber + 1;
-                $calcWeight = (String)round(($dailyChangeWeight * $dayNumber) + $yStartWeight,2);
-                $returnWeight[$date] = array("date" => $date,
-                                             "weight" => $calcWeight,
+                $calcWeight = (String)round(($dailyChangeWeight * $dayNumber) + $yStartWeight, 2);
+                $calcFat = (String)round(($dailyChangeFat * $dayNumber) + $yStartFat, 2);
+                $returnWeight[$date] = array("date"       => $date,
+                                             "weight"     => $calcWeight,
                                              "weightGoal" => $nextRecord['weightGoal'],
-                                             "fat" => 0,
-                                             "fatGoal" => $nextRecord['fatGoal'],
-                                             "source" => "CalcDeviation");
+                                             "fat"        => $calcFat,
+                                             "fatGoal"    => $nextRecord['fatGoal'],
+                                             "source"     => "CalcDeviation");
             }
 
             return $returnWeight;
