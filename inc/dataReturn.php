@@ -444,6 +444,26 @@
         /**
          * @return array
          */
+        public function returnUserRecordDevices() {
+            $dbDevices = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
+                "[>]".$this->getAppClass()->getSetting("db_prefix", NULL, FALSE)."lnk_dev2usr" => array("id" => "device")),
+                array(
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.deviceVersion',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.battery',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.lastSyncTime',
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE)."lnk_dev2usr.user" => $this->getUserID()));
+
+            foreach ($dbDevices as $key => $dev) {
+                $dbDevices[$key]['image'] = 'images/devices/' . str_ireplace(" ","",$dbDevices[$key]['deviceVersion']) . ".png";
+                $dbDevices[$key]['imageSmall'] = 'images/devices/' . str_ireplace(" ","",$dbDevices[$key]['deviceVersion']) . "_small.png";
+            }
+            
+            return $dbDevices;
+        }
+
+        /**
+         * @return array
+         */
         public function returnUserRecordWeight() {
             $days = 7;
             $returnWeight = array();
