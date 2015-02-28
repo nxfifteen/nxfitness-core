@@ -974,17 +974,9 @@
                 }
 
                 $insertToDB = FALSE;
-                $goalsweight = 0;
-                $goalsfat = 0;
                 if (!isset($userBodyLog->body->weight) or $userBodyLog->body->weight == "0") {
                     nxr('  Weight unrecorded, reverting to previous record');
                     $weight = $this->getDBCurrentBody($user, "weight");
-                    if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
-                        nxr('  Weight Goal unset, reverting to 0');
-                        $goalsweight = $this->getDBCurrentBody($user, "weightGoal", TRUE);
-                    } else {
-                        $goalsweight = (float)$userBodyLog->goals->weight;
-                    }
                     $fallback = TRUE;
                 } else {
                     $weight = (float)$userBodyLog->body->weight;
@@ -994,27 +986,35 @@
                 if (!isset($userBodyLog->body->fat) or $userBodyLog->body->fat == "0") {
                     nxr('  Body Fat unrecorded, reverting to previous record');
                     $fat = $this->getDBCurrentBody($user, "fat");
-                    if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
-                        nxr('  Body Fat Goal unset, reverting to 0');
-                        $goalsfat = $this->getDBCurrentBody($user, "fatGoal", TRUE);
-                    } else {
-                        $goalsfat = (float)$userBodyLog->goals->fat;
-                    }
                     $fallback = TRUE;
                 } else {
                     $fat = (float)$userBodyLog->body->fat;
                     $insertToDB = TRUE;
                 }
 
-                if (!isset($userBodyLog->body->bmi) or $userBodyLog->body->bmi == "0") {
-                    nxr('  BMI unrecorded, reverting to previous record');
-                    $bmi = $this->getDBCurrentBody($user, "bmi");
-                    $fallback = TRUE;
-                } else {
-                    $bmi = (float)$userBodyLog->body->bmi;
-                }
-
                 if ($insertToDB) {
+                    if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
+                        nxr('  Weight Goal unset, reverting to 0');
+                        $goalsweight = $this->getDBCurrentBody($user, "weightGoal", TRUE);
+                    } else {
+                        $goalsweight = (float)$userBodyLog->goals->weight;
+                    }
+
+                    if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
+                        nxr('  Body Fat Goal unset, reverting to 0');
+                        $goalsfat = $this->getDBCurrentBody($user, "fatGoal", TRUE);
+                    } else {
+                        $goalsfat = (float)$userBodyLog->goals->fat;
+                    }
+
+                    if (!isset($userBodyLog->body->bmi) or $userBodyLog->body->bmi == "0") {
+                        nxr('  BMI unrecorded, reverting to previous record');
+                        $bmi = $this->getDBCurrentBody($user, "bmi");
+                        $fallback = TRUE;
+                    } else {
+                        $bmi = (float)$userBodyLog->body->bmi;
+                    }
+
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array(
                             "weight"     => $weight,
