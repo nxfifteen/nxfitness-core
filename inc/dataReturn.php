@@ -451,6 +451,7 @@
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.deviceVersion',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.battery',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.lastSyncTime',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.type',
                 ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE)."lnk_dev2usr.user" => $this->getUserID()));
 
             foreach ($dbDevices as $key => $dev) {
