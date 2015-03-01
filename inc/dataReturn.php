@@ -308,6 +308,7 @@
         public function returnUserRecordActivityHistory() {
             $sqlFilter = $this->dbWhere();
             $sqlFilter['AND']['name[!]'] = "Driving";
+            $sqlFilter['ORDER'] = "logId DESC";
 
             unset($sqlFilter['AND']['date[<=]']);
             unset($sqlFilter['AND']['date[>=]']);
@@ -336,7 +337,7 @@
                 $endTime = $endTime + ($record['duration'] / 1000);
                 $record['endTime'] = date("Y-m-d H:i", $endTime);
                 $record['duration'] = (($record['duration'] / 1000) / 60);
-                $record['startTime'] = date("F dS", strtotime($record['startDate'] . " " . $record['startTime']));
+                $record['startTime'] = date("F dS \@H:i", strtotime($record['startDate'] . " " . $record['startTime']));
 
                 $record['calPerMinute'] = round($record['calories'] / $record['duration'], 1);
 
