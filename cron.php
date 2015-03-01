@@ -77,9 +77,7 @@
                 nxr("I am not allowed to requeue anything so will requeue with empty records");
             } else {
                 $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
-                SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where
-                UNIX_TIMESTAMP(str_to_date(lastrun,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s", strtotime('-1 minute')) . "') AND
-                UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
+                SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
 
                 if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0) {
                     foreach ($unfinishedUsers as $user) {
