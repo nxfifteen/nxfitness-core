@@ -303,6 +303,86 @@
         }
 
         /**
+         * @return bool
+         */
+        public function returnUserRecordActivityHistory() {
+            $sqlFilter = $this->dbWhere();
+            $sqlFilter['AND']['name[!]'] = "Driving";
+
+            unset($sqlFilter['AND']['date[<=]']);
+            unset($sqlFilter['AND']['date[>=]']);
+            unset($sqlFilter['LIMIT']);
+
+            if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
+                $days = $this->getParamPeriod();
+                $sqlFilter['LIMIT'] = str_ireplace("last", "", $days);
+            }
+
+            $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
+                array('date', 'name', 'logId', 'startDate', 'startTime', 'calories', 'duration'),
+                $sqlFilter);
+
+            $daysStats = array();
+            $returnArray = array();
+            foreach ($userActivity as $record) {
+                $startTime = new DateTime($record['startDate'] . " " . $record['startTime']);
+                $recKey = $startTime->format("F, Y");
+                if (!array_key_exists($recKey,$returnArray) || !is_array($returnArray[$recKey])) {
+                    $returnArray[$recKey] = array();
+                }
+
+                $record['name'] = str_ireplace(" (MyFitnessPal)","",$record['name']);
+                $endTime = date("U", strtotime($record['startTime']));
+                $endTime = $endTime + ($record['duration'] / 1000);
+                $record['endTime'] = date("Y-m-d H:i", $endTime);
+                $record['duration'] = (($record['duration'] / 1000) / 60);
+                $record['startTime'] = date("F dS", strtotime($record['startDate'] . " " . $record['startTime']));
+
+                $record['calPerMinute'] = round($record['calories'] / $record['duration'], 1);
+
+                if (strpos(strtolower($record['name']), 'push-ups') !== FALSE || strpos(strtolower($record['name']), 'sit-ups') !== FALSE || strpos(strtolower($record['name']), 'strength') !== FALSE) {
+                    $record['colour'] = "teal";
+                } else if (strpos(strtolower($record['name']), 'run') !== FALSE || strpos(strtolower($record['name']), 'walking') !== FALSE) {
+                    $record['colour'] = "green";
+                } else if (strpos(strtolower($record['name']), 'skiing') !== FALSE) {
+                    $record['colour'] = "purple";
+                } else {
+                    $record['colour'] = "bricky";
+                }
+
+                if (!array_key_exists($record['startDate'], $daysStats)) {
+                    $dbDaysStats = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                            "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps" => array("user" => "user"),
+                            "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps" => array("date" => "date")
+                        ),
+                        array(
+                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.fairlyactive',
+                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.veryactive',
+                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.caloriesOut'
+                        ), array("AND" => array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity.user" => $this->getUserID(),
+                                                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity.date" => $record['startDate']
+                        )));
+
+                    $dbDaysStats['active'] = number_format($dbDaysStats['fairlyactive'] + $dbDaysStats['veryactive'], 0);
+                    $dbDaysStats['caloriesOut'] = number_format($dbDaysStats['caloriesOut'], 0);
+
+                    unset($dbDaysStats['fairlyactive']);
+                    unset($dbDaysStats['veryactive']);
+
+                    $daysStats[$record['startDate']] = $dbDaysStats;
+                }
+
+                $record['stats'] = $daysStats[$record['startDate']];
+
+                unset($record['startDate']);
+                unset($record['date']);
+                array_push($returnArray[$recKey], $record);
+            }
+
+            return $returnArray;
+        }
+
+        /**
          * @return array|bool
          */
         public function returnUserRecordWeekPedometer() {
