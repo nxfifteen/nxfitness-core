@@ -98,7 +98,8 @@
 
             $functionName = 'returnUserRecord' . $get['data'];
             if (method_exists($this, $functionName)) {
-                $resultsArray = array("error" => "false", "user" => $this->getUserID(), "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
+                $dbUserName = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'name', array("fuid" => $this->getUserID()));
+                $resultsArray = array("error" => "false", "user" => $this->getUserID(), 'username' => $dbUserName, "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
                 $resultsArray['results'] = $this->$functionName();
 
                 if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
@@ -475,9 +476,6 @@
          * @return array
          */
         public function returnUserRecordDashboard() {
-            // User profile
-            $dbUser = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('name'), array("fuid" => $this->getUserID()));
-
             // Achivment
             $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'floors', 'steps', 'syncd'), $this->dbWhere());
             $dbStepsGoal = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance', 'floors', 'steps'), $this->dbWhere());
@@ -506,8 +504,7 @@
                 $progsteps = 0;
             }
 
-            $return = array('username'        => $dbUser['name'],
-                            'returnDate'      => $thisDate,
+            $return = array('returnDate'      => $thisDate,
                             'syncd'           => $dbSteps['syncd'],
                             'distance'        => number_format($dbSteps['distance'], 2),
                             'floors'          => number_format($dbSteps['floors'], 0),
