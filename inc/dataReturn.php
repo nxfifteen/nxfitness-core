@@ -231,10 +231,60 @@
             $dbWater[0]['liquid'] = (String)round($dbWater[0]['liquid'], 2);
             $dbWater[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
 
-            $this->getTracking()->track("JSON Get", $this->getUserID(), "Water");
-            $this->getTracking()->track("JSON Goal", $this->getUserID(), "Water");
+            if (!is_null($this->getTracking())) {
+                $this->getTracking()->track("JSON Get", $this->getUserID(), "Water");
+                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Water");
+            }
 
             return $dbWater;
+        }
+
+        /**
+         * @return array
+         */
+        public function returnUserRecordFoodDiary() {
+            $returnArray = array();
+
+            $where = $this->dbWhere();
+            unset($where['AND']['date[<=]']);
+            unset($where['AND']['date[>=]']);
+            unset($where['LIMIT']);
+            $where['AND']['date'] = $this->getParamDate();
+
+            $dbWater = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", 'liquid', $where);
+            /** @var float $dbWater */
+            $returnArray['water'] = array("liquid" => (String)round($dbWater, 2), "goal" => $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200'));
+
+            $dbFood = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
+                array('date', 'meal', 'calories', 'carbs', 'fat', 'fiber', 'protein', 'sodium'),
+                $where);
+
+            $returnArray['food'] = array();
+            $returnArray['food']['meals'] = array();
+            $returnArray['food']['summary'] = array();
+            $returnArray['food']['summary']['calories'] = 0;
+            $returnArray['food']['summary']['carbs'] = 0;
+            $returnArray['food']['summary']['fat'] = 0;
+            $returnArray['food']['summary']['fiber'] = 0;
+            $returnArray['food']['summary']['protein'] = 0;
+            $returnArray['food']['summary']['sodium'] = 0;
+            foreach ($dbFood as $meal) {
+                $returnArray['food']['meals'][$meal['meal']] = array('calories' => $meal['calories'],
+                                                                     'carbs' => $meal['carbs'],
+                                                                     'fat' => $meal['fat'],
+                                                                     'fiber' => $meal['fiber'],
+                                                                     'protein' => $meal['protein'],
+                                                                     'sodium' => $meal['sodium']
+                );
+                $returnArray['food']['summary']['calories'] += $meal['calories'];
+                $returnArray['food']['summary']['carbs'] += $meal['carbs'];
+                $returnArray['food']['summary']['fat'] += $meal['fat'];
+                $returnArray['food']['summary']['fiber'] += $meal['fiber'];
+                $returnArray['food']['summary']['protein'] += $meal['protein'];
+                $returnArray['food']['summary']['sodium'] += $meal['sodium'];
+            }
+
+            return $returnArray;
         }
 
         /**
