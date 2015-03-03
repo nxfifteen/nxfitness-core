@@ -592,6 +592,8 @@
                 } else if (strtolower($dbDevices[$key]['battery']) == "low") {
                     $dbDevices[$key]['precentage'] = 10;
                 }
+
+                $dbDevices[$key]['unixtime'] = strtotime($dbDevices[$key]['lastSyncTime']);
             }
 
             return $dbDevices;
