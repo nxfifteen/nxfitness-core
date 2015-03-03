@@ -593,7 +593,18 @@
                     $dbDevices[$key]['precentage'] = 10;
                 }
 
-                $dbDevices[$key]['unixtime'] = strtotime($dbDevices[$key]['lastSyncTime']);
+                $dbDevices[$key]['unixTime'] = strtotime($dbDevices[$key]['lastSyncTime']);
+                if ($dbDevices[$key]['type'] == "TRACKER") {
+                    $dbDevices[$key]['testTime'] = strtotime('now') - (4 * 60 * 60);
+                } else {
+                    $dbDevices[$key]['testTime'] = strtotime('now') - (48 * 60 * 60);
+                }
+
+                if ($dbDevices[$key]['testTime'] > $dbDevices[$key]['unixTime']) {
+                    $dbDevices[$key]['alertTime'] = 1;
+                } else {
+                    $dbDevices[$key]['alertTime'] = 0;
+                }
             }
 
             return $dbDevices;
