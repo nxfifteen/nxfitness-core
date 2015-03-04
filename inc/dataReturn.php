@@ -626,8 +626,8 @@
                 array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
                 array("AND" => array("user"     => $this->getUserID(),
                                      "date[<=]" => $this->getParamDate(),
-                                     "date[>=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day"))
-                ), "ORDER"  => "date DESC", "LIMIT" => $days));
+                                     "date[>=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day"))
+                ), "ORDER"  => "date DESC", "LIMIT" => ($days + 10)));
 
             $latestDate = 0;
             foreach ($dbWeight as $daysWeight) {
@@ -647,7 +647,7 @@
                 /** @var DateTime $currentDate */
                 $currentDate = new DateTime (date('Y-m-d', strtotime($this->getParamDate() . " +1 day")));
                 /** @var DateTime $sevenDaysAgo */
-                $sevenDaysAgo = new DateTime(date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day")));
+                $sevenDaysAgo = new DateTime(date('Y-m-d', strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day")));
                 $interval = DateInterval::createFromDateString('1 day');
                 $period = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
 
@@ -666,7 +666,7 @@
                                                                 "source"     => "LatestRecord");
                 }
 
-            } else if (count($dbWeight) < $days) {
+            } else if (count($dbWeight) < ($days + 10)) {
                 /*
                  * If there are missing records try filling in the blanks
                  */
@@ -674,7 +674,7 @@
                 /** @var DateTime $currentDate */
                 $currentDate = new DateTime (date('Y-m-d', strtotime($this->getParamDate() . " +1 day")));
                 /** @var DateTime $sevenDaysAgo */
-                $sevenDaysAgo = new DateTime(date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day")));
+                $sevenDaysAgo = new DateTime(date('Y-m-d', strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day")));
                 $interval = DateInterval::createFromDateString('1 day');
                 $period = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
 
@@ -699,7 +699,7 @@
                                 $lastRecord = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
                                     array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
                                     array("AND" => array("user"     => $this->getUserID(),
-                                                         "date[<=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . ($days - 1) . " day"))
+                                                         "date[<=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day"))
                                     ), "ORDER"  => "date DESC", "LIMIT" => 1));
                             }
 
@@ -717,14 +717,46 @@
                 $returnWeight = array_reverse($returnWeight);
             }
 
+            $returnWeightKeys = array_keys($returnWeight);
+
+            for ($interval = 0; count($returnWeight) > $interval; $interval++) {
+                if (count($returnWeight) > $interval+10) {
+                    $returnWeight[$returnWeightKeys[$interval]]['weightAvg'] = ($returnWeight[$returnWeightKeys[$interval]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+1]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+2]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+3]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+4]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+5]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+6]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+7]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+8]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval+9]]['weight'])/10;
+
+                    $returnWeight[$returnWeightKeys[$interval]]['fatAvg'] = ($returnWeight[$returnWeightKeys[$interval]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+1]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+2]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+3]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+4]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+5]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+6]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+7]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+8]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval+9]]['fat'])/10;
+                }
+            }
+
+            $returnWeight = array_slice($returnWeight, 0, $days);
+
             $fatMin = 0;
             $fatMax = 0;
             $fat = array();
             $fatGoal = array();
+            $fatTrend = array();
             $weightMin = 0;
             $weightMax = 0;
             $weights = array();
             $weightGoal = array();
+            $weightTrend = array();
             foreach ($returnWeight as $db) {
                 //array_push($weights, (String)round($db['weight'], 2) . " " . $db['source']);
                 if ($db['weight'] < $weightMin || $weightMin == 0) {
@@ -735,6 +767,7 @@
                 }
                 array_push($weights, (String)round($db['weight'], 2));
                 array_push($weightGoal, (String)$db['weightGoal']);
+                array_push($weightTrend, (String)$db['weightAvg']);
 
                 if ($db['fat'] < $fatMin || $fatMin == 0) {
                     $fatMin = $db['fat'];
@@ -744,6 +777,7 @@
                 }
                 array_push($fat, (String)round($db['fat'], 2));
                 array_push($fatGoal, (String)$db['fatGoal']);
+                array_push($fatTrend, (String)$db['fatAvg']);
             }
 
             return array('returnDate'       => explode("-", $this->getParamDate()),
@@ -752,9 +786,11 @@
                          'graph_fat_min'    => $fatMin,
                          'graph_fat_max'    => $fatMax,
                          'graph_weight'     => $weights,
+                         'graph_weightTrend' => $weightTrend,
                          'graph_weightGoal' => $weightGoal,
                          'graph_fat'        => $fat,
-                         'graph_fatGoal'    => $fatGoal);
+                         'graph_fatGoal'    => $fatGoal,
+                         'graph_fatTrend' => $fatTrend);
         }
 
         /**
