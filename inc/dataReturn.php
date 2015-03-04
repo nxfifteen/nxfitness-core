@@ -591,6 +591,8 @@
                     $dbDevices[$key]['precentage'] = 50;
                 } else if (strtolower($dbDevices[$key]['battery']) == "low") {
                     $dbDevices[$key]['precentage'] = 10;
+                } else if (strtolower($dbDevices[$key]['battery']) == "empty") {
+                    $dbDevices[$key]['precentage'] = 0;
                 }
 
                 $dbDevices[$key]['unixTime'] = strtotime($dbDevices[$key]['lastSyncTime']);
