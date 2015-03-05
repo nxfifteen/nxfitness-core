@@ -778,6 +778,27 @@
                 array_push($fatAvg, (String)$db['fatAvg']);
             }
 
+            $loss = array();
+            $monthsBack = 1;
+            $loopMonths = true;
+            do {
+                $timestamp = strtotime('now -'.$monthsBack.' month');
+                if (array_key_exists(date('Y-m-t', $timestamp), $returnWeight) AND array_key_exists(date('Y-m-01', $timestamp), $returnWeight)) {
+                    $loss["weight"][date('Y F', $timestamp)] = round(($returnWeight[date('Y-m-t', $timestamp)]['weightTrend'] - $returnWeight[date('Y-m-01', $timestamp)]['weightTrend']) / 4, 2);
+                    $loss["fat"][date('Y F', $timestamp)] = round(($returnWeight[date('Y-m-t', $timestamp)]['fatTrend'] - $returnWeight[date('Y-m-01', $timestamp)]['fatTrend']) / 4, 2);
+                    $monthsBack += 1;
+                } else {
+                    $loopMonths = false;
+                }
+            } while($loopMonths);
+
+            if (!array_key_exists("weight", $loss)) {
+                $loss["weight"] = array();
+            }
+            if (!array_key_exists("fat", $loss)) {
+                $loss["fat"] = array();
+            }
+
             return array('returnDate'        => explode("-", $this->getParamDate()),
                          'graph_weight_min'  => $weightMin,
                          'graph_weight_max'  => $weightMax,
@@ -790,7 +811,9 @@
                          'graph_fat'         => $fat,
                          'graph_fatGoal'     => $fatGoal,
                          'graph_fatTrend'    => $fatTrend,
-                         'graph_fatAvg'      => $fatAvg);
+                         'graph_fatAvg'      => $fatAvg,
+                         'loss_rate_weight'  => $loss["weight"],
+                         'loss_rate_fat'     => $loss["fat"]);
         }
 
         /**
