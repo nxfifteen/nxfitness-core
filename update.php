@@ -3,4 +3,4 @@
 
     require_once(dirname(__FILE__) . "/inc/upgrade.php");
     $dataReturnClass = new Upgrade($test['user']);
-    $dataReturnClass->calcUserTrend();
+    $dataReturnClass->subscribeUser();

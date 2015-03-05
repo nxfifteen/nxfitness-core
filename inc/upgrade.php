@@ -70,7 +70,13 @@ class Upgrade {
         }
 
         echo "\n";
+    }
 
+    /**
+     * @throws FitBitException
+     */
+    public function subscribeUser() {
+        $this->getAppClass()->getFitbitapi()->subscribeUser($this->getUserID());
     }
 
 }
