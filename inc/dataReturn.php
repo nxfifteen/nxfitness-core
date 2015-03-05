@@ -724,28 +724,16 @@
             $returnWeightKeys = array_keys($returnWeight);
 
             for ($interval = 0; count($returnWeight) > $interval; $interval++) {
-                if (count($returnWeight) > $interval + 10) {
-                    $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = ($returnWeight[$returnWeightKeys[$interval]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 1]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 2]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 3]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 4]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 5]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 6]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 7]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 8]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval + 9]]['weight']) / 10;
-
-                    $returnWeight[$returnWeightKeys[$interval]]['fatTrend'] = ($returnWeight[$returnWeightKeys[$interval]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 1]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 2]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 3]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 4]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 5]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 6]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 7]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 8]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval + 9]]['fat']) / 10;
+                $averageRange = 15;
+                if (count($returnWeight) > $interval + $averageRange) {
+                    $fatSum = 0;
+                    $weightSum = 0;
+                    for ($intervalTwo = 0; $intervalTwo < $averageRange; $intervalTwo++) {
+                        $weightSum = $weightSum + $returnWeight[$returnWeightKeys[$interval + $intervalTwo]]['weight'];
+                        $fatSum = $fatSum + $returnWeight[$returnWeightKeys[$interval + $intervalTwo]]['fat'];
+                    }
+                    $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = $weightSum / $averageRange;
+                    $returnWeight[$returnWeightKeys[$interval]]['fatTrend'] = $fatSum / $averageRange;
                 } else {
                     $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = $returnWeight[$returnWeightKeys[$interval]]['weight'];
                     $returnWeight[$returnWeightKeys[$interval]]['fatTrend'] = $returnWeight[$returnWeightKeys[$interval]]['fat'];
