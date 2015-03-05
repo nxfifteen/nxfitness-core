@@ -270,11 +270,11 @@
             $returnArray['food']['summary']['sodium'] = 0;
             foreach ($dbFood as $meal) {
                 $returnArray['food']['meals'][$meal['meal']] = array('calories' => $meal['calories'],
-                                                                     'carbs' => $meal['carbs'],
-                                                                     'fat' => $meal['fat'],
-                                                                     'fiber' => $meal['fiber'],
-                                                                     'protein' => $meal['protein'],
-                                                                     'sodium' => $meal['sodium']
+                                                                     'carbs'    => $meal['carbs'],
+                                                                     'fat'      => $meal['fat'],
+                                                                     'fiber'    => $meal['fiber'],
+                                                                     'protein'  => $meal['protein'],
+                                                                     'sodium'   => $meal['sodium']
                 );
                 $returnArray['food']['summary']['calories'] += $meal['calories'];
                 $returnArray['food']['summary']['carbs'] += $meal['carbs'];
@@ -379,11 +379,11 @@
             foreach ($userActivity as $record) {
                 $startTime = new DateTime($record['startDate'] . " " . $record['startTime']);
                 $recKey = $startTime->format("F, Y");
-                if (!array_key_exists($recKey,$returnArray) || !is_array($returnArray[$recKey])) {
+                if (!array_key_exists($recKey, $returnArray) || !is_array($returnArray[$recKey])) {
                     $returnArray[$recKey] = array();
                 }
 
-                $record['name'] = str_ireplace(" (MyFitnessPal)","",$record['name']);
+                $record['name'] = str_ireplace(" (MyFitnessPal)", "", $record['name']);
                 $endTime = date("U", strtotime($record['startTime']));
                 $endTime = $endTime + ($record['duration'] / 1000);
                 $record['endTime'] = date("Y-m-d H:i", $endTime);
@@ -574,17 +574,17 @@
          */
         public function returnUserRecordDevices() {
             $dbDevices = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
-                "[>]".$this->getAppClass()->getSetting("db_prefix", NULL, FALSE)."lnk_dev2usr" => array("id" => "device")),
+                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr" => array("id" => "device")),
                 array(
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.deviceVersion',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.battery',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.lastSyncTime',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.type',
-                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE)."lnk_dev2usr.user" => $this->getUserID()));
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr.user" => $this->getUserID()));
 
             foreach ($dbDevices as $key => $dev) {
-                $dbDevices[$key]['image'] = 'images/devices/' . str_ireplace(" ","",$dbDevices[$key]['deviceVersion']) . ".png";
-                $dbDevices[$key]['imageSmall'] = 'images/devices/' . str_ireplace(" ","",$dbDevices[$key]['deviceVersion']) . "_small.png";
+                $dbDevices[$key]['image'] = 'images/devices/' . str_ireplace(" ", "", $dbDevices[$key]['deviceVersion']) . ".png";
+                $dbDevices[$key]['imageSmall'] = 'images/devices/' . str_ireplace(" ", "", $dbDevices[$key]['deviceVersion']) . "_small.png";
                 if (strtolower($dbDevices[$key]['battery']) == "high") {
                     $dbDevices[$key]['precentage'] = 100;
                 } else if (strtolower($dbDevices[$key]['battery']) == "medium") {
@@ -625,7 +625,7 @@
             }
 
             $dbWeight = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
-                array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
+                array('date', 'weight', 'weightGoal', 'weightAvg', 'fat', 'fatAvg', 'fatGoal'),
                 array("AND" => array("user"     => $this->getUserID(),
                                      "date[<=]" => $this->getParamDate(),
                                      "date[>=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day"))
@@ -663,8 +663,10 @@
                     $returnWeight[$dt->format("Y-m-d")] = array("date"       => $dt->format("Y-m-d"),
                                                                 "weight"     => $weight,
                                                                 "weightGoal" => $weightGoal,
+                                                                "weightAvg"  => $weight,
                                                                 "fat"        => $fat,
                                                                 "fatGoal"    => $fatGoal,
+                                                                "fatAvg"     => $fat,
                                                                 "source"     => "LatestRecord");
                 }
 
@@ -699,7 +701,7 @@
                         if ($foundMissingRecord) {
                             if (is_null($lastRecord)) {
                                 $lastRecord = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
-                                    array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'),
+                                    array('date', 'weight', 'weightAvg', 'weightGoal', 'fat', 'fatAvg', 'fatGoal'),
                                     array("AND" => array("user"     => $this->getUserID(),
                                                          "date[<=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day"))
                                     ), "ORDER"  => "date DESC", "LIMIT" => 1));
@@ -722,28 +724,31 @@
             $returnWeightKeys = array_keys($returnWeight);
 
             for ($interval = 0; count($returnWeight) > $interval; $interval++) {
-                if (count($returnWeight) > $interval+10) {
-                    $returnWeight[$returnWeightKeys[$interval]]['weightAvg'] = ($returnWeight[$returnWeightKeys[$interval]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+1]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+2]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+3]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+4]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+5]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+6]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+7]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+8]]['weight']
-                            + $returnWeight[$returnWeightKeys[$interval+9]]['weight'])/10;
+                if (count($returnWeight) > $interval + 10) {
+                    $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = ($returnWeight[$returnWeightKeys[$interval]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 1]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 2]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 3]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 4]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 5]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 6]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 7]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 8]]['weight']
+                            + $returnWeight[$returnWeightKeys[$interval + 9]]['weight']) / 10;
 
-                    $returnWeight[$returnWeightKeys[$interval]]['fatAvg'] = ($returnWeight[$returnWeightKeys[$interval]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+1]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+2]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+3]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+4]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+5]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+6]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+7]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+8]]['fat']
-                            + $returnWeight[$returnWeightKeys[$interval+9]]['fat'])/10;
+                    $returnWeight[$returnWeightKeys[$interval]]['fatTrend'] = ($returnWeight[$returnWeightKeys[$interval]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 1]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 2]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 3]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 4]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 5]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 6]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 7]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 8]]['fat']
+                            + $returnWeight[$returnWeightKeys[$interval + 9]]['fat']) / 10;
+                } else {
+                    $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = $returnWeight[$returnWeightKeys[$interval]]['weight'];
+                    $returnWeight[$returnWeightKeys[$interval]]['fatTrend'] = $returnWeight[$returnWeightKeys[$interval]]['fat'];
                 }
             }
 
@@ -752,15 +757,16 @@
             $fatMin = 0;
             $fatMax = 0;
             $fat = array();
+            $fatAvg = array();
             $fatGoal = array();
             $fatTrend = array();
             $weightMin = 0;
             $weightMax = 0;
             $weights = array();
+            $weightAvg = array();
             $weightGoal = array();
             $weightTrend = array();
             foreach ($returnWeight as $db) {
-                //array_push($weights, (String)round($db['weight'], 2) . " " . $db['source']);
                 if ($db['weight'] < $weightMin || $weightMin == 0) {
                     $weightMin = $db['weight'];
                 }
@@ -769,7 +775,8 @@
                 }
                 array_push($weights, (String)round($db['weight'], 2));
                 array_push($weightGoal, (String)$db['weightGoal']);
-                array_push($weightTrend, (String)$db['weightAvg']);
+                array_push($weightTrend, (String)$db['weightTrend']);
+                array_push($weightAvg, (String)$db['weightAvg']);
 
                 if ($db['fat'] < $fatMin || $fatMin == 0) {
                     $fatMin = $db['fat'];
@@ -779,20 +786,23 @@
                 }
                 array_push($fat, (String)round($db['fat'], 2));
                 array_push($fatGoal, (String)$db['fatGoal']);
-                array_push($fatTrend, (String)$db['fatAvg']);
+                array_push($fatTrend, (String)$db['fatTrend']);
+                array_push($fatAvg, (String)$db['fatAvg']);
             }
 
-            return array('returnDate'       => explode("-", $this->getParamDate()),
-                         'graph_weight_min' => $weightMin,
-                         'graph_weight_max' => $weightMax,
-                         'graph_fat_min'    => $fatMin,
-                         'graph_fat_max'    => $fatMax,
-                         'graph_weight'     => $weights,
+            return array('returnDate'        => explode("-", $this->getParamDate()),
+                         'graph_weight_min'  => $weightMin,
+                         'graph_weight_max'  => $weightMax,
+                         'graph_fat_min'     => $fatMin,
+                         'graph_fat_max'     => $fatMax,
+                         'graph_weight'      => $weights,
                          'graph_weightTrend' => $weightTrend,
-                         'graph_weightGoal' => $weightGoal,
-                         'graph_fat'        => $fat,
-                         'graph_fatGoal'    => $fatGoal,
-                         'graph_fatTrend' => $fatTrend);
+                         'graph_weightAvg'   => $weightAvg,
+                         'graph_weightGoal'  => $weightGoal,
+                         'graph_fat'         => $fat,
+                         'graph_fatGoal'     => $fatGoal,
+                         'graph_fatTrend'    => $fatTrend,
+                         'graph_fatAvg'      => $fatAvg);
         }
 
         /**
@@ -809,19 +819,31 @@
             $yEndWeight = $nextRecord['weight'];
             $dailyChangeWeight = ($yEndWeight - $yStartWeight) / $xDistance;
 
+            $yStartWeightAvg = $lastRecord['weightAvg'];
+            $yEndWeightAvg = $nextRecord['weightAvg'];
+            $dailyChangeWeightAvg = ($yEndWeightAvg - $yStartWeightAvg) / $xDistance;
+
             $yStartFat = $lastRecord['fat'];
             $yEndFat = $nextRecord['fat'];
             $dailyChangeFat = ($yEndFat - $yStartFat) / $xDistance;
+
+            $yStartFatAvg = $lastRecord['fatAvg'];
+            $yEndFatAvg = $nextRecord['fatAvg'];
+            $dailyChangeFatAvg = ($yEndFatAvg - $yStartFatAvg) / $xDistance;
 
             $dayNumber = 0;
             foreach ($arrayOfMissingDays as $date) {
                 $dayNumber = $dayNumber + 1;
                 $calcWeight = (String)round(($dailyChangeWeight * $dayNumber) + $yStartWeight, 2);
+                $calcWeightAvg = (String)round(($dailyChangeWeightAvg * $dayNumber) + $yStartWeightAvg, 2);
                 $calcFat = (String)round(($dailyChangeFat * $dayNumber) + $yStartFat, 2);
+                $calcFatAvg = (String)round(($dailyChangeFatAvg * $dayNumber) + $yStartFatAvg, 2);
                 $returnWeight[$date] = array("date"       => $date,
                                              "weight"     => $calcWeight,
+                                             "weightAvg"  => $calcWeightAvg,
                                              "weightGoal" => $nextRecord['weightGoal'],
                                              "fat"        => $calcFat,
+                                             "fatAvg"     => $calcFatAvg,
                                              "fatGoal"    => $nextRecord['fatGoal'],
                                              "source"     => "CalcDeviation");
             }
