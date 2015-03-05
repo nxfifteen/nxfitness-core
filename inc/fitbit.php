@@ -948,6 +948,9 @@
                 }
 
                 if ($insertToDB) {
+                    $weightAvg = round(($weight - $this->getDBCurrentBody($user, "weight")) / 10, 1, PHP_ROUND_HALF_UP) + $this->getDBCurrentBody($user, "weight");
+                    $fatAvg = round(($fat - $this->getDBCurrentBody($user, "fat")) / 10, 1, PHP_ROUND_HALF_UP) + $this->getDBCurrentBody($user, "fat");
+
                     if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
                         nxr('  Weight Goal unset, reverting to 0');
                         $goalsweight = $this->getDBCurrentBody($user, "weightGoal", TRUE);
@@ -974,8 +977,10 @@
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array(
                             "weight"     => $weight,
                             "weightGoal" => $goalsweight,
+                            "weightAvg"  => $weightAvg,
                             "fat"        => $fat,
                             "fatGoal"    => $goalsfat,
+                            "fatAvg"     => $fatAvg,
                             "bmi"        => $bmi,
                             "bicep"      => (String)$userBodyLog->body->bicep,
                             "calf"       => (String)$userBodyLog->body->calf,
