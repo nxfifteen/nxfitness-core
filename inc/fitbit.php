@@ -289,6 +289,16 @@
             }
         }
 
+        public function subscribeUser($user) {
+            if ($this->getAppClass()->isUser($user)) {
+                if (!$this->getAppClass()->getFitbitapi()->isAuthorised()) {
+                    $this->getAppClass()->getFitbitapi()->oAuthorise($user);
+                }
+                $this->getAppClass()->getFitbitapi()->getLibrary()->addSubscription(1);
+                print_r($this->getAppClass()->getFitbitapi()->getLibrary()->getSubscriptions());
+            }
+        }
+
         /**
          * @return FitBitPHP
          */
