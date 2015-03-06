@@ -65,18 +65,19 @@
     header('HTTP/1.0 204 No Content');
 
     function validate_client() {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
-
-        $host = gethostbyaddr($ip);
-        if (strpos($host, '.fitbit.com') !== false) {
-            $access = true;
-        } else {
-            $access = false;
-        }
-
-        return $access;
+        //if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        //    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        //} else {
+        //    $ip = $_SERVER['REMOTE_ADDR'];
+        //}
+        //
+        //$host = gethostbyaddr($ip);
+        //if (strpos($host, '.fitbit.com') !== false) {
+        //    $access = true;
+        //} else {
+        //    $access = false;
+        //}
+        //
+        //return $access;
+        return true;
     }
