@@ -229,11 +229,13 @@
                                     "minutesVeryActive"    => "1800",
                                     "caloriesOut"          => "1800");
                 if ($trigger == "all" || $trigger == "activities") {
-                    nxr(" Downloading Series Info");
-                    foreach ($timeSeries as $activity => $timeout) {
-                        $this->api_pull_time_series($user, $activity);
+                    if ($this->api_isCooled("activities", $user)) {
+                        nxr(" Downloading Series Info");
+                        foreach ($timeSeries as $activity => $timeout) {
+                            $this->api_pull_time_series($user, $activity, TRUE);
+                        }
+                        $this->api_setLastrun("activities", $user, NULL, TRUE);
                     }
-                    $this->api_setLastrun("activities", $user, NULL, TRUE);
                 } else if (array_key_exists($trigger, $timeSeries)) {
                     $this->api_pull_time_series($user, $trigger);
                 }
@@ -1297,9 +1299,10 @@
         /**
          * @param $user
          * @param $trigger
+         * @param bool $force
          */
-        private function api_pull_time_series($user, $trigger) {
-            if ($this->api_isCooled($trigger, $user)) {
+        private function api_pull_time_series($user, $trigger, $force = false) {
+            if ($force || $this->api_isCooled($trigger, $user)) {
                 $currentDate = new DateTime();
 
                 $lastrun = $this->api_getLastCleanrun($trigger, $user);
