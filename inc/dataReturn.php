@@ -112,7 +112,7 @@
                     $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
                 }
 
-                return array("error" => "true", "code" => 103, "msg" => "Unknown dataset");
+                return array("error" => "true", "code" => 103, "msg" => "Unknown dataset: " . $functionName);
             }
         }
 
