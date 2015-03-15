@@ -816,6 +816,41 @@
                          'loss_rate_fat'     => $loss["fat"]);
         }
 
+        public function returnUserRecordAboutMe() {
+            $dbSteps = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('steps'),
+                array("user" => $this->getUserID())
+            );
+            $dbFloors = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('floors'),
+                array("user" => $this->getUserID())
+            );
+            $dbDistance = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('distance'),
+                array("user" => $this->getUserID())
+            );
+
+            $yearThis = date("Y");
+            $yearLast = date("Y") - 1;
+            $dbStepsYearThis = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('steps'),
+                array("AND" => array("user" => $this->getUserID(), "date[~]" => $yearThis . "%"))
+            );
+
+            $dbStepsYearLast = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('steps'),
+                array("AND" => array("user" => $this->getUserID(), "date[~]" => $yearLast . "%"))
+            );
+
+            return array(
+                "steps" => round($dbSteps, 0),
+                "floors" => round($dbFloors, 0),
+                "distance" => round($dbDistance, 0),
+                "stepsThisYear" => round($dbStepsYearThis, 0),
+                "stepsLastYear" => round($dbStepsYearLast, 0),
+            );
+        }
+
         /**
          * @param array $returnWeight
          * @param array $arrayOfMissingDays
