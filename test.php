@@ -1,5 +1,5 @@
 <?php
-    $test = array("user" => "269VLG", "data" => "Weight", "period" => "all");
+    $test = array("user" => "269VLG", "data" => "KeyPoints");
 
     require_once(dirname(__FILE__) . "/inc/dataReturn.php");
     $dataReturnClass = new dataReturn($test['user']);
