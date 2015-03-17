@@ -865,9 +865,11 @@
             $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
             if (array_key_exists("personal", $_GET) and $_GET['personal'] == "true") {
                 $he = "I";
+                $is = "am";
                 $hes = "I've";
                 $his = "my";
             } else {
+                $is = "is";
                 if ($dbUsers['gender'] == "MALE") {
                     $he = "he";
                     $hes = "he's";
@@ -902,9 +904,9 @@
             $returnStats = array("distance" => array(), "floors" => array(), "max" => array(), "friends" => array());
             $returnStats["friends"] = $hes . " " . $dbUsers['friends'] . " friends ";
             if ($dbUsers['rank'] > 1) {
-                $returnStats["friends"] .= "and is currently ranked " . $this->ordinal_suffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'], 0) . " steps " . $he . " could take " . $this->ordinal_suffix($dbUsers['rank'] - 1) . " place.";
+                $returnStats["friends"] .= "and " . $is . " currently ranked " . $this->ordinal_suffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'], 0) . " steps " . $he . " could take " . $this->ordinal_suffix($dbUsers['rank'] - 1) . " place.";
             } else {
-                $returnStats["friends"] .= "and is proudly at the top of the leaderboard.";
+                $returnStats["friends"] .= "and " . $is . " proudly at the top of the leaderboard.";
             }
 
             /**
