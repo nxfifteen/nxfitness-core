@@ -852,55 +852,159 @@
         }
 
         public function returnUserRecordKeyPoints() {
-            /*
-            284 miles until ive walked the length of the UK motorways.
-            9,316 more miles until ive walked the UK coastline.
-            23,103 more miles until ive walked the distance around the world!
-            237,101 miles until ive walked to the moon.
-             */
-
-            $keyPoints = array(
-                "distance" => array(
-                    "lochness"  => array( "miles" => "22", "tag" => "length of Loch Ness" ),
-                    "coastline" => array( "miles" => "7723", "tag" => "the UK coastline" ),
-                    "theworld"  => array( "miles" => "24901", "tag" => "around the world!" ),
-                    "moon"      => array( "miles" => "238855", "tag" => "to the moon" ),
-                    "motorways" => array( "miles" => "245400", "tag" => "length of the UK motorways" ),
-                )
-            );
-
+            // Get Users Gender and leaderboard ranking
             $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
-            if ($dbUsers['gender'] == "MALE") {
-                $he = "he";
-                $hes = "he's";
-                $his = "his";
+            if (array_key_exists("personal", $_GET) and $_GET['personal'] == "true") {
+                $he = "I";
+                $hes = "I've";
+                $his = "my";
             } else {
-                $he = "she";
-                $hes = "she's";
-                $his = "her";
-            }
-
-            $dbDistanceAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'distance', array("user" => $this->getUserID()));
-
-            $returnStats = array("distance" => array(), "max" => array());
-            foreach ($keyPoints['distance'] as $key => $values) {
-                if ($dbDistanceAllTime < $values['miles']) {
-                    array_push($returnStats["distance"], number_format(($values['miles'] - $dbDistanceAllTime), 0) . " miles until " . $hes . " walked " . $values['tag']);
+                if ($dbUsers['gender'] == "MALE") {
+                    $he = "he";
+                    $hes = "he's";
+                    $his = "his";
+                } else {
+                    $he = "she";
+                    $hes = "she's";
+                    $his = "her";
                 }
             }
 
+            /**
+             * Get Keypoint records
+             */
+            $dbKeyPoints = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "keypoints",
+                array('category', 'value', 'less', 'more')
+            );
+
+            $keyPoints = array();
+            foreach ($dbKeyPoints as $point) {
+                if (!array_key_exists($point['category'], $keyPoints)) {
+                    $keyPoints[$point['category']] = array();
+                }
+
+                array_push($keyPoints[$point['category']], array(
+                    "value" => $point['value'],
+                    "less" => $point['less'],
+                    "more" => $point['more']
+                ));
+            }
+
+            $returnStats = array("distance" => array(), "floors" => array(), "max" => array(), "friends" => array());
+            $returnStats["friends"] = $hes . " " . $dbUsers['friends'] . " friends ";
+            if ($dbUsers['rank'] > 1) {
+                $returnStats["friends"] .= "and is currently ranked " . $this->ordinal_suffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'], 0) . " steps " . $he . " could take " . $this->ordinal_suffix($dbUsers['rank'] - 1) . " place.";
+            } else {
+                $returnStats["friends"] .= "and is proudly at the top of the leaderboard.";
+            }
+
+            /**
+             * Set key points for DISTANCE
+             */
+            $dbDistanceAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'distance', array("user" => $this->getUserID()));
+            $less = array();
+            $more = array();
+            foreach ($keyPoints['distance'] as $values) {
+                if ($dbDistanceAllTime < $values['value']) {
+                    array_push($less, number_format(($values['value'] - $dbDistanceAllTime), 0) . " miles until " . $hes . " walked " . $values['less']);
+                } else if ($dbDistanceAllTime > $values['value']) {
+                    $times = round($dbDistanceAllTime / $values['value'], 2);
+                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
+                        $msg = $hes . " walked " . $values['more'] . " " . number_format($times, 0) . " time";
+                    } else {
+                        $msg = $hes . " walked " . $values['less'] . " " . number_format($times, 0) . " time";
+                    }
+                    if ($times > 1) {
+                        $msg .= "s";
+                    }
+                    array_push($more, $msg);
+                }
+            }
+
+            $maxItems = $this->getAppClass()->getSetting("kp_maxItems", 8);
+            $lessItems = $this->getAppClass()->getSetting("kp_lessItems", 2);
+            if (count($less) < $maxItems - $lessItems) {
+                $lessItems = $maxItems - count($less);
+            }
+
+            for ($iMore = ($lessItems - 1); $iMore >= 0; $iMore = $iMore - 1) {
+                if (count($more) > $iMore) {
+                    array_push($returnStats['distance'], $more[(count($more) - 1) - $iMore]);
+                    $maxItems = $maxItems - 1;
+                }
+            }
+
+            for ($iLess = $maxItems; $iLess >= 0; $iLess = $iLess - 1) {
+                if (count($less) > $iLess) {
+                    array_push($returnStats['distance'], $less[(count($less) - 1) - $iLess]);
+                }
+            }
+
+            /**
+             * Set key points for Floors
+             */
+            $dbFloorsAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors', array("user" => $this->getUserID()));
+
+            $less = array();
+            $more = array();
+            foreach ($keyPoints['floors'] as $values) {
+                if ($dbFloorsAllTime < $values['value']) {
+                    array_push($less, number_format(($values['value'] - $dbFloorsAllTime), 0) . " more floors until " . $hes . " climbed " . $values['less']);
+                } else if ($dbFloorsAllTime > $values['value']) {
+                    $times = round($dbFloorsAllTime / $values['value'], 0);
+                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
+                        $msg = $hes . " climbed " . $values['more'] . " " . number_format($times, 0) . " time";
+                    } else {
+                        $msg = $hes . " climbed " . $values['less'] . " " . number_format($times, 0) . " time";
+                    }
+                    if ($times > 1) {
+                        $msg .= "s";
+                    }
+                    array_push($more, $msg);
+                }
+            }
+
+            $maxItems = $this->getAppClass()->getSetting("kp_maxItems", 8);
+            $lessItems = $this->getAppClass()->getSetting("kp_lessItems", 2);
+            if (count($less) < $maxItems - $lessItems) {
+                $lessItems = $maxItems - count($less);
+            }
+
+            for ($iMore = ($lessItems - 1); $iMore >= 0; $iMore = $iMore - 1) {
+                if (count($more) > $iMore) {
+                    array_push($returnStats['floors'], $more[(count($more) - 1) - $iMore]);
+                    $maxItems = $maxItems - 1;
+                }
+            }
+
+            for ($iLess = $maxItems; $iLess >= 0; $iLess = $iLess - 1) {
+                if (count($less) > $iLess) {
+                    array_push($returnStats['floors'], $less[(count($less) - 1) - $iLess]);
+                }
+            }
+
+            /**
+             * Set Max values
+             */
             $dbMaxSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('steps', 'date'), array("user" => $this->getUserID(), "ORDER" => "steps DESC", "LIMIT" => 1));
-            $returnStats["max"]["steps"] = array("date" => $dbMaxSteps['date'], "value" => number_format($dbMaxSteps['steps'], 0));
+            array_push($returnStats["max"], $his . " highest step count, totalling " . number_format($dbMaxSteps['steps'], 0) . ", for a day was on " . date("jS F, Y", strtotime($dbMaxSteps['date'])) . ".");
 
             $dbMaxDistance = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'date'), array("user" => $this->getUserID(), "ORDER" => "distance DESC", "LIMIT" => 1));
-            $returnStats["max"]["distance"] = array("date" => $dbMaxDistance['date'], "value" => number_format($dbMaxDistance['distance'], 2));
-
-            $dbMaxElevation = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('elevation', 'date'), array("user" => $this->getUserID(), "ORDER" => "elevation DESC", "LIMIT" => 1));
-            $returnStats["max"]["elevation"] = array("date" => $dbMaxElevation['date'], "value" => number_format($dbMaxElevation['elevation'], 2));
+            if ($dbMaxDistance['date'] == $dbMaxSteps['date']) {
+                $returnStats["max"][(count($returnStats["max"]) -1)] .= " That's an impressive " . number_format($dbMaxDistance['distance'], 0) . " miles.";
+            } else {
+                array_push($returnStats["max"], $he . " traveled the furthest, " . number_format($dbMaxDistance['distance'], 0) . " miles, on " . date("jS F, Y", strtotime($dbMaxDistance['date'])) . ".");
+            }
 
             $dbMaxFloors = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('floors', 'date'), array("user" => $this->getUserID(), "ORDER" => "floors DESC", "LIMIT" => 1));
-            $returnStats["max"]["floors"] = array("date" => $dbMaxFloors['date'], "value" => number_format($dbMaxFloors['floors'], 0));
+            array_push($returnStats["max"], $he . " walked up, " . number_format($dbMaxFloors['floors'], 0) . " floors, on " . date("jS F, Y", strtotime($dbMaxFloors['date'])) . ".");
 
+            $dbMaxElevation = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('elevation', 'date'), array("user" => $this->getUserID(), "ORDER" => "elevation DESC", "LIMIT" => 1));
+            if ($dbMaxFloors['date'] == $dbMaxElevation['date']) {
+                $returnStats["max"][(count($returnStats["max"]) -1)] .= " That's a total of " . number_format($dbMaxElevation['elevation'], 2) . " meters.";
+            } else {
+                array_push($returnStats["max"], $he . " climed the highest on " . date("jS F, Y", strtotime($dbMaxElevation['date'])) . ", a total of " . number_format($dbMaxElevation['elevation'], 2) . " meters.");
+            }
             return $returnStats;
         }
 
@@ -949,4 +1053,17 @@
 
             return $returnWeight;
         }
+
+        private function ordinal_suffix($input_num){
+            $num = $input_num % 100; // protect against large numbers
+            if($num < 11 || $num > 13){
+                switch($num % 10){
+                    case 1: return $input_num . 'st';
+                    case 2: return $input_num . 'nd';
+                    case 3: return $input_num . 'rd';
+                }
+            }
+            return $input_num . 'th';
+        }
+
     }
