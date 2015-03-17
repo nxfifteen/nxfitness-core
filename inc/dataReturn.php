@@ -283,6 +283,15 @@
                 $returnArray['food']['summary']['protein'] += $meal['protein'];
                 $returnArray['food']['summary']['sodium'] += $meal['sodium'];
             }
+            foreach ($dbFood as $meal) {
+                $returnArray['food']['meals'][$meal['meal']]['precentage'] = ($meal['calories']/$returnArray['food']['summary']['calories']) * 100;
+            }
+            $returnArray['food']['goals'] = array();
+            $returnArray['food']['goals']['carbs'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_carbs", 310);
+            $returnArray['food']['goals']['fat'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_fat", 70);
+            $returnArray['food']['goals']['fiber'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_fiber", 30);
+            $returnArray['food']['goals']['protein'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_protein", 50);
+            $returnArray['food']['goals']['sodium'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_sodium", 2300);
 
             return $returnArray;
         }
