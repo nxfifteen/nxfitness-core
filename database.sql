@@ -6,17 +6,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
---
--- Database: `nxad`
---
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_activity`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_activity`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_activity` (
   `user` varchar(8) NOT NULL,
   `date` varchar(10) NOT NULL,
@@ -27,13 +17,6 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_activity` (
   `syncd` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_activity_log`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_activity_log`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_activity_log` (
   `user` varchar(8) NOT NULL,
   `date` varchar(19) NOT NULL,
@@ -51,45 +34,37 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_activity_log` (
   `isFavorite` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_bages`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_bages`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_bages` (
   `badgeType` varchar(120) NOT NULL,
   `value` int(11) NOT NULL,
-  `image50px` varchar(255) NOT NULL,
-  `image75px` varchar(255) NOT NULL,
-  `image300px` varchar(255) NOT NULL
+  `image` varchar(255) NOT NULL,
+  `badgeGradientEndColor` varchar(6) NOT NULL,
+  `badgeGradientStartColor` varchar(6) NOT NULL,
+  `earnedMessage` longtext NOT NULL,
+  `marketingDescription` longtext NOT NULL,
+  `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_body`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_body`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_body` (
   `user` varchar(8) NOT NULL,
-  `date` varchar(10) NOT NULL,
+  `date` date NOT NULL,
   `weight` decimal(5,2) DEFAULT NULL,
   `weightGoal` decimal(5,2) DEFAULT NULL,
+  `weightAvg` decimal(5,2) DEFAULT NULL,
   `fat` decimal(5,2) DEFAULT NULL,
   `fatGoal` decimal(5,2) DEFAULT NULL,
-  `bmi` decimal(5,2) DEFAULT NULL
+  `fatAvg` decimal(5,2) DEFAULT NULL,
+  `bmi` decimal(5,2) DEFAULT NULL,
+  `calf` decimal(5,2) DEFAULT NULL,
+  `bicep` decimal(5,2) DEFAULT NULL,
+  `chest` decimal(5,2) DEFAULT NULL,
+  `forearm` decimal(5,2) DEFAULT NULL,
+  `hips` decimal(5,2) DEFAULT NULL,
+  `neck` decimal(5,2) DEFAULT NULL,
+  `thigh` decimal(5,2) DEFAULT NULL,
+  `waist` decimal(5,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_devices`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_devices`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_devices` (
   `id` varchar(20) NOT NULL,
   `deviceVersion` varchar(10) NOT NULL,
@@ -98,13 +73,6 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_devices` (
   `battery` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_goals_calories`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_goals_calories`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_goals_calories` (
   `user` varchar(8) NOT NULL,
   `date` varchar(10) NOT NULL,
@@ -114,13 +82,6 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_goals_calories` (
   `personalized` varchar(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_heartAverage`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_heartAverage`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_heartAverage` (
   `user` varchar(8) NOT NULL,
   `date` varchar(20) NOT NULL,
@@ -129,13 +90,13 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_heartAverage` (
   `exertive` decimal(5,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `nx_fitbit_keypoints` (
+  `category` enum('distance','floors') NOT NULL,
+  `value` float(22,2) NOT NULL,
+  `less` varchar(255) NOT NULL,
+  `more` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Table structure for table `nx_fitbit_lnk_badge2usr`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_lnk_badge2usr`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_badge2usr` (
   `user` varchar(8) NOT NULL,
   `badgeType` varchar(120) NOT NULL,
@@ -145,25 +106,11 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_badge2usr` (
   `unit` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_lnk_dev2usr`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_lnk_dev2usr`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_dev2usr` (
   `user` varchar(8) NOT NULL,
   `device` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_lnk_sleep2usr`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_lnk_sleep2usr`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_sleep2usr` (
   `user` varchar(8) NOT NULL,
   `sleeplog` int(11) NOT NULL,
@@ -172,13 +119,6 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_sleep2usr` (
   `totalTimeInBed` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_logFood`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_logFood`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_logFood` (
   `user` varchar(8) NOT NULL,
   `date` varchar(10) NOT NULL,
@@ -191,13 +131,6 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_logFood` (
   `sodium` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_logSleep`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_logSleep`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_logSleep` (
   `logId` int(11) NOT NULL,
   `awakeningsCount` int(11) NOT NULL,
@@ -213,26 +146,12 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_logSleep` (
   `minuteData` longtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_queue`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_queue`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_queue` (
   `user` varchar(10) NOT NULL,
   `date` varchar(20) NOT NULL,
   `trigger` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_runlog`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_runlog`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_runlog` (
   `user` varchar(8) NOT NULL,
   `date` varchar(20) NOT NULL,
@@ -241,25 +160,11 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_runlog` (
   `lastrun` varchar(20) NOT NULL DEFAULT '1970-01-01 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_settings`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_settings`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_settings` (
   `var` varchar(255) NOT NULL,
   `data` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_steps`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_steps`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_steps` (
   `user` varchar(8) NOT NULL,
   `distance` decimal(21,16) DEFAULT NULL,
@@ -271,13 +176,6 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_steps` (
   `syncd` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_steps_goals`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_steps_goals`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_steps_goals` (
   `user` varchar(8) NOT NULL,
   `distance` decimal(21,16) DEFAULT NULL,
@@ -289,13 +187,6 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_steps_goals` (
   `syncd` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_users`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_users`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_users` (
 `uid` int(11) NOT NULL,
   `fuid` varchar(8) NOT NULL,
@@ -315,28 +206,26 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_users` (
   `stride_walking` decimal(20,14) DEFAULT NULL,
   `city` varchar(25) DEFAULT NULL,
   `country` varchar(3) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `nx_fitbit_users_auth` (
+`ID` int(7) unsigned NOT NULL,
+  `Username` varchar(15) NOT NULL,
+  `Password` varchar(40) NOT NULL,
+  `Email` varchar(100) NOT NULL,
+  `Activated` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `Confirmation` char(40) NOT NULL DEFAULT '',
+  `RegDate` int(11) unsigned NOT NULL,
+  `LastLogin` int(11) unsigned NOT NULL DEFAULT '0',
+  `GroupID` int(2) unsigned NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Table structure for table `nx_fitbit_users_settings`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_users_settings`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_users_settings` (
   `fuid` varchar(8) NOT NULL,
-  `name` varchar(128) NOT NULL DEFAULT '' COMMENT 'The name of the variable.',
-  `value` longtext NOT NULL COMMENT 'The value of the variable.'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Named variable/value pairs created.';
+  `name` varchar(128) NOT NULL DEFAULT '',
+  `value` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nx_fitbit_water`
---
-
-DROP TABLE IF EXISTS `nx_fitbit_water`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_water` (
   `user` varchar(8) NOT NULL,
   `date` varchar(10) NOT NULL,
@@ -344,154 +233,93 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_water` (
   `liquid` decimal(18,12) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Indexes for dumped tables
---
 
---
--- Indexes for table `nx_fitbit_activity`
---
 ALTER TABLE `nx_fitbit_activity`
  ADD PRIMARY KEY (`user`,`date`);
 
---
--- Indexes for table `nx_fitbit_activity_log`
---
 ALTER TABLE `nx_fitbit_activity_log`
- ADD PRIMARY KEY (`user`,`date`);
+ ADD PRIMARY KEY (`user`,`logId`,`activityId`,`startDate`,`startTime`);
 
---
--- Indexes for table `nx_fitbit_bages`
---
 ALTER TABLE `nx_fitbit_bages`
  ADD PRIMARY KEY (`badgeType`,`value`);
 
---
--- Indexes for table `nx_fitbit_body`
---
 ALTER TABLE `nx_fitbit_body`
  ADD PRIMARY KEY (`user`,`date`);
 
---
--- Indexes for table `nx_fitbit_devices`
---
 ALTER TABLE `nx_fitbit_devices`
  ADD PRIMARY KEY (`id`);
 
---
--- Indexes for table `nx_fitbit_goals_calories`
---
 ALTER TABLE `nx_fitbit_goals_calories`
  ADD PRIMARY KEY (`user`,`date`);
 
---
--- Indexes for table `nx_fitbit_heartAverage`
---
 ALTER TABLE `nx_fitbit_heartAverage`
  ADD PRIMARY KEY (`user`,`date`);
 
---
--- Indexes for table `nx_fitbit_lnk_badge2usr`
---
+ALTER TABLE `nx_fitbit_keypoints`
+ ADD PRIMARY KEY (`category`,`value`);
+
 ALTER TABLE `nx_fitbit_lnk_badge2usr`
  ADD PRIMARY KEY (`user`,`badgeType`,`value`);
 
---
--- Indexes for table `nx_fitbit_lnk_dev2usr`
---
 ALTER TABLE `nx_fitbit_lnk_dev2usr`
  ADD UNIQUE KEY `user` (`user`,`device`);
 
---
--- Indexes for table `nx_fitbit_lnk_sleep2usr`
---
 ALTER TABLE `nx_fitbit_lnk_sleep2usr`
  ADD PRIMARY KEY (`user`,`sleeplog`), ADD KEY `sleeplog` (`sleeplog`);
 
---
--- Indexes for table `nx_fitbit_logFood`
---
 ALTER TABLE `nx_fitbit_logFood`
  ADD PRIMARY KEY (`user`,`date`,`meal`);
 
---
--- Indexes for table `nx_fitbit_logSleep`
---
 ALTER TABLE `nx_fitbit_logSleep`
  ADD PRIMARY KEY (`logId`);
 
---
--- Indexes for table `nx_fitbit_queue`
---
 ALTER TABLE `nx_fitbit_queue`
  ADD PRIMARY KEY (`user`,`trigger`);
 
---
--- Indexes for table `nx_fitbit_runlog`
---
 ALTER TABLE `nx_fitbit_runlog`
  ADD PRIMARY KEY (`user`,`activity`);
 
---
--- Indexes for table `nx_fitbit_settings`
---
 ALTER TABLE `nx_fitbit_settings`
  ADD UNIQUE KEY `var` (`var`);
 
---
--- Indexes for table `nx_fitbit_steps`
---
 ALTER TABLE `nx_fitbit_steps`
  ADD PRIMARY KEY (`user`,`date`), ADD UNIQUE KEY `distance` (`user`,`date`,`distance`), ADD UNIQUE KEY `elevation` (`user`,`date`,`elevation`), ADD UNIQUE KEY `floors` (`user`,`date`,`floors`), ADD UNIQUE KEY `steps` (`user`,`date`,`steps`);
 
---
--- Indexes for table `nx_fitbit_steps_goals`
---
 ALTER TABLE `nx_fitbit_steps_goals`
  ADD PRIMARY KEY (`user`,`date`), ADD UNIQUE KEY `distance` (`user`,`date`,`distance`), ADD UNIQUE KEY `elevation` (`user`,`date`,`activeMinutes`), ADD UNIQUE KEY `floors` (`user`,`date`,`floors`), ADD UNIQUE KEY `steps` (`user`,`date`,`steps`);
 
---
--- Indexes for table `nx_fitbit_users`
---
 ALTER TABLE `nx_fitbit_users`
  ADD PRIMARY KEY (`fuid`), ADD UNIQUE KEY `drupalid` (`uid`);
 
---
--- Indexes for table `nx_fitbit_users_settings`
---
+ALTER TABLE `nx_fitbit_users_auth`
+ ADD PRIMARY KEY (`ID`);
+
 ALTER TABLE `nx_fitbit_users_settings`
  ADD PRIMARY KEY (`fuid`,`name`);
 
---
--- Indexes for table `nx_fitbit_water`
---
 ALTER TABLE `nx_fitbit_water`
  ADD PRIMARY KEY (`user`,`date`);
 
---
--- AUTO_INCREMENT for dumped tables
---
 
---
--- AUTO_INCREMENT for table `nx_fitbit_users`
---
 ALTER TABLE `nx_fitbit_users`
-MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=29;
---
--- Constraints for dumped tables
---
+MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+ALTER TABLE `nx_fitbit_users_auth`
+MODIFY `ID` int(7) unsigned NOT NULL AUTO_INCREMENT;
 
---
--- Constraints for table `nx_fitbit_users_settings`
---
+ALTER TABLE `nx_fitbit_activity`
+ADD CONSTRAINT `nx_fitbit_activity_ibfk_1` FOREIGN KEY (`user`) REFERENCES `nx_fitbit_users` (`fuid`);
+
+ALTER TABLE `nx_fitbit_body`
+ADD CONSTRAINT `nx_fitbit_body_ibfk_1` FOREIGN KEY (`user`) REFERENCES `nx_fitbit_users` (`fuid`);
+
+ALTER TABLE `nx_fitbit_queue`
+ADD CONSTRAINT `nx_fitbit_queue_ibfk_1` FOREIGN KEY (`user`) REFERENCES `nx_fitbit_users` (`fuid`);
+
 ALTER TABLE `nx_fitbit_users_settings`
 ADD CONSTRAINT `nx_fitbit_users_settings_ibfk_1` FOREIGN KEY (`fuid`) REFERENCES `nx_fitbit_users` (`fuid`);
 
-ALTER TABLE `nx_fitbit_activity` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_fitbit_users`(`fuid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE `nx_fitbit_water` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_fitbit_users`(`fuid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE `nx_fitbit_body` ADD FOREIGN KEY (`user`) REFERENCES `nxad`.`nx_fitbit_users`(`fuid`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE `nx_fitbit_activity_log` ADD PRIMARY KEY (`user`,`logId`,`activityId`,`startDate`,`startTime`);
+ALTER TABLE `nx_fitbit_water`
+ADD CONSTRAINT `nx_fitbit_water_ibfk_1` FOREIGN KEY (`user`) REFERENCES `nx_fitbit_users` (`fuid`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
