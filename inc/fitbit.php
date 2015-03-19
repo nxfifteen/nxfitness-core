@@ -1285,15 +1285,25 @@
                             }
                         }
 
-                        // This cant be updated from the API yet
-                        //if ($usr_goals->activeMinutes > 1) {
-                        //    $newGoal = $this->thisWeeksGoal($user, "activeMinutes");
-                        //    if ($newGoal > 0 && $usr_goals->activeMinutes != $newGoal) {
-                        //        nxr("  Returned active minutes target was " . $usr_goals->activeMinutes . " but I think it should be " . $newGoal);
-                        //    } else {
-                        //        nxr("  Returned active minutes target was " . $usr_goals->activeMinutes . " which is right for this week goal of " . $newGoal);
-                        //    }
-                        //}
+                        if ($usr_goals->floors > 1) {
+                            $newGoal = $this->thisWeeksGoal($user, "floors");
+                            if ($newGoal > 0 && $usr_goals->floors != $newGoal) {
+                                nxr("  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
+                                try {
+                                    $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", array('type' => 'floors', 'value' => $newGoal), OAUTH_HTTP_METHOD_POST);
+                                } catch (Exception $E) {
+                                    /**
+                                     * @var FitBitException $E
+                                     */
+                                    echo $user . "\n";
+                                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
+                                    print_r($E);
+                                    die();
+                                }
+                            } elseif ($newGoal > 0) {
+                                nxr("  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal);
+                            }
+                        }
                     }
 
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
@@ -1584,7 +1594,7 @@
             $plusTargetSteps = -1;
 
             if ($string == "steps") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10);
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10000);
                 if ($improvment > 0) {
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                         array("AND" => array(
@@ -1599,9 +1609,35 @@
                     }
 
                     $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                    $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($improvment / 100), 0);
+                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
+                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000);
+                    }
                 }
-            } elseif ($string == "activeMinutes") {}
+            } elseif ($string == "floors") {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10);
+                if ($improvment > 0) {
+                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[<=]" => $oneWeek,
+                            "date[>=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+                    $totalSteps = 0;
+                    foreach ($dbSteps as $dbStep) {
+                        $totalSteps = $totalSteps + $dbStep;
+                    }
+
+                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10)) {
+                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10);
+                    }
+                }
+            }
 
             return $plusTargetSteps;
         }
