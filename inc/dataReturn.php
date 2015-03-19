@@ -365,9 +365,11 @@
                 'imp_steps' => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) . "%",
                 'avg_steps' => number_format($goalCalcSteps['newTargetSteps'], 0),
                 'newgoal_steps' => number_format($goalCalcSteps['plusTargetSteps'], 0),
+                'maxgoal_steps' => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000), 0),
                 'imp_floors' => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) . "%",
-                'avg_floors' => $goalCalcFloors['newTargetFloors'],
-                'newgoal_floors' => $goalCalcFloors['plusTargetFloors']
+                'avg_floors' => number_format($goalCalcFloors['newTargetFloors'], 0),
+                'newgoal_floors' => number_format($goalCalcFloors['plusTargetFloors'], 0),
+                'maxgoal_floors' => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20), 0)
             );
         }
 
@@ -1150,7 +1152,11 @@
             }
 
             $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-            $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) / 100), 0);
+            if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000)) {
+                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) / 100), 0);
+            } else {
+                $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000);
+            }
 
             return array(
                 "weekStart" => $lastMonday,
@@ -1178,7 +1184,11 @@
             }
 
             $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-            $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) / 100), 0);
+            if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20)) {
+                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) / 100), 0);
+            } else {
+                $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20);
+            }
 
             return array(
                 "weekStart" => $lastMonday,
