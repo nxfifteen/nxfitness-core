@@ -302,6 +302,22 @@
             return $returnArray;
         }
 
+        public function returnUserRecordTracked() {
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",array(
+                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals" => array("date" => "date")),
+                array(
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.distance',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.floors',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.steps',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.distance(distance_g)',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.floors(floors_g)',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.steps(steps_g)'
+                ),
+                $this->dbWhere(-1, $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps'));
+
+            return $dbSteps;
+        }
+
         /**
          * @return array
          */
