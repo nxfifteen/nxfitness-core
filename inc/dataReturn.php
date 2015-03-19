@@ -364,8 +364,10 @@
                 'graph_steps_max' => $graph_steps_max,
                 'imp_steps' => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) . "%",
                 'avg_steps' => $goalCalcSteps['newTargetSteps'],
+                'newgoal_steps' => $goalCalcSteps['plusTargetSteps'],
                 'imp_floors' => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) . "%",
-                'avg_floors' => $goalCalcFloors['newTargetFloors']
+                'avg_floors' => $goalCalcFloors['newTargetFloors'],
+                'newgoal_floors' => $goalCalcFloors['plusTargetFloors']
             );
         }
 
