@@ -102,12 +102,12 @@
                 $resultsArray = array("error" => "false", "user" => $this->getUserID(), 'username' => $dbUserName, "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
                 $resultsArray['results'] = $this->$functionName();
 
-                if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
+                if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
                     $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
 
                 return $resultsArray;
             } else {
-                if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
+                if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
                     $this->getTracking()->track("Error", 103);
                     $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
                 }
@@ -193,8 +193,10 @@
                     array('calories'),
                     $this->dbWhere());
 
-                $this->getTracking()->track("JSON Get", $this->getUserID(), "Food");
-                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Food");
+                if (!is_null($this->getTracking())) {
+                    $this->getTracking()->track("JSON Get", $this->getUserID(), "Food");
+                    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Food");
+                }
 
                 return array('goal' => $dbFoodGoal[0]['calories'], 'total' => $total, "meals" => $dbFoodLog);
             } else {
@@ -304,8 +306,6 @@
          * @return array
          */
         public function returnUserRecordSteps() {
-            //TODO Added support for multi record returned
-
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
                 array('distance', 'floors', 'steps'),
                 $this->dbWhere());
@@ -318,8 +318,10 @@
                 $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
                 $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
 
-                $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
-                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+                if (!is_null($this->getTracking())) {
+                    $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
+                    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+                }
 
                 return array('recorded' => $dbSteps[0], 'goal' => $dbGoals[0]);
             } else {
@@ -337,7 +339,9 @@
 
             $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
-            $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+            if (!is_null($this->getTracking())) {
+                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+            }
 
             return $dbGoals;
         }
