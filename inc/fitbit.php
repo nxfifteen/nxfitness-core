@@ -1585,7 +1585,7 @@
 
             if ($string == "steps") {
                 $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10);
-                if ($improvment < 0) {
+                if ($improvment > 0) {
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                         array("AND" => array(
                             "user"     => $user,
