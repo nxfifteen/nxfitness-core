@@ -315,7 +315,7 @@
                 ),
                 $this->dbWhere(-1, $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps'));
 
-            return $dbSteps;
+            return array('returnDate' => explode("-", $this->getParamDate()), 'values' => $dbSteps);
         }
 
         /**
