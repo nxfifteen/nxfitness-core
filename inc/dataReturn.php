@@ -204,19 +204,23 @@
 
         /**
          * @param int $limit
+         * @param string $tableName
          * @return array
          */
-        public function dbWhere($limit = 1) {
+        public function dbWhere($limit = 1, $tableName = '') {
+            if ($limit < 1) {$limit = 1;}
+            if ($tableName != "") {$tableName = $tableName . ".";}
+
             if ($this->getParamPeriod() == "single") {
-                return array("AND" => array("user" => $this->getUserID(), "date" => $this->getParamDate()), "LIMIT" => $limit);
+                return array("AND" => array($tableName."user" => $this->getUserID(), $tableName."date" => $this->getParamDate()), "LIMIT" => $limit);
             } else if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
                 $days = $this->getParamPeriod();
                 $days = str_ireplace("last", "", $days);
                 $then = date('Y-m-d', strtotime($this->getParamDate() . " -" . $days . " day"));
 
-                return array("AND" => array("user" => $this->getUserID(), "date[<=]" => $this->getParamDate(), "date[>=]" => $then), "ORDER" => "date DESC", "LIMIT" => $days);
+                return array("AND" => array($tableName."user" => $this->getUserID(), $tableName."date[<=]" => $this->getParamDate(), $tableName."date[>=]" => $then), "ORDER" => $tableName."date DESC", "LIMIT" => $days);
             } else {
-                return array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => $limit);
+                return array($tableName."user" => $this->getUserID(), "ORDER" => $tableName."date DESC", "LIMIT" => $limit);
             }
         }
 
