@@ -1056,6 +1056,34 @@
             return $returnSleep;
         }
 
+        public function returnUserRecordStepGoal() {
+            $lastMonday = date('Y-m-d',strtotime('last monday -7 days'));
+            $oneWeek = date('Y-m-d',strtotime( $lastMonday . ' +6 days'));
+
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
+                array("AND" => array(
+                    "user" => $this->getUserID(),
+                    "date[<=]" => $oneWeek,
+                    "date[>=]" => $lastMonday
+                ), "ORDER" => "date DESC", "LIMIT" => 7));
+
+            $totalSteps = 0;
+            foreach ($dbSteps as $dbStep) {
+                $totalSteps = $totalSteps + $dbStep;
+            }
+
+            $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+            $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) / 100), 0);
+
+            return array(
+                "weekStart" => $lastMonday,
+                "weekEnd" => $oneWeek,
+                "totalSteps" => $totalSteps,
+                "newTargetSteps" => $newTargetSteps,
+                "plusTargetSteps" => $plusTargetSteps
+            );
+        }
+
         /**
          * @param array $returnWeight
          * @param array $arrayOfMissingDays
