@@ -1019,6 +1019,43 @@
             return $returnStats;
         }
 
+        public function returnUserRecordSleep() {
+
+            $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
+                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr" => array("logId" => "sleeplog")),
+                array(
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.startTime',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.timeInBed',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesAsleep',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesToFallAsleep',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.efficiency',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.awakeningsCount',
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr.user" => $this->getUserID()));
+
+            $returnSleep = array(
+                "efficiency" => 0,
+                "timeInBed" => 0,
+                "minutesToFallAsleep" => 0,
+                "minutesAsleep" => 0,
+                "awakeningsCount" => 0
+            );
+            foreach ($dbSleepRecords as $record) {
+                $returnSleep['efficiency'] = $returnSleep['efficiency'] + $record['efficiency'];
+                $returnSleep['timeInBed'] = $returnSleep['timeInBed'] + $record['timeInBed'];
+                $returnSleep['minutesToFallAsleep'] = $returnSleep['minutesToFallAsleep'] + $record['minutesToFallAsleep'];
+                $returnSleep['minutesAsleep'] = $returnSleep['minutesAsleep'] + $record['minutesAsleep'];
+                $returnSleep['awakeningsCount'] = $returnSleep['awakeningsCount'] + $record['awakeningsCount'];
+            }
+
+            $returnSleep['efficiency'] = round($returnSleep['efficiency'] / count($dbSleepRecords), 0);
+            $returnSleep['timeInBedAvg'] = round($returnSleep['timeInBed'] / count($dbSleepRecords), 0);
+            $returnSleep['minutesToFallAsleep'] = round($returnSleep['minutesToFallAsleep']/ count($dbSleepRecords), 0);
+            $returnSleep['minutesAsleep'] = round($returnSleep['minutesAsleep'] / count($dbSleepRecords), 0);
+            $returnSleep['awakeningsCount'] = round($returnSleep['awakeningsCount'] / count($dbSleepRecords), 0);
+
+            return $returnSleep;
+        }
+
         /**
          * @param array $returnWeight
          * @param array $arrayOfMissingDays
