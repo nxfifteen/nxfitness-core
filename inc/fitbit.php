@@ -1224,7 +1224,7 @@
          */
         private function api_pull_goals($user, $targetDate) {
             try {
-                $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.xml", NULL, OAUTH_HTTP_METHOD_GET);
+                $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", NULL, OAUTH_HTTP_METHOD_GET);
             } catch (Exception $E) {
                 /**
                  * @var FitBitException $E
@@ -1236,7 +1236,8 @@
             }
 
             if (isset($userGoals)) {
-                $userGoals = simplexml_load_string($userGoals->response);
+                $currentDate = new DateTime();
+                $userGoals = json_decode($userGoals->response);
                 $usr_goals = $userGoals->goals;
                 if (is_object($usr_goals)) {
                     $fallback = FALSE;
@@ -1261,6 +1262,38 @@
                         if ($usr_goals->steps == "") /** @noinspection PhpUndefinedFieldInspection */
                             $usr_goals->steps = -1;
                         $fallback = TRUE;
+                    }
+
+                    if ($currentDate->format("Y-m-d") == $targetDate) {
+                        if ($usr_goals->steps > 1) {
+                            $newGoal = $this->thisWeeksGoal($user, "steps");
+                            if ($newGoal > 0 && $usr_goals->steps != $newGoal) {
+                                nxr("  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
+                                try {
+                                    $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", array('type' => 'steps', 'value' => $newGoal), OAUTH_HTTP_METHOD_POST);
+                                } catch (Exception $E) {
+                                    /**
+                                     * @var FitBitException $E
+                                     */
+                                    echo $user . "\n";
+                                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
+                                    print_r($E);
+                                    die();
+                                }
+                            } elseif ($newGoal > 0) {
+                                nxr("  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
+                            }
+                        }
+
+                        // This cant be updated from the API yet
+                        //if ($usr_goals->activeMinutes > 1) {
+                        //    $newGoal = $this->thisWeeksGoal($user, "activeMinutes");
+                        //    if ($newGoal > 0 && $usr_goals->activeMinutes != $newGoal) {
+                        //        nxr("  Returned active minutes target was " . $usr_goals->activeMinutes . " but I think it should be " . $newGoal);
+                        //    } else {
+                        //        nxr("  Returned active minutes target was " . $usr_goals->activeMinutes . " which is right for this week goal of " . $newGoal);
+                        //    }
+                        //}
                     }
 
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
@@ -1290,7 +1323,6 @@
                     if (!$fallback) $this->api_setLastCleanrun("goals", $user, new DateTime($targetDate));
                 }
 
-                $currentDate = new DateTime();
                 if ($currentDate->format("Y-m-d") == $targetDate)
                     $this->api_setLastrun("goals", $user);
             }
@@ -1544,6 +1576,34 @@
          */
         public function setFitbitapi($fitbitapi) {
             $this->setLibrary($fitbitapi);
+        }
+
+        private function thisWeeksGoal($user, $string) {
+            $lastMonday = date('Y-m-d',strtotime('last monday -7 days'));
+            $oneWeek = date('Y-m-d',strtotime( $lastMonday . ' +6 days'));
+            $plusTargetSteps = -1;
+
+            if ($string == "steps") {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10);
+                if ($improvment < 0) {
+                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[<=]" => $oneWeek,
+                            "date[>=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+                    $totalSteps = 0;
+                    foreach ($dbSteps as $dbStep) {
+                        $totalSteps = $totalSteps + $dbStep;
+                    }
+
+                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+                    $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($improvment / 100), 0);
+                }
+            } elseif ($string == "activeMinutes") {}
+
+            return $plusTargetSteps;
         }
 
     }
