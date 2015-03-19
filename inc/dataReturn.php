@@ -315,7 +315,52 @@
                 ),
                 $this->dbWhere(-1, $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps'));
 
-            return array('returnDate' => explode("-", $this->getParamDate()), 'values' => $dbSteps);
+            $graph_distance = array();
+            $graph_distance_g = array();
+            $graph_distance_min = 0;
+            $graph_distance_max = 0;
+            $graph_floors = array();
+            $graph_floors_g = array();
+            $graph_floors_min = 0;
+            $graph_floors_max = 0;
+            $graph_steps = array();
+            $graph_steps_g = array();
+            $graph_steps_min = 0;
+            $graph_steps_max = 0;
+            foreach ($dbSteps as $dbValue) {
+                array_push($graph_distance, (String)round($dbValue['distance'], 2));
+                array_push($graph_distance_g, (String)round($dbValue['distance_g'], 2));
+                array_push($graph_floors, (String)round($dbValue['floors'], 0));
+                array_push($graph_floors_g, (String)round($dbValue['floors_g'], 0));
+                array_push($graph_steps, (String)round($dbValue['steps'], 0));
+                array_push($graph_steps_g, (String)round($dbValue['steps_g'], 0));
+
+                if ($dbValue['distance'] < $graph_distance_min || $graph_distance_min == 0) {$graph_distance_min = $dbValue['distance'];}
+                if ($dbValue['distance'] > $graph_distance_max || $graph_distance_max == 0) {$graph_distance_max = $dbValue['distance'];}
+
+                if ($dbValue['floors'] < $graph_floors_min || $graph_floors_min == 0) {$graph_floors_min = $dbValue['floors'];}
+                if ($dbValue['floors'] > $graph_floors_max || $graph_floors_max == 0) {$graph_floors_max = $dbValue['floors'];}
+
+                if ($dbValue['steps'] < $graph_steps_min || $graph_steps_min == 0) {$graph_steps_min = $dbValue['steps'];}
+                if ($dbValue['steps'] > $graph_steps_max || $graph_steps_max == 0) {$graph_steps_max = $dbValue['steps'];}
+
+            }
+
+            return array(
+                'returnDate' => explode("-", $this->getParamDate()),
+                'graph_distance' => $graph_distance,
+                'graph_distance_g' => $graph_distance_g,
+                'graph_floors' => $graph_floors,
+                'graph_floors_g' => $graph_floors_g,
+                'graph_steps' => $graph_steps,
+                'graph_steps_g' => $graph_steps_g,
+                'graph_distance_min' => $graph_distance_min,
+                'graph_distance_max' => $graph_distance_max,
+                'graph_floors_min' => $graph_floors_min,
+                'graph_floors_max' => $graph_floors_max,
+                'graph_steps_min' => $graph_steps_min,
+                'graph_steps_max' => $graph_steps_max
+            );
         }
 
         /**
