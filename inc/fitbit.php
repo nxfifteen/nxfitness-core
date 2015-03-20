@@ -831,8 +831,12 @@
             if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
                 return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "lastrun", array("AND" => array("user" => $user, "activity" => $activity))));
             } else {
-                return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
+                return $this->user_getFirstSeen($user);
             }
+        }
+
+        private function user_getFirstSeen($user) {
+            return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
         }
 
         /**
@@ -1428,6 +1432,7 @@
 
                 nxr("  Last download: $daysSince days ago. ");
 
+                $allRecords = false;
                 if ($daysSince < 2) {
                     $daysSince = "1d";
                 } elseif ($daysSince < 8) {
@@ -1438,13 +1443,22 @@
                     $daysSince = "3m";
                 } elseif ($daysSince < 180) {
                     $daysSince = "6m";
-                } else {
+                } elseif ($daysSince < 364) {
                     $daysSince = "1y";
+                } else {
+                    $allRecords = true;
+                    $daysSince = "1y";
+                    $lastrun->add(new DateInterval('P360D'));
                 }
 
-                nxr("  Requesting $trigger data for $daysSince days");
-                $this->api_pull_time_series_by_trigger($user, $trigger, $daysSince);
-                $this->api_setLastrun($trigger, $user);
+                if ($allRecords) {
+                    nxr("  Requesting $trigger data for $daysSince days");
+                    $this->api_pull_time_series_by_trigger($user, $trigger, $daysSince, $lastrun);
+                } else {
+                    nxr("  Requesting $trigger data for $daysSince days");
+                    $this->api_pull_time_series_by_trigger($user, $trigger, $daysSince);
+                    $this->api_setLastrun($trigger, $user);
+                }
             } else {
                 echo "   Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
             }
@@ -1454,21 +1468,22 @@
          * @param $user
          * @param $trigger
          * @param $daysSince
+         * @param DateTime|null $lastrun
          */
-        private function api_pull_time_series_by_trigger($user, $trigger, $daysSince) {
+        private function api_pull_time_series_by_trigger($user, $trigger, $daysSince, $lastrun = NULL) {
             switch ($trigger) {
                 case "steps":
                 case "distance":
                 case "floors":
                 case "elevation":
                 case "caloriesOut":
-                    $this->api_pull_time_series_for_steps($user, $trigger, $daysSince);
+                    $this->api_pull_time_series_for_steps($user, $trigger, $daysSince, $lastrun);
                     break;
                 case "minutesVeryActive":
                 case "minutesSedentary":
                 case "minutesLightlyActive":
                 case "minutesFairlyActive":
-                    $this->api_pull_time_series_for_activity($user, $trigger, $daysSince);
+                    $this->api_pull_time_series_for_activity($user, $trigger, $daysSince, $lastrun);
                     break;
             }
         }
@@ -1477,11 +1492,16 @@
          * @param $user
          * @param $trigger
          * @param $daysSince
+         * @param DateTime|null $lastrun
          */
-        private function api_pull_time_series_for_steps($user, $trigger, $daysSince) {
-            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records');
+        private function api_pull_time_series_for_steps($user, $trigger, $daysSince, $lastrun = NULL) {
+            if (!is_null($lastrun)) {
+                $currentDate = $lastrun;
+            } else {
+                $currentDate = new DateTime ('now');
+            }
 
-            $currentDate = new DateTime ('now');
+            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records from ' . $currentDate->format("Y-m-d"));
 
             try {
                 $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
@@ -1496,29 +1516,31 @@
             }
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+                $FirstSeen = $this->user_getFirstSeen($user)->format("Y-m-d");
                 foreach ($userTimeSeries as $steps) {
-                    if ($steps->value == 0) {
-                        nxr("   No recorded data for " . $steps->dateTime);
-                    } else {
-                        nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
+                    if (strtotime($steps->dateTime) >= strtotime($FirstSeen)) {
+                        if ($steps->value == 0) {
+                            nxr("   No recorded data for " . $steps->dateTime);
+                        } else {
+                            nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
+                        }
+
+                        if ($steps->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($steps->dateTime));
+
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                                $trigger => (String)$steps->value,
+                                'syncd'  => $currentDate->format('Y-m-d H:m:s')
+                            ), array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)));
+                        } else {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                                'user'   => $user,
+                                'date'   => (String)$steps->dateTime,
+                                $trigger => (String)$steps->value,
+                                'syncd'  => $currentDate->format('Y-m-d H:m:s')
+                            ));
+                        }
                     }
-
-                    if ($steps->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($steps->dateTime));
-
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
-                            $trigger => (String)$steps->value,
-                            'syncd'  => $currentDate->format('Y-m-d H:m:s')
-                        ), array("AND" => array('user' => $user, 'date' => (String)$steps->dateTime)));
-                    } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
-                            'user'   => $user,
-                            'date'   => (String)$steps->dateTime,
-                            $trigger => (String)$steps->value,
-                            'syncd'  => $currentDate->format('Y-m-d H:m:s')
-                        ));
-                    }
-
                 }
             }
         }
@@ -1527,8 +1549,10 @@
          * @param $user
          * @param $trigger
          * @param $daysSince
+         * @param DateTime|null $lastrun
+         * @return bool
          */
-        private function api_pull_time_series_for_activity($user, $trigger, $daysSince) {
+        private function api_pull_time_series_for_activity($user, $trigger, $daysSince, $lastrun = NULL) {
             switch ($trigger) {
                 case "minutesVeryActive":
                     $databaseColumn = "veryactive";
@@ -1546,9 +1570,13 @@
                     return FALSE;
             }
 
-            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records');
+            if (!is_null($lastrun)) {
+                $currentDate = $lastrun;
+            } else {
+                $currentDate = new DateTime ('now');
+            }
 
-            $currentDate = new DateTime ('now');
+            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records ' . $currentDate->format("Y-m-d"));
 
             try {
                 $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
@@ -1563,23 +1591,26 @@
             }
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+                $FirstSeen = $this->user_getFirstSeen($user)->format("Y-m-d");
                 foreach ($userTimeSeries as $series) {
-                    nxr("   " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
+                    if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
+                        nxr("   " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
 
-                    if ($series->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($series->dateTime));
+                        if ($series->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($series->dateTime));
 
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                            $databaseColumn => (String)$series->value,
-                            'syncd'         => $currentDate->format('Y-m-d H:m:s')
-                        ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
-                    } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                            'user'          => $user,
-                            'date'          => (String)$series->dateTime,
-                            $databaseColumn => (String)$series->value,
-                            'syncd'         => $currentDate->format('Y-m-d H:m:s')
-                        ));
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                                $databaseColumn => (String)$series->value,
+                                'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                            ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
+                        } else {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                                'user'          => $user,
+                                'date'          => (String)$series->dateTime,
+                                $databaseColumn => (String)$series->value,
+                                'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                            ));
+                        }
                     }
                 }
             }
