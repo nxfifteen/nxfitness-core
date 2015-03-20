@@ -6,7 +6,18 @@
     if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
         if (is_writable('cache') && (!array_key_exists("cache", $_GET) || $_GET['cache'] != "false")) {
             // cache files are created like cache/abcdef123456...
-            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . md5($_SERVER['REQUEST_URI']);
+            $cacheFileName = '';
+            //user" => "269VLG", "data" => "Tracked", "period
+            if (array_key_exists("user", $_GET )) {
+                $cacheFileName = $cacheFileName . '_' . $_GET['user'];
+            }
+            if (array_key_exists("data", $_GET )) {
+                $cacheFileName = $cacheFileName . '_' . $_GET['data'];
+            }
+            if (array_key_exists("period", $_GET )) {
+                $cacheFileName = $cacheFileName . '_' . $_GET['period'];
+            }
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . $cacheFileName;
 
             if (file_exists($cacheFile)) {
                 $fh = fopen($cacheFile, 'r');
