@@ -83,7 +83,7 @@
         /**
          * @return config
          */
-        private function getSettings() {
+        public function getSettings() {
             return $this->settings;
         }
 
