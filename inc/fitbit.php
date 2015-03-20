@@ -471,6 +471,20 @@
 
                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
             }
+
+            $cache_dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+            $cache_files = scandir($cache_dir);
+            foreach ($cache_files as $file) {
+                if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file) && substr($file, 0, strlen($username) + 1) === "_" . $username) {
+                    $cacheNames = $this->getAppClass()->getSettings()->getRelatedCacheNames($activity);
+                    foreach ($cacheNames as $cacheName) {
+                        if (substr($file, 0, strlen($username) + strlen($cacheName) + 2) === "_" . $username . "_" . $cacheName) {
+                            nxr("  $file cache file was deleted");
+                            unlink($cache_dir . $file);
+                        }
+                    }
+                }
+            }
         }
 
         /**
