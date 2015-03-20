@@ -45,7 +45,7 @@
                                 $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
                             }
 
-                            $fitbitApp->addCronJob($upreq->ownerId, $upreq->collectionType, true);
+                            $fitbitApp->addCronJob($upreq->ownerId, $upreq->collectionType, TRUE);
                         } else {
                             $logMsg .= "Can not process " . $fitbitApp->supportedApi($upreq->collectionType) . ". API limit reached for " . $upreq->ownerId . ". Cooldown period ends " . $cooldown . "\n";
                         }
@@ -58,8 +58,8 @@
     } else {
         $logMsg .= "Could not authorise client IP\n";
     }
-    
-    $fh      = fopen("/home/nxad/logs/fitbit.upload.txt", "a");
+
+    $fh = fopen("/home/nxad/logs/fitbit.upload.txt", "a");
     fwrite($fh, "************\nNew API request:\n" . $logMsg . "\n");
 
     header('HTTP/1.0 204 No Content');
@@ -79,5 +79,5 @@
         //}
         //
         //return $access;
-        return true;
+        return TRUE;
     }

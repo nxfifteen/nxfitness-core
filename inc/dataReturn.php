@@ -17,21 +17,18 @@
          * @var String
          */
         protected $UserID;
-
-        /**
-         * @var String
-         */
-        protected $paramPeriod;
-
-        /**
-         * @var tracking
-         */
-        protected $tracking;
-
         /**
          * @var String
          */
         protected $paramDate;
+        /**
+         * @var String
+         */
+        protected $paramPeriod;
+        /**
+         * @var tracking
+         */
+        protected $tracking;
 
         /**
          * @param $userFid
@@ -82,37 +79,77 @@
             $this->UserID = $UserID;
         }
 
+        public function returnUserRecordAboutMe() {
+            $dbSteps = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('steps'),
+                array("user" => $this->getUserID())
+            );
+            $dbFloors = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('floors'),
+                array("user" => $this->getUserID())
+            );
+            $dbDistance = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('distance'),
+                array("user" => $this->getUserID())
+            );
+
+            $yearThis = date("Y");
+            $yearLast = date("Y") - 1;
+            $dbStepsYearThis = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('steps'),
+                array("AND" => array("user" => $this->getUserID(), "date[~]" => $yearThis . "%"))
+            );
+
+            $dbStepsYearLast = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('steps'),
+                array("AND" => array("user" => $this->getUserID(), "date[~]" => $yearLast . "%"))
+            );
+
+            return array(
+                "steps"         => round($dbSteps, 0),
+                "floors"        => round($dbFloors, 0),
+                "distance"      => round($dbDistance, 0),
+                "stepsThisYear" => round($dbStepsYearThis, 0),
+                "stepsLastYear" => round($dbStepsYearLast, 0),
+            );
+        }
+
         /**
-         * @param $get
+         * @return bool
+         */
+        public function returnUserRecordActivity() {
+            $userActivity = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity",
+                array('sedentary', 'lightlyactive', 'fairlyactive', 'veryactive'),
+                $this->dbWhere());
+
+            $userActivity['total'] = $userActivity['sedentary'] + $userActivity['lightlyactive'] + $userActivity['fairlyactive'] + $userActivity['veryactive'];
+
+            return $userActivity;
+        }
+
+        /**
+         * @param int $limit
+         * @param string $tableName
          * @return array
          */
-        public function returnUserRecords($get) {
-
-            if (array_key_exists("period", $get)) {
-                $this->setParamPeriod($get['period']);
+        public function dbWhere($limit = 1, $tableName = '') {
+            if ($limit < 1) {
+                $limit = 1;
+            }
+            if ($tableName != "") {
+                $tableName = $tableName . ".";
             }
 
-            if (array_key_exists("date", $get)) {
-                $this->setParamDate($get['date']);
-            }
+            if ($this->getParamPeriod() == "single") {
+                return array("AND" => array($tableName . "user" => $this->getUserID(), $tableName . "date" => $this->getParamDate()), "LIMIT" => $limit);
+            } else if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
+                $days = $this->getParamPeriod();
+                $days = str_ireplace("last", "", $days);
+                $then = date('Y-m-d', strtotime($this->getParamDate() . " -" . $days . " day"));
 
-            $functionName = 'returnUserRecord' . $get['data'];
-            if (method_exists($this, $functionName)) {
-                $dbUserName = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'name', array("fuid" => $this->getUserID()));
-                $resultsArray = array("error" => "false", "user" => $this->getUserID(), 'username' => $dbUserName, "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
-                $resultsArray['results'] = $this->$functionName();
-
-                if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
-                    $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
-
-                return $resultsArray;
+                return array("AND" => array($tableName . "user" => $this->getUserID(), $tableName . "date[<=]" => $this->getParamDate(), $tableName . "date[>=]" => $then), "ORDER" => $tableName . "date DESC", "LIMIT" => $days);
             } else {
-                if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
-                    $this->getTracking()->track("Error", 103);
-                    $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
-                }
-
-                return array("error" => "true", "code" => 103, "msg" => "Unknown dataset: " . $functionName);
+                return array($tableName . "user" => $this->getUserID(), "ORDER" => $tableName . "date DESC", "LIMIT" => $limit);
             }
         }
 
@@ -156,289 +193,6 @@
          */
         public function setParamDate($paramDate) {
             $this->paramDate = $paramDate;
-        }
-
-        /**
-         * @return tracking
-         */
-        public function getTracking() {
-            return $this->tracking;
-        }
-
-        /**
-         * @param tracking $tracking
-         */
-        public function setTracking($tracking) {
-            $this->tracking = $tracking;
-        }
-
-        /**
-         * @return array
-         */
-        public function returnUserRecordFood() {
-            //TODO Added support for multi record returned
-
-            $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
-                array('meal', 'calories'),
-                $this->dbWhere(4));
-
-            if (count($dbFoodLog) > 0) {
-                $total = 0;
-                foreach ($dbFoodLog as $meal) {
-                    $total = $total + $meal['calories'];
-                }
-
-
-                $dbFoodGoal = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories",
-                    array('calories'),
-                    $this->dbWhere());
-
-                if (!is_null($this->getTracking())) {
-                    $this->getTracking()->track("JSON Get", $this->getUserID(), "Food");
-                    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Food");
-                }
-
-                return array('goal' => $dbFoodGoal[0]['calories'], 'total' => $total, "meals" => $dbFoodLog);
-            } else {
-                return array("error" => "true", "code" => 104, "msg" => "No results for given date");
-            }
-        }
-
-        /**
-         * @param int $limit
-         * @param string $tableName
-         * @return array
-         */
-        public function dbWhere($limit = 1, $tableName = '') {
-            if ($limit < 1) {$limit = 1;}
-            if ($tableName != "") {$tableName = $tableName . ".";}
-
-            if ($this->getParamPeriod() == "single") {
-                return array("AND" => array($tableName."user" => $this->getUserID(), $tableName."date" => $this->getParamDate()), "LIMIT" => $limit);
-            } else if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
-                $days = $this->getParamPeriod();
-                $days = str_ireplace("last", "", $days);
-                $then = date('Y-m-d', strtotime($this->getParamDate() . " -" . $days . " day"));
-
-                return array("AND" => array($tableName."user" => $this->getUserID(), $tableName."date[<=]" => $this->getParamDate(), $tableName."date[>=]" => $then), "ORDER" => $tableName."date DESC", "LIMIT" => $days);
-            } else {
-                return array($tableName."user" => $this->getUserID(), "ORDER" => $tableName."date DESC", "LIMIT" => $limit);
-            }
-        }
-
-        /**
-         * @return array|bool
-         */
-        public function returnUserRecordWater() {
-            $dbWater = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water",
-                array('date', 'liquid'),
-                $this->dbWhere());
-
-            $dbWater[0]['liquid'] = (String)round($dbWater[0]['liquid'], 2);
-            $dbWater[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
-
-            if (!is_null($this->getTracking())) {
-                $this->getTracking()->track("JSON Get", $this->getUserID(), "Water");
-                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Water");
-            }
-
-            return $dbWater;
-        }
-
-        /**
-         * @return array
-         */
-        public function returnUserRecordFoodDiary() {
-            $returnArray = array();
-
-            $where = $this->dbWhere();
-            unset($where['AND']['date[<=]']);
-            unset($where['AND']['date[>=]']);
-            unset($where['LIMIT']);
-            $where['AND']['date'] = $this->getParamDate();
-
-            $dbWater = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", 'liquid', $where);
-            /** @var float $dbWater */
-            $returnArray['water'] = array("liquid" => (String)round($dbWater, 2), "goal" => $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200'));
-
-            $dbFood = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
-                array('date', 'meal', 'calories', 'carbs', 'fat', 'fiber', 'protein', 'sodium'),
-                $where);
-
-            $returnArray['food'] = array();
-            $returnArray['food']['meals'] = array();
-            $returnArray['food']['summary'] = array();
-            $returnArray['food']['summary']['calories'] = 0;
-            $returnArray['food']['summary']['carbs'] = 0;
-            $returnArray['food']['summary']['fat'] = 0;
-            $returnArray['food']['summary']['fiber'] = 0;
-            $returnArray['food']['summary']['protein'] = 0;
-            $returnArray['food']['summary']['sodium'] = 0;
-            foreach ($dbFood as $meal) {
-                $returnArray['food']['meals'][$meal['meal']] = array('calories' => $meal['calories'],
-                                                                     'carbs'    => $meal['carbs'],
-                                                                     'fat'      => $meal['fat'],
-                                                                     'fiber'    => $meal['fiber'],
-                                                                     'protein'  => $meal['protein'],
-                                                                     'sodium'   => $meal['sodium']
-                );
-                $returnArray['food']['summary']['calories'] += $meal['calories'];
-                $returnArray['food']['summary']['carbs'] += $meal['carbs'];
-                $returnArray['food']['summary']['fat'] += $meal['fat'];
-                $returnArray['food']['summary']['fiber'] += $meal['fiber'];
-                $returnArray['food']['summary']['protein'] += $meal['protein'];
-                $returnArray['food']['summary']['sodium'] += $meal['sodium'];
-            }
-            foreach ($dbFood as $meal) {
-                $returnArray['food']['meals'][$meal['meal']]['precentage'] = ($meal['calories']/$returnArray['food']['summary']['calories']) * 100;
-            }
-            $returnArray['food']['goals'] = array();
-            $returnArray['food']['goals']['carbs'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_carbs", 310);
-            $returnArray['food']['goals']['fat'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_fat", 70);
-            $returnArray['food']['goals']['fiber'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_fiber", 30);
-            $returnArray['food']['goals']['protein'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_protein", 50);
-            $returnArray['food']['goals']['sodium'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_sodium", 2300);
-
-            return $returnArray;
-        }
-
-        public function returnUserRecordTracked() {
-            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",array(
-                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals" => array("date" => "date")),
-                array(
-                    //$this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.distance',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.floors',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.steps',
-                    //$this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.distance(distance_g)',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.floors(floors_g)',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.steps(steps_g)'
-                ),
-                $this->dbWhere(-1, $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps'));
-
-            //$graph_distance = array();
-            //$graph_distance_g = array();
-            //$graph_distance_min = 0;
-            //$graph_distance_max = 0;
-            $graph_floors = array();
-            $graph_floors_g = array();
-            $graph_floors_min = 0;
-            $graph_floors_max = 0;
-            $graph_steps = array();
-            $graph_steps_g = array();
-            $graph_steps_min = 0;
-            $graph_steps_max = 0;
-            foreach ($dbSteps as $dbValue) {
-                //array_push($graph_distance, (String)round($dbValue['distance'], 2));
-                //array_push($graph_distance_g, (String)round($dbValue['distance_g'], 2));
-                //if ($dbValue['distance'] < $graph_distance_min || $graph_distance_min == 0) {$graph_distance_min = $dbValue['distance'];}
-                //if ($dbValue['distance'] > $graph_distance_max || $graph_distance_max == 0) {$graph_distance_max = $dbValue['distance'];}
-
-                array_push($graph_floors, (String)round($dbValue['floors'], 0));
-                array_push($graph_floors_g, (String)round($dbValue['floors_g'], 0));
-                if ($dbValue['floors'] < $graph_floors_min || $graph_floors_min == 0) {$graph_floors_min = $dbValue['floors'];}
-                if ($dbValue['floors'] > $graph_floors_max || $graph_floors_max == 0) {$graph_floors_max = $dbValue['floors'];}
-
-                array_push($graph_steps, (String)round($dbValue['steps'], 0));
-                array_push($graph_steps_g, (String)round($dbValue['steps_g'], 0));
-                if ($dbValue['steps'] < $graph_steps_min || $graph_steps_min == 0) {$graph_steps_min = $dbValue['steps'];}
-                if ($dbValue['steps'] > $graph_steps_max || $graph_steps_max == 0) {$graph_steps_max = $dbValue['steps'];}
-
-            }
-
-            $goalCalcSteps = $this->returnUserRecordStepGoal();
-            $goalCalcFloors = $this->returnUserRecordFloorGoal();
-
-            return array(
-                'returnDate' => explode("-", $this->getParamDate()),
-                //'graph_distance' => $graph_distance,
-                //'graph_distance_g' => $graph_distance_g,
-                'graph_floors' => $graph_floors,
-                'graph_floors_g' => $graph_floors_g,
-                'graph_steps' => $graph_steps,
-                'graph_steps_g' => $graph_steps_g,
-                //'graph_distance_min' => $graph_distance_min,
-                //'graph_distance_max' => $graph_distance_max,
-                'graph_floors_min' => $graph_floors_min,
-                'graph_floors_max' => $graph_floors_max,
-                'graph_steps_min' => $graph_steps_min,
-                'graph_steps_max' => $graph_steps_max,
-                'imp_steps' => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) . "%",
-                'avg_steps' => number_format($goalCalcSteps['newTargetSteps'], 0),
-                'newgoal_steps' => number_format($goalCalcSteps['plusTargetSteps'], 0),
-                'maxgoal_steps' => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000), 0),
-                'imp_floors' => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) . "%",
-                'avg_floors' => number_format($goalCalcFloors['newTargetFloors'], 0),
-                'newgoal_floors' => number_format($goalCalcFloors['plusTargetFloors'], 0),
-                'maxgoal_floors' => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20), 0)
-            );
-        }
-
-        /**
-         * @return array
-         */
-        public function returnUserRecordSteps() {
-            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
-                array('distance', 'floors', 'steps'),
-                $this->dbWhere());
-
-            if (count($dbSteps) > 0) {
-                $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
-                    array('distance', 'floors', 'steps'),
-                    $this->dbWhere());
-
-                $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
-                $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
-
-                if (!is_null($this->getTracking())) {
-                    $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
-                    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
-                }
-
-                return array('recorded' => $dbSteps[0], 'goal' => $dbGoals[0]);
-            } else {
-                return array("error" => "true", "code" => 104, "msg" => "No results for given date");
-            }
-        }
-
-        /**
-         * @return array|bool
-         */
-        public function returnUserRecordStepsGoal() {
-            $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
-                array('date', 'distance', 'floors', 'steps'),
-                $this->dbWhere());
-
-            $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
-
-            if (!is_null($this->getTracking())) {
-                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
-            }
-
-            return $dbGoals;
-        }
-
-        /**
-         * @return array|bool
-         */
-        public function returnUserRecordBody() {
-            $return = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
-                array('date', 'weight', 'weightGoal', 'fat', 'fatGoal', 'bmi', 'calf', 'bicep', 'chest', 'forearm', 'hips', 'neck', 'thigh', 'waist'),
-                $this->dbWhere());
-
-            return $return;
-        }
-
-        /**
-         * @return bool
-         */
-        public function returnUserRecordActivity() {
-            $userActivity = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity",
-                array('sedentary', 'lightlyactive', 'fairlyactive', 'veryactive'),
-                $this->dbWhere());
-
-            $userActivity['total'] = $userActivity['sedentary'] + $userActivity['lightlyactive'] + $userActivity['fairlyactive'] + $userActivity['veryactive'];
-
-            return $userActivity;
         }
 
         /**
@@ -525,89 +279,12 @@
         /**
          * @return array|bool
          */
-        public function returnUserRecordWeekPedometer() {
-            $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
-                array('date', 'steps', 'distance', 'floors'),
+        public function returnUserRecordBody() {
+            $return = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
+                array('date', 'weight', 'weightGoal', 'fat', 'fatGoal', 'bmi', 'calf', 'bicep', 'chest', 'forearm', 'hips', 'neck', 'thigh', 'waist'),
                 $this->dbWhere());
 
-            foreach ($userActivity as $key => $value) {
-                $userActivity[$key]['distance'] = (String)round($value['distance'], 2);
-                $userActivity[$key]['returnDate'] = explode("-", $value['date']);
-            }
-
-            return $userActivity;
-        }
-
-        /**
-         * @return array
-         */
-        public function returnUserRecordTopBadges() {
-            $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr",
-                array('badgeType', 'value', 'dateTime', 'timesAchieved'),
-                array("user" => $this->getUserID()));
-
-            $badges = array();
-            foreach ($userBadges as $userBadge) {
-                if (!array_key_exists($userBadge['badgeType'], $badges)) {
-                    $badges[$userBadge['badgeType']] = array();
-                    $badges[$userBadge['badgeType']]['type'] = $userBadge['badgeType'];
-                    $badges[$userBadge['badgeType']]['value'] = $userBadge['value'];
-                    $badges[$userBadge['badgeType']]['dateTime'] = $userBadge['dateTime'];
-                    $badges[$userBadge['badgeType']]['timesAchieved'] = $userBadge['timesAchieved'];
-                } else if ($userBadge['value'] > $badges[$userBadge['badgeType']]['value']) {
-                    $badges[$userBadge['badgeType']]['value'] = $userBadge['value'];
-                    $badges[$userBadge['badgeType']]['dateTime'] = $userBadge['dateTime'];
-                    $badges[$userBadge['badgeType']]['timesAchieved'] = $userBadge['timesAchieved'];
-                }
-            }
-
-            foreach ($badges as $badge) {
-                $dbBadge = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages",
-                    array('image', 'badgeGradientEndColor', 'badgeGradientStartColor', 'earnedMessage', 'marketingDescription', 'name'),
-                    array("AND" => array("badgeType" => $badge['type'], "value" => $badge['value'])));
-                $badges[$badge['type']] = array_merge($badges[$badge['type']], $dbBadge);
-            }
-
-            return array("images" => "images/badges/", "badges" => $badges);
-        }
-
-        /**
-         * @return array
-         */
-        public function returnUserRecordTrend() {
-            $trendArray = array();
-
-            $dbBody = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'), array("user" => $this->getUserID(), "ORDER" => "date  ASC", "LIMIT" => 1));
-            $trendArray['weeksWeightTracked'] = round(abs(strtotime($this->getParamDate()) - strtotime($dbBody['date'])) / 604800, 0);
-
-            $trendArray['weightToLose'] = $dbBody['weight'] - $dbBody['weightGoal'];
-            $trendArray['fatToLose'] = $dbBody['fat'] - $dbBody['fatGoal'];
-
-            $dbGoalsCalories = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array('estimatedDate'), array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
-            $trendArray['estimatedDate'] = date("l", strtotime($dbGoalsCalories['estimatedDate'])) . " the " . date("jS \of F Y", strtotime($dbGoalsCalories['estimatedDate']));
-            $trendArray['estimatedWeeks'] = round(abs(strtotime($dbGoalsCalories['estimatedDate']) - strtotime($this->getParamDate())) / 604800, 0);
-
-            $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('name', 'rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
-            $trendArray['rank'] = $dbUsers['rank'];
-            $trendArray['friends'] = $dbUsers['friends'];
-            $trendArray['nextRank'] = number_format($dbUsers['distance'], 0);
-            $trendArray['name'] = explode(" ", $dbUsers['name']);
-            $trendArray['name'] = $trendArray['name'][0];
-
-            $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('caloriesOut'), array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
-            $dbLogFood = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array('calories'), array("AND" => array("user" => $this->getUserID(), "date" => $this->getParamDate()), "ORDER" => "date DESC", "LIMIT" => 1));
-
-            $trendArray['caldef'] = (String)($dbSteps['caloriesOut'] - $dbLogFood);
-
-            if ($dbUsers['gender'] == "MALE") {
-                $trendArray['he'] = "he";
-                $trendArray['his'] = "his";
-            } else {
-                $trendArray['he'] = "she";
-                $trendArray['his'] = "her";
-            }
-
-            return $trendArray;
+            return $return;
         }
 
         /**
@@ -698,6 +375,616 @@
             }
 
             return $dbDevices;
+        }
+
+        /**
+         * @return array
+         */
+        public function returnUserRecordFood() {
+            //TODO Added support for multi record returned
+
+            $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
+                array('meal', 'calories'),
+                $this->dbWhere(4));
+
+            if (count($dbFoodLog) > 0) {
+                $total = 0;
+                foreach ($dbFoodLog as $meal) {
+                    $total = $total + $meal['calories'];
+                }
+
+
+                $dbFoodGoal = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories",
+                    array('calories'),
+                    $this->dbWhere());
+
+                if (!is_null($this->getTracking())) {
+                    $this->getTracking()->track("JSON Get", $this->getUserID(), "Food");
+                    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Food");
+                }
+
+                return array('goal' => $dbFoodGoal[0]['calories'], 'total' => $total, "meals" => $dbFoodLog);
+            } else {
+                return array("error" => "true", "code" => 104, "msg" => "No results for given date");
+            }
+        }
+
+        /**
+         * @return tracking
+         */
+        public function getTracking() {
+            return $this->tracking;
+        }
+
+        /**
+         * @param tracking $tracking
+         */
+        public function setTracking($tracking) {
+            $this->tracking = $tracking;
+        }
+
+        /**
+         * @return array
+         */
+        public function returnUserRecordFoodDiary() {
+            $returnArray = array();
+
+            $where = $this->dbWhere();
+            unset($where['AND']['date[<=]']);
+            unset($where['AND']['date[>=]']);
+            unset($where['LIMIT']);
+            $where['AND']['date'] = $this->getParamDate();
+
+            $dbWater = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", 'liquid', $where);
+            /** @var float $dbWater */
+            $returnArray['water'] = array("liquid" => (String)round($dbWater, 2), "goal" => $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200'));
+
+            $dbFood = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
+                array('date', 'meal', 'calories', 'carbs', 'fat', 'fiber', 'protein', 'sodium'),
+                $where);
+
+            $returnArray['food'] = array();
+            $returnArray['food']['meals'] = array();
+            $returnArray['food']['summary'] = array();
+            $returnArray['food']['summary']['calories'] = 0;
+            $returnArray['food']['summary']['carbs'] = 0;
+            $returnArray['food']['summary']['fat'] = 0;
+            $returnArray['food']['summary']['fiber'] = 0;
+            $returnArray['food']['summary']['protein'] = 0;
+            $returnArray['food']['summary']['sodium'] = 0;
+            foreach ($dbFood as $meal) {
+                $returnArray['food']['meals'][$meal['meal']] = array('calories' => $meal['calories'],
+                                                                     'carbs'    => $meal['carbs'],
+                                                                     'fat'      => $meal['fat'],
+                                                                     'fiber'    => $meal['fiber'],
+                                                                     'protein'  => $meal['protein'],
+                                                                     'sodium'   => $meal['sodium']
+                );
+                $returnArray['food']['summary']['calories'] += $meal['calories'];
+                $returnArray['food']['summary']['carbs'] += $meal['carbs'];
+                $returnArray['food']['summary']['fat'] += $meal['fat'];
+                $returnArray['food']['summary']['fiber'] += $meal['fiber'];
+                $returnArray['food']['summary']['protein'] += $meal['protein'];
+                $returnArray['food']['summary']['sodium'] += $meal['sodium'];
+            }
+            foreach ($dbFood as $meal) {
+                $returnArray['food']['meals'][$meal['meal']]['precentage'] = ($meal['calories'] / $returnArray['food']['summary']['calories']) * 100;
+            }
+            $returnArray['food']['goals'] = array();
+            $returnArray['food']['goals']['carbs'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_carbs", 310);
+            $returnArray['food']['goals']['fat'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_fat", 70);
+            $returnArray['food']['goals']['fiber'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_fiber", 30);
+            $returnArray['food']['goals']['protein'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_protein", 50);
+            $returnArray['food']['goals']['sodium'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_sodium", 2300);
+
+            return $returnArray;
+        }
+
+        public function returnUserRecordKeyPoints() {
+            // Get Users Gender and leaderboard ranking
+            $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
+            if (array_key_exists("personal", $_GET) and $_GET['personal'] == "true") {
+                $he = "I";
+                $is = "am";
+                $hes = "I've";
+                $his = "my";
+            } else {
+                $is = "is";
+                if ($dbUsers['gender'] == "MALE") {
+                    $he = "he";
+                    $hes = "he's";
+                    $his = "his";
+                } else {
+                    $he = "she";
+                    $hes = "she's";
+                    $his = "her";
+                }
+            }
+
+            /**
+             * Get Keypoint records
+             */
+            $dbKeyPoints = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "keypoints",
+                array('category', 'value', 'less', 'more')
+            );
+
+            $keyPoints = array();
+            foreach ($dbKeyPoints as $point) {
+                if (!array_key_exists($point['category'], $keyPoints)) {
+                    $keyPoints[$point['category']] = array();
+                }
+
+                array_push($keyPoints[$point['category']], array(
+                    "value" => $point['value'],
+                    "less"  => $point['less'],
+                    "more"  => $point['more']
+                ));
+            }
+
+            $returnStats = array("distance" => array(), "floors" => array(), "max" => array(), "friends" => array());
+            $returnStats["friends"] = $hes . " " . $dbUsers['friends'] . " friends ";
+            if ($dbUsers['rank'] > 1) {
+                $returnStats["friends"] .= "and " . $is . " currently ranked " . $this->ordinal_suffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'], 0) . " steps " . $he . " could take " . $this->ordinal_suffix($dbUsers['rank'] - 1) . " place.";
+            } else {
+                $returnStats["friends"] .= "and " . $is . " proudly at the top of the leaderboard.";
+            }
+
+            /**
+             * Set key points for DISTANCE
+             */
+            $dbDistanceAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'distance', array("user" => $this->getUserID()));
+            $less = array();
+            $more = array();
+            foreach ($keyPoints['distance'] as $values) {
+                if ($dbDistanceAllTime < $values['value']) {
+                    array_push($less, number_format(($values['value'] - $dbDistanceAllTime), 0) . " miles until " . $hes . " walked " . $values['less']);
+                } else if ($dbDistanceAllTime > $values['value']) {
+                    $times = round($dbDistanceAllTime / $values['value'], 2);
+                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
+                        $msg = $hes . " walked " . $values['more'] . " " . number_format($times, 0) . " time";
+                    } else {
+                        $msg = $hes . " walked " . $values['less'] . " " . number_format($times, 0) . " time";
+                    }
+                    if ($times > 1) {
+                        $msg .= "s";
+                    }
+                    array_push($more, $msg);
+                }
+            }
+
+            $maxItems = $this->getAppClass()->getSetting("kp_maxItems", 8);
+            $lessItems = $this->getAppClass()->getSetting("kp_lessItems", 2);
+            if (count($less) < $maxItems - $lessItems) {
+                $lessItems = $maxItems - count($less);
+            }
+
+            for ($iMore = ($lessItems - 1); $iMore >= 0; $iMore = $iMore - 1) {
+                if (count($more) > $iMore) {
+                    array_push($returnStats['distance'], $more[(count($more) - 1) - $iMore]);
+                    $maxItems = $maxItems - 1;
+                }
+            }
+
+            for ($iLess = $maxItems; $iLess >= 0; $iLess = $iLess - 1) {
+                if (count($less) > $iLess) {
+                    array_push($returnStats['distance'], $less[(count($less) - 1) - $iLess]);
+                }
+            }
+
+            /**
+             * Set key points for Floors
+             */
+            $dbFloorsAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors', array("user" => $this->getUserID()));
+
+            $less = array();
+            $more = array();
+            foreach ($keyPoints['floors'] as $values) {
+                if ($dbFloorsAllTime < $values['value']) {
+                    array_push($less, number_format(($values['value'] - $dbFloorsAllTime), 0) . " more floors until " . $hes . " climbed " . $values['less']);
+                } else if ($dbFloorsAllTime > $values['value']) {
+                    $times = round($dbFloorsAllTime / $values['value'], 0);
+                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
+                        $msg = $hes . " climbed " . $values['more'] . " " . number_format($times, 0) . " time";
+                    } else {
+                        $msg = $hes . " climbed " . $values['less'] . " " . number_format($times, 0) . " time";
+                    }
+                    if ($times > 1) {
+                        $msg .= "s";
+                    }
+                    array_push($more, $msg);
+                }
+            }
+
+            $maxItems = $this->getAppClass()->getSetting("kp_maxItems", 8);
+            $lessItems = $this->getAppClass()->getSetting("kp_lessItems", 2);
+            if (count($less) < $maxItems - $lessItems) {
+                $lessItems = $maxItems - count($less);
+            }
+
+            for ($iMore = ($lessItems - 1); $iMore >= 0; $iMore = $iMore - 1) {
+                if (count($more) > $iMore) {
+                    array_push($returnStats['floors'], $more[(count($more) - 1) - $iMore]);
+                    $maxItems = $maxItems - 1;
+                }
+            }
+
+            for ($iLess = $maxItems; $iLess >= 0; $iLess = $iLess - 1) {
+                if (count($less) > $iLess) {
+                    array_push($returnStats['floors'], $less[(count($less) - 1) - $iLess]);
+                }
+            }
+
+            /**
+             * Set Max values
+             */
+            $dbMaxSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('steps', 'date'), array("user" => $this->getUserID(), "ORDER" => "steps DESC", "LIMIT" => 1));
+            array_push($returnStats["max"], $his . " highest step count, totalling " . number_format($dbMaxSteps['steps'], 0) . ", for a day was on " . date("jS F, Y", strtotime($dbMaxSteps['date'])) . ".");
+
+            $dbMaxDistance = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'date'), array("user" => $this->getUserID(), "ORDER" => "distance DESC", "LIMIT" => 1));
+            if ($dbMaxDistance['date'] == $dbMaxSteps['date']) {
+                $returnStats["max"][(count($returnStats["max"]) - 1)] .= " That's an impressive " . number_format($dbMaxDistance['distance'], 0) . " miles.";
+            } else {
+                array_push($returnStats["max"], $he . " traveled the furthest, " . number_format($dbMaxDistance['distance'], 0) . " miles, on " . date("jS F, Y", strtotime($dbMaxDistance['date'])) . ".");
+            }
+
+            $dbMaxFloors = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('floors', 'date'), array("user" => $this->getUserID(), "ORDER" => "floors DESC", "LIMIT" => 1));
+            array_push($returnStats["max"], $he . " walked up, " . number_format($dbMaxFloors['floors'], 0) . " floors, on " . date("jS F, Y", strtotime($dbMaxFloors['date'])) . ".");
+
+            $dbMaxElevation = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('elevation', 'date'), array("user" => $this->getUserID(), "ORDER" => "elevation DESC", "LIMIT" => 1));
+            if ($dbMaxFloors['date'] == $dbMaxElevation['date']) {
+                $returnStats["max"][(count($returnStats["max"]) - 1)] .= " That's a total of " . number_format($dbMaxElevation['elevation'], 2) . " meters.";
+            } else {
+                array_push($returnStats["max"], $he . " climed the highest on " . date("jS F, Y", strtotime($dbMaxElevation['date'])) . ", a total of " . number_format($dbMaxElevation['elevation'], 2) . " meters.");
+            }
+
+            return $returnStats;
+        }
+
+        private function ordinal_suffix($input_num) {
+            $num = $input_num % 100; // protect against large numbers
+            if ($num < 11 || $num > 13) {
+                switch ($num % 10) {
+                    case 1:
+                        return $input_num . 'st';
+                    case 2:
+                        return $input_num . 'nd';
+                    case 3:
+                        return $input_num . 'rd';
+                }
+            }
+
+            return $input_num . 'th';
+        }
+
+        public function returnUserRecordSleep() {
+
+            $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
+                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr" => array("logId" => "sleeplog")),
+                array(
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.startTime',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.timeInBed',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesAsleep',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesToFallAsleep',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.efficiency',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.awakeningsCount',
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr.user" => $this->getUserID()));
+
+            $returnSleep = array(
+                "efficiency"          => 0,
+                "timeInBed"           => 0,
+                "minutesToFallAsleep" => 0,
+                "minutesAsleep"       => 0,
+                "awakeningsCount"     => 0
+            );
+            foreach ($dbSleepRecords as $record) {
+                $returnSleep['efficiency'] = $returnSleep['efficiency'] + $record['efficiency'];
+                $returnSleep['timeInBed'] = $returnSleep['timeInBed'] + $record['timeInBed'];
+                $returnSleep['minutesToFallAsleep'] = $returnSleep['minutesToFallAsleep'] + $record['minutesToFallAsleep'];
+                $returnSleep['minutesAsleep'] = $returnSleep['minutesAsleep'] + $record['minutesAsleep'];
+                $returnSleep['awakeningsCount'] = $returnSleep['awakeningsCount'] + $record['awakeningsCount'];
+            }
+
+            $returnSleep['efficiency'] = round($returnSleep['efficiency'] / count($dbSleepRecords), 0);
+            $returnSleep['timeInBedAvg'] = round($returnSleep['timeInBed'] / count($dbSleepRecords), 0);
+            $returnSleep['minutesToFallAsleep'] = round($returnSleep['minutesToFallAsleep'] / count($dbSleepRecords), 0);
+            $returnSleep['minutesAsleep'] = round($returnSleep['minutesAsleep'] / count($dbSleepRecords), 0);
+            $returnSleep['awakeningsCount'] = round($returnSleep['awakeningsCount'] / count($dbSleepRecords), 0);
+
+            return $returnSleep;
+        }
+
+        /**
+         * @return array
+         */
+        public function returnUserRecordSteps() {
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('distance', 'floors', 'steps'),
+                $this->dbWhere());
+
+            if (count($dbSteps) > 0) {
+                $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+                    array('distance', 'floors', 'steps'),
+                    $this->dbWhere());
+
+                $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
+                $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
+
+                if (!is_null($this->getTracking())) {
+                    $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
+                    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+                }
+
+                return array('recorded' => $dbSteps[0], 'goal' => $dbGoals[0]);
+            } else {
+                return array("error" => "true", "code" => 104, "msg" => "No results for given date");
+            }
+        }
+
+        /**
+         * @return array|bool
+         */
+        public function returnUserRecordStepsGoal() {
+            $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+                array('date', 'distance', 'floors', 'steps'),
+                $this->dbWhere());
+
+            $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
+
+            if (!is_null($this->getTracking())) {
+                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+            }
+
+            return $dbGoals;
+        }
+
+        /**
+         * @return array
+         */
+        public function returnUserRecordTopBadges() {
+            $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr",
+                array('badgeType', 'value', 'dateTime', 'timesAchieved'),
+                array("user" => $this->getUserID()));
+
+            $badges = array();
+            foreach ($userBadges as $userBadge) {
+                if (!array_key_exists($userBadge['badgeType'], $badges)) {
+                    $badges[$userBadge['badgeType']] = array();
+                    $badges[$userBadge['badgeType']]['type'] = $userBadge['badgeType'];
+                    $badges[$userBadge['badgeType']]['value'] = $userBadge['value'];
+                    $badges[$userBadge['badgeType']]['dateTime'] = $userBadge['dateTime'];
+                    $badges[$userBadge['badgeType']]['timesAchieved'] = $userBadge['timesAchieved'];
+                } else if ($userBadge['value'] > $badges[$userBadge['badgeType']]['value']) {
+                    $badges[$userBadge['badgeType']]['value'] = $userBadge['value'];
+                    $badges[$userBadge['badgeType']]['dateTime'] = $userBadge['dateTime'];
+                    $badges[$userBadge['badgeType']]['timesAchieved'] = $userBadge['timesAchieved'];
+                }
+            }
+
+            foreach ($badges as $badge) {
+                $dbBadge = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages",
+                    array('image', 'badgeGradientEndColor', 'badgeGradientStartColor', 'earnedMessage', 'marketingDescription', 'name'),
+                    array("AND" => array("badgeType" => $badge['type'], "value" => $badge['value'])));
+                $badges[$badge['type']] = array_merge($badges[$badge['type']], $dbBadge);
+            }
+
+            return array("images" => "images/badges/", "badges" => $badges);
+        }
+
+        public function returnUserRecordTracked() {
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals" => array("date" => "date")),
+                array(
+                    //$this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.distance',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.floors',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.steps',
+                    //$this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.distance(distance_g)',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.floors(floors_g)',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.steps(steps_g)'
+                ),
+                $this->dbWhere(-1, $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps'));
+
+            //$graph_distance = array();
+            //$graph_distance_g = array();
+            //$graph_distance_min = 0;
+            //$graph_distance_max = 0;
+            $graph_floors = array();
+            $graph_floors_g = array();
+            $graph_floors_min = 0;
+            $graph_floors_max = 0;
+            $graph_steps = array();
+            $graph_steps_g = array();
+            $graph_steps_min = 0;
+            $graph_steps_max = 0;
+            foreach ($dbSteps as $dbValue) {
+                //array_push($graph_distance, (String)round($dbValue['distance'], 2));
+                //array_push($graph_distance_g, (String)round($dbValue['distance_g'], 2));
+                //if ($dbValue['distance'] < $graph_distance_min || $graph_distance_min == 0) {$graph_distance_min = $dbValue['distance'];}
+                //if ($dbValue['distance'] > $graph_distance_max || $graph_distance_max == 0) {$graph_distance_max = $dbValue['distance'];}
+
+                array_push($graph_floors, (String)round($dbValue['floors'], 0));
+                array_push($graph_floors_g, (String)round($dbValue['floors_g'], 0));
+                if ($dbValue['floors'] < $graph_floors_min || $graph_floors_min == 0) {
+                    $graph_floors_min = $dbValue['floors'];
+                }
+                if ($dbValue['floors'] > $graph_floors_max || $graph_floors_max == 0) {
+                    $graph_floors_max = $dbValue['floors'];
+                }
+
+                array_push($graph_steps, (String)round($dbValue['steps'], 0));
+                array_push($graph_steps_g, (String)round($dbValue['steps_g'], 0));
+                if ($dbValue['steps'] < $graph_steps_min || $graph_steps_min == 0) {
+                    $graph_steps_min = $dbValue['steps'];
+                }
+                if ($dbValue['steps'] > $graph_steps_max || $graph_steps_max == 0) {
+                    $graph_steps_max = $dbValue['steps'];
+                }
+
+            }
+
+            $goalCalcSteps = $this->returnUserRecordStepGoal();
+            $goalCalcFloors = $this->returnUserRecordFloorGoal();
+
+            return array(
+                'returnDate'       => explode("-", $this->getParamDate()),
+                //'graph_distance' => $graph_distance,
+                //'graph_distance_g' => $graph_distance_g,
+                'graph_floors'     => $graph_floors,
+                'graph_floors_g'   => $graph_floors_g,
+                'graph_steps'      => $graph_steps,
+                'graph_steps_g'    => $graph_steps_g,
+                //'graph_distance_min' => $graph_distance_min,
+                //'graph_distance_max' => $graph_distance_max,
+                'graph_floors_min' => $graph_floors_min,
+                'graph_floors_max' => $graph_floors_max,
+                'graph_steps_min'  => $graph_steps_min,
+                'graph_steps_max'  => $graph_steps_max,
+                'imp_steps'        => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) . "%",
+                'avg_steps'        => number_format($goalCalcSteps['newTargetSteps'], 0),
+                'newgoal_steps'    => number_format($goalCalcSteps['plusTargetSteps'], 0),
+                'maxgoal_steps'    => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000), 0),
+                'imp_floors'       => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) . "%",
+                'avg_floors'       => number_format($goalCalcFloors['newTargetFloors'], 0),
+                'newgoal_floors'   => number_format($goalCalcFloors['plusTargetFloors'], 0),
+                'maxgoal_floors'   => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20), 0)
+            );
+        }
+
+        public function returnUserRecordStepGoal() {
+            $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
+
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
+                array("AND" => array(
+                    "user"     => $this->getUserID(),
+                    "date[<=]" => $oneWeek,
+                    "date[>=]" => $lastMonday
+                ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+            $totalSteps = 0;
+            foreach ($dbSteps as $dbStep) {
+                $totalSteps = $totalSteps + $dbStep;
+            }
+
+            $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+            if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000)) {
+                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) / 100), 0);
+            } else {
+                $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000);
+            }
+
+            return array(
+                "weekStart"       => $lastMonday,
+                "weekEnd"         => $oneWeek,
+                "totalSteps"      => $totalSteps,
+                "newTargetSteps"  => $newTargetSteps,
+                "plusTargetSteps" => $plusTargetSteps
+            );
+        }
+
+        public function returnUserRecordFloorGoal() {
+            $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
+
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
+                array("AND" => array(
+                    "user"     => $this->getUserID(),
+                    "date[<=]" => $oneWeek,
+                    "date[>=]" => $lastMonday
+                ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+            $totalSteps = 0;
+            foreach ($dbSteps as $dbStep) {
+                $totalSteps = $totalSteps + $dbStep;
+            }
+
+            $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+            if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20)) {
+                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) / 100), 0);
+            } else {
+                $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20);
+            }
+
+            return array(
+                "weekStart"        => $lastMonday,
+                "weekEnd"          => $oneWeek,
+                "totalFloors"      => $totalSteps,
+                "newTargetFloors"  => $newTargetSteps,
+                "plusTargetFloors" => $plusTargetSteps
+            );
+        }
+
+        /**
+         * @return array
+         */
+        public function returnUserRecordTrend() {
+            $trendArray = array();
+
+            $dbBody = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'), array("user" => $this->getUserID(), "ORDER" => "date  ASC", "LIMIT" => 1));
+            $trendArray['weeksWeightTracked'] = round(abs(strtotime($this->getParamDate()) - strtotime($dbBody['date'])) / 604800, 0);
+
+            $trendArray['weightToLose'] = $dbBody['weight'] - $dbBody['weightGoal'];
+            $trendArray['fatToLose'] = $dbBody['fat'] - $dbBody['fatGoal'];
+
+            $dbGoalsCalories = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array('estimatedDate'), array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
+            $trendArray['estimatedDate'] = date("l", strtotime($dbGoalsCalories['estimatedDate'])) . " the " . date("jS \of F Y", strtotime($dbGoalsCalories['estimatedDate']));
+            $trendArray['estimatedWeeks'] = round(abs(strtotime($dbGoalsCalories['estimatedDate']) - strtotime($this->getParamDate())) / 604800, 0);
+
+            $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('name', 'rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
+            $trendArray['rank'] = $dbUsers['rank'];
+            $trendArray['friends'] = $dbUsers['friends'];
+            $trendArray['nextRank'] = number_format($dbUsers['distance'], 0);
+            $trendArray['name'] = explode(" ", $dbUsers['name']);
+            $trendArray['name'] = $trendArray['name'][0];
+
+            $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('caloriesOut'), array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
+            $dbLogFood = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array('calories'), array("AND" => array("user" => $this->getUserID(), "date" => $this->getParamDate()), "ORDER" => "date DESC", "LIMIT" => 1));
+
+            $trendArray['caldef'] = (String)($dbSteps['caloriesOut'] - $dbLogFood);
+
+            if ($dbUsers['gender'] == "MALE") {
+                $trendArray['he'] = "he";
+                $trendArray['his'] = "his";
+            } else {
+                $trendArray['he'] = "she";
+                $trendArray['his'] = "her";
+            }
+
+            return $trendArray;
+        }
+
+        /**
+         * @return array|bool
+         */
+        public function returnUserRecordWater() {
+            $dbWater = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water",
+                array('date', 'liquid'),
+                $this->dbWhere());
+
+            $dbWater[0]['liquid'] = (String)round($dbWater[0]['liquid'], 2);
+            $dbWater[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
+
+            if (!is_null($this->getTracking())) {
+                $this->getTracking()->track("JSON Get", $this->getUserID(), "Water");
+                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Water");
+            }
+
+            return $dbWater;
+        }
+
+        /**
+         * @return array|bool
+         */
+        public function returnUserRecordWeekPedometer() {
+            $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('date', 'steps', 'distance', 'floors'),
+                $this->dbWhere());
+
+            foreach ($userActivity as $key => $value) {
+                $userActivity[$key]['distance'] = (String)round($value['distance'], 2);
+                $userActivity[$key]['returnDate'] = explode("-", $value['date']);
+            }
+
+            return $userActivity;
         }
 
         /**
@@ -868,17 +1155,17 @@
 
             $loss = array();
             $monthsBack = 1;
-            $loopMonths = true;
+            $loopMonths = TRUE;
             do {
-                $timestamp = strtotime('now -'.$monthsBack.' month');
+                $timestamp = strtotime('now -' . $monthsBack . ' month');
                 if (array_key_exists(date('Y-m-t', $timestamp), $returnWeight) AND array_key_exists(date('Y-m-01', $timestamp), $returnWeight)) {
                     $loss["weight"][date('Y F', $timestamp)] = round(($returnWeight[date('Y-m-t', $timestamp)]['weightTrend'] - $returnWeight[date('Y-m-01', $timestamp)]['weightTrend']) / 4, 2);
                     $loss["fat"][date('Y F', $timestamp)] = round(($returnWeight[date('Y-m-t', $timestamp)]['fatTrend'] - $returnWeight[date('Y-m-01', $timestamp)]['fatTrend']) / 4, 2);
                     $monthsBack += 1;
                 } else {
-                    $loopMonths = false;
+                    $loopMonths = FALSE;
                 }
-            } while($loopMonths);
+            } while ($loopMonths);
 
             if (!array_key_exists("weight", $loss)) {
                 $loss["weight"] = array();
@@ -902,301 +1189,6 @@
                          'graph_fatAvg'      => $fatAvg,
                          'loss_rate_weight'  => $loss["weight"],
                          'loss_rate_fat'     => $loss["fat"]);
-        }
-
-        public function returnUserRecordAboutMe() {
-            $dbSteps = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
-                array('steps'),
-                array("user" => $this->getUserID())
-            );
-            $dbFloors = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
-                array('floors'),
-                array("user" => $this->getUserID())
-            );
-            $dbDistance = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
-                array('distance'),
-                array("user" => $this->getUserID())
-            );
-
-            $yearThis = date("Y");
-            $yearLast = date("Y") - 1;
-            $dbStepsYearThis = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
-                array('steps'),
-                array("AND" => array("user" => $this->getUserID(), "date[~]" => $yearThis . "%"))
-            );
-
-            $dbStepsYearLast = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
-                array('steps'),
-                array("AND" => array("user" => $this->getUserID(), "date[~]" => $yearLast . "%"))
-            );
-
-            return array(
-                "steps" => round($dbSteps, 0),
-                "floors" => round($dbFloors, 0),
-                "distance" => round($dbDistance, 0),
-                "stepsThisYear" => round($dbStepsYearThis, 0),
-                "stepsLastYear" => round($dbStepsYearLast, 0),
-            );
-        }
-
-        public function returnUserRecordKeyPoints() {
-            // Get Users Gender and leaderboard ranking
-            $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
-            if (array_key_exists("personal", $_GET) and $_GET['personal'] == "true") {
-                $he = "I";
-                $is = "am";
-                $hes = "I've";
-                $his = "my";
-            } else {
-                $is = "is";
-                if ($dbUsers['gender'] == "MALE") {
-                    $he = "he";
-                    $hes = "he's";
-                    $his = "his";
-                } else {
-                    $he = "she";
-                    $hes = "she's";
-                    $his = "her";
-                }
-            }
-
-            /**
-             * Get Keypoint records
-             */
-            $dbKeyPoints = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "keypoints",
-                array('category', 'value', 'less', 'more')
-            );
-
-            $keyPoints = array();
-            foreach ($dbKeyPoints as $point) {
-                if (!array_key_exists($point['category'], $keyPoints)) {
-                    $keyPoints[$point['category']] = array();
-                }
-
-                array_push($keyPoints[$point['category']], array(
-                    "value" => $point['value'],
-                    "less" => $point['less'],
-                    "more" => $point['more']
-                ));
-            }
-
-            $returnStats = array("distance" => array(), "floors" => array(), "max" => array(), "friends" => array());
-            $returnStats["friends"] = $hes . " " . $dbUsers['friends'] . " friends ";
-            if ($dbUsers['rank'] > 1) {
-                $returnStats["friends"] .= "and " . $is . " currently ranked " . $this->ordinal_suffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'], 0) . " steps " . $he . " could take " . $this->ordinal_suffix($dbUsers['rank'] - 1) . " place.";
-            } else {
-                $returnStats["friends"] .= "and " . $is . " proudly at the top of the leaderboard.";
-            }
-
-            /**
-             * Set key points for DISTANCE
-             */
-            $dbDistanceAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'distance', array("user" => $this->getUserID()));
-            $less = array();
-            $more = array();
-            foreach ($keyPoints['distance'] as $values) {
-                if ($dbDistanceAllTime < $values['value']) {
-                    array_push($less, number_format(($values['value'] - $dbDistanceAllTime), 0) . " miles until " . $hes . " walked " . $values['less']);
-                } else if ($dbDistanceAllTime > $values['value']) {
-                    $times = round($dbDistanceAllTime / $values['value'], 2);
-                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
-                        $msg = $hes . " walked " . $values['more'] . " " . number_format($times, 0) . " time";
-                    } else {
-                        $msg = $hes . " walked " . $values['less'] . " " . number_format($times, 0) . " time";
-                    }
-                    if ($times > 1) {
-                        $msg .= "s";
-                    }
-                    array_push($more, $msg);
-                }
-            }
-
-            $maxItems = $this->getAppClass()->getSetting("kp_maxItems", 8);
-            $lessItems = $this->getAppClass()->getSetting("kp_lessItems", 2);
-            if (count($less) < $maxItems - $lessItems) {
-                $lessItems = $maxItems - count($less);
-            }
-
-            for ($iMore = ($lessItems - 1); $iMore >= 0; $iMore = $iMore - 1) {
-                if (count($more) > $iMore) {
-                    array_push($returnStats['distance'], $more[(count($more) - 1) - $iMore]);
-                    $maxItems = $maxItems - 1;
-                }
-            }
-
-            for ($iLess = $maxItems; $iLess >= 0; $iLess = $iLess - 1) {
-                if (count($less) > $iLess) {
-                    array_push($returnStats['distance'], $less[(count($less) - 1) - $iLess]);
-                }
-            }
-
-            /**
-             * Set key points for Floors
-             */
-            $dbFloorsAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors', array("user" => $this->getUserID()));
-
-            $less = array();
-            $more = array();
-            foreach ($keyPoints['floors'] as $values) {
-                if ($dbFloorsAllTime < $values['value']) {
-                    array_push($less, number_format(($values['value'] - $dbFloorsAllTime), 0) . " more floors until " . $hes . " climbed " . $values['less']);
-                } else if ($dbFloorsAllTime > $values['value']) {
-                    $times = round($dbFloorsAllTime / $values['value'], 0);
-                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
-                        $msg = $hes . " climbed " . $values['more'] . " " . number_format($times, 0) . " time";
-                    } else {
-                        $msg = $hes . " climbed " . $values['less'] . " " . number_format($times, 0) . " time";
-                    }
-                    if ($times > 1) {
-                        $msg .= "s";
-                    }
-                    array_push($more, $msg);
-                }
-            }
-
-            $maxItems = $this->getAppClass()->getSetting("kp_maxItems", 8);
-            $lessItems = $this->getAppClass()->getSetting("kp_lessItems", 2);
-            if (count($less) < $maxItems - $lessItems) {
-                $lessItems = $maxItems - count($less);
-            }
-
-            for ($iMore = ($lessItems - 1); $iMore >= 0; $iMore = $iMore - 1) {
-                if (count($more) > $iMore) {
-                    array_push($returnStats['floors'], $more[(count($more) - 1) - $iMore]);
-                    $maxItems = $maxItems - 1;
-                }
-            }
-
-            for ($iLess = $maxItems; $iLess >= 0; $iLess = $iLess - 1) {
-                if (count($less) > $iLess) {
-                    array_push($returnStats['floors'], $less[(count($less) - 1) - $iLess]);
-                }
-            }
-
-            /**
-             * Set Max values
-             */
-            $dbMaxSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('steps', 'date'), array("user" => $this->getUserID(), "ORDER" => "steps DESC", "LIMIT" => 1));
-            array_push($returnStats["max"], $his . " highest step count, totalling " . number_format($dbMaxSteps['steps'], 0) . ", for a day was on " . date("jS F, Y", strtotime($dbMaxSteps['date'])) . ".");
-
-            $dbMaxDistance = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'date'), array("user" => $this->getUserID(), "ORDER" => "distance DESC", "LIMIT" => 1));
-            if ($dbMaxDistance['date'] == $dbMaxSteps['date']) {
-                $returnStats["max"][(count($returnStats["max"]) -1)] .= " That's an impressive " . number_format($dbMaxDistance['distance'], 0) . " miles.";
-            } else {
-                array_push($returnStats["max"], $he . " traveled the furthest, " . number_format($dbMaxDistance['distance'], 0) . " miles, on " . date("jS F, Y", strtotime($dbMaxDistance['date'])) . ".");
-            }
-
-            $dbMaxFloors = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('floors', 'date'), array("user" => $this->getUserID(), "ORDER" => "floors DESC", "LIMIT" => 1));
-            array_push($returnStats["max"], $he . " walked up, " . number_format($dbMaxFloors['floors'], 0) . " floors, on " . date("jS F, Y", strtotime($dbMaxFloors['date'])) . ".");
-
-            $dbMaxElevation = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('elevation', 'date'), array("user" => $this->getUserID(), "ORDER" => "elevation DESC", "LIMIT" => 1));
-            if ($dbMaxFloors['date'] == $dbMaxElevation['date']) {
-                $returnStats["max"][(count($returnStats["max"]) -1)] .= " That's a total of " . number_format($dbMaxElevation['elevation'], 2) . " meters.";
-            } else {
-                array_push($returnStats["max"], $he . " climed the highest on " . date("jS F, Y", strtotime($dbMaxElevation['date'])) . ", a total of " . number_format($dbMaxElevation['elevation'], 2) . " meters.");
-            }
-            return $returnStats;
-        }
-
-        public function returnUserRecordSleep() {
-
-            $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
-                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr" => array("logId" => "sleeplog")),
-                array(
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.startTime',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.timeInBed',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesAsleep',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesToFallAsleep',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.efficiency',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.awakeningsCount',
-                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr.user" => $this->getUserID()));
-
-            $returnSleep = array(
-                "efficiency" => 0,
-                "timeInBed" => 0,
-                "minutesToFallAsleep" => 0,
-                "minutesAsleep" => 0,
-                "awakeningsCount" => 0
-            );
-            foreach ($dbSleepRecords as $record) {
-                $returnSleep['efficiency'] = $returnSleep['efficiency'] + $record['efficiency'];
-                $returnSleep['timeInBed'] = $returnSleep['timeInBed'] + $record['timeInBed'];
-                $returnSleep['minutesToFallAsleep'] = $returnSleep['minutesToFallAsleep'] + $record['minutesToFallAsleep'];
-                $returnSleep['minutesAsleep'] = $returnSleep['minutesAsleep'] + $record['minutesAsleep'];
-                $returnSleep['awakeningsCount'] = $returnSleep['awakeningsCount'] + $record['awakeningsCount'];
-            }
-
-            $returnSleep['efficiency'] = round($returnSleep['efficiency'] / count($dbSleepRecords), 0);
-            $returnSleep['timeInBedAvg'] = round($returnSleep['timeInBed'] / count($dbSleepRecords), 0);
-            $returnSleep['minutesToFallAsleep'] = round($returnSleep['minutesToFallAsleep']/ count($dbSleepRecords), 0);
-            $returnSleep['minutesAsleep'] = round($returnSleep['minutesAsleep'] / count($dbSleepRecords), 0);
-            $returnSleep['awakeningsCount'] = round($returnSleep['awakeningsCount'] / count($dbSleepRecords), 0);
-
-            return $returnSleep;
-        }
-
-        public function returnUserRecordStepGoal() {
-            $lastMonday = date('Y-m-d',strtotime('last monday -7 days'));
-            $oneWeek = date('Y-m-d',strtotime( $lastMonday . ' +6 days'));
-
-            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
-                array("AND" => array(
-                    "user" => $this->getUserID(),
-                    "date[<=]" => $oneWeek,
-                    "date[>=]" => $lastMonday
-                ), "ORDER" => "date DESC", "LIMIT" => 7));
-
-            $totalSteps = 0;
-            foreach ($dbSteps as $dbStep) {
-                $totalSteps = $totalSteps + $dbStep;
-            }
-
-            $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-            if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000)) {
-                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) / 100), 0);
-            } else {
-                $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000);
-            }
-
-            return array(
-                "weekStart" => $lastMonday,
-                "weekEnd" => $oneWeek,
-                "totalSteps" => $totalSteps,
-                "newTargetSteps" => $newTargetSteps,
-                "plusTargetSteps" => $plusTargetSteps
-            );
-        }
-
-        public function returnUserRecordFloorGoal() {
-            $lastMonday = date('Y-m-d',strtotime('last monday -7 days'));
-            $oneWeek = date('Y-m-d',strtotime( $lastMonday . ' +6 days'));
-
-            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
-                array("AND" => array(
-                    "user" => $this->getUserID(),
-                    "date[<=]" => $oneWeek,
-                    "date[>=]" => $lastMonday
-                ), "ORDER" => "date DESC", "LIMIT" => 7));
-
-            $totalSteps = 0;
-            foreach ($dbSteps as $dbStep) {
-                $totalSteps = $totalSteps + $dbStep;
-            }
-
-            $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-            if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20)) {
-                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) / 100), 0);
-            } else {
-                $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20);
-            }
-
-            return array(
-                "weekStart" => $lastMonday,
-                "weekEnd" => $oneWeek,
-                "totalFloors" => $totalSteps,
-                "newTargetFloors" => $newTargetSteps,
-                "plusTargetFloors" => $plusTargetSteps
-            );
         }
 
         /**
@@ -1245,16 +1237,38 @@
             return $returnWeight;
         }
 
-        private function ordinal_suffix($input_num){
-            $num = $input_num % 100; // protect against large numbers
-            if($num < 11 || $num > 13){
-                switch($num % 10){
-                    case 1: return $input_num . 'st';
-                    case 2: return $input_num . 'nd';
-                    case 3: return $input_num . 'rd';
-                }
+        /**
+         * @param $get
+         * @return array
+         */
+        public function returnUserRecords($get) {
+
+            if (array_key_exists("period", $get)) {
+                $this->setParamPeriod($get['period']);
             }
-            return $input_num . 'th';
+
+            if (array_key_exists("date", $get)) {
+                $this->setParamDate($get['date']);
+            }
+
+            $functionName = 'returnUserRecord' . $get['data'];
+            if (method_exists($this, $functionName)) {
+                $dbUserName = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'name', array("fuid" => $this->getUserID()));
+                $resultsArray = array("error" => "false", "user" => $this->getUserID(), 'username' => $dbUserName, "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
+                $resultsArray['results'] = $this->$functionName();
+
+                if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
+                    $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+
+                return $resultsArray;
+            } else {
+                if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
+                    $this->getTracking()->track("Error", 103);
+                    $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+                }
+
+                return array("error" => "true", "code" => 103, "msg" => "Unknown dataset: " . $functionName);
+            }
         }
 
     }

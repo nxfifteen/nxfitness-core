@@ -9,18 +9,18 @@
      * @license http://stuart.nx15.at/mit/2015 MIT
      */
     class medoo {
-        protected $database_type;
         protected $charset;
-        protected $database_name;
-        protected $server;
-        protected $username;
-        protected $password;
         protected $database_file;
-        protected $socket;
-        protected $port;
-        protected $option = array();
-        protected $logs = array();
+        protected $database_name;
+        protected $database_type;
         protected $debug_mode = FALSE;
+        protected $logs = array();
+        protected $option = array();
+        protected $password;
+        protected $port;
+        protected $server;
+        protected $socket;
+        protected $username;
 
         public function __construct($options = NULL) {
             try {
@@ -82,6 +82,175 @@
             } catch (PDOException$e) {
                 throw new Exception($e->getMessage());
             }
+        }
+
+        public function avg($table, $join, $column = NULL, $where = NULL) {
+            $query = $this->query($this->select_context($table, $join, $column, $where, 'AVG'));
+
+            return $query ? 0 + $query->fetchColumn() : FALSE;
+        }
+
+        public function count($table, $join = NULL, $column = NULL, $where = NULL) {
+            $query = $this->query($this->select_context($table, $join, $column, $where, 'COUNT'));
+
+            return $query ? 0 + $query->fetchColumn() : FALSE;
+        }
+
+        public function debug() {
+            $this->debug_mode = TRUE;
+
+            return $this;
+        }
+
+        public function delete($table, $where) {
+            return $this->exec('DELETE FROM "' . $table . '"' . $this->where_clause($where));
+        }
+
+        public function error() {
+            return $this->pdo->errorInfo();
+        }
+
+        public function get($table, $join = NULL, $column = NULL, $where = NULL) {
+            if (!isset($where)) {
+                $where = array();
+            }
+            $where['LIMIT'] = 1;
+            $query = $this->query($this->select_context($table, $join, $column, $where));
+            if ($query) {
+                $data = $query->fetchAll(PDO::FETCH_ASSOC);
+                if (isset($data[0])) {
+                    $column = $where == NULL ? $join : $column;
+                    if (is_string($column) && $column != '*') {
+                        return $data[0][$column];
+                    }
+
+                    return $data[0];
+                } else {
+                    return FALSE;
+                }
+            } else {
+                return FALSE;
+            }
+        }
+
+        public function has($table, $join, $where = NULL) {
+            $column = NULL;
+            $query = $this->query('SELECT EXISTS(' . $this->select_context($table, $join, $column, $where, 1) . ')');
+
+            return $query ? $query->fetchColumn() === '1' : FALSE;
+        }
+
+        public function info() {
+            $output = array('server' => 'SERVER_INFO', 'driver' => 'DRIVER_NAME', 'client' => 'CLIENT_VERSION', 'version' => 'SERVER_VERSION', 'connection' => 'CONNECTION_STATUS');
+            foreach ($output as $key => $value) {
+                $output[$key] = $this->pdo->getAttribute(constant('PDO::ATTR_' . $value));
+            }
+
+            return $output;
+        }
+
+        public function insert($table, $datas) {
+            $lastId = array();
+            if (!isset($datas[0])) {
+                $datas = array($datas);
+            }
+            foreach ($datas as $data) {
+                $keys = array_keys($data);
+                $values = array();
+                $columns = array();
+                foreach ($data as $key => $value) {
+                    array_push($columns, $this->column_quote($key));
+                    switch (gettype($value)) {
+                        case 'NULL':
+                            $values[] = 'NULL';
+                            break;
+                        case 'array':
+                            preg_match("/\(JSON\)\s*([\w]+)/i", $key, $column_match);
+                            $values[] = isset($column_match[0]) ? $this->quote(json_encode($value)) : $this->quote(serialize($value));
+                            break;
+                        case 'boolean':
+                            $values[] = ($value ? '1' : '0');
+                            break;
+                        case 'integer':
+                        case 'double':
+                        case 'string':
+                            $values[] = $this->fn_quote($key, $value);
+                            break;
+                    }
+                }
+                $this->exec('INSERT INTO "' . $table . '" (' . implode(', ', $columns) . ') VALUES (' . implode($values, ', ') . ')');
+                $lastId[] = $this->pdo->lastInsertId();
+            }
+
+            return count($lastId) > 1 ? $lastId : $lastId[0];
+        }
+
+        public function exec($query) {
+            if ($this->debug_mode) {
+                echo $query;
+                $this->debug_mode = FALSE;
+
+                return FALSE;
+            }
+            array_push($this->logs, $query);
+
+            return $this->pdo->exec($query);
+        }
+
+        public function last_query() {
+            return end($this->logs);
+        }
+
+        public function log() {
+            return $this->logs;
+        }
+
+        public function max($table, $join, $column = NULL, $where = NULL) {
+            $query = $this->query($this->select_context($table, $join, $column, $where, 'MAX'));
+            if ($query) {
+                $max = $query->fetchColumn();
+
+                return is_numeric($max) ? $max + 0 : $max;
+            } else {
+                return FALSE;
+            }
+        }
+
+        public function min($table, $join, $column = NULL, $where = NULL) {
+            $query = $this->query($this->select_context($table, $join, $column, $where, 'MIN'));
+            if ($query) {
+                $min = $query->fetchColumn();
+
+                return is_numeric($min) ? $min + 0 : $min;
+            } else {
+                return FALSE;
+            }
+        }
+
+        public function replace($table, $columns, $search = NULL, $replace = NULL, $where = NULL) {
+            if (is_array($columns)) {
+                $replace_query = array();
+                foreach ($columns as $column => $replacements) {
+                    foreach ($replacements as $replace_search => $replace_replacement) {
+                        $replace_query[] = $column . ' = REPLACE(' . $this->column_quote($column) . ', ' . $this->quote($replace_search) . ', ' . $this->quote($replace_replacement) . ')';
+                    }
+                }
+                $replace_query = implode(', ', $replace_query);
+                $where = $search;
+            } else {
+                if (is_array($search)) {
+                    $replace_query = array();
+                    foreach ($search as $replace_search => $replace_replacement) {
+                        $replace_query[] = $columns . ' = REPLACE(' . $this->column_quote($columns) . ', ' . $this->quote($replace_search) . ', ' . $this->quote($replace_replacement) . ')';
+                    }
+                    $replace_query = implode(', ', $replace_query);
+                    $where = $replace;
+                } else {
+                    $replace_query = $columns . ' = REPLACE(' . $this->column_quote($columns) . ', ' . $this->quote($search) . ', ' . $this->quote($replace) . ')';
+                }
+            }
+
+            return $this->exec('UPDATE "' . $table . '" SET ' . $replace_query . $this->where_clause($where));
         }
 
         public function select($table, $join, $columns = NULL, $where = NULL) {
@@ -377,52 +546,10 @@
             return $this->pdo->quote($string);
         }
 
-        public function insert($table, $datas) {
-            $lastId = array();
-            if (!isset($datas[0])) {
-                $datas = array($datas);
-            }
-            foreach ($datas as $data) {
-                $keys = array_keys($data);
-                $values = array();
-                $columns = array();
-                foreach ($data as $key => $value) {
-                    array_push($columns, $this->column_quote($key));
-                    switch (gettype($value)) {
-                        case 'NULL':
-                            $values[] = 'NULL';
-                            break;
-                        case 'array':
-                            preg_match("/\(JSON\)\s*([\w]+)/i", $key, $column_match);
-                            $values[] = isset($column_match[0]) ? $this->quote(json_encode($value)) : $this->quote(serialize($value));
-                            break;
-                        case 'boolean':
-                            $values[] = ($value ? '1' : '0');
-                            break;
-                        case 'integer':
-                        case 'double':
-                        case 'string':
-                            $values[] = $this->fn_quote($key, $value);
-                            break;
-                    }
-                }
-                $this->exec('INSERT INTO "' . $table . '" (' . implode(', ', $columns) . ') VALUES (' . implode($values, ', ') . ')');
-                $lastId[] = $this->pdo->lastInsertId();
-            }
+        public function sum($table, $join, $column = NULL, $where = NULL) {
+            $query = $this->query($this->select_context($table, $join, $column, $where, 'SUM'));
 
-            return count($lastId) > 1 ? $lastId : $lastId[0];
-        }
-
-        public function exec($query) {
-            if ($this->debug_mode) {
-                echo $query;
-                $this->debug_mode = FALSE;
-
-                return FALSE;
-            }
-            array_push($this->logs, $query);
-
-            return $this->pdo->exec($query);
+            return $query ? 0 + $query->fetchColumn() : FALSE;
         }
 
         public function update($table, $data, $where = NULL) {
@@ -456,132 +583,5 @@
             }
 
             return $this->exec('UPDATE "' . $table . '" SET ' . implode(', ', $fields) . $this->where_clause($where));
-        }
-
-        public function delete($table, $where) {
-            return $this->exec('DELETE FROM "' . $table . '"' . $this->where_clause($where));
-        }
-
-        public function replace($table, $columns, $search = NULL, $replace = NULL, $where = NULL) {
-            if (is_array($columns)) {
-                $replace_query = array();
-                foreach ($columns as $column => $replacements) {
-                    foreach ($replacements as $replace_search => $replace_replacement) {
-                        $replace_query[] = $column . ' = REPLACE(' . $this->column_quote($column) . ', ' . $this->quote($replace_search) . ', ' . $this->quote($replace_replacement) . ')';
-                    }
-                }
-                $replace_query = implode(', ', $replace_query);
-                $where = $search;
-            } else {
-                if (is_array($search)) {
-                    $replace_query = array();
-                    foreach ($search as $replace_search => $replace_replacement) {
-                        $replace_query[] = $columns . ' = REPLACE(' . $this->column_quote($columns) . ', ' . $this->quote($replace_search) . ', ' . $this->quote($replace_replacement) . ')';
-                    }
-                    $replace_query = implode(', ', $replace_query);
-                    $where = $replace;
-                } else {
-                    $replace_query = $columns . ' = REPLACE(' . $this->column_quote($columns) . ', ' . $this->quote($search) . ', ' . $this->quote($replace) . ')';
-                }
-            }
-
-            return $this->exec('UPDATE "' . $table . '" SET ' . $replace_query . $this->where_clause($where));
-        }
-
-        public function get($table, $join = NULL, $column = NULL, $where = NULL) {
-            if (!isset($where)) {
-                $where = array();
-            }
-            $where['LIMIT'] = 1;
-            $query = $this->query($this->select_context($table, $join, $column, $where));
-            if ($query) {
-                $data = $query->fetchAll(PDO::FETCH_ASSOC);
-                if (isset($data[0])) {
-                    $column = $where == NULL ? $join : $column;
-                    if (is_string($column) && $column != '*') {
-                        return $data[0][$column];
-                    }
-
-                    return $data[0];
-                } else {
-                    return FALSE;
-                }
-            } else {
-                return FALSE;
-            }
-        }
-
-        public function has($table, $join, $where = NULL) {
-            $column = NULL;
-            $query = $this->query('SELECT EXISTS(' . $this->select_context($table, $join, $column, $where, 1) . ')');
-
-            return $query ? $query->fetchColumn() === '1' : FALSE;
-        }
-
-        public function count($table, $join = NULL, $column = NULL, $where = NULL) {
-            $query = $this->query($this->select_context($table, $join, $column, $where, 'COUNT'));
-
-            return $query ? 0 + $query->fetchColumn() : FALSE;
-        }
-
-        public function max($table, $join, $column = NULL, $where = NULL) {
-            $query = $this->query($this->select_context($table, $join, $column, $where, 'MAX'));
-            if ($query) {
-                $max = $query->fetchColumn();
-
-                return is_numeric($max) ? $max + 0 : $max;
-            } else {
-                return FALSE;
-            }
-        }
-
-        public function min($table, $join, $column = NULL, $where = NULL) {
-            $query = $this->query($this->select_context($table, $join, $column, $where, 'MIN'));
-            if ($query) {
-                $min = $query->fetchColumn();
-
-                return is_numeric($min) ? $min + 0 : $min;
-            } else {
-                return FALSE;
-            }
-        }
-
-        public function avg($table, $join, $column = NULL, $where = NULL) {
-            $query = $this->query($this->select_context($table, $join, $column, $where, 'AVG'));
-
-            return $query ? 0 + $query->fetchColumn() : FALSE;
-        }
-
-        public function sum($table, $join, $column = NULL, $where = NULL) {
-            $query = $this->query($this->select_context($table, $join, $column, $where, 'SUM'));
-
-            return $query ? 0 + $query->fetchColumn() : FALSE;
-        }
-
-        public function debug() {
-            $this->debug_mode = TRUE;
-
-            return $this;
-        }
-
-        public function error() {
-            return $this->pdo->errorInfo();
-        }
-
-        public function last_query() {
-            return end($this->logs);
-        }
-
-        public function log() {
-            return $this->logs;
-        }
-
-        public function info() {
-            $output = array('server' => 'SERVER_INFO', 'driver' => 'DRIVER_NAME', 'client' => 'CLIENT_VERSION', 'version' => 'SERVER_VERSION', 'connection' => 'CONNECTION_STATUS');
-            foreach ($output as $key => $value) {
-                $output[$key] = $this->pdo->getAttribute(constant('PDO::ATTR_' . $value));
-            }
-
-            return $output;
         }
     }

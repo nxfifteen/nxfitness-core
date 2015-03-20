@@ -8,13 +8,13 @@
             // cache files are created like cache/abcdef123456...
             $cacheFileName = '';
             //user" => "269VLG", "data" => "Tracked", "period
-            if (array_key_exists("user", $_GET )) {
+            if (array_key_exists("user", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['user'];
             }
-            if (array_key_exists("data", $_GET )) {
+            if (array_key_exists("data", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['data'];
             }
-            if (array_key_exists("period", $_GET )) {
+            if (array_key_exists("period", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['period'];
             }
             $cacheFile = 'cache' . DIRECTORY_SEPARATOR . $cacheFileName;
@@ -56,9 +56,7 @@
         $dataReturnClass = new dataReturn($_GET['user']);
         if ($dataReturnClass->isUser()) {
             $json = json_encode($dataReturnClass->returnUserRecords($_GET));
-            //echo "<pre>";
-            //print_r($dataReturnClass->returnUserRecords($_GET));
-            //echo "</pre>";
+
             return $json;
         } else {
             echo json_error(101);
@@ -80,7 +78,6 @@
                 $errMessage = "You havent stated what to return";
                 break;
         }
-
 
         return json_encode(array("error" => "true", "code" => $errNumber, "msg" => $errMessage));
     }

@@ -9,14 +9,13 @@
     class tracking {
 
         /**
-         * @var string
-         */
-        protected $siteId;
-
-        /**
          * @var PiwikTracker
          */
         protected $PiwikTracker;
+        /**
+         * @var string
+         */
+        protected $siteId;
 
         /**
          * @param $trackingId
@@ -59,6 +58,13 @@
         }
 
         /**
+         * @param string $documentTitle Page title as it will appear in the Actions > Page titles report
+         */
+        public function endEvent($documentTitle) {
+            $this->PiwikTracker->doTrackPageView($documentTitle);
+        }
+
+        /**
          * @param string $category The Event Category (Videos, Music, Games...)
          * @param string $action The Event's Action (Play, Pause, Duration, Add Playlist, Downloaded, Clicked...)
          * @param string|bool $name (optional) The Event's object Name (a particular Movie name, or Song name, or File name...)
@@ -66,12 +72,5 @@
          */
         public function track($category, $action, $name = FALSE, $value = FALSE) {
             $this->PiwikTracker->doTrackEvent($category, $action, $name, $value);
-        }
-
-        /**
-         * @param string $documentTitle Page title as it will appear in the Actions > Page titles report
-         */
-        public function endEvent($documentTitle) {
-            $this->PiwikTracker->doTrackPageView($documentTitle);
         }
     }

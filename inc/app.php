@@ -19,19 +19,17 @@
      */
     class NxFitbit {
         /**
-         * @var config
-         */
-        protected $settings;
-
-        /**
          * @var medoo
          */
         protected $database;
-
         /**
          * @var fitbit
          */
         protected $fitbitapi;
+        /**
+         * @var config
+         */
+        protected $settings;
 
         /**
          *
@@ -101,6 +99,159 @@
         }
 
         /**
+         * Add new cron jobs to queue
+         * @param string $user_fitbit_id
+         * @param string $trigger
+         * @param bool $force
+         */
+        public function addCronJob($user_fitbit_id, $trigger, $force = FALSE) {
+            if ($force || $this->getSetting('nx_fitbit_ds_' . $trigger . '_cron', FALSE)) {
+                if (!$this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
+                    "AND" => array(
+                        "user"    => $user_fitbit_id,
+                        "trigger" => $trigger
+                    )
+                ))
+                ) {
+                    $this->getDatabase()->insert($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
+                        "user"    => $user_fitbit_id,
+                        "trigger" => $trigger,
+                        "date"    => date("Y-m-d H:i:s")
+                    ));
+                } else {
+                    nxr("Cron job already present");
+                }
+            } else {
+                nxr("I am not allowed to queue $trigger");
+            }
+        }
+
+        /**
+         * Settings and configuration
+         */
+
+        /**
+         * Delete cron jobs from queue
+         * @param $user_fitbit_id
+         * @param $trigger
+         */
+        public function delCronJob($user_fitbit_id, $trigger) {
+            if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array("AND" => array(
+                "user"    => $user_fitbit_id,
+                "trigger" => $trigger
+            )))
+            ) {
+                if ($this->getDatabase()->delete($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
+                    "AND" => array(
+                        "user"    => $user_fitbit_id,
+                        "trigger" => $trigger
+                    )
+                ))
+                ) {
+                    nxr("Cron job $trigger deleted");
+                } else {
+                    nxr("Failed to delete $trigger Cron job");
+                }
+            } else {
+                nxr("Failed to delete $trigger Cron job");
+            }
+        }
+
+        /**
+         * Get list of pending cron jobs from database
+         * @return array|bool
+         */
+        public function getCronJobs() {
+            return $this->getDatabase()->select($this->getSetting("db_prefix", NULL, FALSE) . "queue", "*", array("ORDER" => "date ASC"));
+        }
+
+        /**
+         * @return fitbit
+         */
+        public function getFitbitapi() {
+            if (is_null($this->fitbitapi)) {
+                require_once(dirname(__FILE__) . "/fitbit.php");
+                $this->fitbitapi = new fitbit($this,
+                    $this->getSetting("fitbit_consumer_key", NULL, FALSE),
+                    $this->getSetting("fitbit_consumer_secret", NULL, FALSE),
+                    $this->getSetting("fitbit_debug", FALSE, FALSE),
+                    $this->getSetting("fitbit_user_agent", NULL, FALSE));
+            }
+
+            return $this->fitbitapi;
+        }
+
+        /**
+         * @param fitbit $fitbitapi
+         */
+        public function setFitbitapi($fitbitapi) {
+            $this->fitbitapi = $fitbitapi;
+        }
+
+        /**
+         * Database functions
+         */
+
+        /**
+         * @param $user_fitbit_id
+         * @return int|array
+         */
+        public function getUserCooldown($user_fitbit_id) {
+            if ($this->isUser($user_fitbit_id)) {
+                return $this->getDatabase()->get($this->getSetting("db_prefix", NULL, FALSE) . "users", "cooldown", array("fuid" => $user_fitbit_id));
+            } else {
+                return 0;
+            }
+        }
+
+        /**
+         * @param string $user_fitbit_id
+         * @return bool
+         */
+        public function isUser($user_fitbit_id) {
+            if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("fuid" => $user_fitbit_id))) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+
+        /**
+         * @param $errCode
+         * @param null $user
+         * @return string
+         */
+        public function lookupErrorCode($errCode, $user = NULL) {
+            switch ($errCode) {
+                case "-143":
+                    return "API cool down in effect.";
+                case "-142":
+                    return "Unable to create required directory.";
+                case "429":
+                    if (!is_null($user)) {
+                        $hour = date("H") + 1;
+                        $this->getDatabase()->update($this->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                            'cooldown' => date("Y-m-d " . $hour . ":01:00"),
+                        ), array('fuid' => $user));
+                    }
+
+                    return "Either you hit the rate limiting quota for the client or for the viewer";
+                default:
+                    return $errCode;
+            }
+        }
+
+        /**
+         * Set value in database/config class
+         * @param $key
+         * @param $value
+         * @return bool
+         */
+        public function setSetting($key, $value) {
+            return $this->getSettings()->set($key, $value);
+        }
+
+        /**
          * Helper function to check for supported API calls
          * @param null $key
          * @return array|null|string
@@ -141,159 +292,6 @@
                 } else {
                     return $key;
                 }
-            }
-        }
-
-        /**
-         * Settings and configuration
-         */
-
-        /**
-         * Get list of pending cron jobs from database
-         * @return array|bool
-         */
-        public function getCronJobs() {
-            return $this->getDatabase()->select($this->getSetting("db_prefix", NULL, FALSE) . "queue", "*", array("ORDER" => "date ASC"));
-        }
-
-        /**
-         * Delete cron jobs from queue
-         * @param $user_fitbit_id
-         * @param $trigger
-         */
-        public function delCronJob($user_fitbit_id, $trigger) {
-            if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array("AND" => array(
-                "user"    => $user_fitbit_id,
-                "trigger" => $trigger
-            )))
-            ) {
-                if ($this->getDatabase()->delete($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
-                    "AND" => array(
-                        "user"    => $user_fitbit_id,
-                        "trigger" => $trigger
-                    )
-                ))
-                ) {
-                    nxr("Cron job $trigger deleted");
-                } else {
-                    nxr("Failed to delete $trigger Cron job");
-                }
-            } else {
-                nxr("Failed to delete $trigger Cron job");
-            }
-        }
-
-        /**
-         * Add new cron jobs to queue
-         * @param string $user_fitbit_id
-         * @param string $trigger
-         * @param bool $force
-         */
-        public function addCronJob($user_fitbit_id, $trigger, $force = FALSE) {
-            if ($force || $this->getSetting('nx_fitbit_ds_' . $trigger . '_cron', FALSE)) {
-                if (!$this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
-                    "AND" => array(
-                        "user"    => $user_fitbit_id,
-                        "trigger" => $trigger
-                    )
-                ))
-                ) {
-                    $this->getDatabase()->insert($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
-                        "user"    => $user_fitbit_id,
-                        "trigger" => $trigger,
-                        "date"    => date("Y-m-d H:i:s")
-                    ));
-                } else {
-                    nxr("Cron job already present");
-                }
-            } else {
-                nxr("I am not allowed to queue $trigger");
-            }
-        }
-
-        /**
-         * @param $user_fitbit_id
-         * @return int|array
-         */
-        public function getUserCooldown($user_fitbit_id) {
-            if ($this->isUser($user_fitbit_id)) {
-                return $this->getDatabase()->get($this->getSetting("db_prefix", NULL, FALSE) . "users", "cooldown", array("fuid" => $user_fitbit_id));
-            } else {
-                return 0;
-            }
-        }
-
-        /**
-         * Database functions
-         */
-
-        /**
-         * @param string $user_fitbit_id
-         * @return bool
-         */
-        public function isUser($user_fitbit_id) {
-            if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("fuid" => $user_fitbit_id))) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
-
-        /**
-         * Set value in database/config class
-         * @param $key
-         * @param $value
-         * @return bool
-         */
-        public function setSetting($key, $value) {
-            return $this->getSettings()->set($key, $value);
-        }
-
-        /**
-         * @return fitbit
-         */
-        public function getFitbitapi() {
-            if (is_null($this->fitbitapi)) {
-                require_once(dirname(__FILE__) . "/fitbit.php");
-                $this->fitbitapi = new fitbit($this,
-                    $this->getSetting("fitbit_consumer_key", NULL, FALSE),
-                    $this->getSetting("fitbit_consumer_secret", NULL, FALSE),
-                    $this->getSetting("fitbit_debug", FALSE, FALSE),
-                    $this->getSetting("fitbit_user_agent", NULL, FALSE));
-            }
-
-            return $this->fitbitapi;
-        }
-
-        /**
-         * @param fitbit $fitbitapi
-         */
-        public function setFitbitapi($fitbitapi) {
-            $this->fitbitapi = $fitbitapi;
-        }
-
-        /**
-         * @param $errCode
-         * @param null $user
-         * @return string
-         */
-        public function lookupErrorCode($errCode, $user = NULL) {
-            switch ($errCode) {
-                case "-143":
-                    return "API cool down in effect.";
-                case "-142":
-                    return "Unable to create required directory.";
-                case "429":
-                    if (!is_null($user)) {
-                        $hour = date("H") + 1;
-                        $this->getDatabase()->update($this->getSetting("db_prefix", NULL, FALSE) . "users", array(
-                            'cooldown' => date("Y-m-d " . $hour . ":01:00"),
-                        ), array('fuid' => $user));
-                    }
-
-                    return "Either you hit the rate limiting quota for the client or for the viewer";
-                default:
-                    return $errCode;
             }
         }
 

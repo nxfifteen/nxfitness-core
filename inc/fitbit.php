@@ -10,15 +10,13 @@
      */
     class fitbit {
         /**
-         * @var FitBitPHP
-         */
-        protected $fitbitapi;
-
-        /**
          * @var NxFitbit
          */
         protected $AppClass;
-
+        /**
+         * @var FitBitPHP
+         */
+        protected $fitbitapi;
         /**
          * @var bool
          */
@@ -52,6 +50,29 @@
          */
         public function setLibrary($fitbitapi) {
             $this->fitbitapi = $fitbitapi;
+        }
+
+        /**
+         * @deprecated Use getLibrary() instead
+         * @return FitBitPHP
+         */
+        public function getFitbitapi() {
+            return $this->getLibrary();
+        }
+
+        /**
+         * @deprecated Use setLibrary() instead
+         * @param FitBitPHP $fitbitapi
+         */
+        public function setFitbitapi($fitbitapi) {
+            $this->setLibrary($fitbitapi);
+        }
+
+        /**
+         * @return FitBitPHP
+         */
+        public function getLibrary() {
+            return $this->fitbitapi;
         }
 
         /**
@@ -289,23 +310,6 @@
             } else {
                 return FALSE;
             }
-        }
-
-        public function subscribeUser($user) {
-            if ($this->getAppClass()->isUser($user)) {
-                if (!$this->getAppClass()->getFitbitapi()->isAuthorised()) {
-                    $this->getAppClass()->getFitbitapi()->oAuthorise($user);
-                }
-                $this->getAppClass()->getFitbitapi()->getLibrary()->addSubscription(1);
-                print_r($this->getAppClass()->getFitbitapi()->getLibrary()->getSubscriptions());
-            }
-        }
-
-        /**
-         * @return FitBitPHP
-         */
-        public function getLibrary() {
-            return $this->fitbitapi;
         }
 
         /**
@@ -1340,12 +1344,66 @@
             return $userGoals;
         }
 
+        private function thisWeeksGoal($user, $string) {
+            $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
+            $plusTargetSteps = -1;
+
+            if ($string == "steps") {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10000);
+                if ($improvment > 0) {
+                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[<=]" => $oneWeek,
+                            "date[>=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+                    $totalSteps = 0;
+                    foreach ($dbSteps as $dbStep) {
+                        $totalSteps = $totalSteps + $dbStep;
+                    }
+
+                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
+                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000);
+                    }
+                }
+            } elseif ($string == "floors") {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10);
+                if ($improvment > 0) {
+                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[<=]" => $oneWeek,
+                            "date[>=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+                    $totalSteps = 0;
+                    foreach ($dbSteps as $dbStep) {
+                        $totalSteps = $totalSteps + $dbStep;
+                    }
+
+                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10)) {
+                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10);
+                    }
+                }
+            }
+
+            return $plusTargetSteps;
+        }
+
         /**
          * @param $user
          * @param $trigger
          * @param bool $force
          */
-        private function api_pull_time_series($user, $trigger, $force = false) {
+        private function api_pull_time_series($user, $trigger, $force = FALSE) {
             if ($force || $this->api_isCooled($trigger, $user)) {
                 $currentDate = new DateTime();
 
@@ -1572,74 +1630,14 @@
             $this->forceSync = $forceSync;
         }
 
-        /**
-         * @deprecated Use getLibrary() instead
-         * @return FitBitPHP
-         */
-        public function getFitbitapi() {
-            return $this->getLibrary();
-        }
-
-        /**
-         * @deprecated Use setLibrary() instead
-         * @param FitBitPHP $fitbitapi
-         */
-        public function setFitbitapi($fitbitapi) {
-            $this->setLibrary($fitbitapi);
-        }
-
-        private function thisWeeksGoal($user, $string) {
-            $lastMonday = date('Y-m-d',strtotime('last monday -7 days'));
-            $oneWeek = date('Y-m-d',strtotime( $lastMonday . ' +6 days'));
-            $plusTargetSteps = -1;
-
-            if ($string == "steps") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10000);
-                if ($improvment > 0) {
-                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
-                        array("AND" => array(
-                            "user"     => $user,
-                            "date[<=]" => $oneWeek,
-                            "date[>=]" => $lastMonday
-                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
-
-                    $totalSteps = 0;
-                    foreach ($dbSteps as $dbStep) {
-                        $totalSteps = $totalSteps + $dbStep;
-                    }
-
-                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
-                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10) / 100), 0);
-                    } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000);
-                    }
+        public function subscribeUser($user) {
+            if ($this->getAppClass()->isUser($user)) {
+                if (!$this->getAppClass()->getFitbitapi()->isAuthorised()) {
+                    $this->getAppClass()->getFitbitapi()->oAuthorise($user);
                 }
-            } elseif ($string == "floors") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10);
-                if ($improvment > 0) {
-                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
-                        array("AND" => array(
-                            "user"     => $user,
-                            "date[<=]" => $oneWeek,
-                            "date[>=]" => $lastMonday
-                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
-
-                    $totalSteps = 0;
-                    foreach ($dbSteps as $dbStep) {
-                        $totalSteps = $totalSteps + $dbStep;
-                    }
-
-                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10)) {
-                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10) / 100), 0);
-                    } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10);
-                    }
-                }
+                $this->getAppClass()->getFitbitapi()->getLibrary()->addSubscription(1);
+                print_r($this->getAppClass()->getFitbitapi()->getLibrary()->getSubscriptions());
             }
-
-            return $plusTargetSteps;
         }
 
     }

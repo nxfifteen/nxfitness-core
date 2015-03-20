@@ -10,14 +10,13 @@
      */
     class config {
         /**
-         * @var array
-         */
-        private $settings = array();
-
-        /**
          * @var medoo
          */
         private $database;
+        /**
+         * @var array
+         */
+        private $settings = array();
 
         /**
          *
