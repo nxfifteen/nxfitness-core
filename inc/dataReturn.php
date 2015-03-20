@@ -79,6 +79,9 @@
             $this->UserID = $UserID;
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordAboutMe() {
             $dbSteps = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
                 array('steps'),
@@ -480,6 +483,9 @@
             return $returnArray;
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordKeyPoints() {
             // Get Users Gender and leaderboard ranking
             $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('rank', 'friends', 'distance', 'gender'), array("fuid" => $this->getUserID()));
@@ -640,6 +646,10 @@
             return $returnStats;
         }
 
+        /**
+         * @param $input_num
+         * @return string
+         */
         private function ordinal_suffix($input_num) {
             $num = $input_num % 100; // protect against large numbers
             if ($num < 11 || $num > 13) {
@@ -656,6 +666,9 @@
             return $input_num . 'th';
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordSleep() {
 
             $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
@@ -770,6 +783,9 @@
             return array("images" => "images/badges/", "badges" => $badges);
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordTracked() {
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
                     "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals" => array("date" => "date")),
@@ -849,6 +865,9 @@
             );
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordStepGoal() {
             $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
             $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
@@ -881,6 +900,9 @@
             );
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordFloorGoal() {
             $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
             $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
