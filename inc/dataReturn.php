@@ -722,12 +722,29 @@
                 $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
                 $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
 
+                $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
+                foreach ($cheer as $key => $value) {
+                    if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
+                        $cheer[$key] = 5;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
+                        $cheer[$key] = 4;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2) {
+                        $cheer[$key] = 3;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 1.5) {
+                        $cheer[$key] = 2;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key]) {
+                        $cheer[$key] = 1;
+                    } else {
+                        $cheer[$key] = 0;
+                    }
+                }
+
                 if (!is_null($this->getTracking())) {
                     $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
                     $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
                 }
 
-                return array('recorded' => $dbSteps[0], 'goal' => $dbGoals[0]);
+                return array('recorded' => $dbSteps[0], 'goal' => $dbGoals[0], 'cheer' => $cheer);
             } else {
                 return array("error" => "true", "code" => 104, "msg" => "No results for given date");
             }
