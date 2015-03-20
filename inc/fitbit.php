@@ -477,10 +477,12 @@
             foreach ($cache_files as $file) {
                 if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file) && substr($file, 0, strlen($username) + 1) === "_" . $username) {
                     $cacheNames = $this->getAppClass()->getSettings()->getRelatedCacheNames($activity);
-                    foreach ($cacheNames as $cacheName) {
-                        if (substr($file, 0, strlen($username) + strlen($cacheName) + 2) === "_" . $username . "_" . $cacheName) {
-                            nxr("  $file cache file was deleted");
-                            unlink($cache_dir . $file);
+                    if (count($cacheNames) > 0) {
+                        foreach ($cacheNames as $cacheName) {
+                            if (substr($file, 0, strlen($username) + strlen($cacheName) + 2) === "_" . $username . "_" . $cacheName) {
+                                nxr("  $file cache file was deleted");
+                                unlink($cache_dir . $file);
+                            }
                         }
                     }
                 }
