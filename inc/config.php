@@ -31,6 +31,24 @@
         }
 
         /**
+         * @param $activityName
+         * @return array
+         */
+        public function getRelatedCacheNames($activityName) {
+            $cacheNames = array();
+            switch ($activityName) {
+                case "goals":
+                    $cacheNames = array('tracked');
+                    break;
+                default:
+                    nxr("Unknown cache file for $activityName");
+                    break;
+            }
+
+            return $cacheNames;
+        }
+
+        /**
          * @param string $key
          * @param string $value
          * @return bool
