@@ -790,6 +790,7 @@
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
                     "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals" => array("date" => "date")),
                 array(
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.date',
                     //$this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.distance',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.floors',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.steps',
@@ -803,6 +804,7 @@
             //$graph_distance_g = array();
             //$graph_distance_min = 0;
             //$graph_distance_max = 0;
+            $returnDate = null;
             $graph_floors = array();
             $graph_floors_g = array();
             $graph_floors_min = 0;
@@ -816,6 +818,9 @@
                 //array_push($graph_distance_g, (String)round($dbValue['distance_g'], 2));
                 //if ($dbValue['distance'] < $graph_distance_min || $graph_distance_min == 0) {$graph_distance_min = $dbValue['distance'];}
                 //if ($dbValue['distance'] > $graph_distance_max || $graph_distance_max == 0) {$graph_distance_max = $dbValue['distance'];}
+
+                if (is_null($returnDate))
+                    $returnDate = explode("-", $dbValue['date']);
 
                 array_push($graph_floors, (String)round($dbValue['floors'], 0));
                 array_push($graph_floors_g, (String)round($dbValue['floors_g'], 0));
@@ -841,7 +846,7 @@
             $goalCalcFloors = $this->returnUserRecordFloorGoal();
 
             return array(
-                'returnDate'       => explode("-", $this->getParamDate()),
+                'returnDate'       => $returnDate,
                 //'graph_distance' => $graph_distance,
                 //'graph_distance_g' => $graph_distance_g,
                 'graph_floors'     => $graph_floors,
