@@ -990,6 +990,20 @@
             $dbWater[0]['liquid'] = (String)round($dbWater[0]['liquid'], 2);
             $dbWater[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
 
+            if ($dbWater[0]['liquid'] >= $dbWater[0]['goal'] * 3) {
+                $dbWater[0]['cheer'] = 5;
+            } else if ($dbWater[0]['liquid'] >= $dbWater[0]['goal'] * 2.5) {
+                $dbWater[0]['cheer'] = 4;
+            } else if ($dbWater[0]['liquid'] >= $dbWater[0]['goal'] * 2) {
+                $dbWater[0]['cheer'] = 3;
+            } else if ($dbWater[0]['liquid'] >= $dbWater[0]['goal'] * 1.5) {
+                $dbWater[0]['cheer'] = 2;
+            } else if ($dbWater[0]['liquid'] >= $dbWater[0]['goal']) {
+                $dbWater[0]['cheer'] = 1;
+            } else {
+                $dbWater[0]['cheer'] = 0;
+            }
+
             if (!is_null($this->getTracking())) {
                 $this->getTracking()->track("JSON Get", $this->getUserID(), "Water");
                 $this->getTracking()->track("JSON Goal", $this->getUserID(), "Water");
