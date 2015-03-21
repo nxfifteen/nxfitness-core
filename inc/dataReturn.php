@@ -1352,4 +1352,106 @@
             }
         }
 
+        public function returnUserRecordChallenger() {
+            $userChallangeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_length", '50');
+            $userChallangeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID(), '03-31 last sunday'); // Default to last Sunday in March
+            $userChallangeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallangeStartString)); // Default to last Sunday in March
+            $userChallangeEndDate = date("Y-m-d", strtotime($userChallangeStartDate . ' +'.$userChallangeLength.' day')); // Default to last Sunday in March
+
+            $lastChallangeStartDate = date("Y-m-d", strtotime((date("Y") - 1) . '-' . $userChallangeStartString)); // Default to last Sunday in March
+            $lastChallangeEndDate = date("Y-m-d", strtotime($lastChallangeStartDate . ' +'.$userChallangeLength.' day')); // Default to last Sunday in March
+
+            $userChallangeTrgDistance = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_distance", '5');
+            $userChallangeTrgUnit = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_unit", 'km');
+            $userChallangeTrgActivity = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_activity", '30');
+
+            $today = strtotime(date("Y-m-d"));
+            if ($today >= strtotime($userChallangeStartDate) && $today <= strtotime($userChallangeEndDate)) {
+                return array(
+                    'challangeActive' => 'active',
+                    'challangeLength' => $userChallangeLength,
+                    'goals' => array ('Activity' => $userChallangeTrgActivity, 'Distance' => $userChallangeTrgDistance, 'Unit' => $userChallangeTrgUnit),
+                    'last' => array('startDate' => $lastChallangeStartDate, 'startDateF' => date("dS F, Y", strtotime($lastChallangeStartDate)), 'endDate' => $lastChallangeEndDate, 'endDateF' => date("dS F, Y", strtotime($lastChallangeEndDate))),
+                    'next' => array('startDate' => $userChallangeStartDate, 'startDateF' => date("dS F, Y", strtotime($userChallangeStartDate)), 'endDate' => $userChallangeEndDate, 'endDateF' => date("dS F, Y", strtotime($userChallangeEndDate)))
+                );
+            } else if ($today > strtotime($userChallangeStartDate)) {
+                return array(
+                    'challangeActive' => 'past',
+                    'challangeLength' => $userChallangeLength,
+                    'showDate' => $lastChallangeStartDate,
+                    'goals' => array ('Activity' => $userChallangeTrgActivity, 'Distance' => $userChallangeTrgDistance, 'Unit' => $userChallangeTrgUnit),
+                    'last' => array('startDate' => $lastChallangeStartDate, 'startDateF' => date("dS F, Y", strtotime($lastChallangeStartDate)), 'endDate' => $lastChallangeEndDate, 'endDateF' => date("dS F, Y", strtotime($lastChallangeEndDate))),
+                    'next' => array('startDate' => $userChallangeStartDate, 'startDateF' => date("dS F, Y", strtotime($userChallangeStartDate)), 'endDate' => $userChallangeEndDate, 'endDateF' => date("dS F, Y", strtotime($userChallangeEndDate)))
+                );
+            } else if ($today < strtotime($userChallangeStartDate)) {return array(
+                'challangeActive' => 'future',
+                'challangeLength' => $userChallangeLength,
+                'showDate' => $lastChallangeStartDate,
+                'goals' => array ('Activity' => $userChallangeTrgActivity, 'Distance' => $userChallangeTrgDistance, 'Unit' => $userChallangeTrgUnit),
+                'last' => array('startDate' => $lastChallangeStartDate, 'startDateF' => date("dS F, Y", strtotime($lastChallangeStartDate)), 'endDate' => $lastChallangeEndDate, 'endDateF' => date("dS F, Y", strtotime($lastChallangeEndDate))),
+                'next' => array('startDate' => $userChallangeStartDate, 'startDateF' => date("dS F, Y", strtotime($userChallangeStartDate)), 'endDate' => $userChallangeEndDate, 'endDateF' => date("dS F, Y", strtotime($userChallangeEndDate)))
+            );
+            }
+        }
+
+        public function returnUserRecordChallengerCalendar() {
+            // Short-circuit if the client did not give us a date range.
+            if (!isset($_GET['start']) || !isset($_GET['end'])) {
+                return array("error" => "true", "code" => 105, "msg" => "No start or end date given");
+            }
+
+            $range_start = new DateTime($_GET['start']);
+            $range_end = new DateTime($_GET['end']);
+
+            // Parse the timezone parameter if it is present.
+            $timezone = null;
+            if (isset($_GET['timezone'])) {
+                $timezone = new DateTimeZone($_GET['timezone']);
+            }
+
+            $userChallangeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_length", '50');
+            $userChallangeStartDate = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID(), '03-31 last sunday'); // Default to last Sunday in March
+            $userChallangeStartDate = date("Y-m-d", strtotime($range_start->format("Y") . '-' . $userChallangeStartDate)); // Default to last Sunday in March
+            $userChallangeEndDate = date("Y-m-d", strtotime($userChallangeStartDate . ' +'.$userChallangeLength.' day')); // Default to last Sunday in March
+
+            $userChallangeTrgDistance = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_distance", '5');
+            $userChallangeTrgUnit = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_unit", 'km');
+            $userChallangeTrgActivity = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_activity", '30');
+
+            $dbEvents = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity" => array("date" => "date")),
+                array(
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.date',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.distance',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.veryactive'
+                ),
+                array("AND" => array(
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps.user"     => $this->getUserID(),
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps.date[<=]" => $range_end->format("Y-m-d"),
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps.date[>=]" => $range_start->format("Y-m-d")
+                ), "ORDER"  => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps.date DESC"));
+
+            $calenderEvents = array();
+            foreach ($dbEvents as $dbEvent) {
+                if (strtotime($dbEvent['date']) >= strtotime($userChallangeStartDate) && strtotime($dbEvent['date']) <= strtotime($userChallangeEndDate)) {
+                    if ($userChallangeTrgUnit == "km") { $dbEvent['distance'] = $dbEvent['distance'] * 1.609344; }
+
+                    if (strtotime($dbEvent['date']) == strtotime(date("Y-m-d"))) {
+                        array_push($calenderEvents, array("title" => "Still Running\n" . number_format($dbEvent['distance'], 2) . $userChallangeTrgUnit . " / " . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-today'));
+                    } else if ($dbEvent['distance'] >= $userChallangeTrgDistance) {
+                        array_push($calenderEvents, array("title" => "Distance Goal\n" . number_format($dbEvent['distance'], 2) . $userChallangeTrgUnit, "start" => $dbEvent['date'], 'className' => 'label-passDistance'));
+                    } else if ($dbEvent['veryactive'] >= $userChallangeTrgActivity) {
+                        array_push($calenderEvents, array("title" => "Activity Goal\n" . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-passActivity'));
+                    } else {
+                        array_push($calenderEvents, array("title" => "Challenge Failed\n" . number_format($dbEvent['distance'], 2) . $userChallangeTrgUnit . " / " . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-failed'));
+                    }
+
+                } else {
+                    // Returned date is not within challange range
+                    //array_push($calenderEvents, array("title" => "No Active\nChallenge", "start" => $dbEvent['date'], 'className' => 'label-nochallange'));
+                }
+            }
+
+            return array('sole' => true, 'return' => $calenderEvents);
+        }
     }
