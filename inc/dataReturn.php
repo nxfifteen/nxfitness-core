@@ -741,14 +741,18 @@
                 $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
                 foreach ($cheer as $key => $value) {
                     if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
-                        $cheer[$key] = 5;
+                        $cheer[$key] = 7;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
-                        $cheer[$key] = 4;
+                        $cheer[$key] = 6;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2) {
-                        $cheer[$key] = 3;
+                        $cheer[$key] = 5;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 1.5) {
-                        $cheer[$key] = 2;
+                        $cheer[$key] = 4;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key]) {
+                        $cheer[$key] = 3;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.75) {
+                        $cheer[$key] = 2;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.5) {
                         $cheer[$key] = 1;
                     } else {
                         $cheer[$key] = 0;
