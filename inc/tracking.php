@@ -35,9 +35,11 @@
             $this->PiwikTracker->setUrl($protical . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 
             //Sets the Browser language.
-            $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-            $lang = explode(',', $lang);
-            $this->PiwikTracker->setBrowserLanguage($lang[0]);
+            if (array_key_exists("HTTP_ACCEPT_LANGUAGE", $_SERVER)) {
+                $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+                $lang = explode(',', $lang);
+                $this->PiwikTracker->setBrowserLanguage($lang[0]);
+            }
 
             //Sets the user agent, used to detect OS and browser.
             $this->PiwikTracker->setUserAgent($_SERVER['HTTP_USER_AGENT']);
