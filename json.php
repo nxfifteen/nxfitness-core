@@ -17,6 +17,12 @@
             if (array_key_exists("period", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['period'];
             }
+            if (array_key_exists("start", $_GET)) {
+                $cacheFileName = $cacheFileName . '_' . $_GET['start'];
+            }
+            if (array_key_exists("end", $_GET)) {
+                $cacheFileName = $cacheFileName . '_' . $_GET['end'];
+            }
             $cacheFile = 'cache' . DIRECTORY_SEPARATOR . $cacheFileName;
 
             if (file_exists($cacheFile)) {
