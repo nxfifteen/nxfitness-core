@@ -545,11 +545,18 @@
                 if ($dbDistanceAllTime < $values['value']) {
                     array_push($less, number_format(($values['value'] - $dbDistanceAllTime), 0) . " miles until " . $hes . " walked " . $values['less']);
                 } else if ($dbDistanceAllTime > $values['value']) {
-                    $times = round($dbDistanceAllTime / $values['value'], 2);
-                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
-                        $msg = $hes . " walked " . $values['more'] . " " . number_format($times, 0) . " time";
+                    $times = number_format($dbDistanceAllTime / $values['value'], 0);
+                    if ($times == 1) {
+                        $times = "";
+                    } else if ($times == 2) {
+                        $times = "twice";
                     } else {
-                        $msg = $hes . " walked " . $values['less'] . " " . number_format($times, 0) . " time";
+                        $times = $times . " times";
+                    }
+                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
+                        $msg = $hes . " walked " . $values['more'] . " " . $times;
+                    } else {
+                        $msg = $hes . " walked " . $values['less'] . " " . $times;
                     }
                     if ($times > 1) {
                         $msg .= "s";
@@ -562,6 +569,7 @@
             $lessItems = $this->getAppClass()->getSetting("kp_lessItems", 2);
             if (count($less) < $maxItems - $lessItems) {
                 $lessItems = $maxItems - count($less);
+                $lessItems += 1;
             }
 
             for ($iMore = ($lessItems - 1); $iMore >= 0; $iMore = $iMore - 1) {
@@ -580,19 +588,26 @@
             /**
              * Set key points for Floors
              */
-            $dbFloorsAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors', array("user" => $this->getUserID()));
+            $dbFloorsAllTime = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'elevation', array("user" => $this->getUserID()));
 
             $less = array();
             $more = array();
-            foreach ($keyPoints['floors'] as $values) {
+            foreach ($keyPoints['elevation'] as $values) {
                 if ($dbFloorsAllTime < $values['value']) {
-                    array_push($less, number_format(($values['value'] - $dbFloorsAllTime), 0) . " more floors until " . $hes . " climbed " . $values['less']);
+                    array_push($less, number_format(($values['value'] - $dbFloorsAllTime), 0) . " meters more until " . $hes . " climbed " . $values['less']);
                 } else if ($dbFloorsAllTime > $values['value']) {
-                    $times = round($dbFloorsAllTime / $values['value'], 0);
-                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
-                        $msg = $hes . " climbed " . $values['more'] . " " . number_format($times, 0) . " time";
+                    $times = number_format($dbFloorsAllTime / $values['value'], 0);
+                    if ($times == 1) {
+                        $times = "";
+                    } else if ($times == 2) {
+                        $times = "twice";
                     } else {
-                        $msg = $hes . " climbed " . $values['less'] . " " . number_format($times, 0) . " time";
+                        $times = $times . " times";
+                    }
+                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
+                        $msg = $hes . " climbed " . $values['more'] . " " . $times;
+                    } else {
+                        $msg = $hes . " climbed " . $values['less'] . " " . $times;
                     }
                     if ($times > 1) {
                         $msg .= "s";
@@ -603,8 +618,9 @@
 
             $maxItems = $this->getAppClass()->getSetting("kp_maxItems", 8);
             $lessItems = $this->getAppClass()->getSetting("kp_lessItems", 2);
-            if (count($less) < $maxItems - $lessItems) {
+            if (count($less) <= ($maxItems - $lessItems)) {
                 $lessItems = $maxItems - count($less);
+                $lessItems += 1;
             }
 
             for ($iMore = ($lessItems - 1); $iMore >= 0; $iMore = $iMore - 1) {
