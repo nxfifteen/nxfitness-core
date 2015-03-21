@@ -1334,6 +1334,9 @@
                 $dbUserName = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'name', array("fuid" => $this->getUserID()));
                 $resultsArray = array("error" => "false", "user" => $this->getUserID(), 'username' => $dbUserName, "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
                 $resultsArray['results'] = $this->$functionName();
+                if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
+                    $resultsArray = $resultsArray['results']['return'];
+                }
 
                 if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
                     $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
