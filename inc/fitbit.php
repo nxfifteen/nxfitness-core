@@ -1415,6 +1415,8 @@
                 }
             }
 
+            //nxr("  " . $string . " => lastMonday: " . $lastMonday . " to " . $oneWeek . ". New traget is " . $plusTargetSteps);
+
             return $plusTargetSteps;
         }
 
