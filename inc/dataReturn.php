@@ -1431,10 +1431,14 @@
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps.date[>=]" => $range_start->format("Y-m-d")
                 ), "ORDER"  => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps.date DESC"));
 
+            $startDateCovered = false;
             $calenderEvents = array();
             foreach ($dbEvents as $dbEvent) {
                 if (strtotime($dbEvent['date']) >= strtotime($userChallangeStartDate) && strtotime($dbEvent['date']) <= strtotime($userChallangeEndDate)) {
                     if ($userChallangeTrgUnit == "km") { $dbEvent['distance'] = $dbEvent['distance'] * 1.609344; }
+                    if (strtotime($dbEvent['date']) == strtotime($userChallangeStartDate)) {
+                        $startDateCovered = true;
+                    }
 
                     if (strtotime($dbEvent['date']) == strtotime(date("Y-m-d"))) {
                         array_push($calenderEvents, array("title" => "Still Running\n" . number_format($dbEvent['distance'], 2) . $userChallangeTrgUnit . " / " . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-today'));
@@ -1446,10 +1450,11 @@
                         array_push($calenderEvents, array("title" => "Challenge Failed\n" . number_format($dbEvent['distance'], 2) . $userChallangeTrgUnit . " / " . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-failed'));
                     }
 
-                } else {
-                    // Returned date is not within challange range
-                    //array_push($calenderEvents, array("title" => "No Active\nChallenge", "start" => $dbEvent['date'], 'className' => 'label-nochallange'));
                 }
+            }
+
+            if (!$startDateCovered) {
+                array_push($calenderEvents, array("title" => "Challenge " . $range_start->format("Y") . "\nStart!", "start" => $userChallangeStartDate, 'className' => 'label-nochallange'));
             }
 
             return array('sole' => true, 'return' => $calenderEvents);
