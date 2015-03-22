@@ -1435,9 +1435,7 @@
                 nxr("  Last download: $daysSince days ago. ");
 
                 $allRecords = false;
-                if ($daysSince < 2) {
-                    $daysSince = "1d";
-                } elseif ($daysSince < 8) {
+                if ($daysSince < 8) {
                     $daysSince = "7d";
                 } elseif ($daysSince < 30) {
                     $daysSince = "30d";
