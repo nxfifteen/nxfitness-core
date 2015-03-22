@@ -1358,6 +1358,9 @@
             }
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordChallenger() {
             $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_length", '50');
             $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID(), '03-31 last sunday'); // Default to last Sunday in March
@@ -1411,6 +1414,9 @@
             }
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordChallengerCalendar() {
             // Short-circuit if the client did not give us a date range.
             if (!isset($_GET['start']) || !isset($_GET['end'])) {
