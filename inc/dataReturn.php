@@ -1479,6 +1479,7 @@
                 array(
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.date',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.distance',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.fairlyactive',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.veryactive'
                 ),
                 array("AND" => array(
@@ -1500,6 +1501,8 @@
                     if (strtotime($dbEvent['date']) == strtotime($userChallengeStartDate)) {
                         $startDateCovered = TRUE;
                     }
+
+                    $dbEvent['veryactive'] = $dbEvent['fairlyactive'] + $dbEvent['veryactive'];
 
                     $scoreVeryactive += $dbEvent['veryactive'];
                     $scoreDistance += $dbEvent['distance'];
