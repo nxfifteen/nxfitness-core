@@ -734,9 +734,15 @@
                 $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
                     array('distance', 'floors', 'steps'),
                     $this->dbWhere());
+                if (count($dbGoals) == 0) {
+                    // If todays goals are missing download the most recent goals
+                    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+                        array('distance', 'floors', 'steps'),
+                        array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
+                }
 
-                $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
                 $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
+                $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
                 $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
                 foreach ($cheer as $key => $value) {
