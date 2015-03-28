@@ -217,6 +217,18 @@
         }
 
         /**
+         * @param string $user_fitbit_id
+         * @return bool
+         */
+        public function isUserValid($user_fitbit_id, $user_fitbit_password) {
+            if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => $user_fitbit_password)))) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+
+        /**
          * @param $errCode
          * @param null $user
          * @return string
