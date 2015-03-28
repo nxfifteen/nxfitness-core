@@ -221,8 +221,14 @@
          * @return bool
          */
         public function isUserValid($user_fitbit_id, $user_fitbit_password) {
-            if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => $user_fitbit_password)))) {
-                return TRUE;
+            if ($this->isUser($user_fitbit_id)) {
+                if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => $user_fitbit_password)))) {
+                    return 1;
+                } else if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => '')))) {
+                    return -1;
+                } else {
+                    return FALSE;
+                }
             } else {
                 return FALSE;
             }
