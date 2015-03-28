@@ -1365,8 +1365,8 @@
         }
 
         private function thisWeeksGoal($user, $string) {
-            $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
-            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
+            $lastMonday = date('Y-m-d', strtotime('last sunday'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
             $plusTargetSteps = -1;
 
             if ($string == "steps") {
@@ -1375,8 +1375,8 @@
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                         array("AND" => array(
                             "user"     => $user,
-                            "date[<=]" => $oneWeek,
-                            "date[>=]" => $lastMonday
+                            "date[>=]" => $oneWeek,
+                            "date[<=]" => $lastMonday
                         ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
                     $totalSteps = 0;
@@ -1397,8 +1397,8 @@
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
                         array("AND" => array(
                             "user"     => $user,
-                            "date[<=]" => $oneWeek,
-                            "date[>=]" => $lastMonday
+                            "date[>=]" => $oneWeek,
+                            "date[<=]" => $lastMonday
                         ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
                     $totalSteps = 0;
@@ -1415,7 +1415,7 @@
                 }
             }
 
-            //nxr("  " . $string . " => lastMonday: " . $lastMonday . " to " . $oneWeek . ". New traget is " . $plusTargetSteps);
+            //nxr("  " . $string . " => lastMonday: " . $oneWeek . " to " . $lastMonday . ". New traget is (" . $totalSteps . "/" . count($dbSteps) . ") " . $plusTargetSteps);
 
             return $plusTargetSteps;
         }
