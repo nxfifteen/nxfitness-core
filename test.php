@@ -1,7 +1,7 @@
 <?php
     require_once(dirname(__FILE__) . "/inc/dataReturn.php");
 
-    $test = array("user" => "269VLG", "data" => "Tracked", "period" => "last14");
+    $test = array("user" => "269VLG", "data" => "JourneysState");
     $dataReturnClass = new dataReturn($test['user']);
     print_r($dataReturnClass->returnUserRecords($test));
 
