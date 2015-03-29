@@ -688,6 +688,7 @@
                         array(
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'journeys_legs.lid',
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'journeys_legs.name',
+                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'journeys_legs.end_mile',
                         ), array("AND" => array(
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys.jid"                 => $dbJourney['jid'],
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_legs.start_mile[<=]" => $user_miles_travelled,
@@ -728,6 +729,7 @@
                             array_push($narrative, $narrativeArray);
                         }
 
+                        $legsProgress[$dbLeg['lid']] = number_format((($user_miles_travelled / $dbLeg['end_mile']) * 100), 2);
                         $legsNames[$dbLeg['lid']] = $dbLeg['name'];
                         $legs[$dbLeg['lid']] = $narrative;
                     }
@@ -738,6 +740,7 @@
                         "usrMiles"   => number_format($this->getUserMilesSince($dbJourney['start_date']), 2),
                         "blurb"      => $dbJourney['blurb'],
                         "legs_names" => $legsNames,
+                        "legs_progress" => $legsProgress,
                         "legs"       => $legs
                     );
                 }
