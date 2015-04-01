@@ -984,9 +984,6 @@
                 }
 
                 if ($insertToDB) {
-                    $weightAvg = round(($weight - $this->getDBCurrentBody($user, "weight")) / 10, 1, PHP_ROUND_HALF_UP) + $this->getDBCurrentBody($user, "weight");
-                    $fatAvg = round(($fat - $this->getDBCurrentBody($user, "fat")) / 10, 1, PHP_ROUND_HALF_UP) + $this->getDBCurrentBody($user, "fat");
-
                     if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
                         nxr('  Weight Goal unset, reverting to 0');
                         $goalsweight = $this->getDBCurrentBody($user, "weightGoal", TRUE);
@@ -1009,44 +1006,39 @@
                         $bmi = (float)$userBodyLog->body->bmi;
                     }
 
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array(
-                            "weight"     => $weight,
-                            "weightGoal" => $goalsweight,
-                            "weightAvg"  => $weightAvg,
-                            "fat"        => $fat,
-                            "fatGoal"    => $goalsfat,
-                            "fatAvg"     => $fatAvg,
-                            "bmi"        => $bmi,
-                            "bicep"      => (String)$userBodyLog->body->bicep,
-                            "calf"       => (String)$userBodyLog->body->calf,
-                            "chest"      => (String)$userBodyLog->body->chest,
-                            "forearm"    => (String)$userBodyLog->body->forearm,
-                            "hips"       => (String)$userBodyLog->body->hips,
-                            "neck"       => (String)$userBodyLog->body->neck,
-                            "thigh"      => (String)$userBodyLog->body->thigh,
-                            "waist"      => (String)$userBodyLog->body->waist
-                        ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+                    $db_insetArray = array(
+                        "weight"     => $weight,
+                        "weightGoal" => $goalsweight,
+                        "fat"        => $fat,
+                        "fatGoal"    => $goalsfat,
+                        "bmi"        => $bmi,
+                        "bicep"      => (String)$userBodyLog->body->bicep,
+                        "calf"       => (String)$userBodyLog->body->calf,
+                        "chest"      => (String)$userBodyLog->body->chest,
+                        "forearm"    => (String)$userBodyLog->body->forearm,
+                        "hips"       => (String)$userBodyLog->body->hips,
+                        "neck"       => (String)$userBodyLog->body->neck,
+                        "thigh"      => (String)$userBodyLog->body->thigh,
+                        "waist"      => (String)$userBodyLog->body->waist
+                    );
+
+                    $lastWeight = $this->getDBCurrentBody($user, "weight");
+                    $lastFat = $this->getDBCurrentBody($user, "fat");
+                    if ($lastWeight != $weight) {
+                        $db_insetArray['weightAvg'] = round(($weight - $lastWeight) / 10, 1, PHP_ROUND_HALF_UP) + $lastWeight;
                     } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array(
-                            'user'       => $user,
-                            'date'       => $targetDate,
-                            "weight"     => $weight,
-                            "weightGoal" => $goalsweight,
-                            "weightAvg"  => $weightAvg,
-                            "fat"        => $fat,
-                            "fatGoal"    => $goalsfat,
-                            "fatAvg"     => $fatAvg,
-                            "bmi"        => $bmi,
-                            "bicep"      => (String)$userBodyLog->body->bicep,
-                            "calf"       => (String)$userBodyLog->body->calf,
-                            "chest"      => (String)$userBodyLog->body->chest,
-                            "forearm"    => (String)$userBodyLog->body->forearm,
-                            "hips"       => (String)$userBodyLog->body->hips,
-                            "neck"       => (String)$userBodyLog->body->neck,
-                            "thigh"      => (String)$userBodyLog->body->thigh,
-                            "waist"      => (String)$userBodyLog->body->waist
-                        ));
+                        $db_insetArray['weightAvg'] = $this->getDBCurrentBody($user, "weightAvg");
+                    }
+                    if ($lastFat != $fat) {
+                        $db_insetArray['fatAvg'] = round(($fat - $lastFat) / 10, 1, PHP_ROUND_HALF_UP) + $lastFat;
+                    } else {
+                        $db_insetArray['fatAvg'] = $this->getDBCurrentBody($user, "fatAvg");
+                    }
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray, array("AND" => array('user' => $user, 'date' => $targetDate)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray);
                     }
 
                     if (!$fallback) $this->api_setLastCleanrun("body", $user, new DateTime ($targetDate));
