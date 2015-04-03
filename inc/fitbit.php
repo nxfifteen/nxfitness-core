@@ -1038,6 +1038,8 @@
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray, array("AND" => array('user' => $user, 'date' => $targetDate)));
                     } else {
+                        $db_insetArray['user'] = $user;
+                        $db_insetArray['date'] = $targetDate;
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray);
                     }
 
