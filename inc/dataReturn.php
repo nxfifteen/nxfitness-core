@@ -1747,4 +1747,35 @@
                 return array("error" => "true", "code" => 103, "msg" => "Unknown dataset: " . $functionName);
             }
         }
+
+        public function returnUserRecordBadges() {
+            $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeType" => "badgeType"),
+                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("value" => "value")),
+                array(
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'lnk_badge2usr.badgeType',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'lnk_badge2usr.value',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'lnk_badge2usr.dateTime',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'lnk_badge2usr.timesAchieved',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.image',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.badgeGradientEndColor',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.badgeGradientStartColor',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.earnedMessage',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.marketingdescription',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.name',
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr.user" => $this->getUserID(),
+                         "ORDER"  => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr.value ASC"));
+
+            $badges = array();
+            foreach ($userBadges as $userBadge) {
+                $badge_key = $this->getAppClass()->getSetting("badge_key_" . strtolower($userBadge['badgeType']), $userBadge['badgeType']);
+                if (!array_key_exists($badge_key, $badges)) {
+                    $badges[$badge_key] = array();
+                }
+
+                array_push($badges[$badge_key], $userBadge);
+            }
+
+            return array("images" => "images/badges/", "badges" => $badges);
+        }
     }
