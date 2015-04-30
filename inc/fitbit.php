@@ -858,7 +858,7 @@
                 die();
             }
 
-            if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep)) {
+            if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
                 foreach ($userSleepLog->sleep as $loggedSleep) {
                     if (is_object($loggedSleep)) {
                         if ($loggedSleep->logId != 0) {
@@ -898,6 +898,9 @@
                         }
                     }
                 }
+            } else {
+                $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate), 7);
+                $this->api_setLastrun("sleep", $user);
             }
 
             return $userSleepLog;
@@ -985,14 +988,14 @@
 
                 if ($insertToDB) {
                     if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
-                        nxr('  Weight Goal unset, reverting to 0');
+                        nxr('  Weight Goal unset, reverting to previous record');
                         $goalsweight = $this->getDBCurrentBody($user, "weightGoal", TRUE);
                     } else {
                         $goalsweight = (float)$userBodyLog->goals->weight;
                     }
 
                     if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
-                        nxr('  Body Fat Goal unset, reverting to 0');
+                        nxr('  Body Fat Goal unset, reverting to previous record');
                         $goalsfat = $this->getDBCurrentBody($user, "fatGoal", TRUE);
                     } else {
                         $goalsfat = (float)$userBodyLog->goals->fat;
@@ -1632,33 +1635,39 @@
             }
 
             if (isset($userActivityLog) and is_object($userActivityLog) and is_array($userActivityLog->activities)) {
-                foreach ($userActivityLog->activities as $activity) {
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user"       => $user,
-                                                                                                                                                                    "logId"      => (String)$activity->logId,
-                                                                                                                                                                    "activityId" => (String)$activity->activityId,
-                                                                                                                                                                    "startDate"  => (String)$activity->startDate,
-                                                                                                                                                                    "startTime"  => (String)$activity->startTime)))
-                    ) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
-                            "activityId"         => (String)$activity->activityId,
-                            "activityParentId"   => (String)$activity->activityParentId,
-                            "activityParentName" => (String)$activity->activityParentName,
-                            "calories"           => (String)$activity->calories,
-                            "description"        => (String)$activity->description,
-                            "duration"           => (String)$activity->duration,
-                            "hasStartTime"       => (String)$activity->hasStartTime,
-                            "isFavorite"         => (String)$activity->isFavorite,
-                            "logId"              => (String)$activity->logId,
-                            "name"               => (String)$activity->name,
-                            "startDate"          => (String)$activity->startDate,
-                            "startTime"          => (String)$activity->startTime,
-                            "user"               => $user,
-                            "date"               => $targetDate
-                        ));
+                if (count($userActivityLog->activities) > 0) {
+                    foreach ($userActivityLog->activities as $activity) {
+                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user"       => $user,
+                                                                                                                                                                        "logId"      => (String)$activity->logId,
+                                                                                                                                                                        "activityId" => (String)$activity->activityId,
+                                                                                                                                                                        "startDate"  => (String)$activity->startDate,
+                                                                                                                                                                        "startTime"  => (String)$activity->startTime)))
+                        ) {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
+                                "activityId"         => (String)$activity->activityId,
+                                "activityParentId"   => (String)$activity->activityParentId,
+                                "activityParentName" => (String)$activity->activityParentName,
+                                "calories"           => (String)$activity->calories,
+                                "description"        => (String)$activity->description,
+                                "duration"           => (String)$activity->duration,
+                                "hasStartTime"       => (String)$activity->hasStartTime,
+                                "isFavorite"         => (String)$activity->isFavorite,
+                                "logId"              => (String)$activity->logId,
+                                "name"               => (String)$activity->name,
+                                "startDate"          => (String)$activity->startDate,
+                                "startTime"          => (String)$activity->startTime,
+                                "user"               => $user,
+                                "date"               => $targetDate
+                            ));
+                        }
+                        $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
                     }
-
+                } else {
                     $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
                 }
+            } else {
+                $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate), 7);
+                $this->api_setLastrun("activity_log", $user);
             }
 
             return TRUE;
