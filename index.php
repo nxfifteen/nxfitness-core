@@ -14,7 +14,7 @@
         $inputURL = str_replace($sysPath, "", $inputURL);
     }
     $inputURL = explode("/", $inputURL);
-    array_shift($inputURL);
+    //array_shift($inputURL);
 
     $fibit_id = $inputURL[0];
 
