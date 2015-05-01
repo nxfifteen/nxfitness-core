@@ -1367,7 +1367,7 @@
             $plusTargetSteps = -1;
 
             if ($string == "steps") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10000);
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 2);
                 if ($improvment > 0) {
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                         array("AND" => array(
@@ -1389,7 +1389,7 @@
                     }
                 }
             } elseif ($string == "floors") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10);
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_floors", 2);
                 if ($improvment > 0) {
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
                         array("AND" => array(
