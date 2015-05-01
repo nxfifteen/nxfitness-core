@@ -1220,23 +1220,20 @@
          * @return array
          */
         public function returnUserRecordTracked() {
-            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
-                    "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals" => array("date" => "date")),
-                array(
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.date',
-                    //$this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.distance',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.floors',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.steps',
-                    //$this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.distance(distance_g)',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.floors(floors_g)',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals.steps(steps_g)'
-                ),
-                $this->dbWhere(-1, $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps'));
+            $nx_fitbit_steps = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps';
+            $nx_fitbit_steps_goals = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps_goals';
 
-            //$graph_distance = array();
-            //$graph_distance_g = array();
-            //$graph_distance_min = 0;
-            //$graph_distance_max = 0;
+            $days = $this->getParamPeriod();
+            $days = str_ireplace("last", "", $days);
+            $then = date('Y-m-d', strtotime($this->getParamDate() . " -" . $days . " day"));
+
+            $dbSteps = $this->getAppClass()->getDatabase()->query(
+                "SELECT `$nx_fitbit_steps`.`date`,`$nx_fitbit_steps`.`floors`,`$nx_fitbit_steps`.`steps`,`$nx_fitbit_steps_goals`.`floors` AS `floors_g`,`$nx_fitbit_steps_goals`.`steps` AS `steps_g`"
+                ." FROM `$nx_fitbit_steps`"
+                ." JOIN `$nx_fitbit_steps_goals` ON (`$nx_fitbit_steps`.`date` = `$nx_fitbit_steps_goals`.`date`) AND (`$nx_fitbit_steps`.`user` = `$nx_fitbit_steps_goals`.`user`)"
+                ." WHERE `$nx_fitbit_steps`.`user` = '".$this->getUserID()."' AND `$nx_fitbit_steps`.`date` <= '".$this->getParamDate()."' AND `$nx_fitbit_steps`.`date` >= '$then' "
+                ." ORDER BY `$nx_fitbit_steps`.`date` DESC LIMIT $days");
+            
             $returnDate = NULL;
             $graph_floors = array();
             $graph_floors_g = array();
@@ -1247,11 +1244,6 @@
             $graph_steps_min = 0;
             $graph_steps_max = 0;
             foreach ($dbSteps as $dbValue) {
-                //array_push($graph_distance, (String)round($dbValue['distance'], 2));
-                //array_push($graph_distance_g, (String)round($dbValue['distance_g'], 2));
-                //if ($dbValue['distance'] < $graph_distance_min || $graph_distance_min == 0) {$graph_distance_min = $dbValue['distance'];}
-                //if ($dbValue['distance'] > $graph_distance_max || $graph_distance_max == 0) {$graph_distance_max = $dbValue['distance'];}
-
                 if (is_null($returnDate))
                     $returnDate = explode("-", $dbValue['date']);
 
@@ -1280,14 +1272,10 @@
 
             return array(
                 'returnDate'       => $returnDate,
-                //'graph_distance' => $graph_distance,
-                //'graph_distance_g' => $graph_distance_g,
                 'graph_floors'     => $graph_floors,
                 'graph_floors_g'   => $graph_floors_g,
                 'graph_steps'      => $graph_steps,
                 'graph_steps_g'    => $graph_steps_g,
-                //'graph_distance_min' => $graph_distance_min,
-                //'graph_distance_max' => $graph_distance_max,
                 'graph_floors_min' => $graph_floors_min,
                 'graph_floors_max' => $graph_floors_max,
                 'graph_steps_min'  => $graph_steps_min,
