@@ -169,10 +169,11 @@
         }
 
         /**
+         * @param bool $reset
          * @return fitbit
          */
-        public function getFitbitapi() {
-            if (is_null($this->fitbitapi)) {
+        public function getFitbitapi($reset = FALSE) {
+            if (is_null($this->fitbitapi) || $reset) {
                 require_once(dirname(__FILE__) . "/fitbit.php");
                 $this->fitbitapi = new fitbit($this,
                     $this->getSetting("fitbit_consumer_key", NULL, FALSE),
