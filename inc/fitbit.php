@@ -402,6 +402,38 @@
 
                 $this->api_setLastrun("profile", $user, NULL, TRUE);
 
+                try {
+                    $subscriptions = $this->getLibrary()->getSubscriptions();
+                } catch (Exception $E) {
+                    /**
+                     * @var FitBitException $E
+                     */
+                    echo $user . "\n";
+                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
+                    print_r($E);
+                    die();
+                }
+
+                if (count($subscriptions->apiSubscriptions) == 0) {
+                    nxr(" $user is not subscribed to the site");
+                    try {
+                        $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'uid', array("fuid" => $user));
+                        $this->getLibrary()->addSubscription($user_db_id);
+                    } catch (Exception $E) {
+                        /**
+                         * @var FitBitException $E
+                         */
+                        echo $user . "\n";
+                        echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
+                        print_r($E);
+                        die();
+                    }
+                    //$this->getLibrary()->setUser($user);
+                    nxr(" $user subscription confirmed with ID: $user_db_id");
+                } else {
+                    nxr(" $user subscription is still valid");
+                }
+
                 return $userProfile;
             } else {
                 return "-143";
