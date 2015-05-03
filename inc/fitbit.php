@@ -92,6 +92,7 @@
                 nxr(" Pull User Check $user/" . $this->getLibrary()->getUser());
                 if ($user != $this->getLibrary()->getUser()) {
                     nxr("  Aborted $trigger request for $user as session user is " . $this->getLibrary()->getUser());
+                    return "-144";
                 }
 
                 if ($trigger == "all") {
@@ -504,7 +505,7 @@
          * @param $xml
          * @return bool
          */
-        private function isApiError($xml) {
+        public function isApiError($xml) {
             if (is_numeric($xml) AND $xml < 0) {
                 return TRUE;
             } else {
