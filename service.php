@@ -2,6 +2,10 @@
     // JSon request format is :
     //[{"collectionType":"activities","date":"2015-03-06","ownerId":"269VLG","ownerType":"user","subscriptionId":"1"}]
 
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+    header('Content-type: application/json');
+
     // read JSon input
     $data = json_decode(file_get_contents('php://input'));
 
