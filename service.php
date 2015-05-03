@@ -63,25 +63,10 @@
         $logMsg .= "Could not authorise client IP\n";
     }
 
-    $fh = fopen("/home/nxad/logs/fitbit.upload.txt", "a");
-    fwrite($fh, "************\nNew API request:\n" . $logMsg . "\n");
+    nxr("New API request: " . $logMsg);
 
     header('HTTP/1.0 204 No Content');
 
     function validate_client() {
-        //if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        //    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        //} else {
-        //    $ip = $_SERVER['REMOTE_ADDR'];
-        //}
-        //
-        //$host = gethostbyaddr($ip);
-        //if (strpos($host, '.fitbit.com') !== false) {
-        //    $access = true;
-        //} else {
-        //    $access = false;
-        //}
-        //
-        //return $access;
         return TRUE;
     }
