@@ -89,6 +89,11 @@
                     $this->oAuthorise($user);
                 }
 
+                nxr(" Pull User Check $user/" . $this->getLibrary()->getUser());
+                if ($user != $this->getLibrary()->getUser()) {
+                    nxr("  Aborted $trigger request for $user as session user is " . $this->getLibrary()->getUser());
+                }
+
                 if ($trigger == "all") {
                     $this->forceSync = TRUE;
                 }
@@ -96,35 +101,35 @@
                 if ($trigger == "all" || $trigger == "profile") {
                     $pull = $this->api_pull_profile($user);
                     if ($this->isApiError($pull)) {
-                        echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "devices") {
                     $pull = $this->api_pull_devices($user);
                     if ($this->isApiError($pull)) {
-                        echo "  Error devices: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        nxr("  Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "badges") {
                     $pull = $this->api_pull_badges($user);
                     if ($this->isApiError($pull)) {
-                        echo "  Error badges: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        nxr("  Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "leaderboard") {
                     $pull = $this->api_pull_leaderboard($user);
                     if ($this->isApiError($pull)) {
-                        echo "  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        nxr("  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
                     $pull = $this->api_pull_goals_calories($user);
                     if ($this->isApiError($pull)) {
-                        echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
@@ -142,11 +147,11 @@
                             nxr(' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
                             $pull = $this->api_pull_sleep_logs($user, $dt->format("Y-m-d"));
                             if ($this->isApiError($pull)) {
-                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                             }
                         }
                     } else {
-                        echo "  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                        nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -160,11 +165,11 @@
                             nxr(' Downloading Body Logs for ' . $dt->format("l jS M Y"));
                             $pull = $this->api_pull_body($user, $dt->format("Y-m-d"));
                             if ($this->isApiError($pull)) {
-                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                             }
                         }
                     } else {
-                        echo "  Error body: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                        nxr("  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -178,11 +183,11 @@
                             nxr(' Downloading Heart Rate Logs for ' . $dt->format("l jS M Y"));
                             $pull = $this->api_pull_body_heart($user, $dt->format("Y-m-d"));
                             if ($this->isApiError($pull)) {
-                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                             }
                         }
                     } else {
-                        echo "  Error heart: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                        nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -196,11 +201,11 @@
                             nxr(' Downloading Water Logs for ' . $dt->format("l jS M Y"));
                             $pull = $this->api_pull_food_water($user, $dt->format("Y-m-d"));
                             if ($this->isApiError($pull)) {
-                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                             }
                         }
                     } else {
-                        echo "  Error water: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                        nxr("  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -214,11 +219,11 @@
                             nxr(' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
                             $pull = $this->api_pull_food_eaten($user, $dt->format("Y-m-d"));
                             if ($this->isApiError($pull)) {
-                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                             }
                         }
                     } else {
-                        echo "  Error foods: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                        nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -232,11 +237,11 @@
                             nxr(' Downloading Goals Logs for ' . $dt->format("l jS M Y"));
                             $pull = $this->api_pull_goals($user, $dt->format("Y-m-d"));
                             if ($this->isApiError($pull)) {
-                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                             }
                         }
                     } else {
-                        echo "  Error Goals: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                        nxr("  Error Goals: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -271,11 +276,11 @@
                             nxr(' Downloading activities for ' . $dt->format("l jS M Y"));
                             $pull = $this->api_pull_activity_log($user, $dt->format("Y-m-d"));
                             if ($this->isApiError($pull)) {
-                                echo "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull) . "\n";
+                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                             }
                         }
                     } else {
-                        echo "  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                        nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -316,12 +321,14 @@
          * @param $user
          */
         public function oAuthorise($user) {
+            nxr("Setting up oAuth for $user");
             $oAuth = $this->get_oauth($user);
             if (!$oAuth OR !is_array($oAuth) OR $oAuth['token'] == "" OR $oAuth['secret'] == "") {
                 nxr('Unable to setup the user OAuth credentials. Have they authorised this app?');
                 exit;
             }
             $this->getLibrary()->setOAuthDetails($oAuth['token'], $oAuth['secret']);
+            $this->getLibrary()->setUser($user);
         }
 
         /**
@@ -343,6 +350,10 @@
          * @return mixed|null|SimpleXMLElement|string
          */
         private function api_pull_profile($user) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             if ($this->api_isCooled("profile", $user)) {
                 try {
                     $userProfile = $this->getLibrary()->getProfile();
@@ -507,6 +518,10 @@
          * @return mixed|null|SimpleXMLElement|string
          */
         private function api_pull_devices($user) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             if ($this->api_isCooled("devices", $user)) {
                 try {
                     $userDevices = $this->getLibrary()->getDevices();
@@ -559,6 +574,10 @@
          * @return mixed|null|SimpleXMLElement|string
          */
         private function api_pull_badges($user) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             if ($this->api_isCooled("badges", $user)) {
                 $badgeFolder = dirname(__FILE__) . "/../images/badges/";
                 if (file_exists($badgeFolder) AND is_writable($badgeFolder)) {
@@ -576,6 +595,19 @@
 
                     if (isset($userBadges)) {
                         foreach ($userBadges->badges as $badge) {
+
+                            /*
+                             * Check to make sure, some badges do not include unit values
+                             */
+                            if (isset($badge->unit)) {
+                                $unit = (String)$badge->unit;
+                            } else {
+                                $unit = "";
+                            }
+
+                            /*
+                             * If the badge is not already in the database insert it
+                             */
                             if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
                                 "AND" => array(
                                     "badgeType" => (String)$badge->badgeType,
@@ -601,6 +633,7 @@
                                 "value"     => (String)$badge->value
                             )))
                             ) {
+                                nxr(" User $user has been awarded the " . $badge->badgeType . " (" . $badge->value . ") again");
                                 $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
                                     'dateTime'      => (String)$badge->dateTime,
                                     'timesAchieved' => (String)$badge->timesAchieved
@@ -610,13 +643,14 @@
                                     "value"     => (String)$badge->value
                                 )));
                             } else {
+                                nxr(" User $user has been awarded the " . $badge->badgeType . " (" . $badge->value . ") " . $badge->timesAchieved . " times.");
                                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
                                     'user'          => $user,
                                     'badgeType'     => (String)$badge->badgeType,
                                     'dateTime'      => (String)$badge->dateTime,
                                     'timesAchieved' => (String)$badge->timesAchieved,
                                     'value'         => (String)$badge->value,
-                                    'unit'          => (String)$badge->unit
+                                    'unit'          => $unit
                                 ));
                             }
 
@@ -674,6 +708,10 @@
          * @return mixed|null|SimpleXMLElement|string
          */
         private function api_pull_leaderboard($user) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             if ($this->api_isCooled("leaderboard", $user)) {
                 try {
                     $userFriends = $this->getLibrary()->getFriendsLeaderboard();
@@ -739,6 +777,10 @@
          * @return mixed|null|SimpleXMLElement|string
          */
         private function api_pull_goals_calories($user) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             if ($this->api_isCooled("goals_calories", $user)) {
                 try {
                     $userCaloriesGoals = $this->getLibrary()->customCall("user/-/foods/log/goal.xml", NULL, OAUTH_HTTP_METHOD_GET);
@@ -845,6 +887,10 @@
          * @return mixed|null|SimpleXMLElement|string
          */
         private function api_pull_sleep_logs($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             $targetDateTime = new DateTime ($targetDate);
             try {
                 $userSleepLog = $this->getLibrary()->getSleep($targetDateTime);
@@ -943,6 +989,10 @@
          * @return mixed
          */
         private function api_pull_body($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             $targetDateTime = new DateTime ($targetDate);
             try {
                 $userBodyLog = $this->getLibrary()->getBody($targetDateTime);
@@ -1077,6 +1127,10 @@
          * @return mixed
          */
         private function api_pull_body_heart($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             $targetDateTime = new DateTime ($targetDate);
             try {
                 //TODO Soon to be deprecated API
@@ -1146,6 +1200,10 @@
          * @return mixed
          */
         private function api_pull_food_water($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             $targetDateTime = new DateTime ($targetDate);
             try {
                 $userWaterLog = $this->getLibrary()->getWater($targetDateTime);
@@ -1189,6 +1247,10 @@
          * @return mixed
          */
         private function api_pull_food_eaten($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             $targetDateTime = new DateTime ($targetDate);
             try {
                 $userFoodLog = $this->getLibrary()->getFoods($targetDateTime);
@@ -1244,6 +1306,10 @@
          * @return mixed
          */
         private function api_pull_goals($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             try {
                 $userGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", NULL, OAUTH_HTTP_METHOD_GET);
             } catch (Exception $E) {
@@ -1423,6 +1489,10 @@
          * @param bool $force
          */
         private function api_pull_time_series($user, $trigger, $force = FALSE) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             if ($force || $this->api_isCooled($trigger, $user)) {
                 $currentDate = new DateTime();
 
@@ -1468,6 +1538,9 @@
          * @param DateTime|null $lastrun
          */
         private function api_pull_time_series_by_trigger($user, $trigger, $daysSince, $lastrun = NULL) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
             switch ($trigger) {
                 case "steps":
                 case "distance":
@@ -1492,6 +1565,9 @@
          * @param DateTime|null $lastrun
          */
         private function api_pull_time_series_for_steps($user, $trigger, $daysSince, $lastrun = NULL) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
             if (!is_null($lastrun)) {
                 $currentDate = $lastrun;
             } else {
@@ -1550,6 +1626,9 @@
          * @return bool
          */
         private function api_pull_time_series_for_activity($user, $trigger, $daysSince, $lastrun = NULL) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
             switch ($trigger) {
                 case "minutesVeryActive":
                     $databaseColumn = "veryactive";
@@ -1621,6 +1700,10 @@
          * @return bool
          */
         private function api_pull_activity_log($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
             $targetDateTime = new DateTime ($targetDate);
             try {
                 $userActivityLog = $this->getLibrary()->getActivities($targetDateTime);
