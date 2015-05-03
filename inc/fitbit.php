@@ -92,6 +92,7 @@
                 nxr(" Pull User Check $user/" . $this->getLibrary()->getUser());
                 if ($user != $this->getLibrary()->getUser()) {
                     nxr("  Aborted $trigger request for $user as session user is " . $this->getLibrary()->getUser());
+
                     return "-144";
                 }
 
@@ -133,7 +134,7 @@
                         nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
-
+                
                 // Set variables require bellow
                 $currentDate = new DateTime ('now');
                 $interval = DateInterval::createFromDateString('1 day');
@@ -362,9 +363,8 @@
                     /**
                      * @var FitBitException $E
                      */
-                    echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                    print_r($E);
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
                     die();
                 }
 
@@ -408,9 +408,8 @@
                     /**
                      * @var FitBitException $E
                      */
-                    echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                    print_r($E);
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
                     die();
                 }
 
@@ -423,12 +422,10 @@
                         /**
                          * @var FitBitException $E
                          */
-                        echo $user . "\n";
-                        echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                        print_r($E);
+                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                        nxr(print_r($E, TRUE));
                         die();
                     }
-                    //$this->getLibrary()->setUser($user);
                     nxr(" $user subscription confirmed with ID: $user_db_id");
                 } else {
                     nxr(" $user subscription is still valid");
@@ -452,8 +449,6 @@
             } else {
                 $currentDate = new DateTime ('now');
                 $lastRun = $this->api_getCoolDown($trigger, $user, $reset);
-
-                //nxr($currentDate->format("Y-m-d H:i:s") . ": CoolDown test for $trigger - cooled at " . $lastRun->format("Y-m-d H:i:s"));
 
                 if ($lastRun->format("U") < $currentDate->format("U")) {
                     return TRUE;
@@ -562,9 +557,8 @@
                     /**
                      * @var FitBitException $E
                      */
-                    echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                    print_r($E);
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
                     die();
                 }
 
@@ -620,9 +614,8 @@
                         /**
                          * @var FitBitException $E
                          */
-                        echo $user . "\n";
-                        echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                        print_r($E);
+                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                        nxr(print_r($E, TRUE));
                         die();
                     }
 
@@ -630,8 +623,8 @@
                         foreach ($userBadges->badges as $badge) {
 
                             /*
-                             * Check to make sure, some badges do not include unit values
-                             */
+                            * Check to make sure, some badges do not include unit values
+                            */
                             if (isset($badge->unit)) {
                                 $unit = (String)$badge->unit;
                             } else {
@@ -639,8 +632,8 @@
                             }
 
                             /*
-                             * If the badge is not already in the database insert it
-                             */
+                            * If the badge is not already in the database insert it
+                            */
                             if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
                                 "AND" => array(
                                     "badgeType" => (String)$badge->badgeType,
@@ -752,9 +745,8 @@
                     /**
                      * @var FitBitException $E
                      */
-                    echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                    print_r($E);
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
                     die();
                 }
 
@@ -821,9 +813,8 @@
                     /**
                      * @var FitBitException $E
                      */
-                    echo $user . "\n";
-                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                    print_r($E);
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
                     die();
                 }
 
@@ -931,9 +922,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
@@ -1033,9 +1023,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
@@ -1172,9 +1161,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
@@ -1244,9 +1232,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
@@ -1291,9 +1278,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
@@ -1349,9 +1335,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
@@ -1395,9 +1380,8 @@
                                     /**
                                      * @var FitBitException $E
                                      */
-                                    echo $user . "\n";
-                                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                                    print_r($E);
+                                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                                    nxr(print_r($E, TRUE));
                                     die();
                                 }
                             } elseif ($newGoal > 0) {
@@ -1415,9 +1399,8 @@
                                     /**
                                      * @var FitBitException $E
                                      */
-                                    echo $user . "\n";
-                                    echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                                    print_r($E);
+                                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                                    nxr(print_r($E, TRUE));
                                     die();
                                 }
                             } elseif ($newGoal > 0) {
@@ -1511,8 +1494,6 @@
                 }
             }
 
-            //nxr("  " . $string . " => lastMonday: " . $oneWeek . " to " . $lastMonday . ". New traget is (" . $totalSteps . "/" . count($dbSteps) . ") " . $plusTargetSteps);
-
             return $plusTargetSteps;
         }
 
@@ -1534,7 +1515,7 @@
 
                 nxr("  Last download: $daysSince days ago. ");
 
-                $allRecords = false;
+                $allRecords = FALSE;
                 if ($daysSince < 8) {
                     $daysSince = "7d";
                 } elseif ($daysSince < 30) {
@@ -1546,7 +1527,7 @@
                 } elseif ($daysSince < 364) {
                     $daysSince = "1y";
                 } else {
-                    $allRecords = true;
+                    $allRecords = TRUE;
                     $daysSince = "1y";
                     $lastrun->add(new DateInterval('P360D'));
                 }
@@ -1615,9 +1596,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
@@ -1693,9 +1673,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
@@ -1744,9 +1723,8 @@
                 /**
                  * @var FitBitException $E
                  */
-                echo $user . "\n";
-                echo "Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user) . "\n\n";
-                print_r($E);
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
                 die();
             }
 
