@@ -2228,6 +2228,10 @@
             $this->userId = $userId;
         }
 
+        public function getUser() {
+            return $this->userId;
+        }
+
         /**
          * Update user profile
          *
