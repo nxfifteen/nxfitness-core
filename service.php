@@ -17,22 +17,22 @@
             foreach ($data as $upreq) {
                 // Do some data validation to make sure we are getting all we expect
                 if (empty($upreq->collectionType) or $upreq->collectionType == "") {
-                    $logMsg .= "collectionType not sent\n";
+                    $logMsg .= "collectionType not sent";
                 } else if (empty($upreq->date) or $upreq->date == "") {
-                    $logMsg .= "date not sent\n";
+                    $logMsg .= "date not sent";
                 } else if (empty($upreq->ownerId) or $upreq->ownerId == "") {
-                    $logMsg .= "ownerId not sent\n";
+                    $logMsg .= "ownerId not sent";
                 } else if (empty($upreq->ownerType) or $upreq->ownerType == "") {
-                    $logMsg .= "ownerType not sent\n";
+                    $logMsg .= "ownerType not sent";
                 } else if (empty($upreq->subscriptionId) or $upreq->subscriptionId == "") {
-                    $logMsg .= "subscriptionId not sent\n";
+                    $logMsg .= "subscriptionId not sent";
                 } else {
                     require_once(dirname(__FILE__) . "/inc/app.php");
                     $fitbitApp = new NxFitbit();
                     if ($fitbitApp->isUser($upreq->ownerId)) {
                         $cooldown = $fitbitApp->getUserCooldown($upreq->ownerId);
                         if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
-                            $logMsg .= "Processing queue item " . $fitbitApp->supportedApi($upreq->collectionType) . " for " . $upreq->ownerId . "\n";
+                            $logMsg .= "Processing queue item " . $fitbitApp->supportedApi($upreq->collectionType) . " for " . $upreq->ownerId . "";
                             if ($fitbitApp->getDatabase()->has($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $upreq->ownerId, "activity" => $upreq->collectionType)))) {
                                 $fields = array(
                                     "date"     => date("Y-m-d H:i:s"),
@@ -51,16 +51,16 @@
 
                             $fitbitApp->addCronJob($upreq->ownerId, $upreq->collectionType, TRUE);
                         } else {
-                            $logMsg .= "Can not process " . $fitbitApp->supportedApi($upreq->collectionType) . ". API limit reached for " . $upreq->ownerId . ". Cooldown period ends " . $cooldown . "\n";
+                            $logMsg .= "Can not process " . $fitbitApp->supportedApi($upreq->collectionType) . ". API limit reached for " . $upreq->ownerId . ". Cooldown period ends " . $cooldown . "";
                         }
                     } else {
-                        $logMsg .= "Can not process " . $fitbitApp->supportedApi($upreq->collectionType) . " since " . $upreq->ownerId . " is no longer a user.\n";
+                        $logMsg .= "Can not process " . $fitbitApp->supportedApi($upreq->collectionType) . " since " . $upreq->ownerId . " is no longer a user.";
                     }
                 }
             }
         }
     } else {
-        $logMsg .= "Could not authorise client IP\n";
+        $logMsg .= "Could not authorise client IP";
     }
 
     nxr("New API request: " . $logMsg);
