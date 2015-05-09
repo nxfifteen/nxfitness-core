@@ -1131,6 +1131,10 @@
                         array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
                 }
 
+                $dbSteps[0]['steps_p'] = ($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100;
+                $dbSteps[0]['floors_p'] = ($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100;
+                $dbSteps[0]['distance_p'] =  ($dbSteps[0]['distance'] / $dbGoals[0]['distance']) * 100;
+
                 $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
                 $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
