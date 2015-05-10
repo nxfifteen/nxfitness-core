@@ -63,7 +63,12 @@
         if ($dataReturnClass->isUser()) {
             $json = json_encode($dataReturnClass->returnUserRecords($_GET));
 
-            return $json;
+            if (array_key_exists("debug", $_GET) and $_GET['debug'] == true) {
+                return print_r(json_decode($json), true);
+            } else {
+
+                return $json;
+            }
         } else {
             echo json_error(101);
 
