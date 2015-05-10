@@ -1307,7 +1307,7 @@
                 ." JOIN `$nx_fitbit_steps_goals` ON (`$nx_fitbit_steps`.`date` = `$nx_fitbit_steps_goals`.`date`) AND (`$nx_fitbit_steps`.`user` = `$nx_fitbit_steps_goals`.`user`)"
                 ." WHERE `$nx_fitbit_steps`.`user` = '".$this->getUserID()."' AND `$nx_fitbit_steps`.`date` <= '".$this->getParamDate()."' AND `$nx_fitbit_steps`.`date` >= '$then' "
                 ." ORDER BY `$nx_fitbit_steps`.`date` DESC LIMIT $days");
-            
+
             $returnDate = NULL;
             $graph_floors = array();
             $graph_floors_g = array();
@@ -1338,30 +1338,70 @@
                 if ($dbValue['steps'] > $graph_steps_max || $graph_steps_max == 0) {
                     $graph_steps_max = $dbValue['steps'];
                 }
+            }
 
+            $dbActive = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity",
+                array(
+                    'target',
+                    'fairlyactive',
+                    'veryactive'
+                ),
+                array("AND" => array(
+                    "user"     => $this->getUserID(),
+                    "date[>=]" => $then,
+                    "date[<=]" => $this->getParamDate()
+                ), "ORDER"  => "date DESC"));
+
+            $graph_active = array();
+            $graph_active_g = array();
+            $graph_active_min = 0;
+            $graph_active_max = 0;
+
+            foreach ($dbActive as $dbValue) {
+                array_push($graph_active, (String)round($dbValue['fairlyactive'] + $dbValue['veryactive'], 0));
+                array_push($graph_active_g, (String)round($dbValue['target'], 0));
+
+                if (($dbValue['fairlyactive'] + $dbValue['veryactive']) < $graph_active_min) {
+                    $graph_active_min = $dbValue['fairlyactive'] + $dbValue['veryactive'];
+                }
+                if (($dbValue['fairlyactive'] + $dbValue['veryactive']) > $graph_active_max) {
+                    $graph_active_max = $dbValue['fairlyactive'] + $dbValue['veryactive'];
+                }
             }
 
             $goalCalcSteps = $this->returnUserRecordStepGoal();
             $goalCalcFloors = $this->returnUserRecordFloorGoal();
+            $goalCalcActive = $this->returnUserRecordActiveGoal();
 
             return array(
                 'returnDate'       => $returnDate,
-                'graph_floors'     => $graph_floors,
-                'graph_floors_g'   => $graph_floors_g,
+
                 'graph_steps'      => $graph_steps,
                 'graph_steps_g'    => $graph_steps_g,
-                'graph_floors_min' => $graph_floors_min,
-                'graph_floors_max' => $graph_floors_max,
                 'graph_steps_min'  => $graph_steps_min,
                 'graph_steps_max'  => $graph_steps_max,
                 'imp_steps'        => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps", 10) . "%",
                 'avg_steps'        => number_format($goalCalcSteps['newTargetSteps'], 0),
                 'newgoal_steps'    => number_format($goalCalcSteps['plusTargetSteps'], 0),
                 'maxgoal_steps'    => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_steps_max", 10000), 0),
+
+                'graph_floors'     => $graph_floors,
+                'graph_floors_g'   => $graph_floors_g,
+                'graph_floors_min' => $graph_floors_min,
+                'graph_floors_max' => $graph_floors_max,
                 'imp_floors'       => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors", 10) . "%",
                 'avg_floors'       => number_format($goalCalcFloors['newTargetFloors'], 0),
                 'newgoal_floors'   => number_format($goalCalcFloors['plusTargetFloors'], 0),
-                'maxgoal_floors'   => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20), 0)
+                'maxgoal_floors'   => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_floors_max", 20), 0),
+
+                'graph_active'      => $graph_active,
+                'graph_active_g'    => $graph_active_g,
+                'graph_active_min'  => $graph_active_min,
+                'graph_active_max'  => $graph_active_max,
+                'imp_active'       => $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_active", 10) . "%",
+                'avg_active'       => number_format($goalCalcActive['newTargetFloors'], 0),
+                'newgoal_active'   => number_format($goalCalcActive['plusTargetFloors'], 0),
+                'maxgoal_active'   => number_format($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_active_max", 30), 0)
             );
         }
 
@@ -1432,6 +1472,41 @@
                 "totalFloors"      => $totalSteps,
                 "newTargetFloors"  => $newTargetSteps,
                 "plusTargetFloors" => $plusTargetSteps
+            );
+        }
+
+        /**
+         * @return array
+         */
+        public function returnUserRecordActiveGoal() {
+            $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
+
+            $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
+                array("AND" => array(
+                    "user"     => $this->getUserID(),
+                    "date[<=]" => $oneWeek,
+                    "date[>=]" => $lastMonday
+                ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+            $totalMinutes = 0;
+            foreach ($dbActiveMinutes as $dbStep) {
+                $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
+            }
+
+            $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
+            if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_active_max", 30)) {
+                $plusTargetActive = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_active", 10) / 100), 0);
+            } else {
+                $plusTargetActive = $this->getAppClass()->getSetting("improvments_" . $this->getUserID() . "_active_max", 30);
+            }
+
+            return array(
+                "weekStart"        => $lastMonday,
+                "weekEnd"          => $oneWeek,
+                "totalFloors"      => $totalMinutes,
+                "newTargetFloors"  => $newTargetActive,
+                "plusTargetFloors" => $plusTargetActive
             );
         }
 
