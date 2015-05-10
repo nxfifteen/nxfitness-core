@@ -1140,7 +1140,7 @@
         public function getDBCurrentBody($user, $string) {
             if (!$user) return "No default user selected";
 
-            $return = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $string, array("user" => $user, "ORDER" => "date DESC", "LIMIT" => 1));
+            $return = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $string, array("user" => $user, "ORDER" => "date DESC"));
 
             if (!is_numeric($return)) {
                 return 0;
