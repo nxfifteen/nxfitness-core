@@ -22,6 +22,8 @@
          */
         protected $forceSync;
 
+        private $holdingVar;
+
         /**
          * @param $fitbitApp
          * @param $consumer_key
@@ -262,6 +264,7 @@
                         foreach ($timeSeries as $activity => $timeout) {
                             $this->api_pull_time_series($user, $activity, TRUE);
                         }
+                        if (isset($this->holdingVar)) unset($this->holdingVar);
                         $this->api_setLastrun("activities", $user, NULL, TRUE);
                     }
                 } else if (array_key_exists($trigger, $timeSeries)) {
@@ -1491,6 +1494,28 @@
                         $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10);
                     }
                 }
+            } elseif ($string == "activeMinutes") {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_active", 10);
+                if ($improvment > 0) {
+                    $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[>=]" => $oneWeek,
+                            "date[<=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+                    $totalMinutes = 0;
+                    foreach ($dbActiveMinutes as $dbStep) {
+                        $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
+                    }
+
+                    $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
+                    if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30)) {
+                        $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $user . "_active", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30);
+                    }
+                }
             }
 
             return $plusTargetSteps;
@@ -1642,8 +1667,6 @@
                 return "-144";
             }
 
-            $userActivitiesGoals = NULL;
-
             switch ($trigger) {
                 case "minutesVeryActive":
                     $databaseColumn = "veryactive";
@@ -1681,59 +1704,59 @@
             }
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+                if (!isset($this->holdingVar) OR !array_key_exists("type", $this->holdingVar) OR !array_key_exists("data", $this->holdingVar) OR $this->holdingVar["type"] != "activities/goals/daily.json" OR $this->holdingVar["data"] == "") {
+                    if (isset($this->holdingVar)) {unset($this->holdingVar);}
+                    $this->holdingVar = array("type" => "activities/goals/daily.json", "data" => "");
+
+                    try {
+                        $this->holdingVar["data"] = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", NULL, OAUTH_HTTP_METHOD_GET);
+                    } catch (Exception $E) {
+                        /**
+                         * @var FitBitException $E
+                         */
+                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                        nxr(print_r($E, TRUE));
+                        die();
+                    }
+                    $this->holdingVar["data"] = json_decode($this->holdingVar["data"]->response);
+
+                    $newGoal = $this->thisWeeksGoal($user, "activeMinutes");
+                    if ($newGoal > 0 && $this->holdingVar["data"]->goals->activeMinutes != $newGoal) {
+                        nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
+                        try {
+                            $this->holdingVar["data"] = $this->getLibrary()->customCall("user/-/activities/goals/daily.json?type=activeMinutes&value=".$newGoal, NULL, OAUTH_HTTP_METHOD_POST);
+                        } catch (Exception $E) {
+                            /**
+                             * @var FitBitException $E
+                             */
+                            nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                            nxr(print_r($E, TRUE));
+                            die();
+                        }
+                        $this->holdingVar["data"] = json_decode($this->holdingVar["data"]->response);
+                    } elseif ($newGoal > 0) {
+                        nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " which is right for this week goal of " . $newGoal);
+                    }
+                }
+
                 $FirstSeen = $this->user_getFirstSeen($user)->format("Y-m-d");
                 foreach ($userTimeSeries as $series) {
                     if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
-                        nxr("   " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
+                        nxr("    " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
 
                         if ($series->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($series->dateTime));
 
                         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)))) {
-                            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime, 'target' => 0)))) {
-                                if (is_null($userActivitiesGoals)) {
-                                    try {
-                                        $userActivitiesGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", NULL, OAUTH_HTTP_METHOD_GET);
-                                    } catch (Exception $E) {
-                                        /**
-                                         * @var FitBitException $E
-                                         */
-                                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                                        nxr(print_r($E, TRUE));
-                                        die();
-                                    }
-                                    $userActivitiesGoals = json_decode($userActivitiesGoals->response);
-                                }
-
-                                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                                    'target'        => (String)$userActivitiesGoals->goals->activeMinutes,
-                                    $databaseColumn => (String)$series->value,
-                                    'syncd'         => $currentDate->format('Y-m-d H:m:s')
-                                ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
-                            } else {
-                                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                                    $databaseColumn => (String)$series->value,
-                                    'syncd'         => $currentDate->format('Y-m-d H:m:s')
-                                ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
-                            }
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                                'target'        => (String)$this->holdingVar["data"]->goals->activeMinutes,
+                                $databaseColumn => (String)$series->value,
+                                'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                            ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
                         } else {
-                            if (is_null($userActivitiesGoals)) {
-                                try {
-                                    $userActivitiesGoals = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", NULL, OAUTH_HTTP_METHOD_GET);
-                                } catch (Exception $E) {
-                                    /**
-                                     * @var FitBitException $E
-                                     */
-                                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                                    nxr(print_r($E, TRUE));
-                                    die();
-                                }
-                                $userActivitiesGoals = json_decode($userActivitiesGoals->response);
-                            }
-
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
                                 'user'          => $user,
                                 'date'          => (String)$series->dateTime,
-                                'target'        => (String)$userActivitiesGoals->goals->activeMinutes,
+                                'target'        => (String)$this->holdingVar["data"]->goals->activeMinutes,
                                 $databaseColumn => (String)$series->value,
                                 'syncd'         => $currentDate->format('Y-m-d H:m:s')
                             ));
