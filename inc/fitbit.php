@@ -625,95 +625,97 @@
                     if (isset($userBadges)) {
                         foreach ($userBadges->badges as $badge) {
 
-                            /*
-                            * Check to make sure, some badges do not include unit values
-                            */
-                            if (isset($badge->unit)) {
-                                $unit = (String)$badge->unit;
-                            } else {
-                                $unit = "";
-                            }
+                            if ($badge->badgeType != "") {
+                                /*
+                                * Check to make sure, some badges do not include unit values
+                                */
+                                if (isset($badge->unit)) {
+                                    $unit = (String)$badge->unit;
+                                } else {
+                                    $unit = "";
+                                }
 
-                            /*
-                            * If the badge is not already in the database insert it
-                            */
-                            if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
-                                "AND" => array(
-                                    "badgeType" => (String)$badge->badgeType,
-                                    "value"     => (String)$badge->value
-                                )
-                            ))
-                            ) {
-                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
-                                    'badgeType'               => (String)$badge->badgeType,
-                                    'value'                   => (String)$badge->value,
-                                    'image'                   => basename((String)$badge->image50px),
-                                    'badgeGradientEndColor'   => (String)$badge->badgeGradientEndColor,
-                                    'badgeGradientStartColor' => (String)$badge->badgeGradientStartColor,
-                                    'earnedMessage'           => (String)$badge->earnedMessage,
-                                    'marketingDescription'    => (String)$badge->marketingDescription,
-                                    'name'                    => (String)$badge->name
-                                ));
-                            }
+                                /*
+                                * If the badge is not already in the database insert it
+                                */
+                                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
+                                    "AND" => array(
+                                        "badgeType" => (String)$badge->badgeType,
+                                        "value"     => (String)$badge->value
+                                    )
+                                ))
+                                ) {
+                                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
+                                        'badgeType'               => (String)$badge->badgeType,
+                                        'value'                   => (String)$badge->value,
+                                        'image'                   => basename((String)$badge->image50px),
+                                        'badgeGradientEndColor'   => (String)$badge->badgeGradientEndColor,
+                                        'badgeGradientStartColor' => (String)$badge->badgeGradientStartColor,
+                                        'earnedMessage'           => (String)$badge->earnedMessage,
+                                        'marketingDescription'    => (String)$badge->marketingDescription,
+                                        'name'                    => (String)$badge->name
+                                    ));
+                                }
 
-                            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array("AND" => array(
-                                "user"      => $user,
-                                "badgeType" => (String)$badge->badgeType,
-                                "value"     => (String)$badge->value
-                            )))
-                            ) {
-                                nxr(" User $user has been awarded the " . $badge->badgeType . " (" . $badge->value . ") again");
-                                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
-                                    'dateTime'      => (String)$badge->dateTime,
-                                    'timesAchieved' => (String)$badge->timesAchieved
-                                ), array("AND" => array(
+                                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array("AND" => array(
                                     "user"      => $user,
                                     "badgeType" => (String)$badge->badgeType,
                                     "value"     => (String)$badge->value
-                                )));
-                            } else {
-                                nxr(" User $user has been awarded the " . $badge->badgeType . " (" . $badge->value . ") " . $badge->timesAchieved . " times.");
-                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
-                                    'user'          => $user,
-                                    'badgeType'     => (String)$badge->badgeType,
-                                    'dateTime'      => (String)$badge->dateTime,
-                                    'timesAchieved' => (String)$badge->timesAchieved,
-                                    'value'         => (String)$badge->value,
-                                    'unit'          => $unit
-                                ));
-                            }
+                                )))
+                                ) {
+                                    nxr(" User $user has been awarded the " . $badge->badgeType . " (" . $badge->value . ") again");
+                                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                                        'dateTime'      => (String)$badge->dateTime,
+                                        'timesAchieved' => (String)$badge->timesAchieved
+                                    ), array("AND" => array(
+                                        "user"      => $user,
+                                        "badgeType" => (String)$badge->badgeType,
+                                        "value"     => (String)$badge->value
+                                    )));
+                                } else {
+                                    nxr(" User $user has been awarded the " . $badge->badgeType . " (" . $badge->value . ") " . $badge->timesAchieved . " times.");
+                                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                                        'user'          => $user,
+                                        'badgeType'     => (String)$badge->badgeType,
+                                        'dateTime'      => (String)$badge->dateTime,
+                                        'timesAchieved' => (String)$badge->timesAchieved,
+                                        'value'         => (String)$badge->value,
+                                        'unit'          => $unit
+                                    ));
+                                }
 
-                            $imageFileName = basename((String)$badge->image50px);
-                            if (!file_exists($badgeFolder . "/" . $imageFileName)) {
-                                file_put_contents($badgeFolder . "/" . $imageFileName, fopen((String)$badge->image50px, 'r'));
-                            }
+                                $imageFileName = basename((String)$badge->image50px);
+                                if (!file_exists($badgeFolder . "/" . $imageFileName)) {
+                                    file_put_contents($badgeFolder . "/" . $imageFileName, fopen((String)$badge->image50px, 'r'));
+                                }
 
-                            if (!file_exists($badgeFolder . "/75px")) {
-                                mkdir($badgeFolder . "/75px", 0755, TRUE);
-                            }
-                            if (!file_exists($badgeFolder . "/75px/" . $imageFileName)) {
-                                file_put_contents($badgeFolder . "/75px/" . $imageFileName, fopen((String)$badge->image75px, 'r'));
-                            }
+                                if (!file_exists($badgeFolder . "/75px")) {
+                                    mkdir($badgeFolder . "/75px", 0755, TRUE);
+                                }
+                                if (!file_exists($badgeFolder . "/75px/" . $imageFileName)) {
+                                    file_put_contents($badgeFolder . "/75px/" . $imageFileName, fopen((String)$badge->image75px, 'r'));
+                                }
 
-                            if (!file_exists($badgeFolder . "/100px")) {
-                                mkdir($badgeFolder . "/100px", 0755, TRUE);
-                            }
-                            if (!file_exists($badgeFolder . "/100px/" . $imageFileName)) {
-                                file_put_contents($badgeFolder . "/100px/" . $imageFileName, fopen((String)$badge->image100px, 'r'));
-                            }
+                                if (!file_exists($badgeFolder . "/100px")) {
+                                    mkdir($badgeFolder . "/100px", 0755, TRUE);
+                                }
+                                if (!file_exists($badgeFolder . "/100px/" . $imageFileName)) {
+                                    file_put_contents($badgeFolder . "/100px/" . $imageFileName, fopen((String)$badge->image100px, 'r'));
+                                }
 
-                            if (!file_exists($badgeFolder . "/125px")) {
-                                mkdir($badgeFolder . "/125px", 0755, TRUE);
-                            }
-                            if (!file_exists($badgeFolder . "/125px/" . $imageFileName)) {
-                                file_put_contents($badgeFolder . "/125px/" . $imageFileName, fopen((String)$badge->image125px, 'r'));
-                            }
+                                if (!file_exists($badgeFolder . "/125px")) {
+                                    mkdir($badgeFolder . "/125px", 0755, TRUE);
+                                }
+                                if (!file_exists($badgeFolder . "/125px/" . $imageFileName)) {
+                                    file_put_contents($badgeFolder . "/125px/" . $imageFileName, fopen((String)$badge->image125px, 'r'));
+                                }
 
-                            if (!file_exists($badgeFolder . "/300px")) {
-                                mkdir($badgeFolder . "/300px", 0755, TRUE);
-                            }
-                            if (!file_exists($badgeFolder . "/300px/" . $imageFileName)) {
-                                file_put_contents($badgeFolder . "/300px/" . $imageFileName, fopen((String)$badge->image300px, 'r'));
+                                if (!file_exists($badgeFolder . "/300px")) {
+                                    mkdir($badgeFolder . "/300px", 0755, TRUE);
+                                }
+                                if (!file_exists($badgeFolder . "/300px/" . $imageFileName)) {
+                                    file_put_contents($badgeFolder . "/300px/" . $imageFileName, fopen((String)$badge->image300px, 'r'));
+                                }
                             }
 
                         }
