@@ -623,7 +623,7 @@
                     }
 
                     if (isset($userBadges)) {
-                        foreach ($userBadges->badges as $badge) {
+                        foreach ($userBadges->badges->badge as $badge) {
 
                             if ($badge->badgeType != "") {
                                 /*
@@ -716,7 +716,9 @@
                                 if (!file_exists($badgeFolder . "/300px/" . $imageFileName)) {
                                     file_put_contents($badgeFolder . "/300px/" . $imageFileName, fopen((String)$badge->image300px, 'r'));
                                 }
-                            }
+                            } /*else {
+                                nxr(print_r($badge, true));
+                            }*/
 
                         }
                     }
@@ -725,7 +727,7 @@
 
                     return $userBadges;
                 } else {
-                    echo "Missing: $badgeFolder\n";
+                    nxr("Missing: $badgeFolder");
 
                     return "-142";
                 }
