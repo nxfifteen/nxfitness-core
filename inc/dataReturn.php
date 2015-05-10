@@ -1146,11 +1146,16 @@
                 $dbActiveMinutes = $dbActiveMinutes['fairlyactive'] + $dbActiveMinutes['veryactive'];
 
                 $dbSteps[0]['activity'] = $dbActiveMinutes;
-                $dbSteps[0]['activity_p'] = ($dbActiveMinutes / $dbGoals[0]['activity']) * 100;
 
+                $dbSteps[0]['activity_p'] = ($dbActiveMinutes / $dbGoals[0]['activity']) * 100;
                 $dbSteps[0]['steps_p'] = ($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100;
                 $dbSteps[0]['floors_p'] = ($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100;
                 $dbSteps[0]['distance_p'] =  ($dbSteps[0]['distance'] / $dbGoals[0]['distance']) * 100;
+
+                if ($dbSteps[0]['activity_p'] > 100) $dbSteps[0]['activity_p'] = 100;
+                if ($dbSteps[0]['steps_p'] > 100) $dbSteps[0]['steps_p'] = 100;
+                if ($dbSteps[0]['floors_p'] > 100) $dbSteps[0]['floors_p'] = 100;
+                if ($dbSteps[0]['distance_p'] > 100) $dbSteps[0]['distance_p'] = 100;
 
                 $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
                 $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
@@ -1163,6 +1168,9 @@
                     "activity" => ($dbActiveMinutes / $challange['goals']['Activity']) * 100,
                     "distance" => ($dbSteps[0]['distance'] / $challange['goals']['Distance']) * 100,
                 );
+
+                if ($challange['activity'] > 100) $challange['activity'] = 100;
+                if ($challange['distance'] > 100) $challange['distance'] = 100;
 
                 $journeys = $this->returnUserRecordJourneysState();
                 $journeys = array_pop($journeys);
