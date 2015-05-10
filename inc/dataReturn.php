@@ -1668,40 +1668,58 @@
                 $interval = DateInterval::createFromDateString('1 day');
                 $period = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
 
-                $recordsLoopedThru = 0;
+                $recordsLoopedThru = 0; // TODO; do we need this
                 $lastRecord = NULL;
                 $foundMissingRecord = FALSE;
                 $arrayOfMissingDays = array();
                 foreach ($period as $dt) {
-                    /** @var DateTime $dt */
+                    /**
+                     * Find all missing dates
+                     *
+                     * @var DateTime $dt
+                     */
                     if (!array_key_exists($dt->format("Y-m-d"), $returnWeight)) {
                         if (strtotime($dt->format("Y-m-d")) > strtotime($latestDate)) {
+                            // If missing date is after latest record use that
+
                             $returnWeight[$dt->format("Y-m-d")] = $lastRecord;
                             $returnWeight[$dt->format("Y-m-d")]['source'] = "LatestRecord";
                         } else {
+                            // If missing date is before last record add it to list of missing dates
+
                             $foundMissingRecord = TRUE;
                             array_push($arrayOfMissingDays, $dt->format("Y-m-d"));
                             $returnWeight[$dt->format("Y-m-d")] = 'Calc deviation';
                         }
                     } else {
+                        // if there are missing dates still pending
                         if ($foundMissingRecord) {
+                            // If no last record has been set get it from database
                             if (is_null($lastRecord)) {
                                 $lastRecord = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
                                     array('date', 'weight', 'weightAvg', 'weightGoal', 'fat', 'fatAvg', 'fatGoal'),
                                     array("AND" => array("user"     => $this->getUserID(),
                                                          "date[<=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day"))
-                                    ), "ORDER"  => "date DESC", "LIMIT" => 1));
+                                    ), "ORDER"  => "date DESC"));
                             }
 
+                            // Fill in missing records between now and last recorded 'good' date
                             $returnWeight = $this->fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $returnWeight[$dt->format("Y-m-d")]);
 
+                            // reset missing markers
                             $foundMissingRecord = FALSE;
                             $arrayOfMissingDays = array();
                         }
+
+                        // update last record with this one
                         $lastRecord = $returnWeight[$dt->format("Y-m-d")];
                     }
-                    $recordsLoopedThru = $recordsLoopedThru + 1;
+                    $recordsLoopedThru = $recordsLoopedThru + 1; // TODO; do we need this
                 }
+                if ($foundMissingRecord) {
+                    print "There are still missing dates\n";
+                }
+
                 ksort($returnWeight);
 
                 $returnWeight = array_reverse($returnWeight);
