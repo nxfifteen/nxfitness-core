@@ -1131,9 +1131,9 @@
                         array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
                 }
 
-                $activeminutes = 0;
                 $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity",
                     array(
+                        'target',
                         'fairlyactive',
                         'veryactive'
                     ),
@@ -1141,10 +1141,12 @@
                         "user"     => $this->getUserID(),
                         "date" => date("Y-m-d")
                     ), "ORDER"  => "date ASC"));
+                $dbActiveMinutes = array_pop($dbActiveMinutes);
+                $dbGoals[0]['activity'] = (String)round($dbActiveMinutes['target'], 2);
+                $dbActiveMinutes = $dbActiveMinutes['fairlyactive'] + $dbActiveMinutes['veryactive'];
 
-                foreach ($dbActiveMinutes as $dbActiveMin) {
-                    $activeminutes = $activeminutes + $dbActiveMin['fairlyactive'] + $dbActiveMin['veryactive'];
-                }
+                $dbSteps[0]['activity'] = $dbActiveMinutes;
+                $dbSteps[0]['activity_p'] = ($dbActiveMinutes / $dbGoals[0]['activity']) * 100;
 
                 $dbSteps[0]['steps_p'] = ($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100;
                 $dbSteps[0]['floors_p'] = ($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100;
@@ -1158,7 +1160,7 @@
                     "active" => $challange['challengeActive'],
                     "startDateF" => $challange['next']['startDateF'],
                     "endDateF" => $challange['next']['endDateF'],
-                    "activity" => ($activeminutes / $challange['goals']['Activity']) * 100,
+                    "activity" => ($dbActiveMinutes / $challange['goals']['Activity']) * 100,
                     "distance" => ($dbSteps[0]['distance'] / $challange['goals']['Distance']) * 100,
                 );
 
