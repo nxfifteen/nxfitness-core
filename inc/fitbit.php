@@ -136,7 +136,7 @@
                         nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
-                
+
                 // Set variables require bellow
                 $currentDate = new DateTime ('now');
                 $interval = DateInterval::createFromDateString('1 day');
@@ -1291,7 +1291,7 @@
 
             if (isset($userFoodLog)) {
                 if (count($userFoodLog->foods) > 0) {
-                    foreach ($userFoodLog->foods as $meal) {
+                    foreach ($userFoodLog->foods->apiFoodLogImplV1 as $meal) {
                         nxr("  Logging meal " . $meal->loggedFood->name);
 
                         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array("AND" => array('user' => $user, 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
