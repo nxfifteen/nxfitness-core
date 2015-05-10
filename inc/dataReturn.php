@@ -1736,10 +1736,10 @@
                         $weightSum = $weightSum + $returnWeight[$returnWeightKeys[$interval + $intervalTwo]]['weight'];
                         $fatSum = $fatSum + $returnWeight[$returnWeightKeys[$interval + $intervalTwo]]['fat'];
                     }
-                    $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = $weightSum / $averageRange;
+                    $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = round($weightSum / $averageRange, 2);
                     $returnWeight[$returnWeightKeys[$interval]]['fatTrend'] = $fatSum / $averageRange;
                 } else {
-                    $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = $returnWeight[$returnWeightKeys[$interval]]['weight'];
+                    $returnWeight[$returnWeightKeys[$interval]]['weightTrend'] = round($returnWeight[$returnWeightKeys[$interval]]['weight'], 2);
                     $returnWeight[$returnWeightKeys[$interval]]['fatTrend'] = $returnWeight[$returnWeightKeys[$interval]]['fat'];
                 }
             }
