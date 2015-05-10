@@ -1115,6 +1115,74 @@
         /**
          * @return array
          */
+        public function returnUserRecordConky() {
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+                array('distance', 'floors', 'steps'),
+                $this->dbWhere());
+
+            if (count($dbSteps) > 0) {
+                $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+                    array('distance', 'floors', 'steps'),
+                    $this->dbWhere());
+                if (count($dbGoals) == 0) {
+                    // If todays goals are missing download the most recent goals
+                    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+                        array('distance', 'floors', 'steps'),
+                        array("user" => $this->getUserID(), "ORDER" => "date DESC", "LIMIT" => 1));
+                }
+
+                $activeminutes = 0;
+                $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity",
+                    array(
+                        'fairlyactive',
+                        'veryactive'
+                    ),
+                    array("AND" => array(
+                        "user"     => $this->getUserID(),
+                        "date" => date("Y-m-d")
+                    ), "ORDER"  => "date ASC"));
+
+                foreach ($dbActiveMinutes as $dbActiveMin) {
+                    $activeminutes = $activeminutes + $dbActiveMin['fairlyactive'] + $dbActiveMin['veryactive'];
+                }
+
+                $dbSteps[0]['steps_p'] = ($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100;
+                $dbSteps[0]['floors_p'] = ($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100;
+                $dbSteps[0]['distance_p'] =  ($dbSteps[0]['distance'] / $dbGoals[0]['distance']) * 100;
+
+                $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
+                $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
+
+                $challange = $this->returnUserRecordChallenger();
+                $challange = array(
+                    "active" => $challange['challengeActive'],
+                    "startDateF" => $challange['next']['startDateF'],
+                    "endDateF" => $challange['next']['endDateF'],
+                    "activity" => ($activeminutes / $challange['goals']['Activity']) * 100,
+                    "distance" => ($dbSteps[0]['distance'] / $challange['goals']['Distance']) * 100,
+                );
+
+                $journeys = $this->returnUserRecordJourneysState();
+                $journeys = array_pop($journeys);
+                $journeys = array(
+                    "name" => $journeys['name'],
+                    "blurb" => $journeys['blurb'],
+                );
+
+                if (!is_null($this->getTracking())) {
+                    $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
+                    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+                }
+
+                return array('recorded' => $dbSteps[0], 'goal' => $dbGoals[0], 'challange' => $challange, 'journeys' => $journeys);
+            } else {
+                return array("error" => "true", "code" => 104, "msg" => "No results for given date");
+            }
+        }
+
+        /**
+         * @return array
+         */
         public function returnUserRecordSteps() {
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
                 array('distance', 'floors', 'steps'),
