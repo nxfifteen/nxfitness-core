@@ -4,7 +4,7 @@
     header('Content-type: application/json');
 
     if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
-        if (is_writable('cache') && (!array_key_exists("cache", $_GET) || $_GET['cache'] != "false")) {
+        if ((!array_key_exists("debug", $_GET) or $_GET['debug'] != "true") && is_writable('cache') && (!array_key_exists("cache", $_GET) || $_GET['cache'] != "false")) {
             // cache files are created like cache/abcdef123456...
             $cacheFileName = '';
             //user" => "269VLG", "data" => "Tracked", "period
@@ -63,7 +63,7 @@
         if ($dataReturnClass->isUser()) {
             $json = json_encode($dataReturnClass->returnUserRecords($_GET));
 
-            if (array_key_exists("debug", $_GET) and $_GET['debug'] == true) {
+            if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
                 return print_r(json_decode($json), true);
             } else {
 
