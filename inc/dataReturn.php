@@ -144,7 +144,7 @@
             }
 
             if ($this->getParamPeriod() == "single") {
-                return array("AND" => array($tableName . "user" => $this->getUserID(), $tableName . "date" => $this->getParamDate()), "LIMIT" => $limit);
+                return array("AND" => array($tableName . "user" => $this->getUserID(), $tableName . "date" => $this->getParamDate()));
             } else if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
                 $days = $this->getParamPeriod();
                 $days = str_ireplace("last", "", $days);
