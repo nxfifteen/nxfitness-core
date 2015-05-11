@@ -1468,6 +1468,7 @@
                     foreach ($dbSteps as $dbStep) {
                         $totalSteps = $totalSteps + $dbStep;
                     }
+                    if ($totalSteps == 0) $totalSteps = 1;
 
                     $newTargetSteps = round($totalSteps / count($dbSteps), 0);
                     if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
@@ -1490,6 +1491,7 @@
                     foreach ($dbSteps as $dbStep) {
                         $totalSteps = $totalSteps + $dbStep;
                     }
+                    if ($totalSteps == 0) $totalSteps = 1;
 
                     $newTargetSteps = round($totalSteps / count($dbSteps), 0);
                     if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10)) {
@@ -1512,6 +1514,7 @@
                     foreach ($dbActiveMinutes as $dbStep) {
                         $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
                     }
+                    if ($totalMinutes == 0) $totalMinutes = 1;
 
                     $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
                     if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30)) {
