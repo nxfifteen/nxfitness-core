@@ -1417,14 +1417,14 @@
          * @return array
          */
         public function returnUserRecordStepGoal() {
-            $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
-            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
+            $lastMonday = date('Y-m-d', strtotime('last sunday'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
 
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                 array("AND" => array(
                     "user"     => $this->getUserID(),
-                    "date[<=]" => $oneWeek,
-                    "date[>=]" => $lastMonday
+                    "date[>=]" => $oneWeek,
+                    "date[<=]" => $lastMonday
                 ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
             $totalSteps = 0;
@@ -1452,14 +1452,14 @@
          * @return array
          */
         public function returnUserRecordFloorGoal() {
-            $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
-            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
+            $lastMonday = date('Y-m-d', strtotime('last sunday'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
 
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
                 array("AND" => array(
                     "user"     => $this->getUserID(),
-                    "date[<=]" => $oneWeek,
-                    "date[>=]" => $lastMonday
+                    "date[>=]" => $oneWeek,
+                    "date[<=]" => $lastMonday
                 ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
             $totalSteps = 0;
@@ -1487,14 +1487,14 @@
          * @return array
          */
         public function returnUserRecordActiveGoal() {
-            $lastMonday = date('Y-m-d', strtotime('last monday -7 days'));
-            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' +6 days'));
+            $lastMonday = date('Y-m-d', strtotime('last sunday'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
 
             $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
                 array("AND" => array(
                     "user"     => $this->getUserID(),
-                    "date[<=]" => $oneWeek,
-                    "date[>=]" => $lastMonday
+                    "date[>=]" => $oneWeek,
+                    "date[<=]" => $lastMonday
                 ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
             $totalMinutes = 0;
