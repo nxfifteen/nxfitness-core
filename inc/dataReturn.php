@@ -741,6 +741,8 @@
             $returnArray['food']['summary']['protein'] = 0;
             $returnArray['food']['summary']['sodium'] = 0;
 
+            $returnArray['food']['goals']['calories'] = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", 'calories', $where);
+
             if (!array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
                 $returnArray['food']['goals']['carbs'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_carbs", 310);
                 $returnArray['food']['goals']['fat'] = $this->getAppClass()->getSetting("food_goal_" . $this->getUserID() . "_fat", 70);
