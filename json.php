@@ -14,6 +14,9 @@
             if (array_key_exists("data", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['data'];
             }
+            if (array_key_exists("date", $_GET)) {
+                $cacheFileName = $cacheFileName . '_' . $_GET['date'];
+            }
             if (array_key_exists("period", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['period'];
             }
@@ -22,6 +25,9 @@
             }
             if (array_key_exists("end", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['end'];
+            }
+            if (array_key_exists("debug", $_GET)) {
+                $cacheFileName = $cacheFileName . '_' . $_GET['debug'];
             }
             $cacheFile = 'cache' . DIRECTORY_SEPARATOR . $cacheFileName;
 
