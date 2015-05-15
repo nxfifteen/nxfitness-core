@@ -36,7 +36,7 @@
                 $cacheTime = trim(fgets($fh));
 
                 // if data was cached recently, return cached data
-                if ($cacheTime > strtotime('-15 minutes')) {
+                if ($cacheTime > strtotime('-45 minutes')) {
                     echo fread($fh, filesize($cacheFile));
 
                     return TRUE;
