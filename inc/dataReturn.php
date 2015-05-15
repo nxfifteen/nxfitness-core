@@ -377,6 +377,7 @@
             $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
             $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
+            $userChallengeTrgSteps = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_steps", '10000');
             $userChallengeTrgDistance = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_distance", '5');
             $userChallengeTrgUnit = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_unit", 'km');
             $userChallengeTrgActivity = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_activity", '30');
@@ -394,7 +395,7 @@
                     'challengeActive' => 'active',
                     'challengeLength' => $userChallengeLength,
                     'scores'          => $dbChallenge,
-                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
+                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Steps' => $userChallengeTrgSteps, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
                     'next'            => array('startDate' => $userChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($userChallengeStartDate)), 'endDate' => $userChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($userChallengeEndDate)))
                 );
             } else if ($today > strtotime($userChallengeStartDate)) {
@@ -406,7 +407,7 @@
                     'challengeLength' => $userChallengeLength,
                     'showDate'        => $userChallengeStartDate,
                     'scores'          => $dbChallenge,
-                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
+                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Steps' => $userChallengeTrgSteps, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
                     'next'            => array('startDate' => $plusOneChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($plusOneChallengeStartDate)), 'endDate' => $plusOneChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($plusOneChallengeEndDate))),
                     'last'            => array('startDate' => $userChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($userChallengeStartDate)), 'endDate' => $userChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($userChallengeEndDate)))
                 );
@@ -419,7 +420,7 @@
                     'challengeLength' => $userChallengeLength,
                     'showDate'        => $nimusOneChallengeStartDate,
                     'scores'          => $dbChallenge,
-                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
+                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Steps' => $userChallengeTrgSteps, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
                     'next'            => array('startDate' => $userChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($userChallengeStartDate)), 'endDate' => $userChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($userChallengeEndDate))),
                     'last'            => array('startDate' => $nimusOneChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($nimusOneChallengeStartDate)), 'endDate' => $nimusOneChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($nimusOneChallengeEndDate)))
                 );
