@@ -41,17 +41,41 @@
         }
 
         /**
-         * @param $AppClass
+         * @param $trigger
+         * @param $user
+         * @param bool $reset
+         * @return bool
          */
-        private function setAppClass($AppClass) {
-            $this->AppClass = $AppClass;
+        public function api_isCooled($trigger, $user, $reset = FALSE) {
+            if ($this->forceSync) {
+                return TRUE;
+            } else {
+                $currentDate = new DateTime ('now');
+                $lastRun = $this->api_getCoolDown($trigger, $user, $reset);
+
+                if ($lastRun->format("U") < $currentDate->format("U")) {
+                    return TRUE;
+                } else {
+                    return FALSE;
+                }
+            }
         }
 
         /**
-         * @param FitBitPHP $fitbitapi
+         * @param $user
+         * @param $string
+         * @return bool|int
          */
-        public function setLibrary($fitbitapi) {
-            $this->fitbitapi = $fitbitapi;
+        public function getDBCurrentBody($user, $string) {
+            if (!$user) return "No default user selected";
+
+            $return = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $string, array("user" => $user, "ORDER" => "date DESC"));
+
+            if (!is_numeric($return)) {
+                return 0;
+            } else {
+                return $return;
+            }
         }
 
         /**
@@ -75,6 +99,32 @@
          */
         public function getLibrary() {
             return $this->fitbitapi;
+        }
+
+        /**
+         * @param $xml
+         * @return bool
+         */
+        public function isApiError($xml) {
+            if (is_numeric($xml) AND $xml < 0) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+
+        /**
+         * @param $user
+         */
+        public function oAuthorise($user) {
+            nxr("Setting up oAuth for $user");
+            $oAuth = $this->get_oauth($user);
+            if (!$oAuth OR !is_array($oAuth) OR $oAuth['token'] == "" OR $oAuth['secret'] == "") {
+                nxr('Unable to setup the user OAuth credentials. Have they authorised this app?');
+                exit;
+            }
+            $this->getLibrary()->setOAuthDetails($oAuth['token'], $oAuth['secret']);
+            $this->getLibrary()->setUser($user);
         }
 
         /**
@@ -305,159 +355,26 @@
         }
 
         /**
-         * @return NxFitbit
+         * @param boolean $forceSync
          */
-        private function getAppClass() {
-            return $this->AppClass;
+        public function setForceSync($forceSync) {
+            $this->forceSync = $forceSync;
         }
 
         /**
-         * @return boolean
+         * @param FitBitPHP $fitbitapi
          */
-        private function isAuthorised() {
-            if ($this->getLibrary()->getOAuthToken() != "" AND $this->getLibrary()->getOAuthSecret() != "") {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
+        public function setLibrary($fitbitapi) {
+            $this->fitbitapi = $fitbitapi;
         }
 
-        /**
-         * @param $user
-         */
-        public function oAuthorise($user) {
-            nxr("Setting up oAuth for $user");
-            $oAuth = $this->get_oauth($user);
-            if (!$oAuth OR !is_array($oAuth) OR $oAuth['token'] == "" OR $oAuth['secret'] == "") {
-                nxr('Unable to setup the user OAuth credentials. Have they authorised this app?');
-                exit;
-            }
-            $this->getLibrary()->setOAuthDetails($oAuth['token'], $oAuth['secret']);
-            $this->getLibrary()->setUser($user);
-        }
-
-        /**
-         * @param $user
-         * @return array
-         */
-        private function get_oauth($user) {
-            $userArray = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('token', 'secret'), array("fuid" => $user));
-            if (is_array($userArray)) {
-                return $userArray;
-            } else {
-                nxr('User ' . $user . ' does not exist, unable to continue.');
-                exit;
-            }
-        }
-
-        /**
-         * @param $user
-         * @return mixed|null|SimpleXMLElement|string
-         */
-        private function api_pull_profile($user) {
-            if ($user != $this->getLibrary()->getUser()) {
-                return "-144";
-            }
-
-            if ($this->api_isCooled("profile", $user)) {
-                try {
-                    $userProfile = $this->getLibrary()->getProfile();
-                } catch (Exception $E) {
-                    /**
-                     * @var FitBitException $E
-                     */
-                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                    nxr(print_r($E, TRUE));
-                    die();
+        public function subscribeUser($user) {
+            if ($this->getAppClass()->isUser($user)) {
+                if (!$this->getAppClass()->getFitbitapi()->isAuthorised()) {
+                    $this->getAppClass()->getFitbitapi()->oAuthorise($user);
                 }
-
-                if (!isset($userProfile->user->height)) {
-                    $userProfile->user->height = NULL;
-                }
-                if (!isset($userProfile->user->strideLengthRunning)) {
-                    $userProfile->user->strideLengthRunning = NULL;
-                }
-                if (!isset($userProfile->user->strideLengthWalking)) {
-                    $userProfile->user->strideLengthWalking = NULL;
-                }
-                if (!isset($userProfile->user->city)) {
-                    $userProfile->user->city = NULL;
-                }
-                if (!isset($userProfile->user->country)) {
-                    $userProfile->user->country = NULL;
-                }
-
-                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
-                    "avatar"         => (String)$userProfile->user->avatar150,
-                    "city"           => (String)$userProfile->user->city,
-                    "country"        => (String)$userProfile->user->country,
-                    "name"           => (String)$userProfile->user->fullName,
-                    "gender"         => (String)$userProfile->user->gender,
-                    "height"         => (String)$userProfile->user->height,
-                    "seen"           => (String)$userProfile->user->memberSince,
-                    "stride_running" => (String)$userProfile->user->strideLengthRunning,
-                    "stride_walking" => (String)$userProfile->user->strideLengthWalking
-                ), array("fuid" => $user));
-
-                if (!file_exists(dirname(__FILE__) . "/../images/avatars/" . $user . ".jpg")) {
-                    file_put_contents(dirname(__FILE__) . "/../images/avatars/" . $user . ".jpg", fopen((String)$userProfile->user->avatar150, 'r'));
-                }
-
-                $this->api_setLastrun("profile", $user, NULL, TRUE);
-
-                try {
-                    $subscriptions = $this->getLibrary()->getSubscriptions();
-                } catch (Exception $E) {
-                    /**
-                     * @var FitBitException $E
-                     */
-                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                    nxr(print_r($E, TRUE));
-                    die();
-                }
-
-                if (count($subscriptions->apiSubscriptions) == 0) {
-                    nxr(" $user is not subscribed to the site");
-                    try {
-                        $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'uid', array("fuid" => $user));
-                        $this->getLibrary()->addSubscription($user_db_id);
-                    } catch (Exception $E) {
-                        /**
-                         * @var FitBitException $E
-                         */
-                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                        nxr(print_r($E, TRUE));
-                        die();
-                    }
-                    nxr(" $user subscription confirmed with ID: $user_db_id");
-                } else {
-                    nxr(" $user subscription is still valid");
-                }
-
-                return $userProfile;
-            } else {
-                return "-143";
-            }
-        }
-
-        /**
-         * @param $trigger
-         * @param $user
-         * @param bool $reset
-         * @return bool
-         */
-        public function api_isCooled($trigger, $user, $reset = FALSE) {
-            if ($this->forceSync) {
-                return TRUE;
-            } else {
-                $currentDate = new DateTime ('now');
-                $lastRun = $this->api_getCoolDown($trigger, $user, $reset);
-
-                if ($lastRun->format("U") < $currentDate->format("U")) {
-                    return TRUE;
-                } else {
-                    return FALSE;
-                }
+                $this->getAppClass()->getFitbitapi()->getLibrary()->addSubscription(1);
+                print_r($this->getAppClass()->getFitbitapi()->getLibrary()->getSubscriptions());
             }
         }
 
@@ -480,124 +397,76 @@
 
         /**
          * @param $activity
-         * @param $username
-         * @param null $cron_delay
-         * @param bool $clean
+         * @param $user
+         * @return DateTime
          */
-        private function api_setLastrun($activity, $username, $cron_delay = NULL, $clean = FALSE) {
-            if (is_null($cron_delay)) {
-                $cron_delay_holder = 'nx_fitbit_ds_' . $activity . '_timeout';
-                $cron_delay = $this->getAppClass()->getSetting($cron_delay_holder, 5400);
-            }
-
-            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $username, "activity" => $activity)))) {
-                $fields = array(
-                    "date"     => date("Y-m-d H:i:s"),
-                    "cooldown" => date("Y-m-d H:i:s", time() + $cron_delay)
-                );
-                if ($clean) {
-                    $fields['lastrun'] = date("Y-m-d H:i:s");
-                }
-
-                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user" => $username, "activity" => $activity)));
+        private function api_getLastCleanrun($activity, $user) {
+            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
+                return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "lastrun", array("AND" => array("user" => $user, "activity" => $activity))));
             } else {
-                $fields = array(
-                    "user"     => $username,
-                    "activity" => $activity,
-                    "date"     => date("Y-m-d H:i:s"),
-                    "cooldown" => date("Y-m-d H:i:s", time() + $cron_delay)
-                );
-                if ($clean) {
-                    $fields['lastrun'] = date("Y-m-d H:i:s");
-                }
-
-                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
-            }
-
-            $cache_dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
-            $cache_files = scandir($cache_dir);
-            foreach ($cache_files as $file) {
-                if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file) && substr($file, 0, strlen($username) + 1) === "_" . $username) {
-                    $cacheNames = $this->getAppClass()->getSettings()->getRelatedCacheNames($activity);
-                    if (count($cacheNames) > 0) {
-                        foreach ($cacheNames as $cacheName) {
-                            if (substr($file, 0, strlen($username) + strlen($cacheName) + 2) === "_" . $username . "_" . $cacheName) {
-                                if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file)) {
-                                    nxr("  $file cache file was deleted");
-                                    unlink($cache_dir . $file);
-                                }
-                            }
-                        }
-                    }
-                }
+                return $this->user_getFirstSeen($user);
             }
         }
 
         /**
-         * @param $xml
+         * @param $user
+         * @param $targetDate
          * @return bool
          */
-        public function isApiError($xml) {
-            if (is_numeric($xml) AND $xml < 0) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
-
-        /**
-         * Download information about devices associated with the users account. This is then stored in the database
-         * @param $user
-         * @return mixed|null|SimpleXMLElement|string
-         */
-        private function api_pull_devices($user) {
+        private function api_pull_activity_log($user, $targetDate) {
             if ($user != $this->getLibrary()->getUser()) {
                 return "-144";
             }
 
-            if ($this->api_isCooled("devices", $user)) {
-                try {
-                    $userDevices = $this->getLibrary()->getDevices();
-                } catch (Exception $E) {
-                    /**
-                     * @var FitBitException $E
-                     */
-                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                    nxr(print_r($E, TRUE));
-                    die();
-                }
-
-                foreach ($userDevices as $device) {
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array("AND" => array("id" => (String)$device->id)))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
-                            'lastSyncTime' => (String)$device->lastSyncTime,
-                            'battery'      => (String)$device->battery
-                        ), array("id" => (String)$device->id));
-                    } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
-                            'id'            => (String)$device->id,
-                            'deviceVersion' => (String)$device->deviceVersion,
-                            'type'          => (String)$device->type,
-                            'lastSyncTime'  => (String)$device->lastSyncTime,
-                            'battery'       => (String)$device->battery
-                        ));
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr", array(
-                            'user'   => $user,
-                            'device' => (String)$device->id
-                        ));
-                    }
-
-                    if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
-                        nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
-                    }
-                }
-
-                $this->api_setLastrun("devices", $user, NULL, TRUE);
-
-                return $userDevices;
-            } else {
-                return "-143";
+            $targetDateTime = new DateTime ($targetDate);
+            try {
+                $userActivityLog = $this->getLibrary()->getActivities($targetDateTime);
+            } catch (Exception $E) {
+                /**
+                 * @var FitBitException $E
+                 */
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
+                die();
             }
+
+            if (isset($userActivityLog) and is_object($userActivityLog) and is_array($userActivityLog->activities)) {
+                if (count($userActivityLog->activities) > 0) {
+                    foreach ($userActivityLog->activities as $activity) {
+                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user"       => $user,
+                                                                                                                                                                        "logId"      => (String)$activity->logId,
+                                                                                                                                                                        "activityId" => (String)$activity->activityId,
+                                                                                                                                                                        "startDate"  => (String)$activity->startDate,
+                                                                                                                                                                        "startTime"  => (String)$activity->startTime)))
+                        ) {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
+                                "activityId"         => (String)$activity->activityId,
+                                "activityParentId"   => (String)$activity->activityParentId,
+                                "activityParentName" => (String)$activity->activityParentName,
+                                "calories"           => (String)$activity->calories,
+                                "description"        => (String)$activity->description,
+                                "duration"           => (String)$activity->duration,
+                                "hasStartTime"       => (String)$activity->hasStartTime,
+                                "isFavorite"         => (String)$activity->isFavorite,
+                                "logId"              => (String)$activity->logId,
+                                "name"               => (String)$activity->name,
+                                "startDate"          => (String)$activity->startDate,
+                                "startTime"          => (String)$activity->startTime,
+                                "user"               => $user,
+                                "date"               => $targetDate
+                            ));
+                        }
+                        $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
+                    }
+                } else {
+                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
+                }
+            } else {
+                $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate), 7);
+                $this->api_setLastrun("activity_log", $user);
+            }
+
+            return TRUE;
         }
 
         /**
@@ -740,283 +609,6 @@
 
         /**
          * @param $user
-         * @return mixed|null|SimpleXMLElement|string
-         */
-        private function api_pull_leaderboard($user) {
-            if ($user != $this->getLibrary()->getUser()) {
-                return "-144";
-            }
-
-            if ($this->api_isCooled("leaderboard", $user)) {
-                try {
-                    $userFriends = $this->getLibrary()->getFriendsLeaderboard();
-                } catch (Exception $E) {
-                    /**
-                     * @var FitBitException $E
-                     */
-                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                    nxr(print_r($E, TRUE));
-                    die();
-                }
-
-                if (isset($userFriends)) {
-                    $userFriends = $userFriends->friends;
-                    if (is_array($userFriends) and count($userFriends) > 0) {
-                        $youRank = 0;
-                        $youDistance = 0;
-                        $lastSteps = 0;
-                        foreach ($userFriends as $friend) {
-                            $lifetime = floatval($friend->lifetime->steps);
-                            $steps = floatval($friend->summary->steps);
-
-                            if ($friend->user->encodedId == $user) {
-                                $displayName = "* YOU * are";
-                                if ($steps == 0) {
-                                    $youRank = count($userFriends);
-                                } else {
-                                    $youRank = (String)$friend->rank->steps;
-                                }
-                                $youDistance = ($lastSteps - $steps);
-                                if ($youDistance < 0) $youDistance = 0;
-                            } else {
-                                $displayName = $friend->user->displayName . " is";
-                                $lastSteps = $steps;
-                            }
-
-                            nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
-                        }
-
-                        nxr("  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
-
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
-                            'rank'     => $youRank,
-                            'friends'  => count($userFriends),
-                            'distance' => $youDistance
-                        ), array("fuid" => $user));
-
-                    }
-                }
-
-                $this->api_setLastrun("leaderboard", $user, NULL, TRUE);
-
-                return $userFriends;
-            } else {
-                return "-143";
-            }
-
-        }
-
-        /**
-         * @param $user
-         * @return mixed|null|SimpleXMLElement|string
-         */
-        private function api_pull_goals_calories($user) {
-            if ($user != $this->getLibrary()->getUser()) {
-                return "-144";
-            }
-
-            if ($this->api_isCooled("goals_calories", $user)) {
-                try {
-                    $userCaloriesGoals = $this->getLibrary()->customCall("user/-/foods/log/goal.xml", NULL, OAUTH_HTTP_METHOD_GET);
-                } catch (Exception $E) {
-                    /**
-                     * @var FitBitException $E
-                     */
-                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                    nxr(print_r($E, TRUE));
-                    die();
-                }
-
-                if (isset($userCaloriesGoals)) {
-                    $userCaloriesGoals = simplexml_load_string($userCaloriesGoals->response);
-                    $fallback = FALSE;
-
-                    /** @noinspection PhpUndefinedFieldInspection */
-                    $usr_goals = $userCaloriesGoals->goals;
-                    /** @noinspection PhpUndefinedFieldInspection */
-                    $usr_foodplan = $userCaloriesGoals->foodPlan;
-
-                    if (empty($usr_goals->calories)) {
-                        $usr_goals_calories = 0;
-                        $fallback = TRUE;
-                    } else {
-                        $usr_goals_calories = (int)$usr_goals->calories;
-                    }
-
-                    if (empty($usr_foodplan->intensity)) {
-                        $usr_foodplan_intensity = "Unset";
-                        $fallback = TRUE;
-                    } else {
-                        $usr_foodplan_intensity = (string)$usr_foodplan->intensity;
-                    }
-
-                    $currentDate = new DateTime ('now');
-                    if (empty($usr_foodplan->estimatedDate)) {
-                        $usr_foodplan_estimatedDate = $currentDate->format("Y-m-d");
-                        $fallback = TRUE;
-                    } else {
-                        $usr_foodplan_estimatedDate = (string)$usr_foodplan->estimatedDate;
-                    }
-
-                    if (empty($usr_foodplan->personalized)) {
-                        $usr_foodplan_personalized = "false";
-                        $fallback = TRUE;
-                    } else {
-                        $usr_foodplan_personalized = (string)$usr_foodplan->personalized;
-                    }
-
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array("AND" => array("user" => $user, "date" => $currentDate->format("Y-m-d"))))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
-                            'calories'      => $usr_goals_calories,
-                            'intensity'     => $usr_foodplan_intensity,
-                            'estimatedDate' => $usr_foodplan_estimatedDate,
-                            'personalized'  => $usr_foodplan_personalized,
-                        ), array("AND" => array("user" => $user, "date" => $currentDate->format("Y-m-d"))));
-                    } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
-                            'user'          => $user,
-                            'date'          => $currentDate->format("Y-m-d"),
-                            'calories'      => $usr_goals_calories,
-                            'intensity'     => $usr_foodplan_intensity,
-                            'estimatedDate' => $usr_foodplan_estimatedDate,
-                            'personalized'  => $usr_foodplan_personalized,
-                        ));
-                    }
-
-                    if ($fallback) {
-                        $this->api_setLastrun("goals_calories", $user);
-                    } else {
-                        $this->api_setLastrun("goals_calories", $user, NULL, TRUE);
-                    }
-                }
-
-                return $userCaloriesGoals;
-            } else {
-                return "-143";
-            }
-
-        }
-
-        /**
-         * @param $activity
-         * @param $user
-         * @return DateTime
-         */
-        private function api_getLastCleanrun($activity, $user) {
-            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
-                return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "lastrun", array("AND" => array("user" => $user, "activity" => $activity))));
-            } else {
-                return $this->user_getFirstSeen($user);
-            }
-        }
-
-        private function user_getFirstSeen($user) {
-            return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
-        }
-
-        /**
-         * @param $user
-         * @param $targetDate
-         * @return mixed|null|SimpleXMLElement|string
-         */
-        private function api_pull_sleep_logs($user, $targetDate) {
-            if ($user != $this->getLibrary()->getUser()) {
-                return "-144";
-            }
-
-            $targetDateTime = new DateTime ($targetDate);
-            try {
-                $userSleepLog = $this->getLibrary()->getSleep($targetDateTime);
-            } catch (Exception $E) {
-                /**
-                 * @var FitBitException $E
-                 */
-                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                nxr(print_r($E, TRUE));
-                die();
-            }
-
-            if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
-                foreach ($userSleepLog->sleep as $loggedSleep) {
-                    if (is_object($loggedSleep)) {
-                        if ($loggedSleep->logId != 0) {
-                            if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$loggedSleep->logId))) {
-                                if ($loggedSleep->isMainSleep == 1) {
-                                    $loggedSleep->isMainSleep = "true";
-                                } else {
-                                    $loggedSleep->isMainSleep = "false";
-                                }
-
-                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
-                                    "logId"               => (String)$loggedSleep->logId,
-                                    'awakeningsCount'     => (String)$loggedSleep->awakeningsCount,
-                                    'duration'            => (String)$loggedSleep->duration,
-                                    'efficiency'          => (String)$loggedSleep->efficiency,
-                                    'isMainSleep'         => (String)$loggedSleep->isMainSleep,
-                                    'minutesAfterWakeup'  => (String)$loggedSleep->minutesAfterWakeup,
-                                    'minutesAsleep'       => (String)$loggedSleep->minutesAsleep,
-                                    'minutesAwake'        => (String)$loggedSleep->minutesAwake,
-                                    'minutesToFallAsleep' => (String)$loggedSleep->minutesToFallAsleep,
-                                    'startTime'           => (String)$loggedSleep->startTime,
-                                    'timeInBed'           => (String)$loggedSleep->timeInBed
-                                ));
-                            }
-
-                            if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array("AND" => array('user' => $user, 'sleeplog' => (String)$loggedSleep->logId)))) {
-                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array(
-                                    'user'               => $user,
-                                    'sleeplog'           => (String)$loggedSleep->logId,
-                                    'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
-                                    'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
-                                    'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
-                                ));
-                            }
-
-                            $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
-                        }
-                    }
-                }
-            } else {
-                $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate), 7);
-                $this->api_setLastrun("sleep", $user);
-            }
-
-            return $userSleepLog;
-
-        }
-
-        /**
-         * @param $activity
-         * @param $user
-         * @param null $date
-         * @param int $delay
-         */
-        private function api_setLastCleanrun($activity, $user, $date = NULL, $delay = 0) {
-            if (is_null($date)) {
-                $date = new DateTime("now");
-                nxr("Last run " . $date->format("Y-m-d H:i:s"));
-            }
-            if ($delay > 0) $date->modify('-' . $delay . ' day');
-
-            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
-                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array(
-                    'date'    => date("Y-m-d H:i:s"),
-                    'lastrun' => $date->format("Y-m-d H:i:s")
-                ), array("AND" => array("user" => $user, "activity" => $activity)));
-            } else {
-                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array(
-                    'user'     => $user,
-                    'activity' => $activity,
-                    'date'     => date("Y-m-d H:i:s"),
-                    'lastrun'  => $date->format("Y-m-d H:i:s")
-                ));
-            }
-
-            if ($delay == 0) $this->api_setLastrun($activity, $user, NULL, FALSE);
-        }
-
-        /**
-         * @param $user
          * @param $targetDate
          * @return mixed
          */
@@ -1136,23 +728,6 @@
 
         /**
          * @param $user
-         * @param $string
-         * @return bool|int
-         */
-        public function getDBCurrentBody($user, $string) {
-            if (!$user) return "No default user selected";
-
-            $return = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $string, array("user" => $user, "ORDER" => "date DESC"));
-
-            if (!is_numeric($return)) {
-                return 0;
-            } else {
-                return $return;
-            }
-        }
-
-        /**
-         * @param $user
          * @param $targetDate
          * @return mixed
          */
@@ -1224,49 +799,58 @@
         }
 
         /**
+         * Download information about devices associated with the users account. This is then stored in the database
          * @param $user
-         * @param $targetDate
-         * @return mixed
+         * @return mixed|null|SimpleXMLElement|string
          */
-        private function api_pull_food_water($user, $targetDate) {
+        private function api_pull_devices($user) {
             if ($user != $this->getLibrary()->getUser()) {
                 return "-144";
             }
 
-            $targetDateTime = new DateTime ($targetDate);
-            try {
-                $userWaterLog = $this->getLibrary()->getWater($targetDateTime);
-            } catch (Exception $E) {
-                /**
-                 * @var FitBitException $E
-                 */
-                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                nxr(print_r($E, TRUE));
-                die();
-            }
+            if ($this->api_isCooled("devices", $user)) {
+                try {
+                    $userDevices = $this->getLibrary()->getDevices();
+                } catch (Exception $E) {
+                    /**
+                     * @var FitBitException $E
+                     */
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
+                    die();
+                }
 
-            if (isset($userWaterLog)) {
-                if (isset($userWaterLog->summary->water)) {
-
-                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
-                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
-                            'id'     => $targetDateTime->format("U"),
-                            'liquid' => (String)$userWaterLog->summary->water
-                        ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+                foreach ($userDevices as $device) {
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array("AND" => array("id" => (String)$device->id)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
+                            'lastSyncTime' => (String)$device->lastSyncTime,
+                            'battery'      => (String)$device->battery
+                        ), array("id" => (String)$device->id));
                     } else {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
+                            'id'            => (String)$device->id,
+                            'deviceVersion' => (String)$device->deviceVersion,
+                            'type'          => (String)$device->type,
+                            'lastSyncTime'  => (String)$device->lastSyncTime,
+                            'battery'       => (String)$device->battery
+                        ));
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr", array(
                             'user'   => $user,
-                            'date'   => $targetDate,
-                            'id'     => $targetDateTime->format("U"),
-                            'liquid' => (String)$userWaterLog->summary->water
+                            'device' => (String)$device->id
                         ));
                     }
 
-                    $this->api_setLastCleanrun("water", $user, $targetDateTime);
+                    if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
+                        nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
+                    }
                 }
-            }
 
-            return $userWaterLog;
+                $this->api_setLastrun("devices", $user, NULL, TRUE);
+
+                return $userDevices;
+            } else {
+                return "-143";
+            }
         }
 
         /**
@@ -1325,6 +909,52 @@
             }
 
             return $userFoodLog;
+        }
+
+        /**
+         * @param $user
+         * @param $targetDate
+         * @return mixed
+         */
+        private function api_pull_food_water($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
+            $targetDateTime = new DateTime ($targetDate);
+            try {
+                $userWaterLog = $this->getLibrary()->getWater($targetDateTime);
+            } catch (Exception $E) {
+                /**
+                 * @var FitBitException $E
+                 */
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
+                die();
+            }
+
+            if (isset($userWaterLog)) {
+                if (isset($userWaterLog->summary->water)) {
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
+                            'id'     => $targetDateTime->format("U"),
+                            'liquid' => (String)$userWaterLog->summary->water
+                        ), array("AND" => array('user' => $user, 'date' => $targetDate)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
+                            'user'   => $user,
+                            'date'   => $targetDate,
+                            'id'     => $targetDateTime->format("U"),
+                            'liquid' => (String)$userWaterLog->summary->water
+                        ));
+                    }
+
+                    $this->api_setLastCleanrun("water", $user, $targetDateTime);
+                }
+            }
+
+            return $userWaterLog;
         }
 
         /**
@@ -1451,83 +1081,324 @@
             return $userGoals;
         }
 
-        private function thisWeeksGoal($user, $string) {
-            $lastMonday = date('Y-m-d', strtotime('last sunday'));
-            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
-            $plusTargetSteps = -1;
-
-            if ($string == "steps") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 2);
-                if ($improvment > 0) {
-                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
-                        array("AND" => array(
-                            "user"     => $user,
-                            "date[>=]" => $oneWeek,
-                            "date[<=]" => $lastMonday
-                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
-
-                    $totalSteps = 0;
-                    foreach ($dbSteps as $dbStep) {
-                        $totalSteps = $totalSteps + $dbStep;
-                    }
-                    if ($totalSteps == 0) $totalSteps = 1;
-
-                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
-                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10) / 100), 0);
-                    } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000);
-                    }
-                }
-            } elseif ($string == "floors") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_floors", 2);
-                if ($improvment > 0) {
-                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
-                        array("AND" => array(
-                            "user"     => $user,
-                            "date[>=]" => $oneWeek,
-                            "date[<=]" => $lastMonday
-                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
-
-                    $totalSteps = 0;
-                    foreach ($dbSteps as $dbStep) {
-                        $totalSteps = $totalSteps + $dbStep;
-                    }
-                    if ($totalSteps == 0) $totalSteps = 1;
-
-                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10)) {
-                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10) / 100), 0);
-                    } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10);
-                    }
-                }
-            } elseif ($string == "activeMinutes") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_active", 10);
-                if ($improvment > 0) {
-                    $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
-                        array("AND" => array(
-                            "user"     => $user,
-                            "date[>=]" => $oneWeek,
-                            "date[<=]" => $lastMonday
-                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
-
-                    $totalMinutes = 0;
-                    foreach ($dbActiveMinutes as $dbStep) {
-                        $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
-                    }
-                    if ($totalMinutes == 0) $totalMinutes = 1;
-
-                    $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-                    if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30)) {
-                        $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $user . "_active", 10) / 100), 0);
-                    } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30);
-                    }
-                }
+        /**
+         * @param $user
+         * @return mixed|null|SimpleXMLElement|string
+         */
+        private function api_pull_goals_calories($user) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
             }
 
-            return $plusTargetSteps;
+            if ($this->api_isCooled("goals_calories", $user)) {
+                try {
+                    $userCaloriesGoals = $this->getLibrary()->customCall("user/-/foods/log/goal.xml", NULL, OAUTH_HTTP_METHOD_GET);
+                } catch (Exception $E) {
+                    /**
+                     * @var FitBitException $E
+                     */
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
+                    die();
+                }
+
+                if (isset($userCaloriesGoals)) {
+                    $userCaloriesGoals = simplexml_load_string($userCaloriesGoals->response);
+                    $fallback = FALSE;
+
+                    /** @noinspection PhpUndefinedFieldInspection */
+                    $usr_goals = $userCaloriesGoals->goals;
+                    /** @noinspection PhpUndefinedFieldInspection */
+                    $usr_foodplan = $userCaloriesGoals->foodPlan;
+
+                    if (empty($usr_goals->calories)) {
+                        $usr_goals_calories = 0;
+                        $fallback = TRUE;
+                    } else {
+                        $usr_goals_calories = (int)$usr_goals->calories;
+                    }
+
+                    if (empty($usr_foodplan->intensity)) {
+                        $usr_foodplan_intensity = "Unset";
+                        $fallback = TRUE;
+                    } else {
+                        $usr_foodplan_intensity = (string)$usr_foodplan->intensity;
+                    }
+
+                    $currentDate = new DateTime ('now');
+                    if (empty($usr_foodplan->estimatedDate)) {
+                        $usr_foodplan_estimatedDate = $currentDate->format("Y-m-d");
+                        $fallback = TRUE;
+                    } else {
+                        $usr_foodplan_estimatedDate = (string)$usr_foodplan->estimatedDate;
+                    }
+
+                    if (empty($usr_foodplan->personalized)) {
+                        $usr_foodplan_personalized = "false";
+                        $fallback = TRUE;
+                    } else {
+                        $usr_foodplan_personalized = (string)$usr_foodplan->personalized;
+                    }
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array("AND" => array("user" => $user, "date" => $currentDate->format("Y-m-d"))))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
+                            'calories'      => $usr_goals_calories,
+                            'intensity'     => $usr_foodplan_intensity,
+                            'estimatedDate' => $usr_foodplan_estimatedDate,
+                            'personalized'  => $usr_foodplan_personalized,
+                        ), array("AND" => array("user" => $user, "date" => $currentDate->format("Y-m-d"))));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
+                            'user'          => $user,
+                            'date'          => $currentDate->format("Y-m-d"),
+                            'calories'      => $usr_goals_calories,
+                            'intensity'     => $usr_foodplan_intensity,
+                            'estimatedDate' => $usr_foodplan_estimatedDate,
+                            'personalized'  => $usr_foodplan_personalized,
+                        ));
+                    }
+
+                    if ($fallback) {
+                        $this->api_setLastrun("goals_calories", $user);
+                    } else {
+                        $this->api_setLastrun("goals_calories", $user, NULL, TRUE);
+                    }
+                }
+
+                return $userCaloriesGoals;
+            } else {
+                return "-143";
+            }
+
+        }
+
+        /**
+         * @param $user
+         * @return mixed|null|SimpleXMLElement|string
+         */
+        private function api_pull_leaderboard($user) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
+            if ($this->api_isCooled("leaderboard", $user)) {
+                try {
+                    $userFriends = $this->getLibrary()->getFriendsLeaderboard();
+                } catch (Exception $E) {
+                    /**
+                     * @var FitBitException $E
+                     */
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
+                    die();
+                }
+
+                if (isset($userFriends)) {
+                    $userFriends = $userFriends->friends;
+                    if (is_array($userFriends) and count($userFriends) > 0) {
+                        $youRank = 0;
+                        $youDistance = 0;
+                        $lastSteps = 0;
+                        foreach ($userFriends as $friend) {
+                            $lifetime = floatval($friend->lifetime->steps);
+                            $steps = floatval($friend->summary->steps);
+
+                            if ($friend->user->encodedId == $user) {
+                                $displayName = "* YOU * are";
+                                if ($steps == 0) {
+                                    $youRank = count($userFriends);
+                                } else {
+                                    $youRank = (String)$friend->rank->steps;
+                                }
+                                $youDistance = ($lastSteps - $steps);
+                                if ($youDistance < 0) $youDistance = 0;
+                            } else {
+                                $displayName = $friend->user->displayName . " is";
+                                $lastSteps = $steps;
+                            }
+
+                            nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
+                        }
+
+                        nxr("  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
+
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                            'rank'     => $youRank,
+                            'friends'  => count($userFriends),
+                            'distance' => $youDistance
+                        ), array("fuid" => $user));
+
+                    }
+                }
+
+                $this->api_setLastrun("leaderboard", $user, NULL, TRUE);
+
+                return $userFriends;
+            } else {
+                return "-143";
+            }
+
+        }
+
+        /**
+         * @param $user
+         * @return mixed|null|SimpleXMLElement|string
+         */
+        private function api_pull_profile($user) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
+            if ($this->api_isCooled("profile", $user)) {
+                try {
+                    $userProfile = $this->getLibrary()->getProfile();
+                } catch (Exception $E) {
+                    /**
+                     * @var FitBitException $E
+                     */
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
+                    die();
+                }
+
+                if (!isset($userProfile->user->height)) {
+                    $userProfile->user->height = NULL;
+                }
+                if (!isset($userProfile->user->strideLengthRunning)) {
+                    $userProfile->user->strideLengthRunning = NULL;
+                }
+                if (!isset($userProfile->user->strideLengthWalking)) {
+                    $userProfile->user->strideLengthWalking = NULL;
+                }
+                if (!isset($userProfile->user->city)) {
+                    $userProfile->user->city = NULL;
+                }
+                if (!isset($userProfile->user->country)) {
+                    $userProfile->user->country = NULL;
+                }
+
+                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                    "avatar"         => (String)$userProfile->user->avatar150,
+                    "city"           => (String)$userProfile->user->city,
+                    "country"        => (String)$userProfile->user->country,
+                    "name"           => (String)$userProfile->user->fullName,
+                    "gender"         => (String)$userProfile->user->gender,
+                    "height"         => (String)$userProfile->user->height,
+                    "seen"           => (String)$userProfile->user->memberSince,
+                    "stride_running" => (String)$userProfile->user->strideLengthRunning,
+                    "stride_walking" => (String)$userProfile->user->strideLengthWalking
+                ), array("fuid" => $user));
+
+                if (!file_exists(dirname(__FILE__) . "/../images/avatars/" . $user . ".jpg")) {
+                    file_put_contents(dirname(__FILE__) . "/../images/avatars/" . $user . ".jpg", fopen((String)$userProfile->user->avatar150, 'r'));
+                }
+
+                $this->api_setLastrun("profile", $user, NULL, TRUE);
+
+                try {
+                    $subscriptions = $this->getLibrary()->getSubscriptions();
+                } catch (Exception $E) {
+                    /**
+                     * @var FitBitException $E
+                     */
+                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                    nxr(print_r($E, TRUE));
+                    die();
+                }
+
+                if (count($subscriptions->apiSubscriptions) == 0) {
+                    nxr(" $user is not subscribed to the site");
+                    try {
+                        $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'uid', array("fuid" => $user));
+                        $this->getLibrary()->addSubscription($user_db_id);
+                    } catch (Exception $E) {
+                        /**
+                         * @var FitBitException $E
+                         */
+                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                        nxr(print_r($E, TRUE));
+                        die();
+                    }
+                    nxr(" $user subscription confirmed with ID: $user_db_id");
+                } else {
+                    nxr(" $user subscription is still valid");
+                }
+
+                return $userProfile;
+            } else {
+                return "-143";
+            }
+        }
+
+        /**
+         * @param $user
+         * @param $targetDate
+         * @return mixed|null|SimpleXMLElement|string
+         */
+        private function api_pull_sleep_logs($user, $targetDate) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
+            $targetDateTime = new DateTime ($targetDate);
+            try {
+                $userSleepLog = $this->getLibrary()->getSleep($targetDateTime);
+            } catch (Exception $E) {
+                /**
+                 * @var FitBitException $E
+                 */
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
+                die();
+            }
+
+            if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
+                foreach ($userSleepLog->sleep as $loggedSleep) {
+                    if (is_object($loggedSleep)) {
+                        if ($loggedSleep->logId != 0) {
+                            if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$loggedSleep->logId))) {
+                                if ($loggedSleep->isMainSleep == 1) {
+                                    $loggedSleep->isMainSleep = "true";
+                                } else {
+                                    $loggedSleep->isMainSleep = "false";
+                                }
+
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
+                                    "logId"               => (String)$loggedSleep->logId,
+                                    'awakeningsCount'     => (String)$loggedSleep->awakeningsCount,
+                                    'duration'            => (String)$loggedSleep->duration,
+                                    'efficiency'          => (String)$loggedSleep->efficiency,
+                                    'isMainSleep'         => (String)$loggedSleep->isMainSleep,
+                                    'minutesAfterWakeup'  => (String)$loggedSleep->minutesAfterWakeup,
+                                    'minutesAsleep'       => (String)$loggedSleep->minutesAsleep,
+                                    'minutesAwake'        => (String)$loggedSleep->minutesAwake,
+                                    'minutesToFallAsleep' => (String)$loggedSleep->minutesToFallAsleep,
+                                    'startTime'           => (String)$loggedSleep->startTime,
+                                    'timeInBed'           => (String)$loggedSleep->timeInBed
+                                ));
+                            }
+
+                            if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array("AND" => array('user' => $user, 'sleeplog' => (String)$loggedSleep->logId)))) {
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array(
+                                    'user'               => $user,
+                                    'sleeplog'           => (String)$loggedSleep->logId,
+                                    'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
+                                    'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
+                                    'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
+                                ));
+                            }
+
+                            $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate));
+                        }
+                    }
+                }
+            } else {
+                $this->api_setLastCleanrun("sleep", $user, new DateTime ($targetDate), 7);
+                $this->api_setLastrun("sleep", $user);
+            }
+
+            return $userSleepLog;
+
         }
 
         /**
@@ -1610,6 +1481,121 @@
          * @param $trigger
          * @param $daysSince
          * @param DateTime|null $lastrun
+         * @return bool
+         */
+        private function api_pull_time_series_for_activity($user, $trigger, $daysSince, $lastrun = NULL) {
+            if ($user != $this->getLibrary()->getUser()) {
+                return "-144";
+            }
+
+            switch ($trigger) {
+                case "minutesVeryActive":
+                    $databaseColumn = "veryactive";
+                    break;
+                case "minutesSedentary":
+                    $databaseColumn = "sedentary";
+                    break;
+                case "minutesLightlyActive":
+                    $databaseColumn = "lightlyactive";
+                    break;
+                case "minutesFairlyActive":
+                    $databaseColumn = "fairlyactive";
+                    break;
+                default:
+                    return FALSE;
+            }
+
+            if (!is_null($lastrun)) {
+                $currentDate = $lastrun;
+            } else {
+                $currentDate = new DateTime ('now');
+            }
+
+            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records ' . $currentDate->format("Y-m-d"));
+
+            try {
+                $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
+            } catch (Exception $E) {
+                /**
+                 * @var FitBitException $E
+                 */
+                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                nxr(print_r($E, TRUE));
+                die();
+            }
+
+            if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+                if (!isset($this->holdingVar) OR !array_key_exists("type", $this->holdingVar) OR !array_key_exists("data", $this->holdingVar) OR $this->holdingVar["type"] != "activities/goals/daily.json" OR $this->holdingVar["data"] == "") {
+                    if (isset($this->holdingVar)) {
+                        unset($this->holdingVar);
+                    }
+                    $this->holdingVar = array("type" => "activities/goals/daily.json", "data" => "");
+
+                    try {
+                        $this->holdingVar["data"] = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", NULL, OAUTH_HTTP_METHOD_GET);
+                    } catch (Exception $E) {
+                        /**
+                         * @var FitBitException $E
+                         */
+                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                        nxr(print_r($E, TRUE));
+                        die();
+                    }
+                    $this->holdingVar["data"] = json_decode($this->holdingVar["data"]->response);
+
+                    $newGoal = $this->thisWeeksGoal($user, "activeMinutes");
+                    if ($newGoal > 0 && $this->holdingVar["data"]->goals->activeMinutes != $newGoal) {
+                        nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
+                        try {
+                            $this->holdingVar["data"] = $this->getLibrary()->customCall("user/-/activities/goals/daily.json?type=activeMinutes&value=" . $newGoal, NULL, OAUTH_HTTP_METHOD_POST);
+                        } catch (Exception $E) {
+                            /**
+                             * @var FitBitException $E
+                             */
+                            nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+                            nxr(print_r($E, TRUE));
+                            die();
+                        }
+                        $this->holdingVar["data"] = json_decode($this->holdingVar["data"]->response);
+                    } elseif ($newGoal > 0) {
+                        nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " which is right for this week goal of " . $newGoal);
+                    }
+                }
+
+                $FirstSeen = $this->user_getFirstSeen($user)->format("Y-m-d");
+                foreach ($userTimeSeries as $series) {
+                    if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
+                        nxr("    " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
+
+                        if ($series->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($series->dateTime));
+
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                                'target'        => (String)$this->holdingVar["data"]->goals->activeMinutes,
+                                $databaseColumn => (String)$series->value,
+                                'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                            ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
+                        } else {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                                'user'          => $user,
+                                'date'          => (String)$series->dateTime,
+                                'target'        => (String)$this->holdingVar["data"]->goals->activeMinutes,
+                                $databaseColumn => (String)$series->value,
+                                'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                            ));
+                        }
+                    }
+                }
+            }
+
+            return TRUE;
+        }
+
+        /**
+         * @param $user
+         * @param $trigger
+         * @param $daysSince
+         * @param DateTime|null $lastrun
          */
         private function api_pull_time_series_for_steps($user, $trigger, $daysSince, $lastrun = NULL) {
             if ($user != $this->getLibrary()->getUser()) {
@@ -1665,194 +1651,210 @@
         }
 
         /**
+         * @param $activity
          * @param $user
-         * @param $trigger
-         * @param $daysSince
-         * @param DateTime|null $lastrun
-         * @return bool
+         * @param null $date
+         * @param int $delay
          */
-        private function api_pull_time_series_for_activity($user, $trigger, $daysSince, $lastrun = NULL) {
-            if ($user != $this->getLibrary()->getUser()) {
-                return "-144";
+        private function api_setLastCleanrun($activity, $user, $date = NULL, $delay = 0) {
+            if (is_null($date)) {
+                $date = new DateTime("now");
+                nxr("Last run " . $date->format("Y-m-d H:i:s"));
             }
+            if ($delay > 0) $date->modify('-' . $delay . ' day');
 
-            switch ($trigger) {
-                case "minutesVeryActive":
-                    $databaseColumn = "veryactive";
-                    break;
-                case "minutesSedentary":
-                    $databaseColumn = "sedentary";
-                    break;
-                case "minutesLightlyActive":
-                    $databaseColumn = "lightlyactive";
-                    break;
-                case "minutesFairlyActive":
-                    $databaseColumn = "fairlyactive";
-                    break;
-                default:
-                    return FALSE;
-            }
-
-            if (!is_null($lastrun)) {
-                $currentDate = $lastrun;
+            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
+                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array(
+                    'date'    => date("Y-m-d H:i:s"),
+                    'lastrun' => $date->format("Y-m-d H:i:s")
+                ), array("AND" => array("user" => $user, "activity" => $activity)));
             } else {
-                $currentDate = new DateTime ('now');
+                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array(
+                    'user'     => $user,
+                    'activity' => $activity,
+                    'date'     => date("Y-m-d H:i:s"),
+                    'lastrun'  => $date->format("Y-m-d H:i:s")
+                ));
             }
 
-            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records ' . $currentDate->format("Y-m-d"));
+            if ($delay == 0) $this->api_setLastrun($activity, $user, NULL, FALSE);
+        }
 
-            try {
-                $userTimeSeries = $this->getLibrary()->getTimeSeries($trigger, $currentDate, $daysSince);
-            } catch (Exception $E) {
-                /**
-                 * @var FitBitException $E
-                 */
-                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                nxr(print_r($E, TRUE));
-                die();
+        /**
+         * @param $activity
+         * @param $username
+         * @param null $cron_delay
+         * @param bool $clean
+         */
+        private function api_setLastrun($activity, $username, $cron_delay = NULL, $clean = FALSE) {
+            if (is_null($cron_delay)) {
+                $cron_delay_holder = 'nx_fitbit_ds_' . $activity . '_timeout';
+                $cron_delay = $this->getAppClass()->getSetting($cron_delay_holder, 5400);
             }
 
-            if (isset($userTimeSeries) and is_array($userTimeSeries)) {
-                if (!isset($this->holdingVar) OR !array_key_exists("type", $this->holdingVar) OR !array_key_exists("data", $this->holdingVar) OR $this->holdingVar["type"] != "activities/goals/daily.json" OR $this->holdingVar["data"] == "") {
-                    if (isset($this->holdingVar)) {unset($this->holdingVar);}
-                    $this->holdingVar = array("type" => "activities/goals/daily.json", "data" => "");
-
-                    try {
-                        $this->holdingVar["data"] = $this->getLibrary()->customCall("user/-/activities/goals/daily.json", NULL, OAUTH_HTTP_METHOD_GET);
-                    } catch (Exception $E) {
-                        /**
-                         * @var FitBitException $E
-                         */
-                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                        nxr(print_r($E, TRUE));
-                        die();
-                    }
-                    $this->holdingVar["data"] = json_decode($this->holdingVar["data"]->response);
-
-                    $newGoal = $this->thisWeeksGoal($user, "activeMinutes");
-                    if ($newGoal > 0 && $this->holdingVar["data"]->goals->activeMinutes != $newGoal) {
-                        nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
-                        try {
-                            $this->holdingVar["data"] = $this->getLibrary()->customCall("user/-/activities/goals/daily.json?type=activeMinutes&value=".$newGoal, NULL, OAUTH_HTTP_METHOD_POST);
-                        } catch (Exception $E) {
-                            /**
-                             * @var FitBitException $E
-                             */
-                            nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                            nxr(print_r($E, TRUE));
-                            die();
-                        }
-                        $this->holdingVar["data"] = json_decode($this->holdingVar["data"]->response);
-                    } elseif ($newGoal > 0) {
-                        nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " which is right for this week goal of " . $newGoal);
-                    }
+            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $username, "activity" => $activity)))) {
+                $fields = array(
+                    "date"     => date("Y-m-d H:i:s"),
+                    "cooldown" => date("Y-m-d H:i:s", time() + $cron_delay)
+                );
+                if ($clean) {
+                    $fields['lastrun'] = date("Y-m-d H:i:s");
                 }
 
-                $FirstSeen = $this->user_getFirstSeen($user)->format("Y-m-d");
-                foreach ($userTimeSeries as $series) {
-                    if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
-                        nxr("    " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
+                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user" => $username, "activity" => $activity)));
+            } else {
+                $fields = array(
+                    "user"     => $username,
+                    "activity" => $activity,
+                    "date"     => date("Y-m-d H:i:s"),
+                    "cooldown" => date("Y-m-d H:i:s", time() + $cron_delay)
+                );
+                if ($clean) {
+                    $fields['lastrun'] = date("Y-m-d H:i:s");
+                }
 
-                        if ($series->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($series->dateTime));
+                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
+            }
 
-                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)))) {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                                'target'        => (String)$this->holdingVar["data"]->goals->activeMinutes,
-                                $databaseColumn => (String)$series->value,
-                                'syncd'         => $currentDate->format('Y-m-d H:m:s')
-                            ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
-                        } else {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                                'user'          => $user,
-                                'date'          => (String)$series->dateTime,
-                                'target'        => (String)$this->holdingVar["data"]->goals->activeMinutes,
-                                $databaseColumn => (String)$series->value,
-                                'syncd'         => $currentDate->format('Y-m-d H:m:s')
-                            ));
+            $cache_dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+            $cache_files = scandir($cache_dir);
+            foreach ($cache_files as $file) {
+                if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file) && substr($file, 0, strlen($username) + 1) === "_" . $username) {
+                    $cacheNames = $this->getAppClass()->getSettings()->getRelatedCacheNames($activity);
+                    if (count($cacheNames) > 0) {
+                        foreach ($cacheNames as $cacheName) {
+                            if (substr($file, 0, strlen($username) + strlen($cacheName) + 2) === "_" . $username . "_" . $cacheName) {
+                                if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file)) {
+                                    nxr("  $file cache file was deleted");
+                                    unlink($cache_dir . $file);
+                                }
+                            }
                         }
                     }
                 }
             }
+        }
 
-            return TRUE;
+        /**
+         * @return NxFitbit
+         */
+        private function getAppClass() {
+            return $this->AppClass;
         }
 
         /**
          * @param $user
-         * @param $targetDate
-         * @return bool
+         * @return array
          */
-        private function api_pull_activity_log($user, $targetDate) {
-            if ($user != $this->getLibrary()->getUser()) {
-                return "-144";
-            }
-
-            $targetDateTime = new DateTime ($targetDate);
-            try {
-                $userActivityLog = $this->getLibrary()->getActivities($targetDateTime);
-            } catch (Exception $E) {
-                /**
-                 * @var FitBitException $E
-                 */
-                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                nxr(print_r($E, TRUE));
-                die();
-            }
-
-            if (isset($userActivityLog) and is_object($userActivityLog) and is_array($userActivityLog->activities)) {
-                if (count($userActivityLog->activities) > 0) {
-                    foreach ($userActivityLog->activities as $activity) {
-                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user"       => $user,
-                                                                                                                                                                        "logId"      => (String)$activity->logId,
-                                                                                                                                                                        "activityId" => (String)$activity->activityId,
-                                                                                                                                                                        "startDate"  => (String)$activity->startDate,
-                                                                                                                                                                        "startTime"  => (String)$activity->startTime)))
-                        ) {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
-                                "activityId"         => (String)$activity->activityId,
-                                "activityParentId"   => (String)$activity->activityParentId,
-                                "activityParentName" => (String)$activity->activityParentName,
-                                "calories"           => (String)$activity->calories,
-                                "description"        => (String)$activity->description,
-                                "duration"           => (String)$activity->duration,
-                                "hasStartTime"       => (String)$activity->hasStartTime,
-                                "isFavorite"         => (String)$activity->isFavorite,
-                                "logId"              => (String)$activity->logId,
-                                "name"               => (String)$activity->name,
-                                "startDate"          => (String)$activity->startDate,
-                                "startTime"          => (String)$activity->startTime,
-                                "user"               => $user,
-                                "date"               => $targetDate
-                            ));
-                        }
-                        $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
-                    }
-                } else {
-                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
-                }
+        private function get_oauth($user) {
+            $userArray = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array('token', 'secret'), array("fuid" => $user));
+            if (is_array($userArray)) {
+                return $userArray;
             } else {
-                $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate), 7);
-                $this->api_setLastrun("activity_log", $user);
+                nxr('User ' . $user . ' does not exist, unable to continue.');
+                exit;
             }
-
-            return TRUE;
         }
 
         /**
-         * @param boolean $forceSync
+         * @return boolean
          */
-        public function setForceSync($forceSync) {
-            $this->forceSync = $forceSync;
+        private function isAuthorised() {
+            if ($this->getLibrary()->getOAuthToken() != "" AND $this->getLibrary()->getOAuthSecret() != "") {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
         }
 
-        public function subscribeUser($user) {
-            if ($this->getAppClass()->isUser($user)) {
-                if (!$this->getAppClass()->getFitbitapi()->isAuthorised()) {
-                    $this->getAppClass()->getFitbitapi()->oAuthorise($user);
+        /**
+         * @param $AppClass
+         */
+        private function setAppClass($AppClass) {
+            $this->AppClass = $AppClass;
+        }
+
+        private function thisWeeksGoal($user, $string) {
+            $lastMonday = date('Y-m-d', strtotime('last sunday'));
+            $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
+            $plusTargetSteps = -1;
+
+            if ($string == "steps") {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 2);
+                if ($improvment > 0) {
+                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[>=]" => $oneWeek,
+                            "date[<=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+                    $totalSteps = 0;
+                    foreach ($dbSteps as $dbStep) {
+                        $totalSteps = $totalSteps + $dbStep;
+                    }
+                    if ($totalSteps == 0) $totalSteps = 1;
+
+                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
+                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000);
+                    }
                 }
-                $this->getAppClass()->getFitbitapi()->getLibrary()->addSubscription(1);
-                print_r($this->getAppClass()->getFitbitapi()->getLibrary()->getSubscriptions());
+            } elseif ($string == "floors") {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_floors", 2);
+                if ($improvment > 0) {
+                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[>=]" => $oneWeek,
+                            "date[<=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+                    $totalSteps = 0;
+                    foreach ($dbSteps as $dbStep) {
+                        $totalSteps = $totalSteps + $dbStep;
+                    }
+                    if ($totalSteps == 0) $totalSteps = 1;
+
+                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10)) {
+                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10);
+                    }
+                }
+            } elseif ($string == "activeMinutes") {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_active", 10);
+                if ($improvment > 0) {
+                    $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[>=]" => $oneWeek,
+                            "date[<=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
+
+                    $totalMinutes = 0;
+                    foreach ($dbActiveMinutes as $dbStep) {
+                        $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
+                    }
+                    if ($totalMinutes == 0) $totalMinutes = 1;
+
+                    $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
+                    if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30)) {
+                        $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $user . "_active", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30);
+                    }
+                }
             }
+
+            return $plusTargetSteps;
+        }
+
+        private function user_getFirstSeen($user) {
+            return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
         }
 
     }
