@@ -1182,9 +1182,11 @@
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesToFallAsleep',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.efficiency',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.awakeningsCount',
-                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr.user" => $this->getUserID()));
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr.user" => $this->getUserID(),
+                         "ORDER" => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep.startTime DESC"));
 
             $returnSleep = array(
+                "lastSleep" => array(),
                 "efficiency"          => 0,
                 "timeInBed"           => 0,
                 "minutesToFallAsleep" => 0,
@@ -1192,6 +1194,16 @@
                 "awakeningsCount"     => 0
             );
             foreach ($dbSleepRecords as $record) {
+                if (count($returnSleep['lastSleep']) == 0) {
+                    $returnSleep['lastSleep'] = array(
+                        "efficiency"          => $record['efficiency'],
+                        "timeInBed"           => $record['timeInBed'],
+                        "minutesToFallAsleep" => $record['minutesToFallAsleep'],
+                        "minutesAsleep"       => $record['minutesAsleep'],
+                        "awakeningsCount"     => $record['awakeningsCount']
+                    );
+                }
+
                 $returnSleep['efficiency'] = $returnSleep['efficiency'] + $record['efficiency'];
                 $returnSleep['timeInBed'] = $returnSleep['timeInBed'] + $record['timeInBed'];
                 $returnSleep['minutesToFallAsleep'] = $returnSleep['minutesToFallAsleep'] + $record['minutesToFallAsleep'];
