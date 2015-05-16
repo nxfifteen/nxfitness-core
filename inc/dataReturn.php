@@ -382,7 +382,7 @@
             $userChallengeTrgUnit = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_unit", 'km');
             $userChallengeTrgActivity = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_activity", '30');
 
-            $userChallengePassMark = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_passmark", '80');
+            $userChallengePassMark = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_passmark", '95');
 
             $dbChallenge = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "challenge",
                 array('startDate', 'endDate', 'score', 'steps', 'distance', 'veryactive'),
