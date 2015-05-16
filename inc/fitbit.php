@@ -148,6 +148,24 @@
                     return "-144";
                 }
 
+                $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $user . '_' . $trigger, NULL);
+                if (!is_null($usrConfig) AND $usrConfig != 1) {
+                    nxr("  Aborted $trigger disabled in system config");
+
+                    //return "-145";
+                } else {
+                    nxr("  User config for $trigger is " . $usrConfig);
+                }
+
+                $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, FALSE);
+                if ($sysConfig != 1) {
+                    nxr("  Aborted $trigger disabled in user config");
+
+                    //return "-146";
+                } else {
+                    nxr("  System config for $trigger is " . $sysConfig);
+                }
+
                 if ($trigger == "all") {
                     $this->forceSync = TRUE;
                 }
