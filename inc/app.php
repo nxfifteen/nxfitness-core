@@ -245,6 +245,10 @@
          */
         public function lookupErrorCode($errCode, $user = NULL) {
             switch ($errCode) {
+                case "-146":
+                    return "Disabled in user config.";
+                case "-145":
+                    return "Disabled in system config.";
                 case "-144":
                     return "Username missmatch.";
                 case "-143":
