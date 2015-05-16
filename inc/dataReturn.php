@@ -382,11 +382,27 @@
             $userChallengeTrgUnit = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_unit", 'km');
             $userChallengeTrgActivity = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_activity", '30');
 
+            $userChallengePassMark = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_passmark", '80');
+
             $dbChallenge = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "challenge",
                 array('startDate', 'endDate', 'score', 'steps', 'distance', 'veryactive'),
                 array("user" => $this->getUserID()));
+
             if (!$dbChallenge) {
                 $dbChallenge = array();
+            }
+
+            if (count($dbChallenge) > 0) {
+                foreach ($dbChallenge as $index => $challenge) {
+                    $dbChallenge[$index]['score'] = round($dbChallenge[$index]['score'], 0, PHP_ROUND_HALF_UP);
+                    if ($challenge['score'] >= 98) {
+                        $dbChallenge[$index]['pass'] = 2;
+                    } else if ($challenge['score'] >= $userChallengePassMark) {
+                        $dbChallenge[$index]['pass'] = 1;
+                    } else {
+                        $dbChallenge[$index]['pass'] = 0;
+                    }
+                }
             }
 
             $today = strtotime(date("Y-m-d"));
