@@ -157,7 +157,7 @@
                     nxr("  User config for $trigger is " . $usrConfig);
                 }
 
-                $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, FALSE);
+                $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
                 if ($sysConfig != 1) {
                     nxr("  Aborted $trigger disabled in user config");
 
