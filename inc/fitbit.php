@@ -150,20 +150,16 @@
 
                 $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $user . '_' . $trigger, NULL);
                 if (!is_null($usrConfig) AND $usrConfig != 1) {
-                    nxr("  Aborted $trigger disabled in system config");
+                    nxr("  Aborted $trigger disabled in user config");
 
-                    //return "-145";
-                } else {
-                    nxr("  User config for $trigger is " . $usrConfig);
+                    return "-145";
                 }
 
                 $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
                 if ($sysConfig != 1) {
-                    nxr("  Aborted $trigger disabled in user config");
+                    nxr("  Aborted $trigger disabled in system config");
 
-                    //return "-146";
-                } else {
-                    nxr("  System config for $trigger is " . $sysConfig);
+                    return "-146";
                 }
 
                 if ($trigger == "all") {
