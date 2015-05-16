@@ -148,56 +148,57 @@
                     return "-144";
                 }
 
-                $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $user . '_' . $trigger, NULL);
-                if (!is_null($usrConfig) AND $usrConfig != 1) {
-                    nxr("  Aborted $trigger disabled in user config");
-
-                    return "-145";
-                }
-
-                $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
-                if ($sysConfig != 1) {
-                    nxr("  Aborted $trigger disabled in system config");
-
-                    return "-146";
-                }
-
                 if ($trigger == "all") {
                     $this->forceSync = TRUE;
                 }
 
                 if ($trigger == "all" || $trigger == "profile") {
-                    $pull = $this->api_pull_profile($user);
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "profile");
+                    if (!is_numeric($isAllowed)) {
+                        $pull = $this->api_pull_profile($user);
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "devices") {
-                    $pull = $this->api_pull_devices($user);
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "devices");
+                    if (!is_numeric($isAllowed)) {
+                        $pull = $this->api_pull_devices($user);
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "badges") {
-                    $pull = $this->api_pull_badges($user);
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "badges");
+                    if (!is_numeric($isAllowed)) {
+                        $pull = $this->api_pull_badges($user);
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "leaderboard") {
-                    $pull = $this->api_pull_leaderboard($user);
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "leaderboard");
+                    if (!is_numeric($isAllowed)) {
+                        $pull = $this->api_pull_leaderboard($user);
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
-                    $pull = $this->api_pull_goals_calories($user);
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "goals_calories");
+                    if (!is_numeric($isAllowed)) {
+                        $pull = $this->api_pull_goals_calories($user);
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
                     }
                 }
 
@@ -206,110 +207,128 @@
                 $interval = DateInterval::createFromDateString('1 day');
 
                 if ($trigger == "all" || $trigger == "sleep") {
-                    if ($this->api_isCooled("sleep", $user)) {
-                        $period = new DatePeriod ($this->api_getLastCleanrun("sleep", $user), $interval, $currentDate);
-                        /**
-                         * @var DateTime $dt
-                         */
-                        foreach ($period as $dt) {
-                            nxr(' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
-                            $pull = $this->api_pull_sleep_logs($user, $dt->format("Y-m-d"));
-                            if ($this->isApiError($pull)) {
-                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "sleep");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("sleep", $user)) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("sleep", $user), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->api_pull_sleep_logs($user, $dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
                             }
+                        } else {
+                            nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
-                    } else {
-                        nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "body") {
-                    if ($this->api_isCooled("body", $user)) {
-                        $period = new DatePeriod ($this->api_getLastCleanrun("body", $user), $interval, $currentDate);
-                        /**
-                         * @var DateTime $dt
-                         */
-                        foreach ($period as $dt) {
-                            nxr(' Downloading Body Logs for ' . $dt->format("l jS M Y"));
-                            $pull = $this->api_pull_body($user, $dt->format("Y-m-d"));
-                            if ($this->isApiError($pull)) {
-                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "body");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("body", $user)) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("body", $user), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Body Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->api_pull_body($user, $dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
                             }
+                        } else {
+                            nxr("  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
-                    } else {
-                        nxr("  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "heart") {
-                    if ($this->api_isCooled("heart", $user)) {
-                        $period = new DatePeriod ($this->api_getLastCleanrun("heart", $user), $interval, $currentDate);
-                        /**
-                         * @var DateTime $dt
-                         */
-                        foreach ($period as $dt) {
-                            nxr(' Downloading Heart Rate Logs for ' . $dt->format("l jS M Y"));
-                            $pull = $this->api_pull_body_heart($user, $dt->format("Y-m-d"));
-                            if ($this->isApiError($pull)) {
-                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "heart");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("heart", $user)) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("heart", $user), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Heart Rate Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->api_pull_body_heart($user, $dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
                             }
+                        } else {
+                            nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
-                    } else {
-                        nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
-                    if ($this->api_isCooled("water", $user)) {
-                        $period = new DatePeriod ($this->api_getLastCleanrun("water", $user), $interval, $currentDate);
-                        /**
-                         * @var DateTime $dt
-                         */
-                        foreach ($period as $dt) {
-                            nxr(' Downloading Water Logs for ' . $dt->format("l jS M Y"));
-                            $pull = $this->api_pull_food_water($user, $dt->format("Y-m-d"));
-                            if ($this->isApiError($pull)) {
-                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "water");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("water", $user)) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("water", $user), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Water Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->api_pull_food_water($user, $dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
                             }
+                        } else {
+                            nxr("  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
-                    } else {
-                        nxr("  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "foods") {
-                    if ($this->api_isCooled("foods", $user)) {
-                        $period = new DatePeriod ($this->api_getLastCleanrun("foods", $user), $interval, $currentDate);
-                        /**
-                         * @var DateTime $dt
-                         */
-                        foreach ($period as $dt) {
-                            nxr(' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
-                            $pull = $this->api_pull_food_eaten($user, $dt->format("Y-m-d"));
-                            if ($this->isApiError($pull)) {
-                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "foods");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("foods", $user)) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("foods", $user), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->api_pull_food_eaten($user, $dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
                             }
+                        } else {
+                            nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
-                    } else {
-                        nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "goals") {
-                    if ($this->api_isCooled("goals", $user)) {
-                        $period = new DatePeriod ($this->api_getLastCleanrun("goals", $user), $interval, $currentDate);
-                        /**
-                         * @var DateTime $dt
-                         */
-                        foreach ($period as $dt) {
-                            nxr(' Downloading Goals Logs for ' . $dt->format("l jS M Y"));
-                            $pull = $this->api_pull_goals($user, $dt->format("Y-m-d"));
-                            if ($this->isApiError($pull)) {
-                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "goals");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("goals", $user)) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("goals", $user), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Goals Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->api_pull_goals($user, $dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
                             }
+                        } else {
+                            nxr("  Error Goals: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
-                    } else {
-                        nxr("  Error Goals: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -323,33 +342,42 @@
                                     "minutesVeryActive"    => "1800",
                                     "caloriesOut"          => "1800");
                 if ($trigger == "all" || $trigger == "activities") {
-                    if ($this->api_isCooled("activities", $user)) {
-                        nxr(" Downloading Series Info");
-                        foreach ($timeSeries as $activity => $timeout) {
-                            $this->api_pull_time_series($user, $activity, TRUE);
+                    $isAllowed = $this->isAllowed($user, "activities");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("activities", $user)) {
+                            nxr(" Downloading Series Info");
+                            foreach ($timeSeries as $activity => $timeout) {
+                                $this->api_pull_time_series($user, $activity, TRUE);
+                            }
+                            if (isset($this->holdingVar)) unset($this->holdingVar);
+                            $this->api_setLastrun("activities", $user, NULL, TRUE);
                         }
-                        if (isset($this->holdingVar)) unset($this->holdingVar);
-                        $this->api_setLastrun("activities", $user, NULL, TRUE);
                     }
                 } else if (array_key_exists($trigger, $timeSeries)) {
-                    $this->api_pull_time_series($user, $trigger);
+                    $isAllowed = $this->isAllowed($user, $trigger);
+                    if (!is_numeric($isAllowed)) {
+                        $this->api_pull_time_series($user, $trigger);
+                    }
                 }
 
                 if ($trigger == "all" || $trigger == "activity_log") {
-                    if ($this->api_isCooled("activity_log", $user)) {
-                        $period = new DatePeriod ($this->api_getLastCleanrun("activity_log", $user), $interval, $currentDate);
-                        /**
-                         * @var DateTime $dt
-                         */
-                        foreach ($period as $dt) {
-                            nxr(' Downloading activities for ' . $dt->format("l jS M Y"));
-                            $pull = $this->api_pull_activity_log($user, $dt->format("Y-m-d"));
-                            if ($this->isApiError($pull)) {
-                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    $isAllowed = $this->isAllowed($user, "activity_log");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("activity_log", $user)) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("activity_log", $user), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading activities for ' . $dt->format("l jS M Y"));
+                                $pull = $this->api_pull_activity_log($user, $dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
                             }
+                        } else {
+                            nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
-                    } else {
-                        nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                     }
                 }
 
@@ -1862,6 +1890,24 @@
 
         private function user_getFirstSeen($user) {
             return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
+        }
+
+        private function isAllowed($user, $trigger) {
+            $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $user . '_' . $trigger, NULL);
+            if (!is_null($usrConfig) AND $usrConfig != 1) {
+                nxr(" Aborted $trigger disabled in user config");
+
+                return "-145";
+            }
+
+            $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
+            if ($sysConfig != 1) {
+                nxr(" Aborted $trigger disabled in system config");
+
+                return "-146";
+            }
+
+            return true;
         }
 
     }
