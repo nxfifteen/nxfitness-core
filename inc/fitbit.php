@@ -472,9 +472,13 @@
                 die();
             }
 
-            if (isset($userActivityLog) and is_object($userActivityLog) and is_array($userActivityLog->activities)) {
-                if (count($userActivityLog->activities) > 0) {
-                    foreach ($userActivityLog->activities as $activity) {
+            if (isset($userActivityLog) and is_object($userActivityLog)) {
+                $activityLog = $userActivityLog->activities->activityLog;
+                nxr(print_r($activityLog, true));
+                    foreach ($activityLog as $activity) {
+
+                        nxr(print_r($activity, true));
+
                         if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user"       => $user,
                                                                                                                                                                         "logId"      => (String)$activity->logId,
                                                                                                                                                                         "activityId" => (String)$activity->activityId,
@@ -494,15 +498,13 @@
                                 "name"               => (String)$activity->name,
                                 "startDate"          => (String)$activity->startDate,
                                 "startTime"          => (String)$activity->startTime,
+                                "steps"              => (String)$activity->steps,
                                 "user"               => $user,
                                 "date"               => $targetDate
                             ));
                         }
                         $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
                     }
-                } else {
-                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
-                }
             } else {
                 $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate), 7);
                 $this->api_setLastrun("activity_log", $user);
