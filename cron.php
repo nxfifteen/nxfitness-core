@@ -33,7 +33,7 @@
         } else {
             $allowed_triggers = Array();
             foreach ($fitbitApp->supportedApi() as $key => $name) {
-                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', FALSE) && $key != "all") {
+                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key, FALSE) && $fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', FALSE) && $key != "all") {
                     $allowed_triggers[] = $key;
                 }
             }
@@ -49,11 +49,12 @@
                         nxr("Repopulating queue for " . $user['name']);
 
                         foreach ($allowed_triggers as $trigger) {
-                            if ($fitbitApp->getFitbitapi()->api_isCooled($trigger, $user['fuid'])) {
-                                $fitbitApp->addCronJob($user['fuid'], $trigger);
-                            }/* else {
-                                nxr("  " . $fitbitApp->supportedApi($trigger) . " isn't cool enought yet");
-                            }*/
+                            $isAllowed = $fitbitApp->getFitbitapi()->isAllowed($user['fuid'], $trigger);
+                            if (!is_numeric($isAllowed)) {
+                                if ($fitbitApp->getFitbitapi()->api_isCooled($trigger, $user['fuid'])) {
+                                    $fitbitApp->addCronJob($user['fuid'], $trigger);
+                                }
+                            }
                         }
                     }
                 } else {

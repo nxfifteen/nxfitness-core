@@ -1894,7 +1894,7 @@
             return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
         }
 
-        private function isAllowed($user, $trigger) {
+        public function isAllowed($user, $trigger) {
             $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $user . '_' . $trigger, NULL);
             if (!is_null($usrConfig) AND $usrConfig != 1) {
                 nxr(" Aborted $trigger disabled in user config");
