@@ -295,26 +295,22 @@
                 }
 
                 if (!array_key_exists($record['startDate'], $daysStats)) {
-                    $dbDaysStats = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                            "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps" => array("user" => "user"),
-                            "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps" => array("date" => "date")
-                        ),
-                        array(
-                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.fairlyactive',
-                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.veryactive',
-                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.steps',
-                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.caloriesOut'
-                        ), array("AND" => array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity.user" => $this->getUserID(),
-                                                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity.date" => $record['startDate']
-                        )));
+                    $daysStats[$record['startDate']] = array();
 
-                    $dbDaysStats['active'] = number_format($dbDaysStats['fairlyactive'] + $dbDaysStats['veryactive'], 0);
-                    $dbDaysStats['caloriesOut'] = number_format($dbDaysStats['caloriesOut'], 0);
+                    $db_steps = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps";
+                    $db_activity = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity";
+                    $dbDaysStatsDb = $this->getAppClass()->getDatabase()->query(
+                        "SELECT `$db_steps`.`caloriesOut`,`$db_steps`.`steps`,`$db_activity`.`fairlyactive`,`$db_activity`.`veryactive`"
+                        . " FROM `$db_steps`"
+                        . " JOIN `$db_activity` ON (`$db_steps`.`date` = `$db_activity`.`date`) AND (`$db_steps`.`user` = `$db_activity`.`user`)"
+                        . " WHERE `$db_activity`.`user` = '" . $this->getUserID() . "' AND `$db_activity`.`date` = '" . $record['startDate'] . "'"
+                        . " ORDER BY `$db_activity`.`date` DESC");
 
-                    unset($dbDaysStats['fairlyactive']);
-                    unset($dbDaysStats['veryactive']);
-
-                    $daysStats[$record['startDate']] = $dbDaysStats;
+                    foreach ($dbDaysStatsDb as $dbValue) {
+                        $daysStats[$record['startDate']]['active'] = number_format($dbValue['fairlyactive'] + $dbValue['veryactive'], 0);
+                        $daysStats[$record['startDate']]['caloriesOut'] = number_format($dbValue['caloriesOut'], 0);
+                        $daysStats[$record['startDate']]['steps'] = number_format($dbValue['steps'], 0);
+                    }
                 }
 
                 $record['stats'] = $daysStats[$record['startDate']];
@@ -1831,6 +1827,10 @@
                 $resultsArray['results'] = $this->$functionName();
                 if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
                     $resultsArray = $resultsArray['results']['return'];
+                }
+
+                if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
+                    $resultsArray['dbLog'] = $this->getAppClass()->getDatabase()->log();
                 }
 
                 if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
