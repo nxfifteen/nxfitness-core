@@ -505,7 +505,7 @@
                         $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
                     }
                 } else {
-                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
+                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate), 2);
                 }
             } else {
                 $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate), 7);
