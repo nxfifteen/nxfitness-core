@@ -476,7 +476,7 @@
                 $activityLog = $userActivityLog->activities->activityLog;
                 if (isset($activityLog)) {
                     foreach ($activityLog as $activity) {
-                        nxr(print_r($activity, true));
+                        //nxr(print_r($activity, true));
 
                         if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $user,
                             "logId" => (String)$activity->logId,
