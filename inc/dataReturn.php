@@ -263,7 +263,7 @@
             }
 
             $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
-                array('date', 'name', 'logId', 'startDate', 'startTime', 'calories', 'duration'),
+                array('date', 'name', 'logId', 'startDate', 'startTime', 'calories', 'duration', 'steps'),
                 $sqlFilter);
 
             $daysStats = array();
@@ -279,7 +279,7 @@
                 $endTime = date("U", strtotime($record['startTime']));
                 $endTime = $endTime + ($record['duration'] / 1000);
                 $record['endTime'] = date("Y-m-d H:i", $endTime);
-                $record['duration'] = (($record['duration'] / 1000) / 60);
+                $record['duration'] = round(($record['duration'] / 1000) / 60, 0, PHP_ROUND_HALF_UP);
                 $record['startTime'] = date("F dS \@H:i", strtotime($record['startDate'] . " " . $record['startTime']));
 
                 $record['calPerMinute'] = round($record['calories'] / $record['duration'], 1);
@@ -302,6 +302,7 @@
                         array(
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.fairlyactive',
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'activity.veryactive',
+                            $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.steps',
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'steps.caloriesOut'
                         ), array("AND" => array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity.user" => $this->getUserID(),
                                                 $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity.date" => $record['startDate']
