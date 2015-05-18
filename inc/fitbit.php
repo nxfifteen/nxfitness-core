@@ -474,37 +474,39 @@
 
             if (isset($userActivityLog) and is_object($userActivityLog)) {
                 $activityLog = $userActivityLog->activities->activityLog;
-                nxr(print_r($activityLog, true));
+                if (isset($activityLog)) {
                     foreach ($activityLog as $activity) {
-
                         nxr(print_r($activity, true));
 
-                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user"       => $user,
-                                                                                                                                                                        "logId"      => (String)$activity->logId,
-                                                                                                                                                                        "activityId" => (String)$activity->activityId,
-                                                                                                                                                                        "startDate"  => (String)$activity->startDate,
-                                                                                                                                                                        "startTime"  => (String)$activity->startTime)))
+                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $user,
+                            "logId" => (String)$activity->logId,
+                            "activityId" => (String)$activity->activityId,
+                            "startDate" => (String)$activity->startDate,
+                            "startTime" => (String)$activity->startTime)))
                         ) {
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
-                                "activityId"         => (String)$activity->activityId,
-                                "activityParentId"   => (String)$activity->activityParentId,
+                                "activityId" => (String)$activity->activityId,
+                                "activityParentId" => (String)$activity->activityParentId,
                                 "activityParentName" => (String)$activity->activityParentName,
-                                "calories"           => (String)$activity->calories,
-                                "description"        => (String)$activity->description,
-                                "duration"           => (String)$activity->duration,
-                                "hasStartTime"       => (String)$activity->hasStartTime,
-                                "isFavorite"         => (String)$activity->isFavorite,
-                                "logId"              => (String)$activity->logId,
-                                "name"               => (String)$activity->name,
-                                "startDate"          => (String)$activity->startDate,
-                                "startTime"          => (String)$activity->startTime,
-                                "steps"              => (String)$activity->steps,
-                                "user"               => $user,
-                                "date"               => $targetDate
+                                "calories" => (String)$activity->calories,
+                                "description" => (String)$activity->description,
+                                "duration" => (String)$activity->duration,
+                                "hasStartTime" => (String)$activity->hasStartTime,
+                                "isFavorite" => (String)$activity->isFavorite,
+                                "logId" => (String)$activity->logId,
+                                "name" => (String)$activity->name,
+                                "startDate" => (String)$activity->startDate,
+                                "startTime" => (String)$activity->startTime,
+                                "steps" => (String)$activity->steps,
+                                "user" => $user,
+                                "date" => $targetDate
                             ));
                         }
                         $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
                     }
+                } else {
+                    $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate));
+                }
             } else {
                 $this->api_setLastCleanrun("activity_log", $user, new DateTime ($targetDate), 7);
                 $this->api_setLastrun("activity_log", $user);
