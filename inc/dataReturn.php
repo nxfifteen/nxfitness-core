@@ -173,12 +173,30 @@
             $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance', 'floors', 'steps'), $this->dbWhere());
             $taskerDataArray['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100, 0);
             $taskerDataArray['today']['steps_raw'] = $dbSteps[0]['steps'];
-            $taskerDataArray['today']['steps_c'] = 0;
             $taskerDataArray['today']['distance'] = round((round($dbSteps[0]['distance'], 2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
-            $taskerDataArray['today']['distance_c'] = 0;
             $taskerDataArray['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100, 0);
-            $taskerDataArray['today']['floors_c'] = 0;
 
+            $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
+            foreach ($cheer as $key => $value) {
+                if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
+                    $taskerDataArray['today'][$key . '_c'] = 7;
+                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
+                    $taskerDataArray['today'][$key . '_c'] = 6;
+                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2) {
+                    $taskerDataArray['today'][$key . '_c'] = 5;
+                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 1.5) {
+                    $taskerDataArray['today'][$key . '_c'] = 4;
+                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key]) {
+                    $taskerDataArray['today'][$key . '_c'] = 3;
+                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.75) {
+                    $taskerDataArray['today'][$key . '_c'] = 2;
+                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.5) {
+                    $taskerDataArray['today'][$key . '_c'] = 1;
+                } else {
+                    $taskerDataArray['today'][$key . '_c'] = 0;
+                }
+            }
+            
             $returnUserRecordChallenger = $this->returnUserRecordChallenger();
             $taskerDataArray['today']['active'] = ($returnUserRecordChallenger['current']['active'] / $returnUserRecordChallenger['current']['active_g']) * 100;
             $taskerDataArray['challenge']['state'] = $returnUserRecordChallenger['challengeActive'];
