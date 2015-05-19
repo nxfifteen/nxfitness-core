@@ -117,6 +117,7 @@
          * @return bool
          */
         public function set($key, $value) {
+            $this->settings[$key] = $value;
             if ($this->database->has($this->get("db_prefix", FALSE) . "settings", array("var" => $key))) {
                 return $this->database->update($this->get("db_prefix", FALSE) . "settings", array("data" => $value), array("var" => $key));
             } else {
