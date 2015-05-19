@@ -416,7 +416,7 @@
                     $this->getAppClass()->getFitbitapi()->oAuthorise($user);
                 }
                 $this->getAppClass()->getFitbitapi()->getLibrary()->addSubscription(1);
-                print_r($this->getAppClass()->getFitbitapi()->getLibrary()->getSubscriptions());
+                //print_r($this->getAppClass()->getFitbitapi()->getLibrary()->getSubscriptions());
             }
         }
 
@@ -1444,6 +1444,7 @@
          * @param $user
          * @param $trigger
          * @param bool $force
+         * @return string
          */
         private function api_pull_time_series($user, $trigger, $force = FALSE) {
             if ($user != $this->getLibrary()->getUser()) {
@@ -1484,7 +1485,7 @@
                     $this->api_setLastrun($trigger, $user);
                 }
             } else {
-                echo "   Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143) . "\n";
+                nxr("   Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143));
             }
         }
 
@@ -1493,6 +1494,7 @@
          * @param $trigger
          * @param $daysSince
          * @param DateTime|null $lastrun
+         * @return string
          */
         private function api_pull_time_series_by_trigger($user, $trigger, $daysSince, $lastrun = NULL) {
             if ($user != $this->getLibrary()->getUser()) {
@@ -1609,19 +1611,27 @@
                         if ($series->value > 0) $this->api_setLastCleanrun($trigger, $user, new DateTime ($series->dateTime));
 
                         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)))) {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
-                                'target'        => (String)$this->holdingVar["data"]->goals->activeMinutes,
+                            $dbStorage = array(
                                 $databaseColumn => (String)$series->value,
                                 'syncd'         => $currentDate->format('Y-m-d H:m:s')
-                            ), array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
+                            );
+
+                            if ($currentDate->format("Y-m-d") == $series->dateTime) {
+                                $dbStorage['target'] = (String)$this->holdingVar["data"]->goals->activeMinutes;
+                            }
+
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage, array("AND" => array('user' => $user, 'date' => (String)$series->dateTime)));
                         } else {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array(
+                            $dbStorage = array(
                                 'user'          => $user,
                                 'date'          => (String)$series->dateTime,
-                                'target'        => (String)$this->holdingVar["data"]->goals->activeMinutes,
                                 $databaseColumn => (String)$series->value,
                                 'syncd'         => $currentDate->format('Y-m-d H:m:s')
-                            ));
+                            );
+                            if ($currentDate->format("Y-m-d") == $series->dateTime) {
+                                $dbStorage['target'] = (String)$this->holdingVar["data"]->goals->activeMinutes;
+                            }
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage);
                         }
                     }
                 }
