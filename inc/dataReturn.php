@@ -159,6 +159,51 @@
             return $this->getAppClass()->isUser((String)$this->getUserID());
         }
 
+        public function returnUserRecordTasker() {
+            $taskerDataArray = array();
+
+//            $taskerDataArray['returnUserRecordJourneys'] = $this->returnUserRecordJourneys();
+//            $taskerDataArray['returnUserRecordJourneysState'] = $this->returnUserRecordJourneysState();
+
+            $returnUserRecordWater = $this->returnUserRecordWater();
+            $taskerDataArray['today']['water'] = round(($returnUserRecordWater[0]['liquid'] / $returnUserRecordWater[0]['goal']) * 100, 0);
+            $taskerDataArray['today']['water_c'] = $returnUserRecordWater[0]['cheer'];
+
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'floors', 'steps'), $this->dbWhere());
+            $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance', 'floors', 'steps'), $this->dbWhere());
+            $taskerDataArray['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100, 0);
+            $taskerDataArray['today']['steps_raw'] = $dbSteps[0]['steps'];
+            $taskerDataArray['today']['steps_c'] = 0;
+            $taskerDataArray['today']['distance'] = round((round($dbSteps[0]['distance'], 2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
+            $taskerDataArray['today']['distance_c'] = 0;
+            $taskerDataArray['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100, 0);
+            $taskerDataArray['today']['floors_c'] = 0;
+
+            $returnUserRecordChallenger = $this->returnUserRecordChallenger();
+            $taskerDataArray['today']['active'] = ($returnUserRecordChallenger['current']['active'] / $returnUserRecordChallenger['current']['active_g']) * 100;
+            $taskerDataArray['challenge']['state'] = $returnUserRecordChallenger['challengeActive'];
+            $taskerDataArray['challenge']['start_date'] = $returnUserRecordChallenger['next']['startDateF'];
+            $taskerDataArray['challenge']['end_date'] = $returnUserRecordChallenger['next']['endDateF'];
+            $taskerDataArray['challenge']['length'] = round(($returnUserRecordChallenger['current']['day'] / $returnUserRecordChallenger['challengeLength']) * 100, 0);
+            $taskerDataArray['challenge']['day'] = round(($returnUserRecordChallenger['current']['day_past'] / $returnUserRecordChallenger['current']['day']) * 100, 0);
+
+            $taskerDataArray['challenge']['distance'] = round(($returnUserRecordChallenger['current']['distance'] / $returnUserRecordChallenger['current']['distance_g']) * 100, 0);
+            $taskerDataArray['challenge']['active'] = round(($returnUserRecordChallenger['current']['active'] / $returnUserRecordChallenger['current']['active_g']) * 100, 0);
+            $taskerDataArray['challenge']['steps'] = round(($returnUserRecordChallenger['current']['steps'] / $returnUserRecordChallenger['current']['steps_g']) * 100, 0);
+
+            $taskerDataArray['devices'] = $this->returnUserRecordDevices();
+
+            $returnUserRecordFood = $this->returnUserRecordFood();
+            $taskerDataArray['today']['food'] = round(($returnUserRecordFood['total'] / $returnUserRecordFood['goal']) * 100, 2);
+
+            if (!is_null($this->getTracking())) {
+                $this->getTracking()->track("JSON Get", $this->getUserID(), "Tasker");
+                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Tasker");
+            }
+
+            return $taskerDataArray;
+        }
+
         /**
          * @return array
          */
@@ -739,7 +784,6 @@
                 foreach ($dbFoodLog as $meal) {
                     $total = $total + $meal['calories'];
                 }
-
 
                 $dbFoodGoal = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories",
                     array('calories'),
