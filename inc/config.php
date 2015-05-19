@@ -134,7 +134,8 @@
             if (array_key_exists($key, $this->settings)) {
                 return $this->settings[$key];
             } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, FALSE) . "settings", array("var" => $key))) {
-                return $this->database->get($this->get("db_prefix", NULL, FALSE) . "settings", "data", array("var" => $key));
+                $this->settings[$key] = $this->database->get($this->get("db_prefix", NULL, FALSE) . "settings", "data", array("var" => $key));
+                return $this->settings[$key];
             } else {
                 if (!is_null($default)) {
                     $this->set($key, $default);
