@@ -404,10 +404,38 @@
 
             $today = strtotime(date("Y-m-d"));
             if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
+                $currentChallenge = array();
+
+                $days = 0;
+                $daysPast = 0;
+                $dbChallengeRec = $this->calculateChallengeDays($userChallengeStartDate, $userChallengeEndDate, new DateTime($userChallengeStartDate));
+                    foreach ($dbChallengeRec['events'] as $dayRecord) {
+                        if ($dayRecord['className'] == "label-pass") {
+                            $days += 1;
+                            $daysPast += 1;
+                        } else if ($dayRecord['className'] == "label-today") {
+                            $currentChallenge['distance'] = $dayRecord['distance'];
+                            $currentChallenge['active'] = $dayRecord['active'];
+                            $currentChallenge['steps'] = $dayRecord['steps'];
+                        } else {
+                            $days += 1;
+                        }
+                    }
+
+
+                $currentChallenge['steps_g'] = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_steps", '10000');
+                $currentChallenge['distance_g'] = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_distance", '5');
+                $currentChallenge['active_g'] = $this->getAppClass()->getSetting("usr_challenger_" . $this->getUserID() . "_activity", '30');
+
+                $currentChallenge['day'] = $days;
+                $currentChallenge['day_past'] = $daysPast;
+                $currentChallenge['score'] = ($currentChallenge['day_past']/$currentChallenge['day']) * 100;
+
                 return array(
                     'challengeActive' => 'active',
                     'challengeLength' => $userChallengeLength,
                     'scores'          => $dbChallenge,
+                    'current' => $currentChallenge,
                     'goals'           => array('Activity' => $userChallengeTrgActivity, 'Steps' => $userChallengeTrgSteps, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
                     'next'            => array('startDate' => $userChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($userChallengeStartDate)), 'endDate' => $userChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($userChallengeEndDate)))
                 );
@@ -1903,16 +1931,21 @@
                         } else {
                             $score = 0;
                         }
-                        array_push($calenderEvents, array("title" => "Still Running\n" . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit . " / " . $dbEvent['veryactive'] . " min\n" . $score . "%", "start" => $dbEvent['date'], 'className' => 'label-today'));
+                        array_push($calenderEvents, array("title" => "Still Running\n" . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit . " / " . $dbEvent['veryactive'] . " min\n" . $score . "%",
+                            "start" => $dbEvent['date'],
+                            'className' => 'label-today',
+                            'distance' => round($dbEvent['distance'], 2),
+                            'active' => $dbEvent['veryactive'],
+                            'steps' => $dbEvent['steps']));
                     } else if ($dbEvent['steps'] >= $userChallengeTrgSteps) {
                         $score = $score + 1;
-                        array_push($calenderEvents, array("title" => "Steps: \n" . number_format($dbEvent['steps'], 0), "start" => $dbEvent['date'], 'className' => 'label-passSteps'));
+                        array_push($calenderEvents, array("title" => "Steps: \n" . number_format($dbEvent['steps'], 0), "start" => $dbEvent['date'], 'className' => 'label-pass'));
                     } else if ($dbEvent['distance'] >= $userChallengeTrgDistance) {
                         $score = $score + 1;
-                        array_push($calenderEvents, array("title" => "Distance: \n" . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit, "start" => $dbEvent['date'], 'className' => 'label-passDistance'));
+                        array_push($calenderEvents, array("title" => "Distance: \n" . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit, "start" => $dbEvent['date'], 'className' => 'label-pass'));
                     } else if ($dbEvent['veryactive'] >= $userChallengeTrgActivity) {
                         $score = $score + 1;
-                        array_push($calenderEvents, array("title" => "Activity: \n" . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-passActivity'));
+                        array_push($calenderEvents, array("title" => "Activity: \n" . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-pass'));
                     } else {
                         array_push($calenderEvents, array("title" => "Steps: " . number_format($dbEvent['steps'], 0)
                             . "\nDistance: " . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit
