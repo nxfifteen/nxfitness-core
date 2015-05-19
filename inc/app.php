@@ -222,6 +222,7 @@
 
         /**
          * @param string $user_fitbit_id
+         * @param string $user_fitbit_password
          * @return bool
          */
         public function isUserValid($user_fitbit_id, $user_fitbit_password) {

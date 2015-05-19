@@ -439,6 +439,8 @@
                     'last'            => array('startDate' => $nimusOneChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($nimusOneChallengeStartDate)), 'endDate' => $nimusOneChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($nimusOneChallengeEndDate)))
                 );
             }
+
+            return array();
         }
 
         /**
@@ -843,6 +845,7 @@
 
                     $legs = array();
                     $legsNames = array();
+                    $legsProgress = array();
                     foreach ($dbLegs as $dbLeg) {
                         // Get all narative items the user has completed
                         $dbNarratives = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative", array(
@@ -941,7 +944,6 @@
                                 $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.miles[<=]" => $user_miles_travelled
                             ), "LIMIT"     => 1, "ORDER" => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.miles DESC"));
 
-                        $narrative = array();
                         $prevNarrativeMiles = 0;
                         foreach ($dbNarratives as $dbNarrative) {
                             $narrativeArray = array(
@@ -1372,6 +1374,7 @@
             }
 
             foreach ($badges as $badge) {
+                /** @var array $dbBadge */
                 $dbBadge = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages",
                     array('image', 'badgeGradientEndColor', 'badgeGradientStartColor', 'earnedMessage', 'marketingDescription', 'name'),
                     array("AND" => array("badgeType" => $badge['type'], "value" => $badge['value'])));
@@ -1682,6 +1685,7 @@
                         if ($foundMissingRecord) {
                             // If no last record has been set get it from database
                             if (is_null($lastRecord)) {
+                                /** @var array $lastRecord */
                                 $lastRecord = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
                                     array('date', 'weight', 'weightAvg', 'weightGoal', 'fat', 'fatAvg', 'fatGoal'),
                                     array("AND" => array("user"     => $this->getUserID(),
