@@ -629,11 +629,15 @@ class dataReturn
                     }
                 }
 
+                $trackPoint = $items->Activities->Activity->Lap->Track->Trackpoint;
+
                 return array("Id" => (String)$items->Activities->Activity->Id,
                     "TotalTimeSeconds" => (String)$items->Activities->Activity->Lap->TotalTimeSeconds,
                     "DistanceMeters" => (String)$items->Activities->Activity->Lap->DistanceMeters,
                     "Calories" => (String)$items->Activities->Activity->Lap->Calories,
                     "Intensity" => (String)$items->Activities->Activity->Lap->Intensity,
+                    "LatitudeDegrees" => (String)$trackPoint[0]->Position->LatitudeDegrees,
+                    "LongitudeDegrees" => (String)$trackPoint[0]->Position->LongitudeDegrees,
                     "gpx" => $gpxFileName);
             } else {
                 echo "TCX file $tcxFile missing";
