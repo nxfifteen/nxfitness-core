@@ -850,7 +850,7 @@ class fitbit
 
             if (isset($userFriends)) {
                 $userFriends = $userFriends->friends->friend;
-                
+
                 if (count($userFriends) > 0) {
                     $youRank = 0;
                     $youDistance = 0;
