@@ -11,6 +11,9 @@
             if (array_key_exists("user", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['user'];
             }
+            if (array_key_exists("tcx", $_GET)) {
+                $cacheFileName = $cacheFileName . '_' . $_GET['tcx'];
+            }
             if (array_key_exists("data", $_GET)) {
                 $cacheFileName = $cacheFileName . '_' . $_GET['data'];
             }
