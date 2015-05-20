@@ -2050,11 +2050,11 @@ class FitBitPHP
      * @param string $period Depth ('7d' or '30d')
      * @return mixed SimpleXMLElement or the value encoded in json as an object
      */
-    public function getFriendsLeaderboard($period = '7d')
+    public function getFriendsLeaderboard()
     {
         $headers = $this->getHeaders();
         try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/friends/leaders/" . $period . "." . $this->responseFormat, null, OAUTH_HTTP_METHOD_GET, $headers);
+            $this->oauth->fetch($this->baseApiUrl . "user/-/friends/leaderboard." . $this->responseFormat, null, OAUTH_HTTP_METHOD_GET, $headers);
         } catch (Exception $E) {
         }
         $response = $this->oauth->getLastResponse();
