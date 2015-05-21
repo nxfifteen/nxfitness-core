@@ -57,6 +57,7 @@
             require_once(dirname(__FILE__) . "/app.php");
             $this->setAppClass(new NxFitbit());
             $this->setUserID($userFid);
+            $this->setForCache(true);
 
             if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
                 require_once(dirname(__FILE__) . "/tracking.php");
@@ -271,7 +272,7 @@
         public function returnUserRecordActivityHistory() {
             $sqlFilter = $this->dbWhere();
             $sqlFilter['AND']['name[!]'] = "Driving";
-            $sqlFilter['ORDER'] = "logId DESC";
+            $sqlFilter['ORDER'] = "startDate DESC, startTime DESC";
 
             unset($sqlFilter['AND']['date[<=]']);
             unset($sqlFilter['AND']['date[>=]']);
@@ -296,9 +297,9 @@
                 }
 
                 $record['name'] = str_ireplace(" (MyFitnessPal)", "", $record['name']);
-                $endTime = date("U", strtotime($record['startTime']));
+                $endTime = date("U", strtotime($record['startDate'] . " " . $record['startTime']));
                 $endTime = $endTime + ($record['duration'] / 1000);
-                $record['endTime'] = date("Y-m-d H:i", $endTime);
+                $record['endTime'] = date("F dS \@H:i", $endTime);
                 $record['duration'] = round(($record['duration'] / 1000) / 60, 0, PHP_ROUND_HALF_UP);
                 $record['startTime'] = date("F dS \@H:i", strtotime($record['startDate'] . " " . $record['startTime']));
 
@@ -338,11 +339,17 @@
                 unset($record['startDate']);
                 unset($record['date']);
 
-                if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] == hash("sha256", $this->getAppClass()->getSetting("salt") . $_SERVER['SERVER_SIGNATURE'] . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'])) {
-                    $record['link'] = "User";
-                    $this->setForCache(false);
+                $tcxFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $record['logId'] . '.tcx';
+                if (!file_exists($tcxFile)) {
+                    if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] == hash("sha256", $this->getAppClass()->getSetting("salt") . $_SERVER['SERVER_SIGNATURE'] . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'])) {
+                        $record['link'] = "https://www.fitbit.com/activities/exercise/" . $record['logId'] . "?export=tcx";
+                        $this->setForCache(false);
+                    }
                 } else {
-                    $record['link'] = "Guest";
+                    if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx')) {
+                        $this->returnUserRecordActivityTCX($record['logId'], $record['name'] . ": " . $record['startTime']);
+                    }
+                    $record['link'] = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
                 }
 
                 array_push($returnArray[$recKey], $record);
@@ -351,9 +358,18 @@
             return $returnArray;
         }
 
-        public function returnUserRecordActivityTCX() {
-            if (array_key_exists("tcx", $_GET)) {
-                $tcxFileName = $_GET['tcx'];
+        public function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null) {
+            if (is_null($tcxFileName)) {
+                if (array_key_exists("tcx", $_GET)) {
+                    $tcxFileName = $_GET['tcx'];
+                }
+            }
+
+            if (!is_null($tcxFileName)) {
+                if (is_null($tcxTrackName)) {
+                    $tcxTrackName = $tcxFileName . " Fitbit Track";
+                }
+
                 $tcxFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $tcxFileName . '.tcx';
 
                 if (file_exists($tcxFile)) {
@@ -385,12 +401,12 @@
                         $gpx .= "\n   xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"";
                         $gpx .= "\n   xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
                         $gpx .= "\n <metadata>";
-                        $gpx .= "\n  <name>" . $_GET["tcx"] . " Fitbit Track</name>";
-                        $gpx .= "\n  <link href=\"http://nxfifteen.me.uk/\"><text>" . $_GET["tcx"] . " Fitbit Track</text></link>";
+                        $gpx .= "\n  <name>" . $tcxTrackName ."</name>";
+                        $gpx .= "\n  <link href=\"http://nxfifteen.me.uk/\"><text>" . $tcxFileName . " Fitbit Track</text></link>";
                         $gpx .= "\n  <time>" . $items->Activities->Activity->Id . "</time>";
                         $gpx .= "\n </metadata>";
                         $gpx .= "\n <trk>";
-                        $gpx .= "\n  <name>" . $_GET["tcx"] . " Fitbit Track</name>";
+                        $gpx .= "\n  <name>" . $tcxTrackName ."</name>";
 
                         $gpx .= "\n  <trkseg>";
 
