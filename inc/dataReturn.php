@@ -1549,20 +1549,24 @@
 
             $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
             foreach ($cheer as $key => $value) {
-                if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
-                    $taskerDataArray['today'][$key . '_c'] = 7;
-                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
-                    $taskerDataArray['today'][$key . '_c'] = 6;
-                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2) {
-                    $taskerDataArray['today'][$key . '_c'] = 5;
-                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 1.5) {
-                    $taskerDataArray['today'][$key . '_c'] = 4;
-                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key]) {
-                    $taskerDataArray['today'][$key . '_c'] = 3;
-                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.75) {
-                    $taskerDataArray['today'][$key . '_c'] = 2;
-                } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.5) {
-                    $taskerDataArray['today'][$key . '_c'] = 1;
+                if ($dbGoals[0][$key] > 0) {
+                    if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
+                        $taskerDataArray['today'][$key . '_c'] = 7;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
+                        $taskerDataArray['today'][$key . '_c'] = 6;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2) {
+                        $taskerDataArray['today'][$key . '_c'] = 5;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 1.5) {
+                        $taskerDataArray['today'][$key . '_c'] = 4;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key]) {
+                        $taskerDataArray['today'][$key . '_c'] = 3;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.75) {
+                        $taskerDataArray['today'][$key . '_c'] = 2;
+                    } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.5) {
+                        $taskerDataArray['today'][$key . '_c'] = 1;
+                    } else {
+                        $taskerDataArray['today'][$key . '_c'] = 0;
+                    }
                 } else {
                     $taskerDataArray['today'][$key . '_c'] = 0;
                 }
