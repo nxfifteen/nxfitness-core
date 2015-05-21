@@ -725,12 +725,14 @@
                     "active"     => $challange['challengeActive'],
                     "startDateF" => $challange['next']['startDateF'],
                     "endDateF"   => $challange['next']['endDateF'],
-                    "activity"   => ($dbActiveMinutes / $challange['goals']['Activity']) * 100,
-                    "distance"   => ($dbSteps[0]['distance'] / $challange['goals']['Distance']) * 100,
+                    "activity"   => ($challange['current']['active'] / $challange['current']['active_g']) * 100,
+                    "distance"   => ($challange['current']['distance'] / $challange['current']['distance_g']) * 100,
+                    "steps"   => ($challange['current']['steps'] / $challange['current']['steps_g']) * 100
                 );
 
                 if ($challange['activity'] > 100) $challange['activity'] = 100;
                 if ($challange['distance'] > 100) $challange['distance'] = 100;
+                if ($challange['steps'] > 100) $challange['steps'] = 100;
 
                 $journeys = $this->returnUserRecordJourneysState();
                 $journeys = array_pop($journeys);
