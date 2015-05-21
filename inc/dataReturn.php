@@ -343,13 +343,16 @@
                 if (!file_exists($tcxFile)) {
                     if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] == hash("sha256", $this->getAppClass()->getSetting("salt") . $_SERVER['SERVER_SIGNATURE'] . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'])) {
                         $record['link'] = "https://www.fitbit.com/activities/exercise/" . $record['logId'] . "?export=tcx";
+                        $record['gpx'] = "download";
                         $this->setForCache(false);
+                    } else {
+                        $record['gpx'] = "none";
                     }
                 } else {
                     if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx')) {
                         $this->returnUserRecordActivityTCX($record['logId'], $record['name'] . ": " . $record['startTime']);
                     }
-                    $record['link'] = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
+                    $record['gpx'] = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
                 }
 
                 array_push($returnArray[$recKey], $record);
