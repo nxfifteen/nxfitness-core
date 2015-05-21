@@ -30,6 +30,26 @@
          */
         protected $tracking;
 
+        protected $forCache;
+
+        /**
+         * @return int
+         */
+        public function getForCache() {
+            if ($this->forCache) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        /**
+         * @param bool $forCache
+         */
+        public function setForCache($forCache) {
+            $this->forCache = $forCache;
+        }
+
         /**
          * @param $userFid
          */
@@ -317,6 +337,14 @@
 
                 unset($record['startDate']);
                 unset($record['date']);
+
+                if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] == hash("sha256", $this->getAppClass()->getSetting("salt") . $_SERVER['SERVER_SIGNATURE'] . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'])) {
+                    $record['link'] = "User";
+                    $this->setForCache(false);
+                } else {
+                    $record['link'] = "Guest";
+                }
+
                 array_push($returnArray[$recKey], $record);
             }
 
@@ -2020,7 +2048,13 @@
             $functionName = 'returnUserRecord' . $get['data'];
             if (method_exists($this, $functionName)) {
                 $dbUserName = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'name', array("fuid" => $this->getUserID()));
-                $resultsArray = array("error" => "false", "user" => $this->getUserID(), 'username' => $dbUserName, "data" => $get['data'], "period" => $this->getParamPeriod(), "date" => $this->getParamDate());
+                $resultsArray = array("error" => "false",
+                                      "user" => $this->getUserID(),
+                                      'username' => $dbUserName,
+                                      "cache" => true,
+                                      "data" => $get['data'],
+                                      "period" => $this->getParamPeriod(),
+                                      "date" => $this->getParamDate());
                 $resultsArray['results'] = $this->$functionName();
                 if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
                     $resultsArray = $resultsArray['results']['return'];
@@ -2032,6 +2066,8 @@
 
                 if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
                     $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+
+                $resultsArray['cache'] = $this->getForCache();
 
                 return $resultsArray;
             } else {

@@ -77,11 +77,13 @@
             } else {
                 if (array_key_exists("error", $json['results'])) {
                     if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
-                        $json['error'] = true;
+                        $json['error'] = TRUE;
                         $json['code'] = "000";
                         $json['msg'] = $json['results']['error'];
                         $json['results'] = $json['results']['return'];
                     }
+                    echo json_encode($json);
+                } else if (array_key_exists("cache", $json) and $json['cache'] == 0) {
                     echo json_encode($json);
                 } else {
                     return json_encode($json);
