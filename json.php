@@ -51,12 +51,14 @@
             }
 
             $json = query_api();
-            echo $json;
+            if ($json != "") {
+                echo $json;
 
-            $fh = fopen($cacheFile, 'w');
-            fwrite($fh, time() . "\n");
-            fwrite($fh, $json);
-            fclose($fh);
+                $fh = fopen($cacheFile, 'w');
+                fwrite($fh, time() . "\n");
+                fwrite($fh, $json);
+                fclose($fh);
+            }
         } else {
             echo query_api();
         }
@@ -83,8 +85,10 @@
                         $json['results'] = $json['results']['return'];
                     }
                     echo json_encode($json);
+                    return "";
                 } else if (array_key_exists("cache", $json) and $json['cache'] == 0) {
                     echo json_encode($json);
+                    return "";
                 } else {
                     return json_encode($json);
                 }
