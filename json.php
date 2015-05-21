@@ -70,13 +70,22 @@
         require_once(dirname(__FILE__) . "/inc/dataReturn.php");
         $dataReturnClass = new dataReturn($_GET['user']);
         if ($dataReturnClass->isUser()) {
-            $json = json_encode($dataReturnClass->returnUserRecords($_GET));
+            $json = $dataReturnClass->returnUserRecords($_GET);
 
             if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
-                return print_r(json_decode($json), true);
+                return print_r($json, true);
             } else {
-
-                return $json;
+                if (array_key_exists("error", $json['results'])) {
+                    if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
+                        $json['error'] = true;
+                        $json['code'] = "000";
+                        $json['msg'] = $json['results']['error'];
+                        $json['results'] = $json['results']['return'];
+                    }
+                    echo json_encode($json);
+                } else {
+                    return json_encode($json);
+                }
             }
         } else {
             echo json_error(101);
