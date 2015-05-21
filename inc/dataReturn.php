@@ -593,6 +593,23 @@ class dataReturn
 
             if (file_exists($tcxFile)) {
                 $items = simplexml_load_file($tcxFile);
+                if (!is_object($items)) {
+                    $items = simplexml_load_file($tcxFile);
+                    if (!is_object($items)) {
+                        $items = simplexml_load_file($tcxFile);
+                        if (!is_object($items)) {
+                            return array("error" => "Failed to read $tcxFileName TCX file", "return" => array("Id" => "Failed to read $tcxFileName TCX file",
+                                "TotalTimeSeconds" => 0,
+                                "DistanceMeters" => 0,
+                                "Calories" => 0,
+                                "Intensity" => 0,
+                                "LatitudeDegrees" => "56.462018",
+                                "LongitudeDegrees" => "-2.970721",
+                                "gpx" => ""));
+                        }
+                    }
+                }
+
                 if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
                     $gpxFileName = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
                 } else {
@@ -640,10 +657,24 @@ class dataReturn
                     "LongitudeDegrees" => (String)$trackPoint[0]->Position->LongitudeDegrees,
                     "gpx" => $gpxFileName);
             } else {
-                echo "TCX file $tcxFile missing";
+                return array("error" => "TCX file for $tcxFileName is missing", "return" =>  array("Id" => "TCX file for $tcxFileName is missing",
+                    "TotalTimeSeconds" => 0,
+                    "DistanceMeters" => 0,
+                    "Calories" => 0,
+                    "Intensity" => 0,
+                    "LatitudeDegrees" => "56.462018",
+                    "LongitudeDegrees" => "-2.970721",
+                    "gpx" => ""));
             }
         } else {
-            echo "TCX not set";
+            return array("error" => "You must set an activity id", "return" =>  array("Id" => "You must set an activity id",
+                "TotalTimeSeconds" => 0,
+                "DistanceMeters" => 0,
+                "Calories" => 0,
+                "Intensity" => 0,
+                "LatitudeDegrees" => "56.462018",
+                "LongitudeDegrees" => "-2.970721",
+                "gpx" => ""));
         }
 
         return array();
@@ -2183,9 +2214,7 @@ class dataReturn
      * @param $get
      * @return array
      */
-    public function returnUserRecords($get)
-    {
-
+    public function returnUserRecords($get) {
         if (array_key_exists("period", $get)) {
             $this->setParamPeriod($get['period']);
         }
