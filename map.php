@@ -7,9 +7,6 @@
     } else {
         $tcxCode = "221144036";
     }
-
-    $json = file_get_contents("http://nxfifteen.me.uk/api/fitbit/json.php?user=269VLG&data=ActivityTCX&tcx=" . $tcxCode);
-    $json = json_decode($json);
 ?>
 <html>
   <head>
@@ -32,7 +29,7 @@
     </style>
   </head>
   <body>
-    <section id="demo" class="gpx" data-gpx-source="<?php echo $json->results->gpx; ?>" data-map-target="demo-map">
+    <section id="demo" class="gpx" data-gpx-source="/api/fitbit/cache/<?php echo $tcxCode; ?>.gpx" data-map-target="demo-map">
       <header>
         <h3>Loading...</h3>
         <span class="start"></span>
