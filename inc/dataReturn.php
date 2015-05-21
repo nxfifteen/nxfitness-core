@@ -321,6 +321,10 @@
                     $record['colour'] = "bricky";
                 }
 
+                $record['calories'] = number_format($record['calories'], 0);
+                //@todo
+                //$record['steps'] = number_format($record['steps'], 0);
+
                 if (!array_key_exists($record['startDate'], $daysStats)) {
                     $daysStats[$record['startDate']] = array();
 
