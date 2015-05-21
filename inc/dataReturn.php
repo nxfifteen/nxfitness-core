@@ -296,7 +296,13 @@
                     $returnArray[$recKey] = array();
                 }
 
-                $record['name'] = str_ireplace(" (MyFitnessPal)", "", $record['name']);
+                if (substr( $record['name'], 0, 6 ) === "Skiing") {
+                    $record['name'] = "Skiing";
+                } else if (substr( $record['name'], 0, 7 ) === "Sit-ups" || substr( $record['name'], 0, 12 ) === "Calisthenics") {
+                    $record['name'] = "Calisthenics (pushups, sit-ups, squats)";
+                } else {
+                    $record['name'] = str_ireplace(" (MyFitnessPal)", "", $record['name']);
+                }
                 $endTime = date("U", strtotime($record['startDate'] . " " . $record['startTime']));
                 $endTime = $endTime + ($record['duration'] / 1000);
                 $record['endTime'] = date("F dS \@H:i", $endTime);
@@ -305,9 +311,9 @@
 
                 $record['calPerMinute'] = round($record['calories'] / $record['duration'], 1);
 
-                if (strpos(strtolower($record['name']), 'push-ups') !== FALSE || strpos(strtolower($record['name']), 'sit-ups') !== FALSE || strpos(strtolower($record['name']), 'strength') !== FALSE) {
+                if (strpos(strtolower($record['name']), 'calisthenics') !== FALSE || strpos(strtolower($record['name']), 'strength') !== FALSE) {
                     $record['colour'] = "teal";
-                } else if (strpos(strtolower($record['name']), 'run') !== FALSE || strpos(strtolower($record['name']), 'walking') !== FALSE) {
+                } else if (strpos(strtolower($record['name']), 'run') !== FALSE || strpos(strtolower($record['name']), 'walk') !== FALSE) {
                     $record['colour'] = "green";
                 } else if (strpos(strtolower($record['name']), 'skiing') !== FALSE) {
                     $record['colour'] = "purple";
@@ -416,7 +422,11 @@
                         foreach ($items->Activities->Activity->Lap->Track->Trackpoint as $trkpt) {
                             $gpx .= "\n   <trkpt lat=\"" . $trkpt->Position->LatitudeDegrees . "\" lon=\"" . $trkpt->Position->LongitudeDegrees . "\">";
                             $gpx .= "\n    <time>" . $trkpt->Time . "</time>";
-                            $gpx .= "\n    <ele>0</ele>";
+                            if (isset($trkpt->AltitudeMeters)) {
+                                $gpx .= "\n    <ele>" . $trkpt->AltitudeMeters . "</ele>";
+                            } else {
+                                $gpx .= "\n    <ele>0</ele>";
+                            }
                             $gpx .= "\n    <extensions>";
                             $gpx .= "\n     <gpxtpx:TrackPointExtension>";
                             $gpx .= "\n      <gpxtpx:hr>" . $trkpt->HeartRateBpm->Value . "</gpxtpx:hr>";
