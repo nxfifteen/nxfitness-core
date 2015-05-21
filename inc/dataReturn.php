@@ -613,27 +613,37 @@ class dataReturn
                 if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
                     $gpxFileName = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
                 } else {
-                    $gpx = '<?xml version="1.0" encoding="UTF-8"?>';
-                    $gpx .= '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpsies="http://www.gpsies.com/GPX/1/0" creator="NxFit - http://nxfifteen.me.uk" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.gpsies.com/GPX/1/0 http://www.gpsies.com/gpsies.xsd">';
-                    $gpx .= '<metadata>';
-                    $gpx .= '<name>' . $_GET['tcx'] . ' Fitbit Track</name>';
-                    $gpx .= '<link href="http://nxfifteen.me.uk/"><text>' . $_GET['tcx'] . ' Fitbit Track</text></link>';
-                    $gpx .= '<time>' . $items->Activities->Activity->Id . '</time>';
-                    $gpx .= '</metadata>';
-                    $gpx .= '<trk>';
-                    $gpx .= '<name>' . $_GET['tcx'] . ' Fitbit Track</name>';
+                    $gpx = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+                    $gpx .= "<gpx creator=\"NxFit - http://nxfifteen.me.uk\" ";
+                    $gpx .= "\n   xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\"";
+                    $gpx .= "\n   xmlns=\"http://www.topografix.com/GPX/1/1\"";
+                    $gpx .= "\n   xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"";
+                    $gpx .= "\n   xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+                    $gpx .= "\n <metadata>";
+                    $gpx .= "\n  <name>" . $_GET["tcx"] . " Fitbit Track</name>";
+                    $gpx .= "\n  <link href=\"http://nxfifteen.me.uk/\"><text>" . $_GET["tcx"] . " Fitbit Track</text></link>";
+                    $gpx .= "\n  <time>" . $items->Activities->Activity->Id . "</time>";
+                    $gpx .= "\n </metadata>";
+                    $gpx .= "\n <trk>";
+                    $gpx .= "\n  <name>" . $_GET["tcx"] . " Fitbit Track</name>";
 
-                    $gpx .= '<trkseg>';
+                    $gpx .= "\n  <trkseg>";
 
                     foreach ($items->Activities->Activity->Lap->Track->Trackpoint as $trkpt) {
-                        $gpx .= '<trkpt lat="' . $trkpt->Position->LatitudeDegrees . '" lon="' . $trkpt->Position->LongitudeDegrees . '">';
-                        $gpx .= '<name>' . $trkpt->Time . '</name>';
-                        $gpx .= '</trkpt>';
+                        $gpx .= "\n   <trkpt lat=\"" . $trkpt->Position->LatitudeDegrees . "\" lon=\"" . $trkpt->Position->LongitudeDegrees . "\">";
+                        $gpx .= "\n    <time>" . $trkpt->Time . "</time>";
+                        $gpx .= "\n    <ele>0</ele>";
+                        $gpx .= "\n    <extensions>";
+                        $gpx .= "\n     <gpxtpx:TrackPointExtension>";
+                        $gpx .= "\n      <gpxtpx:hr>" . $trkpt->HeartRateBpm->Value . "</gpxtpx:hr>";
+                        $gpx .= "\n     </gpxtpx:TrackPointExtension>";
+                        $gpx .= "\n    </extensions>";
+                        $gpx .= "\n   </trkpt>";
                     }
 
-                    $gpx .= '</trkseg>';
-                    $gpx .= '</trk>';
-                    $gpx .= '</gpx>';
+                    $gpx .= "\n  </trkseg>";
+                    $gpx .= "\n </trk>";
+                    $gpx .= "\n</gpx>";
 
                     $fh = fopen(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx', 'w');
                     fwrite($fh, $gpx);
