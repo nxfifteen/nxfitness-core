@@ -17,6 +17,7 @@
          * @var String
          */
         protected $UserID;
+        protected $forCache;
         /**
          * @var String
          */
@@ -30,26 +31,6 @@
          */
         protected $tracking;
 
-        protected $forCache;
-
-        /**
-         * @return int
-         */
-        public function getForCache() {
-            if ($this->forCache) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-
-        /**
-         * @param bool $forCache
-         */
-        public function setForCache($forCache) {
-            $this->forCache = $forCache;
-        }
-
         /**
          * @param $userFid
          */
@@ -57,7 +38,7 @@
             require_once(dirname(__FILE__) . "/app.php");
             $this->setAppClass(new NxFitbit());
             $this->setUserID($userFid);
-            $this->setForCache(true);
+            $this->setForCache(TRUE);
 
             if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
                 require_once(dirname(__FILE__) . "/tracking.php");
@@ -89,6 +70,24 @@
             } else {
                 return array($tableName . "user" => $this->getUserID(), "ORDER" => $tableName . "date DESC", "LIMIT" => $limit);
             }
+        }
+
+        /**
+         * @return int
+         */
+        public function getForCache() {
+            if ($this->forCache) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        /**
+         * @param bool $forCache
+         */
+        public function setForCache($forCache) {
+            $this->forCache = $forCache;
         }
 
         /**
@@ -296,9 +295,9 @@
                     $returnArray[$recKey] = array();
                 }
 
-                if (substr( $record['name'], 0, 6 ) === "Skiing") {
+                if (substr($record['name'], 0, 6) === "Skiing") {
                     $record['name'] = "Skiing";
-                } else if (substr( $record['name'], 0, 7 ) === "Sit-ups" || substr( $record['name'], 0, 12 ) === "Calisthenics") {
+                } else if (substr($record['name'], 0, 7) === "Sit-ups" || substr($record['name'], 0, 12) === "Calisthenics") {
                     $record['name'] = "Calisthenics (pushups, sit-ups, squats)";
                 } else {
                     $record['name'] = str_ireplace(" (MyFitnessPal)", "", $record['name']);
@@ -354,7 +353,7 @@
                     if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] == hash("sha256", $this->getAppClass()->getSetting("salt") . $_SERVER['SERVER_SIGNATURE'] . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'])) {
                         $record['link'] = "https://www.fitbit.com/activities/exercise/" . $record['logId'] . "?export=tcx";
                         $record['gpx'] = "download";
-                        $this->setForCache(false);
+                        $this->setForCache(FALSE);
                     } else {
                         $record['gpx'] = "none";
                     }
@@ -371,7 +370,7 @@
             return $returnArray;
         }
 
-        public function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null) {
+        public function returnUserRecordActivityTCX($tcxFileName = NULL, $tcxTrackName = NULL) {
             if (is_null($tcxFileName)) {
                 if (array_key_exists("tcx", $_GET)) {
                     $tcxFileName = $_GET['tcx'];
@@ -414,12 +413,12 @@
                         $gpx .= "\n   xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"";
                         $gpx .= "\n   xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
                         $gpx .= "\n <metadata>";
-                        $gpx .= "\n  <name>" . $tcxTrackName ."</name>";
+                        $gpx .= "\n  <name>" . $tcxTrackName . "</name>";
                         $gpx .= "\n  <link href=\"http://nxfifteen.me.uk/\"><text>" . $tcxFileName . " Fitbit Track</text></link>";
                         $gpx .= "\n  <time>" . $items->Activities->Activity->Id . "</time>";
                         $gpx .= "\n </metadata>";
                         $gpx .= "\n <trk>";
-                        $gpx .= "\n  <name>" . $tcxTrackName ."</name>";
+                        $gpx .= "\n  <name>" . $tcxTrackName . "</name>";
 
                         $gpx .= "\n  <trkseg>";
 
@@ -741,7 +740,7 @@
                     "endDateF"   => $challange['next']['endDateF'],
                     "activity"   => ($challange['current']['active'] / $challange['current']['active_g']) * 100,
                     "distance"   => ($challange['current']['distance'] / $challange['current']['distance_g']) * 100,
-                    "steps"   => ($challange['current']['steps'] / $challange['current']['steps_g']) * 100
+                    "steps"      => ($challange['current']['steps'] / $challange['current']['steps_g']) * 100
                 );
 
                 if ($challange['activity'] > 100) $challange['activity'] = 100;
@@ -2087,13 +2086,13 @@
             $functionName = 'returnUserRecord' . $get['data'];
             if (method_exists($this, $functionName)) {
                 $dbUserName = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'name', array("fuid" => $this->getUserID()));
-                $resultsArray = array("error" => "false",
-                                      "user" => $this->getUserID(),
+                $resultsArray = array("error"    => "false",
+                                      "user"     => $this->getUserID(),
                                       'username' => $dbUserName,
-                                      "cache" => true,
-                                      "data" => $get['data'],
-                                      "period" => $this->getParamPeriod(),
-                                      "date" => $this->getParamDate());
+                                      "cache"    => TRUE,
+                                      "data"     => $get['data'],
+                                      "period"   => $this->getParamPeriod(),
+                                      "date"     => $this->getParamDate());
                 $resultsArray['results'] = $this->$functionName();
                 if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
                     $resultsArray = $resultsArray['results']['return'];
@@ -2171,7 +2170,9 @@
                         } else {
                             $score = 0;
                         }
-                        array_push($calenderEvents, array("title"     => "Still Running\n" . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit . " / " . $dbEvent['veryactive'] . " min\n" . $score . "%",
+                        array_push($calenderEvents, array("title"     => $dbEvent['steps'] . " steps"
+                            . "\n" . $dbEvent['veryactive'] . " min"
+                            . "\n" . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit,
                                                           "start"     => $dbEvent['date'],
                                                           'className' => 'label-today',
                                                           'distance'  => round($dbEvent['distance'], 2),
