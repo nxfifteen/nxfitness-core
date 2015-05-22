@@ -1561,26 +1561,37 @@ class fitbit
         $plusTargetSteps = -1;
 
         if ($string == "steps") {
-            $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 2);
-            if ($improvment > 0) {
-                $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
-                    array("AND" => array(
-                        "user" => $user,
-                        "date[>=]" => $oneWeek,
-                        "date[<=]" => $lastMonday
-                    ), "ORDER" => "date DESC", "LIMIT" => 7));
+            $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $user . "_length", '50');
+            $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $user, '03-31 last sunday'); // Default to last Sunday in March
+            $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
+            $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
-                $totalSteps = 0;
-                foreach ($dbSteps as $dbStep) {
-                    $totalSteps = $totalSteps + $dbStep;
-                }
-                if ($totalSteps == 0) $totalSteps = 1;
+            $today = strtotime(date("Y-m-d"));
+            if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
+                nxr("Challenge is running");
+                return $this->getAppClass()->getSetting("usr_challenger_" . $user . "_steps", '10000');
+            } else {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 2);
+                if ($improvment > 0) {
+                    $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
+                        array("AND" => array(
+                            "user" => $user,
+                            "date[>=]" => $oneWeek,
+                            "date[<=]" => $lastMonday
+                        ), "ORDER" => "date DESC", "LIMIT" => 7));
 
-                $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
-                    $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10) / 100), 0);
-                } else {
-                    $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000);
+                    $totalSteps = 0;
+                    foreach ($dbSteps as $dbStep) {
+                        $totalSteps = $totalSteps + $dbStep;
+                    }
+                    if ($totalSteps == 0) $totalSteps = 1;
+
+                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
+                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
+                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000);
+                    }
                 }
             }
         } elseif ($string == "floors") {
@@ -1607,26 +1618,37 @@ class fitbit
                 }
             }
         } elseif ($string == "activeMinutes") {
-            $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_active", 10);
-            if ($improvment > 0) {
-                $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
-                    array("AND" => array(
-                        "user" => $user,
-                        "date[>=]" => $oneWeek,
-                        "date[<=]" => $lastMonday
-                    ), "ORDER" => "date DESC", "LIMIT" => 7));
+            $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $user . "_length", '50');
+            $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $user, '03-31 last sunday'); // Default to last Sunday in March
+            $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
+            $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
-                $totalMinutes = 0;
-                foreach ($dbActiveMinutes as $dbStep) {
-                    $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
-                }
-                if ($totalMinutes == 0) $totalMinutes = 1;
+            $today = strtotime(date("Y-m-d"));
+            if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
+                nxr("Challenge is running");
+                return $this->getAppClass()->getSetting("usr_challenger_" . $user . "_activity", '30');
+            } else {
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_active", 10);
+                if ($improvment > 0) {
+                    $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
+                        array("AND" => array(
+                            "user"     => $user,
+                            "date[>=]" => $oneWeek,
+                            "date[<=]" => $lastMonday
+                        ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
-                $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-                if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30)) {
-                    $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $user . "_active", 10) / 100), 0);
-                } else {
-                    $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30);
+                    $totalMinutes = 0;
+                    foreach ($dbActiveMinutes as $dbStep) {
+                        $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
+                    }
+                    if ($totalMinutes == 0) $totalMinutes = 1;
+
+                    $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
+                    if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30)) {
+                        $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $user . "_active", 10) / 100), 0);
+                    } else {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30);
+                    }
                 }
             }
         }
