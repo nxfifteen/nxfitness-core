@@ -38,7 +38,7 @@
             $cacheNames = array();
             switch ($activityName) {
                 case "activities":
-                    $cacheNames = array('activity', 'dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked');
+                    $cacheNames = array('activity', 'dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tracked', 'tasker', 'challenger', 'conky');
                     break;
                 case "activity_log":
                     $cacheNames = array('activityhistory');
@@ -50,25 +50,25 @@
                     $cacheNames = array('trend', 'weight');
                     break;
                 case "caloriesOut":
-                    $cacheNames = array();
+                    $cacheNames = array('tasker');
                     break;
                 case "devices":
-                    $cacheNames = array('devices');
+                    $cacheNames = array('devices', 'tasker');
                     break;
                 case "distance":
-                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked');
+                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tasker', 'challenger', 'conky');
                     break;
                 case "elevation":
                     $cacheNames = array();
                     break;
                 case "floors":
-                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked');
+                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tasker', 'challenger', 'conky');
                     break;
                 case "foods":
                     $cacheNames = array('food', 'fooddiary');
                     break;
                 case "goals":
-                    $cacheNames = array('dashboard', 'tracked', 'steps');
+                    $cacheNames = array('dashboard', 'tracked', 'steps', 'tasker');
                     break;
                 case "goals_calories":
                     $cacheNames = array('trend');
@@ -80,7 +80,7 @@
                     $cacheNames = array('trend');
                     break;
                 case "minutesFairlyActive":
-                    $cacheNames = array('activity');
+                    $cacheNames = array('activity', 'tasker', 'challenger', 'conky');
                     break;
                 case "minutesLightlyActive":
                     $cacheNames = array('activity');
@@ -89,7 +89,7 @@
                     $cacheNames = array('activity');
                     break;
                 case "minutesVeryActive":
-                    $cacheNames = array('activity');
+                    $cacheNames = array('activity', 'tasker', 'challenger', 'conky');
                     break;
                 case "profile":
                     $cacheNames = array('trend');
@@ -98,10 +98,10 @@
                     $cacheNames = array('sleep');
                     break;
                 case "steps":
-                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked');
+                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tasker', 'conky');
                     break;
                 case "water":
-                    $cacheNames = array('water');
+                    $cacheNames = array('water', 'tasker');
                     break;
                 default:
                     nxr("Unknown cache file for $activityName");
