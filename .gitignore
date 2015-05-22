@@ -5,7 +5,7 @@ admin
 images/badges/*.png
 images/badges/*/*.png
 images/avatars/*.jpg
-tcx/*.tcx
+tcx/
 composer.phar
 composer.lock
 vendor
