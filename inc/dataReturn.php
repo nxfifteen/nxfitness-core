@@ -2179,13 +2179,13 @@
                                                           'steps'     => $dbEvent['steps']));
                     } else if ($dbEvent['steps'] >= $userChallengeTrgSteps) {
                         $score = $score + 1;
-                        array_push($calenderEvents, array("title" => "Steps: \n" . number_format($dbEvent['steps'], 0), "start" => $dbEvent['date'], 'className' => 'label-pass'));
-                    } else if ($dbEvent['distance'] >= $userChallengeTrgDistance) {
-                        $score = $score + 1;
-                        array_push($calenderEvents, array("title" => "Distance: \n" . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit, "start" => $dbEvent['date'], 'className' => 'label-pass'));
+                        array_push($calenderEvents, array("title" => "Past!\nSteps: " . number_format($dbEvent['steps'], 0), "start" => $dbEvent['date'], 'className' => 'label-pass'));
                     } else if ($dbEvent['veryactive'] >= $userChallengeTrgActivity) {
                         $score = $score + 1;
-                        array_push($calenderEvents, array("title" => "Activity: \n" . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-pass'));
+                        array_push($calenderEvents, array("title" => "Past!\nActivity: " . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-pass'));
+                    } else if ($dbEvent['distance'] >= $userChallengeTrgDistance) {
+                        $score = $score + 1;
+                        array_push($calenderEvents, array("title" => "Past!\nDistance: " . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit, "start" => $dbEvent['date'], 'className' => 'label-pass'));
                     } else {
                         array_push($calenderEvents, array("title"                       => "Steps: " . number_format($dbEvent['steps'], 0)
                             . "\nDistance: " . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit
