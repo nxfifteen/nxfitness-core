@@ -2097,6 +2097,8 @@
                 $resultsArray['results'] = $this->$functionName();
                 if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
                     $resultsArray = $resultsArray['results']['return'];
+                } else {
+                    $resultsArray['cache'] = $this->getForCache();
                 }
 
                 if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
@@ -2105,8 +2107,6 @@
 
                 if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
                     $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
-
-                $resultsArray['cache'] = $this->getForCache();
 
                 return $resultsArray;
             } else {

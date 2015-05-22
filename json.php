@@ -77,7 +77,7 @@
             if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
                 return print_r($json, true);
             } else {
-                if (array_key_exists("error", $json['results'])) {
+                if (is_array($json) and array_key_exists("results", $json) and array_key_exists("error", $json['results'])) {
                     if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
                         $json['error'] = TRUE;
                         $json['code'] = "000";
