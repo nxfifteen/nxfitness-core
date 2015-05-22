@@ -269,26 +269,30 @@
          * @return bool
          */
         public function returnUserRecordActivityHistory() {
-            $sqlFilter = $this->dbWhere();
-            $sqlFilter['AND']['name[!]'] = "Driving";
-            $sqlFilter['ORDER'] = "startDate DESC, startTime DESC";
-
-            unset($sqlFilter['AND']['date[<=]']);
-            unset($sqlFilter['AND']['date[>=]']);
-            unset($sqlFilter['LIMIT']);
-
             if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
                 $days = $this->getParamPeriod();
-                $sqlFilter['LIMIT'] = str_ireplace("last", "", $days);
+                $sqlLimit = str_ireplace("last", "", $days);
+            } else {
+                $sqlLimit = 1;
             }
 
-            $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
-                array('date', 'name', 'logId', 'startDate', 'startTime', 'calories', 'duration', 'steps'),
-                $sqlFilter);
+            $userActivity = $this->getAppClass()->getDatabase()->query("SELECT `date`,`name`,`logId`,`startDate`,`startTime`,`calories`,`duration`,`steps` "
+                ."FROM `" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log` "
+                ."WHERE `user` = '" . $this->getUserID() . "' AND `name` != 'Driving' "
+                ."ORDER BY `startDate` DESC, `startTime` DESC LIMIT " . $sqlLimit)->fetchAll();
 
             $daysStats = array();
             $returnArray = array();
             foreach ($userActivity as $record) {
+                unset($record[0]);
+                unset($record[1]);
+                unset($record[2]);
+                unset($record[3]);
+                unset($record[4]);
+                unset($record[5]);
+                unset($record[6]);
+                unset($record[7]);
+
                 $startTime = new DateTime($record['startDate'] . " " . $record['startTime']);
                 $recKey = $startTime->format("F, Y");
                 if (!array_key_exists($recKey, $returnArray) || !is_array($returnArray[$recKey])) {
@@ -321,8 +325,7 @@
                 }
 
                 $record['calories'] = number_format($record['calories'], 0);
-                //@todo
-                //$record['steps'] = number_format($record['steps'], 0);
+                $record['steps'] = number_format($record['steps'], 0);
 
                 if (!array_key_exists($record['startDate'], $daysStats)) {
                     $daysStats[$record['startDate']] = array();
@@ -348,6 +351,7 @@
                 unset($record['startDate']);
                 unset($record['date']);
 
+
                 $tcxFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $record['logId'] . '.tcx';
                 if (!file_exists($tcxFile)) {
                     if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] == hash("sha256", $this->getAppClass()->getSetting("salt") . $_SERVER['SERVER_SIGNATURE'] . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'])) {
@@ -359,9 +363,15 @@
                     }
                 } else {
                     if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx')) {
-                        $this->returnUserRecordActivityTCX($record['logId'], $record['name'] . ": " . $record['startTime']);
+                        if (is_writable(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache')) {
+                            $this->returnUserRecordActivityTCX($record['logId'], $record['name'] . ": " . $record['startTime']);
+                            $record['gpx'] = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
+                        } else {
+                            $record['gpx'] = "none";
+                        }
+                    } else {
+                        $record['gpx'] = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
                     }
-                    $record['gpx'] = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
                 }
 
                 array_push($returnArray[$recKey], $record);
