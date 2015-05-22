@@ -49,6 +49,26 @@
                                 $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
                             }
 
+                            if ($upreq->collectionType == "foods") {
+                                if ($fitbitApp->getDatabase()->has($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $upreq->ownerId,
+                                                                                                                                                     "activity" => "water")))) {
+                                    $fields = array(
+                                        "date"     => date("Y-m-d H:i:s"),
+                                        "cooldown" => "1970-01-01 01:00:00"
+                                    );
+                                    $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user" => $upreq->ownerId,
+                                                                                                                                                                 "activity" => "water")));
+                                } else {
+                                    $fields = array(
+                                        "user"     => $upreq->ownerId,
+                                        "activity" => "water",
+                                        "date"     => date("Y-m-d H:i:s"),
+                                        "cooldown" => "1970-01-01 01:00:00"
+                                    );
+                                    $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
+                                }
+                            }
+
                             $fitbitApp->addCronJob($upreq->ownerId, $upreq->collectionType, TRUE);
                         } else {
                             $logMsg .= "Can not process " . $fitbitApp->supportedApi($upreq->collectionType) . ". API limit reached for " . $upreq->ownerId . ". Cooldown period ends " . $cooldown . "";
