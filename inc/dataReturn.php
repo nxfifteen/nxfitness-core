@@ -1566,12 +1566,14 @@
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'floors', 'steps'), $this->dbWhere());
             $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance', 'floors', 'steps'), $this->dbWhere());
             $taskerDataArray['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100, 0);
-            $taskerDataArray['today']['steps_raw'] = $dbSteps[0]['steps'];
             $taskerDataArray['today']['distance'] = round((round($dbSteps[0]['distance'], 2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
             $taskerDataArray['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100, 0);
 
             $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
             foreach ($cheer as $key => $value) {
+                $taskerDataArray['today'][$key . '_raw'] = $dbSteps[0][$key];
+                //$taskerDataArray['today'][$key . '_r_g'] = $dbGoals[0][$key];
+
                 if ($dbGoals[0][$key] > 0) {
                     if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
                         $taskerDataArray['today'][$key . '_c'] = 7;
@@ -1616,6 +1618,9 @@
                 $this->getTracking()->track("JSON Get", $this->getUserID(), "Tasker");
                 $this->getTracking()->track("JSON Goal", $this->getUserID(), "Tasker");
             }
+
+            ksort($taskerDataArray['today']);
+            ksort($taskerDataArray['challenge']);
 
             return $taskerDataArray;
         }
