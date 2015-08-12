@@ -1650,29 +1650,29 @@ class FitBitPHP
      * @param  String $dateStr
      * @return mixed SimpleXMLElement or the value encoded in json as an object
      */
-    public function getHeartRate($date, $dateStr = null)
-    {
-        $headers = $this->getHeaders();
-        if (!isset($dateStr)) {
-            $dateStr = $date->format('Y-m-d');
-        }
-        try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/heart/date/" . $dateStr . "." . $this->responseFormat, null, OAUTH_HTTP_METHOD_GET, $headers);
-        } catch (Exception $E) {
-        }
-        $response = $this->oauth->getLastResponse();
-        $responseInfo = $this->oauth->getLastResponseInfo();
-        if (!strcmp($responseInfo['http_code'], '200')) {
-            $response = $this->parseResponse($response);
-
-            if ($response)
-                return $response;
-            else
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        } else {
-            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        }
-    }
+//    public function getHeartRate($date, $dateStr = null)
+//    {
+//        $headers = $this->getHeaders();
+//        if (!isset($dateStr)) {
+//            $dateStr = $date->format('Y-m-d');
+//        }
+//        try {
+//            $this->oauth->fetch($this->baseApiUrl . "user/-/heart/date/" . $dateStr . "." . $this->responseFormat, null, OAUTH_HTTP_METHOD_GET, $headers);
+//        } catch (Exception $E) {
+//        }
+//        $response = $this->oauth->getLastResponse();
+//        $responseInfo = $this->oauth->getLastResponseInfo();
+//        if (!strcmp($responseInfo['http_code'], '200')) {
+//            $response = $this->parseResponse($response);
+//
+//            if ($response)
+//                return $response;
+//            else
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        } else {
+//            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        }
+//    }
 
 
     /**
