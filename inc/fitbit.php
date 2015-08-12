@@ -729,14 +729,12 @@
                         $goalsfat = (float)$userBodyLog->goals->fat;
                     }
 
-                    if (!isset($userBodyLog->body->bmi) or $userBodyLog->body->bmi == "0") {
-                        nxr('  BMI unrecorded, reverting to previous record');
-                        //$bmi = $this->getDBCurrentBody($user, "bmi");
-                        $bmi = "0.0";
+                    $user_height = $this->getDatabase()->get($this->getSetting("db_prefix", NULL, FALSE) . "users", "height", array("fuid" => $user));
+                    if (is_numeric($user_height) AND $user_height > 0) {
+                        $bmi = $weight / ($user_height * $user_height);
                     } else {
-                        $bmi = (float)$userBodyLog->body->bmi;
+                        $bmi = "0.0";
                     }
-
 
                     $db_insetArray = array(
                         "weight"     => $weight,
