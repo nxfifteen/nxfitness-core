@@ -1570,29 +1570,29 @@ class FitBitPHP
      * @param  String $dateStr
      * @return mixed SimpleXMLElement or the value encoded in json as an object
      */
-    public function getGlucose($date, $dateStr)
-    {
-        $headers = $this->getHeaders();
-        if (!isset($dateStr)) {
-            $dateStr = $date->format('Y-m-d');
-        }
-        try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/glucose/date/" . $dateStr . "." . $this->responseFormat, null, OAUTH_HTTP_METHOD_GET, $headers);
-        } catch (Exception $E) {
-        }
-        $response = $this->oauth->getLastResponse();
-        $responseInfo = $this->oauth->getLastResponseInfo();
-        if (!strcmp($responseInfo['http_code'], '200')) {
-            $response = $this->parseResponse($response);
-
-            if ($response)
-                return $response;
-            else
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        } else {
-            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        }
-    }
+//    public function getGlucose($date, $dateStr)
+//    {
+//        $headers = $this->getHeaders();
+//        if (!isset($dateStr)) {
+//            $dateStr = $date->format('Y-m-d');
+//        }
+//        try {
+//            $this->oauth->fetch($this->baseApiUrl . "user/-/glucose/date/" . $dateStr . "." . $this->responseFormat, null, OAUTH_HTTP_METHOD_GET, $headers);
+//        } catch (Exception $E) {
+//        }
+//        $response = $this->oauth->getLastResponse();
+//        $responseInfo = $this->oauth->getLastResponseInfo();
+//        if (!strcmp($responseInfo['http_code'], '200')) {
+//            $response = $this->parseResponse($response);
+//
+//            if ($response)
+//                return $response;
+//            else
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        } else {
+//            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        }
+//    }
 
     /**
      * Log user glucose and HbA1c
@@ -1605,41 +1605,41 @@ class FitBitPHP
      * @param DateTime $time Time of the measurement (set proper timezone, which could be fetched via getProfile)
      * @return mixed SimpleXMLElement or the value encoded in json as an object
      */
-    public function logGlucose($date, $tracker, $glucose, $hba1c = null, $time = null)
-    {
-        $headers = $this->getHeaders();
-        $parameters = array();
-        $parameters['date'] = $date->format('Y-m-d');
-        $parameters['tracker'] = $tracker;
-        $parameters['glucose'] = $glucose;
-        if (isset($hba1c))
-            $parameters['hba1c'] = $hba1c;
-        if (isset($time))
-            $parameters['time'] = $time->format('H:i');
-
-        try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/glucose." . $this->responseFormat, $parameters,
-                                OAUTH_HTTP_METHOD_POST, $headers);
-        } catch (Exception $E) {
-        }
-        $response = $this->oauth->getLastResponse();
-        $responseInfo = $this->oauth->getLastResponseInfo();
-        if (!strcmp($responseInfo['http_code'], '201')) {
-            $response = $this->parseResponse($response);
-
-            if ($response)
-                return $response;
-            else
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        } else {
-            $response = $this->parseResponse($response);
-
-            if (!$response)
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-            else
-                throw new FitBitException($responseInfo['http_code'], $response->message, 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        }
-    }
+//    public function logGlucose($date, $tracker, $glucose, $hba1c = null, $time = null)
+//    {
+//        $headers = $this->getHeaders();
+//        $parameters = array();
+//        $parameters['date'] = $date->format('Y-m-d');
+//        $parameters['tracker'] = $tracker;
+//        $parameters['glucose'] = $glucose;
+//        if (isset($hba1c))
+//            $parameters['hba1c'] = $hba1c;
+//        if (isset($time))
+//            $parameters['time'] = $time->format('H:i');
+//
+//        try {
+//            $this->oauth->fetch($this->baseApiUrl . "user/-/glucose." . $this->responseFormat, $parameters,
+//                                OAUTH_HTTP_METHOD_POST, $headers);
+//        } catch (Exception $E) {
+//        }
+//        $response = $this->oauth->getLastResponse();
+//        $responseInfo = $this->oauth->getLastResponseInfo();
+//        if (!strcmp($responseInfo['http_code'], '201')) {
+//            $response = $this->parseResponse($response);
+//
+//            if ($response)
+//                return $response;
+//            else
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        } else {
+//            $response = $this->parseResponse($response);
+//
+//            if (!$response)
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//            else
+//                throw new FitBitException($responseInfo['http_code'], $response->message, 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        }
+//    }
 
 
     /**
