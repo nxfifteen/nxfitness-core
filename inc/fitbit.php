@@ -274,27 +274,6 @@
                     }
                 }
 
-//                if ($trigger == "all" || $trigger == "heart") {
-//                    $isAllowed = $this->isAllowed($user, "heart");
-//                    if (!is_numeric($isAllowed)) {
-//                        if ($this->api_isCooled("heart", $user)) {
-//                            $period = new DatePeriod ($this->api_getLastCleanrun("heart", $user), $interval, $currentDate);
-//                            /**
-//                             * @var DateTime $dt
-//                             */
-//                            foreach ($period as $dt) {
-//                                nxr(' Downloading Heart Rate Logs for ' . $dt->format("l jS M Y"));
-//                                $pull = $this->api_pull_body_heart($user, $dt->format("Y-m-d"));
-//                                if ($this->isApiError($pull)) {
-//                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
-//                                }
-//                            }
-//                        } else {
-//                            nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode(-143));
-//                        }
-//                    }
-//                }
-
                 if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
                     $isAllowed = $this->isAllowed($user, "water");
                     if (!is_numeric($isAllowed)) {
@@ -738,14 +717,14 @@
                 if ($insertToDB) {
                     if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
                         nxr('  Weight Goal unset, reverting to previous record');
-                        $goalsweight = $this->getDBCurrentBody($user, "weightGoal", TRUE);
+                        $goalsweight = $this->getDBCurrentBody($user, "weightGoal");
                     } else {
                         $goalsweight = (float)$userBodyLog->goals->weight;
                     }
 
                     if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
                         nxr('  Body Fat Goal unset, reverting to previous record');
-                        $goalsfat = $this->getDBCurrentBody($user, "fatGoal", TRUE);
+                        $goalsfat = $this->getDBCurrentBody($user, "fatGoal");
                     } else {
                         $goalsfat = (float)$userBodyLog->goals->fat;
                     }
@@ -802,78 +781,6 @@
             return $userBodyLog;
 
         }
-
-        /**
-         * @param $user
-         * @param $targetDate
-         * @return mixed
-         */
-//        private function api_pull_body_heart($user, $targetDate) {
-//            if ($user != $this->getLibrary()->getUser()) {
-//                return "-144";
-//            }
-//
-//            $targetDateTime = new DateTime ($targetDate);
-//            try {
-//                //TODO Soon to be deprecated API
-//                $userBodyHeart = $this->getLibrary()->getHeartRate($targetDateTime);
-//            } catch (Exception $E) {
-//                /**
-//                 * @var FitBitException $E
-//                 */
-//                nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-//                nxr(print_r($E, TRUE));
-//                die();
-//            }
-//
-//            if (isset($userBodyHeart)) {
-//                if (count($userBodyHeart->average) == 3) {
-//                    $resting = 0;
-//                    $normal = 0;
-//                    $exertive = 0;
-//
-//                    foreach ($userBodyHeart->average as $heartAverage) {
-//                        switch ($heartAverage->tracker) {
-//                            case "Resting Heart Rate":
-//                                $resting = (string)$heartAverage->heartRate;
-//                                break;
-//                            case "Normal Heart Rate":
-//                                $normal = (string)$heartAverage->heartRate;
-//                                break;
-//                            case "Exertive Heart Rate":
-//                                $exertive = (string)$heartAverage->heartRate;
-//                                break;
-//                        }
-//                    }
-//                    if ($resting > 0 or $normal > 0 or $exertive > 0) {
-//                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array("AND" => array('user' => $user, 'date' => $targetDate)))) {
-//                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array(
-//                                'resting'  => $resting,
-//                                'normal'   => $normal,
-//                                'exertive' => $exertive
-//                            ), array("AND" => array('user' => $user, 'date' => $targetDate)));
-//                        } else {
-//                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", array(
-//                                'user'     => $user,
-//                                'date'     => $targetDate,
-//                                'resting'  => $resting,
-//                                'normal'   => $normal,
-//                                'exertive' => $exertive
-//                            ));
-//                        }
-//                    }
-//
-//                    if ($resting > 0 or $normal > 0 or $exertive > 0) {
-//                        $this->api_setLastCleanrun("heart", $user, new DateTime ($targetDate));
-//                    } else {
-//                        $this->api_setLastCleanrun("heart", $user, new DateTime ($targetDate), 7);
-//                        $this->api_setLastrun("heart", $user);
-//                    }
-//                }
-//            }
-//
-//            return $userBodyHeart;
-//        }
 
         /**
          * Download information about devices associated with the users account. This is then stored in the database
