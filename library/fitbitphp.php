@@ -1468,29 +1468,29 @@ class FitBitPHP
      * @param  String $dateStr
      * @return mixed SimpleXMLElement or the value encoded in json as an object
      */
-    public function getBloodPressure($date, $dateStr)
-    {
-        $headers = $this->getHeaders();
-        if (!isset($dateStr)) {
-            $dateStr = $date->format('Y-m-d');
-        }
-        try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/bp/date/" . $dateStr . "." . $this->responseFormat, null, OAUTH_HTTP_METHOD_GET, $headers);
-        } catch (Exception $E) {
-        }
-        $response = $this->oauth->getLastResponse();
-        $responseInfo = $this->oauth->getLastResponseInfo();
-        if (!strcmp($responseInfo['http_code'], '200')) {
-            $response = $this->parseResponse($response);
-
-            if ($response)
-                return $response;
-            else
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        } else {
-            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        }
-    }
+//    public function getBloodPressure($date, $dateStr)
+//    {
+//        $headers = $this->getHeaders();
+//        if (!isset($dateStr)) {
+//            $dateStr = $date->format('Y-m-d');
+//        }
+//        try {
+//            $this->oauth->fetch($this->baseApiUrl . "user/-/bp/date/" . $dateStr . "." . $this->responseFormat, null, OAUTH_HTTP_METHOD_GET, $headers);
+//        } catch (Exception $E) {
+//        }
+//        $response = $this->oauth->getLastResponse();
+//        $responseInfo = $this->oauth->getLastResponseInfo();
+//        if (!strcmp($responseInfo['http_code'], '200')) {
+//            $response = $this->parseResponse($response);
+//
+//            if ($response)
+//                return $response;
+//            else
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        } else {
+//            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        }
+//    }
 
 
     /**
@@ -1503,39 +1503,39 @@ class FitBitPHP
      * @param DateTime $time Time of the measurement (set proper timezone, which could be fetched via getProfile)
      * @return mixed SimpleXMLElement or the value encoded in json as an object
      */
-    public function logBloodPressure($date, $systolic, $diastolic, $time = null)
-    {
-        $headers = $this->getHeaders();
-        $parameters = array();
-        $parameters['date'] = $date->format('Y-m-d');
-        $parameters['systolic'] = $systolic;
-        $parameters['diastolic'] = $diastolic;
-        if (isset($time))
-            $parameters['time'] = $time->format('H:i');
-
-        try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/bp." . $this->responseFormat, $parameters,
-                                OAUTH_HTTP_METHOD_POST, $headers);
-        } catch (Exception $E) {
-        }
-        $response = $this->oauth->getLastResponse();
-        $responseInfo = $this->oauth->getLastResponseInfo();
-        if (!strcmp($responseInfo['http_code'], '201')) {
-            $response = $this->parseResponse($response);
-
-            if ($response)
-                return $response;
-            else
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        } else {
-            $response = $this->parseResponse($response);
-
-            if (!$response)
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-            else
-                throw new FitBitException($responseInfo['http_code'], $response->message, 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        }
-    }
+//    public function logBloodPressure($date, $systolic, $diastolic, $time = null)
+//    {
+//        $headers = $this->getHeaders();
+//        $parameters = array();
+//        $parameters['date'] = $date->format('Y-m-d');
+//        $parameters['systolic'] = $systolic;
+//        $parameters['diastolic'] = $diastolic;
+//        if (isset($time))
+//            $parameters['time'] = $time->format('H:i');
+//
+//        try {
+//            $this->oauth->fetch($this->baseApiUrl . "user/-/bp." . $this->responseFormat, $parameters,
+//                                OAUTH_HTTP_METHOD_POST, $headers);
+//        } catch (Exception $E) {
+//        }
+//        $response = $this->oauth->getLastResponse();
+//        $responseInfo = $this->oauth->getLastResponseInfo();
+//        if (!strcmp($responseInfo['http_code'], '201')) {
+//            $response = $this->parseResponse($response);
+//
+//            if ($response)
+//                return $response;
+//            else
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        } else {
+//            $response = $this->parseResponse($response);
+//
+//            if (!$response)
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//            else
+//                throw new FitBitException($responseInfo['http_code'], $response->message, 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        }
+//    }
 
 
     /**
@@ -1545,21 +1545,21 @@ class FitBitPHP
      * @param string $id Blood pressure log id
      * @return bool
      */
-    public function deleteBloodPressure($id)
-    {
-        $headers = $this->getHeaders();
-        try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/bp/" . $id . ".xml", null,
-                                OAUTH_HTTP_METHOD_DELETE, $headers);
-        } catch (Exception $E) {
-        }
-        $responseInfo = $this->oauth->getLastResponseInfo();
-        if (!strcmp($responseInfo['http_code'], '204')) {
-            return true;
-        } else {
-            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        }
-    }
+//    public function deleteBloodPressure($id)
+//    {
+//        $headers = $this->getHeaders();
+//        try {
+//            $this->oauth->fetch($this->baseApiUrl . "user/-/bp/" . $id . ".xml", null,
+//                                OAUTH_HTTP_METHOD_DELETE, $headers);
+//        } catch (Exception $E) {
+//        }
+//        $responseInfo = $this->oauth->getLastResponseInfo();
+//        if (!strcmp($responseInfo['http_code'], '204')) {
+//            return true;
+//        } else {
+//            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        }
+//    }
 
 
     /**
@@ -1685,39 +1685,39 @@ class FitBitPHP
      * @param DateTime $time Time of the measurement (set proper timezone, which could be fetched via getProfile)
      * @return mixed SimpleXMLElement or the value encoded in json as an object
      */
-    public function logHeartRate($date, $tracker, $heartRate, $time = null)
-    {
-        $headers = $this->getHeaders();
-        $parameters = array();
-        $parameters['date'] = $date->format('Y-m-d');
-        $parameters['tracker'] = $tracker;
-        $parameters['heartRate'] = $heartRate;
-        if (isset($time))
-            $parameters['time'] = $time->format('H:i');
-
-        try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/heart." . $this->responseFormat, $parameters,
-                                OAUTH_HTTP_METHOD_POST, $headers);
-        } catch (Exception $E) {
-        }
-        $response = $this->oauth->getLastResponse();
-        $responseInfo = $this->oauth->getLastResponseInfo();
-        if (!strcmp($responseInfo['http_code'], '201')) {
-            $response = $this->parseResponse($response);
-
-            if ($response)
-                return $response;
-            else
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        } else {
-            $response = $this->parseResponse($response);
-
-            if (!$response)
-                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-            else
-                throw new FitBitException($responseInfo['http_code'], $response->message, 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        }
-    }
+//    public function logHeartRate($date, $tracker, $heartRate, $time = null)
+//    {
+//        $headers = $this->getHeaders();
+//        $parameters = array();
+//        $parameters['date'] = $date->format('Y-m-d');
+//        $parameters['tracker'] = $tracker;
+//        $parameters['heartRate'] = $heartRate;
+//        if (isset($time))
+//            $parameters['time'] = $time->format('H:i');
+//
+//        try {
+//            $this->oauth->fetch($this->baseApiUrl . "user/-/heart." . $this->responseFormat, $parameters,
+//                                OAUTH_HTTP_METHOD_POST, $headers);
+//        } catch (Exception $E) {
+//        }
+//        $response = $this->oauth->getLastResponse();
+//        $responseInfo = $this->oauth->getLastResponseInfo();
+//        if (!strcmp($responseInfo['http_code'], '201')) {
+//            $response = $this->parseResponse($response);
+//
+//            if ($response)
+//                return $response;
+//            else
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        } else {
+//            $response = $this->parseResponse($response);
+//
+//            if (!$response)
+//                throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//            else
+//                throw new FitBitException($responseInfo['http_code'], $response->message, 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        }
+//    }
 
 
     /**
@@ -1727,21 +1727,21 @@ class FitBitPHP
      * @param string $id Heart rate log id
      * @return bool
      */
-    public function deleteHeartRate($id)
-    {
-        $headers = $this->getHeaders();
-        try {
-            $this->oauth->fetch($this->baseApiUrl . "user/-/heart/" . $id . ".xml", null,
-                                OAUTH_HTTP_METHOD_DELETE, $headers);
-        } catch (Exception $E) {
-        }
-        $responseInfo = $this->oauth->getLastResponseInfo();
-        if (!strcmp($responseInfo['http_code'], '204')) {
-            return true;
-        } else {
-            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
-        }
-    }
+//    public function deleteHeartRate($id)
+//    {
+//        $headers = $this->getHeaders();
+//        try {
+//            $this->oauth->fetch($this->baseApiUrl . "user/-/heart/" . $id . ".xml", null,
+//                                OAUTH_HTTP_METHOD_DELETE, $headers);
+//        } catch (Exception $E) {
+//        }
+//        $responseInfo = $this->oauth->getLastResponseInfo();
+//        if (!strcmp($responseInfo['http_code'], '204')) {
+//            return true;
+//        } else {
+//            throw new FitBitException($responseInfo['http_code'], 'Fitbit request failed. Code: ' . $responseInfo['http_code']);
+//        }
+//    }
 
 
     /**
