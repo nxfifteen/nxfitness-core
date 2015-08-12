@@ -731,26 +731,19 @@
 
                     if (!isset($userBodyLog->body->bmi) or $userBodyLog->body->bmi == "0") {
                         nxr('  BMI unrecorded, reverting to previous record');
-                        $bmi = $this->getDBCurrentBody($user, "bmi");
-                        $fallback = TRUE;
+                        //$bmi = $this->getDBCurrentBody($user, "bmi");
+                        $bmi = "0.0";
                     } else {
                         $bmi = (float)$userBodyLog->body->bmi;
                     }
+
 
                     $db_insetArray = array(
                         "weight"     => $weight,
                         "weightGoal" => $goalsweight,
                         "fat"        => $fat,
                         "fatGoal"    => $goalsfat,
-                        "bmi"        => $bmi,
-                        "bicep"      => (String)$userBodyLog->body->bicep,
-                        "calf"       => (String)$userBodyLog->body->calf,
-                        "chest"      => (String)$userBodyLog->body->chest,
-                        "forearm"    => (String)$userBodyLog->body->forearm,
-                        "hips"       => (String)$userBodyLog->body->hips,
-                        "neck"       => (String)$userBodyLog->body->neck,
-                        "thigh"      => (String)$userBodyLog->body->thigh,
-                        "waist"      => (String)$userBodyLog->body->waist
+                        "bmi"        => $bmi
                     );
 
                     $lastWeight = $this->getDBCurrentBody($user, "weight");
