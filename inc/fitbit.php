@@ -729,9 +729,10 @@
                         $goalsfat = (float)$userBodyLog->goals->fat;
                     }
 
-                    $user_height = $this->getDatabase()->get($this->getSetting("db_prefix", NULL, FALSE) . "users", "height", array("fuid" => $user));
+                    $user_height = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "height", array("fuid" => $user));
                     if (is_numeric($user_height) AND $user_height > 0) {
-                        $bmi = $weight / ($user_height * $user_height);
+                        $user_height = $user_height / 100;
+                        $bmi = round($weight / ($user_height * $user_height), 2);
                     } else {
                         $bmi = "0.0";
                     }
