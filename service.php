@@ -2,12 +2,24 @@
     // JSon request format is :
     //[{"collectionType":"activities","date":"2015-03-06","ownerId":"269VLG","ownerType":"user","subscriptionId":"1"}]
 
+    if (!function_exists("nxr")) {
+        function nxr($msg)
+        {
+            //echo $msg . "\n";
+            $fh = fopen("/home/nxad/logs/fitbit.log", "a");
+            fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
+            fclose($fh);
+        }
+    }
+
     header('Cache-Control: no-cache, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
     header('Content-type: application/json');
 
     // read JSon input
     $data = json_decode(file_get_contents('php://input'));
+
+//    nxr(print_r($data, true));
 
     $logMsg = '';
 
@@ -78,15 +90,45 @@
                     }
                 }
             }
+        } else if (isset($data) and is_object($data)) {
+            require_once(dirname(__FILE__) . "/inc/app.php");
+            $fitbitApp = new NxFitbit();
+            if ($fitbitApp->isUser($data->ownerId)) {
+                nxr($data->ownerId . " is a valid user");
+                $api = $fitbitApp->getDatabase()->get($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users", "api", array("fuid" => $data->ownerId));
+                if (isset($api)) {
+                    if (hash('sha256', $api . date("Y-m-d H:i")) == $data->auth) {
+                        nxr(" Valid API Access Key");
+                        foreach ($data->unit as $unit) {
+                            nxr("  Recording " . $unit->key . " as " . $unit->value);
+                            $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "units", array(
+                                "user" => $data->ownerId,
+                                "unit" => $unit->key,
+                                "value" => $unit->value
+                            ));
+                        }
+                    } else {
+                        nxr(" Invalid API");
+                        nxr("  Expected: "
+                            . substr(hash('sha256', $api . date("Y-m-d H:i")), 0, 5)
+                            . "......................................................"
+                            . substr(hash('sha256', $api . date("Y-m-d H:i")), -5));
+                        nxr("  Received: " . $data->auth);
+                    }
+                } else {
+                    nxr(" No API Access");
+                }
+            }
         }
     } else {
         $logMsg .= "Could not authorise client IP";
     }
 
-    nxr("New API request: " . $logMsg);
+    if (isset($logMsg) && $logMsg != "") nxr("New API request: " . $logMsg);
 
     header('HTTP/1.0 204 No Content');
 
     function validate_client() {
         return TRUE;
     }
+
