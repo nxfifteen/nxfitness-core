@@ -5,11 +5,14 @@
     /**
      * @param $msg
      */
-    function nxr($msg) {
-        //echo $msg . "\n";
-        $fh = fopen("/home/nxad/logs/fitbit.log", "a");
-        fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
-        fclose($fh);
+    if (!function_exists("nxr")) {
+        function nxr($msg)
+        {
+            //echo $msg . "\n";
+            $fh = fopen("/home/nxad/logs/fitbit.log", "a");
+            fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
+            fclose($fh);
+        }
     }
 
     /**
