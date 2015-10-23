@@ -114,9 +114,13 @@
                             . "......................................................"
                             . substr(hash('sha256', $api . date("Y-m-d H:i")), -5));
                         nxr("  Received: " . $data->auth);
+                        echo date("Y-m-d H:i:s") . ":: Invalid API";
+                        die();
                     }
                 } else {
                     nxr(" No API Access");
+                    echo date("Y-m-d H:i:s") . ":: No API Access";
+                    die();
                 }
             }
         }
