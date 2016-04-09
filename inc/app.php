@@ -8,10 +8,15 @@
     if (!function_exists("nxr")) {
         function nxr($msg)
         {
-            //echo $msg . "\n";
-            $fh = fopen("/home/nxad/logs/fitbit.log", "a");
-            fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
-            fclose($fh);
+            if (is_writable(dirname(__FILE__) . "/../fitbit.log")) {
+                $fh = fopen(dirname(__FILE__) . "/../fitbit.log", "a");
+                fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
+                fclose($fh);
+            }
+
+            if (php_sapi_name() == "cli") {
+                echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
+            }
         }
     }
 
