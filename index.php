@@ -104,7 +104,6 @@
 
                 // Check again that this really is one of our users
                 if ($NxFitbit->isUser($resourceOwner->getId())) {
-                    //echo __FILE__ . " @" . __LINE__ . " ## All is well '".$resourceOwner->getId()."'<br />\n";
                     // Update the users new keys
                     $NxFitbit->setUserOAuthTokens($resourceOwner->getId(), $accessToken);
 
