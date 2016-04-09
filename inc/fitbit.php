@@ -207,6 +207,13 @@
                         }
                     }
 
+                    if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
+                        $pull = $this->pullBabelCaloriesGoals($user);
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
+                    }
+
                 } else {
                     nxr("User has not yet authenticated with Fitbit");
                 }
@@ -217,6 +224,89 @@
             } else {
                 return TRUE;
             }
+        }
+
+        /**
+         * @param $user
+         * @return mixed|null|SimpleXMLElement|string
+         */
+        private function pullBabelCaloriesGoals() {
+            $isAllowed = $this->isAllowed("goals_calories");
+            if (!is_numeric($isAllowed)) {
+                if ($this->api_isCooled("goals_calories")) {
+                    $userCaloriesGoals = $this->pullBabel('user/-/foods/log/goal.json', TRUE);
+
+                    if (isset($userCaloriesGoals)) {
+                        $userCaloriesGoals = simplexml_load_string($userCaloriesGoals->response);
+                        $fallback = FALSE;
+
+                        /** @noinspection PhpUndefinedFieldInspection */
+                        $usr_goals = $userCaloriesGoals->goals;
+                        /** @noinspection PhpUndefinedFieldInspection */
+                        $usr_foodplan = $userCaloriesGoals->foodPlan;
+
+                        if (empty($usr_goals->calories)) {
+                            $usr_goals_calories = 0;
+                            $fallback = TRUE;
+                        } else {
+                            $usr_goals_calories = (int)$usr_goals->calories;
+                        }
+
+                        if (empty($usr_foodplan->intensity)) {
+                            $usr_foodplan_intensity = "Unset";
+                            $fallback = TRUE;
+                        } else {
+                            $usr_foodplan_intensity = (string)$usr_foodplan->intensity;
+                        }
+
+                        $currentDate = new DateTime ('now');
+                        if (empty($usr_foodplan->estimatedDate)) {
+                            $usr_foodplan_estimatedDate = $currentDate->format("Y-m-d");
+                            $fallback = TRUE;
+                        } else {
+                            $usr_foodplan_estimatedDate = (string)$usr_foodplan->estimatedDate;
+                        }
+
+                        if (empty($usr_foodplan->personalized)) {
+                            $usr_foodplan_personalized = "false";
+                            $fallback = TRUE;
+                        } else {
+                            $usr_foodplan_personalized = (string)$usr_foodplan->personalized;
+                        }
+
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
+                                'calories'      => $usr_goals_calories,
+                                'intensity'     => $usr_foodplan_intensity,
+                                'estimatedDate' => $usr_foodplan_estimatedDate,
+                                'personalized'  => $usr_foodplan_personalized,
+                            ), array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))));
+                        } else {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
+                                'user'          => $this->getActiveUser(),
+                                'date'          => $currentDate->format("Y-m-d"),
+                                'calories'      => $usr_goals_calories,
+                                'intensity'     => $usr_foodplan_intensity,
+                                'estimatedDate' => $usr_foodplan_estimatedDate,
+                                'personalized'  => $usr_foodplan_personalized,
+                            ));
+                        }
+
+                        if ($fallback) {
+                            $this->api_setLastrun("goals_calories");
+                        } else {
+                            $this->api_setLastrun("goals_calories", NULL, TRUE);
+                        }
+                    }
+
+                    return $userCaloriesGoals;
+                } else {
+                    return "-143";
+                }
+            } else {
+                return $isAllowed;
+            }
+
         }
 
         /**
