@@ -171,27 +171,24 @@
                 // Check this user has valid access to the Fitbit AIP
                 if ($this->getAppClass()->valdidateOAuth($this->getAppClass()->getUserOAuthTokens($user, FALSE))) {
 
-                    // Check what the user is asking for is allowed
-                    // TODO: Removed this, since this will be a seperate AIP call in OAuth 2 I'm not sure its required - Fitbit will check its the right user after all
-                    /*nxr(" Pull User Check $user/" . $this->getLibrary()->getUser());
-                    if ($user != $this->getLibrary()->getUser()) {
-                        nxr("  Aborted $trigger request for $user as session user is " . $this->getLibrary()->getUser());
-                        return "-144";
-                    }*/
-
+                    // If we've asked for a complete update then don't abide by cooldown times
                     if ($trigger == "all") {
-                        // If we've asked for a complete update then don't abide by cooldown times
                         $this->forceSync = TRUE;
                     }
 
-                    // Update the users profile
+                    // PULL - users profile
                     if ($trigger == "all" || $trigger == "profile") {
-                        $isAllowed = $this->isAllowed("profile");
-                        if (!is_numeric($isAllowed)) {
-                            $pull = $this->pullBabelProfile();
-                            if ($this->isApiError($pull)) {
-                                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
-                            }
+                        $pull = $this->pullBabelProfile();
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
+                    }
+
+                    // PULL - Devices
+                    if ($trigger == "all" || $trigger == "devices") {
+                        $pull = $this->pullBabelDevices();
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
                     }
 
@@ -207,93 +204,158 @@
             }
         }
 
+        private function pullBabel($path, $returnObject = FALSE) {
+            try {
+                // Try to get an access token using the authorization code grant.
+                $accessToken = $this->getAccessToken();
+
+                $request = $this->getLibrary()->getAuthenticatedRequest('GET', FITBIT_COM . "/1/" . $path, $accessToken);
+                // Make the authenticated API request and get the response.
+                $response = $this->getLibrary()->getResponse($request);
+
+                // TODO: Debugging only
+                nxr(print_r($response, true));
+
+                if ($returnObject) {
+                    return json_decode(json_encode($response), FALSE);
+                } else {
+                    return $response;
+                }
+            } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+                // Failed to get the access token or user details.
+                nxr($e->getMessage());
+                die();
+            }
+        }
+
+        /**
+         * Download information about devices associated with the users account. This is then stored in the database
+         * @return mixed|null|SimpleXMLElement|string
+         */
+        private function pullBabelDevices() {
+            $isAllowed = $this->isAllowed("devices");
+            if (!is_numeric($isAllowed)) {
+                if ($this->api_isCooled("devices")) {
+                    $userDevices = $this->pullBabel('user/-/devices.json', TRUE);
+
+                    foreach ($userDevices as $device) {
+                        if (isset($device->id) and $device->id != "") {
+                            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array("AND" => array("id" => (String)$device->id)))) {
+                                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
+                                    'lastSyncTime' => (String)$device->lastSyncTime,
+                                    'battery' => (String)$device->battery
+                                ), array("id" => (String)$device->id));
+                            } else {
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
+                                    'id' => (String)$device->id,
+                                    'deviceVersion' => (String)$device->deviceVersion,
+                                    'type' => (String)$device->type,
+                                    'lastSyncTime' => (String)$device->lastSyncTime,
+                                    'battery' => (String)$device->battery
+                                ));
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr", array(
+                                    'user' => $this->getActiveUser(),
+                                    'device' => (String)$device->id
+                                ));
+                            }
+
+                            if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
+                                nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
+                            }
+                        }
+                    }
+
+                    $this->api_setLastrun("devices", NULL, TRUE);
+
+                    return $userDevices;
+                } else {
+                    return "-143";
+                }
+            } else {
+                return $isAllowed;
+            }
+        }
+
         /**
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelProfile() {
-            if ($this->api_isCooled("profile")) {
-                try {
-                    // Try to get an access token using the authorization code grant.
-                    $accessToken = $this->getAccessToken();
+            $isAllowed = $this->isAllowed("profile");
+            if (!is_numeric($isAllowed)) {
+                if ($this->api_isCooled("profile")) {
+                    $userProfile = $this->pullBabel('user/-/profile.json');
+                    $userProfile = $userProfile['user'];
 
-                    $request = $this->getLibrary()->getAuthenticatedRequest('GET', FITBIT_COM . '/1/user/-/profile.json', $accessToken);
-                    // Make the authenticated API request and get the response.
-                    $userProfile = $this->getLibrary()->getResponse($request);
-                } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
-                    // Failed to get the access token or user details.
-                    nxr($e->getMessage());
-                    die();
+                    if (!isset($userProfile['height'])) {
+                        $userProfile['height'] = NULL;
+                    }
+                    if (!isset($userProfile['strideLengthRunning'])) {
+                        $userProfile['strideLengthRunning'] = NULL;
+                    }
+                    if (!isset($userProfile['strideLengthWalking'])) {
+                        $userProfile['strideLengthWalking'] = NULL;
+                    }
+                    if (!isset($userProfile['city'])) {
+                        $userProfile['city'] = NULL;
+                    }
+                    if (!isset($userProfile['country'])) {
+                        $userProfile['country'] = NULL;
+                    }
+
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                        "avatar"         => (String)$userProfile['avatar150'],
+                        "city"           => (String)$userProfile['city'],
+                        "country"        => (String)$userProfile['country'],
+                        "name"           => (String)$userProfile['fullName'],
+                        "gender"         => (String)$userProfile['gender'],
+                        "height"         => (String)$userProfile['height'],
+                        "seen"           => (String)$userProfile['memberSince'],
+                        "stride_running" => (String)$userProfile['strideLengthRunning'],
+                        "stride_walking" => (String)$userProfile['strideLengthWalking']
+                    ), array("fuid" => $this->getActiveUser()));
+
+                    if (!file_exists(dirname(__FILE__) . "/../images/avatars/" . $this->getActiveUser() . ".jpg")) {
+                        file_put_contents(dirname(__FILE__) . "/../images/avatars/" . $this->getActiveUser() . ".jpg", fopen((String)$userProfile['avatar150'], 'r'));
+                    }
+
+                    $this->api_setLastrun("profile", NULL, TRUE);
+
+                    //TODO Subscriptions
+    //                try {
+    //                    $subscriptions = $this->getLibrary()->getSubscriptions();
+    //                } catch (Exception $E) {
+    //                    /**
+    //                     * @var FitBitException $E
+    //                     */
+    //                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+    //                    nxr(print_r($E, TRUE));
+    //                    die();
+    //                }
+    //
+    //                if (count($subscriptions->apiSubscriptions) == 0) {
+    //                    nxr(" $user is not subscribed to the site");
+    //                    try {
+    //                        $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'uid', array("fuid" => $user));
+    //                        $this->getLibrary()->addSubscription($user_db_id);
+    //                    } catch (Exception $E) {
+    //                        /**
+    //                         * @var FitBitException $E
+    //                         */
+    //                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
+    //                        nxr(print_r($E, TRUE));
+    //                        die();
+    //                    }
+    //                    nxr(" $user subscription confirmed with ID: $user_db_id");
+    //                } else {
+    //                    nxr(" $user subscription is still valid");
+    //                }
+
+                    return $userProfile;
+                } else {
+                    return "-143";
                 }
-
-                $userProfile = $userProfile['user'];
-
-                if (!isset($userProfile['height'])) {
-                    $userProfile['height'] = NULL;
-                }
-                if (!isset($userProfile['strideLengthRunning'])) {
-                    $userProfile['strideLengthRunning'] = NULL;
-                }
-                if (!isset($userProfile['strideLengthWalking'])) {
-                    $userProfile['strideLengthWalking'] = NULL;
-                }
-                if (!isset($userProfile['city'])) {
-                    $userProfile['city'] = NULL;
-                }
-                if (!isset($userProfile['country'])) {
-                    $userProfile['country'] = NULL;
-                }
-
-                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
-                    "avatar"         => (String)$userProfile['avatar150'],
-                    "city"           => (String)$userProfile['city'],
-                    "country"        => (String)$userProfile['country'],
-                    "name"           => (String)$userProfile['fullName'],
-                    "gender"         => (String)$userProfile['gender'],
-                    "height"         => (String)$userProfile['height'],
-                    "seen"           => (String)$userProfile['memberSince'],
-                    "stride_running" => (String)$userProfile['strideLengthRunning'],
-                    "stride_walking" => (String)$userProfile['strideLengthWalking']
-                ), array("fuid" => $this->getActiveUser()));
-
-                if (!file_exists(dirname(__FILE__) . "/../images/avatars/" . $this->getActiveUser() . ".jpg")) {
-                    file_put_contents(dirname(__FILE__) . "/../images/avatars/" . $this->getActiveUser() . ".jpg", fopen((String)$userProfile['avatar150'], 'r'));
-                }
-
-                $this->api_setLastrun("profile", NULL, TRUE);
-
-                //TODO Subscriptions
-//                try {
-//                    $subscriptions = $this->getLibrary()->getSubscriptions();
-//                } catch (Exception $E) {
-//                    /**
-//                     * @var FitBitException $E
-//                     */
-//                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-//                    nxr(print_r($E, TRUE));
-//                    die();
-//                }
-//
-//                if (count($subscriptions->apiSubscriptions) == 0) {
-//                    nxr(" $user is not subscribed to the site");
-//                    try {
-//                        $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'uid', array("fuid" => $user));
-//                        $this->getLibrary()->addSubscription($user_db_id);
-//                    } catch (Exception $E) {
-//                        /**
-//                         * @var FitBitException $E
-//                         */
-//                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-//                        nxr(print_r($E, TRUE));
-//                        die();
-//                    }
-//                    nxr(" $user subscription confirmed with ID: $user_db_id");
-//                } else {
-//                    nxr(" $user subscription is still valid");
-//                }
-
-                return $userProfile;
             } else {
-                return "-143";
+                return $isAllowed;
             }
         }
 
