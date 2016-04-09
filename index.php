@@ -54,6 +54,6 @@
         }
 
     } else {
-        echo "Hi " . $fibit_id . ", unfortunitly this site is not open to public registration.";
+        echo "Hi " . $fibit_id . ", unfortunately this site is not open to public registration.";
     }
 
