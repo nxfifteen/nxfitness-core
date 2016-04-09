@@ -12,4 +12,5 @@ composer.phar
 composer.lock
 vendor
 composer.json
+/cache
 fitbitphp-library
