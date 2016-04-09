@@ -192,6 +192,14 @@
                         }
                     }
 
+                    // PULL - Badges
+                    if ($trigger == "all" || $trigger == "badges") {
+                        $pull = $this->pullBabelBadges();
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
+                    }
+
                 } else {
                     nxr("User has not yet authenticated with Fitbit");
                 }
@@ -204,6 +212,138 @@
             }
         }
 
+        /**
+         * Download information of badges the user has aquired
+         * @param $user
+         * @return mixed|null|SimpleXMLElement|string
+         */
+        private function pullBabelBadges() {
+            $isAllowed = $this->isAllowed("badges");
+            if (!is_numeric($isAllowed)) {
+                if ($this->api_isCooled("badges")) {
+                    $badgeFolder = dirname(__FILE__) . "/../images/badges/";
+                    if (file_exists($badgeFolder) AND is_writable($badgeFolder)) {
+
+                        $userBadges = $this->pullBabel('user/' . $this->getActiveUser() . '/badges.json', TRUE);
+
+                        if (isset($userBadges)) {
+                            foreach ($userBadges->badges as $badge) {
+
+                                if (is_array($badge)) {
+                                    $badge = json_decode(json_encode($badge), FALSE);
+                                }
+
+                                if ($badge->badgeType != "") {
+                                    /*
+                                    * Check to make sure, some badges do not include unit values
+                                    */
+                                    if (isset($badge->unit)) {
+                                        $unit = (String)$badge->unit;
+                                    } else {
+                                        $unit = "";
+                                    }
+
+                                    /*
+                                    * If the badge is not already in the database insert it
+                                    */
+                                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
+                                        "AND" => array(
+                                            "badgeType" => (String)$badge->badgeType,
+                                            "value"     => (String)$badge->value
+                                        )
+                                    ))
+                                    ) {
+                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
+                                            'badgeType'               => (String)$badge->badgeType,
+                                            'value'                   => (String)$badge->value,
+                                            'image'                   => basename((String)$badge->image50px),
+                                            'badgeGradientEndColor'   => (String)$badge->badgeGradientEndColor,
+                                            'badgeGradientStartColor' => (String)$badge->badgeGradientStartColor,
+                                            'earnedMessage'           => (String)$badge->earnedMessage,
+                                            'marketingDescription'    => (String)$badge->marketingDescription,
+                                            'name'                    => (String)$badge->name
+                                        ));
+                                    }
+
+                                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array("AND" => array(
+                                        "user"      => $this->getActiveUser(),
+                                        "badgeType" => (String)$badge->badgeType,
+                                        "value"     => (String)$badge->value
+                                    )))
+                                    ) {
+                                        nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") again");
+                                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                                            'dateTime'      => (String)$badge->dateTime,
+                                            'timesAchieved' => (String)$badge->timesAchieved
+                                        ), array("AND" => array(
+                                            "user"      => $this->getActiveUser(),
+                                            "badgeType" => (String)$badge->badgeType,
+                                            "value"     => (String)$badge->value
+                                        )));
+                                    } else {
+                                        nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") " . $badge->timesAchieved . " times.");
+                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                                            'user'          => $this->getActiveUser(),
+                                            'badgeType'     => (String)$badge->badgeType,
+                                            'dateTime'      => (String)$badge->dateTime,
+                                            'timesAchieved' => (String)$badge->timesAchieved,
+                                            'value'         => (String)$badge->value,
+                                            'unit'          => $unit
+                                        ));
+                                    }
+
+                                    $imageFileName = basename((String)$badge->image50px);
+                                    if (!file_exists($badgeFolder . "/" . $imageFileName)) {
+                                        file_put_contents($badgeFolder . "/" . $imageFileName, fopen((String)$badge->image50px, 'r'));
+                                    }
+
+                                    if (!file_exists($badgeFolder . "/75px")) {
+                                        mkdir($badgeFolder . "/75px", 0755, TRUE);
+                                    }
+                                    if (!file_exists($badgeFolder . "/75px/" . $imageFileName)) {
+                                        file_put_contents($badgeFolder . "/75px/" . $imageFileName, fopen((String)$badge->image75px, 'r'));
+                                    }
+
+                                    if (!file_exists($badgeFolder . "/100px")) {
+                                        mkdir($badgeFolder . "/100px", 0755, TRUE);
+                                    }
+                                    if (!file_exists($badgeFolder . "/100px/" . $imageFileName)) {
+                                        file_put_contents($badgeFolder . "/100px/" . $imageFileName, fopen((String)$badge->image100px, 'r'));
+                                    }
+
+                                    if (!file_exists($badgeFolder . "/125px")) {
+                                        mkdir($badgeFolder . "/125px", 0755, TRUE);
+                                    }
+                                    if (!file_exists($badgeFolder . "/125px/" . $imageFileName)) {
+                                        file_put_contents($badgeFolder . "/125px/" . $imageFileName, fopen((String)$badge->image125px, 'r'));
+                                    }
+
+                                    if (!file_exists($badgeFolder . "/300px")) {
+                                        mkdir($badgeFolder . "/300px", 0755, TRUE);
+                                    }
+                                    if (!file_exists($badgeFolder . "/300px/" . $imageFileName)) {
+                                        file_put_contents($badgeFolder . "/300px/" . $imageFileName, fopen((String)$badge->image300px, 'r'));
+                                    }
+                                }
+                            }
+                        }
+
+                        $this->api_setLastrun("badges", NULL, TRUE);
+
+                        return $userBadges;
+                    } else {
+                        nxr("Missing: $badgeFolder");
+
+                        return "-142";
+                    }
+                } else {
+                    return "-143";
+                }
+            } else {
+                return $isAllowed;
+            }
+        }
+
         private function pullBabel($path, $returnObject = FALSE) {
             try {
                 // Try to get an access token using the authorization code grant.
@@ -213,14 +353,13 @@
                 // Make the authenticated API request and get the response.
                 $response = $this->getLibrary()->getResponse($request);
 
+                if ($returnObject) {
+                    $response = json_decode(json_encode($response), FALSE);
+                }
+
                 // TODO: Debugging only
                 nxr(print_r($response, true));
-
-                if ($returnObject) {
-                    return json_decode(json_encode($response), FALSE);
-                } else {
-                    return $response;
-                }
+                return $response;
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
                 nxr($e->getMessage());
