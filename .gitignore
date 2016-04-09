@@ -7,6 +7,7 @@ images/badges/*.png
 images/badges/*/*.png
 images/avatars/*.jpg
 tcx/
+/fitbit.log
 composer.phar
 composer.lock
 vendor
