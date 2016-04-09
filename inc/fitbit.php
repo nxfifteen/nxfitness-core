@@ -200,6 +200,13 @@
                         }
                     }
 
+                    if ($trigger == "all" || $trigger == "leaderboard") {
+                        $pull = $this->pullBabelLeaderboard();
+                        if ($this->isApiError($pull)) {
+                            nxr("  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
+                    }
+
                 } else {
                     nxr("User has not yet authenticated with Fitbit");
                 }
@@ -210,6 +217,67 @@
             } else {
                 return TRUE;
             }
+        }
+
+        /**
+         * @param $user
+         * @return mixed|null|SimpleXMLElement|string
+         */
+        private function pullBabelLeaderboard() {
+            $isAllowed = $this->isAllowed("leaderboard");
+            if (!is_numeric($isAllowed)) {
+                if ($this->api_isCooled("leaderboard")) {
+                    $userFriends = $this->pullBabel('user/-/friends/leaderboard.json', TRUE);
+
+                    if (isset($userFriends)) {
+                        $userFriends = $userFriends->friends;
+
+                        if (count($userFriends) > 0) {
+                            $youRank = 0;
+                            $youDistance = 0;
+                            $lastSteps = 0;
+                            foreach ($userFriends as $friend) {
+                                $lifetime = floatval($friend->lifetime->steps);
+                                $steps = floatval($friend->summary->steps);
+
+                                if ($friend->user->encodedId == $this->getActiveUser()) {
+                                    $displayName = "* YOU * are";
+                                    if ($steps == 0) {
+                                        $youRank = count($userFriends);
+                                    } else {
+                                        $youRank = (String)$friend->rank->steps;
+                                    }
+                                    $youDistance = ($lastSteps - $steps);
+                                    if ($youDistance < 0) $youDistance = 0;
+                                } else {
+                                    $displayName = $friend->user->displayName . " is";
+                                    $lastSteps = $steps;
+                                }
+
+                                nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
+                            }
+
+                            nxr("  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
+
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                                'rank'     => $youRank,
+                                'friends'  => count($userFriends),
+                                'distance' => $youDistance
+                            ), array("fuid" => $this->getActiveUser()));
+
+                        }
+                    }
+
+                    $this->api_setLastrun("leaderboard", NULL, TRUE);
+
+                    return $userFriends;
+                } else {
+                    return "-143";
+                }
+            } else {
+                return $isAllowed;
+            }
+
         }
 
         /**
