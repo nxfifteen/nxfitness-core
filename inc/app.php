@@ -20,6 +20,8 @@
         }
     }
 
+    require_once(dirname(__FILE__) . "/../vendor/autoload.php");
+
     /**
      * NxFitbit
      * @version 0.0.1
