@@ -218,7 +218,7 @@
                     $currentDate = new DateTime ('now');
                     $interval = DateInterval::createFromDateString('1 day');
 
-                    
+
 
                     if ($trigger == "all") {
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
