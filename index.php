@@ -58,7 +58,7 @@
                 // Fetch the authorization URL from the provider; this returns the
                 // urlAuthorize option and generates and applies any necessary parameters
                 // (e.g. state).
-                $authorizationUrl = $helper->getAuthorizationUrl();
+                $authorizationUrl = $helper->getAuthorizationUrl(array('scope' => array('activity', 'heartrate', 'location', 'nutrition', 'profile', 'settings', 'sleep', 'social', 'weight')));
 
                 // Get the state generated for you and store it to the session.
                 $_SESSION['oauth2state'] = $helper->getState();
