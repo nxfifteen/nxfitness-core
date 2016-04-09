@@ -214,9 +214,22 @@
                         }
                     }
 
+                    // Set variables require bellow
+                    $currentDate = new DateTime ('now');
+                    $interval = DateInterval::createFromDateString('1 day');
+
+                    
+
+                    if ($trigger == "all") {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                            "lastrun" => $currentDate->format("Y-m-d H:i:s")
+                        ), array("fuid" => $this->getActiveUser()));
+                    }
+
                 } else {
                     nxr("User has not yet authenticated with Fitbit");
                 }
+
             }
 
             if ($return) {
