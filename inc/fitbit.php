@@ -208,7 +208,7 @@
                     }
 
                     if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
-                        $pull = $this->pullBabelCaloriesGoals($user);
+                        $pull = $this->pullBabelCaloriesGoals();
                         if ($this->isApiError($pull)) {
                             nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
@@ -237,7 +237,6 @@
                     $userCaloriesGoals = $this->pullBabel('user/-/foods/log/goal.json', TRUE);
 
                     if (isset($userCaloriesGoals)) {
-                        $userCaloriesGoals = simplexml_load_string($userCaloriesGoals->response);
                         $fallback = FALSE;
 
                         /** @noinspection PhpUndefinedFieldInspection */
