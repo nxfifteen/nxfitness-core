@@ -172,6 +172,27 @@ class fitbit
                 $currentDate = new DateTime ('now');
                 $interval = DateInterval::createFromDateString('1 day');
 
+                if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
+                    // Check we're allowed to pull these records here rather than at each loop
+                    $isAllowed = $this->isAllowed("water");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("water")) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("water"), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Water Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->pullBabelWater($dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
+                            }
+                        } else {
+                            nxr("  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
+                        }
+                    }
+                }
 
                 if ($trigger == "all") {
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
@@ -190,6 +211,38 @@ class fitbit
         } else {
             return TRUE;
         }
+    }
+
+    /**
+     * @param $targetDate
+     * @return mixed
+     */
+    private function pullBabelWater($targetDate) {
+        $targetDateTime = new DateTime ($targetDate);
+        $userWaterLog = $this->pullBabel('user/-/foods/log/water/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+
+        if (isset($userWaterLog)) {
+            if (isset($userWaterLog->summary->water)) {
+
+                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)))) {
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
+                        'id'     => $targetDateTime->format("U"),
+                        'liquid' => (String)$userWaterLog->summary->water
+                    ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)));
+                } else {
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
+                        'user'   => $this->getActiveUser(),
+                        'date'   => $targetDate,
+                        'id'     => $targetDateTime->format("U"),
+                        'liquid' => (String)$userWaterLog->summary->water
+                    ));
+                }
+
+                $this->api_setLastCleanrun("water", $targetDateTime);
+            }
+        }
+
+        return $userWaterLog;
     }
 
     /**
