@@ -1181,8 +1181,7 @@ class fitbit
                 $response = json_decode(json_encode($response), FALSE);
             }
 
-            // TODO: GitLab Issue #4 - Debug Payload Output
-            nxr(print_r($response, true));
+            //nxr(print_r($response, true));
             return $response;
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
             // Failed to get the access token or user details.
@@ -1215,12 +1214,11 @@ class fitbit
                 $response = json_decode(json_encode($response), FALSE);
             }
 
-            // TODO: GitLab Issue #4 - Debug Payload Output
-//            nxr(print_r("pushObject: " . $pushObject, true));
-//            nxr(print_r($request->getUri(), true));
-//            nxr(print_r($request->getHeaders(), true));
-//            nxr(print_r($request->getBody()->getContents(), true));
-            nxr(print_r($response, true));
+            //nxr(print_r("pushObject: " . $pushObject, true));
+            //nxr(print_r($request->getUri(), true));
+            //nxr(print_r($request->getHeaders(), true));
+            //nxr(print_r($request->getBody()->getContents(), true));
+            //nxr(print_r($response, true));
             return $response;
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
             // Failed to get the access token or user details.
