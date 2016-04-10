@@ -350,6 +350,222 @@ class fitbit
     }
 
     /**
+     * Launch TimeSeries requests
+     *
+     * Allowed types are:
+     *            'caloriesIn', 'water'
+     *
+     *            'caloriesOut', 'steps', 'distance', 'floors', 'elevation'
+     *            'minutesSedentary', 'minutesLightlyActive', 'minutesFairlyActive', 'minutesVeryActive',
+     *            'activityCalories',
+     *
+     *            'tracker_caloriesOut', 'tracker_steps', 'tracker_distance', 'tracker_floors', 'tracker_elevation'
+     *
+     *            'startTime', 'timeInBed', 'minutesAsleep', 'minutesAwake', 'awakeningsCount',
+     *            'minutesToFallAsleep', 'minutesAfterWakeup',
+     *            'efficiency'
+     *
+     *            'weight', 'bmi', 'fat'
+     *
+     * @param string $type
+     * @param  $baseDate DateTime or 'today', to_period
+     * @param  $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
+     * @return array
+     */
+    public function getTimeSeries($type, $baseDate, $to_period)
+    {
+        switch ($type) {
+            case 'caloriesIn':
+                $path = '/foods/log/caloriesIn';
+                break;
+            case 'water':
+                $path = '/foods/log/water';
+                break;
+
+            case 'caloriesOut':
+                $path = '/activities/log/calories';
+                break;
+            case 'steps':
+                $path = '/activities/log/steps';
+                break;
+            case 'distance':
+                $path = '/activities/log/distance';
+                break;
+            case 'floors':
+                $path = '/activities/log/floors';
+                break;
+            case 'elevation':
+                $path = '/activities/log/elevation';
+                break;
+            case 'minutesSedentary':
+                $path = '/activities/log/minutesSedentary';
+                break;
+            case 'minutesLightlyActive':
+                $path = '/activities/log/minutesLightlyActive';
+                break;
+            case 'minutesFairlyActive':
+                $path = '/activities/log/minutesFairlyActive';
+                break;
+            case 'minutesVeryActive':
+                $path = '/activities/log/minutesVeryActive';
+                break;
+            case 'activityCalories':
+                $path = '/activities/log/activityCalories';
+                break;
+
+            case 'tracker_caloriesOut':
+                $path = '/activities/log/tracker/calories';
+                break;
+            case 'tracker_steps':
+                $path = '/activities/log/tracker/steps';
+                break;
+            case 'tracker_distance':
+                $path = '/activities/log/tracker/distance';
+                break;
+            case 'tracker_floors':
+                $path = '/activities/log/tracker/floors';
+                break;
+            case 'tracker_elevation':
+                $path = '/activities/log/tracker/elevation';
+                break;
+
+            case 'startTime':
+                $path = '/sleep/startTime';
+                break;
+            case 'timeInBed':
+                $path = '/sleep/timeInBed';
+                break;
+            case 'minutesAsleep':
+                $path = '/sleep/minutesAsleep';
+                break;
+            case 'awakeningsCount':
+                $path = '/sleep/awakeningsCount';
+                break;
+            case 'minutesAwake':
+                $path = '/sleep/minutesAwake';
+                break;
+            case 'minutesToFallAsleep':
+                $path = '/sleep/minutesToFallAsleep';
+                break;
+            case 'minutesAfterWakeup':
+                $path = '/sleep/minutesAfterWakeup';
+                break;
+            case 'efficiency':
+                $path = '/sleep/efficiency';
+                break;
+
+
+            case 'weight':
+                $path = '/body/weight';
+                break;
+            case 'bmi':
+                $path = '/body/bmi';
+                break;
+            case 'fat':
+                $path = '/body/fat';
+                break;
+
+            default:
+                return false;
+        }
+
+        $response = $this->pullBabel('user/' . $this->getActiveUser() . $path . '/date/' . (is_string($baseDate) ? $baseDate : $baseDate->format('Y-m-d')) . "/" . (is_string($to_period) ? $to_period : $to_period->format('Y-m-d')) . '.json', TRUE);
+
+        switch ($type) {
+            case 'caloriesOut':
+                $objectKey = "activities-log-calories";
+                break;
+            default:
+                $objectKey = "activities-log-" . $type;
+                break;
+        }
+
+        $response = $response->$objectKey;
+
+        return $response;
+    }
+
+    /**
+     * @param $xml
+     * @return bool
+     */
+    public function isApiError($xml)
+    {
+        if (is_numeric($xml) AND $xml < 0) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    /**
+     * @param $user
+     * @param $trigger
+     * @return bool|string
+     */
+    public function isAllowed($trigger)
+    {
+        $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $this->getActiveUser() . '_' . $trigger, NULL);
+        if (!is_null($usrConfig) AND $usrConfig != 1) {
+            nxr(" Aborted $trigger disabled in user config");
+
+            return "-145";
+        }
+
+        $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
+        if ($sysConfig != 1) {
+            nxr(" Aborted $trigger disabled in system config");
+
+            return "-146";
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * @param $trigger
+     * @param $user
+     * @param bool $reset
+     * @return bool
+     */
+    public function api_isCooled($trigger, $reset = FALSE)
+    {
+        if ($this->forceSync) {
+            return TRUE;
+        } else {
+            $currentDate = new DateTime ('now');
+            $lastRun = $this->api_getCoolDown($trigger, $reset);
+
+            if ($lastRun->format("U") < $currentDate->format("U")) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+    }
+
+    /**
+     * @param boolean $forceSync
+     */
+    public function setForceSync($forceSync)
+    {
+        $this->forceSync = $forceSync;
+    }
+
+    /**
+     * @param $user
+     */
+    public function subscribeUser($user)
+    {
+        if ($this->getAppClass()->isUser($user)) {
+            if (!$this->isAuthorised()) {
+                $this->oAuthorise($user);
+            }
+            $this->getLibrary()->addSubscription(1);
+        }
+    }
+
+    /**
      * @param $trigger
      * @param bool $force
      * @return string|bool
@@ -559,144 +775,6 @@ class fitbit
         return TRUE;
     }
 
-
-
-    /**
-     * Launch TimeSeries requests
-     *
-     * Allowed types are:
-     *            'caloriesIn', 'water'
-     *
-     *            'caloriesOut', 'steps', 'distance', 'floors', 'elevation'
-     *            'minutesSedentary', 'minutesLightlyActive', 'minutesFairlyActive', 'minutesVeryActive',
-     *            'activityCalories',
-     *
-     *            'tracker_caloriesOut', 'tracker_steps', 'tracker_distance', 'tracker_floors', 'tracker_elevation'
-     *
-     *            'startTime', 'timeInBed', 'minutesAsleep', 'minutesAwake', 'awakeningsCount',
-     *            'minutesToFallAsleep', 'minutesAfterWakeup',
-     *            'efficiency'
-     *
-     *            'weight', 'bmi', 'fat'
-     *
-     * @param string $type
-     * @param  $baseDate DateTime or 'today', to_period
-     * @param  $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
-     * @return array
-     */
-    public function getTimeSeries($type, $baseDate, $to_period)
-    {
-        switch ($type) {
-            case 'caloriesIn':
-                $path = '/foods/log/caloriesIn';
-                break;
-            case 'water':
-                $path = '/foods/log/water';
-                break;
-
-            case 'caloriesOut':
-                $path = '/activities/log/calories';
-                break;
-            case 'steps':
-                $path = '/activities/log/steps';
-                break;
-            case 'distance':
-                $path = '/activities/log/distance';
-                break;
-            case 'floors':
-                $path = '/activities/log/floors';
-                break;
-            case 'elevation':
-                $path = '/activities/log/elevation';
-                break;
-            case 'minutesSedentary':
-                $path = '/activities/log/minutesSedentary';
-                break;
-            case 'minutesLightlyActive':
-                $path = '/activities/log/minutesLightlyActive';
-                break;
-            case 'minutesFairlyActive':
-                $path = '/activities/log/minutesFairlyActive';
-                break;
-            case 'minutesVeryActive':
-                $path = '/activities/log/minutesVeryActive';
-                break;
-            case 'activityCalories':
-                $path = '/activities/log/activityCalories';
-                break;
-
-            case 'tracker_caloriesOut':
-                $path = '/activities/log/tracker/calories';
-                break;
-            case 'tracker_steps':
-                $path = '/activities/log/tracker/steps';
-                break;
-            case 'tracker_distance':
-                $path = '/activities/log/tracker/distance';
-                break;
-            case 'tracker_floors':
-                $path = '/activities/log/tracker/floors';
-                break;
-            case 'tracker_elevation':
-                $path = '/activities/log/tracker/elevation';
-                break;
-
-            case 'startTime':
-                $path = '/sleep/startTime';
-                break;
-            case 'timeInBed':
-                $path = '/sleep/timeInBed';
-                break;
-            case 'minutesAsleep':
-                $path = '/sleep/minutesAsleep';
-                break;
-            case 'awakeningsCount':
-                $path = '/sleep/awakeningsCount';
-                break;
-            case 'minutesAwake':
-                $path = '/sleep/minutesAwake';
-                break;
-            case 'minutesToFallAsleep':
-                $path = '/sleep/minutesToFallAsleep';
-                break;
-            case 'minutesAfterWakeup':
-                $path = '/sleep/minutesAfterWakeup';
-                break;
-            case 'efficiency':
-                $path = '/sleep/efficiency';
-                break;
-
-
-            case 'weight':
-                $path = '/body/weight';
-                break;
-            case 'bmi':
-                $path = '/body/bmi';
-                break;
-            case 'fat':
-                $path = '/body/fat';
-                break;
-
-            default:
-                return false;
-        }
-
-        $response = $this->pullBabel('user/' . $this->getActiveUser() . $path . '/date/'.(is_string($baseDate) ? $baseDate : $baseDate->format('Y-m-d')) . "/" . (is_string($to_period) ? $to_period : $to_period->format('Y-m-d')) . '.json', TRUE);
-
-        switch ($type) {
-            case 'caloriesOut':
-                $objectKey = "activities-log-calories";
-                break;
-            default:
-                $objectKey = "activities-log-" . $type;
-                break;
-        }
-
-        $response = $response->$objectKey;
-
-        return $response;
-    }
-
     /**
      * @param $targetDate
      * @return bool
@@ -766,19 +844,19 @@ class fitbit
                 if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
                     $this->getAppClass()->addCronJob($this->getActiveUser(), "goals");
 
-                    if ($usr_goals->caloriesOut == "") 
+                    if ($usr_goals->caloriesOut == "")
                         $usr_goals->caloriesOut = -1;
-                    
-                    if ($usr_goals->distance == "") 
+
+                    if ($usr_goals->distance == "")
                         $usr_goals->distance = -1;
-                    
-                    if ($usr_goals->floors == "") 
+
+                    if ($usr_goals->floors == "")
                         $usr_goals->floors = -1;
-                    
-                    if ($usr_goals->activeMinutes == "") 
+
+                    if ($usr_goals->activeMinutes == "")
                         $usr_goals->activeMinutes = -1;
-                    
-                    if ($usr_goals->steps == "") 
+
+                    if ($usr_goals->steps == "")
                         $usr_goals->steps = -1;
 
                     $fallback = TRUE;
@@ -807,7 +885,7 @@ class fitbit
                 }
 
                 if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)))) {
-                    
+
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
                         'caloriesOut'   => (String)$usr_goals->caloriesOut,
                         'distance'      => (String)$usr_goals->distance,
@@ -817,7 +895,7 @@ class fitbit
                         'syncd'         => date("Y-m-d H:i:s")
                     ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)));
                 } else {
-                    
+
                     $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
                         'user'          => $this->getActiveUser(),
                         'date'          => $targetDate,
@@ -1061,86 +1139,6 @@ class fitbit
         }
 
         return $userWaterLog;
-    }
-
-    /**
-     * @param $xml
-     * @return bool
-     */
-    public function isApiError($xml)
-    {
-        if (is_numeric($xml) AND $xml < 0) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
-
-    /**
-     * @param $user
-     * @param $trigger
-     * @return bool|string
-     */
-    public function isAllowed($trigger)
-    {
-        $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $this->getActiveUser() . '_' . $trigger, NULL);
-        if (!is_null($usrConfig) AND $usrConfig != 1) {
-            nxr(" Aborted $trigger disabled in user config");
-
-            return "-145";
-        }
-
-        $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
-        if ($sysConfig != 1) {
-            nxr(" Aborted $trigger disabled in system config");
-
-            return "-146";
-        }
-
-        return TRUE;
-    }
-
-    /**
-     * @param $trigger
-     * @param $user
-     * @param bool $reset
-     * @return bool
-     */
-    public function api_isCooled($trigger, $reset = FALSE)
-    {
-        if ($this->forceSync) {
-            return TRUE;
-        } else {
-            $currentDate = new DateTime ('now');
-            $lastRun = $this->api_getCoolDown($trigger, $reset);
-
-            if ($lastRun->format("U") < $currentDate->format("U")) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
-    }
-
-    /**
-     * @param boolean $forceSync
-     */
-    public function setForceSync($forceSync)
-    {
-        $this->forceSync = $forceSync;
-    }
-
-    /**
-     * @param $user
-     */
-    public function subscribeUser($user)
-    {
-        if ($this->getAppClass()->isUser($user)) {
-            if (!$this->isAuthorised()) {
-                $this->oAuthorise($user);
-            }
-            $this->getLibrary()->addSubscription(1);
-        }
     }
 
     /**
