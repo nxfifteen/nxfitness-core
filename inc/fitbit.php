@@ -1666,15 +1666,12 @@ class fitbit
      */
     private function api_setLastrun($activity, $cron_delay = NULL, $clean = FALSE)
     {
-        //TODO: GitLab Issue #6 - getActiveUser
-        $username = $this->getActiveUser();
-
         if (is_null($cron_delay)) {
             $cron_delay_holder = 'nx_fitbit_ds_' . $activity . '_timeout';
             $cron_delay = $this->getAppClass()->getSetting($cron_delay_holder, 5400);
         }
 
-        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $username, "activity" => $activity)))) {
+        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $this->getActiveUser(), "activity" => $activity)))) {
             $fields = array(
                 "date" => date("Y-m-d H:i:s"),
                 "cooldown" => date("Y-m-d H:i:s", time() + $cron_delay)
@@ -1683,10 +1680,10 @@ class fitbit
                 $fields['lastrun'] = date("Y-m-d H:i:s");
             }
 
-            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user" => $username, "activity" => $activity)));
+            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user" => $this->getActiveUser(), "activity" => $activity)));
         } else {
             $fields = array(
-                "user" => $username,
+                "user" => $this->getActiveUser(),
                 "activity" => $activity,
                 "date" => date("Y-m-d H:i:s"),
                 "cooldown" => date("Y-m-d H:i:s", time() + $cron_delay)
@@ -1701,11 +1698,11 @@ class fitbit
         $cache_dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
         $cache_files = scandir($cache_dir);
         foreach ($cache_files as $file) {
-            if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file) && substr($file, 0, strlen($username) + 1) === "_" . $username) {
+            if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file) && substr($file, 0, strlen($this->getActiveUser()) + 1) === "_" . $this->getActiveUser()) {
                 $cacheNames = $this->getAppClass()->getSettings()->getRelatedCacheNames($activity);
                 if (count($cacheNames) > 0) {
                     foreach ($cacheNames as $cacheName) {
-                        if (substr($file, 0, strlen($username) + strlen($cacheName) + 2) === "_" . $username . "_" . $cacheName) {
+                        if (substr($file, 0, strlen($this->getActiveUser()) + strlen($cacheName) + 2) === "_" . $this->getActiveUser() . "_" . $cacheName) {
                             if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file)) {
                                 nxr("  $file cache file was deleted");
                                 unlink($cache_dir . $file);
@@ -1784,11 +1781,8 @@ class fitbit
      */
     private function api_getLastCleanrun($activity)
     {
-        //TODO: GitLab Issue #6 - getActiveUser
-        $user = $this->getActiveUser();
-
-        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
-            return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "lastrun", array("AND" => array("user" => $user, "activity" => $activity))));
+        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $this->getActiveUser(), "activity" => $activity)))) {
+            return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "lastrun", array("AND" => array("user" => $this->getActiveUser(), "activity" => $activity))));
         } else {
             return $this->user_getFirstSeen();
         }
@@ -1800,10 +1794,7 @@ class fitbit
      */
     private function user_getFirstSeen()
     {
-        //TODO: GitLab Issue #6 - getActiveUser
-        $user = $this->getActiveUser();
-
-        return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
+        return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $this->getActiveUser())));
     }
 
     /**
@@ -1814,23 +1805,20 @@ class fitbit
      */
     private function api_setLastCleanrun($activity, $date = NULL, $delay = 0)
     {
-        //TODO: GitLab Issue #6 - getActiveUser
-        $user = $this->getActiveUser();
-
         if (is_null($date)) {
             $date = new DateTime("now");
             nxr("Last run " . $date->format("Y-m-d H:i:s"));
         }
         if ($delay > 0) $date->modify('-' . $delay . ' day');
 
-        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
+        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $this->getActiveUser(), "activity" => $activity)))) {
             $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array(
                 'date' => date("Y-m-d H:i:s"),
                 'lastrun' => $date->format("Y-m-d H:i:s")
-            ), array("AND" => array("user" => $user, "activity" => $activity)));
+            ), array("AND" => array("user" => $this->getActiveUser(), "activity" => $activity)));
         } else {
             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array(
-                'user' => $user,
+                'user' => $this->getActiveUser(),
                 'activity' => $activity,
                 'date' => date("Y-m-d H:i:s"),
                 'lastrun' => $date->format("Y-m-d H:i:s")
@@ -1847,16 +1835,13 @@ class fitbit
      */
     private function thisWeeksGoal($string)
     {
-        //TODO: GitLab Issue #6 - getActiveUser
-        $user = $this->getActiveUser();
-
         $lastMonday = date('Y-m-d', strtotime('last sunday'));
         $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
         $plusTargetSteps = -1;
 
         if ($string == "steps") {
-            $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $user . "_length", '50');
-            $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $user, '03-31 last sunday'); // Default to last Sunday in March
+            $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_length", '50');
+            $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser(), '03-31 last sunday'); // Default to last Sunday in March
             $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
             $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
@@ -1864,13 +1849,13 @@ class fitbit
             if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
                 nxr("Challenge is running");
 
-                return $this->getAppClass()->getSetting("usr_challenger_" . $user . "_steps", '10000');
+                return $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_steps", '10000');
             } else {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_steps", 2);
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps", 2);
                 if ($improvment > 0) {
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                         array("AND" => array(
-                            "user" => $user,
+                            "user" => $this->getActiveUser(),
                             "date[>=]" => $oneWeek,
                             "date[<=]" => $lastMonday
                         ), "ORDER" => "date DESC", "LIMIT" => 7));
@@ -1882,19 +1867,19 @@ class fitbit
                     if ($totalSteps == 0) $totalSteps = 1;
 
                     $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000)) {
-                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_steps", 10) / 100), 0);
+                    if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000)) {
+                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps", 10) / 100), 0);
                     } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_steps_max", 10000);
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
                     }
                 }
             }
         } elseif ($string == "floors") {
-            $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_floors", 2);
+            $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 2);
             if ($improvment > 0) {
                 $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
                     array("AND" => array(
-                        "user" => $user,
+                        "user" => $this->getActiveUser(),
                         "date[>=]" => $oneWeek,
                         "date[<=]" => $lastMonday
                     ), "ORDER" => "date DESC", "LIMIT" => 7));
@@ -1906,15 +1891,15 @@ class fitbit
                 if ($totalSteps == 0) $totalSteps = 1;
 
                 $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10)) {
-                    $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $user . "_floors", 10) / 100), 0);
+                if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)) {
+                    $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 10) / 100), 0);
                 } else {
-                    $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_floors_max", 10);
+                    $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10);
                 }
             }
         } elseif ($string == "activeMinutes") {
-            $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $user . "_length", '50');
-            $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $user, '03-31 last sunday'); // Default to last Sunday in March
+            $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_length", '50');
+            $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser(), '03-31 last sunday'); // Default to last Sunday in March
             $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
             $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
@@ -1922,13 +1907,13 @@ class fitbit
             if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
                 nxr("Challenge is running");
 
-                return $this->getAppClass()->getSetting("usr_challenger_" . $user . "_activity", '30');
+                return $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_activity", '30');
             } else {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $user . "_active", 10);
+                $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active", 10);
                 if ($improvment > 0) {
                     $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
                         array("AND" => array(
-                            "user" => $user,
+                            "user" => $this->getActiveUser(),
                             "date[>=]" => $oneWeek,
                             "date[<=]" => $lastMonday
                         ), "ORDER" => "date DESC", "LIMIT" => 7));
@@ -1940,10 +1925,10 @@ class fitbit
                     if ($totalMinutes == 0) $totalMinutes = 1;
 
                     $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-                    if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30)) {
-                        $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $user . "_active", 10) / 100), 0);
+                    if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30)) {
+                        $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active", 10) / 100), 0);
                     } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $user . "_active_max", 30);
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30);
                     }
                 }
             }
