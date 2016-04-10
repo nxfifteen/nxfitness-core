@@ -1152,7 +1152,13 @@ class fitbit
         $this->activeUser = $activeUser;
     }
 
-    private function pullBabel($path, $returnObject = FALSE)
+    /**
+     * @param $path
+     * @param bool $returnObject
+     * @param bool $debugOutput
+     * @return mixed
+     */
+    private function pullBabel($path, $returnObject = FALSE, $debugOutput = FALSE)
     {
         try {
             // Try to get an access token using the authorization code grant.
@@ -1166,7 +1172,7 @@ class fitbit
                 $response = json_decode(json_encode($response), FALSE);
             }
 
-            //nxr(print_r($response, true));
+            if ($debugOutput) nxr(print_r($response, true));
             return $response;
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
             // Failed to get the access token or user details.
