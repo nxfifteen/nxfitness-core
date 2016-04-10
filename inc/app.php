@@ -8,12 +8,20 @@
     if (!function_exists("nxr")) {
         function nxr($msg)
         {
-            //echo $msg . "\n";
-            $fh = fopen("/home/nxad/logs/fitbit.log", "a");
-            fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
-            fclose($fh);
+            if (is_writable(dirname(__FILE__) . "/../fitbit.log")) {
+                $fh = fopen(dirname(__FILE__) . "/../fitbit.log", "a");
+                fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
+                fclose($fh);
+            }
+
+            if (php_sapi_name() == "cli") {
+                echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
+            }
         }
     }
+
+    // composer require djchen/oauth2-fitbit
+    require_once(dirname(__FILE__) . "/../vendor/autoload.php");
 
     /**
      * NxFitbit
@@ -178,11 +186,7 @@
         public function getFitbitapi($reset = FALSE) {
             if (is_null($this->fitbitapi) || $reset) {
                 require_once(dirname(__FILE__) . "/fitbit.php");
-                $this->fitbitapi = new fitbit($this,
-                    $this->getSetting("fitbit_consumer_key", NULL, FALSE),
-                    $this->getSetting("fitbit_consumer_secret", NULL, FALSE),
-                    $this->getSetting("fitbit_debug", FALSE, FALSE),
-                    $this->getSetting("fitbit_user_agent", NULL, FALSE));
+                $this->fitbitapi = new fitbit($this);
             }
 
             return $this->fitbitapi;
@@ -220,6 +224,41 @@
                 return TRUE;
             } else {
                 return FALSE;
+            }
+        }
+
+        /**
+         * @param string $user_fitbit_id
+         * @param League\OAuth2\Client\Token\AccessToken $accessToken
+         */
+        public function setUserOAuthTokens($user_fitbit_id, $accessToken) {
+            $this->getDatabase()->update($this->getSetting("db_prefix", FALSE) . "users",
+                array(
+                    'tkn_access' => $accessToken->getToken(),
+                    'tkn_refresh' => $accessToken->getRefreshToken(),
+                    'tkn_expires' => $accessToken->getExpires()
+                ), array("fuid" => $user_fitbit_id));
+        }
+
+        public function getUserOAuthTokens($user_fitbit_id, $validate = TRUE) {
+            $userArray = $this->getDatabase()->get($this->getSetting("db_prefix", NULL, FALSE) . "users", array('tkn_access', 'tkn_refresh', 'tkn_expires'), array("fuid" => $user_fitbit_id));
+            if (is_array($userArray)) {
+                if ($validate && $this->valdidateOAuth($userArray)) {
+                    return $userArray;
+                } else if (!$validate) {
+                    return $userArray;
+                }
+            }
+
+            return FALSE;
+        }
+
+        public function valdidateOAuth($userArray){
+            if ($userArray['tkn_access'] == "" || $userArray['tkn_refresh'] == "" || $userArray['tkn_expires'] == "") {
+                nxr("OAuth is not fully setup for this user");
+                return FALSE;
+            } else {
+                return TRUE;
             }
         }
 
