@@ -194,6 +194,27 @@ class fitbit
                     }
                 }
 
+                if ($trigger == "all" || $trigger == "sleep") {
+                    $isAllowed = $this->isAllowed("sleep");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("sleep")) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("sleep"), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->pullBabelSleep($dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
+                            }
+                        } else {
+                            nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
+                        }
+                    }
+                }
+
                 if ($trigger == "all") {
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
                         "lastrun" => $currentDate->format("Y-m-d H:i:s")
@@ -211,6 +232,56 @@ class fitbit
         } else {
             return TRUE;
         }
+    }
+
+    /**
+     * @param $targetDate
+     * @return mixed|null|SimpleXMLElement|string
+     */
+    private function pullBabelSleep($targetDate) {
+        $targetDateTime = new DateTime ($targetDate);
+        $userSleepLog = $this->pullBabel('user/' . $this->getActiveUser() . '/sleep/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+
+        if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
+            $loggedSleep = $userSleepLog->sleep[0];
+            if ($loggedSleep->logId != 0) {
+                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$loggedSleep->logId))) {
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
+                        "logId"               => (String)$loggedSleep->logId,
+                        'awakeningsCount'     => (String)$loggedSleep->awakeningsCount,
+                        'duration'            => (String)$loggedSleep->duration,
+                        'efficiency'          => (String)$loggedSleep->efficiency,
+                        'isMainSleep'         => (String)$loggedSleep->isMainSleep,
+                        'minutesAfterWakeup'  => (String)$loggedSleep->minutesAfterWakeup,
+                        'minutesAsleep'       => (String)$loggedSleep->minutesAsleep,
+                        'minutesAwake'        => (String)$loggedSleep->minutesAwake,
+                        'minutesToFallAsleep' => (String)$loggedSleep->minutesToFallAsleep,
+                        'startTime'           => (String)$loggedSleep->startTime,
+                        'timeInBed'           => (String)$loggedSleep->timeInBed
+                    ));
+                }
+
+                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array("AND" => array('user' => $this->getActiveUser(), 'sleeplog' => (String)$loggedSleep->logId)))) {
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array(
+                        'user'               => $this->getActiveUser(),
+                        'sleeplog'           => (String)$loggedSleep->logId,
+                        'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
+                        'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
+                        'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
+                    ));
+                }
+
+                $this->api_setLastCleanrun("sleep", new DateTime ($targetDate));
+
+                nxr("  Sleeplog " . $loggedSleep->logId . " recorded");
+            }
+        } else {
+            $this->api_setLastCleanrun("sleep", new DateTime ($targetDate), 7);
+            $this->api_setLastrun("sleep");
+        }
+
+        return $userSleepLog;
+
     }
 
     /**
