@@ -66,10 +66,15 @@
         }
 
         /**
-         * @param config $settings
+         * Get settings from config class
+         * @param $key
+         * @param null $default
+         * @param bool $query_db
+         * @return string
          */
-        private function setSettings($settings) {
-            $this->settings = $settings;
+        public function getSetting($key, $default = NULL, $query_db = TRUE)
+        {
+            return $this->getSettings()->get($key, $default, $query_db);
         }
 
         /**
@@ -77,38 +82,18 @@
          */
 
         /**
-         * @param medoo $database
-         */
-        private function setDatabase($database) {
-            $this->database = $database;
-        }
-
-        /**
-         * Get settings from config class
-         * @param $key
-         * @param null $default
-         * @param bool $query_db
-         * @return string
-         */
-        public function getSetting($key, $default = NULL, $query_db = TRUE) {
-            return $this->getSettings()->get($key, $default, $query_db);
-        }
-
-        /**
          * @return config
          */
-        public function getSettings() {
+        public function getSettings()
+        {
             return $this->settings;
         }
 
         /**
-         * Users
-         */
-
-        /**
          * @return medoo
          */
-        public function getDatabase() {
+        public function getDatabase()
+        {
             return $this->database;
         }
 
@@ -118,19 +103,20 @@
          * @param string $trigger
          * @param bool $force
          */
-        public function addCronJob($user_fitbit_id, $trigger, $force = FALSE) {
+        public function addCronJob($user_fitbit_id, $trigger, $force = FALSE)
+        {
             if ($force || $this->getSetting('nx_fitbit_ds_' . $trigger . '_cron', FALSE)) {
                 if (!$this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
                     "AND" => array(
-                        "user"    => $user_fitbit_id,
+                        "user" => $user_fitbit_id,
                         "trigger" => $trigger
                     )
                 ))
                 ) {
                     $this->getDatabase()->insert($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
-                        "user"    => $user_fitbit_id,
+                        "user" => $user_fitbit_id,
                         "trigger" => $trigger,
-                        "date"    => date("Y-m-d H:i:s")
+                        "date" => date("Y-m-d H:i:s")
                     ));
                 } else {
                     nxr("Cron job already present");
@@ -141,7 +127,7 @@
         }
 
         /**
-         * Settings and configuration
+         * Users
          */
 
         /**
@@ -149,15 +135,16 @@
          * @param $user_fitbit_id
          * @param $trigger
          */
-        public function delCronJob($user_fitbit_id, $trigger) {
+        public function delCronJob($user_fitbit_id, $trigger)
+        {
             if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array("AND" => array(
-                "user"    => $user_fitbit_id,
+                "user" => $user_fitbit_id,
                 "trigger" => $trigger
             )))
             ) {
                 if ($this->getDatabase()->delete($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
                     "AND" => array(
-                        "user"    => $user_fitbit_id,
+                        "user" => $user_fitbit_id,
                         "trigger" => $trigger
                     )
                 ))
@@ -175,15 +162,21 @@
          * Get list of pending cron jobs from database
          * @return array|bool
          */
-        public function getCronJobs() {
+        public function getCronJobs()
+        {
             return $this->getDatabase()->select($this->getSetting("db_prefix", NULL, FALSE) . "queue", "*", array("ORDER" => "date ASC"));
         }
+
+        /**
+         * Settings and configuration
+         */
 
         /**
          * @param bool $reset
          * @return fitbit
          */
-        public function getFitbitapi($reset = FALSE) {
+        public function getFitbitapi($reset = FALSE)
+        {
             if (is_null($this->fitbitapi) || $reset) {
                 require_once(dirname(__FILE__) . "/fitbit.php");
                 $this->fitbitapi = new fitbit($this);
@@ -195,19 +188,17 @@
         /**
          * @param fitbit $fitbitapi
          */
-        public function setFitbitapi($fitbitapi) {
+        public function setFitbitapi($fitbitapi)
+        {
             $this->fitbitapi = $fitbitapi;
         }
-
-        /**
-         * Database functions
-         */
 
         /**
          * @param $user_fitbit_id
          * @return int|array
          */
-        public function getUserCooldown($user_fitbit_id) {
+        public function getUserCooldown($user_fitbit_id)
+        {
             if ($this->isUser($user_fitbit_id)) {
                 return $this->getDatabase()->get($this->getSetting("db_prefix", NULL, FALSE) . "users", "cooldown", array("fuid" => $user_fitbit_id));
             } else {
@@ -219,13 +210,18 @@
          * @param string $user_fitbit_id
          * @return bool
          */
-        public function isUser($user_fitbit_id) {
+        public function isUser($user_fitbit_id)
+        {
             if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("fuid" => $user_fitbit_id))) {
                 return TRUE;
             } else {
                 return FALSE;
             }
         }
+
+        /**
+         * Database functions
+         */
 
         /**
          * @param string $user_fitbit_id
@@ -237,6 +233,16 @@
                     'tkn_access' => $accessToken->getToken(),
                     'tkn_refresh' => $accessToken->getRefreshToken(),
                     'tkn_expires' => $accessToken->getExpires()
+                ), array("fuid" => $user_fitbit_id));
+        }
+
+        public function delUserOAuthTokens($user_fitbit_id)
+        {
+            $this->getDatabase()->update($this->getSetting("db_prefix", FALSE) . "users",
+                array(
+                    'tkn_access' => '',
+                    'tkn_refresh' => '',
+                    'tkn_expires' => 0
                 ), array("fuid" => $user_fitbit_id));
         }
 
@@ -267,7 +273,8 @@
          * @param string $user_fitbit_password
          * @return bool
          */
-        public function isUserValid($user_fitbit_id, $user_fitbit_password) {
+        public function isUserValid($user_fitbit_id, $user_fitbit_password)
+        {
             if ($this->isUser($user_fitbit_id)) {
                 if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => $user_fitbit_password)))) {
                     return 1;
@@ -286,7 +293,8 @@
          * @param null $user
          * @return string
          */
-        public function lookupErrorCode($errCode, $user = NULL) {
+        public function lookupErrorCode($errCode, $user = NULL)
+        {
             switch ($errCode) {
                 case "-146":
                     return "Disabled in user config.";
@@ -318,7 +326,8 @@
          * @param $value
          * @return bool
          */
-        public function setSetting($key, $value) {
+        public function setSetting($key, $value)
+        {
             return $this->getSettings()->set($key, $value);
         }
 
@@ -327,31 +336,32 @@
          * @param null $key
          * @return array|null|string
          */
-        public function supportedApi($key = NULL) {
+        public function supportedApi($key = NULL)
+        {
             $database_array = array(
-                'all'                  => 'Everything',
-                'floors'               => 'Floors Climed',
-                'foods'                => 'Calorie Intake',
-                'badges'               => 'Badges',
-                'sleep'                => 'Sleep Records',
-                'body'                 => 'Weight & Body Fat Records',
-                'goals'                => 'Personal Goals',
-                'water'                => 'Water Intake',
-                'activities'           => 'Pedomitor & Activities',
-                'leaderboard'          => 'Friends',
-                'devices'              => 'Device Status',
-                'caloriesOut'          => 'Calories Out',
-                'goals_calories'       => 'Calorie Goals',
-                'minutesVeryActive'    => 'Minutes Very Active',
-                'minutesFairlyActive'  => 'Minutes Fairly Active',
+                'all' => 'Everything',
+                'floors' => 'Floors Climed',
+                'foods' => 'Calorie Intake',
+                'badges' => 'Badges',
+                'sleep' => 'Sleep Records',
+                'body' => 'Weight & Body Fat Records',
+                'goals' => 'Personal Goals',
+                'water' => 'Water Intake',
+                'activities' => 'Pedomitor & Activities',
+                'leaderboard' => 'Friends',
+                'devices' => 'Device Status',
+                'caloriesOut' => 'Calories Out',
+                'goals_calories' => 'Calorie Goals',
+                'minutesVeryActive' => 'Minutes Very Active',
+                'minutesFairlyActive' => 'Minutes Fairly Active',
                 'minutesLightlyActive' => 'Minutes Lightly Active',
-                'minutesSedentary'     => 'Minutes Sedentary',
-                'elevation'            => 'Elevation',
-                'distance'             => 'Distance Traveled',
-                'steps'                => 'Steps Taken',
-                'profile'              => 'User Profile',
-                'heart'                => 'Heart Rates',
-                'activity_log'         => 'Activities'
+                'minutesSedentary' => 'Minutes Sedentary',
+                'elevation' => 'Elevation',
+                'distance' => 'Distance Traveled',
+                'steps' => 'Steps Taken',
+                'profile' => 'User Profile',
+                'heart' => 'Heart Rates',
+                'activity_log' => 'Activities'
             );
             asort($database_array);
 
@@ -364,6 +374,22 @@
                     return $key;
                 }
             }
+        }
+
+        /**
+         * @param config $settings
+         */
+        private function setSettings($settings)
+        {
+            $this->settings = $settings;
+        }
+
+        /**
+         * @param medoo $database
+         */
+        private function setDatabase($database)
+        {
+            $this->database = $database;
         }
 
     }

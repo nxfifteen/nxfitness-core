@@ -556,6 +556,10 @@ class fitbit
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
             // Failed to get the access token or user details.
             nxr(" User validation test failed: " . print_r($e->getMessage(), TRUE));
+            if ($e->getCode() == 400) {
+                $this->getAppClass()->delUserOAuthTokens($_nx_fb_usr);
+            }
+
             return FALSE;
         }
     }
