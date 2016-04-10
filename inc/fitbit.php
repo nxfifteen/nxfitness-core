@@ -608,6 +608,14 @@ class fitbit
                             $lifetime = floatval($friend->lifetime->steps);
                             $steps = floatval($friend->summary->steps);
 
+                            if ($this->getActiveUser() == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                                if (!isset($allOwnersFriends)) {
+                                    $allOwnersFriends = $friend->user->encodedId;
+                                } else {
+                                    $allOwnersFriends = $allOwnersFriends . "," . $friend->user->encodedId;
+                                }
+                            }
+
                             if ($friend->user->encodedId == $this->getActiveUser()) {
                                 $displayName = "* YOU * are";
                                 if ($steps == 0) {
@@ -623,6 +631,10 @@ class fitbit
                             }
 
                             nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
+                        }
+
+                        if ($this->getActiveUser() == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE) && isset($allOwnersFriends)) {
+                            $this->getAppClass()->setSetting("owners_friends", $allOwnersFriends);
                         }
 
                         nxr("  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
