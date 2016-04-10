@@ -257,6 +257,28 @@ class fitbit
                     }
                 }
 
+                // TODO: GitLab #19 - There is not need for this to be looped here, data is only returned for current day not past days
+                if ($trigger == "all" || $trigger == "goals") {
+                    $isAllowed = $this->isAllowed("goals");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("goals")) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("goals"), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Goals Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->pullBabelUserGoals($dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
+                            }
+                        } else {
+                            nxr("  Error Goals: " . $this->getAppClass()->lookupErrorCode(-143));
+                        }
+                    }
+                }
+
                 if ($trigger == "all") {
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
                         "lastrun" => $currentDate->format("Y-m-d H:i:s")
@@ -274,6 +296,96 @@ class fitbit
         } else {
             return TRUE;
         }
+    }
+
+    /**
+     * @param $targetDate
+     * @return mixed
+     */
+    private function pullBabelUserGoals($targetDate) {
+        $userGoals = $this->pullBabel('user/-/activities/goals/daily.json', TRUE);
+
+        if (isset($userGoals)) {
+            $currentDate = new DateTime();
+            $usr_goals = $userGoals->goals;
+            if (is_object($usr_goals)) {
+                $fallback = FALSE;
+
+                if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
+                    $this->getAppClass()->addCronJob($this->getActiveUser(), "goals");
+
+                    if ($usr_goals->caloriesOut == "") 
+                        $usr_goals->caloriesOut = -1;
+                    
+                    if ($usr_goals->distance == "") 
+                        $usr_goals->distance = -1;
+                    
+                    if ($usr_goals->floors == "") 
+                        $usr_goals->floors = -1;
+                    
+                    if ($usr_goals->activeMinutes == "") 
+                        $usr_goals->activeMinutes = -1;
+                    
+                    if ($usr_goals->steps == "") 
+                        $usr_goals->steps = -1;
+
+                    $fallback = TRUE;
+                }
+
+                if ($currentDate->format("Y-m-d") == $targetDate) {
+                    if ($usr_goals->steps > 1) {
+                        $newGoal = $this->thisWeeksGoal("steps");
+                        if ($newGoal > 0 && $usr_goals->steps != $newGoal) {
+                            nxr("  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
+                            $this->pushBabel('user/-/activities/goals/daily.json', array('steps' => $newGoal));
+                        } elseif ($newGoal > 0) {
+                            nxr("  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
+                        }
+                    }
+
+                    if ($usr_goals->floors > 1) {
+                        $newGoal = $this->thisWeeksGoal("floors");
+                        if ($newGoal > 0 && $usr_goals->floors != $newGoal) {
+                            nxr("  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
+                            $this->pushBabel('user/-/activities/goals/daily.json', array('floors' => $newGoal));
+                        } elseif ($newGoal > 0) {
+                            nxr("  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal);
+                        }
+                    }
+                }
+
+                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)))) {
+                    
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
+                        'caloriesOut'   => (String)$usr_goals->caloriesOut,
+                        'distance'      => (String)$usr_goals->distance,
+                        'floors'        => (String)$usr_goals->floors,
+                        'activeMinutes' => (String)$usr_goals->activeMinutes,
+                        'steps'         => (String)$usr_goals->steps,
+                        'syncd'         => date("Y-m-d H:i:s")
+                    ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)));
+                } else {
+                    
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
+                        'user'          => $this->getActiveUser(),
+                        'date'          => $targetDate,
+                        'caloriesOut'   => (String)$usr_goals->caloriesOut,
+                        'distance'      => (String)$usr_goals->distance,
+                        'floors'        => (String)$usr_goals->floors,
+                        'activeMinutes' => (String)$usr_goals->activeMinutes,
+                        'steps'         => (String)$usr_goals->steps,
+                        'syncd'         => date("Y-m-d H:i:s")
+                    ));
+                }
+
+                if (!$fallback) $this->api_setLastCleanrun("goals", new DateTime($targetDate));
+            }
+
+            if ($currentDate->format("Y-m-d") == $targetDate)
+                $this->api_setLastrun("goals");
+        }
+
+        return $userGoals;
     }
 
     /**
@@ -618,6 +730,44 @@ class fitbit
             }
 
             // TODO: GitLab Issue #4 - Debug Payload Output
+            nxr(print_r($response, true));
+            return $response;
+        } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            // Failed to get the access token or user details.
+            nxr($e->getMessage());
+            die();
+        }
+    }
+
+    private function pushBabel($path, $pushObject, $returnObject = FALSE)
+    {
+        try {
+            // Try to get an access token using the authorization code grant.
+            $accessToken = $this->getAccessToken();
+
+            if (is_array($pushObject)) $pushObject = http_build_query($pushObject);
+
+            $request = $this->getLibrary()->getAuthenticatedRequest(OAUTH_HTTP_METHOD_POST, FITBIT_COM . "/1/" . $path, $accessToken,
+                array("headers" =>
+                    array(
+                        "Accept-Header" => "en_GB",
+                        "Content-Type" => "application/x-www-form-urlencoded"
+                    ),
+                    "body" => $pushObject
+                ));
+            // Make the authenticated API request and get the response.
+
+            $response = $this->getLibrary()->getResponse($request);
+
+            if ($returnObject) {
+                $response = json_decode(json_encode($response), FALSE);
+            }
+
+            // TODO: GitLab Issue #4 - Debug Payload Output
+//            nxr(print_r("pushObject: " . $pushObject, true));
+//            nxr(print_r($request->getUri(), true));
+//            nxr(print_r($request->getHeaders(), true));
+//            nxr(print_r($request->getBody()->getContents(), true));
             nxr(print_r($response, true));
             return $response;
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
@@ -981,9 +1131,9 @@ class fitbit
                 if (isset($userCaloriesGoals)) {
                     $fallback = FALSE;
 
-                    /** @noinspection PhpUndefinedFieldInspection */
+                    
                     $usr_goals = $userCaloriesGoals->goals;
-                    /** @noinspection PhpUndefinedFieldInspection */
+                    
                     $usr_foodplan = $userCaloriesGoals->foodPlan;
 
                     if (empty($usr_goals->calories)) {
@@ -1245,8 +1395,11 @@ class fitbit
      * @param $string
      * @return float|int|string
      */
-    private function thisWeeksGoal($user, $string)
+    private function thisWeeksGoal($string)
     {
+        //TODO: GitLab Issue #6 - getActiveUser
+        $user = $this->getActiveUser();
+
         $lastMonday = date('Y-m-d', strtotime('last sunday'));
         $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
         $plusTargetSteps = -1;
