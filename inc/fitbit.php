@@ -1893,7 +1893,9 @@ class fitbit
                     $newTargetSteps = round($totalSteps / count($dbSteps), 0);
                     if ($newTargetSteps >= $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000)) {
                         $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
-                    } elseif ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000)) {
+                    } else if ($newTargetSteps <= ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000)/2)) {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000) / 2;
+                    } else if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000)) {
                         $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps", 10) / 100), 0);
                     } else {
                         $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
@@ -1919,6 +1921,8 @@ class fitbit
                 $newTargetSteps = round($totalSteps / count($dbSteps), 0);
                 if ($newTargetSteps >= $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)) {
                     $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10);
+                } else if ($newTargetSteps <= ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)/2)) {
+                    $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)/2;
                 } else if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)) {
                     $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 10) / 100), 0);
                 } else {
@@ -1955,6 +1959,8 @@ class fitbit
                     $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
                     if ($newTargetActive >= $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30)) {
                         $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30);
+                    } else if ($newTargetActive <= ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30) / 2)) {
+                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30) / 2;
                     } else if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30)) {
                         $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active", 10) / 100), 0);
                     } else {
