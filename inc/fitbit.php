@@ -310,7 +310,7 @@ class fitbit
                 $response = json_decode(json_encode($response), FALSE);
             }
 
-            // TODO: Debugging only
+            // TODO: GitLab Issue #4 - Debug Payload Output
             nxr(print_r($response, true));
             return $response;
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
@@ -365,7 +365,7 @@ class fitbit
 
                 $this->api_setLastrun("profile", NULL, TRUE);
 
-                //TODO Subscriptions
+                //TODO GitLab Issue #5 - Subscriptions
                 //                try {
                 //                    $subscriptions = $this->getLibrary()->getSubscriptions();
                 //                } catch (Exception $E) {
@@ -747,7 +747,7 @@ class fitbit
      */
     private function api_setLastrun($activity, $cron_delay = NULL, $clean = FALSE)
     {
-        //TODO: getActiveUser
+        //TODO: GitLab Issue #6 - getActiveUser
         $username = $this->getActiveUser();
 
         if (is_null($cron_delay)) {
@@ -865,7 +865,7 @@ class fitbit
      */
     private function api_getLastCleanrun($activity)
     {
-        //TODO: getActiveUser
+        //TODO: GitLab Issue #6 - getActiveUser
         $user = $this->getActiveUser();
 
         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $user, "activity" => $activity)))) {
@@ -881,7 +881,7 @@ class fitbit
      */
     private function user_getFirstSeen()
     {
-        //TODO: getActiveUser
+        //TODO: GitLab Issue #6 - getActiveUser
         $user = $this->getActiveUser();
 
         return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "seen", array("fuid" => $user)));
@@ -895,7 +895,7 @@ class fitbit
      */
     private function api_setLastCleanrun($activity, $date = NULL, $delay = 0)
     {
-        //TODO: getActiveUser
+        //TODO: GitLab Issue #6 - getActiveUser
         $user = $this->getActiveUser();
 
         if (is_null($date)) {

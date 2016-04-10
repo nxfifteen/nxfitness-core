@@ -25,7 +25,7 @@
     // Split-up the input URL to workout whats required
     $inputURL = $_SERVER['REDIRECT_URL'];
 
-    // TODO: Removed include as it breaks the config class when building up the full app
+    // TODO: GitLab Issue #7 - Removed include as it breaks the config class when building up the full app
     /*require_once(dirname(__FILE__) . "/config.inc.php");
     if (array_key_exists("path", $config) && $config["path"] != "") {
         $sysPath = $config["path"];
