@@ -279,6 +279,7 @@ class fitbit
                     }
                 }
 
+                // TODO: GitLab # 20 - Very broken
                 if ($trigger == "all" || $trigger == "activity_log") {
                     $isAllowed = $this->isAllowed("activity_log");
                     if (!is_numeric($isAllowed)) {
@@ -300,6 +301,35 @@ class fitbit
                     }
                 }
 
+                $timeSeries = Array(
+                    "steps"                => "300",
+                    "distance"             => "300",
+                    "floors"               => "300",
+                    "elevation"            => "300",
+                    "minutesSedentary"     => "1800",
+                    "minutesLightlyActive" => "1800",
+                    "minutesFairlyActive"  => "1800",
+                    "minutesVeryActive"    => "1800",
+                    "caloriesOut"          => "1800");
+                if ($trigger == "all" || $trigger == "activities") {
+                    $isAllowed = $this->isAllowed("activities");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("activities")) {
+                            nxr(" Downloading Series Info");
+                            foreach ($timeSeries as $activity => $timeout) {
+                                $this->pullBabelTimeSeries($activity, TRUE);
+                            }
+                            if (isset($this->holdingVar)) unset($this->holdingVar);
+                            $this->api_setLastrun("activities", NULL, TRUE);
+                        }
+                    }
+                } else if (array_key_exists($trigger, $timeSeries)) {
+                    $isAllowed = $this->isAllowed($trigger);
+                    if (!is_numeric($isAllowed)) {
+                        $this->pullBabelTimeSeries($trigger);
+                    }
+                }
+
                 if ($trigger == "all") {
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
                         "lastrun" => $currentDate->format("Y-m-d H:i:s")
@@ -317,6 +347,354 @@ class fitbit
         } else {
             return TRUE;
         }
+    }
+
+    /**
+     * @param $trigger
+     * @param bool $force
+     * @return string|bool
+     */
+    private function pullBabelTimeSeries($trigger, $force = FALSE) {
+        if ($force || $this->api_isCooled($trigger)) {
+            $currentDate = new DateTime();
+
+            $lastrun = $this->api_getLastCleanrun($trigger);
+            $daysSince = (strtotime($currentDate->format("Y-m-d")) - strtotime($lastrun->format("l jS M Y"))) / (60 * 60 * 24);
+
+            nxr("  Last download: $daysSince days ago. ");
+
+            $allRecords = FALSE;
+            if ($daysSince < 8) {
+                $daysSince = "7d";
+            } elseif ($daysSince < 30) {
+                $daysSince = "30d";
+            } elseif ($daysSince < 90) {
+                $daysSince = "3m";
+            } elseif ($daysSince < 180) {
+                $daysSince = "6m";
+            } elseif ($daysSince < 364) {
+                $daysSince = "1y";
+            } else {
+                $allRecords = TRUE;
+                $daysSince = "1y";
+                $lastrun->add(new DateInterval('P360D'));
+            }
+
+            if ($allRecords) {
+                nxr("  Requesting $trigger data for $daysSince days");
+                $this->pullBabelTimeSeriesByTrigger($trigger, $daysSince, $lastrun);
+            } else {
+                nxr("  Requesting $trigger data for $daysSince days");
+                $this->pullBabelTimeSeriesByTrigger($trigger, $daysSince);
+                $this->api_setLastrun($trigger);
+            }
+        } else {
+            nxr("   Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143));
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * @param $trigger
+     * @param $daysSince
+     * @param DateTime|null $lastrun
+     * @return string|bool
+     */
+    private function pullBabelTimeSeriesByTrigger($trigger, $daysSince, $lastrun = NULL) {
+        switch ($trigger) {
+            case "steps":
+            case "distance":
+            case "floors":
+            case "elevation":
+            case "caloriesOut":
+                $this->pullBabelTimeSeriesForSteps($trigger, $daysSince, $lastrun);
+                break;
+            case "minutesVeryActive":
+            case "minutesSedentary":
+            case "minutesLightlyActive":
+            case "minutesFairlyActive":
+                $this->pullBabelTimeSeriesForActivity($trigger, $daysSince, $lastrun);
+                break;
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * @param $trigger
+     * @param $daysSince
+     * @param DateTime|null $lastrun
+     * @return string|bool
+     */
+    private function pullBabelTimeSeriesForSteps($trigger, $daysSince, $lastrun = NULL) {
+        if (!is_null($lastrun)) {
+            $currentDate = $lastrun;
+        } else {
+            $currentDate = new DateTime ('now');
+        }
+
+        nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records from ' . $currentDate->format("Y-m-d"));
+        $userTimeSeries = $this->getTimeSeries($trigger, $currentDate, $daysSince);
+
+        if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+            $FirstSeen = $this->user_getFirstSeen()->format("Y-m-d");
+            foreach ($userTimeSeries as $steps) {
+                if (strtotime($steps->dateTime) >= strtotime($FirstSeen)) {
+                    if ($steps->value == 0) {
+                        nxr("   No recorded data for " . $steps->dateTime);
+                    } else {
+                        nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
+                    }
+
+                    if ($steps->value > 0) $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$steps->dateTime)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                            $trigger => (String)$steps->value,
+                            'syncd'  => $currentDate->format('Y-m-d H:m:s')
+                        ), array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$steps->dateTime)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
+                            'user'   => $this->getActiveUser(),
+                            'date'   => (String)$steps->dateTime,
+                            $trigger => (String)$steps->value,
+                            'syncd'  => $currentDate->format('Y-m-d H:m:s')
+                        ));
+                    }
+                }
+            }
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * @param $trigger
+     * @param $daysSince
+     * @param DateTime|null $lastrun
+     * @return bool
+     */
+    private function pullBabelTimeSeriesForActivity($trigger, $daysSince, $lastrun = NULL) {
+
+        switch ($trigger) {
+            case "minutesVeryActive":
+                $databaseColumn = "veryactive";
+                break;
+            case "minutesSedentary":
+                $databaseColumn = "sedentary";
+                break;
+            case "minutesLightlyActive":
+                $databaseColumn = "lightlyactive";
+                break;
+            case "minutesFairlyActive":
+                $databaseColumn = "fairlyactive";
+                break;
+            default:
+                return FALSE;
+        }
+
+        if (!is_null($lastrun)) {
+            $currentDate = $lastrun;
+        } else {
+            $currentDate = new DateTime ('now');
+        }
+
+        nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records ' . $currentDate->format("Y-m-d"));
+        $userTimeSeries = $this->getTimeSeries($trigger, $currentDate, $daysSince);
+
+        if (isset($userTimeSeries) and is_array($userTimeSeries)) {
+            if (!isset($this->holdingVar) OR !array_key_exists("type", $this->holdingVar) OR !array_key_exists("data", $this->holdingVar) OR $this->holdingVar["type"] != "activities/goals/daily.json" OR $this->holdingVar["data"] == "") {
+                if (isset($this->holdingVar)) {
+                    unset($this->holdingVar);
+                }
+                $this->holdingVar = array("type" => "activities/goals/daily.json", "data" => "");
+                $this->holdingVar["data"] = $this->pullBabel('user/-/activities/goals/daily.json', TRUE);
+
+                if ($trigger == "minutesVeryActive") {
+                    $newGoal = $this->thisWeeksGoal("activeMinutes");
+                    if ($newGoal > 0 && $this->holdingVar["data"]->goals->activeMinutes != $newGoal) {
+                        nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
+                        $this->pushBabel('user/-/activities/goals/daily.json', array('activeMinutes' => $newGoal));
+                    } elseif ($newGoal > 0) {
+                        nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " which is right for this week goal of " . $newGoal);
+                    }
+                }
+            }
+
+            $FirstSeen = $this->user_getFirstSeen()->format("Y-m-d");
+            foreach ($userTimeSeries as $series) {
+                if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
+                    nxr("    " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
+
+                    if ($series->value > 0) $this->api_setLastCleanrun($trigger, new DateTime ($series->dateTime));
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$series->dateTime)))) {
+                        $dbStorage = array(
+                            $databaseColumn => (String)$series->value,
+                            'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                        );
+
+                        if ($currentDate->format("Y-m-d") == $series->dateTime) {
+                            $dbStorage['target'] = (String)$this->holdingVar["data"]->goals->activeMinutes;
+                        }
+
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage, array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$series->dateTime)));
+                    } else {
+                        $dbStorage = array(
+                            'user'          => $this->getActiveUser(),
+                            'date'          => (String)$series->dateTime,
+                            $databaseColumn => (String)$series->value,
+                            'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                        );
+                        if ($currentDate->format("Y-m-d") == $series->dateTime) {
+                            $dbStorage['target'] = (String)$this->holdingVar["data"]->goals->activeMinutes;
+                        }
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage);
+                    }
+                }
+            }
+        }
+
+        return TRUE;
+    }
+
+
+
+    /**
+     * Launch TimeSeries requests
+     *
+     * Allowed types are:
+     *            'caloriesIn', 'water'
+     *
+     *            'caloriesOut', 'steps', 'distance', 'floors', 'elevation'
+     *            'minutesSedentary', 'minutesLightlyActive', 'minutesFairlyActive', 'minutesVeryActive',
+     *            'activityCalories',
+     *
+     *            'tracker_caloriesOut', 'tracker_steps', 'tracker_distance', 'tracker_floors', 'tracker_elevation'
+     *
+     *            'startTime', 'timeInBed', 'minutesAsleep', 'minutesAwake', 'awakeningsCount',
+     *            'minutesToFallAsleep', 'minutesAfterWakeup',
+     *            'efficiency'
+     *
+     *            'weight', 'bmi', 'fat'
+     *
+     * @param string $type
+     * @param  $baseDate DateTime or 'today', to_period
+     * @param  $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
+     * @return array
+     */
+    public function getTimeSeries($type, $baseDate, $to_period)
+    {
+        switch ($type) {
+            case 'caloriesIn':
+                $path = '/foods/log/caloriesIn';
+                break;
+            case 'water':
+                $path = '/foods/log/water';
+                break;
+
+            case 'caloriesOut':
+                $path = '/activities/log/calories';
+                break;
+            case 'steps':
+                $path = '/activities/log/steps';
+                break;
+            case 'distance':
+                $path = '/activities/log/distance';
+                break;
+            case 'floors':
+                $path = '/activities/log/floors';
+                break;
+            case 'elevation':
+                $path = '/activities/log/elevation';
+                break;
+            case 'minutesSedentary':
+                $path = '/activities/log/minutesSedentary';
+                break;
+            case 'minutesLightlyActive':
+                $path = '/activities/log/minutesLightlyActive';
+                break;
+            case 'minutesFairlyActive':
+                $path = '/activities/log/minutesFairlyActive';
+                break;
+            case 'minutesVeryActive':
+                $path = '/activities/log/minutesVeryActive';
+                break;
+            case 'activityCalories':
+                $path = '/activities/log/activityCalories';
+                break;
+
+            case 'tracker_caloriesOut':
+                $path = '/activities/log/tracker/calories';
+                break;
+            case 'tracker_steps':
+                $path = '/activities/log/tracker/steps';
+                break;
+            case 'tracker_distance':
+                $path = '/activities/log/tracker/distance';
+                break;
+            case 'tracker_floors':
+                $path = '/activities/log/tracker/floors';
+                break;
+            case 'tracker_elevation':
+                $path = '/activities/log/tracker/elevation';
+                break;
+
+            case 'startTime':
+                $path = '/sleep/startTime';
+                break;
+            case 'timeInBed':
+                $path = '/sleep/timeInBed';
+                break;
+            case 'minutesAsleep':
+                $path = '/sleep/minutesAsleep';
+                break;
+            case 'awakeningsCount':
+                $path = '/sleep/awakeningsCount';
+                break;
+            case 'minutesAwake':
+                $path = '/sleep/minutesAwake';
+                break;
+            case 'minutesToFallAsleep':
+                $path = '/sleep/minutesToFallAsleep';
+                break;
+            case 'minutesAfterWakeup':
+                $path = '/sleep/minutesAfterWakeup';
+                break;
+            case 'efficiency':
+                $path = '/sleep/efficiency';
+                break;
+
+
+            case 'weight':
+                $path = '/body/weight';
+                break;
+            case 'bmi':
+                $path = '/body/bmi';
+                break;
+            case 'fat':
+                $path = '/body/fat';
+                break;
+
+            default:
+                return false;
+        }
+
+        $response = $this->pullBabel('user/' . $this->getActiveUser() . $path . '/date/'.(is_string($baseDate) ? $baseDate : $baseDate->format('Y-m-d')) . "/" . (is_string($to_period) ? $to_period : $to_period->format('Y-m-d')) . '.json', TRUE);
+
+        switch ($type) {
+            case 'caloriesOut':
+                $objectKey = "activities-log-calories";
+                break;
+            default:
+                $objectKey = "activities-log-" . $type;
+                break;
+        }
+
+        $response = $response->$objectKey;
+
+        return $response;
     }
 
     /**
