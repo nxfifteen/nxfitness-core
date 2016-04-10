@@ -84,7 +84,7 @@ class fitbit
 
     /**
      * @deprecated Use getLibrary() instead
-     * @return FitBitPHP
+     * @return djchen\OAuth2\Client\Provider\Fitbit
      */
     public function getFitbitapi()
     {
@@ -93,7 +93,7 @@ class fitbit
 
     /**
      * @deprecated Use setLibrary() instead
-     * @param FitBitPHP $fitbitapi
+     * @param djchen\OAuth2\Client\Provider\Fitbit $fitbitapi
      */
     public function setFitbitapi($fitbitapi)
     {
@@ -499,9 +499,9 @@ class fitbit
     }
 
     /**
-     * @param $user
      * @param $trigger
      * @return bool|string
+     * @internal param $user
      */
     public function isAllowed($trigger)
     {
@@ -524,9 +524,9 @@ class fitbit
 
     /**
      * @param $trigger
-     * @param $user
      * @param bool $reset
      * @return bool
+     * @internal param $user
      */
     public function api_isCooled($trigger, $reset = FALSE)
     {
@@ -550,19 +550,6 @@ class fitbit
     public function setForceSync($forceSync)
     {
         $this->forceSync = $forceSync;
-    }
-
-    /**
-     * @param $user
-     */
-    public function subscribeUser($user)
-    {
-        if ($this->getAppClass()->isUser($user)) {
-            if (!$this->isAuthorised()) {
-                $this->oAuthorise($user);
-            }
-            $this->getLibrary()->addSubscription(1);
-        }
     }
 
     /**
@@ -1384,8 +1371,8 @@ class fitbit
 
     /**
      * Download information of badges the user has aquired
-     * @param $user
      * @return mixed|null|SimpleXMLElement|string
+     * @internal param $user
      */
     private function pullBabelBadges()
     {
@@ -1516,8 +1503,8 @@ class fitbit
     }
 
     /**
-     * @param $user
      * @return mixed|null|SimpleXMLElement|string
+     * @internal param $user
      */
     private function pullBabelLeaderboard()
     {
@@ -1590,8 +1577,8 @@ class fitbit
     }
 
     /**
-     * @param $user
      * @return mixed|null|SimpleXMLElement|string
+     * @internal param $user
      */
     private function pullBabelCaloriesGoals()
     {
@@ -1682,9 +1669,9 @@ class fitbit
 
     /**
      * @param $activity
-     * @param $username
      * @param null $cron_delay
      * @param bool $clean
+     * @internal param $username
      */
     private function api_setLastrun($activity, $cron_delay = NULL, $clean = FALSE)
     {
@@ -1738,9 +1725,9 @@ class fitbit
 
     /**
      * @param $activity
-     * @param $username
      * @param bool $reset
      * @return DateTime
+     * @internal param $username
      */
     private function api_getCoolDown($activity, $reset = FALSE)
     {
@@ -1798,8 +1785,8 @@ class fitbit
 
     /**
      * @param $activity
-     * @param $user
      * @return DateTime
+     * @internal param $user
      */
     private function api_getLastCleanrun($activity)
     {
@@ -1811,8 +1798,8 @@ class fitbit
     }
 
     /**
-     * @param $user
      * @return DateTime
+     * @internal param $user
      */
     private function user_getFirstSeen()
     {
@@ -1821,9 +1808,9 @@ class fitbit
 
     /**
      * @param $activity
-     * @param $user
      * @param null $date
      * @param int $delay
+     * @internal param $user
      */
     private function api_setLastCleanrun($activity, $date = NULL, $delay = 0)
     {
@@ -1851,9 +1838,9 @@ class fitbit
     }
 
     /**
-     * @param $user
      * @param $string
      * @return float|int|string
+     * @internal param $user
      */
     private function thisWeeksGoal($string)
     {
