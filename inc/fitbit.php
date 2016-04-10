@@ -236,6 +236,27 @@ class fitbit
                     }
                 }
 
+                if ($trigger == "all" || $trigger == "foods") {
+                    $isAllowed = $this->isAllowed("foods");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("foods")) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("foods"), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->pullBabelMeals($dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
+                            }
+                        } else {
+                            nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
+                        }
+                    }
+                }
+
                 if ($trigger == "all") {
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
                         "lastrun" => $currentDate->format("Y-m-d H:i:s")
@@ -253,6 +274,50 @@ class fitbit
         } else {
             return TRUE;
         }
+    }
+
+    /**
+     * @param $targetDate
+     * @return mixed
+     */
+    private function pullBabelMeals($targetDate) {
+        $targetDateTime = new DateTime ($targetDate);
+        $userFoodLog = $this->pullBabel('user/' . $this->getActiveUser() . '/foods/log/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+
+        if (isset($userFoodLog)) {
+            if (count($userFoodLog->foods) > 0) {
+                foreach ($userFoodLog->foods as $meal) {
+                    nxr("  Logging meal " . $meal->loggedFood->name);
+
+                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
+                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
+                            'calories' => (String)$meal->nutritionalValues->calories,
+                            'carbs'    => (String)$meal->nutritionalValues->carbs,
+                            'fat'      => (String)$meal->nutritionalValues->fat,
+                            'fiber'    => (String)$meal->nutritionalValues->fiber,
+                            'protein'  => (String)$meal->nutritionalValues->protein,
+                            'sodium'   => (String)$meal->nutritionalValues->sodium
+                        ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)));
+                    } else {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
+                            'user'     => $this->getActiveUser(),
+                            'date'     => $targetDate,
+                            'meal'     => (String)$meal->loggedFood->name,
+                            'calories' => (String)$meal->nutritionalValues->calories,
+                            'carbs'    => (String)$meal->nutritionalValues->carbs,
+                            'fat'      => (String)$meal->nutritionalValues->fat,
+                            'fiber'    => (String)$meal->nutritionalValues->fiber,
+                            'protein'  => (String)$meal->nutritionalValues->protein,
+                            'sodium'   => (String)$meal->nutritionalValues->sodium
+                        ));
+                    }
+
+                    $this->api_setLastCleanrun("foods", $targetDateTime);
+                }
+            }
+        }
+
+        return $userFoodLog;
     }
 
     /**
