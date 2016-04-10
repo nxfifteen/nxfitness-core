@@ -1890,15 +1890,16 @@ class fitbit
                     }
                     if ($totalSteps == 0) $totalSteps = 1;
 
+                    $maxTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
                     $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($newTargetSteps >= $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000)) {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
-                    } else if ($newTargetSteps <= ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000)/2)) {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000) / 2;
-                    } else if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000)) {
+                    if ($newTargetSteps >= $maxTargetSteps) {
+                        $plusTargetSteps = $maxTargetSteps;
+                    } else if ($newTargetSteps <= ($maxTargetSteps / 2)) {
+                        $plusTargetSteps = $maxTargetSteps / 2;
+                    } else if ($newTargetSteps < $maxTargetSteps) {
                         $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps", 10) / 100), 0);
                     } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
+                        $plusTargetSteps = $maxTargetSteps;
                     }
                 }
             }
@@ -1918,15 +1919,16 @@ class fitbit
                 }
                 if ($totalSteps == 0) $totalSteps = 1;
 
+                $maxTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10);
                 $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                if ($newTargetSteps >= $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)) {
-                    $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10);
-                } else if ($newTargetSteps <= ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)/2)) {
-                    $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)/2;
-                } else if ($newTargetSteps < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10)) {
+                if ($newTargetSteps >= $maxTargetSteps) {
+                    $plusTargetSteps = $maxTargetSteps;
+                } else if ($newTargetSteps <= ($maxTargetSteps / 2)) {
+                    $plusTargetSteps = $maxTargetSteps/2;
+                } else if ($newTargetSteps < $maxTargetSteps) {
                     $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 10) / 100), 0);
                 } else {
-                    $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10);
+                    $plusTargetSteps = $maxTargetSteps;
                 }
             }
         } elseif ($string == "activeMinutes") {
@@ -1956,15 +1958,16 @@ class fitbit
                     }
                     if ($totalMinutes == 0) $totalMinutes = 1;
 
+                    $maxTargetActive = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30);
                     $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-                    if ($newTargetActive >= $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30)) {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30);
-                    } else if ($newTargetActive <= ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30) / 2)) {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30) / 2;
-                    } else if ($newTargetActive < $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30)) {
+                    if ($newTargetActive >= $maxTargetActive) {
+                        $plusTargetSteps = $maxTargetActive;
+                    } else if ($newTargetActive <= ($maxTargetActive / 2)) {
+                        $plusTargetSteps = $maxTargetActive / 2;
+                    } else if ($newTargetActive < $maxTargetActive) {
                         $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active", 10) / 100), 0);
                     } else {
-                        $plusTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30);
+                        $plusTargetSteps = $maxTargetActive;
                     }
                 }
             }
