@@ -344,7 +344,7 @@ class fitbit
                     $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray);
                 }
 
-                if (!$fallback) $this->api_setLastCleanrun("body", $this->getActiveUser(), new DateTime ($targetDate));
+                if (!$fallback) $this->api_setLastCleanrun("body", new DateTime ($targetDate));
             }
         }
 
