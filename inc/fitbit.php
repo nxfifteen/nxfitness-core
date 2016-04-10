@@ -1190,6 +1190,50 @@ class fitbit
         }
     }
 
+    /**
+     * Add subscription
+     *
+     * @param string $id Subscription Id
+     * @param string $path Subscription resource path (beginning with slash). Omit to subscribe to all user updates.
+     * @param string $subscriberId
+     * @return mixed
+     */
+    private function pushBabelSubscription($id, $path = null, $subscriberId = null)
+    {
+        try {
+            // Try to get an access token using the authorization code grant.
+            $accessToken = $this->getAccessToken();
+
+            $userHeaders = array(
+                "Accept-Header" => "en_GB",
+                "Content-Type" => "application/x-www-form-urlencoded"
+            );
+            if ($subscriberId)
+                $userHeaders['X-Fitbit-Subscriber-Id'] = $subscriberId;
+
+            if (isset($path))
+                $path = '/' . $path;
+            else
+                $path = '';
+
+            $request = $this->getLibrary()->getAuthenticatedRequest(OAUTH_HTTP_METHOD_POST, FITBIT_COM . "/1/user/-" . $path . "/apiSubscriptions/" . $id . ".json" , $accessToken, array("headers" => $userHeaders));
+            // Make the authenticated API request and get the response.
+
+            $response = $this->getLibrary()->getResponse($request);
+            $response = json_decode(json_encode($response), FALSE);
+
+            //nxr(print_r($request->getUri(), true));
+            //nxr(print_r($request->getHeaders(), true));
+            //nxr(print_r($request->getBody()->getContents(), true));
+            //nxr(print_r($response, true));
+            return $response;
+        } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            // Failed to get the access token or user details.
+            nxr($e->getMessage());
+            die();
+        }
+    }
+
     private function pushBabel($path, $pushObject, $returnObject = FALSE)
     {
         try {
@@ -1272,35 +1316,15 @@ class fitbit
 
                 $this->api_setLastrun("profile", NULL, TRUE);
 
-                //TODO GitLab Issue #5 - Subscriptions
-                //                try {
-                //                    $subscriptions = $this->getLibrary()->getSubscriptions();
-                //                } catch (Exception $E) {
-                //                    /**
-                //                     * @var FitBitException $E
-                //                     */
-                //                    nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                //                    nxr(print_r($E, TRUE));
-                //                    die();
-                //                }
-                //
-                //                if (count($subscriptions->apiSubscriptions) == 0) {
-                //                    nxr(" $user is not subscribed to the site");
-                //                    try {
-                //                        $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'uid', array("fuid" => $user));
-                //                        $this->getLibrary()->addSubscription($user_db_id);
-                //                    } catch (Exception $E) {
-                //                        /**
-                //                         * @var FitBitException $E
-                //                         */
-                //                        nxr("Error code (" . $E->httpcode . "): " . $this->getAppClass()->lookupErrorCode($E->httpcode, $user));
-                //                        nxr(print_r($E, TRUE));
-                //                        die();
-                //                    }
-                //                    nxr(" $user subscription confirmed with ID: $user_db_id");
-                //                } else {
-                //                    nxr(" $user subscription is still valid");
-                //                }
+                $subscriptions = $this->pullBabel('user/-/apiSubscriptions.json', TRUE);
+                if (count($subscriptions->apiSubscriptions) == 0) {
+                    nxr(" " . $this->getActiveUser() . " is not subscribed to the site");
+                    $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", 'uid', array("fuid" => $this->getActiveUser()));
+                    $this->pushBabelSubscription($user_db_id);
+                    nxr(" " . $this->getActiveUser() . " subscription confirmed with ID: $user_db_id");
+                } else {
+                    nxr(" " . $this->getActiveUser() . " subscription is still valid");
+                }
 
                 return $userProfile;
             } else {
