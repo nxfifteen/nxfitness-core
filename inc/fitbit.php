@@ -525,6 +525,33 @@ class fitbit
     }
 
     /**
+     * @param $_nx_fb_usr
+     * @return bool
+     */
+    public function validateOAuth($_nx_fb_usr)
+    {
+        $this->setActiveUser($_nx_fb_usr);
+
+        try {
+            // Try to get an access token using the authorization code grant.
+            $accessToken = $this->getAccessToken();
+
+            $request = $this->getLibrary()->getResourceOwner($accessToken);
+            if ($request->getId() == $_nx_fb_usr) {
+                return TRUE;
+            } else {
+                nxr(" User miss match " . $request->getId() . " should equal " . $_nx_fb_usr);
+                return FALSE;
+            }
+
+        } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            // Failed to get the access token or user details.
+            nxr(" User validation test failed: " . print_r($e->getMessage(), TRUE));
+            return FALSE;
+        }
+    }
+
+    /**
      * @param $trigger
      * @param bool $force
      * @return string|bool
