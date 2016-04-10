@@ -184,6 +184,15 @@ class fitbit
                     }
                 }
 
+                if ($trigger == "all" || $trigger == "heart") {
+                    $lastCleanRun = $this->api_getLastCleanrun("heart");
+                    nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
+                    $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
+                    if ($this->isApiError($pull)) {
+                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    }
+                }
+
                 // Set variables require bellow
                 $currentDate = new DateTime ('now');
                 $interval = DateInterval::createFromDateString('1 day');
@@ -1223,6 +1232,65 @@ class fitbit
             // Failed to get the access token or user details.
             nxr($e->getMessage());
             die();
+        }
+    }
+
+    private function pullBabelHeartRateSeries($lastCleanRun)
+    {
+        // Check we're allowed to pull these records here rather than at each loop
+        $isAllowed = $this->isAllowed("heart");
+        if (!is_numeric($isAllowed)) {
+            if ($this->api_isCooled("heart")) {
+                $lastCleanRun = new DateTime ($lastCleanRun);
+                $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/today/' . $lastCleanRun->format('Y-m-d') . '.json', TRUE);
+
+                if (isset($userHeartRateLog)) {
+                    $className = "activities-heart";
+                    $activities = $userHeartRateLog->$className;
+                    if (is_array($activities) && count($activities) > 0) {
+                        foreach ($activities as $activity) {
+                            $lastDateReturned = $activity->dateTime;
+                            if (array_key_exists("restingHeartRate", $activity->value)) {
+                                $databaseArray = array(
+                                    'user' => $this->getActiveUser(),
+                                    'date' => (String)$activity->dateTime,
+                                    'resting' => (String)$activity->value->restingHeartRate
+                                );
+                                foreach ($activity->value->heartRateZones as $heartRateZone) {
+                                    if (array_key_exists("minutes", $heartRateZone)) {
+                                        nxr("  " . $activity->dateTime . " you spent " . $heartRateZone->minutes . " in " . $heartRateZone->name . " zone");
+                                        $key = str_replace(" ", "", strtolower($heartRateZone->name));
+                                        $databaseArray[$key] = (String)$heartRateZone->minutes;
+                                        $databaseArray[$key . '_cals'] = (String)$heartRateZone->caloriesOut;
+                                    } else {
+                                        nxr("  " . $activity->dateTime . " does have time spent in '" . $heartRateZone->name . "' zone");
+                                    }
+
+                                }
+
+                                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage",
+                                    array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$activity->dateTime)))
+                                ) {
+                                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", $databaseArray);
+                                } else {
+                                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", $databaseArray,
+                                        array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$activity->dateTime)));
+                                }
+                            } else {
+                                nxr("  " . $activity->dateTime . " does have a resting heart rate");
+                            }
+                        }
+                    }
+
+                    if (isset($lastDateReturned)) $this->api_setLastCleanrun("heart", new DateTime ($lastDateReturned));
+                }
+
+                return $userHeartRateLog;
+            } else {
+                return "-143";
+            }
+        } else {
+            return $isAllowed;
         }
     }
 
