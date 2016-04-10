@@ -7,6 +7,21 @@
         exit();
     }
 
+    if (!function_exists("nxr")) {
+        function nxr($msg)
+        {
+            if (is_writable(dirname(__FILE__) . "/fitbit.log")) {
+                $fh = fopen(dirname(__FILE__) . "/fitbit.log", "a");
+                fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
+                fclose($fh);
+            }
+
+            if (php_sapi_name() == "cli") {
+                echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
+            }
+        }
+    }
+
     // Split-up the input URL to workout whats required
     $inputURL = $_SERVER['REDIRECT_URL'];
 
@@ -127,8 +142,26 @@
         }
 
     } else if ($url_namespace == "service") {
-        // Deal with Fitbit subsciptions
-        require_once (dirname(__FILE__) . "/service.php");
+        if (is_array($_GET) && array_key_exists("verify", $_GET)) {
+            require_once(dirname(__FILE__) . "/config.inc.php");
+            if ($_GET['verify'] == $config['fitbit_subscriber_id']) {
+                header('Cache-Control: no-cache, must-revalidate');
+                header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+                header('Content-type: text/plain');
+                header('HTTP/1.0 204 No Content');
+
+                nxr("Valid subscriber request");
+            } else {
+                header('Cache-Control: no-cache, must-revalidate');
+                header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+                header('HTTP/1.0 404 Not Found');
+
+                nxr("Invalid subscriber request - " . $_GET['verify']);
+            }
+        } else {
+            // Deal with Fitbit subsciptions
+            require_once (dirname(__FILE__) . "/service.php");
+        }
 
     } else if ($url_namespace != "" && DEBUG_MY_PROJECT) {
         // If we're debugging things print out the unknown namespace
