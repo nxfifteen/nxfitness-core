@@ -215,6 +215,27 @@ class fitbit
                     }
                 }
 
+                if ($trigger == "all" || $trigger == "body") {
+                    $isAllowed = $this->isAllowed("body");
+                    if (!is_numeric($isAllowed)) {
+                        if ($this->api_isCooled("body")) {
+                            $period = new DatePeriod ($this->api_getLastCleanrun("body"), $interval, $currentDate);
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ($period as $dt) {
+                                nxr(' Downloading Body Logs for ' . $dt->format("l jS M Y"));
+                                $pull = $this->pullBabelBody($dt->format("Y-m-d"));
+                                if ($this->isApiError($pull)) {
+                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                }
+                            }
+                        } else {
+                            nxr("  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
+                        }
+                    }
+                }
+
                 if ($trigger == "all") {
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
                         "lastrun" => $currentDate->format("Y-m-d H:i:s")
@@ -232,6 +253,103 @@ class fitbit
         } else {
             return TRUE;
         }
+    }
+
+    /**
+     * @param $targetDate
+     * @return mixed
+     */
+    private function pullBabelBody($targetDate) {
+        $targetDateTime = new DateTime ($targetDate);
+        $userBodyLog = $this->pullBabel('user/' . $this->getActiveUser() . '/body/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+
+        if (isset($userBodyLog)) {
+            $fallback = FALSE;
+            $currentDate = new DateTime ();
+            if ($currentDate->format("Y-m-d") == $targetDate and ($userBodyLog->body->weight == "0" OR $userBodyLog->body->fat == "0" OR
+                    $userBodyLog->body->bmi == "0" OR (isset($userBodyLog->goals) AND ($userBodyLog->goals->weight == "0" OR $userBodyLog->goals->fat == "0")))
+            ) {
+                $this->getAppClass()->addCronJob($this->getActiveUser(), "body");
+                $fallback = TRUE;
+            }
+
+            $insertToDB = FALSE;
+            if (!isset($userBodyLog->body->weight) or $userBodyLog->body->weight == "0") {
+                nxr('  Weight unrecorded, reverting to previous record');
+                $weight = $this->getDBCurrentBody($this->getActiveUser(), "weight");
+                $fallback = TRUE;
+            } else {
+                $weight = (float)$userBodyLog->body->weight;
+                $insertToDB = TRUE;
+            }
+
+            if (!isset($userBodyLog->body->fat) or $userBodyLog->body->fat == "0") {
+                nxr('  Body Fat unrecorded, reverting to previous record');
+                $fat = $this->getDBCurrentBody($this->getActiveUser(), "fat");
+                $fallback = TRUE;
+            } else {
+                $fat = (float)$userBodyLog->body->fat;
+                $insertToDB = TRUE;
+            }
+
+            if ($insertToDB) {
+                if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
+                    nxr('  Weight Goal unset, reverting to previous record');
+                    $goalsweight = $this->getDBCurrentBody($this->getActiveUser(), "weightGoal");
+                } else {
+                    $goalsweight = (float)$userBodyLog->goals->weight;
+                }
+
+                if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
+                    nxr('  Body Fat Goal unset, reverting to previous record');
+                    $goalsfat = $this->getDBCurrentBody($this->getActiveUser(), "fatGoal");
+                } else {
+                    $goalsfat = (float)$userBodyLog->goals->fat;
+                }
+
+                $user_height = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", "height", array("fuid" => $this->getActiveUser()));
+                if (is_numeric($user_height) AND $user_height > 0) {
+                    $user_height = $user_height / 100;
+                    $bmi = round($weight / ($user_height * $user_height), 2);
+                } else {
+                    $bmi = "0.0";
+                }
+
+                $db_insetArray = array(
+                    "weight"     => $weight,
+                    "weightGoal" => $goalsweight,
+                    "fat"        => $fat,
+                    "fatGoal"    => $goalsfat,
+                    "bmi"        => $bmi
+                );
+
+                $lastWeight = $this->getDBCurrentBody($this->getActiveUser(), "weight");
+                $lastFat = $this->getDBCurrentBody($this->getActiveUser(), "fat");
+                if ($lastWeight != $weight) {
+                    $db_insetArray['weightAvg'] = round(($weight - $lastWeight) / 10, 1, PHP_ROUND_HALF_UP) + $lastWeight;
+                } else {
+                    $db_insetArray['weightAvg'] = $this->getDBCurrentBody($this->getActiveUser(), "weightAvg");
+                }
+                if ($lastFat != $fat) {
+                    $db_insetArray['fatAvg'] = round(($fat - $lastFat) / 10, 1, PHP_ROUND_HALF_UP) + $lastFat;
+                } else {
+                    $db_insetArray['fatAvg'] = $this->getDBCurrentBody($this->getActiveUser(), "fatAvg");
+                }
+
+                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)))) {
+                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray, array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)));
+                } else {
+                    $db_insetArray['user'] = $this->getActiveUser();
+                    $db_insetArray['date'] = $targetDate;
+                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray);
+                }
+
+                if (!$fallback) $this->api_setLastCleanrun("body", $this->getActiveUser(), new DateTime ($targetDate));
+            }
+        }
+
+        return $userBodyLog;
+
     }
 
     /**
