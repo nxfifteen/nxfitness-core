@@ -1762,7 +1762,7 @@ class fitbit
                     // Purge old access token and store new access token to your data store.
                     return $newAccessToken;
                 } else {
-                    nxr("This token still valid");
+                    //nxr("This token still valid");
                     return $accessToken;
                 }
             } else {
