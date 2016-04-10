@@ -168,6 +168,14 @@ class fitbit
                     }
                 }
 
+                if ($trigger == "all" || $trigger == "activity_log") {
+                    nxr(' Downloading activity logs ');
+                    $pull = $this->pullBabelActivityLogs();
+                    if ($this->isApiError($pull)) {
+                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    }
+                }
+
                 // Set variables require bellow
                 $currentDate = new DateTime ('now');
                 $interval = DateInterval::createFromDateString('1 day');
@@ -275,28 +283,6 @@ class fitbit
                             }
                         } else {
                             nxr("  Error Goals: " . $this->getAppClass()->lookupErrorCode(-143));
-                        }
-                    }
-                }
-
-                // TODO: GitLab # 20 - Very broken
-                if ($trigger == "all" || $trigger == "activity_log") {
-                    $isAllowed = $this->isAllowed("activity_log");
-                    if (!is_numeric($isAllowed)) {
-                        if ($this->api_isCooled("activity_log")) {
-                            $period = new DatePeriod ($this->api_getLastCleanrun("activity_log"), $interval, $currentDate);
-                            /**
-                             * @var DateTime $dt
-                             */
-                            foreach ($period as $dt) {
-                                nxr(' Downloading activities for ' . $dt->format("l jS M Y"));
-                                $pull = $this->pullBabelActivityLogs($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull)) {
-                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
-                                }
-                            }
-                        } else {
-                            nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
                     }
                 }
@@ -766,50 +752,81 @@ class fitbit
      * @param $targetDate
      * @return bool
      */
-    private function pullBabelActivityLogs($targetDate) {
-        $targetDateTime = new DateTime ($targetDate);
-        $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+    private function pullBabelActivityLogs()
+    {
+        $currentDate = new DateTime ('now');
+        $triggerDate = new DateTime ('18 April 2016 00:00:00');
 
-        if (isset($userActivityLog) and is_object($userActivityLog)) {
-            $activityLog = $userActivityLog->activities;
-            if (isset($activityLog) && is_array($activityLog) && count($activityLog) > 0) {
-                foreach ($activityLog as $activity) {
-                    if ((String)$activity->activityId == "16010") {
-                        nxr("  Activity " . $activity->activityParentName . " (" . $activity->activityId . ") is ignored.");
-                    } else {
-                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user"       => $this->getActiveUser(),
-                            "logId"      => (String)$activity->logId,
-                            "activityId" => (String)$activity->activityId,
-                            "startDate"  => (String)$activity->startDate,
-                            "startTime"  => (String)$activity->startTime)))
-                        ) {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
-                                "activityId"         => (String)$activity->activityId,
-                                "activityParentId"   => (String)$activity->activityParentId,
-                                "activityParentName" => (String)$activity->activityParentName,
-                                "calories"           => (String)$activity->calories,
-                                "description"        => (String)$activity->description,
-                                "duration"           => (String)$activity->duration,
-                                "hasStartTime"       => (String)$activity->hasStartTime,
-                                "isFavorite"         => (String)$activity->isFavorite,
-                                "logId"              => (String)$activity->logId,
-                                "name"               => (String)$activity->name,
-                                "startDate"          => (String)$activity->startDate,
-                                "startTime"          => (String)$activity->startTime,
-                                "steps"              => (String)$activity->steps,
-                                "user"               => $this->getActiveUser(),
-                                "date"               => $targetDate
-                            ));
+        // From 18/04/2016 Fitbit is changing the returned values from this endpoint.
+        if ($currentDate->format("U") >= $triggerDate->format("U")) {
+            nxr("  From 18/04/2016 Fitbit is changing the returned values from this endpoint.");
+            return TRUE;
+        }
+
+        $isAllowed = $this->isAllowed("activity_log");
+        if (!is_numeric($isAllowed)) {
+            if ($this->api_isCooled("activity_log")) {
+                $targetDateTime = $this->api_getLastCleanrun("activity_log");
+                $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0', TRUE);
+
+                if (isset($userActivityLog) and is_object($userActivityLog)) {
+                    $activityLog = $userActivityLog->activities;
+                    if (isset($activityLog) && is_array($activityLog) && count($activityLog) > 0) {
+                        foreach ($activityLog as $activity) {
+                            // From 18/04/2016 Fitbit is changing the returned values from this endpoint.
+                            // Here I am just trying to support both the old and new - once the new if fully deployed
+                            // I can remove this in favour of just the new
+                            $activityId = (String)$activity->activityId;
+                            $activityParentId = (String)$activity->activityParentId;
+                            $activityParentName = (String)$activity->activityParentName;
+                            $startDate = (String)$activity->startDate;
+                            $startTime = (String)$activity->startTime;
+                            // I can remove this in favour of just the new
+
+                            if ($activityId == "16010") {
+                                nxr("  Activity " . $activityParentName . " on " . $startDate . " (" . $activityId . ") is ignored.");
+                            } else {
+                                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array(
+                                    "user" => $this->getActiveUser(),
+                                    "logId" => (String)$activity->logId,
+                                    "activityId" => $activityId,
+                                    "startDate" => $startDate,
+                                    "startTime" => $startTime)))
+                                ) {
+                                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
+                                        "activityId" => $activityId,
+                                        "activityParentId" => $activityParentId,
+                                        "activityParentName" => $activityParentName,
+                                        "calories" => (String)$activity->calories,
+                                        "description" => (String)$activity->description,
+                                        "duration" => (String)$activity->duration,
+                                        "hasStartTime" => (String)$activity->hasStartTime,
+                                        "isFavorite" => (String)$activity->isFavorite,
+                                        "logId" => (String)$activity->logId,
+                                        "name" => (String)$activity->name,
+                                        "startDate" => $startDate,
+                                        "startTime" => $startTime,
+                                        "steps" => (String)$activity->steps,
+                                        "user" => $this->getActiveUser(),
+                                        "date" => $startDate
+                                    ));
+                                } else {
+                                    nxr("  Activity " . $activityParentName . " on " . $startDate . " (" . $activityId . ") is already in the database.");
+                                }
+                            }
+                            $this->api_setLastCleanrun("activity_log", new DateTime ($startDate));
                         }
+                    } else {
+                        $this->api_setLastCleanrun("activity_log", new DateTime ($userActivityLog->pagination->afterDate), 2);
                     }
-                    $this->api_setLastCleanrun("activity_log", new DateTime ($targetDate));
-                }
+                } /*else {
+                    $this->api_setLastCleanrun("activity_log", new DateTime ((String)$activity->startDate), 7);
+                    $this->api_setLastrun("activity_log");
+                }*/
+
             } else {
-                $this->api_setLastCleanrun("activity_log", new DateTime ($targetDate), 2);
+                nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
             }
-        } else {
-            $this->api_setLastCleanrun("activity_log", new DateTime ($targetDate), 7);
-            $this->api_setLastrun("activity_log");
         }
 
         return TRUE;
