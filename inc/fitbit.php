@@ -184,6 +184,15 @@ class fitbit
                     }
                 }
 
+                if ($trigger == "all" || $trigger == "heart") {
+                    $lastCleanRun = $this->api_getLastCleanrun("heart");
+                    nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
+                    $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
+                    if ($this->isApiError($pull)) {
+                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    }
+                }
+
                 // Set variables require bellow
                 $currentDate = new DateTime ('now');
                 $interval = DateInterval::createFromDateString('1 day');
@@ -473,7 +482,6 @@ class fitbit
     /**
      * @param $trigger
      * @return bool|string
-     * @internal param $user
      */
     public function isAllowed($trigger)
     {
@@ -498,7 +506,6 @@ class fitbit
      * @param $trigger
      * @param bool $reset
      * @return bool
-     * @internal param $user
      */
     public function api_isCooled($trigger, $reset = FALSE)
     {
@@ -547,8 +554,20 @@ class fitbit
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
             // Failed to get the access token or user details.
             nxr(" User validation test failed: " . print_r($e->getMessage(), TRUE));
+            if ($e->getCode() == 400) {
+                $this->getAppClass()->delUserOAuthTokens($_nx_fb_usr);
+            }
+
             return FALSE;
         }
+    }
+
+    /**
+     * @param mixed $activeUser
+     */
+    public function setActiveUser($activeUser)
+    {
+        $this->activeUser = $activeUser;
     }
 
     /**
@@ -556,7 +575,8 @@ class fitbit
      * @param bool $force
      * @return string|bool
      */
-    private function pullBabelTimeSeries($trigger, $force = FALSE) {
+    private function pullBabelTimeSeries($trigger, $force = FALSE)
+    {
         if ($force || $this->api_isCooled($trigger)) {
             $currentDate = new DateTime();
 
@@ -603,7 +623,8 @@ class fitbit
      * @param DateTime|null $lastrun
      * @return string|bool
      */
-    private function pullBabelTimeSeriesByTrigger($trigger, $daysSince, $lastrun = NULL) {
+    private function pullBabelTimeSeriesByTrigger($trigger, $daysSince, $lastrun = NULL)
+    {
         switch ($trigger) {
             case "steps":
             case "distance":
@@ -629,7 +650,8 @@ class fitbit
      * @param DateTime|null $lastrun
      * @return string|bool
      */
-    private function pullBabelTimeSeriesForSteps($trigger, $daysSince, $lastrun = NULL) {
+    private function pullBabelTimeSeriesForSteps($trigger, $daysSince, $lastrun = NULL)
+    {
         if (!is_null($lastrun)) {
             $currentDate = $lastrun;
         } else {
@@ -654,14 +676,14 @@ class fitbit
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$steps->dateTime)))) {
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
                             $trigger => (String)$steps->value,
-                            'syncd'  => $currentDate->format('Y-m-d H:m:s')
+                            'syncd' => $currentDate->format('Y-m-d H:m:s')
                         ), array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$steps->dateTime)));
                     } else {
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array(
-                            'user'   => $this->getActiveUser(),
-                            'date'   => (String)$steps->dateTime,
+                            'user' => $this->getActiveUser(),
+                            'date' => (String)$steps->dateTime,
                             $trigger => (String)$steps->value,
-                            'syncd'  => $currentDate->format('Y-m-d H:m:s')
+                            'syncd' => $currentDate->format('Y-m-d H:m:s')
                         ));
                     }
                 }
@@ -677,7 +699,8 @@ class fitbit
      * @param DateTime|null $lastrun
      * @return bool
      */
-    private function pullBabelTimeSeriesForActivity($trigger, $daysSince, $lastrun = NULL) {
+    private function pullBabelTimeSeriesForActivity($trigger, $daysSince, $lastrun = NULL)
+    {
 
         switch ($trigger) {
             case "minutesVeryActive":
@@ -734,7 +757,7 @@ class fitbit
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$series->dateTime)))) {
                         $dbStorage = array(
                             $databaseColumn => (String)$series->value,
-                            'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                            'syncd' => $currentDate->format('Y-m-d H:m:s')
                         );
 
                         if ($currentDate->format("Y-m-d") == $series->dateTime) {
@@ -744,10 +767,10 @@ class fitbit
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage, array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$series->dateTime)));
                     } else {
                         $dbStorage = array(
-                            'user'          => $this->getActiveUser(),
-                            'date'          => (String)$series->dateTime,
+                            'user' => $this->getActiveUser(),
+                            'date' => (String)$series->dateTime,
                             $databaseColumn => (String)$series->value,
-                            'syncd'         => $currentDate->format('Y-m-d H:m:s')
+                            'syncd' => $currentDate->format('Y-m-d H:m:s')
                         );
                         if ($currentDate->format("Y-m-d") == $series->dateTime) {
                             $dbStorage['target'] = (String)$this->holdingVar["data"]->goals->activeMinutes;
@@ -954,9 +977,10 @@ class fitbit
      * @param $targetDate
      * @return mixed
      */
-    private function pullBabelMeals($targetDate) {
+    private function pullBabelMeals($targetDate)
+    {
         $targetDateTime = new DateTime ($targetDate);
-        $userFoodLog = $this->pullBabel('user/' . $this->getActiveUser() . '/foods/log/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+        $userFoodLog = $this->pullBabel('user/' . $this->getActiveUser() . '/foods/log/date/' . $targetDateTime->format('Y-m-d') . '.json', TRUE);
 
         if (isset($userFoodLog)) {
             if (count($userFoodLog->foods) > 0) {
@@ -966,23 +990,23 @@ class fitbit
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
                             'calories' => (String)$meal->nutritionalValues->calories,
-                            'carbs'    => (String)$meal->nutritionalValues->carbs,
-                            'fat'      => (String)$meal->nutritionalValues->fat,
-                            'fiber'    => (String)$meal->nutritionalValues->fiber,
-                            'protein'  => (String)$meal->nutritionalValues->protein,
-                            'sodium'   => (String)$meal->nutritionalValues->sodium
+                            'carbs' => (String)$meal->nutritionalValues->carbs,
+                            'fat' => (String)$meal->nutritionalValues->fat,
+                            'fiber' => (String)$meal->nutritionalValues->fiber,
+                            'protein' => (String)$meal->nutritionalValues->protein,
+                            'sodium' => (String)$meal->nutritionalValues->sodium
                         ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)));
                     } else {
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
-                            'user'     => $this->getActiveUser(),
-                            'date'     => $targetDate,
-                            'meal'     => (String)$meal->loggedFood->name,
+                            'user' => $this->getActiveUser(),
+                            'date' => $targetDate,
+                            'meal' => (String)$meal->loggedFood->name,
                             'calories' => (String)$meal->nutritionalValues->calories,
-                            'carbs'    => (String)$meal->nutritionalValues->carbs,
-                            'fat'      => (String)$meal->nutritionalValues->fat,
-                            'fiber'    => (String)$meal->nutritionalValues->fiber,
-                            'protein'  => (String)$meal->nutritionalValues->protein,
-                            'sodium'   => (String)$meal->nutritionalValues->sodium
+                            'carbs' => (String)$meal->nutritionalValues->carbs,
+                            'fat' => (String)$meal->nutritionalValues->fat,
+                            'fiber' => (String)$meal->nutritionalValues->fiber,
+                            'protein' => (String)$meal->nutritionalValues->protein,
+                            'sodium' => (String)$meal->nutritionalValues->sodium
                         ));
                     }
 
@@ -998,9 +1022,10 @@ class fitbit
      * @param $targetDate
      * @return mixed
      */
-    private function pullBabelBody($targetDate) {
+    private function pullBabelBody($targetDate)
+    {
         $targetDateTime = new DateTime ($targetDate);
-        $userBodyLog = $this->pullBabel('user/' . $this->getActiveUser() . '/body/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+        $userBodyLog = $this->pullBabel('user/' . $this->getActiveUser() . '/body/date/' . $targetDateTime->format('Y-m-d') . '.json', TRUE);
 
         if (isset($userBodyLog)) {
             $fallback = FALSE;
@@ -1055,11 +1080,11 @@ class fitbit
                 }
 
                 $db_insetArray = array(
-                    "weight"     => $weight,
+                    "weight" => $weight,
                     "weightGoal" => $goalsweight,
-                    "fat"        => $fat,
-                    "fatGoal"    => $goalsfat,
-                    "bmi"        => $bmi
+                    "fat" => $fat,
+                    "fatGoal" => $goalsfat,
+                    "bmi" => $bmi
                 );
 
                 $lastWeight = $this->getDBCurrentBody($this->getActiveUser(), "weight");
@@ -1095,36 +1120,37 @@ class fitbit
      * @param $targetDate
      * @return mixed|null|SimpleXMLElement|string
      */
-    private function pullBabelSleep($targetDate) {
+    private function pullBabelSleep($targetDate)
+    {
         $targetDateTime = new DateTime ($targetDate);
-        $userSleepLog = $this->pullBabel('user/' . $this->getActiveUser() . '/sleep/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+        $userSleepLog = $this->pullBabel('user/' . $this->getActiveUser() . '/sleep/date/' . $targetDateTime->format('Y-m-d') . '.json', TRUE);
 
         if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
             $loggedSleep = $userSleepLog->sleep[0];
             if ($loggedSleep->logId != 0) {
                 if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$loggedSleep->logId))) {
                     $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
-                        "logId"               => (String)$loggedSleep->logId,
-                        'awakeningsCount'     => (String)$loggedSleep->awakeningsCount,
-                        'duration'            => (String)$loggedSleep->duration,
-                        'efficiency'          => (String)$loggedSleep->efficiency,
-                        'isMainSleep'         => (String)$loggedSleep->isMainSleep,
-                        'minutesAfterWakeup'  => (String)$loggedSleep->minutesAfterWakeup,
-                        'minutesAsleep'       => (String)$loggedSleep->minutesAsleep,
-                        'minutesAwake'        => (String)$loggedSleep->minutesAwake,
+                        "logId" => (String)$loggedSleep->logId,
+                        'awakeningsCount' => (String)$loggedSleep->awakeningsCount,
+                        'duration' => (String)$loggedSleep->duration,
+                        'efficiency' => (String)$loggedSleep->efficiency,
+                        'isMainSleep' => (String)$loggedSleep->isMainSleep,
+                        'minutesAfterWakeup' => (String)$loggedSleep->minutesAfterWakeup,
+                        'minutesAsleep' => (String)$loggedSleep->minutesAsleep,
+                        'minutesAwake' => (String)$loggedSleep->minutesAwake,
                         'minutesToFallAsleep' => (String)$loggedSleep->minutesToFallAsleep,
-                        'startTime'           => (String)$loggedSleep->startTime,
-                        'timeInBed'           => (String)$loggedSleep->timeInBed
+                        'startTime' => (String)$loggedSleep->startTime,
+                        'timeInBed' => (String)$loggedSleep->timeInBed
                     ));
                 }
 
                 if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array("AND" => array('user' => $this->getActiveUser(), 'sleeplog' => (String)$loggedSleep->logId)))) {
                     $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array(
-                        'user'               => $this->getActiveUser(),
-                        'sleeplog'           => (String)$loggedSleep->logId,
+                        'user' => $this->getActiveUser(),
+                        'sleeplog' => (String)$loggedSleep->logId,
                         'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
-                        'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
-                        'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
+                        'totalSleepRecords' => (String)$userSleepLog->summary->totalSleepRecords,
+                        'totalTimeInBed' => (String)$userSleepLog->summary->totalTimeInBed
                     ));
                 }
 
@@ -1145,23 +1171,24 @@ class fitbit
      * @param $targetDate
      * @return mixed
      */
-    private function pullBabelWater($targetDate) {
+    private function pullBabelWater($targetDate)
+    {
         $targetDateTime = new DateTime ($targetDate);
-        $userWaterLog = $this->pullBabel('user/-/foods/log/water/date/'.$targetDateTime->format('Y-m-d').'.json', TRUE);
+        $userWaterLog = $this->pullBabel('user/-/foods/log/water/date/' . $targetDateTime->format('Y-m-d') . '.json', TRUE);
 
         if (isset($userWaterLog)) {
             if (isset($userWaterLog->summary->water)) {
 
                 if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)))) {
                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
-                        'id'     => $targetDateTime->format("U"),
+                        'id' => $targetDateTime->format("U"),
                         'liquid' => (String)$userWaterLog->summary->water
                     ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)));
                 } else {
                     $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
-                        'user'   => $this->getActiveUser(),
-                        'date'   => $targetDate,
-                        'id'     => $targetDateTime->format("U"),
+                        'user' => $this->getActiveUser(),
+                        'date' => $targetDate,
+                        'id' => $targetDateTime->format("U"),
                         'liquid' => (String)$userWaterLog->summary->water
                     ));
                 }
@@ -1190,14 +1217,6 @@ class fitbit
     }
 
     /**
-     * @param mixed $activeUser
-     */
-    private function setActiveUser($activeUser)
-    {
-        $this->activeUser = $activeUser;
-    }
-
-    /**
      * @param $path
      * @param bool $returnObject
      * @param bool $debugOutput
@@ -1223,6 +1242,65 @@ class fitbit
             // Failed to get the access token or user details.
             nxr($e->getMessage());
             die();
+        }
+    }
+
+    private function pullBabelHeartRateSeries($lastCleanRun)
+    {
+        // Check we're allowed to pull these records here rather than at each loop
+        $isAllowed = $this->isAllowed("heart");
+        if (!is_numeric($isAllowed)) {
+            if ($this->api_isCooled("heart")) {
+                $lastCleanRun = new DateTime ($lastCleanRun);
+                $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/today/' . $lastCleanRun->format('Y-m-d') . '.json', TRUE);
+
+                if (isset($userHeartRateLog)) {
+                    $className = "activities-heart";
+                    $activities = $userHeartRateLog->$className;
+                    if (is_array($activities) && count($activities) > 0) {
+                        foreach ($activities as $activity) {
+                            $lastDateReturned = $activity->dateTime;
+                            if (array_key_exists("restingHeartRate", $activity->value)) {
+                                $databaseArray = array(
+                                    'user' => $this->getActiveUser(),
+                                    'date' => (String)$activity->dateTime,
+                                    'resting' => (String)$activity->value->restingHeartRate
+                                );
+                                foreach ($activity->value->heartRateZones as $heartRateZone) {
+                                    if (array_key_exists("minutes", $heartRateZone)) {
+                                        nxr("  " . $activity->dateTime . " you spent " . $heartRateZone->minutes . " in " . $heartRateZone->name . " zone");
+                                        $key = str_replace(" ", "", strtolower($heartRateZone->name));
+                                        $databaseArray[$key] = (String)$heartRateZone->minutes;
+                                        $databaseArray[$key . '_cals'] = (String)$heartRateZone->caloriesOut;
+                                    } else {
+                                        nxr("  " . $activity->dateTime . " does have time spent in '" . $heartRateZone->name . "' zone");
+                                    }
+
+                                }
+
+                                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage",
+                                    array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$activity->dateTime)))
+                                ) {
+                                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", $databaseArray);
+                                } else {
+                                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", $databaseArray,
+                                        array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$activity->dateTime)));
+                                }
+                            } else {
+                                nxr("  " . $activity->dateTime . " does have a resting heart rate");
+                            }
+                        }
+                    }
+
+                    if (isset($lastDateReturned)) $this->api_setLastCleanrun("heart", new DateTime ($lastDateReturned));
+                }
+
+                return $userHeartRateLog;
+            } else {
+                return "-143";
+            }
+        } else {
+            return $isAllowed;
         }
     }
 

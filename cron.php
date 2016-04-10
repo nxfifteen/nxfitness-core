@@ -25,44 +25,53 @@
 
         if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0 and $fitbitApp->getSetting('nx_fitbit_ds_all_cron', TRUE)) {
             foreach ($unfinishedUsers as $user) {
-                if (time() < $end) {
-                    nxr("Adding all to Q for " . $user['name']);
-                    $fitbitApp->addCronJob($user['fuid'], 'all');
+                if (!$fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], FALSE))) {
+                    nxr($user['name'] . " has not completed the OAuth configuration");
+                } else {
+                    if (time() < $end) {
+                        nxr("Adding all to Q for " . $user['name']);
+                        $fitbitApp->addCronJob($user['fuid'], 'all');
+                    }
                 }
             }
+        }
+
+        $allowed_triggers = Array();
+        foreach ($fitbitApp->supportedApi() as $key => $name) {
+            if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key, FALSE) && $fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', FALSE) && $key != "all") {
+                $allowed_triggers[] = $key;
+            }
+        }
+
+        if (count($allowed_triggers) == 0) {
+            nxr("I am not allowed to requeue anything so will requeue with empty records");
         } else {
-            $allowed_triggers = Array();
-            foreach ($fitbitApp->supportedApi() as $key => $name) {
-                if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key, FALSE) && $fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', FALSE) && $key != "all") {
-                    $allowed_triggers[] = $key;
-                }
-            }
+            $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
+            SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
 
-            if (count($allowed_triggers) == 0) {
-                nxr("I am not allowed to requeue anything so will requeue with empty records");
-            } else {
-                $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
-                SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
-
-                if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0) {
-                    foreach ($unfinishedUsers as $user) {
+            if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0) {
+                foreach ($unfinishedUsers as $user) {
+                    if (!$fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], FALSE))) {
+                        nxr($user['name'] . " has not completed the OAuth configuration");
+                    } else {
                         nxr("Repopulating queue for " . $user['name']);
+                        $fitbitApp->getFitbitapi()->setActiveUser($user['name']);
 
                         foreach ($allowed_triggers as $trigger) {
-                            $isAllowed = $fitbitApp->getFitbitapi()->isAllowed($user['fuid'], $trigger);
+                            $isAllowed = $fitbitApp->getFitbitapi()->isAllowed($trigger);
                             if (!is_numeric($isAllowed)) {
-                                if ($fitbitApp->getFitbitapi()->api_isCooled($trigger, $user['fuid'])) {
+                                if ($fitbitApp->getFitbitapi()->api_isCooled($trigger)) {
                                     $fitbitApp->addCronJob($user['fuid'], $trigger);
                                 }
                             }
                         }
                     }
-                } else {
-                    nxr("There is nothing to queue");
                 }
+            } else {
+                nxr("There is nothing to queue");
             }
-
         }
+
         if (time() < $end) {
             run_thru_queue();
         }
