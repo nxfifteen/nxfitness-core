@@ -261,7 +261,7 @@
 
         public function valdidateOAuth($userArray){
             if ($userArray['tkn_access'] == "" || $userArray['tkn_refresh'] == "" || $userArray['tkn_expires'] == "") {
-                nxr("OAuth is not fully setup for this user");
+                //nxr("OAuth is not fully setup for this user");
                 return FALSE;
             } else {
                 return TRUE;
