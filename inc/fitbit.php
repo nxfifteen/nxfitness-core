@@ -161,7 +161,7 @@ class fitbit
                     }
                 }
 
-                if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
+                if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories" || $trigger == "goals") {
                     $pull = $this->pullBabelCaloriesGoals();
                     if ($this->isApiError($pull)) {
                         nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
@@ -171,6 +171,14 @@ class fitbit
                 if ($trigger == "all" || $trigger == "activity_log") {
                     nxr(' Downloading activity logs ');
                     $pull = $this->pullBabelActivityLogs();
+                    if ($this->isApiError($pull)) {
+                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    }
+                }
+
+                if ($trigger == "all" || $trigger == "goals") {
+                    nxr(' Downloading Goals');
+                    $pull = $this->pullBabelUserGoals();
                     if ($this->isApiError($pull)) {
                         nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
@@ -261,28 +269,6 @@ class fitbit
                             }
                         } else {
                             nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
-                        }
-                    }
-                }
-
-                // TODO: GitLab #19 - There is not need for this to be looped here, data is only returned for current day not past days
-                if ($trigger == "all" || $trigger == "goals") {
-                    $isAllowed = $this->isAllowed("goals");
-                    if (!is_numeric($isAllowed)) {
-                        if ($this->api_isCooled("goals")) {
-                            $period = new DatePeriod ($this->api_getLastCleanrun("goals"), $interval, $currentDate);
-                            /**
-                             * @var DateTime $dt
-                             */
-                            foreach ($period as $dt) {
-                                nxr(' Downloading Goals Logs for ' . $dt->format("l jS M Y"));
-                                $pull = $this->pullBabelUserGoals($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull)) {
-                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
-                                }
-                            }
-                        } else {
-                            nxr("  Error Goals: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
                     }
                 }
@@ -749,8 +735,8 @@ class fitbit
     }
 
     /**
-     * @param $targetDate
      * @return bool
+     * @internal param $targetDate
      */
     private function pullBabelActivityLogs()
     {
@@ -833,93 +819,108 @@ class fitbit
     }
 
     /**
-     * @param $targetDate
      * @return mixed
+     * @internal param $targetDate
      */
-    private function pullBabelUserGoals($targetDate) {
-        $userGoals = $this->pullBabel('user/-/activities/goals/daily.json', TRUE);
+    private function pullBabelUserGoals()
+    {
+        $isAllowed = $this->isAllowed("goals");
+        if (!is_numeric($isAllowed)) {
+            if ($this->api_isCooled("goals")) {
+                $userGoals = $this->pullBabel('user/-/activities/goals/daily.json', TRUE);
 
-        if (isset($userGoals)) {
-            $currentDate = new DateTime();
-            $usr_goals = $userGoals->goals;
-            if (is_object($usr_goals)) {
-                $fallback = FALSE;
+                if (isset($userGoals)) {
+                    $currentDate = new DateTime();
+                    $usr_goals = $userGoals->goals;
+                    if (is_object($usr_goals)) {
+                        $fallback = FALSE;
 
-                if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
-                    $this->getAppClass()->addCronJob($this->getActiveUser(), "goals");
+                        if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
+                            $this->getAppClass()->addCronJob($this->getActiveUser(), "goals");
 
-                    if ($usr_goals->caloriesOut == "")
-                        $usr_goals->caloriesOut = -1;
+                            if ($usr_goals->caloriesOut == "")
+                                $usr_goals->caloriesOut = -1;
 
-                    if ($usr_goals->distance == "")
-                        $usr_goals->distance = -1;
+                            if ($usr_goals->distance == "")
+                                $usr_goals->distance = -1;
 
-                    if ($usr_goals->floors == "")
-                        $usr_goals->floors = -1;
+                            if ($usr_goals->floors == "")
+                                $usr_goals->floors = -1;
 
-                    if ($usr_goals->activeMinutes == "")
-                        $usr_goals->activeMinutes = -1;
+                            if ($usr_goals->activeMinutes == "")
+                                $usr_goals->activeMinutes = -1;
 
-                    if ($usr_goals->steps == "")
-                        $usr_goals->steps = -1;
+                            if ($usr_goals->steps == "")
+                                $usr_goals->steps = -1;
 
-                    $fallback = TRUE;
-                }
-
-                if ($currentDate->format("Y-m-d") == $targetDate) {
-                    if ($usr_goals->steps > 1) {
-                        $newGoal = $this->thisWeeksGoal("steps");
-                        if ($newGoal > 0 && $usr_goals->steps != $newGoal) {
-                            nxr("  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
-                            $this->pushBabel('user/-/activities/goals/daily.json', array('steps' => $newGoal));
-                        } elseif ($newGoal > 0) {
-                            nxr("  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
+                            $fallback = TRUE;
                         }
+
+                        if ($usr_goals->steps > 1) {
+                            $newGoal = $this->thisWeeksGoal("steps");
+                            if ($newGoal > 0 && $usr_goals->steps != $newGoal) {
+                                nxr("  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
+                                $this->pushBabel('user/-/activities/goals/daily.json', array('steps' => $newGoal));
+                            } elseif ($newGoal > 0) {
+                                nxr("  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
+                            }
+                        }
+
+                        if ($usr_goals->floors > 1) {
+                            $newGoal = $this->thisWeeksGoal("floors");
+                            if ($newGoal > 0 && $usr_goals->floors != $newGoal) {
+                                nxr("  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
+                                $this->pushBabel('user/-/activities/goals/daily.json', array('floors' => $newGoal));
+                            } elseif ($newGoal > 0) {
+                                nxr("  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal);
+                            }
+                        }
+
+                        $interval = DateInterval::createFromDateString('1 day');
+                        $period = new DatePeriod ($this->api_getLastCleanrun("goals"), $interval, $currentDate);
+                        /**
+                         * @var DateTime $dt
+                         */
+                        foreach ($period as $dt) {
+                            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $this->getActiveUser(), 'date' => $dt->format("Y-m-d"))))) {
+
+                                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
+                                    'caloriesOut' => (String)$usr_goals->caloriesOut,
+                                    'distance' => (String)$usr_goals->distance,
+                                    'floors' => (String)$usr_goals->floors,
+                                    'activeMinutes' => (String)$usr_goals->activeMinutes,
+                                    'steps' => (String)$usr_goals->steps,
+                                    'syncd' => date("Y-m-d H:i:s")
+                                ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $dt->format("Y-m-d"))));
+                            } else {
+
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
+                                    'user' => $this->getActiveUser(),
+                                    'date' => $dt->format("Y-m-d"),
+                                    'caloriesOut' => (String)$usr_goals->caloriesOut,
+                                    'distance' => (String)$usr_goals->distance,
+                                    'floors' => (String)$usr_goals->floors,
+                                    'activeMinutes' => (String)$usr_goals->activeMinutes,
+                                    'steps' => (String)$usr_goals->steps,
+                                    'syncd' => date("Y-m-d H:i:s")
+                                ));
+                            }
+                        }
+
+                        if (!$fallback) $this->api_setLastCleanrun("goals", $currentDate);
+                        $this->api_setLastrun("goals");
                     }
 
-                    if ($usr_goals->floors > 1) {
-                        $newGoal = $this->thisWeeksGoal("floors");
-                        if ($newGoal > 0 && $usr_goals->floors != $newGoal) {
-                            nxr("  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
-                            $this->pushBabel('user/-/activities/goals/daily.json', array('floors' => $newGoal));
-                        } elseif ($newGoal > 0) {
-                            nxr("  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal);
-                        }
-                    }
                 }
 
-                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)))) {
-
-                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
-                        'caloriesOut'   => (String)$usr_goals->caloriesOut,
-                        'distance'      => (String)$usr_goals->distance,
-                        'floors'        => (String)$usr_goals->floors,
-                        'activeMinutes' => (String)$usr_goals->activeMinutes,
-                        'steps'         => (String)$usr_goals->steps,
-                        'syncd'         => date("Y-m-d H:i:s")
-                    ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)));
-                } else {
-
-                    $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
-                        'user'          => $this->getActiveUser(),
-                        'date'          => $targetDate,
-                        'caloriesOut'   => (String)$usr_goals->caloriesOut,
-                        'distance'      => (String)$usr_goals->distance,
-                        'floors'        => (String)$usr_goals->floors,
-                        'activeMinutes' => (String)$usr_goals->activeMinutes,
-                        'steps'         => (String)$usr_goals->steps,
-                        'syncd'         => date("Y-m-d H:i:s")
-                    ));
-                }
-
-                if (!$fallback) $this->api_setLastCleanrun("goals", new DateTime($targetDate));
+                return $userGoals;
+            } else {
+                return "-143";
             }
-
-            if ($currentDate->format("Y-m-d") == $targetDate)
-                $this->api_setLastrun("goals");
+        } else {
+            return $isAllowed;
         }
 
-        return $userGoals;
     }
 
     /**
