@@ -133,7 +133,7 @@ class fitbit
                 // PULL - users profile
                 if ($trigger == "all" || $trigger == "profile") {
                     $pull = $this->pullBabelProfile();
-                    if ($this->isApiError($pull)) {
+                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
                         nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
@@ -141,7 +141,7 @@ class fitbit
                 // PULL - Devices
                 if ($trigger == "all" || $trigger == "devices") {
                     $pull = $this->pullBabelDevices();
-                    if ($this->isApiError($pull)) {
+                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
                         nxr("  Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
@@ -149,38 +149,38 @@ class fitbit
                 // PULL - Badges
                 if ($trigger == "all" || $trigger == "badges") {
                     $pull = $this->pullBabelBadges();
-                    if ($this->isApiError($pull)) {
+                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
                         nxr("  Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "leaderboard") {
                     $pull = $this->pullBabelLeaderboard();
-                    if ($this->isApiError($pull)) {
+                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
                         nxr("  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
-                if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories" || $trigger == "goals") {
+                if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
                     $pull = $this->pullBabelCaloriesGoals();
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                        nxr("  Error goals_calories: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "activity_log") {
                     nxr(' Downloading activity logs ');
                     $pull = $this->pullBabelActivityLogs();
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                        nxr("  Error activity_log: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "goals") {
                     nxr(' Downloading Goals');
                     $pull = $this->pullBabelUserGoals();
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                        nxr("  Error goals: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
@@ -188,8 +188,8 @@ class fitbit
                     $lastCleanRun = $this->api_getLastCleanrun("heart");
                     nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
                     $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
-                    if ($this->isApiError($pull)) {
-                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                        nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
@@ -209,12 +209,12 @@ class fitbit
                             foreach ($period as $dt) {
                                 nxr(' Downloading Water Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelWater($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull)) {
-                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                                    nxr("  Error water: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
-                            nxr("  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
+                            if (!IS_CRON_RUN) nxr("  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
                     }
                 }
@@ -230,12 +230,12 @@ class fitbit
                             foreach ($period as $dt) {
                                 nxr(' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelSleep($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull)) {
-                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                                    nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
-                            nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
+                            if (!IS_CRON_RUN) nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
                     }
                 }
@@ -251,12 +251,12 @@ class fitbit
                             foreach ($period as $dt) {
                                 nxr(' Downloading Body Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelBody($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull)) {
-                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                                    nxr("  Error body: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
-                            nxr("  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
+                            if (!IS_CRON_RUN) nxr("  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
                     }
                 }
@@ -272,12 +272,12 @@ class fitbit
                             foreach ($period as $dt) {
                                 nxr(' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelMeals($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull)) {
-                                    nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                                    nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
-                            nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
+                            if (!IS_CRON_RUN) nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
                         }
                     }
                 }
@@ -483,18 +483,20 @@ class fitbit
      * @param $trigger
      * @return bool|string
      */
-    public function isAllowed($trigger)
+    public function isAllowed($trigger, $quiet = FALSE)
     {
+        if ($trigger == "profile") return TRUE;
+
         $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $this->getActiveUser() . '_' . $trigger, NULL);
         if (!is_null($usrConfig) AND $usrConfig != 1) {
-            nxr(" Aborted $trigger disabled in user config");
+            if (!$quiet) nxr(" Aborted $trigger disabled in user config");
 
             return "-145";
         }
 
         $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
         if ($sysConfig != 1) {
-            nxr(" Aborted $trigger disabled in system config");
+            if (!$quiet) nxr(" Aborted $trigger disabled in system config");
 
             return "-146";
         }
@@ -611,7 +613,7 @@ class fitbit
                 $this->api_setLastrun($trigger);
             }
         } else {
-            nxr("   Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143));
+            if (!IS_CRON_RUN) nxr("   Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143));
         }
 
         return TRUE;
@@ -1390,7 +1392,8 @@ class fitbit
      */
     private function pullBabelProfile()
     {
-        $isAllowed = $this->isAllowed("profile");
+        //$isAllowed = $this->isAllowed("profile");
+        $isAllowed = TRUE;
         if (!is_numeric($isAllowed)) {
             if ($this->api_isCooled("profile")) {
                 $userProfile = $this->pullBabel('user/-/profile.json');
@@ -2005,15 +2008,15 @@ class fitbit
                     if ($totalSteps == 0) $totalSteps = 1;
 
                     $maxTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
-                    $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($newTargetSteps >= $maxTargetSteps) {
+                    $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
+                    $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
+
+                    if ($ProposedNextWeek >= $maxTargetSteps) {
                         $plusTargetSteps = $maxTargetSteps;
-                    } else if ($newTargetSteps <= ($maxTargetSteps / 2)) {
+                    } else if ($ProposedNextWeek <= ($maxTargetSteps / 2)) {
                         $plusTargetSteps = $maxTargetSteps / 2;
-                    } else if ($newTargetSteps < $maxTargetSteps) {
-                        $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps", 10) / 100), 0);
                     } else {
-                        $plusTargetSteps = $maxTargetSteps;
+                        $plusTargetSteps = $ProposedNextWeek;
                     }
                 }
             }
@@ -2034,13 +2037,13 @@ class fitbit
                 if ($totalSteps == 0) $totalSteps = 1;
 
                 $maxTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10);
-                $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-                if ($newTargetSteps >= $maxTargetSteps) {
+                $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
+                if ($LastWeeksSteps >= $maxTargetSteps) {
                     $plusTargetSteps = $maxTargetSteps;
-                } else if ($newTargetSteps <= ($maxTargetSteps / 2)) {
+                } else if ($LastWeeksSteps <= ($maxTargetSteps / 2)) {
                     $plusTargetSteps = $maxTargetSteps/2;
-                } else if ($newTargetSteps < $maxTargetSteps) {
-                    $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 10) / 100), 0);
+                } else if ($LastWeeksSteps < $maxTargetSteps) {
+                    $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 10) / 100), 0);
                 } else {
                     $plusTargetSteps = $maxTargetSteps;
                 }
