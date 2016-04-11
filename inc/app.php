@@ -149,7 +149,7 @@
                     )
                 ))
                 ) {
-                    nxr("Cron job $trigger deleted");
+                    //nxr("Cron job $trigger deleted");
                 } else {
                     nxr("Failed to delete $trigger Cron job");
                 }
