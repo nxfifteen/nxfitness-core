@@ -1,5 +1,7 @@
 <?php
 
+define('IS_CRON_RUN', TRUE);
+
     /**
      * NxFitbit - Cron commandline tool
      * @version 0.0.1
@@ -8,6 +10,17 @@
      * @copyright 2015 Stuart McCulloch Anderson
      * @license http://stuart.nx15.at/mit/2015 MIT
      */
+
+if (!function_exists("nxr")) {
+    function nxr($msg)
+    {
+        if (is_writable(dirname(__FILE__) . "/fitbit.log")) {
+            $fh = fopen(dirname(__FILE__) . "/fitbit.log", "a");
+            fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
+            fclose($fh);
+        }
+    }
+}
 
     require_once(dirname(__FILE__) . "/inc/app.php");
     $fitbitApp = new NxFitbit();
@@ -58,7 +71,7 @@
                         $fitbitApp->getFitbitapi()->setActiveUser($user['name']);
 
                         foreach ($allowed_triggers as $trigger) {
-                            $isAllowed = $fitbitApp->getFitbitapi()->isAllowed($trigger);
+                            $isAllowed = $fitbitApp->getFitbitapi()->isAllowed($trigger, TRUE);
                             if (!is_numeric($isAllowed)) {
                                 if ($fitbitApp->getFitbitapi()->api_isCooled($trigger)) {
                                     $fitbitApp->addCronJob($user['fuid'], $trigger);
