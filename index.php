@@ -16,9 +16,9 @@ if (!function_exists("nxr")) {
             fclose($fh);
         }
 
-        if (php_sapi_name() == "cli") {
-            echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
-        }
+//        if (php_sapi_name() == "cli") {
+//            echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
+//        }
     }
 }
 
