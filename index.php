@@ -143,7 +143,9 @@ if ($url_namespace == "authorise" && array_key_exists("_nx_fb_usr", $_COOKIE) &&
 
     }
 
-} else if ($url_namespace == "service") {
+} else if ($url_namespace == "webhook" || $url_namespace == "service") {
+    nxr("Namespace Called: " . $url_namespace);
+
     if (is_array($_GET) && array_key_exists("verify", $_GET)) {
         require_once(dirname(__FILE__) . "/config.inc.php");
         if ($_GET['verify'] == $config['fitbit_subscriber_id']) {
@@ -165,31 +167,6 @@ if ($url_namespace == "authorise" && array_key_exists("_nx_fb_usr", $_COOKIE) &&
         require_once(dirname(__FILE__) . "/service.php");
     }
 
-} else if ($url_namespace == "webhook") {
-    if (is_array($_GET) && array_key_exists("verify", $_GET)) {
-        require_once(dirname(__FILE__) . "/config.inc.php");
-        if ($_GET['verify'] == $config['fitbit_subscriber_id']) {
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-            header('Content-type: text/plain');
-            header('HTTP/1.0 204 No Content');
-
-            nxr("Valid subscriber request - " . $url_namespace);
-        } else {
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-            header('HTTP/1.0 404 Not Found');
-
-            nxr("Invalid subscriber request - " . $_GET['verify'] . " - " . $url_namespace);
-        }
-    } else {
-        header('Cache-Control: no-cache, must-revalidate');
-        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-        header('HTTP/1.0 404 Not Found');
-
-        // If we're debugging things print out the unknown namespace
-        nxr("Namespace Called: " . $url_namespace);
-    }
 } else if ($url_namespace != "" && DEBUG_MY_PROJECT) {
     header('Cache-Control: no-cache, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
