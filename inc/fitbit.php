@@ -184,14 +184,14 @@ class fitbit
                     }
                 }
 
-                /*                if ($trigger == "all" || $trigger == "heart") {
-                                    $lastCleanRun = $this->api_getLastCleanrun("heart");
-                                    nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
-                                    $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
-                                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                        nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
-                                    }
-                                }*/
+//                if ($trigger == "all" || $trigger == "heart") {
+//                    $lastCleanRun = $this->api_getLastCleanrun("heart");
+//                    nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
+//                    $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
+//                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
+//                        nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
+//                    }
+//                }
 
                 // Set variables require bellow
                 $currentDate = new DateTime ('now');
@@ -818,7 +818,7 @@ class fitbit
         if (!is_numeric($isAllowed)) {
             if ($this->api_isCooled("activity_log")) {
                 $targetDateTime = $this->api_getLastCleanrun("activity_log");
-                $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0', TRUE, TRUE);
+                $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0', TRUE);
 
                 if (isset($userActivityLog) and is_object($userActivityLog)) {
                     $activityLog = $userActivityLog->activities;
@@ -1269,7 +1269,7 @@ class fitbit
         if (!is_numeric($isAllowed)) {
             if ($this->api_isCooled("heart")) {
                 $lastCleanRun = new DateTime ($lastCleanRun);
-                $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/today/' . $lastCleanRun->format('Y-m-d') . '.json', TRUE);
+                $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/today/' . $lastCleanRun->format('Y-m-d') . '.json', TRUE, TRUE);
 
                 if (isset($userHeartRateLog)) {
                     $className = "activities-heart";
