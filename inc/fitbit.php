@@ -184,14 +184,14 @@ class fitbit
                     }
                 }
 
-                if ($trigger == "all" || $trigger == "heart") {
-                    $lastCleanRun = $this->api_getLastCleanrun("heart");
-                    nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
-                    $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
-                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
-                    }
-                }
+                /*                if ($trigger == "all" || $trigger == "heart") {
+                                    $lastCleanRun = $this->api_getLastCleanrun("heart");
+                                    nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
+                                    $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
+                                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                                        nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
+                                    }
+                                }*/
 
                 // Set variables require bellow
                 $currentDate = new DateTime ('now');
@@ -515,14 +515,16 @@ class fitbit
             return TRUE;
         } else {
             $currentDate = new DateTime ('now');
-            $lastRun = $this->api_getCoolDown($trigger, $reset);
+            $coolDownTill = $this->api_getCoolDown($trigger, $reset);
 
-//            nxr($currentDate->format("Y-m-d H:i:s"));
-//            nxr($lastRun->format("Y-m-d H:i:s"));
+//            nxr("coolDownTill " . $coolDownTill->format("Y-m-d H:i:s"));
+//            nxr("currentDate " . $currentDate->format("Y-m-d H:i:s"));
 
-            if ($lastRun->format("U") > $currentDate->format("U")) {
+            if ($coolDownTill->format("U") < $currentDate->format("U")) {
+//                nxr(" Is cool");
                 return TRUE;
             } else {
+//                nxr(" Stil hot");
                 return FALSE;
             }
         }
@@ -816,7 +818,7 @@ class fitbit
         if (!is_numeric($isAllowed)) {
             if ($this->api_isCooled("activity_log")) {
                 $targetDateTime = $this->api_getLastCleanrun("activity_log");
-                $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0', TRUE);
+                $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0', TRUE, TRUE);
 
                 if (isset($userActivityLog) and is_object($userActivityLog)) {
                     $activityLog = $userActivityLog->activities;
@@ -866,15 +868,17 @@ class fitbit
                             $this->api_setLastCleanrun("activity_log", new DateTime ($startDate));
                         }
                     } else {
+                        nxr("  No recorded activities");
                         $this->api_setLastCleanrun("activity_log", new DateTime ($userActivityLog->pagination->afterDate), 2);
+                        $this->api_setLastrun("activity_log");
                     }
-                } /*else {
-                    $this->api_setLastCleanrun("activity_log", new DateTime ((String)$activity->startDate), 7);
+                } else {
+                    $this->api_setLastCleanrun("activity_log", new DateTime ((String)$targetDateTime->format("Y-m-d")), 7);
                     $this->api_setLastrun("activity_log");
-                }*/
+                }
 
             } else {
-                nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
+                nxr("  Error activity log: " . $this->getAppClass()->lookupErrorCode(-143));
             }
         }
 

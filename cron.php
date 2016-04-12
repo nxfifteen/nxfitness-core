@@ -19,14 +19,19 @@ if (!function_exists("nxr")) {
             fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
             fclose($fh);
         }
+
+        if (php_sapi_name() == "cli") {
+            echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
+        }
     }
 }
 
     require_once(dirname(__FILE__) . "/inc/app.php");
     $fitbitApp = new NxFitbit();
 
-    $end = time() + 30;
+$end = time() + 20;
     $repopulate_queue = run_thru_queue();
+$repopulate_queue = TRUE;
 
     if ($repopulate_queue) {
         nxr("Ready to repopulate the queue");
@@ -67,14 +72,16 @@ if (!function_exists("nxr")) {
                     if (!$fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], FALSE))) {
                         nxr($user['name'] . " has not completed the OAuth configuration");
                     } else {
-                        nxr("Repopulating queue for " . $user['name']);
-                        $fitbitApp->getFitbitapi()->setActiveUser($user['name']);
+                        nxr(" Repopulating for " . $user['name']);
 
-                        foreach ($allowed_triggers as $trigger) {
-                            $isAllowed = $fitbitApp->getFitbitapi()->isAllowed($trigger, TRUE);
-                            if (!is_numeric($isAllowed)) {
-                                if ($fitbitApp->getFitbitapi()->api_isCooled($trigger)) {
-                                    $fitbitApp->addCronJob($user['fuid'], $trigger);
+                        $fitbitApp->getFitbitapi()->setActiveUser($user['fuid']);
+                        foreach ($allowed_triggers as $allowed_trigger) {
+                            if (!is_numeric($fitbitApp->getFitbitapi()->isAllowed($allowed_trigger, TRUE))) {
+                                if ($fitbitApp->getFitbitapi()->api_isCooled($allowed_trigger)) {
+                                    nxr("  + $allowed_trigger added to queue");
+                                    $fitbitApp->addCronJob($user['fuid'], $allowed_trigger);
+                                } else {
+                                    nxr("  - $allowed_trigger still too hot");
                                 }
                             }
                         }
