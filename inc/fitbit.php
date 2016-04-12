@@ -517,12 +517,23 @@ class fitbit
             $currentDate = new DateTime ('now');
             $lastRun = $this->api_getCoolDown($trigger, $reset);
 
-            if ($lastRun->format("U") < $currentDate->format("U")) {
+//            nxr($currentDate->format("Y-m-d H:i:s"));
+//            nxr($lastRun->format("Y-m-d H:i:s"));
+
+            if ($lastRun->format("U") > $currentDate->format("U")) {
                 return TRUE;
             } else {
                 return FALSE;
             }
         }
+    }
+
+    /**
+     * @param boolean $forceSync
+     */
+    public function getForceSync()
+    {
+        return $this->forceSync;
     }
 
     /**
