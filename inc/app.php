@@ -277,7 +277,7 @@
         {
             if ($this->isUser($user_fitbit_id)) {
                 if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => $user_fitbit_password)))) {
-                    return 1;
+                    return $user_fitbit_id;
                 } else if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => '')))) {
                     return -1;
                 } else {
@@ -285,6 +285,20 @@
                 }
             } else {
                 return FALSE;
+            }
+        }
+
+        /**
+         * @param string $user_fitbit_id
+         * @return bool
+         */
+        public function isUserValidEml($user_fitbit_id)
+        {
+            if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("eml" => $user_fitbit_id))) {
+                $user_fuid = $this->getDatabase()->get($this->getSetting("db_prefix", NULL, FALSE) . "users", "fuid", array("eml" => $user_fitbit_id));
+                return $user_fuid;
+            } else {
+                return $user_fitbit_id;
             }
         }
 
