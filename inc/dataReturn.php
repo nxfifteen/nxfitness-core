@@ -1556,52 +1556,67 @@
         public function returnUserRecordTasker() {
             $taskerDataArray = array();
 
-//            $taskerDataArray['returnUserRecordJourneys'] = $this->returnUserRecordJourneys();
-//            $taskerDataArray['returnUserRecordJourneysState'] = $this->returnUserRecordJourneysState();
-
             $returnUserRecordWater = $this->returnUserRecordWater();
             $taskerDataArray['today']['water'] = round(($returnUserRecordWater[0]['liquid'] / $returnUserRecordWater[0]['goal']) * 100, 0);
-            $taskerDataArray['today']['water_c'] = $returnUserRecordWater[0]['cheer'];
+            $taskerDataArray['cheer']['water'] = $returnUserRecordWater[0]['cheer'];
 
-            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'floors', 'steps'), $this->dbWhere());
-            $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance', 'floors', 'steps'), $this->dbWhere());
+            $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'floors', 'steps', 'syncd'), $this->dbWhere());
+            $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance', 'floors', 'steps', 'syncd'), $this->dbWhere());
             $taskerDataArray['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100, 0);
             $taskerDataArray['today']['distance'] = round((round($dbSteps[0]['distance'], 2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
             $taskerDataArray['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100, 0);
 
+            $taskerDataArray['goals']['steps'] = $dbGoals[0]['steps'];
+            $taskerDataArray['goals']['distance'] = $dbGoals[0]['distance'];
+            $taskerDataArray['goals']['floors'] = $dbGoals[0]['floors'];
+
+            $dbActive = $this->getAppClass()->getDatabase()->query("SELECT target, fairlyactive, veryactive, syncd FROM "
+                . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity WHERE user = '" . $this->getUserID() . "' AND date = '" . date("Y-m-d") . "'")->fetchAll();
+            $dbActive = $dbActive[0];
+            $taskerDataArray['today']['active'] = round((($dbActive['fairlyactive'] + $dbActive['veryactive']) / $dbActive['target']) * 100, 2);
+            $taskerDataArray['goals']['active'] = $dbActive['target'];
+
+            $taskerDataArray['syncd']['active'] = $dbActive['syncd'];
+            $taskerDataArray['syncd']['steps'] = $dbSteps[0]['syncd'];
+            $taskerDataArray['syncd']['distance'] = $dbSteps[0]['syncd'];
+            $taskerDataArray['syncd']['floors'] = $dbSteps[0]['syncd'];
+            $taskerDataArray['syncd']['goals'] = $dbGoals[0]['syncd'];
+
             $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
             foreach ($cheer as $key => $value) {
-                $taskerDataArray['today'][$key . '_raw'] = $dbSteps[0][$key];
-                //$taskerDataArray['today'][$key . '_r_g'] = $dbGoals[0][$key];
+                $taskerDataArray['raw'][$key] = $dbSteps[0][$key];
 
                 if ($dbGoals[0][$key] > 0) {
                     if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
-                        $taskerDataArray['today'][$key . '_c'] = 7;
+                        $taskerDataArray['cheer'][$key] = 7;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
-                        $taskerDataArray['today'][$key . '_c'] = 6;
+                        $taskerDataArray['cheer'][$key] = 6;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2) {
-                        $taskerDataArray['today'][$key . '_c'] = 5;
+                        $taskerDataArray['cheer'][$key] = 5;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 1.5) {
-                        $taskerDataArray['today'][$key . '_c'] = 4;
+                        $taskerDataArray['cheer'][$key] = 4;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key]) {
-                        $taskerDataArray['today'][$key . '_c'] = 3;
+                        $taskerDataArray['cheer'][$key] = 3;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.75) {
-                        $taskerDataArray['today'][$key . '_c'] = 2;
+                        $taskerDataArray['cheer'][$key] = 2;
                     } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 0.5) {
-                        $taskerDataArray['today'][$key . '_c'] = 1;
+                        $taskerDataArray['cheer'][$key] = 1;
                     } else {
-                        $taskerDataArray['today'][$key . '_c'] = 0;
+                        $taskerDataArray['cheer'][$key] = 0;
                     }
                 } else {
-                    $taskerDataArray['today'][$key . '_c'] = 0;
+                    $taskerDataArray['cheer'][$key] = 0;
                 }
             }
 
             $returnUserRecordChallenger = $this->returnUserRecordChallenger();
-            $taskerDataArray['today']['active'] = ($returnUserRecordChallenger['current']['active'] / $returnUserRecordChallenger['current']['active_g']) * 100;
+            $taskerDataArray['challenge']['active'] = ($returnUserRecordChallenger['current']['active'] / $returnUserRecordChallenger['current']['active_g']) * 100;
+
             $taskerDataArray['challenge']['state'] = $returnUserRecordChallenger['challengeActive'];
+
             $taskerDataArray['challenge']['start_date'] = $returnUserRecordChallenger['next']['startDateF'];
             $taskerDataArray['challenge']['end_date'] = $returnUserRecordChallenger['next']['endDateF'];
+
             $taskerDataArray['challenge']['length'] = round(($returnUserRecordChallenger['current']['day'] / $returnUserRecordChallenger['challengeLength']) * 100, 0);
             $taskerDataArray['challenge']['day'] = round(($returnUserRecordChallenger['current']['day_past'] / $returnUserRecordChallenger['current']['day']) * 100, 0);
 
@@ -1620,7 +1635,10 @@
             }
 
             ksort($taskerDataArray['today']);
-            ksort($taskerDataArray['challenge']);
+            ksort($taskerDataArray['cheer']);
+            ksort($taskerDataArray['goals']);
+            ksort($taskerDataArray['syncd']);
+            ksort($taskerDataArray['raw']);
 
             return $taskerDataArray;
         }
