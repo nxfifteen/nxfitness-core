@@ -5,7 +5,7 @@
 
     if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
         if ((!array_key_exists("debug", $_GET) or $_GET['debug'] != "true") && is_writable('cache') && (!array_key_exists("cache", $_GET) || $_GET['cache'] != "false")) {
-            // cache files are created like cache/abcdef123456...
+            // cache files are created like cache/...
             $cacheFileName = '';
             //user" => "269VLG", "data" => "Tracked", "period
             if (array_key_exists("user", $_GET)) {
@@ -68,6 +68,9 @@
         echo json_error(102);
     }
 
+    /**
+     * @return mixed|string
+     */
     function query_api() {
         require_once(dirname(__FILE__) . "/inc/dataReturn.php");
         $dataReturnClass = new dataReturn($_GET['user']);
@@ -102,17 +105,22 @@
         }
     }
 
+    /**
+     * @param $errNumber
+     *
+     * @return string
+     */
     function json_error($errNumber) {
         $errMessage = "";
         switch ($errNumber) {
             case "100":
-                $errMessage = "You must specifiy a user";
+                $errMessage = "You must specify a user";
                 break;
             case "101":
-                $errMessage = "You must specifiy a valid user";
+                $errMessage = "You must specify a valid user";
                 break;
             case "102":
-                $errMessage = "You havent stated what to return";
+                $errMessage = "You haven't stated what to return";
                 break;
         }
 

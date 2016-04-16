@@ -34,7 +34,7 @@
         /**
          * @param $activityName
          *
-*@return array
+         * @return array
          */
         public function getRelatedCacheNames($activityName) {
             $cacheNames = array();
@@ -117,7 +117,7 @@
          * @param string $key
          * @param string $value
          *
-*@return bool
+         * @return bool
          */
         public function set($key, $value) {
             $this->settings[ $key ] = $value;
@@ -133,7 +133,7 @@
          * @param string $default
          * @param bool   $query_db
          *
-*@return string
+         * @return string
          */
         public function get($key, $default = NULL, $query_db = TRUE) {
             if (array_key_exists($key, $this->settings)) {

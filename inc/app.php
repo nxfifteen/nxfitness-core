@@ -6,6 +6,13 @@
      * @param $msg
      */
     if (!function_exists("nxr")) {
+        /**
+         * NXR is a helper function. Past strings are recorded in a text file
+         * and when run from a command line output is displayed on screen as
+         * well
+         *
+         * @param string $msg String input to be displayed in logs files
+         */
         function nxr($msg) {
             if (is_writable(dirname(__FILE__) . "/../fitbit.log")) {
                 $fh = fopen(dirname(__FILE__) . "/../fitbit.log", "a");
@@ -85,15 +92,12 @@
 
         /**
          * Get settings from config class
-
-*
-*@param                $key
-         * @param null $default
-         * @param bool $query_db
-
-
-*
-*@return string
+         *
+         * @param                $key
+         * @param null           $default
+         * @param bool           $query_db
+         *
+         * @return string
          */
         public function getSetting($key, $default = NULL, $query_db = TRUE) {
             return $this->getSettings()->get($key, $default, $query_db);
@@ -119,7 +123,6 @@
 
         /**
          * Add new cron jobs to queue
-
          *
          * @param string $user_fitbit_id
          * @param string $trigger
@@ -153,7 +156,6 @@
 
         /**
          * Delete cron jobs from queue
-
          *
          * @param $user_fitbit_id
          * @param $trigger
@@ -182,7 +184,6 @@
 
         /**
          * Get list of pending cron jobs from database
-
          *
          * @return array|bool
          */
@@ -254,6 +255,9 @@
                 ), array("fuid" => $user_fitbit_id));
         }
 
+        /**
+         * @param $user_fitbit_id
+         */
         public function delUserOAuthTokens($user_fitbit_id) {
             $this->getDatabase()->update($this->getSetting("db_prefix", FALSE) . "users",
                 array(
@@ -263,6 +267,12 @@
                 ), array("fuid" => $user_fitbit_id));
         }
 
+        /**
+         * @param      $user_fitbit_id
+         * @param bool $validate
+         *
+         * @return bool
+         */
         public function getUserOAuthTokens($user_fitbit_id, $validate = TRUE) {
             $userArray = $this->getDatabase()->get($this->getSetting("db_prefix", NULL, FALSE) . "users", array('tkn_access', 'tkn_refresh', 'tkn_expires'), array("fuid" => $user_fitbit_id));
             if (is_array($userArray)) {
@@ -276,6 +286,11 @@
             return FALSE;
         }
 
+        /**
+         * @param $userArray
+         *
+         * @return bool
+         */
         public function valdidateOAuth($userArray) {
             if ($userArray['tkn_access'] == "" || $userArray['tkn_refresh'] == "" || $userArray['tkn_expires'] == "") {
                 //nxr("OAuth is not fully setup for this user");
@@ -354,14 +369,11 @@
 
         /**
          * Set value in database/config class
-
-*
-*@param           $key
-         * @param $value
-
-
-*
-*@return bool
+         *
+         * @param           $key
+         * @param           $value
+         *
+         * @return bool
          */
         public function setSetting($key, $value) {
             return $this->getSettings()->set($key, $value);
@@ -369,11 +381,10 @@
 
         /**
          * Helper function to check for supported API calls
-
-*
-*@param null $key
          *
-*@return array|null|string
+         * @param null $key
+         *
+         * @return array|null|string
          */
         public function supportedApi($key = NULL) {
             $database_array = array(

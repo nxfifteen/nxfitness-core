@@ -8,6 +8,13 @@
     }
 
     if (!function_exists("nxr")) {
+        /**
+         * NXR is a helper function. Past strings are recorded in a text file
+         * and when run from a command line output is displayed on screen as
+         * well
+         *
+         * @param string $msg String input to be displayed in logs files
+         */
         function nxr($msg) {
             if (is_writable(dirname(__FILE__) . "/fitbit.log")) {
                 $fh = fopen(dirname(__FILE__) . "/fitbit.log", "a");
@@ -115,7 +122,7 @@
         } else if (DEBUG_MY_PROJECT) {
             echo __FILE__ . " @" . __LINE__ . " ## This is not a valid user<br />\n";
         } else {
-            // When we dont know what to do put the user over to the user interface screens
+            // When we don't know what to do put the user over to the user interface screens
             header("Location: https://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
             exit();
         }
@@ -142,7 +149,7 @@
                     'code' => $_GET['code']
                 ]);
 
-                // Findout who the new OAuth keys belong too
+                // Find out who the new OAuth keys belong too
                 $resourceOwner = $helper->getResourceOwner($accessToken);
 
                 // Check again that this really is one of our users
@@ -204,7 +211,7 @@
                 nxr("Invalid subscriber request - " . $_GET['verify'] . " - " . $url_namespace);
             }
         } else {
-            // Deal with Fitbit subsciptions
+            // Deal with Fitbit subscriptions
             require_once(dirname(__FILE__) . "/service.php");
         }
 
@@ -217,7 +224,7 @@
         nxr("Namespace Called: " . $url_namespace);
 
     } else {
-        // When we dont know what to do put the user over to the user interface screens
+        // When we don't know what to do put the user over to the user interface screens
         header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . "admin/");
         exit();
     }

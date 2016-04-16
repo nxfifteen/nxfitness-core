@@ -556,6 +556,12 @@
             return $returnArray;
         }
 
+        /**
+         * @param null $tcxFileName
+         * @param null $tcxTrackName
+         *
+         * @return array
+         */
         public function returnUserRecordActivityTCX($tcxFileName = NULL, $tcxTrackName = NULL) {
             if (is_null($tcxFileName)) {
                 if (array_key_exists("tcx", $_GET)) {
@@ -592,6 +598,7 @@
                     if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
                         $gpxFileName = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
                     } else {
+                        /** @lang XML */
                         $gpx = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
                         $gpx .= "<gpx creator=\"NxFit - http://nxfifteen.me.uk\" ";
                         $gpx .= "\n   xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\"";
@@ -669,10 +676,11 @@
                                                                                          "LongitudeDegrees" => "-2.970721",
                                                                                          "gpx"              => ""));
             }
-
-            return array();
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordBadges() {
             $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
                 "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeType" => "badgeType"),
@@ -848,7 +856,7 @@
                     ), "LIMIT"  => 1));
 
                 if (!$dbChallenge) {
-                    $calenderEvents = $this->calculateChallengeDays($userChallengeStartDate, $userChallengeEndDate, $range_start, $range_end);
+                    $calenderEvents = $this->calculateChallengeDays($userChallengeStartDate, $userChallengeEndDate, $range_start);
                     if (!array_key_exists("debug", $_GET) or $_GET['debug'] != "true") {
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "challenge", array(
                             'user'       => $this->getUserID(),
@@ -1729,6 +1737,9 @@
             return $dbGoals;
         }
 
+        /**
+         * @return array
+         */
         public function returnUserRecordTasker() {
             $taskerDataArray = array();
 

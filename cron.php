@@ -13,6 +13,13 @@
      */
 
     if (!function_exists("nxr")) {
+        /**
+         * NXR is a helper function. Past strings are recorded in a text file
+         * and when run from a command line output is displayed on screen as
+         * well
+         *
+         * @param string $msg String input to be displayed in logs files
+         */
         function nxr($msg) {
             if (is_writable(dirname(__FILE__) . "/fitbit.log")) {
                 $fh = fopen(dirname(__FILE__) . "/fitbit.log", "a");
@@ -30,7 +37,7 @@
     $fitbitApp = new NxFitbit();
 
     $end = time() + 20;
-    $repopulate_queue = run_thru_queue();
+    $repopulate_queue = run_through_queue();
 
     if ($repopulate_queue) {
         nxr("Ready to repopulate the queue");
@@ -61,7 +68,7 @@
         }
 
         if (count($allowed_triggers) == 0) {
-            nxr("I am not allowed to requeue anything so will requeue with empty records");
+            nxr("I am not allowed to re-queue anything so will re-queue with empty records");
         } else {
             $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
             SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
@@ -92,11 +99,14 @@
         }
 
         if (time() < $end) {
-            run_thru_queue();
+            run_through_queue();
         }
     }
 
-    function run_thru_queue() {
+    /**
+     * @return bool
+     */
+    function run_through_queue() {
         global $fitbitApp, $end;
         $repopulate_queue = TRUE;
 

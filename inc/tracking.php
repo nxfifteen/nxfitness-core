@@ -28,11 +28,11 @@
             $this->PiwikTracker = new PiwikTracker($this->getSiteId(), $api_url);
 
             if (array_key_exists("HTTPS", $_SERVER) && $_SERVER["HTTPS"] == "on") {
-                $protical = "https://";
+                $protocol = "https://";
             } else {
-                $protical = "http://";
+                $protocol = "http://";
             }
-            $this->PiwikTracker->setUrl($protical . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+            $this->PiwikTracker->setUrl($protocol . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 
             //Sets the Browser language.
             if (array_key_exists("HTTP_ACCEPT_LANGUAGE", $_SERVER)) {

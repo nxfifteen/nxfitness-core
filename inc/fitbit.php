@@ -700,6 +700,12 @@
             return $this->AppClass;
         }
 
+        /**
+         * @param $lastCleanRun
+         *
+         * @return bool|mixed|string
+         */
+        /** @noinspection PhpUnusedPrivateMethodInspection */
         private function pullBabelHeartRateSeries($lastCleanRun) {
             // Check we're allowed to pull these records here rather than at each loop
             $isAllowed = $this->isAllowed("heart");
@@ -802,6 +808,13 @@
             }
         }
 
+        /**
+         * @param      $path
+         * @param      $pushObject
+         * @param bool $returnObject
+         *
+         * @return mixed
+         */
         private function pushBabel($path, $pushObject, $returnObject = FALSE) {
             try {
                 // Try to get an access token using the authorization code grant.
@@ -1961,7 +1974,8 @@
         }
 
         /**
-         * @param $trigger
+         * @param      $trigger
+         * @param bool $quiet
          *
          * @return bool|string
          */
@@ -2012,7 +2026,8 @@
         }
 
         /**
-         * @param boolean $forceSync
+         * @return bool
+         * @internal param bool $forceSync
          */
         public function getForceSync() {
             return $this->forceSync;
@@ -2064,6 +2079,11 @@
             $this->activeUser = $activeUser;
         }
 
+        /**
+         * @param $newUserProfile
+         *
+         * @return bool
+         */
         public function createNewUser($newUserProfile) {
             /*
 
