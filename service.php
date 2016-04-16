@@ -5,8 +5,7 @@
     date_default_timezone_set('Europe/London');
 
     if (!function_exists("nxr")) {
-        function nxr($msg)
-        {
+        function nxr($msg) {
             if (is_writable(dirname(__FILE__) . "/../fitbit.log")) {
                 $fh = fopen(dirname(__FILE__) . "/../fitbit.log", "a");
                 fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
@@ -26,7 +25,7 @@
     // read JSon input
     $data = json_decode(file_get_contents('php://input'));
 
-//    nxr(print_r($data, true));
+    //    nxr(print_r($data, true));
 
     $logMsg = '';
 
@@ -69,13 +68,14 @@
                             }
 
                             if ($upreq->collectionType == "foods") {
-                                if ($fitbitApp->getDatabase()->has($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $upreq->ownerId,
-                                                                                                                                                     "activity" => "water")))) {
+                                if ($fitbitApp->getDatabase()->has($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user"     => $upreq->ownerId,
+                                                                                                                                                     "activity" => "water")))
+                                ) {
                                     $fields = array(
                                         "date"     => date("Y-m-d H:i:s"),
                                         "cooldown" => "1970-01-01 01:00:00"
                                     );
-                                    $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user" => $upreq->ownerId,
+                                    $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user"     => $upreq->ownerId,
                                                                                                                                                                  "activity" => "water")));
                                 } else {
                                     $fields = array(
@@ -109,8 +109,8 @@
                         foreach ($data->unit as $unit) {
                             nxr("  Recording " . $unit->key . " as " . $unit->value);
                             $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "units", array(
-                                "user" => $data->ownerId,
-                                "unit" => $unit->key,
+                                "user"  => $data->ownerId,
+                                "unit"  => $unit->key,
                                 "value" => $unit->value
                             ));
                         }

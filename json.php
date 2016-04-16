@@ -75,7 +75,7 @@
             $json = $dataReturnClass->returnUserRecords($_GET);
 
             if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
-                return print_r($json, true);
+                return print_r($json, TRUE);
             } else {
                 if (is_array($json) and array_key_exists("results", $json) and array_key_exists("error", $json['results'])) {
                     if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
@@ -85,9 +85,11 @@
                         $json['results'] = $json['results']['return'];
                     }
                     echo json_encode($json);
+
                     return "";
                 } else if (array_key_exists("cache", $json) and $json['cache'] == 0) {
                     echo json_encode($json);
+
                     return "";
                 } else {
                     return json_encode($json);

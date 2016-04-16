@@ -2,11 +2,12 @@
 
     /**
      * Class config
-     * @version 0.0.1
-     * @author Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
-     * @link http://nxfifteen.me.uk NxFIFTEEN
+     *
+     * @version   0.0.1
+     * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+     * @link      http://nxfifteen.me.uk NxFIFTEEN
      * @copyright 2015 Stuart McCulloch Anderson
-     * @license http://stuart.nx15.at/mit/2015 MIT
+     * @license   http://stuart.nx15.at/mit/2015 MIT
      */
     class config {
         /**
@@ -32,7 +33,8 @@
 
         /**
          * @param $activityName
-         * @return array
+         *
+*@return array
          */
         public function getRelatedCacheNames($activityName) {
             $cacheNames = array();
@@ -114,10 +116,11 @@
         /**
          * @param string $key
          * @param string $value
-         * @return bool
+         *
+*@return bool
          */
         public function set($key, $value) {
-            $this->settings[$key] = $value;
+            $this->settings[ $key ] = $value;
             if ($this->database->has($this->get("db_prefix", FALSE) . "settings", array("var" => $key))) {
                 return $this->database->update($this->get("db_prefix", FALSE) . "settings", array("data" => $value), array("var" => $key));
             } else {
@@ -128,15 +131,17 @@
         /**
          * @param string $key
          * @param string $default
-         * @param bool $query_db
-         * @return string
+         * @param bool   $query_db
+         *
+*@return string
          */
         public function get($key, $default = NULL, $query_db = TRUE) {
             if (array_key_exists($key, $this->settings)) {
-                return $this->settings[$key];
+                return $this->settings[ $key ];
             } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, FALSE) . "settings", array("var" => $key))) {
-                $this->settings[$key] = $this->database->get($this->get("db_prefix", NULL, FALSE) . "settings", "data", array("var" => $key));
-                return $this->settings[$key];
+                $this->settings[ $key ] = $this->database->get($this->get("db_prefix", NULL, FALSE) . "settings", "data", array("var" => $key));
+
+                return $this->settings[ $key ];
             } else {
                 if (!is_null($default)) {
                     $this->set($key, $default);

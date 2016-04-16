@@ -1,37 +1,36 @@
 <?php
 
-define('IS_CRON_RUN', TRUE);
+    define('IS_CRON_RUN', TRUE);
 
     /**
      * NxFitbit - Cron commandline tool
-     * @version 0.0.1
-     * @author Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
-     * @link http://nxfifteen.me.uk NxFIFTEEN
+     *
+     * @version   0.0.1
+     * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+     * @link      http://nxfifteen.me.uk NxFIFTEEN
      * @copyright 2015 Stuart McCulloch Anderson
-     * @license http://stuart.nx15.at/mit/2015 MIT
+     * @license   http://stuart.nx15.at/mit/2015 MIT
      */
 
-if (!function_exists("nxr")) {
-    function nxr($msg)
-    {
-        if (is_writable(dirname(__FILE__) . "/fitbit.log")) {
-            $fh = fopen(dirname(__FILE__) . "/fitbit.log", "a");
-            fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
-            fclose($fh);
-        }
+    if (!function_exists("nxr")) {
+        function nxr($msg) {
+            if (is_writable(dirname(__FILE__) . "/fitbit.log")) {
+                $fh = fopen(dirname(__FILE__) . "/fitbit.log", "a");
+                fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
+                fclose($fh);
+            }
 
-        /*if (php_sapi_name() == "cli") {
-            echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
-        }*/
+            /*if (php_sapi_name() == "cli") {
+                echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
+            }*/
+        }
     }
-}
 
     require_once(dirname(__FILE__) . "/inc/app.php");
     $fitbitApp = new NxFitbit();
 
-$end = time() + 20;
+    $end = time() + 20;
     $repopulate_queue = run_thru_queue();
-$repopulate_queue = TRUE;
 
     if ($repopulate_queue) {
         nxr("Ready to repopulate the queue");
@@ -99,7 +98,7 @@ $repopulate_queue = TRUE;
 
     function run_thru_queue() {
         global $fitbitApp, $end;
-        $repopulate_queue = true;
+        $repopulate_queue = TRUE;
 
         $queuedJobs = $fitbitApp->getCronJobs();
         if (count($queuedJobs) > 0) {

@@ -27,16 +27,16 @@
             $iteration = 0;
             foreach ($dbWeight as $weight) {
                 if ($iteration == 0) {
-                    $dbWeight[$iteration]['weightAvg'] = $dbWeight[$iteration]['weight'];
-                    $dbWeight[$iteration]['fatAvg'] = $dbWeight[$iteration]['fat'];
+                    $dbWeight[ $iteration ]['weightAvg'] = $dbWeight[ $iteration ]['weight'];
+                    $dbWeight[ $iteration ]['fatAvg'] = $dbWeight[ $iteration ]['fat'];
                 } else {
-                    $dbWeight[$iteration]['weightAvg'] = round(($dbWeight[$iteration]['weight'] - $dbWeight[$iteration - 1]['weightAvg']) / 10, 1, PHP_ROUND_HALF_UP) + $dbWeight[$iteration - 1]['weightAvg'];
-                    $dbWeight[$iteration]['fatAvg'] = round(($dbWeight[$iteration]['fat'] - $dbWeight[$iteration - 1]['fatAvg']) / 10, 1, PHP_ROUND_HALF_UP) + $dbWeight[$iteration - 1]['fatAvg'];
+                    $dbWeight[ $iteration ]['weightAvg'] = round(($dbWeight[ $iteration ]['weight'] - $dbWeight[ $iteration - 1 ]['weightAvg']) / 10, 1, PHP_ROUND_HALF_UP) + $dbWeight[ $iteration - 1 ]['weightAvg'];
+                    $dbWeight[ $iteration ]['fatAvg'] = round(($dbWeight[ $iteration ]['fat'] - $dbWeight[ $iteration - 1 ]['fatAvg']) / 10, 1, PHP_ROUND_HALF_UP) + $dbWeight[ $iteration - 1 ]['fatAvg'];
                 }
 
                 $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
-                    array('weightAvg' => $dbWeight[$iteration]['weightAvg'], 'fatAvg' => $dbWeight[$iteration]['fatAvg']),
-                    array("AND" => array("user" => $this->getUserID(), "date" => $dbWeight[$iteration]['date'])));
+                    array('weightAvg' => $dbWeight[ $iteration ]['weightAvg'], 'fatAvg' => $dbWeight[ $iteration ]['fatAvg']),
+                    array("AND" => array("user" => $this->getUserID(), "date" => $dbWeight[ $iteration ]['date'])));
 
                 $iteration = $iteration + 1;
             }
