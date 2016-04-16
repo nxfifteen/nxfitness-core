@@ -98,11 +98,16 @@
                 }
             } else {
                 // Sent the user off too Fitbit to authenticate
+                if ($_COOKIE['_nx_fb_usr'] == $NxFitbit->getSetting("fitbit_owner_id")) {
+                    $personal = "_personal";
+                } else {
+                    $personal = "";
+                }
 
                 $helper = new djchen\OAuth2\Client\Provider\Fitbit([
-                    'clientId'     => $NxFitbit->getSetting("fitbit_clientId", NULL, FALSE),
-                    'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret", NULL, FALSE),
-                    'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri", NULL, FALSE)
+                    'clientId'     => $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
+                    'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
+                    'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
                 ]);
 
                 // Fetch the authorization URL from the provider; this returns the
@@ -127,7 +132,7 @@
             exit();
         }
 
-    } else if ($url_namespace == "callback") {
+    } else if ($url_namespace == "callback" || $url_namespace == "rti") {
         // Process the return information from a Fitbit authentication flow
         if (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
             unset($_SESSION['oauth2state']);
@@ -138,10 +143,17 @@
                 require_once(dirname(__FILE__) . "/inc/app.php");
                 $NxFitbit = new NxFitbit();
 
+                // Sent the user off too Fitbit to authenticate
+                if ($url_namespace == "rti") {
+                    $personal = "_personal";
+                } else {
+                    $personal = "";
+                }
+
                 $helper = new djchen\OAuth2\Client\Provider\Fitbit([
-                    'clientId'     => $NxFitbit->getSetting("fitbit_clientId", NULL, FALSE),
-                    'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret", NULL, FALSE),
-                    'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri", NULL, FALSE)
+                    'clientId'     => $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
+                    'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
+                    'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
                 ]);
 
                 // Try to get an access token using the authorization code grant.
@@ -166,11 +178,11 @@
                     $pre_auth = explode(",", $pre_auth);
                     if (array_search($resourceOwner->getId(), $pre_auth)) {
                         $newUserName = $resourceOwner->getId();
-                        $NxFitbit->getFitbitapi()->setUserAccessToken($accessToken);
-                        $NxFitbit->getFitbitapi()->setActiveUser($newUserName);
-                        $newUserProfile = $NxFitbit->getFitbitapi()->pullBabel('user/-/profile.json', TRUE);
+                        $NxFitbit->getFitbitAPI($newUserName)->setUserAccessToken($accessToken);
+                        $NxFitbit->getFitbitAPI($newUserName)->setActiveUser($newUserName);
+                        $newUserProfile = $NxFitbit->getFitbitAPI($newUserName)->pullBabel('user/-/profile.json', TRUE);
 
-                        if ($NxFitbit->getFitbitapi()->createNewUser($newUserProfile->user)) {
+                        if ($NxFitbit->getFitbitAPI($newUserName)->createNewUser($newUserProfile->user)) {
                             echo "Thank you Everything has worked correctly. Sadly this is as far as I can take you for now.";
                         }
 
@@ -196,7 +208,7 @@
 
         if (is_array($_GET) && array_key_exists("verify", $_GET)) {
             require_once(dirname(__FILE__) . "/config.inc.php");
-            if ($_GET['verify'] == $config['fitbit_subscriber_id']) {
+            if ((is_array($config['fitbit_subscriber_id']) and array_search($_GET['verify'], $config['fitbit_subscriber_id'])) OR ($_GET['verify'] == $config['fitbit_subscriber_id'])) {
                 header('Cache-Control: no-cache, must-revalidate');
                 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
                 header('Content-type: text/plain');
@@ -210,6 +222,7 @@
 
                 nxr("Invalid subscriber request - " . $_GET['verify'] . " - " . $url_namespace);
             }
+
         } else {
             // Deal with Fitbit subscriptions
             require_once(dirname(__FILE__) . "/service.php");

@@ -24,8 +24,8 @@
         if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
             if ($fitbitApp->supportedApi($_GET['get']) != $_GET['get']) {
                 nxr("Forcing pull of " . $fitbitApp->supportedApi($_GET['get']) . " for " . $_GET['user']);
-                $fitbitApp->getFitbitapi()->setForceSync(TRUE);
-                $fitbitApp->getFitbitapi()->pull($_GET['user'], $_GET['get']);
+                $fitbitApp->getFitbitAPI($_GET['user'])->setForceSync(TRUE);
+                $fitbitApp->getFitbitAPI($_GET['user'])->pull($_GET['user'], $_GET['get']);
             } else {
                 nxr("Unknown trigger " . $_GET['get'] . ". Supported calls are:");
                 print_r($fitbitApp->supportedApi());

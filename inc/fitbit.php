@@ -42,15 +42,20 @@
 
         /**
          * @param NxFitbit $fitbitApp
+         * @param bool     $personal
          */
-        public function __construct($fitbitApp) {
+        public function __construct($fitbitApp, $personal = FALSE) {
             $this->setAppClass($fitbitApp);
 
+            $personal = $personal ? "_personal" : "";
+
             $this->setLibrary(new djchen\OAuth2\Client\Provider\Fitbit([
-                'clientId'     => $fitbitApp->getSetting("fitbit_clientId", NULL, FALSE),
-                'clientSecret' => $fitbitApp->getSetting("fitbit_clientSecret", NULL, FALSE),
-                'redirectUri'  => $fitbitApp->getSetting("fitbit_redirectUri", NULL, FALSE)
+                'clientId'     => $fitbitApp->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
+                'clientSecret' => $fitbitApp->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
+                'redirectUri'  => $fitbitApp->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
             ]));
+
+            nxr("clientId: " . $fitbitApp->getSetting("fitbit_clientId" . $personal, NULL, FALSE) . " used");
 
             $this->forceSync = FALSE;
 
@@ -368,28 +373,28 @@
                 if ($this->api_isCooled("goals")) {
                     $userGoals = $this->pullBabel('user/-/activities/goals/daily.json', TRUE);
 
-                    if (isset($userGoals)) {
+                    if (isset($userGoals) && isset($userGoals->goals)) {
                         $currentDate = new DateTime();
                         $usr_goals = $userGoals->goals;
                         if (is_object($usr_goals)) {
                             $fallback = FALSE;
 
-                            if ($usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
+                            if (!isset($usr_goals->caloriesOut) OR !isset($usr_goals->distance) OR !isset($usr_goals->floors) OR !isset($usr_goals->activeMinutes) OR !isset($usr_goals->steps) OR $usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "") {
                                 $this->getAppClass()->addCronJob($this->getActiveUser(), "goals");
 
-                                if ($usr_goals->caloriesOut == "")
+                                if (!isset($usr_goals->caloriesOut) OR $usr_goals->caloriesOut == "")
                                     $usr_goals->caloriesOut = -1;
 
-                                if ($usr_goals->distance == "")
+                                if (!isset($usr_goals->distance) OR $usr_goals->distance == "")
                                     $usr_goals->distance = -1;
 
-                                if ($usr_goals->floors == "")
+                                if (!isset($usr_goals->floors) OR $usr_goals->floors == "")
                                     $usr_goals->floors = -1;
 
-                                if ($usr_goals->activeMinutes == "")
+                                if (!isset($usr_goals->activeMinutes) OR $usr_goals->activeMinutes == "")
                                     $usr_goals->activeMinutes = -1;
 
-                                if ($usr_goals->steps == "")
+                                if (!isset($usr_goals->steps) OR $usr_goals->steps == "")
                                     $usr_goals->steps = -1;
 
                                 $fallback = TRUE;
@@ -1183,7 +1188,7 @@
                 if ($this->api_isCooled("goals_calories")) {
                     $userCaloriesGoals = $this->pullBabel('user/-/foods/log/goal.json', TRUE);
 
-                    if (isset($userCaloriesGoals)) {
+                    if (isset($userCaloriesGoals) && isset($userCaloriesGoals->goals) && isset($userCaloriesGoals->foodPlan)) {
                         $fallback = FALSE;
 
 
@@ -1443,7 +1448,7 @@
 
             if ($string == "steps") {
                 $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_length", '50');
-                $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser(), '03-31 last sunday'); // Default to last Sunday in March
+                $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser(), '12-01 last sunday'); // Default to last Sunday in March
                 $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
                 $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
@@ -1590,7 +1595,7 @@
          * @deprecated Use getLibrary() instead
          * @return djchen\OAuth2\Client\Provider\Fitbit
          */
-        public function getFitbitapi() {
+        public function getFitbitLibrary() {
             return $this->getLibrary();
         }
 
@@ -1686,14 +1691,14 @@
                         }
                     }
 
-                    if ($trigger == "all" || $trigger == "heart") {
+                    /*if ($trigger == "all" || $trigger == "heart") {
                         $lastCleanRun = $this->api_getLastCleanrun("heart");
                         nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
                         $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
                             nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
-                    }
+                    }*/
 
                     // Set variables require bellow
                     $currentDate = new DateTime ('now');
@@ -2140,7 +2145,7 @@
          * @param bool $debugOutput
          * @param bool $supportFailures
          *
-*@return mixed
+         * @return mixed
          */
         public function pullBabel($path, $returnObject = FALSE, $debugOutput = FALSE, $supportFailures = FALSE) {
             try {

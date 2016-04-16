@@ -2108,10 +2108,10 @@
                 $interval = DateInterval::createFromDateString('1 day');
                 $period = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
 
-                $weight = $this->getAppClass()->getFitbitapi()->getDBCurrentBody($this->getUserID(), "weight");
-                $weightGoal = $this->getAppClass()->getFitbitapi()->getDBCurrentBody($this->getUserID(), "weightGoal");
-                $fat = $this->getAppClass()->getFitbitapi()->getDBCurrentBody($this->getUserID(), "fat");
-                $fatGoal = $this->getAppClass()->getFitbitapi()->getDBCurrentBody($this->getUserID(), "fatGoal");
+                $weight = $this->getAppClass()->getFitbitAPI($this->getUserID())->getDBCurrentBody($this->getUserID(), "weight");
+                $weightGoal = $this->getAppClass()->getFitbitAPI($this->getUserID())->getDBCurrentBody($this->getUserID(), "weightGoal");
+                $fat = $this->getAppClass()->getFitbitAPI($this->getUserID())->getDBCurrentBody($this->getUserID(), "fat");
+                $fatGoal = $this->getAppClass()->getFitbitAPI($this->getUserID())->getDBCurrentBody($this->getUserID(), "fatGoal");
 
                 foreach ($period as $dt) {
                     /** @var DateTime $dt */

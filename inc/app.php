@@ -192,14 +192,19 @@
         }
 
         /**
-         * @param bool $reset
+         * @param bool   $reset
+         * @param string $userFitbitId
          *
-         * @return fitbit
+*@return fitbit
          */
-        public function getFitbitapi($reset = FALSE) {
+        public function getFitbitAPI($userFitbitId = "", $reset = FALSE) {
             if (is_null($this->fitbitapi) || $reset) {
                 require_once(dirname(__FILE__) . "/fitbit.php");
-                $this->fitbitapi = new fitbit($this);
+                if ($userFitbitId == $this->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                    $this->fitbitapi = new fitbit($this, TRUE);
+                } else {
+                    $this->fitbitapi = new fitbit($this, FALSE);
+                }
             }
 
             return $this->fitbitapi;

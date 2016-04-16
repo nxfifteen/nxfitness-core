@@ -80,10 +80,10 @@
                     } else {
                         nxr(" Repopulating for " . $user['name']);
 
-                        $fitbitApp->getFitbitapi()->setActiveUser($user['fuid']);
+                        $fitbitApp->getFitbitAPI($user['fuid'])->setActiveUser($user['fuid']);
                         foreach ($allowed_triggers as $allowed_trigger) {
-                            if (!is_numeric($fitbitApp->getFitbitapi()->isAllowed($allowed_trigger, TRUE))) {
-                                if ($fitbitApp->getFitbitapi()->api_isCooled($allowed_trigger)) {
+                            if (!is_numeric($fitbitApp->getFitbitAPI()->isAllowed($allowed_trigger, TRUE))) {
+                                if ($fitbitApp->getFitbitAPI($user['fuid'])->api_isCooled($allowed_trigger)) {
                                     nxr("  + $allowed_trigger added to queue");
                                     $fitbitApp->addCronJob($user['fuid'], $allowed_trigger);
                                 } else {
@@ -119,8 +119,8 @@
                         if ($fitbitApp->getSetting('nx_fitbit_ds_' . $job['trigger'], TRUE)) { //TODO: Set top false by default
                             if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
                                 nxr("Processing queue item " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
-                                $jobRun = $fitbitApp->getFitbitapi(TRUE)->pull($job['user'], $job['trigger']);
-                                if ($fitbitApp->getFitbitapi()->isApiError($jobRun)) {
+                                $jobRun = $fitbitApp->getFitbitAPI($job['user'], TRUE)->pull($job['user'], $job['trigger']);
+                                if ($fitbitApp->getFitbitAPI($job['user'])->isApiError($jobRun)) {
                                     nxr("* Cron Error: " . $fitbitApp->lookupErrorCode($jobRun));
                                 } else {
                                     $fitbitApp->delCronJob($job['user'], $job['trigger']);
