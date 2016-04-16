@@ -57,6 +57,14 @@ class fitbit
     }
 
     /**
+     * @param mixed $userAccessToken
+     */
+    public function setUserAccessToken($userAccessToken)
+    {
+        $this->userAccessToken = $userAccessToken;
+    }
+
+    /**
      * @param djchen\OAuth2\Client\Provider\Fitbit $fitbitapi
      */
     public function setLibrary($fitbitapi)
@@ -583,6 +591,82 @@ class fitbit
     public function setActiveUser($activeUser)
     {
         $this->activeUser = $activeUser;
+    }
+
+    public function createNewUser($newUserProfile)
+    {
+        /*
+
+                'api' => $newUserProfile->encodedId,
+                'name' => $newUserProfile->fullName,
+                'dob' => $newUserProfile->dateOfBirth,
+                'avatar' => $newUserProfile->avatar150,
+                'seen' => $newUserProfile->memberSince,
+                'gender' => $newUserProfile->gender,
+                'height' => $newUserProfile->height,
+                'stride_running' => $newUserProfile->strideLengthRunning,
+                'stride_walking' => $newUserProfile->strideLengthWalking,
+                'country' => $newUserProfile->country,
+         */
+        //nxr(print_r($newUserProfile, TRUE));
+        if ($this->getAppClass()->isUser($newUserProfile->encodedId)) {
+            nxr("User already present");
+            return false;
+        } else {
+
+            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                'fuid' => $newUserProfile->encodedId,
+                'group' => 'user',
+                'api' => $newUserProfile->encodedId,
+                'name' => $newUserProfile->fullName,
+                'dob' => $newUserProfile->dateOfBirth,
+                'avatar' => $newUserProfile->avatar150,
+                'seen' => $newUserProfile->memberSince,
+                'lastrun' => $newUserProfile->memberSince,
+                'gender' => $newUserProfile->gender,
+                'height' => $newUserProfile->height,
+                'stride_running' => $newUserProfile->strideLengthRunning,
+                'stride_walking' => $newUserProfile->strideLengthWalking,
+                'country' => $newUserProfile->country,
+                'tkn_access' => $this->getAccessToken()->getToken(),
+                'tkn_refresh' => $this->getAccessToken()->getRefreshToken(),
+                'tkn_expires' => $this->getAccessToken()->getExpires(),
+                'rank' => 0,
+                'friends' => 0,
+                'distance' => 0,
+            ));
+
+            return true;
+        }
+    }
+
+    /**
+     * @param $path
+     * @param bool $returnObject
+     * @param bool $debugOutput
+     * @return mixed
+     */
+    public function pullBabel($path, $returnObject = FALSE, $debugOutput = FALSE)
+    {
+        try {
+            // Try to get an access token using the authorization code grant.
+            $accessToken = $this->getAccessToken();
+
+            $request = $this->getLibrary()->getAuthenticatedRequest('GET', FITBIT_COM . "/1/" . $path, $accessToken);
+            // Make the authenticated API request and get the response.
+            $response = $this->getLibrary()->getResponse($request);
+
+            if ($returnObject) {
+                $response = json_decode(json_encode($response), FALSE);
+            }
+
+            if ($debugOutput) nxr(print_r($response, true));
+            return $response;
+        } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            // Failed to get the access token or user details.
+            nxr($e->getMessage());
+            die();
+        }
     }
 
     /**
@@ -1231,35 +1315,6 @@ class fitbit
     private function getAppClass()
     {
         return $this->AppClass;
-    }
-
-    /**
-     * @param $path
-     * @param bool $returnObject
-     * @param bool $debugOutput
-     * @return mixed
-     */
-    private function pullBabel($path, $returnObject = FALSE, $debugOutput = FALSE)
-    {
-        try {
-            // Try to get an access token using the authorization code grant.
-            $accessToken = $this->getAccessToken();
-
-            $request = $this->getLibrary()->getAuthenticatedRequest('GET', FITBIT_COM . "/1/" . $path, $accessToken);
-            // Make the authenticated API request and get the response.
-            $response = $this->getLibrary()->getResponse($request);
-
-            if ($returnObject) {
-                $response = json_decode(json_encode($response), FALSE);
-            }
-
-            if ($debugOutput) nxr(print_r($response, true));
-            return $response;
-        } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
-            // Failed to get the access token or user details.
-            nxr($e->getMessage());
-            die();
-        }
     }
 
     private function pullBabelHeartRateSeries($lastCleanRun)
