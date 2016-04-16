@@ -42,7 +42,34 @@ $url_namespace = $inputURL[0];
 // start the session
 session_start();
 
-if ($url_namespace == "authorise" && array_key_exists("_nx_fb_usr", $_COOKIE) && $_COOKIE["_nx_fb_usr"] != "") {
+if ($url_namespace == "authorise" && !array_key_exists("_nx_fb_usr", $_COOKIE)) {
+    // Authorise a user against Fitbit's OAuth AIP
+    nxr("New user registration started");
+
+    // Setup the App
+    require_once(dirname(__FILE__) . "/inc/app.php");
+    $NxFitbit = new NxFitbit();
+
+    // Sent the user off too Fitbit to authenticate
+    $helper = new djchen\OAuth2\Client\Provider\Fitbit([
+        'clientId' => $NxFitbit->getSetting("fitbit_clientId", NULL, FALSE),
+        'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret", NULL, FALSE),
+        'redirectUri' => $NxFitbit->getSetting("fitbit_redirectUri", NULL, FALSE)
+    ]);
+
+    // Fetch the authorization URL from the provider; this returns the
+    // urlAuthorize option and generates and applies any necessary parameters
+    // (e.g. state).
+    $authorizationUrl = $helper->getAuthorizationUrl(array('scope' => array('activity', 'heartrate', 'location', 'nutrition', 'profile', 'settings', 'sleep', 'social', 'weight')));
+
+    // Get the state generated for you and store it to the session.
+    $_SESSION['oauth2state'] = $helper->getState();
+
+    // Redirect the user to the authorization URL.
+    header('Location: ' . $authorizationUrl);
+    exit;
+
+} else if ($url_namespace == "authorise" && array_key_exists("_nx_fb_usr", $_COOKIE) && $_COOKIE["_nx_fb_usr"] != "") {
     // Authorise a user against Fitbit's OAuth AIP
     if (DEBUG_MY_PROJECT) {
         echo __FILE__ . " @" . __LINE__ . " ## authorise - " . $_COOKIE['_nx_fb_usr'] . "<br />\n";
@@ -128,12 +155,27 @@ if ($url_namespace == "authorise" && array_key_exists("_nx_fb_usr", $_COOKIE) &&
                 header("Location: https://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
                 exit();
 
-            } else if (DEBUG_MY_PROJECT) {
-                echo __FILE__ . " @" . __LINE__ . " ## The returned OAuth '" . $resourceOwner->getId() . "' is not for one of our users<br />\n";
-
             } else {
+                $pre_auth = $NxFitbit->getSetting("owners_friends");
+                $pre_auth = explode(",", $pre_auth);
+                if (array_search($resourceOwner->getId(), $pre_auth)) {
+                    $newUserName = $resourceOwner->getId();
+                    $NxFitbit->getFitbitapi()->setUserAccessToken($accessToken);
+                    $NxFitbit->getFitbitapi()->setActiveUser($newUserName);
+                    $newUserProfile = $NxFitbit->getFitbitapi()->pullBabel('user/-/profile.json', TRUE);
+
+                    if ($NxFitbit->getFitbitapi()->createNewUser($newUserProfile->user)) {
+                        echo "Thank you Everything has worked correctly. Sadly this is as far as I can take you for now.";
+                    }
+
+                    //TODO: add new user details
+
+                } else {
+                    nxr(" Non Friend registration: " . $resourceOwner->getId());
+                    header("Location: https://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+                }
+
                 // When we don't know what to do put the user over to the user interface screens
-                header("Location: https://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
                 exit();
             }
 
