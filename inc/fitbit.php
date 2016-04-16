@@ -53,6 +53,9 @@
             ]));
 
             $this->forceSync = FALSE;
+
+            if (!defined('IS_CRON_RUN')) define('IS_CRON_RUN', FALSE);
+
         }
 
         /**
@@ -705,14 +708,14 @@
          *
          * @return bool|mixed|string
          */
-        /** @noinspection PhpUnusedPrivateMethodInspection */
         private function pullBabelHeartRateSeries($lastCleanRun) {
             // Check we're allowed to pull these records here rather than at each loop
             $isAllowed = $this->isAllowed("heart");
             if (!is_numeric($isAllowed)) {
                 if ($this->api_isCooled("heart")) {
                     $lastCleanRun = new DateTime ($lastCleanRun);
-                    $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/today/' . $lastCleanRun->format('Y-m-d') . '.json', TRUE, TRUE);
+                    $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/today/' . $lastCleanRun->format('Y-m-d') . '.json', TRUE, TRUE, TRUE);
+                    if (isset($userHeartRateLog) and is_numeric($userHeartRateLog)) return "-" . $userHeartRateLog;
 
                     if (isset($userHeartRateLog)) {
                         $className = "activities-heart";
@@ -1683,14 +1686,14 @@
                         }
                     }
 
-                    //                if ($trigger == "all" || $trigger == "heart") {
-                    //                    $lastCleanRun = $this->api_getLastCleanrun("heart");
-                    //                    nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
-                    //                    $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
-                    //                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                    //                        nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
-                    //                    }
-                    //                }
+                    if ($trigger == "all" || $trigger == "heart") {
+                        $lastCleanRun = $this->api_getLastCleanrun("heart");
+                        nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
+                        $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
+                        if ($this->isApiError($pull) && !IS_CRON_RUN) {
+                            nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
+                        }
+                    }
 
                     // Set variables require bellow
                     $currentDate = new DateTime ('now');
@@ -2135,10 +2138,11 @@
          * @param      $path
          * @param bool $returnObject
          * @param bool $debugOutput
+         * @param bool $supportFailures
          *
-         * @return mixed
+*@return mixed
          */
-        public function pullBabel($path, $returnObject = FALSE, $debugOutput = FALSE) {
+        public function pullBabel($path, $returnObject = FALSE, $debugOutput = FALSE, $supportFailures = FALSE) {
             try {
                 // Try to get an access token using the authorization code grant.
                 $accessToken = $this->getAccessToken();
@@ -2156,8 +2160,15 @@
                 return $response;
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
-                nxr($e->getMessage());
-                die();
+
+                nxr("Error " . $e->getCode() . ": " . $e->getMessage());
+                nxr($e->getFile() . " @" . $e->getLine());
+                nxr($e->getTraceAsString());
+                if ($supportFailures) {
+                    return $e->getCode();
+                } else {
+                    die();
+                }
             }
         }
 
