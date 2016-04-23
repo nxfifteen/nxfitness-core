@@ -10,18 +10,24 @@
          * NXR is a helper function. Past strings are recorded in a text file
          * and when run from a command line output is displayed on screen as
          * well
-         *
-         * @param string $msg String input to be displayed in logs files
+         
+         * 
+*@param string $msg String input to be displayed in logs files
+         * @param bool $includeDate
+         * @param bool $newline
          */
-        function nxr($msg) {
+        function nxr($msg, $includeDate = TRUE, $newline = TRUE) {
+            if ($includeDate) $msg = date("Y-m-d H:i:s") . ": " . $msg;
+            if ($newline) $msg = $msg . "\n";
+    
             if (is_writable(dirname(__FILE__) . "/../fitbit.log")) {
                 $fh = fopen(dirname(__FILE__) . "/../fitbit.log", "a");
-                fwrite($fh, date("Y-m-d H:i:s") . ": " . $msg . "\n");
+                fwrite($fh, $msg);
                 fclose($fh);
             }
 
             if (php_sapi_name() == "cli") {
-                echo date("Y-m-d H:i:s") . ": " . $msg . "\n";
+                echo $msg;
             }
         }
     }
@@ -195,7 +201,7 @@
          * @param bool   $reset
          * @param string $userFitbitId
          *
-*@return fitbit
+         * @return fitbit
          */
         public function getFitbitAPI($userFitbitId = "", $reset = FALSE) {
             if (is_null($this->fitbitapi) || $reset) {
@@ -220,6 +226,23 @@
         /**
          * Database functions
          */
+
+        /**
+         * @param $user_fitbit_id
+         *
+         * @return int|array
+         */
+        public function setUserCooldown($user_fitbit_id, $datetime) {
+            if ($this->isUser($user_fitbit_id)) {
+                if (is_string($datetime)) $datetime = new DateTime ($datetime);
+
+                return $this->getDatabase()->update($this->getSetting("db_prefix", NULL, FALSE) . "users", array(
+                    'cooldown' => $datetime->format("Y-m-d H:i:s")
+                ), array("AND" => array('fuid' => $user_fitbit_id)));
+            } else {
+                return 0;
+            }
+        }
 
         /**
          * @param $user_fitbit_id
