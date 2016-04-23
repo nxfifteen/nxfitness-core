@@ -291,6 +291,9 @@
             if (!is_numeric($isAllowed)) {
                 if ($this->api_isCooled("activity_log")) {
                     $targetDateTime = $this->api_getLastCleanrun("activity_log");
+
+                    nxr(' Downloading activity logs from ' . $targetDateTime->format("Y-m-d"));
+
                     $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0', TRUE);
 
                     if (isset($userActivityLog) and is_object($userActivityLog)) {
@@ -1766,7 +1769,6 @@
                     }
 
                     if ($trigger == "all" || $trigger == "activity_log") {
-                        nxr(' Downloading activity logs ');
                         $pull = $this->pullBabelActivityLogs();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
                             nxr("  Error activity_log: " . $this->getAppClass()->lookupErrorCode($pull));
