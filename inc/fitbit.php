@@ -159,7 +159,12 @@
                 foreach ($userTimeSeries as $steps) {
                     if (strtotime($steps->dateTime) >= strtotime($FirstSeen)) {
                         if ($steps->value == 0) {
-                            nxr("   No recorded data for " . $steps->dateTime);
+                            $currentDate = new DateTime();
+                            $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($steps->dateTime)) / (60 * 60 * 24);
+                            nxr("   No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago");
+                            if ($daysSinceReading > 180)
+                                $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
+
                         } else {
                             nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
                         }
@@ -282,16 +287,6 @@
          * @internal param $targetDate
          */
         private function pullBabelActivityLogs() {
-            $currentDate = new DateTime ('now');
-            $triggerDate = new DateTime ('18 April 2016 00:00:00');
-
-            // From 18/04/2016 Fitbit is changing the returned values from this endpoint.
-            if ($currentDate->format("U") >= $triggerDate->format("U")) {
-                nxr("  From 18/04/2016 Fitbit is changing the returned values from this endpoint.");
-
-                return TRUE;
-            }
-
             $isAllowed = $this->isAllowed("activity_log");
             if (!is_numeric($isAllowed)) {
                 if ($this->api_isCooled("activity_log")) {
@@ -302,48 +297,71 @@
                         $activityLog = $userActivityLog->activities;
                         if (isset($activityLog) && is_array($activityLog) && count($activityLog) > 0) {
                             foreach ($activityLog as $activity) {
-                                // From 18/04/2016 Fitbit is changing the returned values from this endpoint.
-                                // Here I am just trying to support both the old and new - once the new if fully deployed
-                                // I can remove this in favour of just the new
-                                $activityId = (String)$activity->activityId;
-                                $activityParentId = (String)$activity->activityParentId;
-                                $activityParentName = (String)$activity->activityParentName;
-                                $startDate = (String)$activity->startDate;
-                                $startTime = (String)$activity->startTime;
-                                // I can remove this in favour of just the new
+                                $startTimeRaw = new DateTime ((String)$activity->startTime);
+                                $startDate = $startTimeRaw->format("Y-m-d");
+                                $startTime = $startTimeRaw->format("H:i:s");
 
-                                if ($activityId == "16010") {
-                                    nxr("  Activity " . $activityParentName . " on " . $startDate . " (" . $activityId . ") is ignored.");
-                                } else {
-                                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array(
-                                        "user"       => $this->getActiveUser(),
-                                        "logId"      => (String)$activity->logId,
-                                        "activityId" => $activityId,
-                                        "startDate"  => $startDate,
-                                        "startTime"  => $startTime)))
-                                    ) {
-                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array(
-                                            "activityId"         => $activityId,
-                                            "activityParentId"   => $activityParentId,
-                                            "activityParentName" => $activityParentName,
-                                            "calories"           => (String)$activity->calories,
-                                            "description"        => (String)$activity->description,
-                                            "duration"           => (String)$activity->duration,
-                                            "hasStartTime"       => (String)$activity->hasStartTime,
-                                            "isFavorite"         => (String)$activity->isFavorite,
-                                            "logId"              => (String)$activity->logId,
-                                            "name"               => (String)$activity->name,
-                                            "startDate"          => $startDate,
-                                            "startTime"          => $startTime,
-                                            "steps"              => (String)$activity->steps,
-                                            "user"               => $this->getActiveUser(),
-                                            "date"               => $startDate
-                                        ));
+                                if ((String)$activity->activityTypeId != "16010") {
+                                    $activityLevel = $activity->activityLevel;
+                                    $dbStorage = array(
+                                        "user"                   => $this->getActiveUser(),
+                                        "logId"                  => (String)$activity->logId,
+                                        "logType"                => (String)$activity->logType,
+                                        "activityName"           => (String)$activity->activityName,
+                                        "activityTypeId"         => (String)$activity->activityTypeId,
+                                        "activeDuration"         => (String)$activity->activeDuration,
+                                        "startDate"              => $startDate,
+                                        "startTime"              => $startTime,
+                                        "activityLevelSedentary" => $activityLevel[0]->minutes,
+                                        "activityLevelLightly"   => $activityLevel[1]->minutes,
+                                        "activityLevelFairly"    => $activityLevel[2]->minutes,
+                                        "activityLevelVery"      => $activityLevel[3]->minutes
+                                    );
+
+                                    if (isset($activity->activityName)) $dbStorage["activityName"] = (String)$activity->activityName;
+                                    if (isset($activity->distanceUnit)) $dbStorage["distanceUnit"] = (String)$activity->distanceUnit;
+                                    if (isset($activity->distance)) $dbStorage["distance"] = (String)$activity->distance;
+                                    if (isset($activity->speed)) $dbStorage["speed"] = (String)$activity->speed;
+                                    if (isset($activity->pace)) $dbStorage["pace"] = (String)$activity->pace;
+                                    if (isset($activity->steps)) $dbStorage["steps"] = (String)$activity->steps;
+                                    if (isset($activity->calories)) $dbStorage["calories"] = (String)$activity->calories;
+                                    if (isset($activity->caloriesLink)) $dbStorage["caloriesLink"] = str_replace("https://api.fitbit.com/1/", "", (String)$activity->caloriesLink);
+                                    if (isset($activity->tcxLink)) $dbStorage["tcxLink"] = str_replace("https://api.fitbit.com/1/", "", (String)$activity->tcxLink);
+                                    if (isset($activity->source) && isset($activity->source->name)) $dbStorage["sourceName"] = (String)$activity->source->name;
+                                    if (isset($activity->source) && isset($activity->source->type)) $dbStorage["sourceType"] = (String)$activity->source->type;
+
+                                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)))) {
+                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", $dbStorage);
+                                        nxr("  Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") add to the database.");
                                     } else {
-                                        nxr("  Activity " . $activityParentName . " on " . $startDate . " (" . $activityId . ") is already in the database.");
+                                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", $dbStorage, array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)));
+                                        nxr("  Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") updated in the database.");
+                                    }
+
+                                    if (isset($activity->tcxLink)) {
+                                        $downloadTCX = TRUE;
+
+                                        if (isset($activity->logType) && $activity->logType == "auto_detected") {
+                                            $downloadTCX = FALSE;
+                                        }
+
+                                        if (isset($activity->source) && isset($activity->source->name) && isset($activity->source->type)) {
+                                            if (($activity->source->type == "tracker" && $activity->source->name == "Surge") || ($activity->source->type == "app" && $activity->source->name == "Fitbit for Android")) {
+                                                $downloadTCX = TRUE;
+                                            } else {
+                                                $downloadTCX = FALSE;
+                                            }
+                                        }
+
+                                        if ($downloadTCX) $this->pullBabelTCX($activity->tcxLink);
+                                    }
+
+                                    if ($this->activeUser == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                                        $this->pullBabelHeartIntraday($activity);
                                     }
                                 }
                                 $this->api_setLastCleanrun("activity_log", new DateTime ($startDate));
+
                             }
                         } else {
                             nxr("  No recorded activities");
@@ -1560,6 +1578,73 @@
         }
 
         /**
+         * @param $tcxLink
+         */
+        private function pullBabelTCX($tcxLink) {
+            nxr("   Downloading TCX File");
+            if (!file_exists(dirname(__FILE__) . "/../tcx/" . basename($tcxLink))) {
+                if (file_exists(dirname(__FILE__) . "/../tcx/") AND is_writable(dirname(__FILE__) . "/../tcx/")) {
+                    file_put_contents(dirname(__FILE__) . "/../tcx/" . basename($tcxLink), $this->pullBabel($tcxLink));
+                    nxr("    TCX files created: " . dirname(__FILE__) . "/../tcx/" . basename($tcxLink));
+                } else {
+                    nxr("    Unable to write TCX files created");
+                }
+            } else {
+                nxr("    TCX file present");
+            }
+        }
+
+        private function pullBabelHeartIntraday($activity) {
+            $isAllowed = $this->isAllowed("heart");
+            if (!is_numeric($isAllowed)) {
+                if ($this->activeUser == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                    $startTimeRaw = new DateTime ((String)$activity->startTime);
+                    $startDate = $startTimeRaw->format("Y-m-d");
+                    $startTime = $startTimeRaw->format("H:i");
+
+                    $endTimeRaw = new DateTime ((String)$activity->startTime);
+                    $endTimeRaw = $endTimeRaw->modify("+" . round($activity->activeDuration / 1000, 0) . " seconds");
+                    $endTime = $endTimeRaw->format("H:i");
+
+                    nxr("   Activity Heart Rate on " . $startDate . " for " . $startTime . " till " . $endTime);
+
+                    $hrUrl = "https://api.fitbit.com/1/user/-/activities/heart/date/" . $startDate . "/1d/1sec/time/" . $startTime . "/" . $endTime . ".json";
+                    $heartRateValues = $this->pullBabel($hrUrl);
+
+                    if (array_key_exists("activities-heart", $heartRateValues) &&
+                        count($heartRateValues['activities-heart']) > 0 &&
+                        array_key_exists("heartRateZones", $heartRateValues['activities-heart'][0]) &&
+                        is_array($heartRateValues['activities-heart'][0]['heartRateZones'])
+                    ) {
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
+                                array("heartRateZones" => json_encode($heartRateValues['activities-heart'][0]['heartRateZones'])),
+                                array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)));
+                            nxr("   Summary Information Added to Activity Log");
+                        }
+                    }
+
+                    if (count($heartRateValues['activities-heart-intraday']['dataset']) > 0) {
+                        $activitiesHeartIntraday = $heartRateValues['activities-heart-intraday']['dataset'];
+                        $activitiesHeartIntraday = json_encode($activitiesHeartIntraday);
+
+                        $dbStorage = array(
+                            "user"  => $this->activeUser,
+                            "logId" => $activity->logId,
+                            "json"  => $activitiesHeartIntraday
+                        );
+
+                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)))) {
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage);
+                        } else {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage, array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)));
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
          * @param mixed $userAccessToken
          */
         public function setUserAccessToken($userAccessToken) {
@@ -1628,6 +1713,11 @@
 
             // Check we have a valid user
             if ($this->getAppClass()->isUser($user)) {
+                $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
+                if (strtotime($userCoolDownTime) >= date("U")) {
+                    nxr("User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
+                    die();
+                }
 
                 // Check this user has valid access to the Fitbit AIP
                 if ($this->getAppClass()->valdidateOAuth($this->getAppClass()->getUserOAuthTokens($user, FALSE))) {
@@ -2148,9 +2238,25 @@
          * @return mixed
          */
         public function pullBabel($path, $returnObject = FALSE, $debugOutput = FALSE, $supportFailures = FALSE) {
+            $getRateRemaining = $this->getLibrary()->getRateRemaining();
+            if (is_numeric($getRateRemaining) && $getRateRemaining <= 2) {
+                $restMinutes = round($this->getLibrary()->getRateReset() / 60, 0);
+                nxr(" Rate limit reached. Please try again in about " . $restMinutes . " minutes");
+
+                $currentDate = new DateTime();
+                $currentDate = $currentDate->modify("+" . ($restMinutes + 5) . " minutes");
+                $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate);
+
+                die();
+            } else if (is_numeric($getRateRemaining) && $getRateRemaining < 50) {
+                nxr(" Down to your last " . $getRateRemaining . " calls");
+            }
+
             try {
                 // Try to get an access token using the authorization code grant.
                 $accessToken = $this->getAccessToken();
+
+                $path = str_replace(FITBIT_COM . "/1/", "", $path);
 
                 $request = $this->getLibrary()->getAuthenticatedRequest('GET', FITBIT_COM . "/1/" . $path, $accessToken);
                 // Make the authenticated API request and get the response.
@@ -2166,13 +2272,23 @@
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
 
-                nxr("Error " . $e->getCode() . ": " . $e->getMessage());
-                nxr($e->getFile() . " @" . $e->getLine());
-                nxr($e->getTraceAsString());
-                if ($supportFailures) {
-                    return $e->getCode();
-                } else {
+                if ($e->getCode() == 429) {
+                    nxr(" Rate limit reached. Please try again later");
+
+                    $currentDate = new DateTime();
+                    $currentDate = $currentDate->modify("+1 hours");
+                    $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate->format("Y-m-d H:05:00"));
+
                     die();
+                } else {
+                    nxr("Error " . $e->getCode() . ": " . $e->getMessage());
+                    nxr($e->getFile() . " @" . $e->getLine());
+                    nxr($e->getTraceAsString());
+                    if ($supportFailures) {
+                        return $e->getCode();
+                    } else {
+                        die();
+                    }
                 }
             }
         }
