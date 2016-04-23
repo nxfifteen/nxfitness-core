@@ -2243,7 +2243,7 @@
             $getRateRemaining = $this->getLibrary()->getRateRemaining();
             if (is_numeric($getRateRemaining) && $getRateRemaining <= 2) {
                 $restMinutes = round($this->getLibrary()->getRateReset() / 60, 0);
-                nxr(" Rate limit reached. Please try again in about " . $restMinutes . " minutes");
+                nxr(" *** Rate limit reached. Please try again in about " . $restMinutes . " minutes ***");
 
                 $currentDate = new DateTime();
                 $currentDate = $currentDate->modify("+" . ($restMinutes + 5) . " minutes");
@@ -2251,7 +2251,7 @@
 
                 die();
             } else if (is_numeric($getRateRemaining) && $getRateRemaining < 50) {
-                nxr(" Down to your last " . $getRateRemaining . " calls");
+                nxr(" *** Down to your last " . $getRateRemaining . " calls ***");
             }
 
             try {
