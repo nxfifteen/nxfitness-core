@@ -452,22 +452,17 @@
                 $sqlLimit = 1;
             }
 
-            $userActivity = $this->getAppClass()->getDatabase()->query("SELECT `date`,`name`,`logId`,`startDate`,`startTime`,`calories`,`duration`,`steps` "
+            $userActivity = $this->getAppClass()->getDatabase()->query("SELECT `activityName` as `name`,`logId`,`startDate`,`startTime`,`calories`,`activeDuration` as `duration`,`steps`, "
+                . "`activityLevelSedentary` as `sedentary`, `activityLevelLightly` as `lightly`, `activityLevelFairly` as `fairly`, `activityLevelVery` as `very`, `sourceType`, `sourceName` "
                 . "FROM `" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log` "
-                . "WHERE `user` = '" . $this->getUserID() . "' AND `name` != 'Driving' "
+                . "WHERE `user` = '" . $this->getUserID() . "' AND `logType` != 'auto_detected' "
                 . "ORDER BY `startDate` DESC, `startTime` DESC LIMIT " . $sqlLimit)->fetchAll();
 
             $daysStats = array();
             $returnArray = array();
             foreach ($userActivity as $record) {
-                unset($record[0]);
-                unset($record[1]);
-                unset($record[2]);
-                unset($record[3]);
-                unset($record[4]);
-                unset($record[5]);
-                unset($record[6]);
-                unset($record[7]);
+                $record['source'] = array("type" => $record['sourceType'], "name" => $record['sourceName']);
+                $record['activityLevel'] = array("sedentary" => $record['sedentary'], "lightly" => $record['lightly'], "fairly" => $record['fairly'], "very" => $record['very']);
 
                 $startTime = new DateTime($record['startDate'] . " " . $record['startTime']);
                 $recKey = $startTime->format("F, Y");
@@ -525,10 +520,29 @@
                 $record['stats'] = $daysStats[ $record['startDate'] ];
 
                 unset($record['startDate']);
-                unset($record['date']);
+                unset($record[0]);
+                unset($record[1]);
+                unset($record[2]);
+                unset($record[3]);
+                unset($record[4]);
+                unset($record[5]);
+                unset($record[6]);
+                unset($record[7]);
+                unset($record[8]);
+                unset($record[9]);
+                unset($record[10]);
+                unset($record[11]);
+                unset($record[12]);
+                unset($record['sourceType']);
+                unset($record['sourceName']);
+                unset($record['sedentary']);
+                unset($record['lightly']);
+                unset($record['fairly']);
+                unset($record['very']);
 
+                ksort($record);
 
-                $tcxFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $record['logId'] . '.tcx';
+                $tcxFile = "DELETE ME " . dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $record['logId'] . '.tcx';
                 if (!file_exists($tcxFile)) {
                     if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] == hash("sha256", $this->getAppClass()->getSetting("salt") . $_SERVER['SERVER_SIGNATURE'] . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'])) {
                         $record['link'] = "https://www.fitbit.com/activities/exercise/" . $record['logId'] . "?export=tcx";
