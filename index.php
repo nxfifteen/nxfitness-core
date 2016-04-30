@@ -1,10 +1,20 @@
 <?php
-    if (!defined('DEBUG_MY_PROJECT')) define('DEBUG_MY_PROJECT', FALSE);
+    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+    header('Last-Modified: ' . gmdate( 'D, d M Y H:i:s') . ' GMT');
+    header('Cache-Control: no-store, no-cache, must-revalidate');
+    header('Cache-Control: post-check=0, pre-check=0', false);
+    header('Pragma: no-cache');
 
     // Force HTTPS
-    if ($_SERVER["HTTPS"] != "on") {
+    if ($_SERVER['SERVER_ADDR'] != "10.1.1.1" && $_SERVER["HTTPS"] != "on") {
         header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
         exit();
+    }
+
+    $http = $_SERVER["HTTPS"] != "on" ? "http" : "https";
+    if ($_SERVER['SERVER_ADDR'] == "10.1.1.1" && $_SERVER['REDIRECT_URL'] == "/api/fitbit/json.php") {
+        header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $sysPath . "/json.php?" . http_build_query($_GET));
+        die();
     }
 
     if (!function_exists("nxr")) {
@@ -29,17 +39,13 @@
         }
     }
 
+    if (!defined('DEBUG_MY_PROJECT')) define('DEBUG_MY_PROJECT', FALSE);
+
     // Split-up the input URL to workout whats required
     $inputURL = $_SERVER['REDIRECT_URL'];
 
     // TODO: GitLab Issue #7 - Removed include as it breaks the config class when building up the full app
-    /*require_once(dirname(__FILE__) . "/config.inc.php");
-    if (array_key_exists("path", $config) && $config["path"] != "") {
-        $sysPath = $config["path"];
-    } else {
-        $sysPath = "/";
-    }*/
-    $sysPath = "/api/fitbit/";
+    $sysPath = $_SERVER['SERVER_ADDR'] != "10.1.1.1" ? "/api/fitbit/" : "/";
     if ($sysPath != "/") {
         $inputURL = str_replace($sysPath, "", $inputURL);
     }
@@ -94,7 +100,7 @@
                 if (DEBUG_MY_PROJECT) {
                     echo __FILE__ . " @" . __LINE__ . " ## " . $_COOKIE['_nx_fb_usr'] . " is already authorised with Fitbit<br />\n";
                 } else {
-                    header("Location: https://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+                    header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
                     exit();
                 }
             } else {
@@ -129,7 +135,7 @@
             echo __FILE__ . " @" . __LINE__ . " ## This is not a valid user<br />\n";
         } else {
             // When we don't know what to do put the user over to the user interface screens
-            header("Location: https://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+            header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
             exit();
         }
 
@@ -171,7 +177,7 @@
                     $NxFitbit->setUserOAuthTokens($resourceOwner->getId(), $accessToken);
 
                     // Since we're done pass them back to the Admin UI
-                    header("Location: https://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+                    header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
                     exit();
 
                 } else {
@@ -191,7 +197,7 @@
 
                     } else {
                         nxr(" Non Friend registration: " . $resourceOwner->getId());
-                        header("Location: https://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+                        header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
                     }
 
                     // When we don't know what to do put the user over to the user interface screens
@@ -238,7 +244,8 @@
         nxr("Namespace Called: " . $url_namespace);
 
     } else {
+        $sysPath = $_SERVER['SERVER_ADDR'] != "10.1.1.1" ? "/api/fitbit/" : "/";
         // When we don't know what to do put the user over to the user interface screens
-        header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . "admin/");
+        header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $sysPath . "admin/");
         exit();
     }
