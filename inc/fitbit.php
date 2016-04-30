@@ -291,6 +291,9 @@
             if (!is_numeric($isAllowed)) {
                 if ($this->api_isCooled("activity_log")) {
                     $targetDateTime = $this->api_getLastCleanrun("activity_log");
+
+                    nxr(' Downloading activity logs from ' . $targetDateTime->format("Y-m-d"));
+
                     $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0', TRUE);
 
                     if (isset($userActivityLog) and is_object($userActivityLog)) {
@@ -1766,7 +1769,6 @@
                     }
 
                     if ($trigger == "all" || $trigger == "activity_log") {
-                        nxr(' Downloading activity logs ');
                         $pull = $this->pullBabelActivityLogs();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
                             nxr("  Error activity_log: " . $this->getAppClass()->lookupErrorCode($pull));
@@ -2241,7 +2243,7 @@
             $getRateRemaining = $this->getLibrary()->getRateRemaining();
             if (is_numeric($getRateRemaining) && $getRateRemaining <= 2) {
                 $restMinutes = round($this->getLibrary()->getRateReset() / 60, 0);
-                nxr(" Rate limit reached. Please try again in about " . $restMinutes . " minutes");
+                nxr(" *** Rate limit reached. Please try again in about " . $restMinutes . " minutes ***");
 
                 $currentDate = new DateTime();
                 $currentDate = $currentDate->modify("+" . ($restMinutes + 5) . " minutes");
@@ -2249,7 +2251,7 @@
 
                 die();
             } else if (is_numeric($getRateRemaining) && $getRateRemaining < 50) {
-                nxr(" Down to your last " . $getRateRemaining . " calls");
+                nxr(" *** Down to your last " . $getRateRemaining . " calls ***");
             }
 
             try {

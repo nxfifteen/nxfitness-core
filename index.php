@@ -31,8 +31,8 @@
             if ($includeDate) $msg = date("Y-m-d H:i:s") . ": " . $msg;
             if ($newline) $msg = $msg . "\n";
 
-            if (is_writable(dirname(__FILE__) . "/../fitbit.log")) {
-                $fh = fopen(dirname(__FILE__) . "/../fitbit.log", "a");
+            if (is_writable(dirname(__FILE__) . "/fitbit.log")) {
+                $fh = fopen(dirname(__FILE__) . "/fitbit.log", "a");
                 fwrite($fh, $msg);
                 fclose($fh);
             }
