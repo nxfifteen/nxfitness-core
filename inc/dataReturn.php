@@ -544,23 +544,17 @@
 
                 $tcxFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $record['logId'] . '.tcx';
                 if (!file_exists($tcxFile)) {
-                    if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] == hash("sha256", $this->getAppClass()->getSetting("salt") . $_SERVER['SERVER_SIGNATURE'] . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'])) {
-                        $record['link'] = "https://www.fitbit.com/activities/exercise/" . $record['logId'] . "?export=tcx";
-                        $record['gpx'] = "download";
-                        $this->setForCache(FALSE);
-                    } else {
-                        $record['gpx'] = "none";
-                    }
+                    $record['gpx'] = "none";
                 } else {
                     if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx')) {
                         if (is_writable(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache')) {
-                            $this->returnUserRecordActivityTCX($record['logId'], $record['name'] . ": " . $record['startTime']);
-                            $record['gpx'] = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
+                            $record['gpx'] = $this->returnUserRecordActivityTCX($record['logId'], $record['name'] . ": " . $record['startTime']);
+                            $record['gpx'] = $record['gpx']['return']['gpx'];
                         } else {
                             $record['gpx'] = "none";
                         }
                     } else {
-                        $record['gpx'] = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
+                        $record['gpx'] = DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
                     }
                 }
 
@@ -604,13 +598,22 @@
                                                                                                                   "Intensity"        => 0,
                                                                                                                   "LatitudeDegrees"  => "56.462018",
                                                                                                                   "LongitudeDegrees" => "-2.970721",
-                                                                                                                  "gpx"              => ""));
+                                                                                                                  "gpx"              => "none"));
                             }
                         }
+                    } else if (!isset($items->Activities->Activity->Lap)) {
+                        return array("error" => "TCX Files contains no GPS Points", "return" => array("Id"               => "No GPS in TCX file",
+                                                                                                      "TotalTimeSeconds" => 0,
+                                                                                                      "DistanceMeters"   => 0,
+                                                                                                      "Calories"         => 0,
+                                                                                                      "Intensity"        => 0,
+                                                                                                      "LatitudeDegrees"  => "56.462018",
+                                                                                                      "LongitudeDegrees" => "-2.970721",
+                                                                                                      "gpx"              => "none"));
                     }
 
                     if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
-                        $gpxFileName = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
+                        $gpxFileName = DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
                     } else {
                         /** @lang XML */
                         $gpx = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
@@ -654,22 +657,22 @@
                         fclose($fh);
 
                         if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
-                            $gpxFileName = "File Missing";
+                            $gpxFileName = "none";
                         } else {
-                            $gpxFileName = DIRECTORY_SEPARATOR . "api" . DIRECTORY_SEPARATOR . "fitbit" . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
+                            $gpxFileName = DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
                         }
                     }
 
                     $trackPoint = $items->Activities->Activity->Lap->Track->Trackpoint;
 
-                    return array("Id"               => (String)$items->Activities->Activity->Id,
+                    return array("error" => "", "return" => array("Id"               => (String)$items->Activities->Activity->Id,
                                  "TotalTimeSeconds" => (String)$items->Activities->Activity->Lap->TotalTimeSeconds,
                                  "DistanceMeters"   => (String)$items->Activities->Activity->Lap->DistanceMeters,
                                  "Calories"         => (String)$items->Activities->Activity->Lap->Calories,
                                  "Intensity"        => (String)$items->Activities->Activity->Lap->Intensity,
                                  "LatitudeDegrees"  => (String)$trackPoint[0]->Position->LatitudeDegrees,
                                  "LongitudeDegrees" => (String)$trackPoint[0]->Position->LongitudeDegrees,
-                                 "gpx"              => $gpxFileName);
+                                 "gpx"              => $gpxFileName));
                 } else {
                     return array("error" => "TCX file for $tcxFileName is missing", "return" => array("Id"               => "TCX file for $tcxFileName is missing",
                                                                                                       "TotalTimeSeconds" => 0,
@@ -678,7 +681,7 @@
                                                                                                       "Intensity"        => 0,
                                                                                                       "LatitudeDegrees"  => "56.462018",
                                                                                                       "LongitudeDegrees" => "-2.970721",
-                                                                                                      "gpx"              => ""));
+                                                                                                      "gpx"              => "none"));
                 }
             } else {
                 return array("error" => "You must set an activity id", "return" => array("Id"               => "You must set an activity id",
@@ -688,7 +691,7 @@
                                                                                          "Intensity"        => 0,
                                                                                          "LatitudeDegrees"  => "56.462018",
                                                                                          "LongitudeDegrees" => "-2.970721",
-                                                                                         "gpx"              => ""));
+                                                                                         "gpx"              => "none"));
             }
         }
 
