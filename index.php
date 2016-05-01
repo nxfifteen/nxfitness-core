@@ -46,9 +46,9 @@
 
     // TODO: GitLab Issue #7 - Removed include as it breaks the config class when building up the full app
     $sysPath = $_SERVER['SERVER_ADDR'] != "10.1.1.1" ? "/api/fitbit/" : "/";
-    if ($sysPath != "/") {
-        $inputURL = str_replace($sysPath, "", $inputURL);
-    }
+    if ($sysPath != "/") { $inputURL = str_replace($sysPath, "", $inputURL); }
+    if (substr($inputURL, 0, 1) == "/") {$inputURL = substr($inputURL, 1);}
+
     $inputURL = explode("/", $inputURL);
     $url_namespace = $inputURL[0];
 
@@ -110,6 +110,12 @@
                 } else {
                     $personal = "";
                 }
+
+                //echo $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE) . "<br />";
+                //echo $NxFitbit->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE). "<br />";
+                //echo $NxFitbit->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE). "<br />";
+                //
+                //die();
 
                 $helper = new djchen\OAuth2\Client\Provider\Fitbit([
                     'clientId'     => $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
