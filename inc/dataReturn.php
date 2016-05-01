@@ -224,7 +224,7 @@
          * @param int    $limit
          * @param string $tableName
          *
-*@return array
+         * @return array
          */
         public function dbWhere($limit = 1, $tableName = '') {
             if ($limit < 1) {
@@ -338,7 +338,7 @@
         /**
          * @param $start_date
          *
-*@return bool|int
+         * @return bool|int
          */
         public function getUserMilesSince($start_date) {
             $dbMiles = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
@@ -2307,7 +2307,7 @@
         /**
          * @param $get
          *
-*@return array
+         * @return array
          */
         public function returnUserRecords($get) {
             if (array_key_exists("period", $get)) {
