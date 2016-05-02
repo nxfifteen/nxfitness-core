@@ -334,6 +334,10 @@
          * @return bool
          */
         public function isUserValid($user_fitbit_id, $user_fitbit_password) {
+            if (strpos($user_fitbit_id, '@') !== false) {
+                $user_fitbit_id = $this->isUserValidEml($user_fitbit_id);
+            }
+            
             if ($this->isUser($user_fitbit_id)) {
                 if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => $user_fitbit_password)))) {
                     return $user_fitbit_id;
