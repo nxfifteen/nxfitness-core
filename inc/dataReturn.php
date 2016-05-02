@@ -54,10 +54,10 @@
          * @return array
          */
         private function calculateChallengeDays($userChallengeStartDate, $userChallengeEndDate, $range_start) {
-            $userChallengeTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_steps", '10000');
-            $userChallengeTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_distance", '5');
-            $userChallengeTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_unit", 'km');
-            $userChallengeTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_activity", '30');
+            $userChallengeTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
+            $userChallengeTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
+            $userChallengeTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
+            $userChallengeTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
 
             $db_steps = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps";
             $db_activity = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity";
@@ -413,10 +413,10 @@
             }
 
             $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-            if ($newTargetActive < $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_active_max", 30)) {
-                $plusTargetActive = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getUserSetting($this->getUserID(), "improvments_active", 10) / 100), 0);
+            if ($newTargetActive < $this->getAppClass()->getUserSetting($this->getUserID(), "desire_active_max", 30)) {
+                $plusTargetActive = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getUserSetting($this->getUserID(), "desire_active", 10) / 100), 0);
             } else {
-                $plusTargetActive = $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_active_max", 30);
+                $plusTargetActive = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_active_max", 30);
             }
 
             return array(
@@ -744,17 +744,17 @@
          * @return array
          */
         public function returnUserRecordChallenger() {
-            $userChallengeLength = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_length", '50');
-            $userChallengeStartString = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger", '03-31 last sunday'); // Default to last Sunday in March
+            $userChallengeLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
+            $userChallengeStartString = $this->getAppClass()->getUserSetting($this->getUserID(), "push", '03-31 last sunday'); // Default to last Sunday in March
             $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
             $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
-            $userChallengeTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_steps", '10000');
-            $userChallengeTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_distance", '5');
-            $userChallengeTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_unit", 'km');
-            $userChallengeTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_activity", '30');
+            $userChallengeTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
+            $userChallengeTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
+            $userChallengeTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
+            $userChallengeTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
 
-            $userChallengePassMark = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_passmark", '95');
+            $userChallengePassMark = $this->getAppClass()->getUserSetting($this->getUserID(), "push_passmark", '95');
 
             $dbChallenge = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "challenge",
                 array('startDate', 'endDate', 'score', 'steps', 'distance', 'veryactive'),
@@ -798,9 +798,9 @@
                 }
 
 
-                $currentChallenge['steps_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_steps", '10000');
-                $currentChallenge['distance_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_distance", '5');
-                $currentChallenge['active_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_activity", '30');
+                $currentChallenge['steps_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
+                $currentChallenge['distance_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
+                $currentChallenge['active_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
 
                 $currentChallenge['day'] = $days;
                 $currentChallenge['day_past'] = $daysPast;
@@ -858,8 +858,8 @@
             $range_start = new DateTime($_GET['start']);
             $range_end = new DateTime($_GET['end']);
 
-            $userChallengeLength = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger_length", '50');
-            $userChallengeStartDate = $this->getAppClass()->getUserSetting($this->getUserID(), "usr_challenger", '03-31 last sunday'); // Default to last Sunday in March
+            $userChallengeLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
+            $userChallengeStartDate = $this->getAppClass()->getUserSetting($this->getUserID(), "push", '03-31 last sunday'); // Default to last Sunday in March
             $userChallengeStartDate = date("Y-m-d", strtotime($range_end->format("Y") . '-' . $userChallengeStartDate)); // Default to last Sunday in March
             $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
@@ -1086,10 +1086,10 @@
             }
 
             $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-            if ($newTargetSteps < $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_floors_max", 20)) {
-                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getUserSetting($this->getUserID(), "improvments_floors", 10) / 100), 0);
+            if ($newTargetSteps < $this->getAppClass()->getUserSetting($this->getUserID(), "desire_floors_max", 20)) {
+                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getUserSetting($this->getUserID(), "desire_floors", 10) / 100), 0);
             } else {
-                $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_floors_max", 20);
+                $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_floors_max", 20);
             }
 
             return array(
@@ -1148,10 +1148,10 @@
             $dbWater = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", 'liquid', $where);
             if (!array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
                 /** @var float $dbWater */
-                $returnArray['water'] = array("liquid" => (String)round($dbWater, 2), "goal" => $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200'));
+                $returnArray['water'] = array("liquid" => (String)round($dbWater, 2), "goal" => $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200'));
             } else {
                 /** @var float $dbWater */
-                $returnArray['water'] = array("liquid" => (String)round($dbWater, 2), "goal" => ($this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200') * $where['LIMIT']));
+                $returnArray['water'] = array("liquid" => (String)round($dbWater, 2), "goal" => ($this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200') * $where['LIMIT']));
             }
 
             $returnArray['food'] = array();
@@ -1168,17 +1168,17 @@
             $returnArray['food']['goals']['calories'] = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", 'calories', $where);
 
             if (!array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
-                $returnArray['food']['goals']['carbs'] = $this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_carbs", 310);
-                $returnArray['food']['goals']['fat'] = $this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_fat", 70);
-                $returnArray['food']['goals']['fiber'] = $this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_fiber", 30);
-                $returnArray['food']['goals']['protein'] = $this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_protein", 50);
-                $returnArray['food']['goals']['sodium'] = $this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_sodium", 2300);
+                $returnArray['food']['goals']['carbs'] = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_carbs", 310);
+                $returnArray['food']['goals']['fat'] = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_fat", 70);
+                $returnArray['food']['goals']['fiber'] = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_fiber", 30);
+                $returnArray['food']['goals']['protein'] = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_protein", 50);
+                $returnArray['food']['goals']['sodium'] = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_sodium", 2300);
             } else {
-                $returnArray['food']['goals']['carbs'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_carbs", 310) * $where['LIMIT']);
-                $returnArray['food']['goals']['fat'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_fat", 70) * $where['LIMIT']);
-                $returnArray['food']['goals']['fiber'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_fiber", 30) * $where['LIMIT']);
-                $returnArray['food']['goals']['protein'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_protein", 50) * $where['LIMIT']);
-                $returnArray['food']['goals']['sodium'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "food_goal_sodium", 2300) * $where['LIMIT']);
+                $returnArray['food']['goals']['carbs'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_carbs", 310) * $where['LIMIT']);
+                $returnArray['food']['goals']['fat'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_fat", 70) * $where['LIMIT']);
+                $returnArray['food']['goals']['fiber'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_fiber", 30) * $where['LIMIT']);
+                $returnArray['food']['goals']['protein'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_protein", 50) * $where['LIMIT']);
+                $returnArray['food']['goals']['sodium'] = ($this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_sodium", 2300) * $where['LIMIT']);
             }
 
             unset($where['LIMIT']);
@@ -1664,10 +1664,10 @@
             }
 
             $newTargetSteps = round($totalSteps / count($dbSteps), 0);
-            if ($newTargetSteps < $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_steps_max", 10000)) {
-                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getUserSetting($this->getUserID(), "improvments_steps", 10) / 100), 0);
+            if ($newTargetSteps < $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 10000)) {
+                $plusTargetSteps = $newTargetSteps + round($newTargetSteps * ($this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps", 10) / 100), 0);
             } else {
-                $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_steps_max", 10000);
+                $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 10000);
             }
 
             return array(
@@ -1971,28 +1971,28 @@
                 'graph_steps_g'   => $graph_steps_g,
                 'graph_steps_min' => $graph_steps_min,
                 'graph_steps_max' => $graph_steps_max,
-                'imp_steps'       => $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_steps", 10) . "%",
+                'imp_steps'       => $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps", 10) . "%",
                 'avg_steps'       => number_format($goalCalcSteps['newTargetSteps'], 0),
                 'newgoal_steps'   => number_format($goalCalcSteps['plusTargetSteps'], 0),
-                'maxgoal_steps'   => number_format($this->getAppClass()->getUserSetting($this->getUserID(), "improvments_steps_max", 10000), 0),
+                'maxgoal_steps'   => number_format($this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 10000), 0),
 
                 'graph_floors'     => $graph_floors,
                 'graph_floors_g'   => $graph_floors_g,
                 'graph_floors_min' => $graph_floors_min,
                 'graph_floors_max' => $graph_floors_max,
-                'imp_floors'       => $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_floors", 10) . "%",
+                'imp_floors'       => $this->getAppClass()->getUserSetting($this->getUserID(), "desire_floors", 10) . "%",
                 'avg_floors'       => number_format($goalCalcFloors['newTargetFloors'], 0),
                 'newgoal_floors'   => number_format($goalCalcFloors['plusTargetFloors'], 0),
-                'maxgoal_floors'   => number_format($this->getAppClass()->getUserSetting($this->getUserID(), "improvments_floors_max", 20), 0),
+                'maxgoal_floors'   => number_format($this->getAppClass()->getUserSetting($this->getUserID(), "desire_floors_max", 20), 0),
 
                 'graph_active'     => $graph_active,
                 'graph_active_g'   => $graph_active_g,
                 'graph_active_min' => $graph_active_min,
                 'graph_active_max' => $graph_active_max,
-                'imp_active'       => $this->getAppClass()->getUserSetting($this->getUserID(), "improvments_active", 10) . "%",
+                'imp_active'       => $this->getAppClass()->getUserSetting($this->getUserID(), "desire_active", 10) . "%",
                 'avg_active'       => number_format($goalCalcActive['newTargetFloors'], 0),
                 'newgoal_active'   => number_format($goalCalcActive['plusTargetFloors'], 0),
-                'maxgoal_active'   => number_format($this->getAppClass()->getUserSetting($this->getUserID(), "improvments_active_max", 30), 0)
+                'maxgoal_active'   => number_format($this->getAppClass()->getUserSetting($this->getUserID(), "desire_active_max", 30), 0)
             );
         }
 
@@ -2044,7 +2044,7 @@
                 $this->dbWhere());
 
             $dbWater[0]['liquid'] = (String)round($dbWater[0]['liquid'], 2);
-            $dbWater[0]['goal'] = $this->getAppClass()->getSetting("usr_goal_water_" . $this->getUserID(), '200');
+            $dbWater[0]['goal'] = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
 
             if ($dbWater[0]['liquid'] >= $dbWater[0]['goal'] * 3) {
                 $dbWater[0]['cheer'] = 5;
