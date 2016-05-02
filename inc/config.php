@@ -23,11 +23,14 @@
          *
          */
         public function __construct() {
-            require_once(dirname(__FILE__) . "/../config.inc.php");
-            if (isset($config)) {
-                $this->settings = $config;
+            if (array_key_exists("core_config", $_SESSION) && is_array($_SESSION['core_config']) && count($_SESSION['core_config']) > 0) {
+                $this->settings =  $_SESSION['core_config'];
             } else {
-                $this->settings = array();
+                require_once(dirname(__FILE__) . "/../config.inc.php");
+                if (isset($config)) {
+                    $_SESSION['core_config'] = $config;
+                    $this->settings = $_SESSION['core_config'];
+                }
             }
         }
 
@@ -121,7 +124,7 @@
          * @return string
          */
         public function get($key, $default = NULL, $query_db = TRUE) {
-            if (array_key_exists($key, $this->settings)) {
+            if (is_array($this->settings) && array_key_exists($key, $this->settings)) {
                 return $this->settings[ $key ];
             } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, FALSE) . "settings", array("var" => $key))) {
                 $this->settings[ $key ] = $this->database->get($this->get("db_prefix", NULL, FALSE) . "settings", "data", array("var" => $key));
