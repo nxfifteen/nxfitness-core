@@ -472,14 +472,13 @@
         }
 
         public function isUserOAuthAuthorised($_nx_fb_usr) {
-            if (array_key_exists("userIsOAuth_" . $_nx_fb_usr, $_SESSION) && is_bool($_SESSION['userIsOAuth_' . $_nx_fb_usr])) {
+            if (array_key_exists("userIsOAuth_" . $_nx_fb_usr, $_SESSION) && is_bool($_SESSION['userIsOAuth_' . $_nx_fb_usr]) && $_SESSION['userIsOAuth_' . $_nx_fb_usr] !== FALSE) {
                 return $_SESSION['userIsOAuth_' . $_nx_fb_usr];
             } else {
                 if ($this->valdidateOAuth($this->getUserOAuthTokens($_nx_fb_usr, FALSE))) {
                     $_SESSION['userIsOAuth_' . $_nx_fb_usr] = TRUE;
                     return TRUE;
                 } else {
-                    $_SESSION['userIsOAuth_' . $_nx_fb_usr] = FALSE;
                     return FALSE;
                 }
             }
