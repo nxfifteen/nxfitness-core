@@ -1467,8 +1467,8 @@
             $plusTargetSteps = -1;
 
             if ($string == "steps") {
-                $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_length", '50');
-                $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser(), '12-01 last sunday'); // Default to last Sunday in March
+                $userChallengeLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "usr_challenger_length", '50');
+                $userChallengeStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "usr_challenger", '12-01 last sunday'); // Default to last Sunday in March
                 $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
                 $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
@@ -1476,9 +1476,9 @@
                 if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
                     nxr("Challenge is running");
 
-                    return $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_steps", '10000');
+                    return $this->getAppClass()->getUserSetting($this->getActiveUser(), "usr_challenger_steps", '10000');
                 } else {
-                    $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps", 2);
+                    $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "improvments_steps", 2);
                     if ($improvment > 0) {
                         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                             array("AND" => array(
@@ -1493,7 +1493,7 @@
                         }
                         if ($totalSteps == 0) $totalSteps = 1;
 
-                        $maxTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
+                        $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "improvments_steps_max", 10000);
                         $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
                         $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
 
@@ -1507,7 +1507,7 @@
                     }
                 }
             } elseif ($string == "floors") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 2);
+                $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "improvments_floors", 2);
                 if ($improvment > 0) {
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
                         array("AND" => array(
@@ -1522,21 +1522,21 @@
                     }
                     if ($totalSteps == 0) $totalSteps = 1;
 
-                    $maxTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10);
+                    $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "improvments_floors_max", 10);
                     $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
                     if ($LastWeeksSteps >= $maxTargetSteps) {
                         $plusTargetSteps = $maxTargetSteps;
                     } else if ($LastWeeksSteps <= ($maxTargetSteps / 2)) {
                         $plusTargetSteps = $maxTargetSteps / 2;
                     } else if ($LastWeeksSteps < $maxTargetSteps) {
-                        $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 10) / 100), 0);
+                        $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "improvments_floors", 10) / 100), 0);
                     } else {
                         $plusTargetSteps = $maxTargetSteps;
                     }
                 }
             } elseif ($string == "activeMinutes") {
-                $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_length", '50');
-                $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser(), '03-31 last sunday'); // Default to last Sunday in March
+                $userChallengeLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "usr_challenger_length", '50');
+                $userChallengeStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "usr_challenger", '03-31 last sunday'); // Default to last Sunday in March
                 $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
                 $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
 
@@ -1544,9 +1544,9 @@
                 if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
                     nxr("Challenge is running");
 
-                    return $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_activity", '30');
+                    return $this->getAppClass()->getUserSetting($this->getActiveUser(), "usr_challenger_activity", '30');
                 } else {
-                    $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active", 10);
+                    $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "improvments_active", 10);
                     if ($improvment > 0) {
                         $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
                             array("AND" => array(
@@ -1561,14 +1561,14 @@
                         }
                         if ($totalMinutes == 0) $totalMinutes = 1;
 
-                        $maxTargetActive = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30);
+                        $maxTargetActive = $this->getAppClass()->getUserSetting($this->getActiveUser(), "improvments_active_max", 30);
                         $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
                         if ($newTargetActive >= $maxTargetActive) {
                             $plusTargetSteps = $maxTargetActive;
                         } else if ($newTargetActive <= ($maxTargetActive / 2)) {
                             $plusTargetSteps = $maxTargetActive / 2;
                         } else if ($newTargetActive < $maxTargetActive) {
-                            $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active", 10) / 100), 0);
+                            $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "improvments_active", 10) / 100), 0);
                         } else {
                             $plusTargetSteps = $maxTargetActive;
                         }
@@ -2081,7 +2081,7 @@
         public function isAllowed($trigger, $quiet = FALSE) {
             if ($trigger == "profile") return TRUE;
 
-            $usrConfig = $this->getAppClass()->getSetting('scope_' . $this->getActiveUser() . '_' . $trigger, TRUE);
+            $usrConfig = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'scope_' . $trigger, TRUE);
             if (!is_null($usrConfig) AND $usrConfig != 1) {
                 if (!$quiet) nxr(" Aborted $trigger disabled in user config");
 
