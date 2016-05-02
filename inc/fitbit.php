@@ -1296,7 +1296,7 @@
          */
         private function api_setLastrun($activity, $cron_delay = NULL, $clean = FALSE) {
             if (is_null($cron_delay)) {
-                $cron_delay_holder = 'nx_fitbit_ds_' . $activity . '_timeout';
+                $cron_delay_holder = 'scope_' . $activity . '_timeout';
                 $cron_delay = $this->getAppClass()->getSetting($cron_delay_holder, 5400);
             }
 
@@ -2081,14 +2081,14 @@
         public function isAllowed($trigger, $quiet = FALSE) {
             if ($trigger == "profile") return TRUE;
 
-            $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $this->getActiveUser() . '_' . $trigger, TRUE);
+            $usrConfig = $this->getAppClass()->getSetting('scope_' . $this->getActiveUser() . '_' . $trigger, TRUE);
             if (!is_null($usrConfig) AND $usrConfig != 1) {
                 if (!$quiet) nxr(" Aborted $trigger disabled in user config");
 
                 return "-145";
             }
 
-            $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, TRUE);
+            $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, TRUE);
             if ($sysConfig != 1) {
                 if (!$quiet) nxr(" Aborted $trigger disabled in system config");
 

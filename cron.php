@@ -48,7 +48,7 @@
         UNIX_TIMESTAMP(str_to_date(lastrun,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s", strtotime('-1 day')) . "') AND
         UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
 
-        if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0 and $fitbitApp->getSetting('nx_fitbit_ds_all_cron', TRUE)) {
+        if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0 and $fitbitApp->getSetting('scope_all_cron', TRUE)) {
             foreach ($unfinishedUsers as $user) {
                 if (!$fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], FALSE))) {
                     nxr($user['name'] . " has not completed the OAuth configuration");
@@ -63,7 +63,7 @@
 
         $allowed_triggers = Array();
         foreach ($fitbitApp->supportedApi() as $key => $name) {
-            if ($fitbitApp->getSetting('nx_fitbit_ds_' . $key, FALSE) && $fitbitApp->getSetting('nx_fitbit_ds_' . $key . '_cron', FALSE) && $key != "all") {
+            if ($fitbitApp->getSetting('scope_' . $key, FALSE) && $fitbitApp->getSetting('scope_' . $key . '_cron', FALSE) && $key != "all") {
                 $allowed_triggers[] = $key;
             }
         }
@@ -117,7 +117,7 @@
                 if (time() < $end) {
                     if ($fitbitApp->isUser($job['user'])) {
                         $cooldown = $fitbitApp->getUserCooldown($job['user']);
-                        if ($fitbitApp->getSetting('nx_fitbit_ds_' . $job['trigger'], TRUE)) { //TODO: Set top false by default
+                        if ($fitbitApp->getSetting('scope_' . $job['trigger'], TRUE)) { //TODO: Set top false by default
                             if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
                                 nxr("Processing queue item " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
                                 $jobRun = $fitbitApp->getFitbitAPI($job['user'], TRUE)->pull($job['user'], $job['trigger']);

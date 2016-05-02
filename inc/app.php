@@ -134,7 +134,7 @@
          * @param bool   $force
          */
         public function addCronJob($user_fitbit_id, $trigger, $force = FALSE) {
-            if ($force || $this->getSetting('nx_fitbit_ds_' . $trigger . '_cron', FALSE)) {
+            if ($force || $this->getSetting('scope_' . $trigger . '_cron', FALSE)) {
                 if (!$this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
                     "AND" => array(
                         "user"    => $user_fitbit_id,
