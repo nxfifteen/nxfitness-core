@@ -47,17 +47,17 @@
         }
 
         /**
-         * @param          $userChallengeStartDate
-         * @param          $userChallengeEndDate
+         * @param          $userPushStartDate
+         * @param          $userPushEndDate
          * @param DateTime $range_start
          *
          * @return array
          */
-        private function calculateChallengeDays($userChallengeStartDate, $userChallengeEndDate, $range_start) {
-            $userChallengeTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
-            $userChallengeTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
-            $userChallengeTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
-            $userChallengeTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
+        private function calculatePushDays($userPushStartDate, $userPushEndDate, $range_start) {
+            $userPushTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
+            $userPushTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
+            $userPushTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
+            $userPushTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
 
             $db_steps = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps";
             $db_activity = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity";
@@ -66,7 +66,7 @@
                 "SELECT `$db_steps`.`date`,`$db_steps`.`distance`,`$db_steps`.`steps`,`$db_activity`.`fairlyactive`,`$db_activity`.`veryactive`"
                 . " FROM `$db_steps`"
                 . " JOIN `$db_activity` ON (`$db_steps`.`date` = `$db_activity`.`date`) AND (`$db_steps`.`user` = `$db_activity`.`user`)"
-                . " WHERE `$db_steps`.`user` = '" . $this->getUserID() . "' AND `$db_steps`.`date` <= '" . $userChallengeEndDate . "' AND `$db_steps`.`date` >= '$userChallengeStartDate' "
+                . " WHERE `$db_steps`.`user` = '" . $this->getUserID() . "' AND `$db_steps`.`date` <= '" . $userPushEndDate . "' AND `$db_steps`.`date` >= '$userPushStartDate' "
                 . " ORDER BY `$db_steps`.`date` DESC");
 
             $days = 0;
@@ -77,13 +77,13 @@
             $startDateCovered = FALSE;
             $calenderEvents = array();
             foreach ($dbEvents as $dbEvent) {
-                if (strtotime($dbEvent['date']) >= strtotime($userChallengeStartDate) && strtotime($dbEvent['date']) <= strtotime($userChallengeEndDate)) {
+                if (strtotime($dbEvent['date']) >= strtotime($userPushStartDate) && strtotime($dbEvent['date']) <= strtotime($userPushEndDate)) {
                     $days += 1;
 
-                    if ($userChallengeTrgUnit == "km") {
+                    if ($userPushTrgUnit == "km") {
                         $dbEvent['distance'] = $dbEvent['distance'] * 1.609344;
                     }
-                    if (strtotime($dbEvent['date']) == strtotime($userChallengeStartDate)) {
+                    if (strtotime($dbEvent['date']) == strtotime($userPushStartDate)) {
                         $startDateCovered = TRUE;
                     }
 
@@ -101,24 +101,24 @@
                         }
                         array_push($calenderEvents, array("title"     => $dbEvent['steps'] . " steps"
                             . "\n" . $dbEvent['veryactive'] . " min"
-                            . "\n" . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit,
+                            . "\n" . number_format($dbEvent['distance'], 2) . $userPushTrgUnit,
                                                           "start"     => $dbEvent['date'],
                                                           'className' => 'label-today',
                                                           'distance'  => round($dbEvent['distance'], 2),
                                                           'active'    => $dbEvent['veryactive'],
                                                           'steps'     => $dbEvent['steps']));
-                    } else if ($dbEvent['steps'] >= $userChallengeTrgSteps) {
+                    } else if ($dbEvent['steps'] >= $userPushTrgSteps) {
                         $score = $score + 1;
                         array_push($calenderEvents, array("title" => "Past!\nSteps: " . number_format($dbEvent['steps'], 0), "start" => $dbEvent['date'], 'className' => 'label-pass'));
-                    } else if ($dbEvent['veryactive'] >= $userChallengeTrgActivity) {
+                    } else if ($dbEvent['veryactive'] >= $userPushTrgActivity) {
                         $score = $score + 1;
                         array_push($calenderEvents, array("title" => "Past!\nActivity: " . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-pass'));
-                    } else if ($dbEvent['distance'] >= $userChallengeTrgDistance) {
+                    } else if ($dbEvent['distance'] >= $userPushTrgDistance) {
                         $score = $score + 1;
-                        array_push($calenderEvents, array("title" => "Past!\nDistance: " . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit, "start" => $dbEvent['date'], 'className' => 'label-pass'));
+                        array_push($calenderEvents, array("title" => "Past!\nDistance: " . number_format($dbEvent['distance'], 2) . $userPushTrgUnit, "start" => $dbEvent['date'], 'className' => 'label-pass'));
                     } else {
                         array_push($calenderEvents, array("title"                       => "Steps: " . number_format($dbEvent['steps'], 0)
-                            . "\nDistance: " . number_format($dbEvent['distance'], 2) . $userChallengeTrgUnit
+                            . "\nDistance: " . number_format($dbEvent['distance'], 2) . $userPushTrgUnit
                             . "\nActivity: " . $dbEvent['veryactive'] . " min", "start" => $dbEvent['date'], 'className' => 'label-failed'));
                     }
 
@@ -126,7 +126,7 @@
             }
 
             if (!$startDateCovered) {
-                array_push($calenderEvents, array("title" => "Challenge " . $range_start->format("Y") . "\nStart!", "start" => $userChallengeStartDate, 'className' => 'label-nochallenge'));
+                array_push($calenderEvents, array("title" => "Push " . $range_start->format("Y") . "\nStart!", "start" => $userPushStartDate, 'className' => 'label-nopush'));
             }
 
             if ($days > 0) {
@@ -740,106 +740,110 @@
             return $return;
         }
 
+        public function returnUserRecordChallenger() {
+            return $this->returnUserRecordPush();
+        }
+
         /**
          * @return array
          */
-        public function returnUserRecordChallenger() {
-            $userChallengeLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
-            $userChallengeStartString = $this->getAppClass()->getUserSetting($this->getUserID(), "push", '03-31 last sunday'); // Default to last Sunday in March
-            $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
-            $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
+        public function returnUserRecordPush() {
+            $userPushLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
+            $userPushStartString = $this->getAppClass()->getUserSetting($this->getUserID(), "push", '03-31 last sunday'); // Default to last Sunday in March
+            $userPushStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userPushStartString)); // Default to last Sunday in March
+            $userPushEndDate = date("Y-m-d", strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
-            $userChallengeTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
-            $userChallengeTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
-            $userChallengeTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
-            $userChallengeTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
+            $userPushTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
+            $userPushTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
+            $userPushTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
+            $userPushTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
 
-            $userChallengePassMark = $this->getAppClass()->getUserSetting($this->getUserID(), "push_passmark", '95');
+            $userPushPassMark = $this->getAppClass()->getUserSetting($this->getUserID(), "push_passmark", '95');
 
-            $dbChallenge = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "challenge",
+            $dbPush = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "push",
                 array('startDate', 'endDate', 'score', 'steps', 'distance', 'veryactive'),
                 array("user" => $this->getUserID()));
 
-            if (!$dbChallenge) {
-                $dbChallenge = array();
+            if (!$dbPush) {
+                $dbPush = array();
             }
 
-            if (count($dbChallenge) > 0) {
-                foreach ($dbChallenge as $index => $challenge) {
-                    $dbChallenge[ $index ]['score'] = round($dbChallenge[ $index ]['score'], 0, PHP_ROUND_HALF_UP);
-                    if ($challenge['score'] >= 98) {
-                        $dbChallenge[ $index ]['pass'] = 2;
-                    } else if ($challenge['score'] >= $userChallengePassMark) {
-                        $dbChallenge[ $index ]['pass'] = 1;
+            if (count($dbPush) > 0) {
+                foreach ($dbPush as $index => $push) {
+                    $dbPush[ $index ]['score'] = round($dbPush[ $index ]['score'], 0, PHP_ROUND_HALF_UP);
+                    if ($push['score'] >= 98) {
+                        $dbPush[ $index ]['pass'] = 2;
+                    } else if ($push['score'] >= $userPushPassMark) {
+                        $dbPush[ $index ]['pass'] = 1;
                     } else {
-                        $dbChallenge[ $index ]['pass'] = 0;
+                        $dbPush[ $index ]['pass'] = 0;
                     }
                 }
             }
 
             $today = strtotime(date("Y-m-d"));
-            if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
-                $currentChallenge = array();
+            if ($today >= strtotime($userPushStartDate) && $today <= strtotime($userPushEndDate)) {
+                $currentPush = array();
 
                 $days = 0;
                 $daysPast = 0;
-                $dbChallengeRec = $this->calculateChallengeDays($userChallengeStartDate, $userChallengeEndDate, new DateTime($userChallengeStartDate));
-                foreach ($dbChallengeRec['events'] as $dayRecord) {
+                $dbPushRec = $this->calculatePushDays($userPushStartDate, $userPushEndDate, new DateTime($userPushStartDate));
+                foreach ($dbPushRec['events'] as $dayRecord) {
                     if ($dayRecord['className'] == "label-pass") {
                         $days += 1;
                         $daysPast += 1;
                     } else if ($dayRecord['className'] == "label-today") {
-                        $currentChallenge['distance'] = $dayRecord['distance'];
-                        $currentChallenge['active'] = $dayRecord['active'];
-                        $currentChallenge['steps'] = $dayRecord['steps'];
+                        $currentPush['distance'] = $dayRecord['distance'];
+                        $currentPush['active'] = $dayRecord['active'];
+                        $currentPush['steps'] = $dayRecord['steps'];
                     } else {
                         $days += 1;
                     }
                 }
 
 
-                $currentChallenge['steps_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
-                $currentChallenge['distance_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
-                $currentChallenge['active_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
+                $currentPush['steps_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
+                $currentPush['distance_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
+                $currentPush['active_g'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
 
-                $currentChallenge['day'] = $days;
-                $currentChallenge['day_past'] = $daysPast;
-                $currentChallenge['score'] = ($currentChallenge['day_past'] / $currentChallenge['day']) * 100;
+                $currentPush['day'] = $days;
+                $currentPush['day_past'] = $daysPast;
+                $currentPush['score'] = ($currentPush['day_past'] / $currentPush['day']) * 100;
 
                 return array(
-                    'challengeActive' => 'active',
-                    'challengeLength' => $userChallengeLength,
-                    'scores'          => $dbChallenge,
-                    'current'         => $currentChallenge,
-                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Steps' => $userChallengeTrgSteps, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
-                    'next'            => array('startDate' => $userChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($userChallengeStartDate)), 'endDate' => $userChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($userChallengeEndDate)))
+                    'pushActive' => 'active',
+                    'pushLength' => $userPushLength,
+                    'scores'          => $dbPush,
+                    'current'         => $currentPush,
+                    'goals'           => array('Activity' => $userPushTrgActivity, 'Steps' => $userPushTrgSteps, 'Distance' => $userPushTrgDistance, 'Unit' => $userPushTrgUnit),
+                    'next'            => array('startDate' => $userPushStartDate, 'startDateF' => date("jS F, Y", strtotime($userPushStartDate)), 'endDate' => $userPushEndDate, 'endDateF' => date("jS F, Y", strtotime($userPushEndDate)))
                 );
-            } else if ($today > strtotime($userChallengeStartDate)) {
-                $plusOneChallengeStartDate = date("Y-m-d", strtotime((date("Y") + 1) . '-' . $userChallengeStartString)); // Default to last Sunday in March
-                $plusOneChallengeEndDate = date("Y-m-d", strtotime($plusOneChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
+            } else if ($today > strtotime($userPushStartDate)) {
+                $plusOnePushStartDate = date("Y-m-d", strtotime((date("Y") + 1) . '-' . $userPushStartString)); // Default to last Sunday in March
+                $plusOnePushEndDate = date("Y-m-d", strtotime($plusOnePushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
                 return array(
-                    'challengeActive' => 'past',
-                    'challengeLength' => $userChallengeLength,
-                    'showDate'        => $userChallengeStartDate,
-                    'scores'          => $dbChallenge,
-                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Steps' => $userChallengeTrgSteps, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
-                    'next'            => array('startDate' => $plusOneChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($plusOneChallengeStartDate)), 'endDate' => $plusOneChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($plusOneChallengeEndDate))),
-                    'last'            => array('startDate' => $userChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($userChallengeStartDate)), 'endDate' => $userChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($userChallengeEndDate)))
+                    'pushActive' => 'past',
+                    'pushLength' => $userPushLength,
+                    'showDate'        => $userPushStartDate,
+                    'scores'          => $dbPush,
+                    'goals'           => array('Activity' => $userPushTrgActivity, 'Steps' => $userPushTrgSteps, 'Distance' => $userPushTrgDistance, 'Unit' => $userPushTrgUnit),
+                    'next'            => array('startDate' => $plusOnePushStartDate, 'startDateF' => date("jS F, Y", strtotime($plusOnePushStartDate)), 'endDate' => $plusOnePushEndDate, 'endDateF' => date("jS F, Y", strtotime($plusOnePushEndDate))),
+                    'last'            => array('startDate' => $userPushStartDate, 'startDateF' => date("jS F, Y", strtotime($userPushStartDate)), 'endDate' => $userPushEndDate, 'endDateF' => date("jS F, Y", strtotime($userPushEndDate)))
                 );
-            } else if ($today < strtotime($userChallengeStartDate)) {
+            } else if ($today < strtotime($userPushStartDate)) {
 
-                $nimusOneChallengeStartDate = date("Y-m-d", strtotime((date("Y") - 1) . '-' . $userChallengeStartString)); // Default to last Sunday in March
-                $nimusOneChallengeEndDate = date("Y-m-d", strtotime($nimusOneChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
+                $nimusOnePushStartDate = date("Y-m-d", strtotime((date("Y") - 1) . '-' . $userPushStartString)); // Default to last Sunday in March
+                $nimusOnePushEndDate = date("Y-m-d", strtotime($nimusOnePushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
                 return array(
-                    'challengeActive' => 'future',
-                    'challengeLength' => $userChallengeLength,
-                    'showDate'        => $nimusOneChallengeStartDate,
-                    'scores'          => $dbChallenge,
-                    'goals'           => array('Activity' => $userChallengeTrgActivity, 'Steps' => $userChallengeTrgSteps, 'Distance' => $userChallengeTrgDistance, 'Unit' => $userChallengeTrgUnit),
-                    'next'            => array('startDate' => $userChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($userChallengeStartDate)), 'endDate' => $userChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($userChallengeEndDate))),
-                    'last'            => array('startDate' => $nimusOneChallengeStartDate, 'startDateF' => date("jS F, Y", strtotime($nimusOneChallengeStartDate)), 'endDate' => $nimusOneChallengeEndDate, 'endDateF' => date("jS F, Y", strtotime($nimusOneChallengeEndDate)))
+                    'pushActive' => 'future',
+                    'pushLength' => $userPushLength,
+                    'showDate'        => $nimusOnePushStartDate,
+                    'scores'          => $dbPush,
+                    'goals'           => array('Activity' => $userPushTrgActivity, 'Steps' => $userPushTrgSteps, 'Distance' => $userPushTrgDistance, 'Unit' => $userPushTrgUnit),
+                    'next'            => array('startDate' => $userPushStartDate, 'startDateF' => date("jS F, Y", strtotime($userPushStartDate)), 'endDate' => $userPushEndDate, 'endDateF' => date("jS F, Y", strtotime($userPushEndDate))),
+                    'last'            => array('startDate' => $nimusOnePushStartDate, 'startDateF' => date("jS F, Y", strtotime($nimusOnePushStartDate)), 'endDate' => $nimusOnePushEndDate, 'endDateF' => date("jS F, Y", strtotime($nimusOnePushEndDate)))
                 );
             }
 
@@ -849,7 +853,7 @@
         /**
          * @return array
          */
-        public function returnUserRecordChallengerCalendar() {
+        public function returnUserRecordPushCalendar() {
             // Short-circuit if the client did not give us a date range.
             if (!isset($_GET['start']) || !isset($_GET['end'])) {
                 return array("error" => "true", "code" => 105, "msg" => "No start or end date given");
@@ -858,27 +862,27 @@
             $range_start = new DateTime($_GET['start']);
             $range_end = new DateTime($_GET['end']);
 
-            $userChallengeLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
-            $userChallengeStartDate = $this->getAppClass()->getUserSetting($this->getUserID(), "push", '03-31 last sunday'); // Default to last Sunday in March
-            $userChallengeStartDate = date("Y-m-d", strtotime($range_end->format("Y") . '-' . $userChallengeStartDate)); // Default to last Sunday in March
-            $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
+            $userPushLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
+            $userPushStartDate = $this->getAppClass()->getUserSetting($this->getUserID(), "push", '03-31 last sunday'); // Default to last Sunday in March
+            $userPushStartDate = date("Y-m-d", strtotime($range_end->format("Y") . '-' . $userPushStartDate)); // Default to last Sunday in March
+            $userPushEndDate = date("Y-m-d", strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
             $calenderEvents = array();
-            if (strtotime($userChallengeEndDate) <= strtotime(date("Y-m-d"))) {
-                $dbChallenge = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "challenge",
+            if (strtotime($userPushEndDate) <= strtotime(date("Y-m-d"))) {
+                $dbPush = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "push",
                     'dayData',
                     array("AND" => array("user"      => $this->getUserID(),
-                                         "startDate" => $userChallengeStartDate,
-                                         "endDate"   => $userChallengeEndDate
+                                         "startDate" => $userPushStartDate,
+                                         "endDate"   => $userPushEndDate
                     ), "LIMIT"  => 1));
 
-                if (!$dbChallenge) {
-                    $calenderEvents = $this->calculateChallengeDays($userChallengeStartDate, $userChallengeEndDate, $range_start);
+                if (!$dbPush) {
+                    $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $range_start);
                     if (!array_key_exists("debug", $_GET) or $_GET['debug'] != "true") {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "challenge", array(
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "push", array(
                             'user'       => $this->getUserID(),
-                            'startDate'  => $userChallengeStartDate,
-                            'endDate'    => $userChallengeEndDate,
+                            'startDate'  => $userPushStartDate,
+                            'endDate'    => $userPushEndDate,
                             'score'      => $calenderEvents['score'],
                             'veryactive' => $calenderEvents['veryactive'],
                             'steps'      => $calenderEvents['steps'],
@@ -887,10 +891,10 @@
                         ));
                     }
                 } else {
-                    $calenderEvents['events'] = json_decode($dbChallenge[0]);
+                    $calenderEvents['events'] = json_decode($dbPush[0]);
                 }
             } else {
-                $calenderEvents = $this->calculateChallengeDays($userChallengeStartDate, $userChallengeEndDate, $range_start);
+                $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $range_start);
             }
 
             return array('sole' => TRUE, 'return' => $calenderEvents['events']);
@@ -944,9 +948,9 @@
                 $dbSteps[0]['distance'] = (String)round($dbSteps[0]['distance'], 2);
                 $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
-                $challange = $this->returnUserRecordChallenger();
+                $challange = $this->returnUserRecordPush();
                 $challange = array(
-                    "active"     => $challange['challengeActive'],
+                    "active"     => $challange['pushActive'],
                     "startDateF" => $challange['next']['startDateF'],
                     "endDateF"   => $challange['next']['endDateF'],
                     "activity"   => ($challange['current']['active'] / $challange['current']['active_g']) * 100,
@@ -1813,20 +1817,20 @@
                 }
             }
 
-            $returnUserRecordChallenger = $this->returnUserRecordChallenger();
-            $taskerDataArray['challenge']['active'] = ($returnUserRecordChallenger['current']['active'] / $returnUserRecordChallenger['current']['active_g']) * 100;
+            $returnUserRecordPush = $this->returnUserRecordPush();
+            $taskerDataArray['push']['active'] = ($returnUserRecordPush['current']['active'] / $returnUserRecordPush['current']['active_g']) * 100;
 
-            $taskerDataArray['challenge']['state'] = $returnUserRecordChallenger['challengeActive'];
+            $taskerDataArray['push']['state'] = $returnUserRecordPush['pushActive'];
 
-            $taskerDataArray['challenge']['start_date'] = $returnUserRecordChallenger['next']['startDateF'];
-            $taskerDataArray['challenge']['end_date'] = $returnUserRecordChallenger['next']['endDateF'];
+            $taskerDataArray['push']['start_date'] = $returnUserRecordPush['next']['startDateF'];
+            $taskerDataArray['push']['end_date'] = $returnUserRecordPush['next']['endDateF'];
 
-            $taskerDataArray['challenge']['length'] = round(($returnUserRecordChallenger['current']['day'] / $returnUserRecordChallenger['challengeLength']) * 100, 0);
-            $taskerDataArray['challenge']['day'] = round(($returnUserRecordChallenger['current']['day_past'] / $returnUserRecordChallenger['current']['day']) * 100, 0);
+            $taskerDataArray['push']['length'] = round(($returnUserRecordPush['current']['day'] / $returnUserRecordPush['pushLength']) * 100, 0);
+            $taskerDataArray['push']['day'] = round(($returnUserRecordPush['current']['day_past'] / $returnUserRecordPush['current']['day']) * 100, 0);
 
-            $taskerDataArray['challenge']['distance'] = round(($returnUserRecordChallenger['current']['distance'] / $returnUserRecordChallenger['current']['distance_g']) * 100, 0);
-            $taskerDataArray['challenge']['active'] = round(($returnUserRecordChallenger['current']['active'] / $returnUserRecordChallenger['current']['active_g']) * 100, 0);
-            $taskerDataArray['challenge']['steps'] = round(($returnUserRecordChallenger['current']['steps'] / $returnUserRecordChallenger['current']['steps_g']) * 100, 0);
+            $taskerDataArray['push']['distance'] = round(($returnUserRecordPush['current']['distance'] / $returnUserRecordPush['current']['distance_g']) * 100, 0);
+            $taskerDataArray['push']['active'] = round(($returnUserRecordPush['current']['active'] / $returnUserRecordPush['current']['active_g']) * 100, 0);
+            $taskerDataArray['push']['steps'] = round(($returnUserRecordPush['current']['steps'] / $returnUserRecordPush['current']['steps_g']) * 100, 0);
 
             $taskerDataArray['devices'] = $this->returnUserRecordDevices();
 

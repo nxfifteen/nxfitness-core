@@ -40,7 +40,7 @@
             $cacheNames = array();
             switch ($activityName) {
                 case "activities":
-                    $cacheNames = array('activity', 'dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tracked', 'tasker', 'challenger', 'conky');
+                    $cacheNames = array('activity', 'dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tracked', 'tasker', 'challenger', 'push', 'conky');
                     break;
                 case "activity_log":
                     $cacheNames = array('activityhistory');
@@ -58,13 +58,13 @@
                     $cacheNames = array('devices', 'tasker');
                     break;
                 case "distance":
-                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tasker', 'challenger', 'conky');
+                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tasker', 'challenger', 'push', 'conky');
                     break;
                 case "elevation":
                     $cacheNames = array();
                     break;
                 case "floors":
-                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tasker', 'challenger', 'conky');
+                    $cacheNames = array('dashboard', 'weekpedometer', 'aboutme', 'keypoints', 'steps', 'tracked', 'tasker', 'challenger', 'push', 'conky');
                     break;
                 case "foods":
                     $cacheNames = array('food', 'fooddiary');
@@ -82,7 +82,7 @@
                     $cacheNames = array('trend');
                     break;
                 case "minutesFairlyActive":
-                    $cacheNames = array('activity', 'tasker', 'challenger', 'conky');
+                    $cacheNames = array('activity', 'tasker', 'challenger', 'push', 'conky');
                     break;
                 case "minutesLightlyActive":
                     $cacheNames = array('activity');
@@ -91,7 +91,7 @@
                     $cacheNames = array('activity');
                     break;
                 case "minutesVeryActive":
-                    $cacheNames = array('activity', 'tasker', 'challenger', 'conky');
+                    $cacheNames = array('activity', 'tasker', 'challenger', 'push', 'conky');
                     break;
                 case "profile":
                     $cacheNames = array('trend');

@@ -1467,14 +1467,14 @@
             $plusTargetSteps = -1;
 
             if ($string == "steps") {
-                $userChallengeLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length", '50');
-                $userChallengeStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push", '12-01 last sunday'); // Default to last Sunday in March
-                $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
-                $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
+                $userPushLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length", '50');
+                $userPushStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push", '12-01 last sunday'); // Default to last Sunday in March
+                $userPushStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userPushStartString)); // Default to last Sunday in March
+                $userPushEndDate = date("Y-m-d", strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
                 $today = strtotime(date("Y-m-d"));
-                if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
-                    nxr("Challenge is running");
+                if ($today >= strtotime($userPushStartDate) && $today <= strtotime($userPushEndDate)) {
+                    nxr("Push is running");
 
                     return $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_steps", '10000');
                 } else {
@@ -1535,14 +1535,14 @@
                     }
                 }
             } elseif ($string == "activeMinutes") {
-                $userChallengeLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length", '50');
-                $userChallengeStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push", '03-31 last sunday'); // Default to last Sunday in March
-                $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
-                $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
+                $userPushLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length", '50');
+                $userPushStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push", '03-31 last sunday'); // Default to last Sunday in March
+                $userPushStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userPushStartString)); // Default to last Sunday in March
+                $userPushEndDate = date("Y-m-d", strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
                 $today = strtotime(date("Y-m-d"));
-                if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
-                    nxr("Challenge is running");
+                if ($today >= strtotime($userPushStartDate) && $today <= strtotime($userPushEndDate)) {
+                    nxr("Push is running");
 
                     return $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_activity", '30');
                 } else {
