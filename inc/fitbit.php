@@ -884,8 +884,7 @@
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelProfile() {
-            //$isAllowed = $this->isAllowed("profile");
-            $isAllowed = TRUE;
+            $isAllowed = $this->isAllowed("profile");
             if (!is_numeric($isAllowed)) {
                 if ($this->api_isCooled("profile")) {
                     $userProfile = $this->pullBabel('user/-/profile.json');
@@ -2082,14 +2081,14 @@
         public function isAllowed($trigger, $quiet = FALSE) {
             if ($trigger == "profile") return TRUE;
 
-            $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $this->getActiveUser() . '_' . $trigger, NULL);
+            $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $this->getActiveUser() . '_' . $trigger, TRUE);
             if (!is_null($usrConfig) AND $usrConfig != 1) {
                 if (!$quiet) nxr(" Aborted $trigger disabled in user config");
 
                 return "-145";
             }
 
-            $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
+            $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, TRUE);
             if ($sysConfig != 1) {
                 if (!$quiet) nxr(" Aborted $trigger disabled in system config");
 
