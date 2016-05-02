@@ -699,22 +699,22 @@
          * @return array
          */
         public function returnUserRecordBadges() {
-            $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+            $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
                 "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeType" => "badgeType"),
                 "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("value" => "value")),
                 array(
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'lnk_badge2usr.badgeType',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'lnk_badge2usr.value',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'lnk_badge2usr.dateTime',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'lnk_badge2usr.timesAchieved',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.badgeType',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.value',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.dateTime',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.timesAchieved',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.image',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.badgeGradientEndColor',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.badgeGradientStartColor',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.earnedMessage',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.marketingdescription',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.name',
-                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr.user" => $this->getUserID(),
-                         "ORDER"                                                                           => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr.value ASC"));
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.user" => $this->getUserID(),
+                         "ORDER"                                                                           => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.value ASC"));
 
             $badges = array();
             foreach ($userBadges as $userBadge) {
@@ -1028,13 +1028,13 @@
          */
         public function returnUserRecordDevices() {
             $dbDevices = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
-                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr" => array("id" => "device")),
+                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user" => array("id" => "device")),
                 array(
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.deviceVersion',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.battery',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.lastSyncTime',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.type',
-                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr.user" => $this->getUserID()));
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user.user" => $this->getUserID()));
 
             foreach ($dbDevices as $key => $dev) {
                 $dbDevices[ $key ]['image'] = 'images/devices/' . str_ireplace(" ", "", $dbDevices[ $key ]['deviceVersion']) . ".png";
@@ -1107,7 +1107,7 @@
         public function returnUserRecordFood() {
             //TODO Added support for multi record returned
 
-            $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
+            $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food",
                 array('meal', 'calories'),
                 $this->dbWhere(4));
 
@@ -1117,7 +1117,7 @@
                     $total = $total + $meal['calories'];
                 }
 
-                $dbFoodGoal = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories",
+                $dbFoodGoal = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals",
                     array('calories'),
                     $this->dbWhere());
 
@@ -1165,7 +1165,7 @@
             $returnArray['food']['summary']['protein'] = 0;
             $returnArray['food']['summary']['sodium'] = 0;
 
-            $returnArray['food']['goals']['calories'] = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", 'calories', $where);
+            $returnArray['food']['goals']['calories'] = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", 'calories', $where);
 
             if (!array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
                 $returnArray['food']['goals']['carbs'] = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_carbs", 310);
@@ -1182,7 +1182,7 @@
             }
 
             unset($where['LIMIT']);
-            $dbFood = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood",
+            $dbFood = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food",
                 array('date', 'meal', 'calories', 'carbs', 'fat', 'fiber', 'protein', 'sodium'),
                 $where);
 
@@ -1597,17 +1597,17 @@
          */
         public function returnUserRecordSleep() {
 
-            $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
-                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr" => array("logId" => "sleeplog")),
+            $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep", array(
+                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep_user" => array("logId" => "sleeplog")),
                 array(
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.startTime',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.timeInBed',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesAsleep',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.minutesToFallAsleep',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.efficiency',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'logSleep.awakeningsCount',
-                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr.user" => $this->getUserID(),
-                         "ORDER"                                                                           => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep.startTime DESC"));
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'sleep.startTime',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'sleep.timeInBed',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'sleep.minutesAsleep',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'sleep.minutesToFallAsleep',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'sleep.efficiency',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'sleep.awakeningsCount',
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep_user.user" => $this->getUserID(),
+                         "ORDER"                                                                           => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep.startTime DESC"));
 
             $returnSleep = array(
                 "lastSleep"           => array(),
@@ -1851,7 +1851,7 @@
          * @return array
          */
         public function returnUserRecordTopBadges() {
-            $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr",
+            $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user",
                 array('badgeType', 'value', 'dateTime', 'timesAchieved'),
                 array("user" => $this->getUserID()));
 
@@ -2020,9 +2020,9 @@
             $trendArray['name'] = $trendArray['name'][0];
 
             $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('caloriesOut'), array("user" => $this->getUserID(), "ORDER" => "date DESC"));
-            $dbLogFood = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array('calories'), array("AND" => array("user" => $this->getUserID(), "date" => $this->getParamDate()), "ORDER" => "date DESC"));
+            $dbfood = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food", array('calories'), array("AND" => array("user" => $this->getUserID(), "date" => $this->getParamDate()), "ORDER" => "date DESC"));
 
-            $trendArray['caldef'] = (String)($dbSteps['caloriesOut'] - $dbLogFood);
+            $trendArray['caldef'] = (String)($dbSteps['caloriesOut'] - $dbfood);
 
             if ($dbUsers['gender'] == "MALE") {
                 $trendArray['he'] = "he";

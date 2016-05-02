@@ -502,8 +502,8 @@
                     foreach ($userFoodLog->foods as $meal) {
                         nxr("  Logging meal " . $meal->loggedFood->name);
 
-                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food", array(
                                 'calories' => (String)$meal->nutritionalValues->calories,
                                 'carbs'    => (String)$meal->nutritionalValues->carbs,
                                 'fat'      => (String)$meal->nutritionalValues->fat,
@@ -512,7 +512,7 @@
                                 'sodium'   => (String)$meal->nutritionalValues->sodium
                             ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)));
                         } else {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food", array(
                                 'user'     => $this->getActiveUser(),
                                 'date'     => $targetDate,
                                 'meal'     => (String)$meal->loggedFood->name,
@@ -643,8 +643,8 @@
             if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
                 $loggedSleep = $userSleepLog->sleep[0];
                 if ($loggedSleep->logId != 0) {
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$loggedSleep->logId))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
+                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep", array("logId" => (String)$loggedSleep->logId))) {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep", array(
                             "logId"               => (String)$loggedSleep->logId,
                             'awakeningsCount'     => (String)$loggedSleep->awakeningsCount,
                             'duration'            => (String)$loggedSleep->duration,
@@ -659,8 +659,8 @@
                         ));
                     }
 
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array("AND" => array('user' => $this->getActiveUser(), 'sleeplog' => (String)$loggedSleep->logId)))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array(
+                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep_user", array("AND" => array('user' => $this->getActiveUser(), 'sleeplog' => (String)$loggedSleep->logId)))) {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep_user", array(
                             'user'               => $this->getActiveUser(),
                             'sleeplog'           => (String)$loggedSleep->logId,
                             'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
@@ -969,7 +969,7 @@
                                     'lastSyncTime'  => (String)$device->lastSyncTime,
                                     'battery'       => (String)$device->battery
                                 ));
-                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr", array(
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user", array(
                                     'user'   => $this->getActiveUser(),
                                     'device' => (String)$device->id
                                 ));
@@ -1046,14 +1046,14 @@
                                         ));
                                     }
 
-                                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array("AND" => array(
+                                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array("AND" => array(
                                         "user"      => $this->getActiveUser(),
                                         "badgeType" => (String)$badge->badgeType,
                                         "value"     => (String)$badge->value
                                     )))
                                     ) {
                                         nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") again");
-                                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
                                             'dateTime'      => (String)$badge->dateTime,
                                             'timesAchieved' => (String)$badge->timesAchieved
                                         ), array("AND" => array(
@@ -1063,7 +1063,7 @@
                                         )));
                                     } else {
                                         nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") " . $badge->timesAchieved . " times.");
-                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
                                             'user'          => $this->getActiveUser(),
                                             'badgeType'     => (String)$badge->badgeType,
                                             'dateTime'      => (String)$badge->dateTime,
@@ -1245,15 +1245,15 @@
                             $usr_foodplan_personalized = (string)$usr_foodplan->personalized;
                         }
 
-                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))))) {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array(
                                 'calories'      => $usr_goals_calories,
                                 'intensity'     => $usr_foodplan_intensity,
                                 'estimatedDate' => $usr_foodplan_estimatedDate,
                                 'personalized'  => $usr_foodplan_personalized,
                             ), array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))));
                         } else {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array(
                                 'user'          => $this->getActiveUser(),
                                 'date'          => $currentDate->format("Y-m-d"),
                                 'calories'      => $usr_goals_calories,
