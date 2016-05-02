@@ -219,7 +219,7 @@
         public function getFitbitAPI($userFitbitId = "", $reset = FALSE) {
             if (is_null($this->fitbitapi) || $reset) {
                 require_once(dirname(__FILE__) . "/fitbit.php");
-                if ($userFitbitId == $this->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                if ($userFitbitId == $this->getSetting("ownerFuid", NULL, FALSE)) {
                     $this->fitbitapi = new fitbit($this, TRUE);
                 } else {
                     $this->fitbitapi = new fitbit($this, FALSE);

@@ -65,9 +65,9 @@
 
         // Sent the user off too Fitbit to authenticate
         $helper = new djchen\OAuth2\Client\Provider\Fitbit([
-            'clientId'     => $NxFitbit->getSetting("fitbit_clientId", NULL, FALSE),
-            'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret", NULL, FALSE),
-            'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri", NULL, FALSE)
+            'clientId'     => $NxFitbit->getSetting("api_clientId", NULL, FALSE),
+            'clientSecret' => $NxFitbit->getSetting("api_clientSecret", NULL, FALSE),
+            'redirectUri'  => $NxFitbit->getSetting("api_redirectUri", NULL, FALSE)
         ]);
 
         // Fetch the authorization URL from the provider; this returns the
@@ -105,16 +105,16 @@
                 }
             } else {
                 // Sent the user off too Fitbit to authenticate
-                if ($_COOKIE['_nx_fb_usr'] == $NxFitbit->getSetting("fitbit_owner_id")) {
+                if ($_COOKIE['_nx_fb_usr'] == $NxFitbit->getSetting("ownerFuid")) {
                     $personal = "_personal";
                 } else {
                     $personal = "";
                 }
 
                 $helper = new djchen\OAuth2\Client\Provider\Fitbit([
-                    'clientId'     => $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
-                    'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
-                    'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
+                    'clientId'     => $NxFitbit->getSetting("api_clientId" . $personal, NULL, FALSE),
+                    'clientSecret' => $NxFitbit->getSetting("api_clientSecret" . $personal, NULL, FALSE),
+                    'redirectUri'  => $NxFitbit->getSetting("api_redirectUri" . $personal, NULL, FALSE)
                 ]);
 
                 // Fetch the authorization URL from the provider; this returns the
@@ -158,9 +158,9 @@
                 }
 
                 $helper = new djchen\OAuth2\Client\Provider\Fitbit([
-                    'clientId'     => $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
-                    'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
-                    'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
+                    'clientId'     => $NxFitbit->getSetting("api_clientId" . $personal, NULL, FALSE),
+                    'clientSecret' => $NxFitbit->getSetting("api_clientSecret" . $personal, NULL, FALSE),
+                    'redirectUri'  => $NxFitbit->getSetting("api_redirectUri" . $personal, NULL, FALSE)
                 ]);
 
                 // Try to get an access token using the authorization code grant.
@@ -187,7 +187,7 @@
                     
                     $pre_auth = $NxFitbit->getSetting("owners_friends");
                     $pre_auth = explode(",", $pre_auth);
-                    array_push($pre_auth, $NxFitbit->getSetting("fitbit_owner_id"));
+                    array_push($pre_auth, $NxFitbit->getSetting("ownerFuid"));
                     if (array_search($resourceOwner->getId(), $pre_auth)) {
                         $newUserName = $resourceOwner->getId();
                         $NxFitbit->getFitbitAPI($newUserName)->setUserAccessToken($accessToken);
@@ -218,7 +218,7 @@
 
         if (is_array($_GET) && array_key_exists("verify", $_GET)) {
             require_once(dirname(__FILE__) . "/config.inc.php");
-            if ((is_array($config['fitbit_subscriber_id']) and array_search($_GET['verify'], $config['fitbit_subscriber_id'])) OR ($_GET['verify'] == $config['fitbit_subscriber_id'])) {
+            if ((is_array($config['api_subValidity']) and array_search($_GET['verify'], $config['api_subValidity'])) OR ($_GET['verify'] == $config['api_subValidity'])) {
                 header('Cache-Control: no-cache, must-revalidate');
                 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
                 header('Content-type: text/plain');

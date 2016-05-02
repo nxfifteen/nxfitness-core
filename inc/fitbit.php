@@ -50,12 +50,12 @@
             $personal = $personal ? "_personal" : "";
 
             $this->setLibrary(new djchen\OAuth2\Client\Provider\Fitbit([
-                'clientId'     => $fitbitApp->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
-                'clientSecret' => $fitbitApp->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
-                'redirectUri'  => $fitbitApp->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
+                'clientId'     => $fitbitApp->getSetting("api_clientId" . $personal, NULL, FALSE),
+                'clientSecret' => $fitbitApp->getSetting("api_clientSecret" . $personal, NULL, FALSE),
+                'redirectUri'  => $fitbitApp->getSetting("api_redirectUri" . $personal, NULL, FALSE)
             ]));
 
-            nxr("clientId: " . $fitbitApp->getSetting("fitbit_clientId" . $personal, NULL, FALSE) . " used");
+            nxr("clientId: " . $fitbitApp->getSetting("api_clientId" . $personal, NULL, FALSE) . " used");
 
             $this->forceSync = FALSE;
 
@@ -359,7 +359,7 @@
                                         if ($downloadTCX) $this->pullBabelTCX($activity->tcxLink);
                                     }
 
-                                    if ($this->activeUser == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                                    if ($this->activeUser == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
                                         $this->pullBabelHeartIntraday($activity);
                                     }
                                 }
@@ -1146,7 +1146,7 @@
                                 $lifetime = floatval($friend->lifetime->steps);
                                 $steps = floatval($friend->summary->steps);
 
-                                if ($this->getActiveUser() == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                                if ($this->getActiveUser() == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
                                     if (!isset($allOwnersFriends)) {
                                         $allOwnersFriends = $friend->user->encodedId;
                                     } else {
@@ -1171,7 +1171,7 @@
                                 nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
                             }
 
-                            if ($this->getActiveUser() == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE) && isset($allOwnersFriends)) {
+                            if ($this->getActiveUser() == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE) && isset($allOwnersFriends)) {
                                 $this->getAppClass()->setSetting("owners_friends", $allOwnersFriends);
                             }
 
@@ -1599,7 +1599,7 @@
         private function pullBabelHeartIntraday($activity) {
             $isAllowed = $this->isAllowed("heart");
             if (!is_numeric($isAllowed)) {
-                if ($this->activeUser == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                if ($this->activeUser == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
                     $startTimeRaw = new DateTime ((String)$activity->startTime);
                     $startDate = $startTimeRaw->format("Y-m-d");
                     $startTime = $startTimeRaw->format("H:i");
