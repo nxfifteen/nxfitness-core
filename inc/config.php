@@ -128,7 +128,7 @@
 
                 return $this->settings[ $key ];
             } else {
-                if (!is_null($default)) {
+                if ($query_db && !is_null($default)) {
                     $this->set($key, $default);
                 }
 
@@ -139,15 +139,18 @@
         /**
          * @param string $key
          * @param string $value
+         * @param bool   $query_db
          *
          * @return bool
          */
-        public function set($key, $value) {
+        public function set($key, $value, $query_db = TRUE) {
             $this->settings[ $key ] = $value;
-            if ($this->database->has($this->get("db_prefix", FALSE) . "settings", array("var" => $key))) {
-                return $this->database->update($this->get("db_prefix", FALSE) . "settings", array("data" => $value), array("var" => $key));
-            } else {
-                return $this->database->insert($this->get("db_prefix", FALSE) . "settings", array("data" => $value, "var" => $key));
+            if ($query_db) {
+                if ($this->database->has($this->get("db_prefix", FALSE) . "settings", array("var" => $key))) {
+                    return $this->database->update($this->get("db_prefix", FALSE) . "settings", array("data" => $value), array("var" => $key));
+                } else {
+                    return $this->database->insert($this->get("db_prefix", FALSE) . "settings", array("data" => $value, "var" => $key));
+                }
             }
         }
 

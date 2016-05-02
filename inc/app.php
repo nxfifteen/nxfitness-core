@@ -417,11 +417,12 @@
          *
          * @param           $key
          * @param           $value
+         * @param bool   $query_db
          *
          * @return bool
          */
-        public function setSetting($key, $value) {
-            return $this->getSettings()->set($key, $value);
+        public function setSetting($key, $value, $query_db = TRUE) {
+            return $this->getSettings()->set($key, $value, $query_db);
         }
 
         /**
@@ -467,6 +468,21 @@
                 } else {
                     return $key;
                 }
+            }
+        }
+
+        public function isUserOAuthAuthorised($_nx_fb_usr) {
+            $userIsOAuth = $this->getSetting("userIsOAuth_" . $_nx_fb_usr, NULL, FALSE);
+            if (is_null($userIsOAuth)) {
+                if ($this->valdidateOAuth($this->getUserOAuthTokens($_nx_fb_usr, FALSE))) {
+                    $this->setSetting("userIsOAuth_" . $_nx_fb_usr, TRUE, FALSE);
+                    return TRUE;
+                } else {
+                    $this->setSetting("userIsOAuth_" . $_nx_fb_usr, FALSE, FALSE);
+                    return TRUE;
+                }
+            } else {
+                return $userIsOAuth;
             }
         }
 
