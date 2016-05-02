@@ -55,7 +55,7 @@
     // start the session
     session_start();
 
-    if ($url_namespace == "authorise" && !array_key_exists("_nx_fb_usr", $_COOKIE)) {
+    if ($url_namespace == "register" && !array_key_exists("_nx_fb_usr", $_COOKIE)) {
         // Authorise a user against Fitbit's OAuth AIP
         nxr("New user registration started");
 
@@ -110,12 +110,6 @@
                 } else {
                     $personal = "";
                 }
-
-                //echo $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE) . "<br />";
-                //echo $NxFitbit->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE). "<br />";
-                //echo $NxFitbit->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE). "<br />";
-                //
-                //die();
 
                 $helper = new djchen\OAuth2\Client\Provider\Fitbit([
                     'clientId'     => $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
@@ -179,6 +173,8 @@
 
                 // Check again that this really is one of our users
                 if ($NxFitbit->isUser($resourceOwner->getId())) {
+                    nxr("User OAuth credentials installed");
+                    
                     // Update the users new keys
                     $NxFitbit->setUserOAuthTokens($resourceOwner->getId(), $accessToken);
 
@@ -187,8 +183,11 @@
                     exit();
 
                 } else {
+                    nxr(" OAuth return for new user: " . $resourceOwner->getId());
+                    
                     $pre_auth = $NxFitbit->getSetting("owners_friends");
                     $pre_auth = explode(",", $pre_auth);
+                    array_push($pre_auth, $NxFitbit->getSetting("fitbit_owner_id"));
                     if (array_search($resourceOwner->getId(), $pre_auth)) {
                         $newUserName = $resourceOwner->getId();
                         $NxFitbit->getFitbitAPI($newUserName)->setUserAccessToken($accessToken);
@@ -196,13 +195,11 @@
                         $newUserProfile = $NxFitbit->getFitbitAPI($newUserName)->pullBabel('user/-/profile.json', TRUE);
 
                         if ($NxFitbit->getFitbitAPI($newUserName)->createNewUser($newUserProfile->user)) {
-                            echo "Thank you Everything has worked correctly. Sadly this is as far as I can take you for now.";
+                            nxr("  User sent to new password screen");
+                            header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/register?usr=".$newUserName);
                         }
-
-                        //TODO: add new user details
-
                     } else {
-                        nxr(" Non Friend registration: " . $resourceOwner->getId());
+                        nxr("  Non Friend registration: " . $resourceOwner->getId());
                         header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
                     }
 
