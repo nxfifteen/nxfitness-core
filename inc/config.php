@@ -162,8 +162,8 @@
         public function getUser($fuid, $key, $default = NULL, $query_db = TRUE) {
             if (array_key_exists($key . "_" . $fuid, $this->settings)) {
                 return $this->settings[ $key . "_" . $fuid ];
-            } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, FALSE) . "users_settings", array("fuid" => $fuid, "var" => $key))) {
-                $this->settings[ $key . "_" . $fuid ] = $this->database->get($this->get("db_prefix", NULL, FALSE) . "users_settings", "data", array("fuid" => $fuid, "var" => $key));
+            } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, FALSE) . "settings_users", array("fuid" => $fuid, "var" => $key))) {
+                $this->settings[ $key . "_" . $fuid ] = $this->database->get($this->get("db_prefix", NULL, FALSE) . "settings_users", "data", array("fuid" => $fuid, "var" => $key));
 
                 return $this->settings[ $key . "_" . $fuid ];
             } else {
@@ -184,10 +184,10 @@
          */
         public function setUser($fuid, $key, $value) {
             $this->settings[ $key . "_" . $fuid ] = $value;
-            if ($this->database->has($this->get("db_prefix", FALSE) . "users_settings", array("fuid" => $fuid, "var" => $key))) {
-                return $this->database->update($this->get("db_prefix", FALSE) . "users_settings", array("data" => $value), array("fuid" => $fuid, "var" => $key));
+            if ($this->database->has($this->get("db_prefix", FALSE) . "settings_users", array("fuid" => $fuid, "var" => $key))) {
+                return $this->database->update($this->get("db_prefix", FALSE) . "settings_users", array("data" => $value), array("fuid" => $fuid, "var" => $key));
             } else {
-                return $this->database->insert($this->get("db_prefix", FALSE) . "users_settings", array("fuid" => $fuid, "data" => $value, "var" => $key));
+                return $this->database->insert($this->get("db_prefix", FALSE) . "settings_users", array("fuid" => $fuid, "data" => $value, "var" => $key));
             }
         }
 
