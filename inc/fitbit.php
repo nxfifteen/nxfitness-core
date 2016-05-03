@@ -1487,22 +1487,26 @@
                                 "date[<=]" => $lastMonday
                             ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
-                        $totalSteps = 0;
-                        foreach ($dbSteps as $dbStep) {
-                            $totalSteps = $totalSteps + $dbStep;
-                        }
-                        if ($totalSteps == 0) $totalSteps = 1;
-
-                        $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_max", 10000);
-                        $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
-                        $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
-
-                        if ($ProposedNextWeek >= $maxTargetSteps) {
-                            $plusTargetSteps = $maxTargetSteps;
-                        } else if ($ProposedNextWeek <= ($maxTargetSteps / 2)) {
-                            $plusTargetSteps = $maxTargetSteps / 2;
+                        if (count($dbSteps) == 0) {
+                            $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_max", 1000);
                         } else {
-                            $plusTargetSteps = $ProposedNextWeek;
+                            $totalSteps = 0;
+                            foreach ($dbSteps as $dbStep) {
+                                $totalSteps = $totalSteps + $dbStep;
+                            }
+                            if ($totalSteps == 0) $totalSteps = 1;
+
+                            $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_max", 10000);
+                            $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
+                            $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
+
+                            if ($ProposedNextWeek >= $maxTargetSteps) {
+                                $plusTargetSteps = $maxTargetSteps;
+                            } else if ($ProposedNextWeek <= ($maxTargetSteps / 2)) {
+                                $plusTargetSteps = $maxTargetSteps / 2;
+                            } else {
+                                $plusTargetSteps = $ProposedNextWeek;
+                            }
                         }
                     }
                 }
@@ -1516,22 +1520,26 @@
                             "date[<=]" => $lastMonday
                         ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
-                    $totalSteps = 0;
-                    foreach ($dbSteps as $dbStep) {
-                        $totalSteps = $totalSteps + $dbStep;
-                    }
-                    if ($totalSteps == 0) $totalSteps = 1;
-
-                    $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_max", 10);
-                    $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($LastWeeksSteps >= $maxTargetSteps) {
-                        $plusTargetSteps = $maxTargetSteps;
-                    } else if ($LastWeeksSteps <= ($maxTargetSteps / 2)) {
-                        $plusTargetSteps = $maxTargetSteps / 2;
-                    } else if ($LastWeeksSteps < $maxTargetSteps) {
-                        $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors", 10) / 100), 0);
+                    if (count($dbSteps) == 0) {
+                        $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_max", 10);
                     } else {
-                        $plusTargetSteps = $maxTargetSteps;
+                        $totalSteps = 0;
+                        foreach ($dbSteps as $dbStep) {
+                            $totalSteps = $totalSteps + $dbStep;
+                        }
+                        if ($totalSteps == 0) $totalSteps = 1;
+
+                        $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_max", 10);
+                        $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
+                        if ($LastWeeksSteps >= $maxTargetSteps) {
+                            $plusTargetSteps = $maxTargetSteps;
+                        } else if ($LastWeeksSteps <= ($maxTargetSteps / 2)) {
+                            $plusTargetSteps = $maxTargetSteps / 2;
+                        } else if ($LastWeeksSteps < $maxTargetSteps) {
+                            $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors", 10) / 100), 0);
+                        } else {
+                            $plusTargetSteps = $maxTargetSteps;
+                        }
                     }
                 }
             } elseif ($string == "activeMinutes") {
@@ -1555,22 +1563,26 @@
                                 "date[<=]" => $lastMonday
                             ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
-                        $totalMinutes = 0;
-                        foreach ($dbActiveMinutes as $dbStep) {
-                            $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
-                        }
-                        if ($totalMinutes == 0) $totalMinutes = 1;
-
-                        $maxTargetActive = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_max", 30);
-                        $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-                        if ($newTargetActive >= $maxTargetActive) {
-                            $plusTargetSteps = $maxTargetActive;
-                        } else if ($newTargetActive <= ($maxTargetActive / 2)) {
-                            $plusTargetSteps = $maxTargetActive / 2;
-                        } else if ($newTargetActive < $maxTargetActive) {
-                            $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active", 10) / 100), 0);
+                        if (count($dbActiveMinutes) == 0) {
+                            $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_max", 30);
                         } else {
-                            $plusTargetSteps = $maxTargetActive;
+                            $totalMinutes = 0;
+                            foreach ($dbActiveMinutes as $dbStep) {
+                                $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
+                            }
+                            if ($totalMinutes == 0) $totalMinutes = 1;
+
+                            $maxTargetActive = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_max", 30);
+                            $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
+                            if ($newTargetActive >= $maxTargetActive) {
+                                $plusTargetSteps = $maxTargetActive;
+                            } else if ($newTargetActive <= ($maxTargetActive / 2)) {
+                                $plusTargetSteps = $maxTargetActive / 2;
+                            } else if ($newTargetActive < $maxTargetActive) {
+                                $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active", 10) / 100), 0);
+                            } else {
+                                $plusTargetSteps = $maxTargetActive;
+                            }
                         }
                     }
                 }
