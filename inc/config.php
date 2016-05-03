@@ -168,8 +168,8 @@
         public function getUser($fuid, $key, $default = NULL, $query_db = TRUE) {
             if (array_key_exists($key . "_" . $fuid, $this->settings)) {
                 return $this->settings[ $key . "_" . $fuid ];
-            } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, FALSE) . "settings_users", array("fuid" => $fuid, "var" => $key))) {
-                $this->settings[ $key . "_" . $fuid ] = $this->database->get($this->get("db_prefix", NULL, FALSE) . "settings_users", "data", array("fuid" => $fuid, "var" => $key));
+            } else if ($query_db && $this->database->has($this->get("db_prefix", NULL, FALSE) . "settings_users", array("AND" => array("fuid" => $fuid, "var" => $key)))) {
+                $this->settings[ $key . "_" . $fuid ] = $this->database->get($this->get("db_prefix", NULL, FALSE) . "settings_users", "data", array("AND" => array("fuid" => $fuid, "var" => $key)));
 
                 return $this->settings[ $key . "_" . $fuid ];
             } else {
