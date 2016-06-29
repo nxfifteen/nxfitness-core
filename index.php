@@ -73,12 +73,19 @@
     
     // Split-up the input URL to workout whats required
     $inputURL = $_SERVER['REDIRECT_URL'];
-    $sysPath = $_SESSION['core_config']['http/'];
+    $sysPath = str_ireplace($_SESSION['core_config']['url'], "", $_SESSION['core_config']['http/']);
+
+    nxr("inputURL: " . $inputURL);
+    nxr("sysPath: " . $sysPath);
+    nxr("sysPath: " . $_SERVER['']);
+
     if ($sysPath != "/") { $inputURL = str_replace($sysPath, "", $inputURL); }
     if (substr($inputURL, 0, 1) == "/") {$inputURL = substr($inputURL, 1);}
 
     $inputURL = explode("/", $inputURL);
     $url_namespace = $inputURL[0];
+
+    nxr("Namespace Called: " . $url_namespace);
 
     if ($url_namespace == "register" && !array_key_exists("_nx_fb_usr", $_COOKIE)) {
         // Authorise a user against Fitbit's OAuth AIP
