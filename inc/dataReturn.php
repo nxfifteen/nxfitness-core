@@ -546,15 +546,30 @@
                 if (!file_exists($tcxFile)) {
                     $record['gpx'] = "none";
                 } else {
-                    if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx')) {
-                        if (is_writable(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache')) {
-                            $record['gpx'] = $this->returnUserRecordActivityTCX($record['logId'], $record['name'] . ": " . $record['startTime']);
+                    if ( ! file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx' ) ) {
+                        if ( is_writable( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' ) ) {
+                            $record['gpx'] = $this->returnUserRecordActivityTCX( $record['logId'], $record['name'] . ": " . $record['startTime'] );
                             $record['gpx'] = $record['gpx']['return']['gpx'];
                         } else {
                             $record['gpx'] = "none";
                         }
                     } else {
-                        $record['gpx'] = DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
+                        $record['gpx'] = DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'fitbit' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx';
+                    }
+
+                    if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '_laps.json')) {
+                        $str = file_get_contents(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '_laps.json');
+                        $jsonMeta = json_decode($str, true); // decode the JSON into an associative array
+                        $record['visibility'] = $jsonMeta['meta']['visibility'];
+                    } else {
+                        $record['visibility'] = "unknown";
+                    }
+
+                    if ( 
+                        (array_key_exists('_nx_fb_usr', $_COOKIE ) && $_COOKIE['_nx_fb_usr'] != $_GET['user']) || 
+                        (!array_key_exists('_nx_fb_usr', $_COOKIE ) && $record['visibility'] != "public") 
+                    ) {
+                        $record['gpx'] = "none";
                     }
                 }
 
@@ -562,6 +577,33 @@
             }
 
             return $returnArray;
+        }
+
+        /**
+         * Calculates the great-circle distance between two points, with
+         * the Haversine formula.
+         * @param float $latitudeFrom Latitude of start point in [deg decimal]
+         * @param float $longitudeFrom Longitude of start point in [deg decimal]
+         * @param float $latitudeTo Latitude of target point in [deg decimal]
+         * @param float $longitudeTo Longitude of target point in [deg decimal]
+         * @param float $earthRadius Mean earth radius in [m]
+         * @return float Distance between points in [m] (same as earthRadius)
+         */
+        function haversineGreatCircleDistance( $lat1, $lon1, $lat2, $lon2, $unit ) {
+            $theta = $lon1 - $lon2;
+            $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $unit = strtoupper($unit);
+
+            if ($unit == "K") {
+                return ($miles * 1.609344);
+            } else if ($unit == "N") {
+                return ($miles * 0.8684);
+            } else {
+                return $miles;
+            }
         }
 
         /**
@@ -632,20 +674,58 @@
 
                         $gpx .= "\n  <trkseg>";
 
-                        foreach ($items->Activities->Activity->Lap->Track->Trackpoint as $trkpt) {
-                            $gpx .= "\n   <trkpt lat=\"" . $trkpt->Position->LatitudeDegrees . "\" lon=\"" . $trkpt->Position->LongitudeDegrees . "\">";
-                            $gpx .= "\n    <time>" . $trkpt->Time . "</time>";
-                            if (isset($trkpt->AltitudeMeters)) {
-                                $gpx .= "\n    <ele>" . $trkpt->AltitudeMeters . "</ele>";
-                            } else {
-                                $gpx .= "\n    <ele>0</ele>";
+                        $gpxMeta = array();
+                        $gpxMeta['meta'] = array();
+                        $gpxMeta['laps'] = array();
+
+                        $startLatitudeVery = 0;
+                        $startLongitudeVery = 0;
+                        $endLatitude = 0;
+                        $endLongitude = 0;
+
+                        foreach ( $items->Activities->Activity->Lap as $Laps ) {
+                            $trackCount = 0;
+                            $totalHeartRate = 0;
+                            $startLatitude = 0;
+                            $startLongitude = 0;
+                            foreach ($Laps->Track->Trackpoint as $trkpt) {
+                                $trackCount++;
+                                $gpx .= "\n   <trkpt lat=\"" . $trkpt->Position->LatitudeDegrees . "\" lon=\"" . $trkpt->Position->LongitudeDegrees . "\">";
+                                $gpx .= "\n    <time>" . $trkpt->Time . "</time>";
+                                if (isset($trkpt->AltitudeMeters)) {
+                                    $gpx .= "\n    <ele>" . $trkpt->AltitudeMeters . "</ele>";
+                                } else {
+                                    $gpx .= "\n    <ele>0</ele>";
+                                }
+                                $gpx .= "\n    <extensions>";
+                                $gpx .= "\n     <gpxtpx:TrackPointExtension>";
+                                $gpx .= "\n      <gpxtpx:hr>" . $trkpt->HeartRateBpm->Value . "</gpxtpx:hr>";
+                                $totalHeartRate = $totalHeartRate + $trkpt->HeartRateBpm->Value;
+                                $gpx .= "\n     </gpxtpx:TrackPointExtension>";
+                                $gpx .= "\n    </extensions>";
+                                $gpx .= "\n   </trkpt>";
+
+                                if ($startLatitude == 0) $startLatitude = (Float) $trkpt->Position->LatitudeDegrees;
+                                if ($startLongitude == 0) $startLongitude = (Float) $trkpt->Position->LongitudeDegrees;
+
+                                if ($startLatitudeVery == 0) $startLatitudeVery = (Float) $trkpt->Position->LatitudeDegrees;
+                                if ($startLongitudeVery == 0) $startLongitudeVery = (Float) $trkpt->Position->LongitudeDegrees;
+
+                                $endLatitude = (Float) $trkpt->Position->LatitudeDegrees;
+                                $endLongitude = (Float) $trkpt->Position->LongitudeDegrees;
                             }
-                            $gpx .= "\n    <extensions>";
-                            $gpx .= "\n     <gpxtpx:TrackPointExtension>";
-                            $gpx .= "\n      <gpxtpx:hr>" . $trkpt->HeartRateBpm->Value . "</gpxtpx:hr>";
-                            $gpx .= "\n     </gpxtpx:TrackPointExtension>";
-                            $gpx .= "\n    </extensions>";
-                            $gpx .= "\n   </trkpt>";
+
+                            $attributes = json_decode(json_encode($Laps->attributes()), TRUE);
+                            $gpxMeta['laps'][] = array(
+                                "startTime" => $attributes['@attributes']['StartTime'],
+                                "elapsedTime" => (Float) $Laps->TotalTimeSeconds,
+                                "startPoint" => array($startLatitude, $startLongitude),
+                                "endPoint" => array($endLatitude, $endLongitude),
+                                "calories" => (Integer) $Laps->Calories,
+                                "distance" => (Float) $Laps->DistanceMeters,
+                                "AverageHeartRateBpm" => number_format(($totalHeartRate / $trackCount), 2),
+                                "intensity" => (String) $Laps->Intensity,
+                            );
                         }
 
                         $gpx .= "\n  </trkseg>";
@@ -656,10 +736,25 @@
                         fwrite($fh, $gpx);
                         fclose($fh);
 
+                        $geo_home_lat = $this->getAppClass()->getUserSetting($this->getUserID(), "geo_home_lat", 0.0);
+                        $geo_home_lon = $this->getAppClass()->getUserSetting($this->getUserID(), "geo_home_lon", 0.0);
+
+                        $gpxMeta['meta']['distance_start'] = number_format($this->haversineGreatCircleDistance($geo_home_lat, $geo_home_lon, $startLatitudeVery, $startLongitudeVery, "K"), 2);
+                        $gpxMeta['meta']['distance_end'] = number_format($this->haversineGreatCircleDistance($geo_home_lat, $geo_home_lon, $endLatitude, $endLongitude, "K"), 2);
+                        if ($gpxMeta['meta']['distance_start'] > 1 && $gpxMeta['meta']['distance_end'] > 1) {
+                            $gpxMeta['meta']['visibility'] = "public";
+                        } else {
+                            $gpxMeta['meta']['visibility'] = "private";
+                        }
+
+                        $fh = fopen(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '_laps.json', 'w');
+                        fwrite($fh, json_encode( $gpxMeta ));
+                        fclose($fh);
+
                         if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
                             $gpxFileName = "none";
                         } else {
-                            $gpxFileName = DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
+                            $gpxFileName = $this->getAppClass()->getSetting("http/") . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
                         }
                     }
 
