@@ -452,11 +452,24 @@
                 $sqlLimit = 1;
             }
 
-            $userActivity = $this->getAppClass()->getDatabase()->query("SELECT `activityName` as `name`,`logId`,`startDate`,`startTime`,`calories`,`activeDuration` as `duration`,`steps`, "
-                . "`activityLevelSedentary` as `sedentary`, `activityLevelLightly` as `lightly`, `activityLevelFairly` as `fairly`, `activityLevelVery` as `very`, `sourceType`, `sourceName` "
-                . "FROM `" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log` "
-                . "WHERE `user` = '" . $this->getUserID() . "' AND `logType` != 'auto_detected' "
-                . "ORDER BY `startDate` DESC, `startTime` DESC LIMIT " . $sqlLimit)->fetchAll();
+            // AND `startDate` >= '2016-06-24' AND `startDate` <= '2016-06-26'
+
+            $sqlQueryString  = "SELECT `activityName` as `name`,`logId`,`startDate`,`startTime`,`calories`,`activeDuration` as `duration`,`steps`, "
+                              . "`activityLevelSedentary` as `sedentary`, `activityLevelLightly` as `lightly`, `activityLevelFairly` as `fairly`, `activityLevelVery` as `very`, `sourceType`, `sourceName` "
+                              . "FROM `" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log` "
+                              . "WHERE `user` = '" . $this->getUserID() . "' AND `logType` != 'auto_detected' ";
+
+            if (is_array( $_GET ) && array_key_exists( "start", $_GET ) && array_key_exists( "end", $_GET )) {
+                $sqlQueryString .= "AND `startDate` >= '" . $_GET['start'] . "' AND `startDate` <= '" . $_GET['end'] . "' ";
+            } else if (is_array( $_GET ) && array_key_exists( "start", $_GET )) {
+                $sqlQueryString .= "AND `startDate` >= '" . $_GET['start'] . "' ";
+            } else if (is_array( $_GET ) && array_key_exists( "end", $_GET )) {
+                $sqlQueryString .= "AND `startDate` <= '" . $_GET['end'] . "' ";
+            }
+
+            $sqlQueryString .= "ORDER BY `startDate` DESC, `startTime` DESC LIMIT " . $sqlLimit;
+
+            $userActivity = $this->getAppClass()->getDatabase()->query($sqlQueryString)->fetchAll();
 
             $daysStats = array();
             $returnArray = array();
