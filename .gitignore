@@ -15,3 +15,4 @@ vendor
 composer.json
 /cache
 fitbitphp-library
+/Thumbs.db
