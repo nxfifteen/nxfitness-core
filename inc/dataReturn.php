@@ -2120,7 +2120,7 @@
             $trendArray['weightToLose'] = $dbBody['weight'] - $dbBody['weightGoal'];
             $trendArray['fatToLose'] = $dbBody['fat'] - $dbBody['fatGoal'];
 
-            $dbGoalsCalories = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array('estimatedDate'), array("user" => $this->getUserID(), "ORDER" => "date DESC"));
+            $dbGoalsCalories = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array('estimatedDate'), array("user" => $this->getUserID(), "ORDER" => "date DESC"));
             $trendArray['estimatedDate'] = date("l", strtotime($dbGoalsCalories['estimatedDate'])) . " the " . date("jS \of F Y", strtotime($dbGoalsCalories['estimatedDate']));
             $trendArray['estimatedWeeks'] = round(abs(strtotime($dbGoalsCalories['estimatedDate']) - strtotime($this->getParamDate())) / 604800, 0);
 
