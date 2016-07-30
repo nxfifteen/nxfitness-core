@@ -425,6 +425,19 @@
             return $this->getSettings()->set($key, $value, $query_db);
         }
 
+	    /**
+	     * Get settings from config class
+	     *
+	     * @param string $fuid
+	     * @param string $key
+	     * @param string $value
+	     *
+	     * @return string
+	     */
+	    public function setUserSetting($fuid, $key, $value) {
+		    return $this->getSettings()->setUser($fuid, $key, $value);
+	    }
+
         /**
          * Helper function to check for supported API calls
          *
