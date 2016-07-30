@@ -1142,6 +1142,7 @@
                             $youRank = 0;
                             $youDistance = 0;
                             $lastSteps = 0;
+	                        $storedLeaderboard = array();
                             foreach ($userFriends as $friend) {
                                 $lifetime = floatval($friend->lifetime->steps);
                                 $steps = floatval($friend->summary->steps);
@@ -1169,6 +1170,21 @@
                                 }
 
                                 nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
+
+	                            $friendId = $friend->user->encodedId;
+	                            $storedLeaderboard[$friendId] = array();
+	                            if (isset($friend->rank->steps) && !empty($friend->rank->steps)) $storedLeaderboard[$friendId]["rank"] = (String)$friend->rank->steps;
+	                            if (isset($friend->average->steps) && !empty($friend->average->steps)) $storedLeaderboard[$friendId]["stepsAvg"] = (String)$friend->average->steps;
+	                            if (isset($friend->lifetime->steps) && !empty($friend->lifetime->steps)) $storedLeaderboard[$friendId]["stepsLife"] = (String)$friend->lifetime->steps;
+	                            if (isset($friend->summary->steps) && !empty($friend->summary->steps)) $storedLeaderboard[$friendId]["stepsSum"] = (String)$friend->summary->steps;
+	                            if (isset($friend->user->avatar) && !empty($friend->user->avatar)) $storedLeaderboard[$friendId]["avatar"] = (String)$friend->user->avatar;
+	                            if (isset($friend->user->displayName) && !empty($friend->user->displayName)) $storedLeaderboard[$friendId]["displayName"] = (String)$friend->user->displayName;
+	                            if (isset($friend->user->gender) && !empty($friend->user->gender)) $storedLeaderboard[$friendId]["gender"] = (String)$friend->user->gender;
+	                            if (isset($friend->user->memberSince) && !empty($friend->user->memberSince)) $storedLeaderboard[$friendId]["memberSince"] = (String)$friend->user->memberSince;
+	                            if (isset($friend->user->age) && !empty($friend->user->age)) $storedLeaderboard[$friendId]["age"] = (String)$friend->user->age;
+	                            if (isset($friend->user->city) && !empty($friend->user->city)) $storedLeaderboard[$friendId]["city"] = (String)$friend->user->city;
+	                            if (isset($friend->user->country) && !empty($friend->user->country)) $storedLeaderboard[$friendId]["country"] = (String)$friend->user->country;
+
                             }
 
                             if ($this->getActiveUser() == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE) && isset($allOwnersFriends)) {
@@ -1182,6 +1198,8 @@
                                 'friends'  => count($userFriends),
                                 'distance' => $youDistance
                             ), array("fuid" => $this->getActiveUser()));
+
+	                        if (count($storedLeaderboard) > 0) $this->getAppClass()->setUserSetting($this->getActiveUser(), "leaderboard", json_encode($storedLeaderboard));
 
                         }
                     }
