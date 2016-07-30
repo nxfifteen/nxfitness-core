@@ -232,7 +232,7 @@
                         }
                     } else {
                         nxr("  Non Friend registration: " . $resourceOwner->getId());
-                        header("Location: " . $_SESSION['core_config']['http/admin'] . "/");
+                        header("Location: " . $_SESSION['core_config']['http/admin'] . "/?err=400");
                     }
 
                     // When we don't know what to do put the user over to the user interface screens
