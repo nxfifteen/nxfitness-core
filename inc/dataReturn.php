@@ -1890,22 +1890,55 @@
             }
         }
 
-        /**
-         * @return array|bool
-         */
-        public function returnUserRecordStepsGoal() {
-            $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
-                array('date', 'distance', 'floors', 'steps'),
-                $this->dbWhere());
+	    /**
+	     * @return array|bool
+	     */
+	    public function returnUserRecordStepsGoal() {
+		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+			    array('date', 'distance', 'floors', 'steps'),
+			    $this->dbWhere());
 
-            $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
+		    $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
-            if (!is_null($this->getTracking())) {
-                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
-            }
+		    if (!is_null($this->getTracking())) {
+			    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+		    }
 
-            return $dbGoals;
-        }
+		    return $dbGoals;
+	    }
+
+	    /**
+	     * @return array|bool
+	     */
+	    public function returnUserRecordTrackerHistory() {
+		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+			    array('date', 'distance', 'floors', 'steps'),
+			    $this->dbWhere());
+
+		    $totalsSteps = 0;
+		    $distanceSteps = 0;
+		    $floorsSteps = 0;
+
+		    foreach ( $dbGoals as $key => $value ) {
+			    $totalsSteps += $dbGoals[$key]['steps'];
+			    $floorsSteps += $dbGoals[$key]['floors'];
+			    $distanceSteps += $dbGoals[$key]['distance'];
+
+			    $dbGoals[$key]['steps'] = number_format($dbGoals[$key]['steps'], 0);
+			    $dbGoals[$key]['floors'] = number_format($dbGoals[$key]['floors'], 0);
+			    $dbGoals[$key]['distance'] = number_format($dbGoals[$key]['distance'], 2);
+		    }
+
+		    if (!is_null($this->getTracking())) {
+			    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+		    }
+
+		    return array( "totals" => array( "steps" => number_format($totalsSteps, 0),
+		                                     "distance" => number_format($distanceSteps, 2),
+		                                     "floors" => number_format($floorsSteps, 0)
+			                                ),
+		                  "tracked" => $dbGoals );
+	    }
 
         /**
          * @return array
