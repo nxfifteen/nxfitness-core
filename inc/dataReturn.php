@@ -2237,6 +2237,26 @@
             return $userActivity;
         }
 
+        private function convertWeight($inputWeight, $convertUnits) {
+        	$conversationUnit = 1;
+
+	        if ($convertUnits == "kg") {
+		        return $inputWeight;
+	        } elseif ($convertUnits == "lb") {
+		        $conversationUnit = 2.20462;
+	        }
+
+        	if (!is_array($inputWeight)) {
+		        return round($inputWeight * $conversationUnit, 2);
+	        } else {
+	        	foreach ($inputWeight as $key => $value) {
+			        $inputWeight[$key] = round($value * $conversationUnit, 2);
+		        }
+	        }
+
+	        return $inputWeight;
+        }
+
         /**
          * @return array
          */
@@ -2257,7 +2277,7 @@
                 ), "ORDER"  => "date DESC", "LIMIT" => ($days + 10)));
 
             $latestDate = 0;
-            foreach ($dbWeight as $daysWeight) {
+            foreach ($dbWeight as $key => $daysWeight) {
                 if (strtotime($daysWeight['date']) > strtotime($latestDate)) {
                     $latestDate = $daysWeight['date'];
                 }
@@ -2443,21 +2463,25 @@
                 $loss["fat"] = array();
             }
 
+	        $userWeightUnits = $this->getAppClass()->getUserSetting($this->getUserID(), "unit_weight", "kg");
+
             return array('returnDate'        => explode("-", $this->getParamDate()),
-                         'graph_weight_min'  => $weightMin,
-                         'graph_weight_max'  => $weightMax,
-                         'graph_fat_min'     => $fatMin,
-                         'graph_fat_max'     => $fatMax,
-                         'graph_weight'      => $weights,
-                         'graph_weightTrend' => $weightTrend,
-                         'graph_weightAvg'   => $weightAvg,
-                         'graph_weightGoal'  => $weightGoal,
                          'graph_fat'         => $fat,
+                         'graph_fat_max'     => $fatMax,
+                         'graph_fat_min'     => $fatMin,
+                         'graph_fatAvg'      => $fatAvg,
                          'graph_fatGoal'     => $fatGoal,
                          'graph_fatTrend'    => $fatTrend,
-                         'graph_fatAvg'      => $fatAvg,
-                         'loss_rate_weight'  => $loss["weight"],
-                         'loss_rate_fat'     => $loss["fat"]);
+                         'graph_weight'      => $this->convertWeight($weights, $userWeightUnits),
+                         'graph_weight_max'  => $this->convertWeight($weightMax, $userWeightUnits),
+                         'graph_weight_min'  => $this->convertWeight($weightMin, $userWeightUnits),
+                         'graph_weightAvg'   => $this->convertWeight($weightAvg, $userWeightUnits),
+                         'graph_weightGoal'  => $this->convertWeight($weightGoal, $userWeightUnits),
+                         'graph_weightTrend' => $this->convertWeight($weightTrend, $userWeightUnits),
+                         'loss_rate_fat'     => $loss["fat"],
+                         'loss_rate_weight'  => $this->convertWeight($loss["weight"], $userWeightUnits),
+                         'weight_units'      => $userWeightUnits
+	            );
         }
 
         /**
