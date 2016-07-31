@@ -1910,6 +1910,41 @@
 	    /**
 	     * @return array|bool
 	     */
+	    public function returnUserRecordTrackerHistoryChart() {
+		    $convertedOutput = $this->returnUserRecordTrackerHistory();
+
+		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+			    array('date', 'steps'),
+			    $this->dbWhere());
+
+		    $date = array();
+		    $distance = array();
+		    $floors = array();
+		    $steps = array();
+		    $stepsGoal = array();
+
+		    foreach ( $convertedOutput['tracked'] as $key => $value ) {
+			    $date[] = $convertedOutput['tracked'][$key]['day'];
+			    $distance[] = $convertedOutput['tracked'][$key]['distance'];
+			    $floors[] = $convertedOutput['tracked'][$key]['floors'];
+			    $steps[] = $convertedOutput['tracked'][$key]['steps'];
+			    $stepsGoal[] = $dbGoals[$key]['steps'];
+		    }
+
+		    $convertedOutput['date'] = array_reverse($date);
+		    $convertedOutput['distance'] = array_reverse($distance);
+		    $convertedOutput['floors'] = array_reverse($floors);
+		    $convertedOutput['steps'] = array_reverse($steps);
+		    $convertedOutput['stepsGoal'] = array_reverse($stepsGoal);
+
+		    unset($convertedOutput['tracked']);
+
+	    	return $convertedOutput;
+	    }
+
+	    /**
+	     * @return array|bool
+	     */
 	    public function returnUserRecordTrackerHistory() {
 		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
 			    array('date', 'distance', 'floors', 'steps'),
@@ -1924,9 +1959,8 @@
 			    $floorsSteps += $dbGoals[$key]['floors'];
 			    $distanceSteps += $dbGoals[$key]['distance'];
 
-			    $dbGoals[$key]['steps'] = number_format($dbGoals[$key]['steps'], 0);
-			    $dbGoals[$key]['floors'] = number_format($dbGoals[$key]['floors'], 0);
-			    $dbGoals[$key]['distance'] = number_format($dbGoals[$key]['distance'], 2);
+			    $dbGoals[$key]['day'] = date("l", strtotime($dbGoals[$key]['date']));
+			    $dbGoals[$key]['distance'] = round($dbGoals[$key]['distance'], 2);
 		    }
 
 		    if (!is_null($this->getTracking())) {
