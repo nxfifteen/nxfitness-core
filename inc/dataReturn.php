@@ -1890,22 +1890,115 @@
             }
         }
 
-        /**
-         * @return array|bool
-         */
-        public function returnUserRecordStepsGoal() {
-            $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
-                array('date', 'distance', 'floors', 'steps'),
-                $this->dbWhere());
+	    /**
+	     * @return array|bool
+	     */
+	    public function returnUserRecordStepsGoal() {
+		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+			    array('date', 'distance', 'floors', 'steps'),
+			    $this->dbWhere());
 
-            $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
+		    $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
-            if (!is_null($this->getTracking())) {
-                $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
-            }
+		    if (!is_null($this->getTracking())) {
+			    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+		    }
 
-            return $dbGoals;
-        }
+		    return $dbGoals;
+	    }
+
+	    /**
+	     * @return array|bool
+	     */
+	    public function returnUserRecordTrackerHistoryChart() {
+		    $convertedOutput = $this->returnUserRecordTrackerHistory();
+
+		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
+			    array('date', 'steps'),
+			    $this->dbWhere());
+
+		    $totalsStepsGoal = 0;
+		    $date = array();
+		    $distance = array();
+		    $floors = array();
+		    $steps = array();
+		    $stepsGoal = array();
+
+		    foreach ( $convertedOutput['tracked'] as $key => $value ) {
+			    $date[] = $convertedOutput['tracked'][$key]['day'];
+			    $distance[] = $convertedOutput['tracked'][$key]['distance'];
+			    $floors[] = $convertedOutput['tracked'][$key]['floors'];
+			    $steps[] = $convertedOutput['tracked'][$key]['steps'];
+			    $stepsGoal[] = $dbGoals[$key]['steps'];
+
+			    $totalsStepsGoal += $dbGoals[$key]['steps'];
+		    }
+
+		    $convertedOutput['totals']['stepsGoal'] = $totalsStepsGoal;
+		    $convertedOutput['human']['stepsGoal'] = number_format($totalsStepsGoal,0);
+
+		    $convertedOutput['precentages']['steps'] = round( ($convertedOutput['totals']['steps'] / $convertedOutput['totals']['stepsGoal']) * 100, 0);
+
+		    $cSteps = count($steps);
+		    $cFloors = count($floors);
+		    $cDistance = count($distance);
+
+		    $convertedOutput['analysis'] = array(
+			    "steps7Day" => number_format(array_sum($steps) / $cSteps,0),
+			    "floors7Day" => number_format(array_sum($floors) / $cFloors,0),
+			    "distance7Day" => number_format(array_sum($distance) / $cDistance,2),
+
+			    "stepsYesterday" => number_format($steps[1] - $steps[0],0),
+			    "floorsYesterday" => number_format($floors[1] - $floors[0],0),
+			    "distanceYesterday" => number_format($distance[1] - $distance[0],0)
+		    );
+
+		    $convertedOutput['date'] = array_reverse($date);
+		    $convertedOutput['distance'] = array_reverse($distance);
+		    $convertedOutput['floors'] = array_reverse($floors);
+		    $convertedOutput['steps'] = array_reverse($steps);
+		    $convertedOutput['stepsGoal'] = array_reverse($stepsGoal);
+
+		    unset($convertedOutput['tracked']);
+
+	    	return $convertedOutput;
+	    }
+
+	    /**
+	     * @return array|bool
+	     */
+	    public function returnUserRecordTrackerHistory() {
+		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
+			    array('date', 'distance', 'floors', 'steps'),
+			    $this->dbWhere());
+
+		    $totalsSteps = 0;
+		    $distanceSteps = 0;
+		    $floorsSteps = 0;
+
+		    foreach ( $dbGoals as $key => $value ) {
+			    $totalsSteps += $dbGoals[$key]['steps'];
+			    $floorsSteps += $dbGoals[$key]['floors'];
+			    $distanceSteps += $dbGoals[$key]['distance'];
+
+			    $dbGoals[$key]['day'] = date("l", strtotime($dbGoals[$key]['date']));
+			    $dbGoals[$key]['distance'] = round($dbGoals[$key]['distance'], 2);
+		    }
+
+		    if (!is_null($this->getTracking())) {
+			    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
+		    }
+
+		    return array( "totals" => array( "steps" => round($totalsSteps, 0),
+		                                     "distance" => round($distanceSteps, 2),
+		                                     "floors" => round($floorsSteps, 0)
+										    ),
+		                  "human" => array(  "steps" => number_format($totalsSteps, 0),
+										     "distance" => number_format($distanceSteps, 2),
+										     "floors" => number_format($floorsSteps, 0)
+										    ),
+		                  "tracked" => $dbGoals );
+	    }
 
         /**
          * @return array
