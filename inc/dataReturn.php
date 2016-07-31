@@ -1937,6 +1937,8 @@
 		    $convertedOutput['totals']['stepsGoal'] = $totalsStepsGoal;
 		    $convertedOutput['human']['stepsGoal'] = number_format($totalsStepsGoal,0);
 
+		    $convertedOutput['precentages']['steps'] = round( ($convertedOutput['totals']['steps'] / $convertedOutput['totals']['stepsGoal']) * 100, 0);
+
 		    $cSteps = count($steps);
 		    $cFloors = count($floors);
 		    $cDistance = count($distance);
