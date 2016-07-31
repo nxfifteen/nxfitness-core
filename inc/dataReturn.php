@@ -1935,6 +1935,7 @@
 		    }
 
 		    $convertedOutput['totals']['stepsGoal'] = $totalsStepsGoal;
+		    $convertedOutput['human']['stepsGoal'] = number_format($totalsStepsGoal,0);
 
 		    $convertedOutput['date'] = array_reverse($date);
 		    $convertedOutput['distance'] = array_reverse($distance);
@@ -1975,7 +1976,11 @@
 		    return array( "totals" => array( "steps" => round($totalsSteps, 0),
 		                                     "distance" => round($distanceSteps, 2),
 		                                     "floors" => round($floorsSteps, 0)
-			                                ),
+										    ),
+		                  "human" => array(  "steps" => number_format($totalsSteps, 0),
+										     "distance" => number_format($distanceSteps, 2),
+										     "floors" => number_format($floorsSteps, 0)
+										    ),
 		                  "tracked" => $dbGoals );
 	    }
 
