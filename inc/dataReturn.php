@@ -1917,6 +1917,7 @@
 			    array('date', 'steps'),
 			    $this->dbWhere());
 
+		    $totalsStepsGoal = 0;
 		    $date = array();
 		    $distance = array();
 		    $floors = array();
@@ -1929,7 +1930,11 @@
 			    $floors[] = $convertedOutput['tracked'][$key]['floors'];
 			    $steps[] = $convertedOutput['tracked'][$key]['steps'];
 			    $stepsGoal[] = $dbGoals[$key]['steps'];
+
+			    $totalsStepsGoal += $dbGoals[$key]['steps'];
 		    }
+
+		    $convertedOutput['totals']['stepsGoal'] = $totalsStepsGoal;
 
 		    $convertedOutput['date'] = array_reverse($date);
 		    $convertedOutput['distance'] = array_reverse($distance);
@@ -1967,9 +1972,9 @@
 			    $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
 		    }
 
-		    return array( "totals" => array( "steps" => number_format($totalsSteps, 0),
-		                                     "distance" => number_format($distanceSteps, 2),
-		                                     "floors" => number_format($floorsSteps, 0)
+		    return array( "totals" => array( "steps" => round($totalsSteps, 0),
+		                                     "distance" => round($distanceSteps, 2),
+		                                     "floors" => round($floorsSteps, 0)
 			                                ),
 		                  "tracked" => $dbGoals );
 	    }
