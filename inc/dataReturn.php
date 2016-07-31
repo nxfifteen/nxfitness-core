@@ -1135,6 +1135,43 @@
             return $return;
         }
 
+	    /**
+	     * @return array
+	     */
+	    public function returnUserRecordLeaderboard() {
+		    $leaderboard = $this->getAppClass()->getUserSetting($this->getUserID(), "leaderboard", "none");
+
+		    if ($leaderboard == "none") {
+			    return array("error" => "true", "code" => 104, "msg" => "No friends found");
+		    }
+
+		    $leaderboard = json_decode($leaderboard, true);
+		    $totalFriends = count($leaderboard);
+
+		    foreach ($leaderboard as $encodedId => $friend) {
+		    	if (!array_key_exists("stepsSum", $leaderboard[$encodedId])) {
+				    unset($leaderboard[$encodedId]);
+			    } else {
+				    unset($leaderboard[$encodedId]['gender']);
+				    unset($leaderboard[$encodedId]['memberSince']);
+				    unset($leaderboard[$encodedId]['city']);
+				    unset($leaderboard[$encodedId]['country']);
+				    unset($leaderboard[$encodedId]['age']);
+
+				    $leaderboard[$encodedId]['stepsAvg'] = number_format($leaderboard[$encodedId]['stepsAvg']);
+				    $leaderboard[$encodedId]['stepsSum'] = number_format($leaderboard[$encodedId]['stepsSum']);
+				    $leaderboard[$encodedId]['stepsLife'] = number_format($leaderboard[$encodedId]['stepsLife']);
+			    }
+		    }
+		    $activeFriends = count($leaderboard);
+
+		    $return = array("totalFriends" => $totalFriends,
+		                    "activeFriends" => $activeFriends,
+		                    "friends" => $leaderboard);
+
+		    return $return;
+	    }
+
         /**
          * @return array
          */
