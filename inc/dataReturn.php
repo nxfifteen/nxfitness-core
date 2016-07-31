@@ -2158,8 +2158,15 @@
             $dbBody = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array('date', 'weight', 'weightGoal', 'fat', 'fatGoal'), array("user" => $this->getUserID(), "ORDER" => "date  ASC"));
             $trendArray['weeksWeightTracked'] = round(abs(strtotime($this->getParamDate()) - strtotime($dbBody['date'])) / 604800, 0);
 
-            $trendArray['weightToLose'] = $dbBody['weight'] - $dbBody['weightGoal'];
-            $trendArray['fatToLose'] = $dbBody['fat'] - $dbBody['fatGoal'];
+	        $userWeightUnits = $this->getAppClass()->getUserSetting($this->getUserID(), "unit_weight", "kg");
+
+	        $trendArray['weight'] = $this->convertWeight($dbBody['weight'], $userWeightUnits) . " " . $userWeightUnits;
+	        $trendArray['weightToLose'] = $this->convertWeight($dbBody['weight'] - $dbBody['weightGoal'], $userWeightUnits) . " " . $userWeightUnits;
+	        $trendArray['weightGoal'] = $this->convertWeight($dbBody['weightGoal'], $userWeightUnits) . " " . $userWeightUnits;
+
+	        $trendArray['fat'] = number_format($dbBody['fat']);
+	        $trendArray['fatToLose'] = number_format($dbBody['fat'] - $dbBody['fatGoal']);
+	        $trendArray['fatGoal'] = number_format($dbBody['fatGoal']);
 
             $dbGoalsCalories = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array('estimatedDate'), array("user" => $this->getUserID(), "ORDER" => "date DESC"));
             $trendArray['estimatedDate'] = date("l", strtotime($dbGoalsCalories['estimatedDate'])) . " the " . date("jS \of F Y", strtotime($dbGoalsCalories['estimatedDate']));
