@@ -11,10 +11,24 @@
         exit();
     }
 
-    $http = $_SERVER["HTTPS"] != "on" ? "http" : "https";
-    if ($_SERVER['SERVER_ADDR'] == "10.1.1.1" && $_SERVER['REDIRECT_URL'] == "/api/fitbit/json.php") {
-        header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $sysPath . "/json.php?" . http_build_query($_GET));
-        die();
+    if (!function_exists("nxr_destroy_session")) {
+        function nxr_destroy_session() {
+            // Unset all of the session variables.
+            $_SESSION = array();
+
+            // If it's desired to kill the session, also delete the session cookie.
+            // Note: This will destroy the session, and not just the session data!
+            if (ini_get("session.use_cookies")) {
+                $params = session_get_cookie_params();
+                setcookie(session_name(), '', time() - 42000,
+                    $params["path"], $params["domain"],
+                    $params["secure"], $params["httponly"]
+                );
+            }
+
+            // Finally, destroy the session.
+            session_destroy();
+        }
     }
 
     if (!function_exists("nxr")) {
@@ -41,21 +55,39 @@
 
     if (!defined('DEBUG_MY_PROJECT')) define('DEBUG_MY_PROJECT', FALSE);
 
+    // start the session
+    session_start();
+    if (!array_key_exists("timeout", $_SESSION) || !is_numeric($_SESSION['timeout'])) {
+        $_SESSION['timeout'] = time() + 60*5;
+    } else if ($_SESSION['timeout'] < time()) {
+        nxr_destroy_session();
+        header("Location: ./");
+    }
+    
+    if (!array_key_exists("core_config", $_SESSION) || !is_array($_SESSION['core_config']) || count($_SESSION['core_config']) == 0) {
+        require_once(dirname(__FILE__) . "/config.inc.php");
+        if (isset($config)) {
+            $_SESSION['core_config'] = $config;
+        }
+    }
+    
     // Split-up the input URL to workout whats required
     $inputURL = $_SERVER['REDIRECT_URL'];
+    $sysPath = str_ireplace($_SESSION['core_config']['url'], "", $_SESSION['core_config']['http/']);
 
-    // TODO: GitLab Issue #7 - Removed include as it breaks the config class when building up the full app
-    $sysPath = $_SERVER['SERVER_ADDR'] != "10.1.1.1" ? "/api/fitbit/" : "/";
-    if ($sysPath != "/") {
-        $inputURL = str_replace($sysPath, "", $inputURL);
-    }
+    nxr("inputURL: " . $inputURL);
+    nxr("sysPath: " . $sysPath);
+    nxr("sysPath: " . $_SERVER['']);
+
+    if ($sysPath != "/") { $inputURL = str_replace($sysPath, "", $inputURL); }
+    if (substr($inputURL, 0, 1) == "/") {$inputURL = substr($inputURL, 1);}
+
     $inputURL = explode("/", $inputURL);
     $url_namespace = $inputURL[0];
 
-    // start the session
-    session_start();
+    nxr("Namespace Called: " . $url_namespace);
 
-    if ($url_namespace == "authorise" && !array_key_exists("_nx_fb_usr", $_COOKIE)) {
+    if ($url_namespace == "register" && !array_key_exists("_nx_fb_usr", $_COOKIE)) {
         // Authorise a user against Fitbit's OAuth AIP
         nxr("New user registration started");
 
@@ -65,9 +97,9 @@
 
         // Sent the user off too Fitbit to authenticate
         $helper = new djchen\OAuth2\Client\Provider\Fitbit([
-            'clientId'     => $NxFitbit->getSetting("fitbit_clientId", NULL, FALSE),
-            'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret", NULL, FALSE),
-            'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri", NULL, FALSE)
+            'clientId'     => $NxFitbit->getSetting("api_clientId", NULL, FALSE),
+            'clientSecret' => $NxFitbit->getSetting("api_clientSecret", NULL, FALSE),
+            'redirectUri'  => $NxFitbit->getSetting("api_redirectUri", NULL, FALSE)
         ]);
 
         // Fetch the authorization URL from the provider; this returns the
@@ -100,21 +132,21 @@
                 if (DEBUG_MY_PROJECT) {
                     echo __FILE__ . " @" . __LINE__ . " ## " . $_COOKIE['_nx_fb_usr'] . " is already authorised with Fitbit<br />\n";
                 } else {
-                    header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+                    header("Location: " . $_SESSION['core_config']['http/admin'] . "/");
                     exit();
                 }
             } else {
                 // Sent the user off too Fitbit to authenticate
-                if ($_COOKIE['_nx_fb_usr'] == $NxFitbit->getSetting("fitbit_owner_id")) {
+                if ($_COOKIE['_nx_fb_usr'] == $NxFitbit->getSetting("ownerFuid")) {
                     $personal = "_personal";
                 } else {
                     $personal = "";
                 }
 
                 $helper = new djchen\OAuth2\Client\Provider\Fitbit([
-                    'clientId'     => $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
-                    'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
-                    'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
+                    'clientId'     => $NxFitbit->getSetting("api_clientId" . $personal, NULL, FALSE),
+                    'clientSecret' => $NxFitbit->getSetting("api_clientSecret" . $personal, NULL, FALSE),
+                    'redirectUri'  => $NxFitbit->getSetting("api_redirectUri" . $personal, NULL, FALSE)
                 ]);
 
                 // Fetch the authorization URL from the provider; this returns the
@@ -135,7 +167,7 @@
             echo __FILE__ . " @" . __LINE__ . " ## This is not a valid user<br />\n";
         } else {
             // When we don't know what to do put the user over to the user interface screens
-            header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+            header("Location: " . $_SESSION['core_config']['http/admin'] . "/");
             exit();
         }
 
@@ -158,9 +190,9 @@
                 }
 
                 $helper = new djchen\OAuth2\Client\Provider\Fitbit([
-                    'clientId'     => $NxFitbit->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
-                    'clientSecret' => $NxFitbit->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
-                    'redirectUri'  => $NxFitbit->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
+                    'clientId'     => $NxFitbit->getSetting("api_clientId" . $personal, NULL, FALSE),
+                    'clientSecret' => $NxFitbit->getSetting("api_clientSecret" . $personal, NULL, FALSE),
+                    'redirectUri'  => $NxFitbit->getSetting("api_redirectUri" . $personal, NULL, FALSE)
                 ]);
 
                 // Try to get an access token using the authorization code grant.
@@ -173,16 +205,21 @@
 
                 // Check again that this really is one of our users
                 if ($NxFitbit->isUser($resourceOwner->getId())) {
+                    nxr("User OAuth credentials installed");
+                    
                     // Update the users new keys
                     $NxFitbit->setUserOAuthTokens($resourceOwner->getId(), $accessToken);
 
                     // Since we're done pass them back to the Admin UI
-                    header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+                    header("Location: " . $_SESSION['core_config']['http/admin'] . "/");
                     exit();
 
                 } else {
+                    nxr(" OAuth return for new user: " . $resourceOwner->getId());
+                    
                     $pre_auth = $NxFitbit->getSetting("owners_friends");
                     $pre_auth = explode(",", $pre_auth);
+                    array_push($pre_auth, $NxFitbit->getSetting("ownerFuid"));
                     if (array_search($resourceOwner->getId(), $pre_auth)) {
                         $newUserName = $resourceOwner->getId();
                         $NxFitbit->getFitbitAPI($newUserName)->setUserAccessToken($accessToken);
@@ -190,14 +227,12 @@
                         $newUserProfile = $NxFitbit->getFitbitAPI($newUserName)->pullBabel('user/-/profile.json', TRUE);
 
                         if ($NxFitbit->getFitbitAPI($newUserName)->createNewUser($newUserProfile->user)) {
-                            echo "Thank you Everything has worked correctly. Sadly this is as far as I can take you for now.";
+                            nxr("  User sent to new password screen");
+                            header("Location: " . $_SESSION['core_config']['http/admin'] . "/register?usr=".$newUserName);
                         }
-
-                        //TODO: add new user details
-
                     } else {
-                        nxr(" Non Friend registration: " . $resourceOwner->getId());
-                        header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $NxFitbit->getSetting("path", NULL, FALSE) . "admin/");
+                        nxr("  Non Friend registration: " . $resourceOwner->getId());
+                        header("Location: " . $_SESSION['core_config']['http/admin'] . "/?err=400");
                     }
 
                     // When we don't know what to do put the user over to the user interface screens
@@ -215,7 +250,7 @@
 
         if (is_array($_GET) && array_key_exists("verify", $_GET)) {
             require_once(dirname(__FILE__) . "/config.inc.php");
-            if ((is_array($config['fitbit_subscriber_id']) and array_search($_GET['verify'], $config['fitbit_subscriber_id'])) OR ($_GET['verify'] == $config['fitbit_subscriber_id'])) {
+            if ((is_array($config['api_subValidity']) and array_search($_GET['verify'], $config['api_subValidity'])) OR ($_GET['verify'] == $config['api_subValidity'])) {
                 header('Cache-Control: no-cache, must-revalidate');
                 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
                 header('Content-type: text/plain');
@@ -244,8 +279,7 @@
         nxr("Namespace Called: " . $url_namespace);
 
     } else {
-        $sysPath = $_SERVER['SERVER_ADDR'] != "10.1.1.1" ? "/api/fitbit/" : "/";
         // When we don't know what to do put the user over to the user interface screens
-        header("Location: " . $http . "://" . $_SERVER["HTTP_HOST"] . $sysPath . "admin/");
+        header("Location: " . $_SESSION['core_config']['http/admin'] . "/");
         exit();
     }

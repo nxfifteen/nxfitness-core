@@ -109,6 +109,20 @@
         }
 
         /**
+         * Get settings from config class
+         *
+         * @param string $fuid
+         * @param string $key
+         * @param null   $default
+         * @param bool   $query_db
+         *
+         * @return string
+         */
+        public function getUserSetting($fuid, $key, $default = NULL, $query_db = TRUE) {
+            return $this->getSettings()->getUser($fuid, $key, $default, $query_db);
+        }
+
+        /**
          * @return config
          */
         public function getSettings() {
@@ -134,7 +148,7 @@
          * @param bool   $force
          */
         public function addCronJob($user_fitbit_id, $trigger, $force = FALSE) {
-            if ($force || $this->getSetting('nx_fitbit_ds_' . $trigger . '_cron', FALSE)) {
+            if ($force || $this->getSetting('scope_' . $trigger . '_cron', FALSE)) {
                 if (!$this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "queue", array(
                     "AND" => array(
                         "user"    => $user_fitbit_id,
@@ -205,7 +219,7 @@
         public function getFitbitAPI($userFitbitId = "", $reset = FALSE) {
             if (is_null($this->fitbitapi) || $reset) {
                 require_once(dirname(__FILE__) . "/fitbit.php");
-                if ($userFitbitId == $this->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                if ($userFitbitId == $this->getSetting("ownerFuid", NULL, FALSE)) {
                     $this->fitbitapi = new fitbit($this, TRUE);
                 } else {
                     $this->fitbitapi = new fitbit($this, FALSE);
@@ -334,6 +348,10 @@
          * @return bool
          */
         public function isUserValid($user_fitbit_id, $user_fitbit_password) {
+            if (strpos($user_fitbit_id, '@') !== FALSE) {
+                $user_fitbit_id = $this->isUserValidEml($user_fitbit_id);
+            }
+
             if ($this->isUser($user_fitbit_id)) {
                 if ($this->getDatabase()->has($this->getSetting("db_prefix", NULL, FALSE) . "users", array("AND" => array("fuid" => $user_fitbit_id, "password" => $user_fitbit_password)))) {
                     return $user_fitbit_id;
@@ -399,12 +417,26 @@
          *
          * @param           $key
          * @param           $value
+         * @param bool   $query_db
          *
          * @return bool
          */
-        public function setSetting($key, $value) {
-            return $this->getSettings()->set($key, $value);
+        public function setSetting($key, $value, $query_db = TRUE) {
+            return $this->getSettings()->set($key, $value, $query_db);
         }
+
+	    /**
+	     * Get settings from config class
+	     *
+	     * @param string $fuid
+	     * @param string $key
+	     * @param string $value
+	     *
+	     * @return string
+	     */
+	    public function setUserSetting($fuid, $key, $value) {
+		    return $this->getSettings()->setUser($fuid, $key, $value);
+	    }
 
         /**
          * Helper function to check for supported API calls
@@ -448,6 +480,19 @@
                     return $database_array[ $key ];
                 } else {
                     return $key;
+                }
+            }
+        }
+
+        public function isUserOAuthAuthorised($_nx_fb_usr) {
+            if (array_key_exists("userIsOAuth_" . $_nx_fb_usr, $_SESSION) && is_bool($_SESSION['userIsOAuth_' . $_nx_fb_usr]) && $_SESSION['userIsOAuth_' . $_nx_fb_usr] !== FALSE) {
+                return $_SESSION['userIsOAuth_' . $_nx_fb_usr];
+            } else {
+                if ($this->valdidateOAuth($this->getUserOAuthTokens($_nx_fb_usr, FALSE))) {
+                    $_SESSION['userIsOAuth_' . $_nx_fb_usr] = TRUE;
+                    return TRUE;
+                } else {
+                    return FALSE;
                 }
             }
         }

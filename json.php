@@ -1,10 +1,16 @@
 <?php
+    header('Access-Control-Allow-Origin: https://wp.dev.psi.nxfifteen.me.uk');
     header('Cache-Control: no-cache, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
     header('Content-type: application/json');
 
     if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
-        if ((!array_key_exists("debug", $_GET) or $_GET['debug'] != "true") && is_writable('cache') && (!array_key_exists("cache", $_GET) || $_GET['cache'] != "false")) {
+        if (
+            is_writable('cache') &&
+            (!array_key_exists("debug", $_GET) || $_GET['debug'] != "true") &&
+            (!array_key_exists("cache", $_GET) || $_GET['cache'] != "false") &&
+            (!array_key_exists('_nx_fb_usr', $_COOKIE ) || $_COOKIE['_nx_fb_usr'] != $_GET['user'])
+        ) {
             // cache files are created like cache/...
             $cacheFileName = '';
             //user" => "269VLG", "data" => "Tracked", "period

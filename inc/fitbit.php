@@ -50,12 +50,12 @@
             $personal = $personal ? "_personal" : "";
 
             $this->setLibrary(new djchen\OAuth2\Client\Provider\Fitbit([
-                'clientId'     => $fitbitApp->getSetting("fitbit_clientId" . $personal, NULL, FALSE),
-                'clientSecret' => $fitbitApp->getSetting("fitbit_clientSecret" . $personal, NULL, FALSE),
-                'redirectUri'  => $fitbitApp->getSetting("fitbit_redirectUri" . $personal, NULL, FALSE)
+                'clientId'     => $fitbitApp->getSetting("api_clientId" . $personal, NULL, FALSE),
+                'clientSecret' => $fitbitApp->getSetting("api_clientSecret" . $personal, NULL, FALSE),
+                'redirectUri'  => $fitbitApp->getSetting("api_redirectUri" . $personal, NULL, FALSE)
             ]));
 
-            nxr("clientId: " . $fitbitApp->getSetting("fitbit_clientId" . $personal, NULL, FALSE) . " used");
+            nxr("clientId: " . $fitbitApp->getSetting("api_clientId" . $personal, NULL, FALSE) . " used");
 
             $this->forceSync = FALSE;
 
@@ -359,7 +359,7 @@
                                         if ($downloadTCX) $this->pullBabelTCX($activity->tcxLink);
                                     }
 
-                                    if ($this->activeUser == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                                    if ($this->activeUser == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
                                         $this->pullBabelHeartIntraday($activity);
                                     }
                                 }
@@ -502,8 +502,8 @@
                     foreach ($userFoodLog->foods as $meal) {
                         nxr("  Logging meal " . $meal->loggedFood->name);
 
-                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food", array(
                                 'calories' => (String)$meal->nutritionalValues->calories,
                                 'carbs'    => (String)$meal->nutritionalValues->carbs,
                                 'fat'      => (String)$meal->nutritionalValues->fat,
@@ -512,7 +512,7 @@
                                 'sodium'   => (String)$meal->nutritionalValues->sodium
                             ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)));
                         } else {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logFood", array(
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food", array(
                                 'user'     => $this->getActiveUser(),
                                 'date'     => $targetDate,
                                 'meal'     => (String)$meal->loggedFood->name,
@@ -643,8 +643,8 @@
             if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
                 $loggedSleep = $userSleepLog->sleep[0];
                 if ($loggedSleep->logId != 0) {
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array("logId" => (String)$loggedSleep->logId))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "logSleep", array(
+                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep", array("logId" => (String)$loggedSleep->logId))) {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep", array(
                             "logId"               => (String)$loggedSleep->logId,
                             'awakeningsCount'     => (String)$loggedSleep->awakeningsCount,
                             'duration'            => (String)$loggedSleep->duration,
@@ -659,8 +659,8 @@
                         ));
                     }
 
-                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array("AND" => array('user' => $this->getActiveUser(), 'sleeplog' => (String)$loggedSleep->logId)))) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_sleep2usr", array(
+                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep_user", array("AND" => array('user' => $this->getActiveUser(), 'sleeplog' => (String)$loggedSleep->logId)))) {
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep_user", array(
                             'user'               => $this->getActiveUser(),
                             'sleeplog'           => (String)$loggedSleep->logId,
                             'totalMinutesAsleep' => (String)$userSleepLog->summary->totalMinutesAsleep,
@@ -884,8 +884,7 @@
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelProfile() {
-            //$isAllowed = $this->isAllowed("profile");
-            $isAllowed = TRUE;
+            $isAllowed = $this->isAllowed("profile");
             if (!is_numeric($isAllowed)) {
                 if ($this->api_isCooled("profile")) {
                     $userProfile = $this->pullBabel('user/-/profile.json');
@@ -970,7 +969,7 @@
                                     'lastSyncTime'  => (String)$device->lastSyncTime,
                                     'battery'       => (String)$device->battery
                                 ));
-                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_dev2usr", array(
+                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user", array(
                                     'user'   => $this->getActiveUser(),
                                     'device' => (String)$device->id
                                 ));
@@ -1047,14 +1046,14 @@
                                         ));
                                     }
 
-                                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array("AND" => array(
+                                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array("AND" => array(
                                         "user"      => $this->getActiveUser(),
                                         "badgeType" => (String)$badge->badgeType,
                                         "value"     => (String)$badge->value
                                     )))
                                     ) {
                                         nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") again");
-                                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
                                             'dateTime'      => (String)$badge->dateTime,
                                             'timesAchieved' => (String)$badge->timesAchieved
                                         ), array("AND" => array(
@@ -1064,7 +1063,7 @@
                                         )));
                                     } else {
                                         nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") " . $badge->timesAchieved . " times.");
-                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "lnk_badge2usr", array(
+                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
                                             'user'          => $this->getActiveUser(),
                                             'badgeType'     => (String)$badge->badgeType,
                                             'dateTime'      => (String)$badge->dateTime,
@@ -1143,11 +1142,12 @@
                             $youRank = 0;
                             $youDistance = 0;
                             $lastSteps = 0;
+	                        $storedLeaderboard = array();
                             foreach ($userFriends as $friend) {
                                 $lifetime = floatval($friend->lifetime->steps);
                                 $steps = floatval($friend->summary->steps);
 
-                                if ($this->getActiveUser() == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                                if ($this->getActiveUser() == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
                                     if (!isset($allOwnersFriends)) {
                                         $allOwnersFriends = $friend->user->encodedId;
                                     } else {
@@ -1170,9 +1170,24 @@
                                 }
 
                                 nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
+
+	                            $friendId = $friend->user->encodedId;
+	                            $storedLeaderboard[$friendId] = array();
+	                            if (isset($friend->rank->steps) && !empty($friend->rank->steps)) $storedLeaderboard[$friendId]["rank"] = (String)$friend->rank->steps;
+	                            if (isset($friend->average->steps) && !empty($friend->average->steps)) $storedLeaderboard[$friendId]["stepsAvg"] = (String)$friend->average->steps;
+	                            if (isset($friend->lifetime->steps) && !empty($friend->lifetime->steps)) $storedLeaderboard[$friendId]["stepsLife"] = (String)$friend->lifetime->steps;
+	                            if (isset($friend->summary->steps) && !empty($friend->summary->steps)) $storedLeaderboard[$friendId]["stepsSum"] = (String)$friend->summary->steps;
+	                            if (isset($friend->user->avatar) && !empty($friend->user->avatar)) $storedLeaderboard[$friendId]["avatar"] = (String)$friend->user->avatar;
+	                            if (isset($friend->user->displayName) && !empty($friend->user->displayName)) $storedLeaderboard[$friendId]["displayName"] = (String)$friend->user->displayName;
+	                            if (isset($friend->user->gender) && !empty($friend->user->gender)) $storedLeaderboard[$friendId]["gender"] = (String)$friend->user->gender;
+	                            if (isset($friend->user->memberSince) && !empty($friend->user->memberSince)) $storedLeaderboard[$friendId]["memberSince"] = (String)$friend->user->memberSince;
+	                            if (isset($friend->user->age) && !empty($friend->user->age)) $storedLeaderboard[$friendId]["age"] = (String)$friend->user->age;
+	                            if (isset($friend->user->city) && !empty($friend->user->city)) $storedLeaderboard[$friendId]["city"] = (String)$friend->user->city;
+	                            if (isset($friend->user->country) && !empty($friend->user->country)) $storedLeaderboard[$friendId]["country"] = (String)$friend->user->country;
+
                             }
 
-                            if ($this->getActiveUser() == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE) && isset($allOwnersFriends)) {
+                            if ($this->getActiveUser() == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE) && isset($allOwnersFriends)) {
                                 $this->getAppClass()->setSetting("owners_friends", $allOwnersFriends);
                             }
 
@@ -1183,6 +1198,8 @@
                                 'friends'  => count($userFriends),
                                 'distance' => $youDistance
                             ), array("fuid" => $this->getActiveUser()));
+
+	                        if (count($storedLeaderboard) > 0) $this->getAppClass()->setUserSetting($this->getActiveUser(), "leaderboard", json_encode($storedLeaderboard));
 
                         }
                     }
@@ -1246,15 +1263,15 @@
                             $usr_foodplan_personalized = (string)$usr_foodplan->personalized;
                         }
 
-                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))))) {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
+                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))))) {
+                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array(
                                 'calories'      => $usr_goals_calories,
                                 'intensity'     => $usr_foodplan_intensity,
                                 'estimatedDate' => $usr_foodplan_estimatedDate,
                                 'personalized'  => $usr_foodplan_personalized,
                             ), array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))));
                         } else {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "goals_calories", array(
+                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array(
                                 'user'          => $this->getActiveUser(),
                                 'date'          => $currentDate->format("Y-m-d"),
                                 'calories'      => $usr_goals_calories,
@@ -1297,7 +1314,7 @@
          */
         private function api_setLastrun($activity, $cron_delay = NULL, $clean = FALSE) {
             if (is_null($cron_delay)) {
-                $cron_delay_holder = 'nx_fitbit_ds_' . $activity . '_timeout';
+                $cron_delay_holder = 'scope_' . $activity . '_timeout';
                 $cron_delay = $this->getAppClass()->getSetting($cron_delay_holder, 5400);
             }
 
@@ -1468,18 +1485,18 @@
             $plusTargetSteps = -1;
 
             if ($string == "steps") {
-                $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_length", '50');
-                $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser(), '12-01 last sunday'); // Default to last Sunday in March
-                $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
-                $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
+                $userPushLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length", '50');
+                $userPushStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push", '12-01 last sunday'); // Default to last Sunday in March
+                $userPushStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userPushStartString)); // Default to last Sunday in March
+                $userPushEndDate = date("Y-m-d", strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
                 $today = strtotime(date("Y-m-d"));
-                if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
-                    nxr("Challenge is running");
+                if ($today >= strtotime($userPushStartDate) && $today <= strtotime($userPushEndDate)) {
+                    nxr("Push is running");
 
-                    return $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_steps", '10000');
+                    return $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_steps", '10000');
                 } else {
-                    $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps", 2);
+                    $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps", 2);
                     if ($improvment > 0) {
                         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                             array("AND" => array(
@@ -1488,27 +1505,31 @@
                                 "date[<=]" => $lastMonday
                             ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
-                        $totalSteps = 0;
-                        foreach ($dbSteps as $dbStep) {
-                            $totalSteps = $totalSteps + $dbStep;
-                        }
-                        if ($totalSteps == 0) $totalSteps = 1;
-
-                        $maxTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_steps_max", 10000);
-                        $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
-                        $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
-
-                        if ($ProposedNextWeek >= $maxTargetSteps) {
-                            $plusTargetSteps = $maxTargetSteps;
-                        } else if ($ProposedNextWeek <= ($maxTargetSteps / 2)) {
-                            $plusTargetSteps = $maxTargetSteps / 2;
+                        if (count($dbSteps) == 0) {
+                            $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_max", 1000);
                         } else {
-                            $plusTargetSteps = $ProposedNextWeek;
+                            $totalSteps = 0;
+                            foreach ($dbSteps as $dbStep) {
+                                $totalSteps = $totalSteps + $dbStep;
+                            }
+                            if ($totalSteps == 0) $totalSteps = 1;
+
+                            $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_max", 10000);
+                            $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
+                            $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
+
+                            if ($ProposedNextWeek >= $maxTargetSteps) {
+                                $plusTargetSteps = $maxTargetSteps;
+                            } else if ($ProposedNextWeek <= ($maxTargetSteps / 2)) {
+                                $plusTargetSteps = $maxTargetSteps / 2;
+                            } else {
+                                $plusTargetSteps = $ProposedNextWeek;
+                            }
                         }
                     }
                 }
             } elseif ($string == "floors") {
-                $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 2);
+                $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors", 2);
                 if ($improvment > 0) {
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
                         array("AND" => array(
@@ -1517,37 +1538,41 @@
                             "date[<=]" => $lastMonday
                         ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
-                    $totalSteps = 0;
-                    foreach ($dbSteps as $dbStep) {
-                        $totalSteps = $totalSteps + $dbStep;
-                    }
-                    if ($totalSteps == 0) $totalSteps = 1;
-
-                    $maxTargetSteps = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors_max", 10);
-                    $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
-                    if ($LastWeeksSteps >= $maxTargetSteps) {
-                        $plusTargetSteps = $maxTargetSteps;
-                    } else if ($LastWeeksSteps <= ($maxTargetSteps / 2)) {
-                        $plusTargetSteps = $maxTargetSteps / 2;
-                    } else if ($LastWeeksSteps < $maxTargetSteps) {
-                        $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_floors", 10) / 100), 0);
+                    if (count($dbSteps) == 0) {
+                        $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_max", 10);
                     } else {
-                        $plusTargetSteps = $maxTargetSteps;
+                        $totalSteps = 0;
+                        foreach ($dbSteps as $dbStep) {
+                            $totalSteps = $totalSteps + $dbStep;
+                        }
+                        if ($totalSteps == 0) $totalSteps = 1;
+
+                        $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_max", 10);
+                        $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
+                        if ($LastWeeksSteps >= $maxTargetSteps) {
+                            $plusTargetSteps = $maxTargetSteps;
+                        } else if ($LastWeeksSteps <= ($maxTargetSteps / 2)) {
+                            $plusTargetSteps = $maxTargetSteps / 2;
+                        } else if ($LastWeeksSteps < $maxTargetSteps) {
+                            $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors", 10) / 100), 0);
+                        } else {
+                            $plusTargetSteps = $maxTargetSteps;
+                        }
                     }
                 }
             } elseif ($string == "activeMinutes") {
-                $userChallengeLength = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_length", '50');
-                $userChallengeStartString = $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser(), '03-31 last sunday'); // Default to last Sunday in March
-                $userChallengeStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userChallengeStartString)); // Default to last Sunday in March
-                $userChallengeEndDate = date("Y-m-d", strtotime($userChallengeStartDate . ' +' . $userChallengeLength . ' day')); // Default to last Sunday in March
+                $userPushLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length", '50');
+                $userPushStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push", '03-31 last sunday'); // Default to last Sunday in March
+                $userPushStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userPushStartString)); // Default to last Sunday in March
+                $userPushEndDate = date("Y-m-d", strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
                 $today = strtotime(date("Y-m-d"));
-                if ($today >= strtotime($userChallengeStartDate) && $today <= strtotime($userChallengeEndDate)) {
-                    nxr("Challenge is running");
+                if ($today >= strtotime($userPushStartDate) && $today <= strtotime($userPushEndDate)) {
+                    nxr("Push is running");
 
-                    return $this->getAppClass()->getSetting("usr_challenger_" . $this->getActiveUser() . "_activity", '30');
+                    return $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_activity", '30');
                 } else {
-                    $improvment = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active", 10);
+                    $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active", 10);
                     if ($improvment > 0) {
                         $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
                             array("AND" => array(
@@ -1556,22 +1581,26 @@
                                 "date[<=]" => $lastMonday
                             ), "ORDER"  => "date DESC", "LIMIT" => 7));
 
-                        $totalMinutes = 0;
-                        foreach ($dbActiveMinutes as $dbStep) {
-                            $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
-                        }
-                        if ($totalMinutes == 0) $totalMinutes = 1;
-
-                        $maxTargetActive = $this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active_max", 30);
-                        $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-                        if ($newTargetActive >= $maxTargetActive) {
-                            $plusTargetSteps = $maxTargetActive;
-                        } else if ($newTargetActive <= ($maxTargetActive / 2)) {
-                            $plusTargetSteps = $maxTargetActive / 2;
-                        } else if ($newTargetActive < $maxTargetActive) {
-                            $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getSetting("improvments_" . $this->getActiveUser() . "_active", 10) / 100), 0);
+                        if (count($dbActiveMinutes) == 0) {
+                            $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_max", 30);
                         } else {
-                            $plusTargetSteps = $maxTargetActive;
+                            $totalMinutes = 0;
+                            foreach ($dbActiveMinutes as $dbStep) {
+                                $totalMinutes = $totalMinutes + $dbStep['veryactive'] + $dbStep['fairlyactive'];
+                            }
+                            if ($totalMinutes == 0) $totalMinutes = 1;
+
+                            $maxTargetActive = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_max", 30);
+                            $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
+                            if ($newTargetActive >= $maxTargetActive) {
+                                $plusTargetSteps = $maxTargetActive;
+                            } else if ($newTargetActive <= ($maxTargetActive / 2)) {
+                                $plusTargetSteps = $maxTargetActive / 2;
+                            } else if ($newTargetActive < $maxTargetActive) {
+                                $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active", 10) / 100), 0);
+                            } else {
+                                $plusTargetSteps = $maxTargetActive;
+                            }
                         }
                     }
                 }
@@ -1600,7 +1629,7 @@
         private function pullBabelHeartIntraday($activity) {
             $isAllowed = $this->isAllowed("heart");
             if (!is_numeric($isAllowed)) {
-                if ($this->activeUser == $this->getAppClass()->getSetting("fitbit_owner_id", NULL, FALSE)) {
+                if ($this->activeUser == $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
                     $startTimeRaw = new DateTime ((String)$activity->startTime);
                     $startDate = $startTimeRaw->format("Y-m-d");
                     $startTime = $startTimeRaw->format("H:i");
@@ -2082,14 +2111,14 @@
         public function isAllowed($trigger, $quiet = FALSE) {
             if ($trigger == "profile") return TRUE;
 
-            $usrConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $this->getActiveUser() . '_' . $trigger, NULL);
+            $usrConfig = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'scope_' . $trigger, TRUE);
             if (!is_null($usrConfig) AND $usrConfig != 1) {
                 if (!$quiet) nxr(" Aborted $trigger disabled in user config");
 
                 return "-145";
             }
 
-            $sysConfig = $this->getAppClass()->getSetting('nx_fitbit_ds_' . $trigger, 0);
+            $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, TRUE);
             if ($sysConfig != 1) {
                 if (!$quiet) nxr(" Aborted $trigger disabled in system config");
 
