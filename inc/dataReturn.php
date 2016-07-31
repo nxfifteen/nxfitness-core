@@ -496,7 +496,11 @@
                 $record['duration'] = round(($record['duration'] / 1000) / 60, 0, PHP_ROUND_HALF_UP);
                 $record['startTime'] = date("F dS \@H:i", strtotime($record['startDate'] . " " . $record['startTime']));
 
-                $record['calPerMinute'] = round($record['calories'] / $record['duration'], 1);
+	            if ($record['calories'] == 0 || $record['calories'] == 0) {
+		            $record['calPerMinute'] = 0;
+	            } else {
+		            $record['calPerMinute'] = round( $record['calories'] / $record['duration'], 1 );
+	            }
 
                 if (strpos(strtolower($record['name']), 'calisthenics') !== FALSE || strpos(strtolower($record['name']), 'strength') !== FALSE) {
                     $record['colour'] = "teal";
