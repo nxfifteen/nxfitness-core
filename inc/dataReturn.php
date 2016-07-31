@@ -1937,6 +1937,20 @@
 		    $convertedOutput['totals']['stepsGoal'] = $totalsStepsGoal;
 		    $convertedOutput['human']['stepsGoal'] = number_format($totalsStepsGoal,0);
 
+		    $cSteps = count($steps);
+		    $cFloors = count($floors);
+		    $cDistance = count($distance);
+
+		    $convertedOutput['analysis'] = array(
+			    "steps7Day" => number_format(array_sum($steps) / $cSteps,0),
+			    "floors7Day" => number_format(array_sum($floors) / $cFloors,0),
+			    "distance7Day" => number_format(array_sum($distance) / $cDistance,2),
+
+			    "stepsYesterday" => number_format($steps[1] - $steps[0],0),
+			    "floorsYesterday" => number_format($floors[1] - $floors[0],0),
+			    "distanceYesterday" => number_format($distance[1] - $distance[0],0)
+		    );
+
 		    $convertedOutput['date'] = array_reverse($date);
 		    $convertedOutput['distance'] = array_reverse($distance);
 		    $convertedOutput['floors'] = array_reverse($floors);
