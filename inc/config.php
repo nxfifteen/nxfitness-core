@@ -23,7 +23,7 @@
          *
          */
         public function __construct() {
-            if (isset($_SESSION) && is_array($_SESSION['core_config']) && array_key_exists("core_config", $_SESSION) && count($_SESSION['core_config']) > 0) {
+            if (isset($_SESSION) && is_array($_SESSION) && array_key_exists("core_config", $_SESSION) && count($_SESSION['core_config']) > 0) {
                 $this->settings =  $_SESSION['core_config'];
             } else {
                 require_once(dirname(__FILE__) . "/../config.inc.php");
