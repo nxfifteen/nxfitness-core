@@ -1682,6 +1682,8 @@
 			    return array("error" => "true", "code" => 104, "msg" => "Nomie is only available for the owning user just now");
 		    }
 
+		    nxr(" Connecting to CouchDB");
+
 		    $path = dirname(__FILE__) . "/../library/couchdb/";
 
 		    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", NULL, FALSE);
@@ -1696,24 +1698,31 @@
 
 		    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$this->getAppClass()->getSetting("db_nomie_meta", 'nomie_meta', FALSE));
 		    if ( !$couchClient->databaseExists() ) {
+			    nxr("  Nomie Meta table missing");
 			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 		    }
 
 		    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
 		    if (array_key_exists("NxFITNESS", $trackerGroups)) {
+			    nxr("  Downloadnig NxFITNESS Group Trackers");
 			    $trackerGroups = $trackerGroups['NxFITNESS'];
 		    } else {
+			    nxr("  Downloading All Trackers");
 			    $trackerGroups = $trackerGroups['All'];
 		    }
 
 		    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_trackers", 'nomie_trackers', FALSE));
 		    if ( !$couchClient->databaseExists() ) {
+			    nxr("  Nomie Tracker table missing");
 			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 		    }
 
 		    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
 		    foreach ($trackerGroups as $tracker) {
 			    $doc = $couchClient->getDoc($tracker);
+
+			    nxr("  Storing " . $doc->label);
+
 			    $dbStorage = array(
 				    "fuid" => $this->activeUser,
 				    "id" => $tracker,
