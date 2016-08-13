@@ -20,6 +20,16 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_activity` (
   PRIMARY KEY (`user`,`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
 
+DROP TABLE IF EXISTS `nx_fitbit_nomie_trackers`;
+CREATE TABLE IF NOT EXISTS `nx_fitbit_nomie_trackers` (
+  `fuid` varchar(8) NOT NULL,
+  `id` varchar(21) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `icon` varchar(40) NOT NULL,
+  `color` varchar(7) NOT NULL,
+  `charge` int(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `nx_fitbit_activity_log`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_activity_log` (
   `user` varchar(8) NOT NULL,
@@ -1801,7 +1811,7 @@ INSERT INTO `nx_fitbit_keypoints` (`category`, `value`, `less`, `more`) VALUES
 ('elevation', 18288.00, 'into Concorde, in flight', NULL),
 ('elevation', 214042.00, 'as high a Sputnik', NULL),
 ('elevation', 400000.00, 'aboard the <a href="https://en.wikipedia.org/wiki/International_Space_Station" title="International Space Station" target="_blank">ISS</a>', NULL),
-('elevation', 402336.00, 'to <a href="https://en.wikipedia.org/wiki/Mir" title="Russian Mir space station" target="_blank">Mir\'s</a> orbit', NULL);
+('elevation', 402336.00, 'to <a href="https://en.wikipedia.org/wiki/Mir" title="Russian Mir space station" target="_blank">Mir</a> in orbit', NULL);
 
 DROP TABLE IF EXISTS `nx_fitbit_lnk_badge2usr`;
 CREATE TABLE IF NOT EXISTS `nx_fitbit_lnk_badge2usr` (
@@ -1994,6 +2004,8 @@ CREATE TABLE IF NOT EXISTS `nx_fitbit_water` (
   PRIMARY KEY (`user`,`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='TODO: please describe this table!';
 
+ALTER TABLE `nx_fitbit_nomie_trackers`
+  ADD UNIQUE KEY `fuid` (`fuid`,`id`);
 
 ALTER TABLE `nx_fitbit_journeys_legs`
   ADD CONSTRAINT `nx_fitbit_journeys_legs_ibfk_1` FOREIGN KEY (`jid`) REFERENCES `nx_fitbit_journeys` (`jid`);
