@@ -1678,65 +1678,77 @@
 
         // @todo - Make better
 	    private function pullNomieTrackers() {
-		    if ($this->activeUser != $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
-			    return array("error" => "true", "code" => 104, "msg" => "Nomie is only available for the owning user just now");
+	    	if ($this->activeUser != $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
+			    return "-146";
 		    }
 
-		    nxr(" Connecting to CouchDB");
+		    $isAllowed = $this->isAllowed("nomie_trackers");
+		    if (!is_numeric($isAllowed)) {
+			    if ($this->api_isCooled("nomie_trackers")) {
 
-		    $path = dirname(__FILE__) . "/../library/couchdb/";
+				    nxr(" Connecting to CouchDB");
 
-		    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", NULL, FALSE);
-		    $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", NULL, FALSE);
-		    $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', FALSE);
-		    $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', FALSE);
-		    $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', FALSE);
+				    $path = dirname(__FILE__) . "/../library/couchdb/";
 
-		    require_once $path . 'couch.php';
-		    require_once $path . 'couchClient.php';
-		    require_once $path . 'couchDocument.php';
+				    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", NULL, FALSE);
+				    $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", NULL, FALSE);
+				    $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', FALSE);
+				    $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', FALSE);
+				    $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', FALSE);
 
-		    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$this->getAppClass()->getSetting("db_nomie_meta", 'nomie_meta', FALSE));
-		    if ( !$couchClient->databaseExists() ) {
-			    nxr("  Nomie Meta table missing");
-			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-		    }
+				    require_once $path . 'couch.php';
+				    require_once $path . 'couchClient.php';
+				    require_once $path . 'couchDocument.php';
 
-		    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
-		    if (array_key_exists("NxFITNESS", $trackerGroups)) {
-			    nxr("  Downloadnig NxFITNESS Group Trackers");
-			    $trackerGroups = $trackerGroups['NxFITNESS'];
-		    } else {
-			    nxr("  Downloading All Trackers");
-			    $trackerGroups = $trackerGroups['All'];
-		    }
+				    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$this->getAppClass()->getSetting("db_nomie_meta", 'nomie_meta', FALSE));
+				    if ( !$couchClient->databaseExists() ) {
+					    nxr("  Nomie Meta table missing");
+					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+				    }
 
-		    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_trackers", 'nomie_trackers', FALSE));
-		    if ( !$couchClient->databaseExists() ) {
-			    nxr("  Nomie Tracker table missing");
-			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-		    }
+				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
+				    if (array_key_exists("NxFITNESS", $trackerGroups)) {
+					    nxr("  Downloadnig NxFITNESS Group Trackers");
+					    $trackerGroups = $trackerGroups['NxFITNESS'];
+				    } else {
+					    nxr("  Downloading All Trackers");
+					    $trackerGroups = $trackerGroups['All'];
+				    }
 
-		    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
-		    foreach ($trackerGroups as $tracker) {
-			    $doc = $couchClient->getDoc($tracker);
+				    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_trackers", 'nomie_trackers', FALSE));
+				    if ( !$couchClient->databaseExists() ) {
+					    nxr("  Nomie Tracker table missing");
+					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+				    }
 
-			    nxr("  Storing " . $doc->label);
+				    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
+				    foreach ($trackerGroups as $tracker) {
+					    $doc = $couchClient->getDoc($tracker);
 
-			    $dbStorage = array(
-				    "fuid" => $this->activeUser,
-				    "id" => $tracker,
-				    "label" => $doc->label,
-				    "icon" => trim(str_ireplace("  ", " ", $doc->icon)),
-				    "color" => $doc->color,
-				    "charge" => $doc->charge
-			    );
+					    nxr("  Storing " . $doc->label);
 
-			    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)))) {
-				    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers", $dbStorage);
+					    $dbStorage = array(
+						    "fuid" => $this->activeUser,
+						    "id" => $tracker,
+						    "label" => $doc->label,
+						    "icon" => trim(str_ireplace("  ", " ", $doc->icon)),
+						    "color" => $doc->color,
+						    "charge" => $doc->charge
+					    );
+
+					    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)))) {
+						    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers", $dbStorage);
+					    } else {
+						    $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers", $dbStorage, array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)));
+					    }
+				    }
+
+				    $this->api_setLastrun("nomie_trackers", NULL, TRUE);
 			    } else {
-				    $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers", $dbStorage, array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)));
+				    return "-143";
 			    }
+		    } else {
+			    return $isAllowed;
 		    }
 	    }
 
