@@ -2632,4 +2632,117 @@
                 return array("error" => "true", "code" => 103, "msg" => "Unknown dataset: " . $functionName);
             }
         }
+
+	    /**
+	     * @return array
+	     */
+	    public function returnUserRecordNomie() {
+		    if ($this->getUserID() != $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
+			    return array("error" => "true", "code" => 104, "msg" => "Nomie is only available for the owning user just now");
+		    }
+
+		    $path = dirname(__FILE__) . "/../library/couchdb/";
+
+		    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", NULL, FALSE);
+		    $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", NULL, FALSE);
+		    $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', FALSE);
+		    $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', FALSE);
+		    $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', FALSE);
+
+		    require_once $path . 'couch.php';
+		    require_once $path . 'couchClient.php';
+		    require_once $path . 'couchDocument.php';
+
+		    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$this->getAppClass()->getSetting("db_nomie_meta", 'nomie_meta', FALSE));
+		    if ( !$couchClient->databaseExists() ) {
+			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+		    }
+
+		    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
+		    if (array_key_exists("NxFITNESS", $trackerGroups)) {
+			    $trackerGroups = $trackerGroups['NxFITNESS'];
+		    } else {
+			    $trackerGroups = $trackerGroups['All'];
+		    }
+
+		    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_trackers", 'nomie_trackers', FALSE));
+		    if ( !$couchClient->databaseExists() ) {
+			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+		    }
+
+		    $trackerShared = array();
+		    foreach ($trackerGroups as $tracker) {
+		    	$doc = $couchClient->getDoc($tracker);
+			    $trackerShared[$tracker] = array(
+				    "label" => $doc->label,
+				    "icon" => $this->translateNomieIcons($doc->icon),
+				    "color" => $doc->color,
+				    "charge" => $doc->charge,
+				    "stats" => array(
+					    "first" => $doc->stats->first,
+					    "last" => $doc->stats->last,
+					    "dayAvg" => $doc->stats->dayAvg,
+					    "monthAvg" => $doc->stats->monthAvg
+				    ),
+			    );
+		    }
+
+		    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_events", 'nomie_events', FALSE));
+		    if ( !$couchClient->databaseExists() ) {
+			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+		    }
+		    $allEvents = $couchClient->getAllDocs();
+		    foreach ($allEvents->rows as $event) {
+			    $eventId = explode("|", $event->id);
+			    if (in_array($eventId[2], $trackerGroups)) {
+				    $trackerShared[$eventId[2]]['events'][] = $event->id;
+			    }
+		    }
+
+
+		    foreach ($trackerShared as $id => $tracker) {
+		    	if (count($tracker['events']) == 0) {
+		    		unset($trackerShared[$id]);
+			    }
+		    }
+
+
+		    return array(
+			    "dbTrackers" => $trackerShared
+			    );
+	    }
+
+	    private function translateNomieIcons($inputIcon) {
+		    $inputIcon = trim(str_ireplace("  ", " ", $inputIcon));
+		    switch ( $inputIcon ) {
+			    case "flaticon-leg5":
+			    case "fitnessIcons-person":
+				    return "fa fa-medkit";
+
+			    case "icon-water":
+				    return "fa fa-tint";
+
+			    case "icon-emo-sleep":
+				    return "fa fa-bed";
+
+			    case "foodIcons-soda":
+			    case "drinkIcons-wine-glass":
+				    return "fa fa-glass";
+
+			    case "drinkIcons-glass-2":
+			    case "drinkIcons-jar-of-beer":
+				    return "fa fa-beer";
+
+			    case "flaticon-ice64":
+			    case "flaticon-hamburger2":
+			    case "flaticon-porridge":
+				    return "fa fa-cutlery";
+
+			    case "flaticon-poo":
+			    case "fa flaticon-service":
+				    return "fa fa-universal-access";
+			    default:
+				    return $inputIcon;
+		    }
+	    }
     }
