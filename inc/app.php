@@ -469,7 +469,8 @@
                 'steps'                => 'Steps Taken',
                 'profile'              => 'User Profile',
                 'heart'                => 'Heart Rates',
-                'activity_log'         => 'Activities'
+                'activity_log'         => 'Activities',
+	            'nomie_trackers'       => "Nomie Trackers"
             );
             asort($database_array);
 
