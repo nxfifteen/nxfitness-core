@@ -1676,7 +1676,62 @@
             }
         }
 
-        /**
+        // @todo - Make better
+	    private function pullNomieTrackers() {
+		    if ($this->activeUser != $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
+			    return array("error" => "true", "code" => 104, "msg" => "Nomie is only available for the owning user just now");
+		    }
+
+		    $path = dirname(__FILE__) . "/../library/couchdb/";
+
+		    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", NULL, FALSE);
+		    $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", NULL, FALSE);
+		    $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', FALSE);
+		    $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', FALSE);
+		    $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', FALSE);
+
+		    require_once $path . 'couch.php';
+		    require_once $path . 'couchClient.php';
+		    require_once $path . 'couchDocument.php';
+
+		    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$this->getAppClass()->getSetting("db_nomie_meta", 'nomie_meta', FALSE));
+		    if ( !$couchClient->databaseExists() ) {
+			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+		    }
+
+		    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
+		    if (array_key_exists("NxFITNESS", $trackerGroups)) {
+			    $trackerGroups = $trackerGroups['NxFITNESS'];
+		    } else {
+			    $trackerGroups = $trackerGroups['All'];
+		    }
+
+		    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_trackers", 'nomie_trackers', FALSE));
+		    if ( !$couchClient->databaseExists() ) {
+			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+		    }
+
+		    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
+		    foreach ($trackerGroups as $tracker) {
+			    $doc = $couchClient->getDoc($tracker);
+			    $dbStorage = array(
+				    "fuid" => $this->activeUser,
+				    "id" => $tracker,
+				    "label" => $doc->label,
+				    "icon" => trim(str_ireplace("  ", " ", $doc->icon)),
+				    "color" => $doc->color,
+				    "charge" => $doc->charge
+			    );
+
+			    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)))) {
+				    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers", $dbStorage);
+			    } else {
+				    $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers", $dbStorage, array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)));
+			    }
+		    }
+	    }
+
+	    /**
          * @param mixed $userAccessToken
          */
         public function setUserAccessToken($userAccessToken) {
@@ -1751,6 +1806,14 @@
                     die();
                 }
 
+	            // PULL - users profile
+	            if ($trigger == "all" || $trigger == "nomie_trackers") {
+		            $pull = $this->pullNomieTrackers();
+		            if ($this->isApiError($pull) && !IS_CRON_RUN) {
+			            nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+		            }
+	            }
+
                 // Check this user has valid access to the Fitbit AIP
                 if ($this->getAppClass()->valdidateOAuth($this->getAppClass()->getUserOAuthTokens($user, FALSE))) {
 
@@ -1759,13 +1822,13 @@
                         $this->forceSync = TRUE;
                     }
 
-                    // PULL - users profile
-                    if ($trigger == "all" || $trigger == "profile") {
-                        $pull = $this->pullBabelProfile();
-                        if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
-                        }
-                    }
+	                // PULL - users profile
+	                if ($trigger == "all" || $trigger == "profile") {
+		                $pull = $this->pullBabelProfile();
+		                if ($this->isApiError($pull) && !IS_CRON_RUN) {
+			                nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+		                }
+	                }
 
                     // PULL - Devices
                     if ($trigger == "all" || $trigger == "devices") {
