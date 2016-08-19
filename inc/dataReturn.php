@@ -2701,7 +2701,7 @@
 
 
 		    foreach ($trackerShared as $id => $tracker) {
-		    	if (count($tracker['events']) == 0) {
+		    	if (is_array($tracker) && array_key_exists("events",$tracker) && count($tracker['events']) == 0) {
 		    		unset($trackerShared[$id]);
 			    }
 		    }
