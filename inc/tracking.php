@@ -42,7 +42,9 @@
             }
 
             //Sets the user agent, used to detect OS and browser.
-            $this->PiwikTracker->setUserAgent($_SERVER['HTTP_USER_AGENT']);
+	        if (array_key_exists("HTTP_USER_AGENT", $_SERVER)) {
+                $this->PiwikTracker->setUserAgent($_SERVER['HTTP_USER_AGENT']);
+	        }
         }
 
         /**
