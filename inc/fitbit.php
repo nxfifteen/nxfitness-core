@@ -1678,13 +1678,11 @@
 
         // @todo - Make better
 	    private function pullNomieTrackers() {
-	    	if ($this->activeUser != $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
-			    return "-146";
-		    }
-
 		    $isAllowed = $this->isAllowed("nomie_trackers");
 		    if (!is_numeric($isAllowed)) {
 			    if ($this->api_isCooled("nomie_trackers")) {
+
+				    $nomie_user_key = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", 'nomie');
 
 				    nxr(" Connecting to CouchDB");
 
@@ -1700,7 +1698,7 @@
 				    require_once $path . 'couchClient.php';
 				    require_once $path . 'couchDocument.php';
 
-				    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$this->getAppClass()->getSetting("db_nomie_meta", 'nomie_meta', FALSE));
+				    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$nomie_user_key . '_meta');
 				    if ( !$couchClient->databaseExists() ) {
 					    nxr("  Nomie Meta table missing");
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
@@ -1715,7 +1713,7 @@
 					    $trackerGroups = $trackerGroups['All'];
 				    }
 
-				    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_trackers", 'nomie_trackers', FALSE));
+				    $couchClient->useDatabase($nomie_user_key . '_trackers');
 				    if ( !$couchClient->databaseExists() ) {
 					    nxr("  Nomie Tracker table missing");
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");

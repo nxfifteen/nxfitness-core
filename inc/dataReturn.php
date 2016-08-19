@@ -2637,10 +2637,6 @@
 	     * @return array
 	     */
 	    public function returnUserRecordNomie() {
-		    if ($this->getUserID() != $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
-			    return array("error" => "true", "code" => 104, "msg" => "Nomie is only available for the owning user just now");
-		    }
-
 		    $path = dirname(__FILE__) . "/../library/couchdb/";
 
 		    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", NULL, FALSE);
@@ -2649,11 +2645,13 @@
 		    $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', FALSE);
 		    $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', FALSE);
 
+		    $nomie_user_key = $this->getAppClass()->getUserSetting($this->getUserID(), "nomie_key", 'nomie');
+
 		    require_once $path . 'couch.php';
 		    require_once $path . 'couchClient.php';
 		    require_once $path . 'couchDocument.php';
 
-		    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$this->getAppClass()->getSetting("db_nomie_meta", 'nomie_meta', FALSE));
+		    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$nomie_user_key . '_meta');
 		    if ( !$couchClient->databaseExists() ) {
 			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 		    }
@@ -2665,7 +2663,7 @@
 			    $trackerGroups = $trackerGroups['All'];
 		    }
 
-		    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_trackers", 'nomie_trackers', FALSE));
+		    $couchClient->useDatabase($nomie_user_key . '_trackers');
 		    if ( !$couchClient->databaseExists() ) {
 			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 		    }
@@ -2687,7 +2685,7 @@
 			    );
 		    }
 
-		    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_events", 'nomie_events', FALSE));
+		    $couchClient->useDatabase($nomie_user_key . '_events');
 		    if ( !$couchClient->databaseExists() ) {
 			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 		    }
