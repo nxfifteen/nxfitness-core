@@ -77,7 +77,7 @@
 
     nxr("inputURL: " . $inputURL);
     nxr("sysPath: " . $sysPath);
-    nxr("sysPath: " . $_SERVER['']);
+    //nxr("sysPath: " . $_SERVER['']);
 
     if ($sysPath != "/") { $inputURL = str_replace($sysPath, "", $inputURL); }
     if (substr($inputURL, 0, 1) == "/") {$inputURL = substr($inputURL, 1);}
