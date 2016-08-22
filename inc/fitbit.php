@@ -1515,13 +1515,16 @@
                             if ($totalSteps == 0) $totalSteps = 1;
 
                             $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_max", 10000);
+                            $minTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_min", ($maxTargetSteps * 0.66));
                             $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
                             $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
 
+                            nxr("  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
+
                             if ($ProposedNextWeek >= $maxTargetSteps) {
                                 $plusTargetSteps = $maxTargetSteps;
-                            } else if ($ProposedNextWeek <= ($maxTargetSteps / 2)) {
-                                $plusTargetSteps = $maxTargetSteps / 2;
+                            } else if ($ProposedNextWeek <= $minTargetSteps) {
+                                $plusTargetSteps = $minTargetSteps;
                             } else {
                                 $plusTargetSteps = $ProposedNextWeek;
                             }
@@ -1548,15 +1551,18 @@
                         if ($totalSteps == 0) $totalSteps = 1;
 
                         $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_max", 10);
+                        $minTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_min", ($maxTargetSteps * 0.66));
                         $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
+                        $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
+
+                        nxr("  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
+
                         if ($LastWeeksSteps >= $maxTargetSteps) {
                             $plusTargetSteps = $maxTargetSteps;
-                        } else if ($LastWeeksSteps <= ($maxTargetSteps / 2)) {
-                            $plusTargetSteps = $maxTargetSteps / 2;
-                        } else if ($LastWeeksSteps < $maxTargetSteps) {
-                            $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors", 10) / 100), 0);
+                        } else if ($LastWeeksSteps <= $minTargetSteps) {
+                            $plusTargetSteps = $minTargetSteps;
                         } else {
-                            $plusTargetSteps = $maxTargetSteps;
+                            $plusTargetSteps = $ProposedNextWeek;
                         }
                     }
                 }
@@ -1591,15 +1597,18 @@
                             if ($totalMinutes == 0) $totalMinutes = 1;
 
                             $maxTargetActive = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_max", 30);
-                            $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-                            if ($newTargetActive >= $maxTargetActive) {
+                            $minTargetActive = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_min", ($maxTargetActive * 0.66));
+                            $LastWeeksActive = round($totalMinutes / count($dbActiveMinutes), 0);
+                            $ProposedNextWeek = $LastWeeksActive + round($LastWeeksActive * ($improvment / 100), 0);
+
+                            nxr("    * Min: " . $minTargetActive . " Max: " . $maxTargetActive . " LastWeeksSteps: " . $LastWeeksActive . " ProposedNextWeek: " . $ProposedNextWeek);
+
+                            if ($ProposedNextWeek >= $maxTargetActive) {
                                 $plusTargetSteps = $maxTargetActive;
-                            } else if ($newTargetActive <= ($maxTargetActive / 2)) {
-                                $plusTargetSteps = $maxTargetActive / 2;
-                            } else if ($newTargetActive < $maxTargetActive) {
-                                $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active", 10) / 100), 0);
+                            } else if ($ProposedNextWeek <= $minTargetActive) {
+                                $plusTargetSteps = $minTargetActive;
                             } else {
-                                $plusTargetSteps = $maxTargetActive;
+                                $plusTargetSteps = $ProposedNextWeek;
                             }
                         }
                     }
