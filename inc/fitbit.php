@@ -1515,13 +1515,16 @@
                             if ($totalSteps == 0) $totalSteps = 1;
 
                             $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_max", 10000);
+                            $minTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_min", ($maxTargetSteps * 0.66));
                             $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
                             $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
 
+                            nxr("  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
+
                             if ($ProposedNextWeek >= $maxTargetSteps) {
                                 $plusTargetSteps = $maxTargetSteps;
-                            } else if ($ProposedNextWeek <= ($maxTargetSteps / 2)) {
-                                $plusTargetSteps = $maxTargetSteps / 2;
+                            } else if ($ProposedNextWeek <= $minTargetSteps) {
+                                $plusTargetSteps = $minTargetSteps;
                             } else {
                                 $plusTargetSteps = $ProposedNextWeek;
                             }
@@ -1548,15 +1551,18 @@
                         if ($totalSteps == 0) $totalSteps = 1;
 
                         $maxTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_max", 10);
+                        $minTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_min", ($maxTargetSteps * 0.66));
                         $LastWeeksSteps = round($totalSteps / count($dbSteps), 0);
+                        $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
+
+                        nxr("  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
+
                         if ($LastWeeksSteps >= $maxTargetSteps) {
                             $plusTargetSteps = $maxTargetSteps;
-                        } else if ($LastWeeksSteps <= ($maxTargetSteps / 2)) {
-                            $plusTargetSteps = $maxTargetSteps / 2;
-                        } else if ($LastWeeksSteps < $maxTargetSteps) {
-                            $plusTargetSteps = $LastWeeksSteps + round($LastWeeksSteps * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors", 10) / 100), 0);
+                        } else if ($LastWeeksSteps <= $minTargetSteps) {
+                            $plusTargetSteps = $minTargetSteps;
                         } else {
-                            $plusTargetSteps = $maxTargetSteps;
+                            $plusTargetSteps = $ProposedNextWeek;
                         }
                     }
                 }
@@ -1591,15 +1597,18 @@
                             if ($totalMinutes == 0) $totalMinutes = 1;
 
                             $maxTargetActive = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_max", 30);
-                            $newTargetActive = round($totalMinutes / count($dbActiveMinutes), 0);
-                            if ($newTargetActive >= $maxTargetActive) {
+                            $minTargetActive = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_min", ($maxTargetActive * 0.66));
+                            $LastWeeksActive = round($totalMinutes / count($dbActiveMinutes), 0);
+                            $ProposedNextWeek = $LastWeeksActive + round($LastWeeksActive * ($improvment / 100), 0);
+
+                            nxr("    * Min: " . $minTargetActive . " Max: " . $maxTargetActive . " LastWeeksSteps: " . $LastWeeksActive . " ProposedNextWeek: " . $ProposedNextWeek);
+
+                            if ($ProposedNextWeek >= $maxTargetActive) {
                                 $plusTargetSteps = $maxTargetActive;
-                            } else if ($newTargetActive <= ($maxTargetActive / 2)) {
-                                $plusTargetSteps = $maxTargetActive / 2;
-                            } else if ($newTargetActive < $maxTargetActive) {
-                                $plusTargetSteps = $newTargetActive + round($newTargetActive * ($this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active", 10) / 100), 0);
+                            } else if ($ProposedNextWeek <= $minTargetActive) {
+                                $plusTargetSteps = $minTargetActive;
                             } else {
-                                $plusTargetSteps = $maxTargetActive;
+                                $plusTargetSteps = $ProposedNextWeek;
                             }
                         }
                     }
@@ -1678,13 +1687,11 @@
 
         // @todo - Make better
 	    private function pullNomieTrackers() {
-	    	if ($this->activeUser != $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE)) {
-			    return "-146";
-		    }
-
 		    $isAllowed = $this->isAllowed("nomie_trackers");
 		    if (!is_numeric($isAllowed)) {
 			    if ($this->api_isCooled("nomie_trackers")) {
+
+				    $nomie_user_key = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", 'nomie');
 
 				    nxr(" Connecting to CouchDB");
 
@@ -1700,7 +1707,7 @@
 				    require_once $path . 'couchClient.php';
 				    require_once $path . 'couchDocument.php';
 
-				    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$this->getAppClass()->getSetting("db_nomie_meta", 'nomie_meta', FALSE));
+				    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$nomie_user_key . '_meta');
 				    if ( !$couchClient->databaseExists() ) {
 					    nxr("  Nomie Meta table missing");
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
@@ -1715,7 +1722,7 @@
 					    $trackerGroups = $trackerGroups['All'];
 				    }
 
-				    $couchClient->useDatabase($this->getAppClass()->getSetting("db_nomie_trackers", 'nomie_trackers', FALSE));
+				    $couchClient->useDatabase($nomie_user_key . '_trackers');
 				    if ( !$couchClient->databaseExists() ) {
 					    nxr("  Nomie Tracker table missing");
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");

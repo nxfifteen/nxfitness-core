@@ -72,12 +72,16 @@
     }
     
     // Split-up the input URL to workout whats required
-    $inputURL = $_SERVER['REDIRECT_URL'];
+    if (array_key_exists("REDIRECT_URL", $_SERVER)) {
+        $inputURL = $_SERVER['REDIRECT_URL'];
+    } else {
+        $inputURL = "";
+    }
     $sysPath = str_ireplace($_SESSION['core_config']['url'], "", $_SESSION['core_config']['http/']);
 
     nxr("inputURL: " . $inputURL);
     nxr("sysPath: " . $sysPath);
-    nxr("sysPath: " . $_SERVER['']);
+    //nxr("sysPath: " . $_SERVER['']);
 
     if ($sysPath != "/") { $inputURL = str_replace($sysPath, "", $inputURL); }
     if (substr($inputURL, 0, 1) == "/") {$inputURL = substr($inputURL, 1);}

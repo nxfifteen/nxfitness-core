@@ -96,6 +96,9 @@
                 case "minutesVeryActive":
                     $cacheNames = array('activity', 'tasker', 'challenger', 'push', 'conky');
                     break;
+                case "nomie_trackers":
+                    $cacheNames = array('nomie');
+                    break;
                 case "profile":
                     $cacheNames = array('trend');
                     break;

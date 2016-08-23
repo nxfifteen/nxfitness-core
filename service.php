@@ -53,6 +53,8 @@
                 } else if (empty($upLoadedRequest->subscriptionId) or $upLoadedRequest->subscriptionId == "") {
                     $logMsg .= "subscriptionId not sent";
                 } else {
+                    if ($upLoadedRequest->collectionType == "nomie") $upLoadedRequest->collectionType = "nomie_trackers";
+
                     require_once(dirname(__FILE__) . "/inc/app.php");
                     $fitbitApp = new NxFitbit();
                     if ($fitbitApp->isUser($upLoadedRequest->ownerId)) {
