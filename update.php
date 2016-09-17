@@ -5,8 +5,6 @@
 		$_GET[ $key ] = $value;
 	}
 
-    $test = array("269VLG");
-
     require_once(dirname(__FILE__) . "/inc/upgrade.php");
     $dataReturnClass = new Upgrade($test[0]);
 
