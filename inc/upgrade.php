@@ -228,23 +228,15 @@
 		    $this->getDatabase()->query("ALTER TABLE `".$db_prefix."streak_goal` ADD CONSTRAINT `".$db_prefix."streak_goal_ibfk` FOREIGN KEY (`fuid`) REFERENCES `".$db_prefix."users` (`fuid`) ON DELETE NO ACTION;");
 		    if ($this->wasMySQLError($this->getDatabase()->error())) return false;
 
+		    $this->getDatabase()->query("ALTER TABLE `".$db_prefix."streak_goal` CHANGE `end_date` `end_date` DATE NULL, CHANGE `length` `length` INT(3) NULL");
+		    if ($this->wasMySQLError($this->getDatabase()->error())) return false;
+
 		    $this->setSetting("version", "0.0.0.2", TRUE);
 		    return true;
 	    }
 
 	    /** @noinspection PhpUnusedPrivateMethodInspection */
 	    private function update_3() {
-		    $db_prefix = $this->getSetting("db_prefix", FALSE);
-
-		    $this->getDatabase()->query("ALTER TABLE `".$db_prefix."streak_goal` ADD FOREIGN KEY (`fuid`) REFERENCES `".$db_prefix."users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT; ");
-		    if ($this->wasMySQLError($this->getDatabase()->error())) return false;
-
-		    $this->setSetting("version", "0.0.0.3", TRUE);
-		    return true;
-	    }
-
-	    /** @noinspection PhpUnusedPrivateMethodInspection */
-	    private function update_4() {
 		    $db_prefix = $this->getSetting("db_prefix", FALSE);
 
 		    $users = $this->getDatabase()->select($db_prefix . "users", "fuid");
@@ -343,7 +335,7 @@
 
 		    }
 
-		    $this->setSetting("version", "0.0.0.4", TRUE);
+		    $this->setSetting("version", "0.0.0.3", TRUE);
 		    return true;
 
 	    }
