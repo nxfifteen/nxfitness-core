@@ -2060,19 +2060,21 @@
             }
 
             $returnUserRecordPush = $this->returnUserRecordPush();
-            $taskerDataArray['push']['active'] = ($returnUserRecordPush['current']['active'] / $returnUserRecordPush['current']['active_g']) * 100;
+	        if (array_key_exists('current', $returnUserRecordPush)) {
+		        $taskerDataArray['push']['active'] = ( $returnUserRecordPush['current']['active'] / $returnUserRecordPush['current']['active_g'] ) * 100;
 
-            $taskerDataArray['push']['state'] = $returnUserRecordPush['pushActive'];
+		        $taskerDataArray['push']['state'] = $returnUserRecordPush['pushActive'];
 
-            $taskerDataArray['push']['start_date'] = $returnUserRecordPush['next']['startDateF'];
-            $taskerDataArray['push']['end_date'] = $returnUserRecordPush['next']['endDateF'];
+		        $taskerDataArray['push']['start_date'] = $returnUserRecordPush['next']['startDateF'];
+		        $taskerDataArray['push']['end_date']   = $returnUserRecordPush['next']['endDateF'];
 
-            $taskerDataArray['push']['length'] = round(($returnUserRecordPush['current']['day'] / $returnUserRecordPush['pushLength']) * 100, 0);
-            $taskerDataArray['push']['day'] = round(($returnUserRecordPush['current']['day_past'] / $returnUserRecordPush['current']['day']) * 100, 0);
+		        $taskerDataArray['push']['length'] = round( ( $returnUserRecordPush['current']['day'] / $returnUserRecordPush['pushLength'] ) * 100, 0 );
+		        $taskerDataArray['push']['day']    = round( ( $returnUserRecordPush['current']['day_past'] / $returnUserRecordPush['current']['day'] ) * 100, 0 );
 
-            $taskerDataArray['push']['distance'] = round(($returnUserRecordPush['current']['distance'] / $returnUserRecordPush['current']['distance_g']) * 100, 0);
-            $taskerDataArray['push']['active'] = round(($returnUserRecordPush['current']['active'] / $returnUserRecordPush['current']['active_g']) * 100, 0);
-            $taskerDataArray['push']['steps'] = round(($returnUserRecordPush['current']['steps'] / $returnUserRecordPush['current']['steps_g']) * 100, 0);
+		        $taskerDataArray['push']['distance'] = round( ( $returnUserRecordPush['current']['distance'] / $returnUserRecordPush['current']['distance_g'] ) * 100, 0 );
+		        $taskerDataArray['push']['active']   = round( ( $returnUserRecordPush['current']['active'] / $returnUserRecordPush['current']['active_g'] ) * 100, 0 );
+		        $taskerDataArray['push']['steps']    = round( ( $returnUserRecordPush['current']['steps'] / $returnUserRecordPush['current']['steps_g'] ) * 100, 0 );
+	        }
 
             $taskerDataArray['devices'] = $this->returnUserRecordDevices();
 
@@ -2089,6 +2091,28 @@
             ksort($taskerDataArray['goals']);
             ksort($taskerDataArray['syncd']);
             ksort($taskerDataArray['raw']);
+
+	        $taskerDataArray['streak'] = array(
+	            "max" => $this->getAppClass()->getDatabase()->max($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array('length'), array("fuid" => $this->getUserID()) ),
+		        "avg" => $this->getAppClass()->getDatabase()->avg($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array('length'), array("fuid" => $this->getUserID()) )
+	        );
+
+	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("AND" => array("fuid" => $this->getUserID(), "end_date" => null)) )) {
+		        $taskerDataArray['streak']['has'] = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", "start_date",
+			        array("AND" => array("fuid" => $this->getUserID(), "end_date" => null)) );
+		        $date1 = new DateTime();
+		        $date2 = new DateTime($taskerDataArray['streak']['has']);
+
+		        $days_between = $date2->diff($date1)->format("%a");
+		        $days_between = $days_between + 1;
+
+		        $taskerDataArray['streak']['current'] = $days_between;
+	        } else {
+		        $taskerDataArray['streak']['has'] = date('Y-m-d');
+		        $taskerDataArray['streak']['current'] = 0;
+	        }
+
+
 
             return $taskerDataArray;
         }
