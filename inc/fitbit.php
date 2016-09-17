@@ -1835,7 +1835,7 @@
                 }
 
 	            // PULL - users profile
-	            if ($trigger == "all" || $trigger == "nomie_trackers") {
+	            if (($trigger == "all" || $trigger == "nomie_trackers") && (!is_array($_GET) || !array_key_exists("dev", $_GET)) ) {
 		            $pull = $this->pullNomieTrackers();
 		            if ($this->isApiError($pull) && !IS_CRON_RUN) {
 			            nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
