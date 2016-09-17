@@ -2112,8 +2112,6 @@
 		        $taskerDataArray['streak']['current'] = 0;
 	        }
 
-
-
             return $taskerDataArray;
         }
 
