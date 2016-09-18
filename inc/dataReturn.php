@@ -812,8 +812,7 @@
          */
         public function returnUserRecordBadges() {
             $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
-                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeType" => "badgeType"),
-                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("value" => "value")),
+                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeType", "value")),
                 array(
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.badgeType',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.value',
@@ -826,7 +825,7 @@
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.marketingdescription',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.name',
                 ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.user" => $this->getUserID(),
-                         "ORDER"                                                                           => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.value ASC"));
+                         "ORDER" => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.value ASC"));
 
             $badges = array();
             foreach ($userBadges as $userBadge) {
