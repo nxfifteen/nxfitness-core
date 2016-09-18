@@ -156,6 +156,8 @@
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
                 $FirstSeen = $this->user_getFirstSeen()->format("Y-m-d");
+	            $todaysDate = new DateTime ('now');
+
                 foreach ($userTimeSeries as $steps) {
                     if (strtotime($steps->dateTime) >= strtotime($FirstSeen)) {
                         if ($steps->value == 0) {
@@ -164,7 +166,6 @@
                             nxr("   No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago");
                             if ($daysSinceReading > 180)
                                 $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
-
                         } else {
                             nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
                         }
@@ -184,12 +185,92 @@
                                 'syncd'  => $currentDate->format('Y-m-d H:m:s')
                             ));
                         }
+
+	                    if ($trigger == "steps" && strtotime($steps->dateTime) < strtotime($todaysDate->format('Y-m-d')))
+                            $this->GoalStreakCheck($steps->dateTime, $trigger, $steps->value);
                     }
                 }
             }
 
             return TRUE;
         }
+
+	    private function GoalStreakCheck($dateTime, $goal, $value) {
+		    $dateTime = new DateTime ($dateTime);
+		    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
+
+		    $steps_goals = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", array("steps", "date"), array("AND" => array("user" => $this->getActiveUser(), "date" => $dateTime->format("Y-m-d"))));
+		    if (!is_numeric($steps_goals['steps'])) {
+			    $steps_goals = $this->getAppClass()->getUserSetting($this->getActiveUser(), "goal_steps");
+		    } else {
+			    $steps_goals = $steps_goals['steps'];
+		    }
+
+		    if ($this->getAppClass()->getDatabase()->has($db_prefix . "streak_goal", array("AND" => array("fuid" => $this->getActiveUser(), "goal" => $goal, "end_date" => null)) )) {
+			    $streak = true;
+			    $streak_start = $this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", "start_date", array("AND" => array("fuid" => $this->getActiveUser(), "goal" => $goal, "end_date" => null)));
+		    } else {
+			    $streak = false;
+			    $streak_start = $dateTime->format("Y-m-d");
+		    }
+
+		    if ($value >= $steps_goals) {
+			    //nxr("    Beat your target for " . $dateTime->format("Y-m-d"));
+			    if ($streak) {
+				    nxr("     Streak continuing from " . $streak_start);
+
+				    $dateTimeStart = new DateTime ($streak_start);
+				    $days_between = $dateTimeStart->diff($dateTime)->format("%a");
+				    $days_between = $days_between + 1;
+
+				    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
+					    "length"   => $days_between
+				    ),
+					    array(
+						    "AND" => array(
+							    "fuid"       => $this->getActiveUser(),
+							    "goal"       => $goal,
+							    "start_date" => $streak_start
+						    )
+					    )
+				    );
+
+			    } else {
+				    nxr("     New Streak started");
+
+				    $this->getAppClass()->getDatabase()->insert( $db_prefix . "streak_goal", array(
+					    "fuid"       => $this->getActiveUser(),
+					    "goal"       => $goal,
+					    "start_date" => $dateTime->format("Y-m-d"),
+					    "end_date"   => null,
+					    "length"     => null
+				    ) );
+			    }
+		    } else if ($streak && $value < $steps_goals) {
+			    $dateTimeEnd = $dateTime;
+			    $dateTimeEnd->add(DateInterval::createFromDateString('yesterday'));
+			    $streak_end = $dateTimeEnd->format('Y-m-d');
+			    nxr("     Steak ran from " . $streak_start . " till " . $streak_end);
+
+			    $days_between = $dateTime->diff($dateTimeEnd)->format("%a");
+			    $days_between = $days_between + 1;
+
+			    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
+				    "end_date" => $streak_end,
+				    "length"   => $days_between
+			    ),
+				    array(
+					    "AND" => array(
+						    "fuid"       => $this->getActiveUser(),
+						    "goal"       => $goal,
+						    "start_date" => $streak_start
+					    )
+				    )
+			    );
+			    //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
+			    //nxr(end($this->getAppClass()->getDatabase()->log()));
+		    }
+	    }
 
         /**
          * @param               $trigger
@@ -246,6 +327,7 @@
                 }
 
                 $FirstSeen = $this->user_getFirstSeen()->format("Y-m-d");
+	            $todaysDate = new DateTime ('now');
                 foreach ($userTimeSeries as $series) {
                     if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
                         nxr("    " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
@@ -275,6 +357,9 @@
                             }
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage);
                         }
+
+	                    //if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d')))
+		                 //   $this->GoalStreakCheck($series->dateTime, "veryactive", $series->value);
                     }
                 }
             }
@@ -429,6 +514,8 @@
                                 } elseif ($newGoal > 0) {
                                     nxr("  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
                                 }
+
+	                            $this->getAppClass()->getUserSetting($this->getActiveUser(), "goal_steps", $newGoal);
                             }
 
                             if ($usr_goals->floors > 1) {
