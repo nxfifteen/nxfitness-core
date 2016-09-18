@@ -2097,9 +2097,9 @@
 		        "avg" => $this->getAppClass()->getDatabase()->avg($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array('length'), array("fuid" => $this->getUserID()) )
 	        );
 
-	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("AND" => array("fuid" => $this->getUserID(), "end_date" => null)) )) {
+	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null)) )) {
 		        $taskerDataArray['streak']['has'] = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", "start_date",
-			        array("AND" => array("fuid" => $this->getUserID(), "end_date" => null)) );
+			        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null)) );
 		        $date1 = new DateTime();
 		        $date2 = new DateTime($taskerDataArray['streak']['has']);
 
