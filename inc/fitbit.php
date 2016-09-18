@@ -316,7 +316,7 @@
                     $this->holdingVar["data"] = $this->pullBabel('user/-/activities/goals/daily.json', TRUE);
 
                     if ($trigger == "minutesVeryActive") {
-                        $newGoal = $this->thisWeeksGoal("activeMinutes");
+                        $newGoal = $this->thisWeeksGoal("activeMinutes", $this->holdingVar["data"]->goals->activeMinutes);
                         if ($newGoal > 0 && $this->holdingVar["data"]->goals->activeMinutes != $newGoal) {
                             nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
                             $this->pushBabel('user/-/activities/goals/daily.json', array('activeMinutes' => $newGoal));
@@ -507,7 +507,7 @@
                             }
 
                             if ($usr_goals->steps > 1) {
-                                $newGoal = $this->thisWeeksGoal("steps");
+                                $newGoal = $this->thisWeeksGoal("steps", $usr_goals->steps);
                                 if ($newGoal > 0 && $usr_goals->steps != $newGoal) {
                                     nxr("  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
                                     $this->pushBabel('user/-/activities/goals/daily.json', array('steps' => $newGoal));
@@ -519,7 +519,7 @@
                             }
 
                             if ($usr_goals->floors > 1) {
-                                $newGoal = $this->thisWeeksGoal("floors");
+                                $newGoal = $this->thisWeeksGoal("floors", $usr_goals->floors);
                                 if ($newGoal > 0 && $usr_goals->floors != $newGoal) {
                                     nxr("  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
                                     $this->pushBabel('user/-/activities/goals/daily.json', array('floors' => $newGoal));
@@ -1579,7 +1579,7 @@
          * @return float|int|string
          * @internal param $user
          */
-        private function thisWeeksGoal($string) {
+        private function thisWeeksGoal($string, $current_goal = 0) {
             $lastMonday = date('Y-m-d', strtotime('last sunday'));
             $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
             $plusTargetSteps = -1;
@@ -1596,7 +1596,7 @@
 
                     return $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_steps", '10000');
                 } else {
-                    $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps", 2);
+                    $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps", 0);
                     if ($improvment > 0) {
                         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'steps',
                             array("AND" => array(
@@ -1629,10 +1629,13 @@
                                 $plusTargetSteps = $ProposedNextWeek;
                             }
                         }
+                    } else {
+	                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "desire_steps_max", $current_goal);
+	                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "desire_steps_min", $current_goal);
                     }
                 }
             } elseif ($string == "floors") {
-                $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors", 2);
+                $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors", 0);
                 if ($improvment > 0) {
                     $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", 'floors',
                         array("AND" => array(
@@ -1665,6 +1668,9 @@
                             $plusTargetSteps = $ProposedNextWeek;
                         }
                     }
+                } else {
+	                $this->getAppClass()->setUserSetting($this->getActiveUser(), "desire_floors_max", $current_goal);
+	                $this->getAppClass()->setUserSetting($this->getActiveUser(), "desire_floors_min", $current_goal);
                 }
             } elseif ($string == "activeMinutes") {
                 $userPushLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length", '50');
@@ -1678,7 +1684,7 @@
 
                     return $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_activity", '30');
                 } else {
-                    $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active", 10);
+                    $improvment = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active", 0);
                     if ($improvment > 0) {
                         $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", array('veryactive', 'fairlyactive'),
                             array("AND" => array(
@@ -1711,6 +1717,9 @@
                                 $plusTargetSteps = $ProposedNextWeek;
                             }
                         }
+                    } else {
+	                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "desire_active_max", $current_goal);
+	                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "desire_active_min", $current_goal);
                     }
                 }
             }
