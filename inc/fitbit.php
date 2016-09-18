@@ -633,7 +633,8 @@
                 $fallback = FALSE;
                 $currentDate = new DateTime ();
                 if ($currentDate->format("Y-m-d") == $targetDate and ($userBodyLog->body->weight == "0" OR $userBodyLog->body->fat == "0" OR
-                        $userBodyLog->body->bmi == "0" OR (isset($userBodyLog->goals) AND ($userBodyLog->goals->weight == "0" OR $userBodyLog->goals->fat == "0")))
+                        $userBodyLog->body->bmi == "0" OR (isset($userBodyLog->goals) AND ((isset($userBodyLog->goals->weight) AND $userBodyLog->goals->weight == "0") OR
+                                                                                           (isset($userBodyLog->goals->fat) AND $userBodyLog->goals->fat == "0"))))
                 ) {
                     $this->getAppClass()->addCronJob($this->getActiveUser(), "body");
                     $fallback = TRUE;
