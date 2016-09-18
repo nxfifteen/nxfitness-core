@@ -614,6 +614,12 @@
 
                         $this->api_setLastCleanrun("foods", $targetDateTime);
                     }
+                } else {
+	                $currentDate = new DateTime();
+	                $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
+	                nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
+	                //if ($daysSinceReading > 180)
+		             //   $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
                 }
             }
 
@@ -712,6 +718,12 @@
                     }
 
                     if (!$fallback) $this->api_setLastCleanrun("body", new DateTime ($targetDate));
+                } else {
+	                $currentDate = new DateTime();
+	                $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
+	                nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
+	                //if ($daysSinceReading > 180)
+	                //   $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
                 }
             }
 
@@ -797,7 +809,19 @@
                     }
 
                     $this->api_setLastCleanrun("water", $targetDateTime);
+                } else {
+	                $currentDate = new DateTime();
+	                $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
+	                nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago (one)");
+	                //if ($daysSinceReading > 180)
+	                //   $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
                 }
+            } else {
+	            $currentDate = new DateTime();
+	            $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
+	            nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago (two)");
+	            //if ($daysSinceReading > 180)
+	            //   $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
             }
 
             return $userWaterLog;
