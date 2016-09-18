@@ -472,7 +472,7 @@
                 'activity_log'         => 'Activities',
 	            'nomie_trackers'       => "Nomie Trackers"
             );
-            asort($database_array);
+            ksort($database_array);
 
             if (is_null($key)) {
                 return $database_array;
