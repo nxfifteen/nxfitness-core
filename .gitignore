@@ -16,3 +16,4 @@ composer.json
 /cache
 fitbitphp-library
 /Thumbs.db
+/log.archives/
