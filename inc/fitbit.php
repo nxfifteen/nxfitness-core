@@ -1837,6 +1837,7 @@
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 				    }
 
+				    $trackedTrackers = array();
 				    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
 				    foreach ($trackerGroups as $tracker) {
 					    $doc = $couchClient->getDoc($tracker);
@@ -1852,10 +1853,48 @@
 						    "charge" => $doc->charge
 					    );
 
+					    array_push($trackedTrackers, $tracker);
+
 					    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)))) {
 						    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers", $dbStorage);
 					    } else {
 						    $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers", $dbStorage, array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)));
+					    }
+				    }
+
+				    $couchClient->useDatabase($nomie_user_key . '_events');
+				    if ( !$couchClient->databaseExists() ) {
+					    nxr("  Nomie Tracker table missing");
+					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+				    }
+				    $trackerEvents = json_decode(json_encode($couchClient->getAllDocs()), TRUE);
+				    foreach ($trackerEvents['rows'] as $events) {
+					    $event = explode("|", $events['id']);
+					    if (in_array($event[2], $trackedTrackers)) {
+						    $event[3] = date('Y-m-d H:i:s', $event[3] / 1000);
+						    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_events", array("AND" => array("fuid" => $this->activeUser, "id" => $event[2], "datestamp" => $event[3])))) {
+
+							    $document = json_decode(json_encode($couchClient->getDoc($events['id'])), TRUE);
+
+							    $dbStorage = array(
+								    "fuid"      => $this->activeUser,
+								    "id"        => $event[2],
+								    "type"      => $event[0],
+								    "datestamp" => $event[3],
+								    "value"     => $document['value'],
+								    "score"     => $event[4],
+							    );
+
+							    if (is_array($document['geo']) and count($document['geo']) == 2) {
+								    $dbStorage["geo_lat"] = $document['geo'][0];
+								    $dbStorage["geo_lon"] = $document['geo'][1];
+							    }
+
+							    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_events", $dbStorage );
+							    nxr( "   Stored event : " . $event[2] . " from " . $event[3]);
+							    //nxr( print_r($this->getAppClass()->getDatabase()->log(), true) );
+							    //return true;
+						    }
 					    }
 				    }
 
