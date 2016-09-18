@@ -193,8 +193,8 @@
          */
         public function setUser($fuid, $key, $value) {
             $this->settings[ $key . "_" . $fuid ] = $value;
-            if ($this->database->has($this->get("db_prefix", FALSE) . "settings_users", array("fuid" => $fuid, "var" => $key))) {
-                return $this->database->update($this->get("db_prefix", FALSE) . "settings_users", array("data" => $value), array("fuid" => $fuid, "var" => $key));
+            if ($this->database->has($this->get("db_prefix", FALSE) . "settings_users", array("AND" => array("fuid" => $fuid, "var" => $key)))) {
+                return $this->database->update($this->get("db_prefix", FALSE) . "settings_users", array("data" => $value), array("AND" => array("fuid" => $fuid, "var" => $key)));
             } else {
                 return $this->database->insert($this->get("db_prefix", FALSE) . "settings_users", array("fuid" => $fuid, "data" => $value, "var" => $key));
             }
