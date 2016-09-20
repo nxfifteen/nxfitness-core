@@ -618,7 +618,7 @@
 	                $currentDate = new DateTime();
 	                $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
 	                nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
-	                if ($daysSinceReading > 90)
+	                if ($daysSinceReading > 7)
 		               $this->api_setLastCleanrun("foods", $targetDateTime);
                 }
             }
@@ -722,7 +722,7 @@
 	                $currentDate = new DateTime();
 	                $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
 	                nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
-	                if ($daysSinceReading > 90)
+	                if ($daysSinceReading > 7)
 	                   $this->api_setLastCleanrun("body", new DateTime ($targetDate));
                 }
             }
