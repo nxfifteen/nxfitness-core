@@ -2713,7 +2713,7 @@
 	    public function returnUserRecordNomie() {
 		    $dbTrackers = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "nomie_trackers",
 			    array('id', 'label', 'icon', 'color', 'charge'),
-			    array("fuid" => $this->getUserID(),
+			    array("AND" => array("fuid" => $this->getUserID(), "sort[>]" => -1),
 	            "ORDER"  => "sort ASC"));
 
 		    $trackerShared = array();
