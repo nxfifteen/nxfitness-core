@@ -2711,73 +2711,93 @@
 	     * @return array
 	     */
 	    public function returnUserRecordNomie() {
-		    $path = dirname(__FILE__) . "/../library/couchdb/";
-
-		    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", NULL, FALSE);
-		    $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", NULL, FALSE);
-		    $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', FALSE);
-		    $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', FALSE);
-		    $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', FALSE);
-
-		    $nomie_user_key = $this->getAppClass()->getUserSetting($this->getUserID(), "nomie_key", 'nomie');
-
-		    require_once $path . 'couch.php';
-		    require_once $path . 'couchClient.php';
-		    require_once $path . 'couchDocument.php';
-
-		    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$nomie_user_key . '_meta');
-		    if ( !$couchClient->databaseExists() ) {
-			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-		    }
-
-		    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
-		    if (array_key_exists("NxFITNESS", $trackerGroups)) {
-			    $trackerGroups = $trackerGroups['NxFITNESS'];
-		    } else {
-			    $trackerGroups = $trackerGroups['All'];
-		    }
-
-		    $couchClient->useDatabase($nomie_user_key . '_trackers');
-		    if ( !$couchClient->databaseExists() ) {
-			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-		    }
+		    $dbTrackers = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "nomie_trackers",
+			    array('id', 'label', 'icon', 'color', 'charge'),
+			    array("fuid" => $this->getUserID(),
+	            "ORDER"  => "sort ASC"));
 
 		    $trackerShared = array();
-		    foreach ($trackerGroups as $tracker) {
-		    	$doc = $couchClient->getDoc($tracker);
-			    $trackerShared[$tracker] = array(
-				    "label" => $doc->label,
-				    "icon" => $this->translateNomieIcons($doc->icon),
-				    "color" => $doc->color,
-				    "charge" => $doc->charge,
-				    "stats" => array(
-					    "first" => $doc->stats->first,
-					    "last" => $doc->stats->last,
-					    "dayAvg" => $doc->stats->dayAvg,
-					    "monthAvg" => $doc->stats->monthAvg
-				    ),
-			    );
-		    }
+		    foreach ($dbTrackers as $tracker) {
+			    unset($dbEventCount);
+			    unset($dbEventFirst);
+			    unset($dbEventLast);
+			    unset($days_between);
+			    unset($months_between);
 
-		    $couchClient->useDatabase($nomie_user_key . '_events');
-		    if ( !$couchClient->databaseExists() ) {
-			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-		    }
-		    $allEvents = $couchClient->getAllDocs();
-		    foreach ($allEvents->rows as $event) {
-			    $eventId = explode("|", $event->id);
-			    if (in_array($eventId[2], $trackerGroups)) {
-				    $trackerShared[$eventId[2]]['events'][] = $event->id;
+			    $dayAvg = 0;
+			    $monthAvg = 0;
+
+			    $dbEventCount = $this->getAppClass()->getDatabase()->count($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "nomie_events",
+				    'id', array("AND" => array("fuid" => $this->getUserID(), "id" => $tracker['id'])));
+
+			    if ($dbEventCount > 0) {
+				    $dbEventFirst = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+					    'datestamp', array( "AND"   => array( "fuid" => $this->getUserID(), "id" => $tracker['id'] ),
+					                        "ORDER" => "datestamp ASC",
+					                        "LIMIT" => 1
+					    ) );
+
+				    if ( empty( $dbEventFirst ) ) {
+					    $dbEventFirst = "0000-00-00 00:00:00";
+				    }
+
+				    if ( $dbEventFirst != "0000-00-00 00:00:00" ) {
+					    $dbEventLast = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+						    'datestamp', array(
+							    "AND"   => array( "fuid" => $this->getUserID(), "id" => $tracker['id'] ),
+							    "ORDER" => "datestamp DESC",
+							    "LIMIT" => 1
+						    ) );
+
+					    if ( empty( $dbEventLast ) ) {
+						    $dbEventLast = "0000-00-00 00:00:00";
+					    }
+
+
+					    if ( $dbEventLast != "0000-00-00 00:00:00" ) {
+						    $dateTimeFirst = new DateTime ( $dbEventFirst );
+						    $days_between  = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%a" );
+						    $days_between  = $days_between + 1;
+						    $months_between  = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%m" );
+						    $months_between  = $months_between + 1;
+					    }
+				    }
+
+				    if ( empty( $dbEventLast ) ) {
+					    $dbEventLast = "0000-00-00 00:00:00";
+				    }
+
+				    if ( ! isset( $days_between ) ) {
+					    $days_between = 0;
+				    } else {
+					    $dayAvg = round($dbEventCount / $days_between, 2);
+				    }
+
+				    if ( ! isset( $months_between ) ) {
+					    $months_between = 0;
+				    } else {
+					    $monthAvg = round($dbEventCount / $months_between, 2);
+				    }
+
+				    $dateTimeFirst = new DateTime ( $dbEventFirst );
+				    $dateTimeLast = new DateTime ( $dbEventLast );
+
+				    $trackerShared[ $tracker['id'] ] = array(
+					    "label"  => $tracker['label'],
+					    "icon"   => $this->translateNomieIcons( $tracker['icon'] ),
+					    "icon_raw"   => $tracker['icon'],
+					    "color"  => $tracker['color'],
+					    "charge" => $tracker['charge'],
+					    "stats"  => array(
+						    "events"   => $dbEventCount,
+						    "first"    => $dateTimeFirst->format("Y-m-d H:i"),
+						    "last"     => $dateTimeLast->format("Y-m-d H:i"),
+						    "dayAvg"   => $dayAvg,
+						    "monthAvg" => $monthAvg
+					    ),
+				    );
 			    }
 		    }
-
-
-		    foreach ($trackerShared as $id => $tracker) {
-		    	if (is_array($tracker) && array_key_exists("events",$tracker) && count($tracker['events']) == 0) {
-		    		unset($trackerShared[$id]);
-			    }
-		    }
-
 
 		    return array(
 			    "dbTrackers" => $trackerShared
@@ -2813,6 +2833,7 @@
 			    case "flaticon-poo":
 			    case "fa flaticon-service":
 				    return "fa fa-universal-access";
+
 			    default:
 				    return $inputIcon;
 		    }
