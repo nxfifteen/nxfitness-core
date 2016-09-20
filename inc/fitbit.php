@@ -1054,6 +1054,7 @@
                 if ($this->api_isCooled("devices")) {
                     $userDevices = $this->pullBabel('user/-/devices.json', TRUE);
 
+	                $trackers = array();
                     foreach ($userDevices as $device) {
                         if (isset($device->id) and $device->id != "") {
                             if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array("AND" => array("id" => (String)$device->id)))) {
@@ -1078,7 +1079,48 @@
                             if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
                                 nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
                             }
+
+                            if ($device->type == "TRACKER") {
+	                            array_push($trackers, $device->deviceVersion);
+                            }
+
                         }
+                    }
+
+                    if (count($trackers) > 0) {
+	                    $supportedHeart = FALSE;
+	                    $supportedFloors = FALSE;
+
+	                    //nxr( " Using ".count($trackers)." Trackers");
+	                    if (in_array("Surge", $trackers) || in_array("Charge HR", $trackers)) {
+		                    $supportedHeart = TRUE;
+		                    $supportedFloors = TRUE;
+	                    } else if (in_array("Charge", $trackers)) {
+		                    $supportedFloors = TRUE;
+	                    }
+
+	                    if ($supportedHeart && $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE) == $this->getActiveUser()) {
+		                    //nxr( "  Heartrate Supported " );
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_heart", "1");
+	                    } else {
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_heart", "0");
+	                    }
+
+	                    if ($supportedFloors) {
+		                    //nxr( "  Floors Supported " );
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_floors", "1");
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_elevation", "1");
+	                    } else {
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_floors", "0");
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_elevation", "0");
+	                    }
+
+	                    if (!is_null($this->getAppClass()->getSetting("nomie_key_" . $this->getActiveUser(), NULL, FALSE))) {
+		                    //nxr( "  Nomie Supported " );
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_nomie_trackers", "1");
+	                    } else {
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_nomie_trackers", "0");
+	                    }
                     }
 
                     $this->api_setLastrun("devices", NULL, TRUE);
