@@ -214,16 +214,54 @@
 			    $streak_start = $dateTime->format("Y-m-d");
 		    }
 
-		    if ($value >= $steps_goals) {
-			    //nxr("    Beat your target for " . $dateTime->format("Y-m-d"));
-			    if ($streak) {
-				    nxr("     Streak continuing from " . $streak_start);
+		    //if ()
 
-				    $dateTimeStart = new DateTime ($streak_start);
-				    $days_between = $dateTimeStart->diff($dateTime)->format("%a");
+		    if ($streak && strtotime($dateTime->format("Y-m-d")) <= strtotime($streak_start)) {
+			    //nxr( "     Streak started on " . $streak_start . " ignored since were looking at the past " .$dateTime->format("Y-m-d") );
+		    } else {
+			    if ( $value >= $steps_goals ) {
+				    //nxr("    Beat your target for " . $dateTime->format("Y-m-d"));
+				    if ( $streak ) {
+					    nxr( "     Streak continuing from " . $streak_start );
+
+					    $dateTimeStart = new DateTime ( $streak_start );
+					    $days_between  = $dateTimeStart->diff( $dateTime )->format( "%a" );
+					    $days_between  = $days_between + 1;
+
+					    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
+						    "length" => $days_between
+					    ),
+						    array(
+							    "AND" => array(
+								    "fuid"       => $this->getActiveUser(),
+								    "goal"       => $goal,
+								    "start_date" => $streak_start
+							    )
+						    )
+					    );
+
+				    } else {
+					    nxr( "     New Streak started" );
+
+					    $this->getAppClass()->getDatabase()->insert( $db_prefix . "streak_goal", array(
+						    "fuid"       => $this->getActiveUser(),
+						    "goal"       => $goal,
+						    "start_date" => $dateTime->format( "Y-m-d" ),
+						    "end_date"   => NULL,
+						    "length"     => 1
+					    ) );
+				    }
+			    } else if ( $streak && $value < $steps_goals ) {
+				    $dateTimeEnd = $dateTime;
+				    $dateTimeEnd->add( DateInterval::createFromDateString( 'yesterday' ) );
+				    $streak_end = $dateTimeEnd->format( 'Y-m-d' );
+				    nxr( "     Steak ran from " . $streak_start . " till " . $streak_end );
+
+				    $days_between = $dateTime->diff( $dateTimeEnd )->format( "%a" );
 				    $days_between = $days_between + 1;
 
 				    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
+					    "end_date" => $streak_end,
 					    "length"   => $days_between
 				    ),
 					    array(
@@ -234,41 +272,9 @@
 						    )
 					    )
 				    );
-
-			    } else {
-				    nxr("     New Streak started");
-
-				    $this->getAppClass()->getDatabase()->insert( $db_prefix . "streak_goal", array(
-					    "fuid"       => $this->getActiveUser(),
-					    "goal"       => $goal,
-					    "start_date" => $dateTime->format("Y-m-d"),
-					    "end_date"   => null,
-					    "length"     => null
-				    ) );
+				    //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
+				    //nxr(end($this->getAppClass()->getDatabase()->log()));
 			    }
-		    } else if ($streak && $value < $steps_goals) {
-			    $dateTimeEnd = $dateTime;
-			    $dateTimeEnd->add(DateInterval::createFromDateString('yesterday'));
-			    $streak_end = $dateTimeEnd->format('Y-m-d');
-			    nxr("     Steak ran from " . $streak_start . " till " . $streak_end);
-
-			    $days_between = $dateTime->diff($dateTimeEnd)->format("%a");
-			    $days_between = $days_between + 1;
-
-			    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
-				    "end_date" => $streak_end,
-				    "length"   => $days_between
-			    ),
-				    array(
-					    "AND" => array(
-						    "fuid"       => $this->getActiveUser(),
-						    "goal"       => $goal,
-						    "start_date" => $streak_start
-					    )
-				    )
-			    );
-			    //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
-			    //nxr(end($this->getAppClass()->getDatabase()->log()));
 		    }
 	    }
 
