@@ -1947,9 +1947,13 @@
 			    "floors7Day" => number_format(array_sum($floors) / $cFloors,0),
 			    "distance7Day" => number_format(array_sum($distance) / $cDistance,2),
 
-			    "stepsYesterday" => number_format($steps[1] - $steps[0],0),
-			    "floorsYesterday" => number_format($floors[1] - $floors[0],0),
-			    "distanceYesterday" => number_format($distance[1] - $distance[0],0)
+			    "stepsYesterday" => number_format($steps[1] - $steps[0], 0),
+			    "floorsYesterday" => number_format($floors[1] - $floors[0], 0),
+			    "distanceYesterday" => number_format($distance[1] - $distance[0], 0),
+
+			    "stepsYesterdayRaw" => $steps[1] - $steps[0],
+			    "floorsYesterdayRaw" => $floors[1] - $floors[0],
+			    "distanceYesterdayRaw" => $distance[1] - $distance[0]
 		    );
 
 		    $convertedOutput['date'] = array_reverse($date);
