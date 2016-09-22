@@ -2784,7 +2784,7 @@
 
 				    $trackerShared[ $tracker['id'] ] = array(
 					    "label"  => $tracker['label'],
-					    "icon"   => $this->translateNomieIcons( $tracker['icon'] ),
+					    "icon"   => $tracker['icon'],
 					    "icon_raw"   => $tracker['icon'],
 					    "color"  => $tracker['color'],
 					    "charge" => $tracker['charge'],
@@ -2802,40 +2802,5 @@
 		    return array(
 			    "dbTrackers" => $trackerShared
 			    );
-	    }
-
-	    private function translateNomieIcons($inputIcon) {
-		    $inputIcon = trim(str_ireplace("  ", " ", $inputIcon));
-		    switch ( $inputIcon ) {
-			    case "flaticon-leg5":
-			    case "fitnessIcons-person":
-				    return "fa fa-medkit";
-
-			    case "icon-water":
-				    return "fa fa-tint";
-
-			    case "icon-emo-sleep":
-				    return "fa fa-bed";
-
-			    case "foodIcons-soda":
-			    case "drinkIcons-wine-glass":
-				    return "fa fa-glass";
-
-			    case "drinkIcons-glass-2":
-			    case "drinkIcons-jar-of-beer":
-				    return "fa fa-beer";
-
-			    case "flaticon-ice64":
-			    case "flaticon-hamburger2":
-			    case "flaticon-porridge":
-				    return "fa fa-cutlery";
-
-			    case "flaticon-poo":
-			    case "fa flaticon-service":
-				    return "fa fa-universal-access";
-
-			    default:
-				    return $inputIcon;
-		    }
 	    }
     }
