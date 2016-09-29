@@ -2684,8 +2684,6 @@
                                       'username' => $dbUserName,
                                       "cache"    => TRUE,
                                       "data"     => $get['data'],
-                                      "start"     => 0,
-                                      "end"     => 0,
                                       "time"     => 0,
                                       "period"   => $this->getParamPeriod(),
                                       "date"     => $this->getParamDate());
