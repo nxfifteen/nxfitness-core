@@ -2695,6 +2695,9 @@
 
                 if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
                     $resultsArray['dbLog'] = $this->getAppClass()->getDatabase()->log();
+	                foreach ( $resultsArray['dbLog'] as $key => $value ) {
+		                $resultsArray['dbLog'][$key] = str_ireplace("\"", "`", $value);
+	                }
                 }
 
                 if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
@@ -2716,29 +2719,30 @@
 	     */
 	    public function returnUserRecordNomie() {
 		    $dbTrackers = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "nomie_trackers",
-			    array('id', 'label', 'icon', 'color', 'charge'),
+			    array('id', 'label', 'icon', 'color', 'charge', 'sort'),
 			    array("AND" => array("fuid" => $this->getUserID(), "sort[>]" => -1),
 	            "ORDER"  => "sort ASC"));
 
 		    $trackerShared = array();
-		    foreach ($dbTrackers as $tracker) {
-			    unset($dbEventCount);
-			    unset($dbEventFirst);
-			    unset($dbEventLast);
-			    unset($days_between);
-			    unset($months_between);
+		    foreach ( $dbTrackers as $tracker ) {
+			    unset( $dbEventCount );
+			    unset( $dbEventFirst );
+			    unset( $dbEventLast );
+			    unset( $days_between );
+			    unset( $months_between );
 
-			    $dayAvg = 0;
+			    $dayAvg   = 0;
 			    $monthAvg = 0;
 
-			    $dbEventCount = $this->getAppClass()->getDatabase()->count($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "nomie_events",
-				    'id', array("AND" => array("fuid" => $this->getUserID(), "id" => $tracker['id'])));
+			    $dbEventCount = $this->getAppClass()->getDatabase()->count( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+				    'id', array( "AND" => array( "fuid" => $this->getUserID(), "id" => $tracker['id'] ) ) );
 
-			    if ($dbEventCount > 0) {
+			    if ( $dbEventCount > 0 ) {
 				    $dbEventFirst = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
-					    'datestamp', array( "AND"   => array( "fuid" => $this->getUserID(), "id" => $tracker['id'] ),
-					                        "ORDER" => "datestamp ASC",
-					                        "LIMIT" => 1
+					    'datestamp', array(
+						    "AND"   => array( "fuid" => $this->getUserID(), "id" => $tracker['id'] ),
+						    "ORDER" => "datestamp ASC",
+						    "LIMIT" => 1
 					    ) );
 
 				    if ( empty( $dbEventFirst ) ) {
@@ -2759,11 +2763,11 @@
 
 
 					    if ( $dbEventLast != "0000-00-00 00:00:00" ) {
-						    $dateTimeFirst = new DateTime ( $dbEventFirst );
-						    $days_between  = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%a" );
-						    $days_between  = $days_between + 1;
-						    $months_between  = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%m" );
-						    $months_between  = $months_between + 1;
+						    $dateTimeFirst  = new DateTime ( $dbEventFirst );
+						    $days_between   = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%a" );
+						    $days_between   = $days_between + 1;
+						    $months_between = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%m" );
+						    $months_between = $months_between + 1;
 					    }
 				    }
 
@@ -2774,28 +2778,28 @@
 				    if ( ! isset( $days_between ) ) {
 					    $days_between = 0;
 				    } else {
-					    $dayAvg = round($dbEventCount / $days_between, 2);
+					    $dayAvg = round( $dbEventCount / $days_between, 2 );
 				    }
 
 				    if ( ! isset( $months_between ) ) {
 					    $months_between = 0;
 				    } else {
-					    $monthAvg = round($dbEventCount / $months_between, 2);
+					    $monthAvg = round( $dbEventCount / $months_between, 2 );
 				    }
 
 				    $dateTimeFirst = new DateTime ( $dbEventFirst );
-				    $dateTimeLast = new DateTime ( $dbEventLast );
+				    $dateTimeLast  = new DateTime ( $dbEventLast );
 
 				    $trackerShared[ $tracker['id'] ] = array(
-					    "label"  => $tracker['label'],
-					    "icon"   => $tracker['icon'],
-					    "icon_raw"   => $tracker['icon'],
-					    "color"  => $tracker['color'],
-					    "charge" => $tracker['charge'],
-					    "stats"  => array(
+					    "label"    => $tracker['label'],
+					    "icon"     => $tracker['icon'],
+					    "icon_raw" => $tracker['icon'],
+					    "color"    => $tracker['color'],
+					    "charge"   => $tracker['charge'],
+					    "stats"    => array(
 						    "events"   => $dbEventCount,
-						    "first"    => $dateTimeFirst->format("Y-m-d H:i"),
-						    "last"     => $dateTimeLast->format("Y-m-d H:i"),
+						    "first"    => $dateTimeFirst->format( "Y-m-d H:i" ),
+						    "last"     => $dateTimeLast->format( "Y-m-d H:i" ),
 						    "dayAvg"   => $dayAvg,
 						    "monthAvg" => $monthAvg
 					    ),
