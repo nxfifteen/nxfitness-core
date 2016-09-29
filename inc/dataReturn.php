@@ -1182,7 +1182,8 @@
             $dbDevices = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
                 "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user" => array("id" => "device")),
                 array(
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.deviceVersion',
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.id',
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.deviceVersion',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.battery',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.lastSyncTime',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.type',
@@ -1191,6 +1192,9 @@
             foreach ($dbDevices as $key => $dev) {
                 $dbDevices[ $key ]['image'] = 'images/devices/' . str_ireplace(" ", "", $dbDevices[ $key ]['deviceVersion']) . ".png";
                 $dbDevices[ $key ]['imageSmall'] = 'images/devices/' . str_ireplace(" ", "", $dbDevices[ $key ]['deviceVersion']) . "_small.png";
+
+	            $dbDevices[ $key ]['charges'] = $this->getAppClass()->getDatabase()->count($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_charges", array("AND" => array("charged" => 1, "id" => $dbDevices[ $key ]['id'])));
+
                 if (strtolower($dbDevices[ $key ]['battery']) == "high") {
                     $dbDevices[ $key ]['precentage'] = 100;
                 } else if (strtolower($dbDevices[ $key ]['battery']) == "medium") {
