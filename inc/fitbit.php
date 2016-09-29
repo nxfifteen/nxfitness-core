@@ -1064,10 +1064,30 @@
                     foreach ($userDevices as $device) {
                         if (isset($device->id) and $device->id != "") {
                             if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array("AND" => array("id" => (String)$device->id)))) {
+	                            $current_battery = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", "battery", array("id" => (String)$device->id));
+
                                 $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
                                     'lastSyncTime' => (String)$device->lastSyncTime,
                                     'battery'      => (String)$device->battery
                                 ), array("id" => (String)$device->id));
+
+	                            if ($device->battery != $current_battery) {
+		                            $charged = 0;
+		                            if (
+			                            ($current_battery == "Empty" && ($device->battery == "Low" || $device->battery == "Medium" || $device->battery == "High" || $device->battery == "Full"))
+			                            || ($current_battery == "Low" && ($device->battery == "Medium" || $device->battery == "High" || $device->battery == "Full"))
+			                            || ($current_battery == "Medium" && ($device->battery == "High" || $device->battery == "Full"))
+		                            ) {
+			                            $charged = 1;
+		                            }
+
+		                            $this->getAppClass()->getDatabase()->insert( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "devices_charges", array(
+			                            'id'    => (String) $device->id,
+			                            'date'  => (String) $device->lastSyncTime,
+			                            'level' => (String) $device->battery,
+			                            'charged' => $charged
+		                            ) );
+	                            }
                             } else {
                                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
                                     'id'            => (String)$device->id,
@@ -1076,10 +1096,15 @@
                                     'lastSyncTime'  => (String)$device->lastSyncTime,
                                     'battery'       => (String)$device->battery
                                 ));
-                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user", array(
-                                    'user'   => $this->getActiveUser(),
-                                    'device' => (String)$device->id
-                                ));
+	                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user", array(
+		                            'user'   => $this->getActiveUser(),
+		                            'device' => (String)$device->id
+	                            ));
+	                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_charges", array(
+		                            'id'            => (String)$device->id,
+		                            'date' => (String)$device->lastSyncTime,
+		                            'level'          => (String)$device->battery
+	                            ));
                             }
 
                             if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
