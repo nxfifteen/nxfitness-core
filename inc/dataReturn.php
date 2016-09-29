@@ -457,7 +457,7 @@
             $sqlQueryString  = "SELECT `activityName` as `name`,`logId`,`startDate`,`startTime`,`calories`,`activeDuration` as `duration`,`steps`, "
                               . "`activityLevelSedentary` as `sedentary`, `activityLevelLightly` as `lightly`, `activityLevelFairly` as `fairly`, `activityLevelVery` as `very`, `sourceType`, `sourceName` "
                               . "FROM `" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log` "
-                              . "WHERE `user` = '" . $this->getUserID() . "' AND `logType` != 'auto_detected' ";
+                              . "WHERE `user` = '" . $this->getUserID() . "' ";
 
             if (is_array( $_GET ) && array_key_exists( "start", $_GET ) && array_key_exists( "end", $_GET )) {
                 $sqlQueryString .= "AND `startDate` >= '" . $_GET['start'] . "' AND `startDate` <= '" . $_GET['end'] . "' ";
