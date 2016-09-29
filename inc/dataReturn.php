@@ -2095,80 +2095,89 @@
             ksort($taskerDataArray['syncd']);
             ksort($taskerDataArray['raw']);
 
-	        $taskerDataArray['streak'] = array(
-		        "avg" => array ("days" => round($this->getAppClass()->getDatabase()->avg($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array('length'), array("fuid" => $this->getUserID())), 0) )
-	        );
-
-	        $taskerDataArray['streak']['current'] = array();
-	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
-		        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null))
-	        )) {
-		        $taskerDataArray['streak']['has'] = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", "start_date",
-			        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null)) );
-		        $date1 = new DateTime();
-		        $date2 = new DateTime($taskerDataArray['streak']['has']);
-
-		        $days_between = $date2->diff($date1)->format("%a");
-		        $days_between = $days_between + 1;
-
-		        $taskerDataArray['streak']['current']['start'] = $taskerDataArray['streak']['has'];
-		        $taskerDataArray['streak']['current']['days'] = $days_between;
-	        } else {
-		        $taskerDataArray['streak']['current']['start'] = date('Y-m-d');
-		        $taskerDataArray['streak']['current']['days'] = 0;
-	        }
-
-	        if ($taskerDataArray['streak']['current']['days'] > 0) {
-		        $taskerDataArray['streak']['avg']['dist'] = round( ( $taskerDataArray['streak']['current']['days'] / $taskerDataArray['streak']['avg']['days'] ) * 100, 0 );
-	        } else {
-		        $taskerDataArray['streak']['avg']['dist'] = 0;
-	        }
-
-	        $taskerDataArray['streak']['max'] = array();
-	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
-		        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null))
-	        )) {
-		        $databaseResults = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date", "end_date", "length"),
-			        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null), "LIMIT" => 1, "ORDER" => "length DESC") );
-
-		        $taskerDataArray['streak']['max']['start'] = $databaseResults['start_date'];
-		        $taskerDataArray['streak']['max']['end'] = $databaseResults['end_date'];
-		        $taskerDataArray['streak']['max']['days'] = $databaseResults['length'];
-		        if ($taskerDataArray['streak']['current']['days'] > 0) {
-			        $taskerDataArray['streak']['max']['dist'] = round( ( $taskerDataArray['streak']['current']['days'] / $databaseResults['length'] ) * 100, 0 );
-		        } else {
-			        $taskerDataArray['streak']['max']['dist'] = 0;
-		        }
-	        } else {
-		        $taskerDataArray['streak']['max']['start'] = date('Y-m-d');
-		        $taskerDataArray['streak']['max']['end'] = date('Y-m-d');
-		        $taskerDataArray['streak']['max']['days'] = 0;
-		        $taskerDataArray['streak']['max']['dist'] = 0;
-	        }
-
-	        $taskerDataArray['streak']['last'] = array();
-	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
-		        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null))
-	        )) {
-		        $databaseResults = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date", "end_date", "length"),
-			        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null), "LIMIT" => 1, "ORDER" => "start_date DESC") );
-
-		        $taskerDataArray['streak']['last']['start'] = $databaseResults['start_date'];
-		        $taskerDataArray['streak']['last']['end'] = $databaseResults['end_date'];
-		        $taskerDataArray['streak']['last']['days'] = $databaseResults['length'];
-		        if ($taskerDataArray['streak']['current']['days'] > 0) {
-			        $taskerDataArray['streak']['last']['dist'] = round (($taskerDataArray['streak']['last']['days']/$databaseResults['length']) * 100, 0);
-		        } else {
-			        $taskerDataArray['streak']['last']['dist'] = 0;
-		        }
-	        } else {
-		        $taskerDataArray['streak']['last']['start'] = date('Y-m-d');
-		        $taskerDataArray['streak']['last']['end'] = date('Y-m-d');
-		        $taskerDataArray['streak']['last']['days'] = 0;
-		        $taskerDataArray['streak']['last']['dist'] = 0;
-	        }
+	        $taskerDataArray['streak'] = $this->returnUserRecordGoalStreak();
 
             return $taskerDataArray;
+        }
+
+	    /**
+	     * @return array
+	     */
+	    public function returnUserRecordGoalStreak() {
+		    $taskerDataArray = array(
+			    "avg" => array ("days" => round($this->getAppClass()->getDatabase()->avg($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array('length'), array("fuid" => $this->getUserID())), 0) )
+		    );
+
+		    $taskerDataArray['current'] = array();
+		    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
+			    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null))
+		    )) {
+			    $taskerDataArray['has'] = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", "start_date",
+				    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null)) );
+			    $date1 = new DateTime();
+			    $date2 = new DateTime($taskerDataArray['has']);
+
+			    $days_between = $date2->diff($date1)->format("%a");
+			    $days_between = $days_between + 1;
+
+			    $taskerDataArray['current']['start'] = $taskerDataArray['has'];
+			    $taskerDataArray['current']['days'] = $days_between;
+		    } else {
+			    $taskerDataArray['current']['start'] = date('Y-m-d');
+			    $taskerDataArray['current']['days'] = 0;
+		    }
+
+		    if ($taskerDataArray['current']['days'] > 0) {
+			    $taskerDataArray['avg']['dist'] = round( ( $taskerDataArray['current']['days'] / $taskerDataArray['avg']['days'] ) * 100, 0 );
+		    } else {
+			    $taskerDataArray['avg']['dist'] = 0;
+		    }
+
+		    $taskerDataArray['max'] = array();
+		    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
+			    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null))
+		    )) {
+			    $databaseResults = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date", "end_date", "length"),
+				    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null), "LIMIT" => 1, "ORDER" => "length DESC") );
+
+			    $taskerDataArray['max']['start'] = $databaseResults['start_date'];
+			    $taskerDataArray['max']['end'] = $databaseResults['end_date'];
+			    $taskerDataArray['max']['days'] = $databaseResults['length'];
+			    if ($taskerDataArray['current']['days'] > 0) {
+				    $taskerDataArray['max']['dist'] = round( ( $taskerDataArray['current']['days'] / $databaseResults['length'] ) * 100, 0 );
+			    } else {
+				    $taskerDataArray['max']['dist'] = 0;
+			    }
+		    } else {
+			    $taskerDataArray['max']['start'] = date('Y-m-d');
+			    $taskerDataArray['max']['end'] = date('Y-m-d');
+			    $taskerDataArray['max']['days'] = 0;
+			    $taskerDataArray['max']['dist'] = 0;
+		    }
+
+		    $taskerDataArray['last'] = array();
+		    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
+			    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null))
+		    )) {
+			    $databaseResults = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date", "end_date", "length"),
+				    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null), "LIMIT" => 1, "ORDER" => "start_date DESC") );
+
+			    $taskerDataArray['last']['start'] = $databaseResults['start_date'];
+			    $taskerDataArray['last']['end'] = $databaseResults['end_date'];
+			    $taskerDataArray['last']['days'] = $databaseResults['length'];
+			    if ($taskerDataArray['current']['days'] > 0) {
+				    $taskerDataArray['last']['dist'] = round (($taskerDataArray['last']['days']/$databaseResults['length']) * 100, 0);
+			    } else {
+				    $taskerDataArray['last']['dist'] = 0;
+			    }
+		    } else {
+			    $taskerDataArray['last']['start'] = date('Y-m-d');
+			    $taskerDataArray['last']['end'] = date('Y-m-d');
+			    $taskerDataArray['last']['days'] = 0;
+			    $taskerDataArray['last']['dist'] = 0;
+		    }
+		    
+		    return $taskerDataArray;
         }
 
         /**
