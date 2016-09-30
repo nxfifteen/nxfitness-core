@@ -812,24 +812,27 @@
          */
         public function returnUserRecordBadges() {
             $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
-                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeType", "value")),
+                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeid" => "encodedId")),
                 array(
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.badgeType',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.value',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.dateTime',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.timesAchieved',
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.category',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.value',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.image',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.badgeGradientEndColor',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.badgeGradientStartColor',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.earnedMessage',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.marketingdescription',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.name',
-                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.user" => $this->getUserID(),
-                         "ORDER" => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.value ASC"));
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.dateTime',
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.timesAchieved',
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.fuid" => $this->getUserID(),
+                         "ORDER" => array(
+	                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages.value ASC",
+	                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.dateTime ASC"
+                         )));
 
             $badges = array();
             foreach ($userBadges as $userBadge) {
-                $badge_key = $this->getAppClass()->getSetting("badge_key_" . strtolower($userBadge['badgeType']), $userBadge['badgeType']);
+                $badge_key = $userBadge['category'];
                 if (!array_key_exists($badge_key, $badges)) {
                     $badges[ $badge_key ] = array();
                 }
