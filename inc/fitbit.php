@@ -1197,54 +1197,50 @@
                                         $unit = "";
                                     }
 
-                                    /*
-                                    * If the badge is not already in the database insert it
-                                    */
-                                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
-                                        "AND" => array(
-                                            "badgeType" => (String)$badge->badgeType,
-                                            "value"     => (String)$badge->value
-                                        )
-                                    ))
-                                    ) {
-                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
-                                            'badgeType'               => (String)$badge->badgeType,
-                                            'value'                   => (String)$badge->value,
-                                            'image'                   => basename((String)$badge->image50px),
-                                            'badgeGradientEndColor'   => (String)$badge->badgeGradientEndColor,
-                                            'badgeGradientStartColor' => (String)$badge->badgeGradientStartColor,
-                                            'earnedMessage'           => (String)$badge->earnedMessage,
-                                            'marketingDescription'    => (String)$badge->marketingDescription,
-                                            'name'                    => (String)$badge->name
-                                        ));
-                                    }
+	                                /*
+									* If the badge is not already in the database insert it
+									*/
+	                                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
+		                                "encodedId" => (String)$badge->encodedId
+	                                ))
+	                                ) {
+		                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
+			                                'encodedId'               => (String)$badge->encodedId,
+			                                'badgeType'               => (String)$badge->badgeType,
+			                                'value'                   => (String)$badge->value,
+			                                'category'                   => (String)$badge->category,
+			                                'description'                   => (String)$badge->description,
+			                                'image'                   => basename((String)$badge->image50px),
+			                                'badgeGradientEndColor'   => (String)$badge->badgeGradientEndColor,
+			                                'badgeGradientStartColor' => (String)$badge->badgeGradientStartColor,
+			                                'earnedMessage'           => (String)$badge->earnedMessage,
+			                                'marketingDescription'    => (String)$badge->marketingDescription,
+			                                'name'                    => (String)$badge->name
+		                                ));
+	                                }
 
-                                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array("AND" => array(
-                                        "user"      => $this->getActiveUser(),
-                                        "badgeType" => (String)$badge->badgeType,
-                                        "value"     => (String)$badge->value
-                                    )))
-                                    ) {
-                                        nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") again");
-                                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
-                                            'dateTime'      => (String)$badge->dateTime,
-                                            'timesAchieved' => (String)$badge->timesAchieved
-                                        ), array("AND" => array(
-                                            "user"      => $this->getActiveUser(),
-                                            "badgeType" => (String)$badge->badgeType,
-                                            "value"     => (String)$badge->value
-                                        )));
-                                    } else {
-                                        nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") " . $badge->timesAchieved . " times.");
-                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
-                                            'user'          => $this->getActiveUser(),
-                                            'badgeType'     => (String)$badge->badgeType,
-                                            'dateTime'      => (String)$badge->dateTime,
-                                            'timesAchieved' => (String)$badge->timesAchieved,
-                                            'value'         => (String)$badge->value,
-                                            'unit'          => $unit
-                                        ));
-                                    }
+	                                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array("AND" => array(
+		                                "badgeid"      => (String)$badge->encodedId,
+		                                "fuid" => $this->getActiveUser()
+	                                )))
+	                                ) {
+		                                nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->name . " again");
+		                                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
+			                                'dateTime'      => (String)$badge->dateTime,
+			                                'timesAchieved' => (String)$badge->timesAchieved
+		                                ), array("AND" => array(
+			                                "badgeid"      => (String)$badge->encodedId,
+			                                "fuid" => $this->getActiveUser()
+		                                )));
+	                                } else {
+		                                nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->name . ", " . $badge->timesAchieved . " times.");
+		                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
+			                                "badgeid"      => (String)$badge->encodedId,
+			                                "fuid" => $this->getActiveUser(),
+			                                'dateTime'      => (String)$badge->dateTime,
+			                                'timesAchieved' => (String)$badge->timesAchieved
+		                                ));
+	                                }
 
                                     $imageFileName = basename((String)$badge->image50px);
                                     if (!file_exists($badgeFolder . "/" . $imageFileName)) {
