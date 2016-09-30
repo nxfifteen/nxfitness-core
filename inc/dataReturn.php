@@ -1342,6 +1342,11 @@
                 array('date', 'meal', 'calories', 'carbs', 'fat', 'fiber', 'protein', 'sodium'),
                 $where);
 
+	        $returnArray['food']['meals']['Breakfast Summary'] = array();
+	        $returnArray['food']['meals']['Lunch Summary'] = array();
+	        $returnArray['food']['meals']['Dinner Summary'] = array();
+	        $returnArray['food']['meals']['Snacks Summary'] = array();
+
             foreach ($dbFood as $meal) {
                 if (!isset($returnArray['food']['meals'][ $meal['meal'] ]['calories'])) $returnArray['food']['meals'][ $meal['meal'] ]['calories'] = 0;
                 if (!isset($returnArray['food']['meals'][ $meal['meal'] ]['carbs'])) $returnArray['food']['meals'][ $meal['meal'] ]['carbs'] = 0;
@@ -1368,7 +1373,10 @@
                 $returnArray['food']['meals'][ $meal['meal'] ]['precentage'] = ($meal['calories'] / $returnArray['food']['summary']['calories']) * 100;
             }
 
-            ksort($returnArray['food']['meals']);
+	        if (count($returnArray['food']['meals']['Breakfast Summary']) == 0 ) unset($returnArray['food']['meals']['Breakfast Summary']);
+	        if (count($returnArray['food']['meals']['Lunch Summary']) == 0 ) unset($returnArray['food']['meals']['Lunch Summary']);
+	        if (count($returnArray['food']['meals']['Dinner Summary']) == 0 ) unset($returnArray['food']['meals']['Dinner Summary']);
+	        if (count($returnArray['food']['meals']['Snacks Summary']) == 0 ) unset($returnArray['food']['meals']['Snacks Summary']);
 
             return $returnArray;
         }
