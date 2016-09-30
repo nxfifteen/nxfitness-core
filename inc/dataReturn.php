@@ -2032,7 +2032,7 @@
             $taskerDataArray['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100, 0);
 
             $taskerDataArray['goals']['steps'] = $dbGoals[0]['steps'];
-            $taskerDataArray['goals']['distance'] = $dbGoals[0]['distance'];
+            $taskerDataArray['goals']['distance'] = round($dbGoals[0]['distance'], 2);
             $taskerDataArray['goals']['floors'] = $dbGoals[0]['floors'];
 
             $dbActive = $this->getAppClass()->getDatabase()->query("SELECT target, fairlyactive, veryactive, syncd FROM "
@@ -2049,7 +2049,7 @@
 
             $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
             foreach ($cheer as $key => $value) {
-                $taskerDataArray['raw'][ $key ] = $dbSteps[0][ $key ];
+                $taskerDataArray['raw'][ $key ] = round($dbSteps[0][ $key ], 2);
 
                 if ($dbGoals[0][ $key ] > 0) {
                     if ($dbSteps[0][ $key ] >= $dbGoals[0][ $key ] * 3) {
@@ -2091,7 +2091,6 @@
 		        $taskerDataArray['push']['steps']    = round( ( $returnUserRecordPush['current']['steps'] / $returnUserRecordPush['current']['steps_g'] ) * 100, 0 );
 	        }
 
-            $taskerDataArray['devices'] = $this->returnUserRecordDevices();
 
             $returnUserRecordFood = $this->returnUserRecordFood();
             $taskerDataArray['today']['food'] = round(($returnUserRecordFood['total'] / $returnUserRecordFood['goal']) * 100, 2);
@@ -2107,9 +2106,40 @@
             ksort($taskerDataArray['syncd']);
             ksort($taskerDataArray['raw']);
 
+	        $taskerDataArray['devices'] = $this->returnUserRecordDevices();
 	        $taskerDataArray['streak'] = $this->returnUserRecordGoalStreak();
+	        $taskerDataArray['journeys'] = array();
+	        $returnUserRecordJourneysState = $this->returnUserRecordJourneysState();
+	        if (array_key_exists("msg", $returnUserRecordJourneysState) && $returnUserRecordJourneysState['msg'] == "Not on any jounry") {
+		        $taskerDataArray['journeys']['name'] = "Not on any journey";
+	        } else {
+		        $returnUserRecordJourneysState = $returnUserRecordJourneysState[1];
+		        $taskerDataArray['journeys']['name'] = $returnUserRecordJourneysState['name'];
+		        $taskerDataArray['journeys']['blurb'] = $returnUserRecordJourneysState['blurb'];
+		        $taskerDataArray['journeys']['start_date'] = $returnUserRecordJourneysState['start_date'];
+		        $returnUserRecordJourneys = $this->returnUserRecordJourneys();
+		        $returnUserRecordJourneys = $returnUserRecordJourneys[1];
+		        $taskerDataArray['journeys']['progress'] = $returnUserRecordJourneys['legs_progress'][1];
 
-            return $taskerDataArray;
+		        $taskerDataArray['journeys']['legs'] = array(
+			        "last" => array(
+				        "name" => $returnUserRecordJourneysState['legs']['last']['legs_names'],
+				        "miles" => $returnUserRecordJourneysState['legs']['last']['miles'],
+				        "miles_off" => $returnUserRecordJourneysState['legs']['last']['miles_off'],
+				        "subtitle" => $returnUserRecordJourneysState['legs']['last']['subtitle'],
+				        "narrative" => $returnUserRecordJourneysState['legs']['last']['narrative']
+			        ),
+			        "next" => array(
+				        "name" => $returnUserRecordJourneysState['legs']['next']['legs_names'],
+				        "miles" => $returnUserRecordJourneysState['legs']['next']['miles'],
+				        "miles_off" => $returnUserRecordJourneysState['legs']['next']['miles_off'],
+				        "subtitle" => $returnUserRecordJourneysState['legs']['next']['subtitle'],
+				        "narrative" => $returnUserRecordJourneysState['legs']['next']['narrative']
+			        )
+		        );
+	        }
+
+	        return $taskerDataArray;
         }
 
 	    /**
