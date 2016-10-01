@@ -1518,6 +1518,7 @@
                         $prevNarrativeMiles = 0;
                         foreach ($dbNarratives as $dbNarrative) {
                             $narrativeArray = array(
+                                "lid"      => $dbLeg['lid'] . "/" . $dbNarrative['nid'],
                                 "legs_names"      => $dbLeg['name'],
                                 "miles"           => $dbNarrative['miles'],
                                 "miles_travelled" => $dbNarrative['miles'] - $prevNarrativeMiles,
@@ -1548,6 +1549,7 @@
 
                         foreach ($dbNarrativeNext as $dbNarrative) {
                             $narrativeArray = array(
+                                "lid"      => $dbLeg['lid'] . "/" . $dbNarrative['nid'],
                                 "legs_names"      => $dbLeg['name'],
                                 "miles"           => $dbNarrative['miles'],
                                 "miles_travelled" => $dbNarrative['miles'] - $prevNarrativeMiles,
