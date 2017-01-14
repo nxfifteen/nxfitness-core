@@ -1890,7 +1890,11 @@
 				    require_once $path . 'couchClient.php';
 				    require_once $path . 'couchDocument.php';
 
-				    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$nomie_user_key . '_meta');
+				    $nomie_url = $nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port;
+
+				    $couchClient = new couchClient ($nomie_url, $nomie_user_key . '_meta', array(
+				    	"cookie_auth" => "true"
+				    ));
 				    if ( !$couchClient->databaseExists() ) {
 					    nxr("  Nomie Meta table missing");
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
