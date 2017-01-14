@@ -1823,42 +1823,47 @@
 
                     $endTimeRaw = new DateTime ((String)$activity->startTime);
                     $endTimeRaw = $endTimeRaw->modify("+" . round($activity->activeDuration / 1000, 0) . " seconds");
-                    $endTime = $endTimeRaw->format("H:i");
+	                $endDate = $endTimeRaw->format("Y-m-d");
+	                $endTime = $endTimeRaw->format("H:i");
 
-                    nxr("   Activity Heart Rate on " . $startDate . " for " . $startTime . " till " . $endTime);
+	                if ($startDate == $endDate) {
+		                nxr("   Activity Heart Rate on " . $startDate . " for " . $startTime . " till " . $endTime);
 
-                    $hrUrl = "https://api.fitbit.com/1/user/-/activities/heart/date/" . $startDate . "/1d/1sec/time/" . $startTime . "/" . $endTime . ".json";
-                    $heartRateValues = $this->pullBabel($hrUrl);
+		                $hrUrl = "https://api.fitbit.com/1/user/-/activities/heart/date/" . $startDate . "/1d/1sec/time/" . $startTime . "/" . $endTime . ".json";
+		                $heartRateValues = $this->pullBabel($hrUrl);
 
-                    if (array_key_exists("activities-heart", $heartRateValues) &&
-                        count($heartRateValues['activities-heart']) > 0 &&
-                        array_key_exists("heartRateZones", $heartRateValues['activities-heart'][0]) &&
-                        is_array($heartRateValues['activities-heart'][0]['heartRateZones'])
-                    ) {
-                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)))) {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
-                                array("heartRateZones" => json_encode($heartRateValues['activities-heart'][0]['heartRateZones'])),
-                                array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)));
-                            nxr("   Summary Information Added to Activity Log");
-                        }
-                    }
+		                if (array_key_exists("activities-heart", $heartRateValues) &&
+		                    count($heartRateValues['activities-heart']) > 0 &&
+		                    array_key_exists("heartRateZones", $heartRateValues['activities-heart'][0]) &&
+		                    is_array($heartRateValues['activities-heart'][0]['heartRateZones'])
+		                ) {
+			                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)))) {
+				                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
+					                array("heartRateZones" => json_encode($heartRateValues['activities-heart'][0]['heartRateZones'])),
+					                array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)));
+				                nxr("   Summary Information Added to Activity Log");
+			                }
+		                }
 
-                    if (count($heartRateValues['activities-heart-intraday']['dataset']) > 0) {
-                        $activitiesHeartIntraday = $heartRateValues['activities-heart-intraday']['dataset'];
-                        $activitiesHeartIntraday = json_encode($activitiesHeartIntraday);
+		                if (count($heartRateValues['activities-heart-intraday']['dataset']) > 0) {
+			                $activitiesHeartIntraday = $heartRateValues['activities-heart-intraday']['dataset'];
+			                $activitiesHeartIntraday = json_encode($activitiesHeartIntraday);
 
-                        $dbStorage = array(
-                            "user"  => $this->activeUser,
-                            "logId" => $activity->logId,
-                            "json"  => $activitiesHeartIntraday
-                        );
+			                $dbStorage = array(
+				                "user"  => $this->activeUser,
+				                "logId" => $activity->logId,
+				                "json"  => $activitiesHeartIntraday
+			                );
 
-                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)))) {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage);
-                        } else {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage, array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)));
-                        }
-                    }
+			                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)))) {
+				                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage);
+			                } else {
+				                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage, array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)));
+			                }
+		                }
+	                } else {
+		                nxr("   Activity Heart Rate Skipped. Unable to process across dates. Activity started on " . $startDate . " and ended on " . $endDate);
+	                }
                 }
             }
         }
