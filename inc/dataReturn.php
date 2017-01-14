@@ -1518,6 +1518,7 @@
                         $prevNarrativeMiles = 0;
                         foreach ($dbNarratives as $dbNarrative) {
                             $narrativeArray = array(
+                                "lid"      => $dbLeg['lid'] . "/" . $dbNarrative['nid'],
                                 "legs_names"      => $dbLeg['name'],
                                 "miles"           => $dbNarrative['miles'],
                                 "miles_travelled" => $dbNarrative['miles'] - $prevNarrativeMiles,
@@ -1548,6 +1549,7 @@
 
                         foreach ($dbNarrativeNext as $dbNarrative) {
                             $narrativeArray = array(
+                                "lid"      => $dbLeg['lid'] . "/" . $dbNarrative['nid'],
                                 "legs_names"      => $dbLeg['name'],
                                 "miles"           => $dbNarrative['miles'],
                                 "miles_travelled" => $dbNarrative['miles'] - $prevNarrativeMiles,
@@ -2112,6 +2114,7 @@
 
 	        $taskerDataArray['devices'] = $this->returnUserRecordDevices();
 	        $taskerDataArray['streak'] = $this->returnUserRecordGoalStreak();
+
 	        $taskerDataArray['journeys'] = array();
 	        $returnUserRecordJourneysState = $this->returnUserRecordJourneysState();
 	        if (array_key_exists("msg", $returnUserRecordJourneysState) && $returnUserRecordJourneysState['msg'] == "Not on any jounry") {
@@ -2158,16 +2161,11 @@
 		    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
 			    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null))
 		    )) {
-			    $taskerDataArray['has'] = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", "start_date",
+			    $currentStreakStart = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date","length"),
 				    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null)) );
-			    $date1 = new DateTime();
-			    $date2 = new DateTime($taskerDataArray['has']);
 
-			    $days_between = $date2->diff($date1)->format("%a");
-			    $days_between = $days_between + 1;
-
-			    $taskerDataArray['current']['start'] = $taskerDataArray['has'];
-			    $taskerDataArray['current']['days'] = $days_between;
+			    $taskerDataArray['current']['start'] = $currentStreakStart["start_date"];
+			    $taskerDataArray['current']['days'] = $currentStreakStart["length"];
 		    } else {
 			    $taskerDataArray['current']['start'] = date('Y-m-d');
 			    $taskerDataArray['current']['days'] = 0;
