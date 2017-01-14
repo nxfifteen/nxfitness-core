@@ -17,6 +17,48 @@ Copyright (C) 2009  Mickael Bailly
 
 */
 
+if (!function_exists("nxr")) {
+	/**
+	 * NXR is a helper function. Past strings are recorded in a text file
+	 * and when run from a command line output is displayed on screen as
+	 * well
+	 *
+	 * @param string $msg String input to be displayed in logs files
+	 * @param bool   $includeDate
+	 * @param bool   $newline
+	 */
+	function nxr($msg, $includeDate = TRUE, $newline = TRUE) {
+		if ($includeDate) $msg = date("Y-m-d H:i:s") . ": " . $msg;
+		if ($newline) $msg = $msg . "\n";
+
+		if (is_writable(dirname(__FILE__) . "/fitbit.log")) {
+			$fh = fopen(dirname(__FILE__) . "/fitbit.log", "a");
+			fwrite($fh, $msg);
+			fclose($fh);
+		}
+	}
+}
+
+if (!function_exists("mb_parse_url")) {
+	/**
+	 * UTF-8 aware parse_url() replacement.
+	 *
+	 * @return array
+	 */
+	function mb_parse_url($url) {
+		static $keys = array('scheme'=>0,'user'=>0,'pass'=>0,'host'=>0,'port'=>0,'path'=>0,'query'=>0,'fragment'=>0);
+		if (is_string($url) && preg_match(
+				'~^((?P<scheme>[^:/?#]+):(//))?((\\3|//)?(?:(?P<user>[^:]+):(?P<pass>[^@]+)@)?(?P<host>[^/?:#]*))(:(?P<port>\\d+))?' .
+				'(?P<path>[^?#]*)(\\?(?P<query>[^#]*))?(#(?P<fragment>.*))?~u', $url, $matches))
+		{
+			foreach ($matches as $key => $value)
+				if (!isset($keys[$key]) || empty($value))
+					unset($matches[$key]);
+			return $matches;
+		}
+		return false;
+	}
+}
 
 /**
 * CouchDB client class
@@ -105,7 +147,12 @@ class couchClient extends couch {
 	public function __construct($dsn, $dbname, $options = array() ) {
 		// in the case of a cookie based authentification we have to remove user and password infos from the DSN
 		if ( array_key_exists("cookie_auth",$options) && $options["cookie_auth"] == "true" ) {
-			$parts = parse_url($dsn);
+			nxr($dsn);
+
+			$parts = mb_parse_url($dsn);
+
+			nxr($parts);
+
 			if ( !array_key_exists("user",$parts) || !array_key_exists("pass",$parts) ) {
 				throw new Exception("You should provide a user and a password to use cookie based authentification");
 			}
@@ -152,6 +199,7 @@ class couchClient extends couch {
 	 * @return array
 	 */
 	protected function _queryAndTest ( $method, $url, $allowed_status_codes, $parameters = array(),$data = NULL, $content_type = NULL ) {
+
 		$raw = $this->query($method,$url,$parameters,$data,$content_type);
 		$response = $this->parseRawResponse($raw, $this->results_as_array);
 		$this->results_as_array = false;
