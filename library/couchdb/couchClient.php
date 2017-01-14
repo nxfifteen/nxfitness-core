@@ -147,11 +147,7 @@ class couchClient extends couch {
 	public function __construct($dsn, $dbname, $options = array() ) {
 		// in the case of a cookie based authentification we have to remove user and password infos from the DSN
 		if ( array_key_exists("cookie_auth",$options) && $options["cookie_auth"] == "true" ) {
-			nxr($dsn);
-
 			$parts = mb_parse_url($dsn);
-
-			nxr($parts);
 
 			if ( !array_key_exists("user",$parts) || !array_key_exists("pass",$parts) ) {
 				throw new Exception("You should provide a user and a password to use cookie based authentification");
