@@ -18,7 +18,7 @@
 	    /**
 	     * @var String
 	     */
-	    protected $VersionInstalling = "0.0.0.4";
+	    protected $VersionInstalling = "0.0.0.5";
 
 	    /**
 	     * @var String
@@ -334,8 +334,24 @@
 			    }
 
 		    }
-
 		    $this->setSetting("version", "0.0.0.3", TRUE);
+		    return true;
+	    }
+
+	    /** @noinspection PhpUnusedPrivateMethodInspection */
+	    private function update_4() {
+
+	    	/*
+CREATE TABLE `nx_fitbit_rewards_minecraft` (
+  `rid` int(5) NOT NULL,
+  `fuid` varchar(8) NOT NULL,
+  `state` varchar(15) NOT NULL,
+  `reward` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	    	 */
+
+
+		    $this->setSetting("version", "0.0.0.4", TRUE);
 		    return true;
 
 	    }
