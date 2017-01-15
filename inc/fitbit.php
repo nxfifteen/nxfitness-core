@@ -2270,6 +2270,11 @@
                         ), array("fuid" => $this->getActiveUser()));
                     }
 
+
+	                require_once(dirname(__FILE__) . "/RewardsMinecraft.php");
+	                $RewardsMinecraft = new RewardsMinecraft();
+	                $RewardsMinecraft->check_rewards($user);
+
                 } else {
                     nxr("User has not yet authenticated with Fitbit");
                 }
