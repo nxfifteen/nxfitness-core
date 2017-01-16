@@ -171,10 +171,16 @@
 			$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
 
 			if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "rewards", array( "AND" => array( 'cat' => $cat, 'cat_sub' => $cat_sub, 'level[<=]' => $level ) ) ) ) {
-				$rewards = $this->getAppClass()->getDatabase()->select($db_prefix . "rewards", "reward", array( "AND" => array( 'cat' => $cat, 'cat_sub' => $cat_sub, 'level[<=]' => $level ), "ORDER"  => "level DESC", "LIMIT" => 10 ));
+				$rewards = $this->getAppClass()->getDatabase()->select($db_prefix . "rewards", array("reward", "nuke"), array( "AND" => array( 'cat' => $cat, 'cat_sub' => $cat_sub, 'level[<=]' => $level ), "ORDER"  => array("level ASC", "rcid DESC"), "LIMIT" => 10 ));
 
 				foreach ( $rewards as $dbReward ) {
-					array_push($reward, $dbReward);
+					array_push($reward, $dbReward["reward"]);
+					if(($key = array_search($dbReward["nuke"], $reward)) !== false) {
+						unset($reward[$key]);
+					}
+					if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "rewards_minecraft", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $dbReward["nuke"] ) ) ) ) {
+						$this->getAppClass()->getDatabase()->delete( $db_prefix . "rewards_minecraft", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $dbReward["nuke"] ) ) );
+					}
 				}
 
 			} elseif ($this->createRewards) {
