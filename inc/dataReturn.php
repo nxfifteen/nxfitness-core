@@ -2025,6 +2025,20 @@
          */
         public function returnUserRecordTasker() {
             $taskerDataArray = array();
+
+	        $minecraftUsername = $this->getAppClass()->getUserSetting($this->getUserID(), "minecraft_username");
+	        if (!is_null($minecraftUsername)) {
+		        $taskerDataArray['minecraft'] = array();
+		        $dbRewards = $this->getAppClass()->getDatabase()->query( "SELECT `reward`, `reason` FROM `" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "rewards_minecraft` WHERE `state` != 'delivered' AND `fuid` = '".$this->getUserID()."' ORDER BY `rid` ASC;" );
+		        $data = array();
+		        foreach ($dbRewards as $dbReward) {
+			        array_push($data, $dbReward['reward']);
+		        }
+		        $taskerDataArray['minecraft']['count'] = count($data);
+		        $taskerDataArray['minecraft']['rewards'] = $data;
+
+	        }
+
 	        $taskerDataArray['snapshot'] = array();
 
             $returnUserRecordWater = $this->returnUserRecordWater();
