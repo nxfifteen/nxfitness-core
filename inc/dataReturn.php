@@ -2048,7 +2048,7 @@
 				        ksort($data['give']);
 
 			        } else {
-				        $data['other'] = array();
+				        if (!is_array($data['other'])) $data['other'] = array();
 				        array_push($data['other'], str_replace("%s", $minecraftUsername, $dbReward['reward']));
 			        }
 
