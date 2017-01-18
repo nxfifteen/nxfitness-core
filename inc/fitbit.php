@@ -2309,7 +2309,7 @@
                         ), array("fuid" => $this->getActiveUser()));
                     }
 
-	                if (!is_null($this->RewardsSystem)) $this->RewardsSystem->check_rewards($user);
+	                //if (!is_null($this->RewardsSystem)) $this->RewardsSystem->check_rewards($user);
 
                 } else {
                     nxr("User has not yet authenticated with Fitbit");

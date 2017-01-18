@@ -426,17 +426,9 @@
 				$this->setUserID($user);
 				$this->setUserMinecraftID($minecraftUsername);
 
-				nxr("  Checking Goal Triggers");
-				$this->checkForGoalTriggers();
 
-				nxr("  Checking Value Triggers");
-				$this->checkForValueTriggers();
 
-				nxr("  Checking Nomie Triggers");
-				$this->checkForNomieTriggers();
 
-				nxr("  Checking Recorded Activities");
-				$this->checkForRecordedActivity();
 
 				//nxr(print_r($this->getAppClass()->getDatabase()->log(), TRUE));
 			}
@@ -446,6 +438,8 @@
 		public function EventTriggerActivity( $activity ) {
 			nxr(" ** API Event Trigger Activity");
 			nxr("      " . $activity->activityName . " recorded");
+			nxr("  Checking Recorded Activities");
+			$this->checkForRecordedActivity();
 		}
 
 		public function EventTriggerBadgeAwarded( $badge ) {
@@ -476,10 +470,18 @@
 		public function EventTriggerTracker( $date, $trigger, $value ) {
 			nxr(" ** API Event Tracker - " . $trigger);
 			nxr("      " . $value . " recorded for " . $date);
+
+			nxr("  Checking Goal Triggers");
+			$this->checkForGoalTriggers();
+
+			nxr("  Checking Value Triggers");
+			$this->checkForValueTriggers();
 		}
 
 		public function EventTriggerNomie() {
 			nxr(" ** API Event Nomie");
+			nxr("  Checking Nomie Triggers");
+			$this->checkForNomieTriggers();
 		}
 
 		public function EventTriggerStreak( $goal, $length, $ended = FALSE ) {
