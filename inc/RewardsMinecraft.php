@@ -54,7 +54,7 @@
 		/**
 		 * @param $userFid
 		 */
-		public function __construct() {
+		public function __construct($user) {
 			require_once(dirname(__FILE__) . "/app.php");
 			$this->setAppClass(new NxFitbit());
 			$this->AwardsGiven = array();
@@ -73,126 +73,6 @@
 		 */
 		private function getAppClass() {
 			return $this->AppClass;
-		}
-
-		/**
-		 * @return String
-		 */
-		public function getUserID() {
-			return $this->UserID;
-		}
-
-		/**
-		 * @param String $UserID
-		 */
-		public function setUserID($UserID) {
-			$this->UserID = $UserID;
-		}
-
-		/**
-		 * @return String
-		 */
-		public function getUserMinecraftID() {
-			return $this->UserMinecraftID;
-		}
-
-		/**
-		 * @param String $UserID
-		 */
-		public function setUserMinecraftID($UserMinecraftID) {
-			$this->UserMinecraftID = $UserMinecraftID;
-		}
-
-		public function query_api() {
-			$wmc_key_provided = $_GET['wmc_key'];
-			$wmc_key_correct = $this->getAppClass()->getSetting("wmc_key", NULL, TRUE);
-			nxr("Minecraft rewards Check");
-
-			if ($wmc_key_provided != $wmc_key_correct) {
-				nxr(" Key doesnt match");
-				return array("success" => false, "data" => array("msg" => "Incorrect key"));
-			}
-
-			$databaseTable = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "rewards_minecraft";
-
-			if ($_SERVER['REQUEST_METHOD'] == "GET") {
-				$dbRewards = $this->getAppClass()->getDatabase()->query( "SELECT * FROM `" . $databaseTable . "` WHERE `state` != 'delivered' ORDER BY `rid` ASC;" );
-				$data = array();
-				foreach ($dbRewards as $dbReward) {
-					$minecraftUsername = $this->getAppClass()->getUserSetting($dbReward['fuid'], "minecraft_username", false);
-
-					if (!array_key_exists($minecraftUsername, $data)) {
-						$data[$minecraftUsername] = array();
-					}
-					if (!array_key_exists($dbReward['rid'], $data[$minecraftUsername])) {
-						$data[ $minecraftUsername ][ $dbReward['rid'] ] = array();
-					}
-
-					$dbReward['reward'] = str_replace("%s", $minecraftUsername, $dbReward['reward']);
-
-					array_push($data[ $minecraftUsername ][ $dbReward['rid'] ], $dbReward['reward']);
-
-					nxr(" " . $minecraftUsername . " awarded " . $dbReward['reward']);
-				}
-
-				return array("success" => true, "data" => $data);
-
-			} elseif ($_SERVER['REQUEST_METHOD'] == "POST" && array_key_exists("processedOrders", $_POST)) {
-
-				$_POST['processedOrders'] = json_decode($_POST['processedOrders']);
-
-				if (is_array($_POST['processedOrders'])) {
-					foreach ($_POST['processedOrders'] as $processedOrder) {
-						if ($this->getAppClass()->getDatabase()->has($databaseTable, array("rid" => $processedOrder))) {
-
-							$this->getAppClass()->getDatabase()->update($databaseTable, array("state" => "delivered"), array("rid" => $processedOrder));
-
-							nxr(" Reward " . $processedOrder . " processed");
-						} else {
-							nxr(" Reward " . $processedOrder . " is invalid ID");
-						}
-					}
-				} else {
-					nxr(" No processed rewards recived");
-				}
-
-				nxr(print_r($this->getAppClass()->getDatabase()->log(), TRUE));
-
-				return array("success" => true);
-
-			}
-
-			return array("success" => false, "data" => array("msg" => "Unknown Error"));
-
-		}
-
-		public function check_rewards($user) {
-			nxr("Checking $user for rewards");
-			$minecraftUsername = $this->getAppClass()->getUserSetting($user, "minecraft_username");
-
-			if (is_null($minecraftUsername)) {
-				nxr("  Users is not a Minecraft player");
-			} else {
-				nxr("  Users Minecraft name is " . $minecraftUsername);
-
-				$this->setUserID($user);
-				$this->setUserMinecraftID($minecraftUsername);
-
-				nxr("  Checking Goal Triggers");
-				$this->checkForGoalTriggers();
-
-				nxr("  Checking Value Triggers");
-				$this->checkForValueTriggers();
-
-				nxr("  Checking Nomie Triggers");
-				$this->checkForNomieTriggers();
-
-				nxr("  Checking Recorded Activities");
-				$this->checkForRecordedActivity();
-
-				//nxr(print_r($this->getAppClass()->getDatabase()->log(), TRUE));
-			}
-
 		}
 
 		private function getReward($cat, $cat_sub, $level) {
@@ -325,7 +205,6 @@
 
 			foreach ( $checkForThese as $tracker ) {
 				$nomie_id = $this->getAppClass()->getDatabase()->get( $db_prefix . "nomie_trackers", "id", array( "AND" => array( "fuid" => $this->getUserID(), "label" => $tracker ) ) );
-				//nxr( "    Nomie ID for $tracker is $nomie_id" );
 				if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_events", array( "AND" => array( "fuid" => $this->getUserID(), "id" => $nomie_id, "datestamp[~]" => $currentDate ) ) ) ) {
 
 					$dbEvents = $this->getAppClass()->getDatabase()->select($db_prefix . "nomie_events", 'datestamp',
@@ -442,5 +321,173 @@
 
 		private function crushedGoal($goal) {
 			return $this->reachedGoal($goal, 2);
+		}
+
+		/**
+		 * @return String
+		 */
+		public function getUserID() {
+			return $this->UserID;
+		}
+
+		/**
+		 * @param String $UserID
+		 */
+		public function setUserID($UserID) {
+			$this->UserID = $UserID;
+		}
+
+		/**
+		 * @return String
+		 */
+		public function getUserMinecraftID() {
+			return $this->UserMinecraftID;
+		}
+
+		/**
+		 * @param String $UserID
+		 */
+		public function setUserMinecraftID($UserMinecraftID) {
+			$this->UserMinecraftID = $UserMinecraftID;
+		}
+
+		public function query_api() {
+			$wmc_key_provided = $_GET['wmc_key'];
+			$wmc_key_correct = $this->getAppClass()->getSetting("wmc_key", NULL, TRUE);
+			nxr("Minecraft rewards Check");
+
+			if ($wmc_key_provided != $wmc_key_correct) {
+				nxr(" Key doesnt match");
+				return array("success" => false, "data" => array("msg" => "Incorrect key"));
+			}
+
+			$databaseTable = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "rewards_minecraft";
+
+			if ($_SERVER['REQUEST_METHOD'] == "GET") {
+				$dbRewards = $this->getAppClass()->getDatabase()->query( "SELECT * FROM `" . $databaseTable . "` WHERE `state` != 'delivered' ORDER BY `rid` ASC;" );
+				$data = array();
+				foreach ($dbRewards as $dbReward) {
+					$minecraftUsername = $this->getAppClass()->getUserSetting($dbReward['fuid'], "minecraft_username", false);
+
+					if (!array_key_exists($minecraftUsername, $data)) {
+						$data[$minecraftUsername] = array();
+					}
+					if (!array_key_exists($dbReward['rid'], $data[$minecraftUsername])) {
+						$data[ $minecraftUsername ][ $dbReward['rid'] ] = array();
+					}
+
+					$dbReward['reward'] = str_replace("%s", $minecraftUsername, $dbReward['reward']);
+
+					array_push($data[ $minecraftUsername ][ $dbReward['rid'] ], $dbReward['reward']);
+
+					nxr(" " . $minecraftUsername . " awarded " . $dbReward['reward']);
+				}
+
+				return array("success" => true, "data" => $data);
+
+			} elseif ($_SERVER['REQUEST_METHOD'] == "POST" && array_key_exists("processedOrders", $_POST)) {
+
+				$_POST['processedOrders'] = json_decode($_POST['processedOrders']);
+
+				if (is_array($_POST['processedOrders'])) {
+					foreach ($_POST['processedOrders'] as $processedOrder) {
+						if ($this->getAppClass()->getDatabase()->has($databaseTable, array("rid" => $processedOrder))) {
+
+							$this->getAppClass()->getDatabase()->update($databaseTable, array("state" => "delivered"), array("rid" => $processedOrder));
+
+							nxr(" Reward " . $processedOrder . " processed");
+						} else {
+							nxr(" Reward " . $processedOrder . " is invalid ID");
+						}
+					}
+				} else {
+					nxr(" No processed rewards recived");
+				}
+
+				nxr(print_r($this->getAppClass()->getDatabase()->log(), TRUE));
+
+				return array("success" => true);
+
+			}
+
+			return array("success" => false, "data" => array("msg" => "Unknown Error"));
+
+		}
+
+		public function check_rewards($user) {
+			nxr("Checking $user for rewards");
+			$minecraftUsername = $this->getAppClass()->getUserSetting($user, "minecraft_username");
+
+			if (is_null($minecraftUsername)) {
+				nxr("  Users is not a Minecraft player");
+			} else {
+				nxr("  Users Minecraft name is " . $minecraftUsername);
+
+				$this->setUserID($user);
+				$this->setUserMinecraftID($minecraftUsername);
+
+				nxr("  Checking Goal Triggers");
+				$this->checkForGoalTriggers();
+
+				nxr("  Checking Value Triggers");
+				$this->checkForValueTriggers();
+
+				nxr("  Checking Nomie Triggers");
+				$this->checkForNomieTriggers();
+
+				nxr("  Checking Recorded Activities");
+				$this->checkForRecordedActivity();
+
+				//nxr(print_r($this->getAppClass()->getDatabase()->log(), TRUE));
+			}
+
+		}
+
+		public function EventTriggerActivity( $activity ) {
+			nxr(" ** API Event Trigger Activity");
+			nxr("      " . $activity->activityName . " recorded");
+		}
+
+		public function EventTriggerBadgeAwarded( $badge ) {
+			nxr(" ** API Event Trigger Badge");
+			nxr("      " . $badge->name . " awarded " . $badge->timesAchieved . " times");
+		}
+
+		public function EventTriggerWeightChange( $current, $goal, $last ) {
+			nxr(" ** API Event Trigger Weight Change");
+			nxr("      New weight is " . $current . ", previously was " . $last . ", target is still " . $goal);
+		}
+
+		public function EventTriggerFatChange( $current, $goal, $last ) {
+			nxr(" ** API Event Trigger Fat Change");
+			nxr("      New body fat is " . $current . ", previously was " . $last . ", target is still " . $goal);
+		}
+
+		public function EventTriggerNewMeal( $meal ) {
+			nxr(" ** API Event Meal Logged");
+			nxr("      " . $meal->loggedFood->name . " recorded");
+		}
+
+		public function EventTriggerVeryActive( $veryActive ) {
+			nxr(" ** API Event Very Active Time");
+			nxr("      " . $veryActive . " minutes recorded");
+		}
+
+		public function EventTriggerTracker( $date, $trigger, $value ) {
+			nxr(" ** API Event Tracker - " . $trigger);
+			nxr("      " . $value . " recorded for " . $date);
+		}
+
+		public function EventTriggerNomie() {
+			nxr(" ** API Event Nomie");
+		}
+
+		public function EventTriggerStreak( $goal, $length, $ended = FALSE ) {
+			nxr(" ** API Event Streak");
+			if ($ended) {
+				nxr("      " . $goal . " streak ended after " . $length . " days");
+			} else {
+				nxr("      " . $goal . " streak has run for " . $length . " days");
+			}
 		}
 	}

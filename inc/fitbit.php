@@ -12,10 +12,14 @@
      * @license   http://stuart.nx15.at/mit/2015 MIT
      */
     class fitbit {
-        /**
-         * @var NxFitbit
-         */
-        protected $AppClass;
+	    /**
+	     * @var NxFitbit
+	     */
+	    protected $AppClass;
+	    /**
+	     * @var RewardsMinecraft
+	     */
+	    protected $RewardsSystem;
         /**
          * @var djchen\OAuth2\Client\Provider\Fitbit
          */
@@ -57,7 +61,7 @@
 
             nxr("clientId: " . $fitbitApp->getSetting("api_clientId" . $personal, NULL, FALSE) . " used");
 
-            $this->forceSync = FALSE;
+	        $this->forceSync = FALSE;
 
             if (!defined('IS_CRON_RUN')) define('IS_CRON_RUN', FALSE);
 
@@ -187,6 +191,8 @@
 
                         if ($trigger == "steps")
 	                        $this->GoalStreakCheck($steps->dateTime, $trigger, $steps->value);
+
+	                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerTracker($currentDate->format("Y-m-d"), $trigger, $steps->value);
                     }
                 }
             }
@@ -243,6 +249,8 @@
                                 )
                             );
 
+                            if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerStreak($goal, $days_between);
+
                         } else {
                             nxr( "     New Streak started" );
 
@@ -253,6 +261,8 @@
                                 "end_date"   => NULL,
                                 "length"     => 1
                             ) );
+
+                            if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerStreak($goal, 1);
                         }
                     } else if ( $streak && $value < $steps_goals ) {
                         $dateTimeEnd = $dateTime;
@@ -261,7 +271,7 @@
                         nxr( "     Steak ran from " . $streak_start . " till " . $streak_end );
 
                         $days_between = $dateTime->diff( $dateTimeEnd )->format( "%a" );
-                        $days_between = $days_between + 1;
+                        $days_between = 1 + (int)$days_between;
 
                         $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
                             "end_date" => $streak_end,
@@ -275,6 +285,8 @@
                                 )
                             )
                         );
+
+	                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerStreak($goal, $days_between, TRUE);
                         //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
                         //nxr(end($this->getAppClass()->getDatabase()->log()));
                     }
@@ -368,8 +380,10 @@
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage);
                         }
 
-	                    //if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d')))
-		                 //   $this->GoalStreakCheck($series->dateTime, "veryactive", $series->value);
+	                    if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d'))) {
+		                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerVeryActive($series->value);
+		                    //$this->GoalStreakCheck($series->dateTime, "veryactive", $series->value);
+	                    }
                     }
                 }
             }
@@ -460,7 +474,9 @@
                                 }
                                 $this->api_setLastCleanrun("activity_log", new DateTime ($startDate));
 
+	                            if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerActivity($activity);
                             }
+
                         } else {
                             nxr("  No recorded activities");
                             $this->api_setLastCleanrun("activity_log", new DateTime ($userActivityLog->pagination->afterDate), 2);
@@ -620,6 +636,8 @@
                                 'protein'  => (String)$meal->nutritionalValues->protein,
                                 'sodium'   => (String)$meal->nutritionalValues->sodium
                             ));
+
+	                        if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerNewMeal($meal);
                         }
 
                         $this->api_setLastCleanrun("foods", $targetDateTime);
@@ -725,6 +743,11 @@
                         $db_insetArray['user'] = $this->getActiveUser();
                         $db_insetArray['date'] = $targetDate;
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray);
+
+	                    if (!is_null($this->RewardsSystem)) {
+	                    	$this->RewardsSystem->EventTriggerWeightChange($weight,$goalsweight,$lastWeight);
+		                    $this->RewardsSystem->EventTriggerFatChange($fat,$goalsfat,$lastFat);
+	                    }
                     }
 
                     if (!$fallback) $this->api_setLastCleanrun("body", new DateTime ($targetDate));
@@ -1282,6 +1305,8 @@
                                     if (!file_exists($badgeFolder . "/300px/" . $imageFileName)) {
                                         file_put_contents($badgeFolder . "/300px/" . $imageFileName, fopen((String)$badge->image300px, 'r'));
                                     }
+
+	                                if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerBadgeAwarded($badge);
                                 }
                             }
                         }
@@ -1985,6 +2010,9 @@
 				    }
 
 				    $this->api_setLastrun("nomie_trackers", NULL, TRUE);
+
+				    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerNomie();
+
 			    } else {
 				    return "-143";
 			    }
@@ -2062,6 +2090,17 @@
 
             // Check we have a valid user
             if ($this->getAppClass()->isUser($user)) {
+	            nxr(" Checking $user for minecraft reward support");
+	            $minecraftUsername = $this->getAppClass()->getUserSetting($user, "minecraft_username");
+	            if (is_null($minecraftUsername)) {
+		            nxr("  Users is not a Minecraft player");
+		            $this->RewardsSystem = NULL;
+	            } else {
+		            require_once(dirname(__FILE__) . "/RewardsMinecraft.php");
+		            $this->RewardsSystem = new RewardsMinecraft($user);
+		            nxr("  Reward system ready");
+	            }
+
                 $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
                 if (strtotime($userCoolDownTime) >= date("U")) {
                     nxr("User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
@@ -2270,10 +2309,7 @@
                         ), array("fuid" => $this->getActiveUser()));
                     }
 
-
-	                require_once(dirname(__FILE__) . "/RewardsMinecraft.php");
-	                $RewardsMinecraft = new RewardsMinecraft();
-	                $RewardsMinecraft->check_rewards($user);
+	                if (!is_null($this->RewardsSystem)) $this->RewardsSystem->check_rewards($user);
 
                 } else {
                     nxr("User has not yet authenticated with Fitbit");
