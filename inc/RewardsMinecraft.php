@@ -166,6 +166,35 @@
 
 		}
 
+		public function check_rewards($user) {
+			nxr("Checking $user for rewards");
+			$minecraftUsername = $this->getAppClass()->getUserSetting($user, "minecraft_username");
+
+			if (is_null($minecraftUsername)) {
+				nxr("  Users is not a Minecraft player");
+			} else {
+				nxr("  Users Minecraft name is " . $minecraftUsername);
+
+				$this->setUserID($user);
+				$this->setUserMinecraftID($minecraftUsername);
+
+				nxr("  Checking Goal Triggers");
+				$this->checkForGoalTriggers();
+
+				nxr("  Checking Value Triggers");
+				$this->checkForValueTriggers();
+
+				nxr("  Checking Nomie Triggers");
+				$this->checkForNomieTriggers();
+
+				nxr("  Checking Recorded Activities");
+				$this->checkForRecordedActivity();
+
+				//nxr(print_r($this->getAppClass()->getDatabase()->log(), TRUE));
+			}
+
+		}
+
 		private function getReward($cat, $cat_sub, $level) {
 			$reward = array();
 			$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
@@ -227,36 +256,14 @@
 							"reward" => $recordReward,
 							"reason" => $reason
 						) );
-						nxr( "  Awarding '$recordReward' for $for, $reason" );
+						nxr( "    Awarding '$recordReward' for $for, $reason" );
 						array_push( $this->AwardsGiven, $for );
 					} else {
-						nxr( "  Already been rewarded for $for, $reason" );
+						nxr( "    Already been rewarded for $for, $reason" );
 					}
 				}
 
 			}
-		}
-
-		public function check_rewards($user) {
-			nxr("Checking $user for rewards");
-			$minecraftUsername = $this->getAppClass()->getUserSetting($user, "minecraft_username");
-
-			if (is_null($minecraftUsername)) {
-				nxr("  Users is not a Minecraft player");
-			} else {
-				nxr("  Users Minecraft name is " . $minecraftUsername);
-
-				$this->setUserID($user);
-				$this->setUserMinecraftID($minecraftUsername);
-
-				$this->checkForGoalTriggers();
-				$this->checkForValueTriggers();
-				$this->checkForNomieTriggers();
-				$this->checkForRecordedActivity();
-
-				//nxr(print_r($this->getAppClass()->getDatabase()->log(), TRUE));
-			}
-
 		}
 
 		private function checkForRecordedActivity() {
@@ -325,10 +332,8 @@
 						array("AND" => array( "fuid" => $this->getUserID(), "id" => $nomie_id, "datestamp[~]" => "2016-10-10" ), "ORDER"  => "datestamp DESC"));
 
 					foreach ($dbEvents as $dbEvent) {
-						nxr( "      Recorded $tracker event on " .$dbEvent );
 						$reward = $this->getReward("nomie", $tracker, 1);
 						$this->award($tracker, "Recorded $tracker on $dbEvent", $reward);
-						//nxr("        The appropriate reward is $reward");
 					}
 				}
 			}
@@ -366,11 +371,8 @@
 						$hundredth = round($recordedValue / $divider, 0);
 						if ($hundredth > 0) {
 							$reward = $this->getReward( "hundredth", $goal, $hundredth );
-							//nxr("  hundredth value is $hundredth, reward is " . $reward);
 							$this->award($goal . "_values", "Reached level $hundredth $goal value on $currentDate", $reward);
-						}/* else {
-							nxr("  hundredth value is $hundredth, no reward");
-						}*/
+						}
 					}
 				}
 			}
@@ -387,21 +389,18 @@
 					if(!$this->smashedGoal($goal)) {
 						// Reached Step Goal
 						if(!$this->reachedGoal($goal)) {
-							nxr("  " . $this->getUserID() . " hasn't yet reached their $goal goal");
+							nxr("    " . $this->getUserID() . " hasn't yet reached their $goal goal");
 						} else {
 							$reward = $this->getReward("goal", $goal, 1);
 							$this->award($goal, "Beat $goal goal on $currentDate", $reward);
-							//nxr("  The appropriate reward is $reward");
 						}
 					} else {
 						$reward = $this->getReward("goal", $goal, 2);
 						$this->award($goal, "Smashed $goal goal on $currentDate", $reward);
-						//nxr("  The appropriate reward is $reward");
 					}
 				} else {
 					$reward = $this->getReward("goal", $goal, 3);
 					$this->award($goal, "Crushed $goal goal on $currentDate", $reward);
-					//nxr("  The appropriate reward is $reward");
 				}
 
 			}
@@ -421,7 +420,7 @@
 			) {
 				$recordedValue = round($this->getAppClass()->getDatabase()->get($db_prefix . "steps", $goal, array("AND" => array("user" => $this->getUserID(), "date" => $currentDate))), 3);
 				$recordedTarget = round($this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", $goal, array("AND" => array("user" => $this->getUserID(), "date" => $currentDate))), 3);
-				if (!is_numeric($recordedTarget)) {
+				if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
 					$recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_" . $goal), 3);
 				}
 
@@ -431,7 +430,7 @@
 					return true;
 				}
 			} else {
-				nxr("  No $goal data recorded for $currentDate");
+				nxr("    No $goal data recorded for $currentDate");
 			}
 
 			return false;
