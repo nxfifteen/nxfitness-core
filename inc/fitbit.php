@@ -192,7 +192,7 @@
                         if ($trigger == "steps")
 	                        $this->GoalStreakCheck($steps->dateTime, $trigger, $steps->value);
 
-	                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerTracker($currentDate->format("Y-m-d"), $trigger, $steps->value);
+	                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerTracker($steps->dateTime, $trigger, $steps->value);
                     }
                 }
             }
@@ -249,7 +249,11 @@
                                 )
                             );
 
-                            if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerStreak($goal, $days_between);
+	                        if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
+		                        if ( ! is_null( $this->RewardsSystem ) ) {
+			                        $this->RewardsSystem->EventTriggerStreak( $goal, $days_between );
+		                        }
+	                        }
 
                         } else {
                             nxr( "     New Streak started" );
@@ -262,7 +266,11 @@
                                 "length"     => 1
                             ) );
 
-                            if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerStreak($goal, 1);
+	                        if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
+		                        if ( ! is_null( $this->RewardsSystem ) ) {
+			                        $this->RewardsSystem->EventTriggerStreak( $goal, 1 );
+		                        }
+	                        }
                         }
                     } else if ( $streak && $value < $steps_goals ) {
                         $dateTimeEnd = $dateTime;
@@ -743,12 +751,12 @@
                         $db_insetArray['user'] = $this->getActiveUser();
                         $db_insetArray['date'] = $targetDate;
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray);
-
-	                    if (!is_null($this->RewardsSystem)) {
-	                    	$this->RewardsSystem->EventTriggerWeightChange($weight,$goalsweight,$lastWeight);
-		                    $this->RewardsSystem->EventTriggerFatChange($fat,$goalsfat,$lastFat);
-	                    }
                     }
+
+	                if (!is_null($this->RewardsSystem)) {
+		                $this->RewardsSystem->EventTriggerWeightChange($weight,$goalsweight,$lastWeight);
+		                $this->RewardsSystem->EventTriggerFatChange($fat,$goalsfat,$lastFat);
+	                }
 
                     if (!$fallback) $this->api_setLastCleanrun("body", new DateTime ($targetDate));
                 } else {
@@ -1949,6 +1957,7 @@
 				    }
 
 				    $trackedTrackers = array();
+				    $indexedTrackers = array();
 				    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
 				    foreach ($trackerGroups as $tracker) {
 					    $doc = $couchClient->getDoc($tracker);
@@ -1965,6 +1974,7 @@
 					    );
 
 					    array_push($trackedTrackers, $tracker);
+					    $indexedTrackers[$tracker] = $doc->label;
 
 					    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)))) {
 						    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers", $dbStorage);
@@ -1981,9 +1991,10 @@
 				    $trackerEvents = json_decode(json_encode($couchClient->getAllDocs()), TRUE);
 				    foreach ($trackerEvents['rows'] as $events) {
 					    $event = explode("|", $events['id']);
+					    $event[5] = date('Y-m-d H:i:s', $event[3] / 1000);
+
 					    if (in_array($event[2], $trackedTrackers)) {
-						    $event[3] = date('Y-m-d H:i:s', $event[3] / 1000);
-						    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_events", array("AND" => array("fuid" => $this->activeUser, "id" => $event[2], "datestamp" => $event[3])))) {
+						    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_events", array("AND" => array("fuid" => $this->activeUser, "id" => $event[2], "datestamp" => $event[5])))) {
 
 							    $document = json_decode(json_encode($couchClient->getDoc($events['id'])), TRUE);
 
@@ -1991,7 +2002,7 @@
 								    "fuid"      => $this->activeUser,
 								    "id"        => $event[2],
 								    "type"      => $event[0],
-								    "datestamp" => $event[3],
+								    "datestamp" => $event[5],
 								    "value"     => $document['value'],
 								    "score"     => $event[4],
 							    );
@@ -2006,12 +2017,18 @@
 							    //nxr( print_r($this->getAppClass()->getDatabase()->log(), true) );
 							    //return true;
 						    }
+
+						    if (!is_null($this->RewardsSystem)) {
+						    	if (date('Y-m-d', $event[3] / 1000) == date('Y-m-d')) {
+								    $event[2] = $indexedTrackers[ $event[2] ];
+								    $this->RewardsSystem->EventTriggerNomie( $event );
+							    }
+						    }
 					    }
 				    }
 
 				    $this->api_setLastrun("nomie_trackers", NULL, TRUE);
 
-				    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerNomie();
 
 			    } else {
 				    return "-143";
