@@ -2029,7 +2029,12 @@
 	        $minecraftUsername = $this->getAppClass()->getUserSetting($this->getUserID(), "minecraft_username");
 	        if (!is_null($minecraftUsername)) {
 		        $taskerDataArray['minecraft'] = array();
-		        $dbRewards = $this->getAppClass()->getDatabase()->query( "SELECT `reward`, `reason` FROM `" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "rewards_minecraft` WHERE `state` != 'delivered' AND `fuid` = '".$this->getUserID()."' ORDER BY `rid` ASC;" );
+		        $dbRewards = $this->getAppClass()->getDatabase()->query(
+			        "SELECT `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`reward` AS `reward`, `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`fuid` AS `fuid`"
+			        . " FROM `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`"
+			        . " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`reward` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`rid`)"
+			        . " WHERE `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`state` = 'pending'");
+
 		        $data = array();
 		        $taskerDataArray['minecraft']['count'] = 0;
 		        foreach ($dbRewards as $dbReward) {
