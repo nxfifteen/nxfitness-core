@@ -93,12 +93,13 @@
 			) )
 			) {
 				$rewards = $this->getAppClass()->getDatabase()->query(
-					"SELECT `".$db_prefix."reward_map`.`reward` AS `rid`,`".$db_prefix."rewards`.`reward` AS `reward`,`".$db_prefix."rewards`.`description` AS `description`"
+					"SELECT `".$db_prefix."reward_map`.`rmid` AS `rmid`,`".$db_prefix."reward_map`.`reward` AS `rid`,`".$db_prefix."rewards`.`reward` AS `reward`,`".$db_prefix."rewards`.`description` AS `description`"
 					. " FROM `".$db_prefix."reward_map`"
 					. " JOIN `".$db_prefix."rewards` ON (`".$db_prefix."reward_map`.`reward` = `".$db_prefix."rewards`.`rid`)"
 					. " WHERE `".$db_prefix."reward_map`.`cat` = '" . $cat . "' AND `".$db_prefix."reward_map`.`event` = '" . $event . "' AND `".$db_prefix."reward_map`.`rule` = '".$score."' ");
 				foreach ( $rewards as $dbReward ) {
 					array_push( $reward, array("rid" => $dbReward['rid'],
+					                           "rmid" => $dbReward['rmid'],
 					                           "reward" => $dbReward['reward'],
 					                           "description" => $dbReward['description']) );
 				}
@@ -118,7 +119,7 @@
 
 					$currentDate = new DateTime ( 'now' );
 					$currentDate = $currentDate->format( "Y-m-d" );
-					if ( !$this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'date[~]' => $currentDate, 'reward' => $recordReward['rid'] ) ) ) ) {
+					if ( !$this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'date[~]' => $currentDate, 'rmid' => $recordReward['rmid'] ) ) ) ) {
 						$nukeOne = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'rid', array( "AND" => array( "nukeid" => $recordReward['rid'], "directional" => "true" ) ));
 						if (count($nukeOne) > 0) {
 							foreach ($nukeOne as $nukeId) {
@@ -140,6 +141,7 @@
 						$this->getAppClass()->getDatabase()->insert( $db_prefix . "reward_queue", array(
 							"fuid"   => $this->getUserID(),
 							"state"  => 'pending',
+							"rmid" => $recordReward['rmid'],
 							"reward" => $recordReward['rid']
 						) );
 						nxr( "    Awarding $cat / $event ($score) = " . print_r($recordReward['description'], TRUE));
