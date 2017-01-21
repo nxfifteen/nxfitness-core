@@ -2030,14 +2030,17 @@
 	        if (!is_null($minecraftUsername)) {
 		        $taskerDataArray['minecraft'] = array();
 		        $dbRewards = $this->getAppClass()->getDatabase()->query(
-			        "SELECT `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`reward` AS `reward`, `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`fuid` AS `fuid`"
+			        "SELECT `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`reward` AS `reward`, `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_map`.`name` AS `name`, `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`fuid` AS `fuid`"
 			        . " FROM `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`"
 			        . " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`reward` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`rid`)"
+			        . " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_map` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_map`.`rmid` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`rmid`)"
 			        . " WHERE `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`state` = 'pending'");
 
 		        $data = array();
 		        $taskerDataArray['minecraft']['count'] = 0;
 		        foreach ($dbRewards as $dbReward) {
+			        if (!array_key_exists("reasons", $data)) $data['reasons'] = array();
+
 			        $taskerDataArray['minecraft']['count'] = $taskerDataArray['minecraft']['count'] + 1 ;
 			        $dbReward['reward'] = str_replace("%s", $minecraftUsername, $dbReward['reward']);
 			        if (strpos($dbReward['reward'], 'give ' . $minecraftUsername . ' ') !== false) {
@@ -2047,14 +2050,17 @@
 				        if (!array_key_exists("give", $data)) $data['give'] = array();
 				        if (!array_key_exists($dbReward['reward'][0], $data['give'])) {
 				        	$data['give'][$dbReward['reward'][0]] = $dbReward['reward'][1];
+					        array_push($data['reasons'], $dbReward['name'] . " | give " . $dbReward['reward'][1] . " " . $dbReward['reward'][0]);
 				        } else {
 					        $data['give'][$dbReward['reward'][0]] = $data['give'][$dbReward['reward'][0]] + $dbReward['reward'][1];
+					        array_push($data['reasons'], $dbReward['name'] . " | give " . $dbReward['reward'][1] . " " . $dbReward['reward'][0]);
 				        }
 				        ksort($data['give']);
 
 			        } else {
 				        if (!is_array($data['other'])) $data['other'] = array();
 				        array_push($data['other'], str_replace("%s", $minecraftUsername, $dbReward['reward']));
+				        array_push($data['reasons'], $dbReward['name'] . " | " . $dbReward['reward']);
 			        }
 
 		        }
