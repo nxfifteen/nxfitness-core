@@ -92,7 +92,16 @@
 				)
 			) )
 			) {
-
+				$rewards = $this->getAppClass()->getDatabase()->query(
+					"SELECT `".$db_prefix."reward_map`.`reward` AS `rid`,`".$db_prefix."rewards`.`reward` AS `reward`,`".$db_prefix."rewards`.`description` AS `description`"
+					. " FROM `".$db_prefix."reward_map`"
+					. " JOIN `".$db_prefix."rewards` ON (`".$db_prefix."reward_map`.`reward` = `".$db_prefix."rewards`.`rid`)"
+					. " WHERE `".$db_prefix."reward_map`.`cat` = '" . $cat . "' AND `".$db_prefix."reward_map`.`event` = '" . $event . "' AND `".$db_prefix."reward_map`.`rule` = '".$score."' ");
+				foreach ( $rewards as $dbReward ) {
+					array_push( $reward, array("rid" => $dbReward['rid'],
+					                           "reward" => $dbReward['reward'],
+					                           "description" => $dbReward['description']) );
+				}
 			} elseif ( $this->createRewards ) {
 				$this->getAppClass()->getDatabase()->insert( $db_prefix . "reward_map", array(
 					"cat"   => $cat,
@@ -105,35 +114,41 @@
 				return FALSE;
 			} else {
 
-				/*$duplicateAwards = array();
+				foreach ($reward as $recordReward) {
 
-				if (!is_array($reward)) {
-					$reward = array($reward);
-				}
-
-				if (in_array($for, $duplicateAwards) && in_array($for, $this->AwardsGiven)) {
-					nxr( "  " . $this->getUserMinecraftID() . " has an award for $for" );
-				} else {
-					$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE) ;
-
-					foreach ($reward as $recordReward) {
-						$currentDate = new DateTime ( 'now' );
-						$currentDate = $currentDate->format( "Y-m-d" );
-						if ( !$this->getAppClass()->getDatabase()->has( $db_prefix . "rewards_minecraft", array( "AND" => array( 'fuid' => $this->getUserID(), 'datetime[~]' => $currentDate, 'reward' => $recordReward ) ) ) ) {
-							$this->getAppClass()->getDatabase()->insert( $db_prefix . "rewards_minecraft", array(
-								"fuid"   => $this->getUserID(),
-								"state"  => 'pending',
-								"reward" => $recordReward,
-								"reason" => $reason
-							) );
-							nxr( "    Awarding '$recordReward' for $for, $reason" );
-							array_push( $this->AwardsGiven, $for );
-						} else {
-							nxr( "    Already been rewarded for $for, $reason" );
+					$currentDate = new DateTime ( 'now' );
+					$currentDate = $currentDate->format( "Y-m-d" );
+					if ( !$this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'date[~]' => $currentDate, 'reward' => $recordReward['rid'] ) ) ) ) {
+						$nukeOne = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'rid', array( "AND" => array( "nukeid" => $recordReward['rid'], "directional" => "true" ) ));
+						if (count($nukeOne) > 0) {
+							foreach ($nukeOne as $nukeId) {
+								if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) ) ) {
+									$this->getAppClass()->getDatabase()->delete( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) );
+								}
+							}
 						}
+
+						$nukeTwo = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'nukeid', array( "AND" => array( "rid" => $recordReward['rid'], "directional" => "false" ) ));
+						if (count($nukeTwo) > 0) {
+							foreach ($nukeTwo as $nukeId) {
+								if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) ) ) {
+									$this->getAppClass()->getDatabase()->delete( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) );
+								}
+							}
+						}
+
+						$this->getAppClass()->getDatabase()->insert( $db_prefix . "reward_queue", array(
+							"fuid"   => $this->getUserID(),
+							"state"  => 'pending',
+							"reward" => $recordReward['rid']
+						) );
+						nxr( "    Awarding $cat / $event ($score) = " . print_r($recordReward['description'], TRUE));
+					} else {
+						nxr( "    Already awarded $cat / $event ($score) = " . print_r($recordReward['description'], TRUE));
 					}
 
-				}*/
+
+				}
 
 				return $reward;
 			}
@@ -212,23 +227,26 @@
 			$databaseTable = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "rewards_minecraft";
 
 			if ( $_SERVER['REQUEST_METHOD'] == "GET" ) {
-				$dbRewards = $this->getAppClass()->getDatabase()->query( "SELECT * FROM `" . $databaseTable . "` WHERE `state` != 'delivered' ORDER BY `rid` ASC;" );
+				$rewards = $this->getAppClass()->getDatabase()->query(
+					"SELECT `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`reward` AS `reward`,"
+					. " `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`fuid` AS `fuid`,"
+					. " `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`rqid` AS `rqid`"
+					. " FROM `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`"
+					. " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`reward` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`rid`)"
+					. " WHERE `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`state` = 'pending'");
+
 				$data      = array();
-				foreach ( $dbRewards as $dbReward ) {
+				foreach ( $rewards as $dbReward ) {
 					$minecraftUsername = $this->getAppClass()->getUserSetting( $dbReward['fuid'], "minecraft_username", FALSE );
 
 					if ( ! array_key_exists( $minecraftUsername, $data ) ) {
 						$data[ $minecraftUsername ] = array();
 					}
-					if ( ! array_key_exists( $dbReward['rid'], $data[ $minecraftUsername ] ) ) {
-						$data[ $minecraftUsername ][ $dbReward['rid'] ] = array();
+					if (!array_key_exists($dbReward['rqid'], $data[$minecraftUsername])) {
+						$data[ $minecraftUsername ][ $dbReward['rqid'] ] = array();
 					}
-
 					$dbReward['reward'] = str_replace( "%s", $minecraftUsername, $dbReward['reward'] );
-
-					array_push( $data[ $minecraftUsername ][ $dbReward['rid'] ], $dbReward['reward'] );
-
-					nxr( " " . $minecraftUsername . " awarded " . $dbReward['reward'] );
+					array_push($data[ $minecraftUsername ][ $dbReward['rqid'] ], $dbReward['reward']);
 				}
 
 				return array( "success" => TRUE, "data" => $data );
@@ -239,9 +257,9 @@
 
 				if ( is_array( $_POST['processedOrders'] ) ) {
 					foreach ( $_POST['processedOrders'] as $processedOrder ) {
-						if ( $this->getAppClass()->getDatabase()->has( $databaseTable, array( "rid" => $processedOrder ) ) ) {
+						if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue", array( "rqid" => $processedOrder ) ) ) {
 
-							$this->getAppClass()->getDatabase()->update( $databaseTable, array( "state" => "delivered" ), array( "rid" => $processedOrder ) );
+							$this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue", array( "state" => "delivered" ), array( "rqid" => $processedOrder ) );
 
 							nxr( " Reward " . $processedOrder . " processed" );
 						} else {
@@ -251,8 +269,6 @@
 				} else {
 					nxr( " No processed rewards recived" );
 				}
-
-				nxr( print_r( $this->getAppClass()->getDatabase()->log(), TRUE ) );
 
 				return array( "success" => TRUE );
 
@@ -397,20 +413,9 @@
 				$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
 				if ( $value >= 1 ) {
 					$recordedValue  = round( $value, 3 );
-					$recordedTarget = round( $this->getAppClass()->getDatabase()->get( $db_prefix . "steps_goals", $trigger, array(
-						"AND" => array(
-							"user" => $this->getUserID(),
-							"date" => $date
-						)
-					) ), 3 );
-					if ( ! is_numeric( $recordedTarget ) && $recordedTarget >= 1 ) {
-						$recordedTarget = round( $this->getAppClass()->getUserSetting( $this->getUserID(), "goal_" . $trigger ), 3 );
-					}
-
 					$hundredth = round( $recordedValue / $divider, 0 );
-					if ( $hundredth > 0 ) {
-						$reward = $this->CheckForAward( "hundredth", $trigger, $hundredth );
-					}
+					nxr( " checking awards for $trigger $hundredth");
+					$this->CheckForAward( "hundredth", $trigger, $hundredth );
 
 				}
 			}
@@ -423,10 +428,8 @@
 
 			nxr( "  ** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score );
 
-			if ( $this->CheckForAward( "nomie", "logged", $event ) ) {
-				nxr( "    +" );
-			} else if ( $this->CheckForAward( "nomie", "score", $score ) ) {
-				nxr( "    ++" );
+			if ( !$this->CheckForAward( "nomie", "logged", $event ) ) {
+				$this->CheckForAward( "nomie", "score", $score );
 			}
 		}
 
