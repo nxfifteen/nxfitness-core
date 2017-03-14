@@ -1941,7 +1941,19 @@
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 				    }
 
-				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
+				    try {
+    				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('hyperStorage-groups')), TRUE);
+				    } catch (couchNotFoundException $e) {
+    				    try {
+        				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')), TRUE);
+    				    } catch (couchNotFoundException $e) {
+    				        $this->api_setLastrun("nomie_trackers", NULL, TRUE);
+				            return "-144";
+    				    }
+				    }
+				    
+				    $trackerGroups = $trackerGroups['groups'];
+				    //nxr(print_r($trackerGroups));
 				    if (array_key_exists("NxFITNESS", $trackerGroups)) {
 					    nxr("  Downloadnig NxFITNESS Group Trackers");
 					    $trackerGroups = $trackerGroups['NxFITNESS'];
@@ -1960,26 +1972,43 @@
 				    $indexedTrackers = array();
 				    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
 				    foreach ($trackerGroups as $tracker) {
-					    $doc = $couchClient->getDoc($tracker);
+				    	try {
+						    $doc = $couchClient->getDoc( $tracker );
+					    } catch (couchNotFoundException $e) {
 
-					    nxr("  Storing " . $doc->label);
+					    }
 
-					    $dbStorage = array(
-						    "fuid" => $this->activeUser,
-						    "id" => $tracker,
-						    "label" => $doc->label,
-						    "icon" => trim(str_ireplace("  ", " ", $doc->icon)),
-						    "color" => $doc->color,
-						    "charge" => $doc->charge
-					    );
+					    if (isset($doc) && is_object($doc)) {
+						    nxr( "  Storing " . $doc->label );
 
-					    array_push($trackedTrackers, $tracker);
-					    $indexedTrackers[$tracker] = $doc->label;
+						    $dbStorage = array(
+							    "fuid"   => $this->activeUser,
+							    "id"     => $tracker,
+							    "label"  => $doc->label,
+							    "icon"   => trim( str_ireplace( "  ", " ", $doc->icon ) ),
+							    "color"  => $doc->color,
+							    "charge" => $doc->charge
+						    );
 
-					    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)))) {
-						    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers", $dbStorage);
-					    } else {
-						    $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers", $dbStorage, array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)));
+						    array_push( $trackedTrackers, $tracker );
+						    $indexedTrackers[ $tracker ] = $doc->label;
+
+						    if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_trackers", array(
+							    "AND" => array(
+								    "fuid" => $this->activeUser,
+								    "id"   => $tracker
+							    )
+						    ) )
+						    ) {
+							    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_trackers", $dbStorage );
+						    } else {
+							    $this->getAppClass()->getDatabase()->update( $db_prefix . "nomie_trackers", $dbStorage, array(
+								    "AND" => array(
+									    "fuid" => $this->activeUser,
+									    "id"   => $tracker
+								    )
+							    ) );
+						    }
 					    }
 				    }
 
