@@ -58,7 +58,7 @@
 		/**
 		 * @param $userFid
 		 */
-		public function __construct( $user ) {
+		public function __construct( $user = NULL ) {
 			require_once( dirname( __FILE__ ) . "/app.php" );
 			$this->setAppClass( new NxFitbit() );
 			$this->AwardsGiven   = array();
