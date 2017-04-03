@@ -4,12 +4,13 @@
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
     header('Content-type: application/json');
 
-    if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
+	if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
+	    $start = microtime(TRUE);
         if (
-            is_writable('cache') &&
-            (!array_key_exists("debug", $_GET) || $_GET['debug'] != "true") &&
-            (!array_key_exists("cache", $_GET) || $_GET['cache'] != "false") &&
-            (!array_key_exists('_nx_fb_usr', $_COOKIE ) || $_COOKIE['_nx_fb_usr'] != $_GET['user'])
+            is_writable('cache')
+            && (!array_key_exists("debug", $_GET) || (array_key_exists("debug", $_GET) && $_GET['debug'] != "true"))
+            && (!array_key_exists("cache", $_GET) || (array_key_exists("cache", $_GET) && $_GET['cache'] != "false"))
+            /* && (!array_key_exists('_nx_fb_usr', $_COOKIE ) || $_COOKIE['_nx_fb_usr'] != $_GET['user'])*/
         ) {
             // cache files are created like cache/...
             $cacheFileName = '';
@@ -46,8 +47,13 @@
 
                 // if data was cached recently, return cached data
                 if ($cacheTime > strtotime('-45 minutes')) {
-                    echo fread($fh, filesize($cacheFile));
+	                $json = json_decode(fread($fh, filesize($cacheFile)), TRUE);
 
+	                $end = microtime(TRUE);
+
+	                $json['time'] = round(($end - $start), 4);
+
+	                echo json_encode($json);
                     return TRUE;
                 }
 
@@ -58,17 +64,52 @@
 
             $json = query_api();
             if ($json != "") {
-                echo $json;
+	            $end = microtime(TRUE);
 
-                $fh = fopen($cacheFile, 'w');
-                fwrite($fh, time() . "\n");
-                fwrite($fh, $json);
-                fclose($fh);
+	            $json['time'] = round(($end - $start), 4);
+
+	            $json_encoded = json_encode($json);
+	            echo $json_encoded;
+
+	            if (array_key_exists("cache", $json) and $json['cache'] <> 0) {
+		            $fh = fopen( $cacheFile, 'w' );
+		            fwrite( $fh, time() . "\n" );
+		            fwrite( $fh, $json_encoded );
+		            fclose( $fh );
+	            }
             }
         } else {
-            echo query_api();
+	        $json = query_api();
+
+	        $end = microtime(TRUE);
+
+	        $json['time'] = round(($end - $start), 4);
+
+	        if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
+		        print_r($json);
+	        } else {
+		        echo json_encode($json);
+	        }
+
         }
-    } elseif (!array_key_exists("user", $_GET)) {
+    } elseif (array_key_exists("wmc_key", $_GET)) {
+		$start = microtime(TRUE);
+
+		require_once(dirname(__FILE__) . "/inc/RewardsMinecraft.php");
+		$RewardsMinecraft = new RewardsMinecraft();
+
+		$json = $RewardsMinecraft->query_api();
+
+		$end = microtime(TRUE);
+
+		$json['time'] = round(($end - $start), 4);
+
+		if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
+			print_r($json);
+		} else {
+			echo json_encode($json);
+		}
+	} elseif (!array_key_exists("user", $_GET)) {
         echo json_error(100);
     } elseif (!array_key_exists("data", $_GET)) {
         echo json_error(102);
@@ -83,27 +124,7 @@
         if ($dataReturnClass->isUser()) {
             $json = $dataReturnClass->returnUserRecords($_GET);
 
-            if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
-                return print_r($json, TRUE);
-            } else {
-                if (is_array($json) and array_key_exists("results", $json) and array_key_exists("error", $json['results'])) {
-                    if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
-                        $json['error'] = TRUE;
-                        $json['code'] = "000";
-                        $json['msg'] = $json['results']['error'];
-                        $json['results'] = $json['results']['return'];
-                    }
-                    echo json_encode($json);
-
-                    return "";
-                } else if (array_key_exists("cache", $json) and $json['cache'] == 0) {
-                    echo json_encode($json);
-
-                    return "";
-                } else {
-                    return json_encode($json);
-                }
-            }
+	        return $json;
         } else {
             echo json_error(101);
 

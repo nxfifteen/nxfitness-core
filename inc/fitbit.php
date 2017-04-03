@@ -12,10 +12,14 @@
      * @license   http://stuart.nx15.at/mit/2015 MIT
      */
     class fitbit {
-        /**
-         * @var NxFitbit
-         */
-        protected $AppClass;
+	    /**
+	     * @var NxFitbit
+	     */
+	    protected $AppClass;
+	    /**
+	     * @var RewardsMinecraft
+	     */
+	    protected $RewardsSystem;
         /**
          * @var djchen\OAuth2\Client\Provider\Fitbit
          */
@@ -57,7 +61,7 @@
 
             nxr("clientId: " . $fitbitApp->getSetting("api_clientId" . $personal, NULL, FALSE) . " used");
 
-            $this->forceSync = FALSE;
+	        $this->forceSync = FALSE;
 
             if (!defined('IS_CRON_RUN')) define('IS_CRON_RUN', FALSE);
 
@@ -156,7 +160,6 @@
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
                 $FirstSeen = $this->user_getFirstSeen()->format("Y-m-d");
-	            $todaysDate = new DateTime ('now');
 
                 foreach ($userTimeSeries as $steps) {
                     if (strtotime($steps->dateTime) >= strtotime($FirstSeen)) {
@@ -186,8 +189,10 @@
                             ));
                         }
 
-	                    if ($trigger == "steps" && strtotime($steps->dateTime) < strtotime($todaysDate->format('Y-m-d')))
-                            $this->GoalStreakCheck($steps->dateTime, $trigger, $steps->value);
+                        if ($trigger == "steps")
+	                        $this->GoalStreakCheck($steps->dateTime, $trigger, $steps->value);
+
+	                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerTracker($steps->dateTime, $trigger, $steps->value);
                     }
                 }
             }
@@ -196,7 +201,9 @@
         }
 
 	    private function GoalStreakCheck($dateTime, $goal, $value) {
+            $todaysDate = new DateTime ('now');
 		    $dateTime = new DateTime ($dateTime);
+
 		    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
 
 		    $steps_goals = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", array("steps", "date"), array("AND" => array("user" => $this->getActiveUser(), "date" => $dateTime->format("Y-m-d"))));
@@ -206,70 +213,93 @@
 			    $steps_goals = $steps_goals['steps'];
 		    }
 
-		    if ($this->getAppClass()->getDatabase()->has($db_prefix . "streak_goal", array("AND" => array("fuid" => $this->getActiveUser(), "goal" => $goal, "end_date" => null)) )) {
-			    $streak = true;
-			    $streak_start = $this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", "start_date", array("AND" => array("fuid" => $this->getActiveUser(), "goal" => $goal, "end_date" => null)));
-		    } else {
-			    $streak = false;
-			    $streak_start = $dateTime->format("Y-m-d");
-		    }
+            if (strtotime($dateTime->format('Y-m-d')) < strtotime($todaysDate->format('Y-m-d')) || $value > $steps_goals) {
 
-		    if ($value >= $steps_goals) {
-			    //nxr("    Beat your target for " . $dateTime->format("Y-m-d"));
-			    if ($streak) {
-				    nxr("     Streak continuing from " . $streak_start);
+                if ($this->getAppClass()->getDatabase()->has($db_prefix . "streak_goal", array("AND" => array("fuid" => $this->getActiveUser(), "goal" => $goal, "end_date" => null)) )) {
+                    $streak = true;
+                    $streak_start = $this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", "start_date", array("AND" => array("fuid" => $this->getActiveUser(), "goal" => $goal, "end_date" => null)));
+                } else {
+                    $streak = false;
+                    $streak_start = $dateTime->format("Y-m-d");
+                }
 
-				    $dateTimeStart = new DateTime ($streak_start);
-				    $days_between = $dateTimeStart->diff($dateTime)->format("%a");
-				    $days_between = $days_between + 1;
+                //if ()
 
-				    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
-					    "length"   => $days_between
-				    ),
-					    array(
-						    "AND" => array(
-							    "fuid"       => $this->getActiveUser(),
-							    "goal"       => $goal,
-							    "start_date" => $streak_start
-						    )
-					    )
-				    );
+                if ($streak && strtotime($dateTime->format("Y-m-d")) <= strtotime($streak_start)) {
+                    //nxr( "     Streak started on " . $streak_start . " ignored since were looking at the past " .$dateTime->format("Y-m-d") );
+                } else {
+                    if ( $value >= $steps_goals ) {
+                        //nxr("    Beat your target for " . $dateTime->format("Y-m-d"));
+                        if ( $streak ) {
+                            nxr( "     Streak continuing from " . $streak_start );
 
-			    } else {
-				    nxr("     New Streak started");
+                            $dateTimeStart = new DateTime ( $streak_start );
+                            $days_between  = $dateTimeStart->diff( $dateTime )->format( "%a" );
+                            $days_between  = $days_between + 1;
 
-				    $this->getAppClass()->getDatabase()->insert( $db_prefix . "streak_goal", array(
-					    "fuid"       => $this->getActiveUser(),
-					    "goal"       => $goal,
-					    "start_date" => $dateTime->format("Y-m-d"),
-					    "end_date"   => null,
-					    "length"     => null
-				    ) );
-			    }
-		    } else if ($streak && $value < $steps_goals) {
-			    $dateTimeEnd = $dateTime;
-			    $dateTimeEnd->add(DateInterval::createFromDateString('yesterday'));
-			    $streak_end = $dateTimeEnd->format('Y-m-d');
-			    nxr("     Steak ran from " . $streak_start . " till " . $streak_end);
+                            $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
+                                "length" => $days_between
+                            ),
+                                array(
+                                    "AND" => array(
+                                        "fuid"       => $this->getActiveUser(),
+                                        "goal"       => $goal,
+                                        "start_date" => $streak_start
+                                    )
+                                )
+                            );
 
-			    $days_between = $dateTime->diff($dateTimeEnd)->format("%a");
-			    $days_between = $days_between + 1;
+	                        if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
+		                        if ( ! is_null( $this->RewardsSystem ) ) {
+			                        $this->RewardsSystem->EventTriggerStreak( $goal, $days_between );
+		                        }
+	                        }
 
-			    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
-				    "end_date" => $streak_end,
-				    "length"   => $days_between
-			    ),
-				    array(
-					    "AND" => array(
-						    "fuid"       => $this->getActiveUser(),
-						    "goal"       => $goal,
-						    "start_date" => $streak_start
-					    )
-				    )
-			    );
-			    //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
-			    //nxr(end($this->getAppClass()->getDatabase()->log()));
-		    }
+                        } else {
+                            nxr( "     New Streak started" );
+
+                            $this->getAppClass()->getDatabase()->insert( $db_prefix . "streak_goal", array(
+                                "fuid"       => $this->getActiveUser(),
+                                "goal"       => $goal,
+                                "start_date" => $dateTime->format( "Y-m-d" ),
+                                "end_date"   => NULL,
+                                "length"     => 1
+                            ) );
+
+	                        if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
+		                        if ( ! is_null( $this->RewardsSystem ) ) {
+			                        $this->RewardsSystem->EventTriggerStreak( $goal, 1 );
+		                        }
+	                        }
+                        }
+                    } else if ( $streak && $value < $steps_goals ) {
+                        $dateTimeEnd = $dateTime;
+                        $dateTimeEnd->add( DateInterval::createFromDateString( 'yesterday' ) );
+                        $streak_end = $dateTimeEnd->format( 'Y-m-d' );
+                        nxr( "     Steak ran from " . $streak_start . " till " . $streak_end );
+
+                        $days_between = $dateTime->diff( $dateTimeEnd )->format( "%a" );
+                        $days_between = 1 + (int)$days_between;
+
+                        $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
+                            "end_date" => $streak_end,
+                            "length"   => $days_between
+                        ),
+                            array(
+                                "AND" => array(
+                                    "fuid"       => $this->getActiveUser(),
+                                    "goal"       => $goal,
+                                    "start_date" => $streak_start
+                                )
+                            )
+                        );
+
+	                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerStreak($goal, $days_between, TRUE);
+                        //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
+                        //nxr(end($this->getAppClass()->getDatabase()->log()));
+                    }
+                }
+            }
 	    }
 
         /**
@@ -358,8 +388,10 @@
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage);
                         }
 
-	                    //if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d')))
-		                 //   $this->GoalStreakCheck($series->dateTime, "veryactive", $series->value);
+	                    if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d'))) {
+		                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerVeryActive($series->value);
+		                    //$this->GoalStreakCheck($series->dateTime, "veryactive", $series->value);
+	                    }
                     }
                 }
             }
@@ -450,7 +482,9 @@
                                 }
                                 $this->api_setLastCleanrun("activity_log", new DateTime ($startDate));
 
+	                            if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerActivity($activity);
                             }
+
                         } else {
                             nxr("  No recorded activities");
                             $this->api_setLastCleanrun("activity_log", new DateTime ($userActivityLog->pagination->afterDate), 2);
@@ -610,6 +644,8 @@
                                 'protein'  => (String)$meal->nutritionalValues->protein,
                                 'sodium'   => (String)$meal->nutritionalValues->sodium
                             ));
+
+	                        if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerNewMeal($meal);
                         }
 
                         $this->api_setLastCleanrun("foods", $targetDateTime);
@@ -618,7 +654,7 @@
 	                $currentDate = new DateTime();
 	                $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
 	                nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
-	                if ($daysSinceReading > 90)
+	                if ($daysSinceReading > 7)
 		               $this->api_setLastCleanrun("foods", $targetDateTime);
                 }
             }
@@ -717,12 +753,17 @@
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray);
                     }
 
+	                if (!is_null($this->RewardsSystem)) {
+		                $this->RewardsSystem->EventTriggerWeightChange($weight,$goalsweight,$lastWeight);
+		                $this->RewardsSystem->EventTriggerFatChange($fat,$goalsfat,$lastFat);
+	                }
+
                     if (!$fallback) $this->api_setLastCleanrun("body", new DateTime ($targetDate));
                 } else {
 	                $currentDate = new DateTime();
 	                $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
 	                nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
-	                if ($daysSinceReading > 90)
+	                if ($daysSinceReading > 7)
 	                   $this->api_setLastCleanrun("body", new DateTime ($targetDate));
                 }
             }
@@ -1054,13 +1095,34 @@
                 if ($this->api_isCooled("devices")) {
                     $userDevices = $this->pullBabel('user/-/devices.json', TRUE);
 
+	                $trackers = array();
                     foreach ($userDevices as $device) {
                         if (isset($device->id) and $device->id != "") {
                             if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array("AND" => array("id" => (String)$device->id)))) {
+	                            $current_battery = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", "battery", array("id" => (String)$device->id));
+
                                 $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
                                     'lastSyncTime' => (String)$device->lastSyncTime,
                                     'battery'      => (String)$device->battery
                                 ), array("id" => (String)$device->id));
+
+	                            if ($device->battery != $current_battery) {
+		                            $charged = 0;
+		                            if (
+			                            ($current_battery == "Empty" && ($device->battery == "Low" || $device->battery == "Medium" || $device->battery == "High" || $device->battery == "Full"))
+			                            || ($current_battery == "Low" && ($device->battery == "Medium" || $device->battery == "High" || $device->battery == "Full"))
+			                            || ($current_battery == "Medium" && ($device->battery == "High" || $device->battery == "Full"))
+		                            ) {
+			                            $charged = 1;
+		                            }
+
+		                            $this->getAppClass()->getDatabase()->insert( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "devices_charges", array(
+			                            'id'    => (String) $device->id,
+			                            'date'  => (String) $device->lastSyncTime,
+			                            'level' => (String) $device->battery,
+			                            'charged' => $charged
+		                            ) );
+	                            }
                             } else {
                                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
                                     'id'            => (String)$device->id,
@@ -1069,8 +1131,17 @@
                                     'lastSyncTime'  => (String)$device->lastSyncTime,
                                     'battery'       => (String)$device->battery
                                 ));
+	                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_charges", array(
+		                            'id'            => (String)$device->id,
+		                            'date' => (String)$device->lastSyncTime,
+		                            'level'          => (String)$device->battery
+	                            ));
+                            }
+
+                            if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user", array("AND" => array("user" => $this->getActiveUser(),
+                                "device" => (String)$device->id)))) {
                                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user", array(
-                                    'user'   => $this->getActiveUser(),
+                                    'user' => $this->getActiveUser(),
                                     'device' => (String)$device->id
                                 ));
                             }
@@ -1078,7 +1149,48 @@
                             if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
                                 nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
                             }
+
+                            if ($device->type == "TRACKER") {
+	                            array_push($trackers, $device->deviceVersion);
+                            }
+
                         }
+                    }
+
+                    if (count($trackers) > 0) {
+	                    $supportedHeart = FALSE;
+	                    $supportedFloors = FALSE;
+
+	                    //nxr( " Using ".count($trackers)." Trackers");
+	                    if (in_array("Surge", $trackers) || in_array("Charge HR", $trackers)) {
+		                    $supportedHeart = TRUE;
+		                    $supportedFloors = TRUE;
+	                    } else if (in_array("Charge", $trackers)) {
+		                    $supportedFloors = TRUE;
+	                    }
+
+	                    if ($supportedHeart && $this->getAppClass()->getSetting("ownerFuid", NULL, FALSE) == $this->getActiveUser()) {
+		                    //nxr( "  Heartrate Supported " );
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_heart", "1");
+	                    } else {
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_heart", "0");
+	                    }
+
+	                    if ($supportedFloors) {
+		                    //nxr( "  Floors Supported " );
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_floors", "1");
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_elevation", "1");
+	                    } else {
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_floors", "0");
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_elevation", "0");
+	                    }
+
+	                    if (!is_null($this->getAppClass()->getSetting("nomie_key_" . $this->getActiveUser(), NULL, FALSE))) {
+		                    //nxr( "  Nomie Supported " );
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_nomie_trackers", "1");
+	                    } else {
+		                    $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_nomie_trackers", "0");
+	                    }
                     }
 
                     $this->api_setLastrun("devices", NULL, TRUE);
@@ -1124,54 +1236,50 @@
                                         $unit = "";
                                     }
 
-                                    /*
-                                    * If the badge is not already in the database insert it
-                                    */
-                                    if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
-                                        "AND" => array(
-                                            "badgeType" => (String)$badge->badgeType,
-                                            "value"     => (String)$badge->value
-                                        )
-                                    ))
-                                    ) {
-                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
-                                            'badgeType'               => (String)$badge->badgeType,
-                                            'value'                   => (String)$badge->value,
-                                            'image'                   => basename((String)$badge->image50px),
-                                            'badgeGradientEndColor'   => (String)$badge->badgeGradientEndColor,
-                                            'badgeGradientStartColor' => (String)$badge->badgeGradientStartColor,
-                                            'earnedMessage'           => (String)$badge->earnedMessage,
-                                            'marketingDescription'    => (String)$badge->marketingDescription,
-                                            'name'                    => (String)$badge->name
-                                        ));
-                                    }
+	                                /*
+									* If the badge is not already in the database insert it
+									*/
+	                                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
+		                                "encodedId" => (String)$badge->encodedId
+	                                ))
+	                                ) {
+		                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages", array(
+			                                'encodedId'               => (String)$badge->encodedId,
+			                                'badgeType'               => (String)$badge->badgeType,
+			                                'value'                   => (String)$badge->value,
+			                                'category'                   => (String)$badge->category,
+			                                'description'                   => (String)$badge->description,
+			                                'image'                   => basename((String)$badge->image50px),
+			                                'badgeGradientEndColor'   => (String)$badge->badgeGradientEndColor,
+			                                'badgeGradientStartColor' => (String)$badge->badgeGradientStartColor,
+			                                'earnedMessage'           => (String)$badge->earnedMessage,
+			                                'marketingDescription'    => (String)$badge->marketingDescription,
+			                                'name'                    => (String)$badge->name
+		                                ));
+	                                }
 
-                                    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array("AND" => array(
-                                        "user"      => $this->getActiveUser(),
-                                        "badgeType" => (String)$badge->badgeType,
-                                        "value"     => (String)$badge->value
-                                    )))
-                                    ) {
-                                        nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") again");
-                                        $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
-                                            'dateTime'      => (String)$badge->dateTime,
-                                            'timesAchieved' => (String)$badge->timesAchieved
-                                        ), array("AND" => array(
-                                            "user"      => $this->getActiveUser(),
-                                            "badgeType" => (String)$badge->badgeType,
-                                            "value"     => (String)$badge->value
-                                        )));
-                                    } else {
-                                        nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->badgeType . " (" . $badge->value . ") " . $badge->timesAchieved . " times.");
-                                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
-                                            'user'          => $this->getActiveUser(),
-                                            'badgeType'     => (String)$badge->badgeType,
-                                            'dateTime'      => (String)$badge->dateTime,
-                                            'timesAchieved' => (String)$badge->timesAchieved,
-                                            'value'         => (String)$badge->value,
-                                            'unit'          => $unit
-                                        ));
-                                    }
+	                                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array("AND" => array(
+		                                "badgeid"      => (String)$badge->encodedId,
+		                                "fuid" => $this->getActiveUser()
+	                                )))
+	                                ) {
+		                                nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->name . " again");
+		                                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
+			                                'dateTime'      => (String)$badge->dateTime,
+			                                'timesAchieved' => (String)$badge->timesAchieved
+		                                ), array("AND" => array(
+			                                "badgeid"      => (String)$badge->encodedId,
+			                                "fuid" => $this->getActiveUser()
+		                                )));
+	                                } else {
+		                                nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->name . ", " . $badge->timesAchieved . " times.");
+		                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
+			                                "badgeid"      => (String)$badge->encodedId,
+			                                "fuid" => $this->getActiveUser(),
+			                                'dateTime'      => (String)$badge->dateTime,
+			                                'timesAchieved' => (String)$badge->timesAchieved
+		                                ));
+	                                }
 
                                     $imageFileName = basename((String)$badge->image50px);
                                     if (!file_exists($badgeFolder . "/" . $imageFileName)) {
@@ -1205,6 +1313,8 @@
                                     if (!file_exists($badgeFolder . "/300px/" . $imageFileName)) {
                                         file_put_contents($badgeFolder . "/300px/" . $imageFileName, fopen((String)$badge->image300px, 'r'));
                                     }
+
+	                                if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerBadgeAwarded($badge);
                                 }
                             }
                         }
@@ -1754,42 +1864,47 @@
 
                     $endTimeRaw = new DateTime ((String)$activity->startTime);
                     $endTimeRaw = $endTimeRaw->modify("+" . round($activity->activeDuration / 1000, 0) . " seconds");
-                    $endTime = $endTimeRaw->format("H:i");
+	                $endDate = $endTimeRaw->format("Y-m-d");
+	                $endTime = $endTimeRaw->format("H:i");
 
-                    nxr("   Activity Heart Rate on " . $startDate . " for " . $startTime . " till " . $endTime);
+	                if ($startDate == $endDate) {
+		                nxr("   Activity Heart Rate on " . $startDate . " for " . $startTime . " till " . $endTime);
 
-                    $hrUrl = "https://api.fitbit.com/1/user/-/activities/heart/date/" . $startDate . "/1d/1sec/time/" . $startTime . "/" . $endTime . ".json";
-                    $heartRateValues = $this->pullBabel($hrUrl);
+		                $hrUrl = "https://api.fitbit.com/1/user/-/activities/heart/date/" . $startDate . "/1d/1sec/time/" . $startTime . "/" . $endTime . ".json";
+		                $heartRateValues = $this->pullBabel($hrUrl);
 
-                    if (array_key_exists("activities-heart", $heartRateValues) &&
-                        count($heartRateValues['activities-heart']) > 0 &&
-                        array_key_exists("heartRateZones", $heartRateValues['activities-heart'][0]) &&
-                        is_array($heartRateValues['activities-heart'][0]['heartRateZones'])
-                    ) {
-                        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)))) {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
-                                array("heartRateZones" => json_encode($heartRateValues['activities-heart'][0]['heartRateZones'])),
-                                array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)));
-                            nxr("   Summary Information Added to Activity Log");
-                        }
-                    }
+		                if (array_key_exists("activities-heart", $heartRateValues) &&
+		                    count($heartRateValues['activities-heart']) > 0 &&
+		                    array_key_exists("heartRateZones", $heartRateValues['activities-heart'][0]) &&
+		                    is_array($heartRateValues['activities-heart'][0]['heartRateZones'])
+		                ) {
+			                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)))) {
+				                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
+					                array("heartRateZones" => json_encode($heartRateValues['activities-heart'][0]['heartRateZones'])),
+					                array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)));
+				                nxr("   Summary Information Added to Activity Log");
+			                }
+		                }
 
-                    if (count($heartRateValues['activities-heart-intraday']['dataset']) > 0) {
-                        $activitiesHeartIntraday = $heartRateValues['activities-heart-intraday']['dataset'];
-                        $activitiesHeartIntraday = json_encode($activitiesHeartIntraday);
+		                if (count($heartRateValues['activities-heart-intraday']['dataset']) > 0) {
+			                $activitiesHeartIntraday = $heartRateValues['activities-heart-intraday']['dataset'];
+			                $activitiesHeartIntraday = json_encode($activitiesHeartIntraday);
 
-                        $dbStorage = array(
-                            "user"  => $this->activeUser,
-                            "logId" => $activity->logId,
-                            "json"  => $activitiesHeartIntraday
-                        );
+			                $dbStorage = array(
+				                "user"  => $this->activeUser,
+				                "logId" => $activity->logId,
+				                "json"  => $activitiesHeartIntraday
+			                );
 
-                        if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)))) {
-                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage);
-                        } else {
-                            $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage, array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)));
-                        }
-                    }
+			                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)))) {
+				                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage);
+			                } else {
+				                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage, array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)));
+			                }
+		                }
+	                } else {
+		                nxr("   Activity Heart Rate Skipped. Unable to process across dates. Activity started on " . $startDate . " and ended on " . $endDate);
+	                }
                 }
             }
         }
@@ -1816,13 +1931,29 @@
 				    require_once $path . 'couchClient.php';
 				    require_once $path . 'couchDocument.php';
 
-				    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$nomie_user_key . '_meta');
+				    $nomie_url = $nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port;
+
+				    $couchClient = new couchClient ($nomie_url, $nomie_user_key . '_meta', array(
+				    	"cookie_auth" => "true"
+				    ));
 				    if ( !$couchClient->databaseExists() ) {
 					    nxr("  Nomie Meta table missing");
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 				    }
 
-				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
+				    try {
+    				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('hyperStorage-groups')), TRUE);
+				    } catch (couchNotFoundException $e) {
+    				    try {
+        				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')), TRUE);
+    				    } catch (couchNotFoundException $e) {
+    				        $this->api_setLastrun("nomie_trackers", NULL, TRUE);
+				            return "-144";
+    				    }
+				    }
+				    
+				    $trackerGroups = $trackerGroups['groups'];
+				    //nxr(print_r($trackerGroups));
 				    if (array_key_exists("NxFITNESS", $trackerGroups)) {
 					    nxr("  Downloadnig NxFITNESS Group Trackers");
 					    $trackerGroups = $trackerGroups['NxFITNESS'];
@@ -1837,29 +1968,97 @@
 					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
 				    }
 
+				    $trackedTrackers = array();
+				    $indexedTrackers = array();
 				    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
 				    foreach ($trackerGroups as $tracker) {
-					    $doc = $couchClient->getDoc($tracker);
+				    	try {
+						    $doc = $couchClient->getDoc( $tracker );
+					    } catch (couchNotFoundException $e) {
 
-					    nxr("  Storing " . $doc->label);
+					    }
 
-					    $dbStorage = array(
-						    "fuid" => $this->activeUser,
-						    "id" => $tracker,
-						    "label" => $doc->label,
-						    "icon" => trim(str_ireplace("  ", " ", $doc->icon)),
-						    "color" => $doc->color,
-						    "charge" => $doc->charge
-					    );
+					    if (isset($doc) && is_object($doc)) {
+						    nxr( "  Storing " . $doc->label );
 
-					    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)))) {
-						    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers", $dbStorage);
-					    } else {
-						    $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers", $dbStorage, array("AND" => array("fuid" => $this->activeUser, "id" => $tracker)));
+						    $dbStorage = array(
+							    "fuid"   => $this->activeUser,
+							    "id"     => $tracker,
+							    "label"  => $doc->label,
+							    "icon"   => trim( str_ireplace( "  ", " ", $doc->icon ) ),
+							    "color"  => $doc->color,
+							    "charge" => $doc->charge
+						    );
+
+						    array_push( $trackedTrackers, $tracker );
+						    $indexedTrackers[ $tracker ] = $doc->label;
+
+						    if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_trackers", array(
+							    "AND" => array(
+								    "fuid" => $this->activeUser,
+								    "id"   => $tracker
+							    )
+						    ) )
+						    ) {
+							    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_trackers", $dbStorage );
+						    } else {
+							    $this->getAppClass()->getDatabase()->update( $db_prefix . "nomie_trackers", $dbStorage, array(
+								    "AND" => array(
+									    "fuid" => $this->activeUser,
+									    "id"   => $tracker
+								    )
+							    ) );
+						    }
+					    }
+				    }
+
+				    $couchClient->useDatabase($nomie_user_key . '_events');
+				    if ( !$couchClient->databaseExists() ) {
+					    nxr("  Nomie Tracker table missing");
+					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
+				    }
+				    $trackerEvents = json_decode(json_encode($couchClient->getAllDocs()), TRUE);
+				    foreach ($trackerEvents['rows'] as $events) {
+					    $event = explode("|", $events['id']);
+					    $event[5] = date('Y-m-d H:i:s', $event[3] / 1000);
+
+					    if (in_array($event[2], $trackedTrackers)) {
+						    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_events", array("AND" => array("fuid" => $this->activeUser, "id" => $event[2], "datestamp" => $event[5])))) {
+
+							    $document = json_decode(json_encode($couchClient->getDoc($events['id'])), TRUE);
+
+							    $dbStorage = array(
+								    "fuid"      => $this->activeUser,
+								    "id"        => $event[2],
+								    "type"      => $event[0],
+								    "datestamp" => $event[5],
+								    "value"     => $document['value'],
+								    "score"     => $event[4],
+							    );
+
+							    if (is_array($document['geo']) and count($document['geo']) == 2) {
+								    $dbStorage["geo_lat"] = $document['geo'][0];
+								    $dbStorage["geo_lon"] = $document['geo'][1];
+							    }
+
+							    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_events", $dbStorage );
+							    nxr( "   Stored event : " . $event[2] . " from " . $event[3]);
+							    //nxr( print_r($this->getAppClass()->getDatabase()->log(), true) );
+							    //return true;
+						    }
+
+						    if (!is_null($this->RewardsSystem)) {
+						    	if (date('Y-m-d', $event[3] / 1000) == date('Y-m-d')) {
+								    $event[2] = $indexedTrackers[ $event[2] ];
+								    $this->RewardsSystem->EventTriggerNomie( $event );
+							    }
+						    }
 					    }
 				    }
 
 				    $this->api_setLastrun("nomie_trackers", NULL, TRUE);
+
+
 			    } else {
 				    return "-143";
 			    }
@@ -1937,6 +2136,17 @@
 
             // Check we have a valid user
             if ($this->getAppClass()->isUser($user)) {
+	            nxr(" Checking $user for minecraft reward support");
+	            $minecraftUsername = $this->getAppClass()->getUserSetting($user, "minecraft_username");
+	            if (is_null($minecraftUsername)) {
+		            nxr("  Users is not a Minecraft player");
+		            $this->RewardsSystem = NULL;
+	            } else {
+		            require_once(dirname(__FILE__) . "/RewardsMinecraft.php");
+		            $this->RewardsSystem = new RewardsMinecraft($user);
+		            nxr("  Reward system ready");
+	            }
+
                 $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
                 if (strtotime($userCoolDownTime) >= date("U")) {
                     nxr("User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
@@ -2144,6 +2354,8 @@
                             "lastrun" => $currentDate->format("Y-m-d H:i:s")
                         ), array("fuid" => $this->getActiveUser()));
                     }
+
+	                //if (!is_null($this->RewardsSystem)) $this->RewardsSystem->check_rewards($user);
 
                 } else {
                     nxr("User has not yet authenticated with Fitbit");

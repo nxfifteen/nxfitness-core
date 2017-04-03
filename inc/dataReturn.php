@@ -457,7 +457,7 @@
             $sqlQueryString  = "SELECT `activityName` as `name`,`logId`,`startDate`,`startTime`,`calories`,`activeDuration` as `duration`,`steps`, "
                               . "`activityLevelSedentary` as `sedentary`, `activityLevelLightly` as `lightly`, `activityLevelFairly` as `fairly`, `activityLevelVery` as `very`, `sourceType`, `sourceName` "
                               . "FROM `" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log` "
-                              . "WHERE `user` = '" . $this->getUserID() . "' AND `logType` != 'auto_detected' ";
+                              . "WHERE `user` = '" . $this->getUserID() . "' ";
 
             if (is_array( $_GET ) && array_key_exists( "start", $_GET ) && array_key_exists( "end", $_GET )) {
                 $sqlQueryString .= "AND `startDate` >= '" . $_GET['start'] . "' AND `startDate` <= '" . $_GET['end'] . "' ";
@@ -812,24 +812,27 @@
          */
         public function returnUserRecordBadges() {
             $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
-                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeType", "value")),
+                "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages" => array("badgeid" => "encodedId")),
                 array(
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.badgeType',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.value',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.dateTime',
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.timesAchieved',
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.category',
+                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.value',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.image',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.badgeGradientEndColor',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.badgeGradientStartColor',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.earnedMessage',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.marketingdescription',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages.name',
-                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.user" => $this->getUserID(),
-                         "ORDER" => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.value ASC"));
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.dateTime',
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'bages_user.timesAchieved',
+                ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.fuid" => $this->getUserID(),
+                         "ORDER" => array(
+	                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages.value ASC",
+	                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.dateTime ASC"
+                         )));
 
             $badges = array();
             foreach ($userBadges as $userBadge) {
-                $badge_key = $this->getAppClass()->getSetting("badge_key_" . strtolower($userBadge['badgeType']), $userBadge['badgeType']);
+                $badge_key = $userBadge['category'];
                 if (!array_key_exists($badge_key, $badges)) {
                     $badges[ $badge_key ] = array();
                 }
@@ -1182,7 +1185,8 @@
             $dbDevices = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
                 "[>]" . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user" => array("id" => "device")),
                 array(
-                    $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.deviceVersion',
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.id',
+	                $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.deviceVersion',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.battery',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.lastSyncTime',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.type',
@@ -1191,6 +1195,9 @@
             foreach ($dbDevices as $key => $dev) {
                 $dbDevices[ $key ]['image'] = 'images/devices/' . str_ireplace(" ", "", $dbDevices[ $key ]['deviceVersion']) . ".png";
                 $dbDevices[ $key ]['imageSmall'] = 'images/devices/' . str_ireplace(" ", "", $dbDevices[ $key ]['deviceVersion']) . "_small.png";
+
+	            $dbDevices[ $key ]['charges'] = $this->getAppClass()->getDatabase()->count($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_charges", array("AND" => array("charged" => 1, "id" => $dbDevices[ $key ]['id'])));
+
                 if (strtolower($dbDevices[ $key ]['battery']) == "high") {
                     $dbDevices[ $key ]['precentage'] = 100;
                 } else if (strtolower($dbDevices[ $key ]['battery']) == "medium") {
@@ -1338,6 +1345,11 @@
                 array('date', 'meal', 'calories', 'carbs', 'fat', 'fiber', 'protein', 'sodium'),
                 $where);
 
+	        $returnArray['food']['meals']['Breakfast Summary'] = array();
+	        $returnArray['food']['meals']['Lunch Summary'] = array();
+	        $returnArray['food']['meals']['Dinner Summary'] = array();
+	        $returnArray['food']['meals']['Snacks Summary'] = array();
+
             foreach ($dbFood as $meal) {
                 if (!isset($returnArray['food']['meals'][ $meal['meal'] ]['calories'])) $returnArray['food']['meals'][ $meal['meal'] ]['calories'] = 0;
                 if (!isset($returnArray['food']['meals'][ $meal['meal'] ]['carbs'])) $returnArray['food']['meals'][ $meal['meal'] ]['carbs'] = 0;
@@ -1364,7 +1376,10 @@
                 $returnArray['food']['meals'][ $meal['meal'] ]['precentage'] = ($meal['calories'] / $returnArray['food']['summary']['calories']) * 100;
             }
 
-            ksort($returnArray['food']['meals']);
+	        if (count($returnArray['food']['meals']['Breakfast Summary']) == 0 ) unset($returnArray['food']['meals']['Breakfast Summary']);
+	        if (count($returnArray['food']['meals']['Lunch Summary']) == 0 ) unset($returnArray['food']['meals']['Lunch Summary']);
+	        if (count($returnArray['food']['meals']['Dinner Summary']) == 0 ) unset($returnArray['food']['meals']['Dinner Summary']);
+	        if (count($returnArray['food']['meals']['Snacks Summary']) == 0 ) unset($returnArray['food']['meals']['Snacks Summary']);
 
             return $returnArray;
         }
@@ -1503,6 +1518,7 @@
                         $prevNarrativeMiles = 0;
                         foreach ($dbNarratives as $dbNarrative) {
                             $narrativeArray = array(
+                                "lid"      => $dbLeg['lid'] . "/" . $dbNarrative['nid'],
                                 "legs_names"      => $dbLeg['name'],
                                 "miles"           => $dbNarrative['miles'],
                                 "miles_travelled" => $dbNarrative['miles'] - $prevNarrativeMiles,
@@ -1533,6 +1549,7 @@
 
                         foreach ($dbNarrativeNext as $dbNarrative) {
                             $narrativeArray = array(
+                                "lid"      => $dbLeg['lid'] . "/" . $dbNarrative['nid'],
                                 "legs_names"      => $dbLeg['name'],
                                 "miles"           => $dbNarrative['miles'],
                                 "miles_travelled" => $dbNarrative['miles'] - $prevNarrativeMiles,
@@ -1947,9 +1964,13 @@
 			    "floors7Day" => number_format(array_sum($floors) / $cFloors,0),
 			    "distance7Day" => number_format(array_sum($distance) / $cDistance,2),
 
-			    "stepsYesterday" => number_format($steps[1] - $steps[0],0),
-			    "floorsYesterday" => number_format($floors[1] - $floors[0],0),
-			    "distanceYesterday" => number_format($distance[1] - $distance[0],0)
+			    "stepsYesterday" => number_format($steps[1] - $steps[0], 0),
+			    "floorsYesterday" => number_format($floors[1] - $floors[0], 0),
+			    "distanceYesterday" => number_format($distance[1] - $distance[0], 0),
+
+			    "stepsYesterdayRaw" => $steps[1] - $steps[0],
+			    "floorsYesterdayRaw" => $floors[1] - $floors[0],
+			    "distanceYesterdayRaw" => $distance[1] - $distance[0]
 		    );
 
 		    $convertedOutput['date'] = array_reverse($date);
@@ -2005,25 +2026,69 @@
         public function returnUserRecordTasker() {
             $taskerDataArray = array();
 
+	        $minecraftUsername = $this->getAppClass()->getUserSetting($this->getUserID(), "minecraft_username");
+	        if (!is_null($minecraftUsername)) {
+		        $taskerDataArray['minecraft'] = array();
+		        $dbRewards = $this->getAppClass()->getDatabase()->query(
+			        "SELECT `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`reward` AS `reward`, `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_map`.`name` AS `name`, `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`fuid` AS `fuid`"
+			        . " FROM `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`"
+			        . " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`reward` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`rid`)"
+			        . " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_map` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_map`.`rmid` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`rmid`)"
+			        . " WHERE `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`state` = 'pending'");
+
+		        $data = array();
+		        $taskerDataArray['minecraft']['count'] = 0;
+		        foreach ($dbRewards as $dbReward) {
+			        if (!array_key_exists("reasons", $data)) $data['reasons'] = array();
+
+			        $taskerDataArray['minecraft']['count'] = $taskerDataArray['minecraft']['count'] + 1 ;
+			        $dbReward['reward'] = str_replace("%s", $minecraftUsername, $dbReward['reward']);
+			        if (strpos($dbReward['reward'], 'give ' . $minecraftUsername . ' ') !== false) {
+				        $dbReward['reward'] = str_replace('give ' . $minecraftUsername . ' ', '', $dbReward['reward']);
+				        $dbReward['reward'] = explode(" ", $dbReward['reward']);
+
+				        if (!array_key_exists("give", $data)) $data['give'] = array();
+				        if (!array_key_exists($dbReward['reward'][0], $data['give'])) {
+				        	$data['give'][$dbReward['reward'][0]] = $dbReward['reward'][1];
+					        array_push($data['reasons'], $dbReward['name'] . " | give " . $dbReward['reward'][1] . " " . $dbReward['reward'][0]);
+				        } else {
+					        $data['give'][$dbReward['reward'][0]] = $data['give'][$dbReward['reward'][0]] + $dbReward['reward'][1];
+					        array_push($data['reasons'], $dbReward['name'] . " | give " . $dbReward['reward'][1] . " " . $dbReward['reward'][0]);
+				        }
+				        ksort($data['give']);
+
+			        } else {
+				        if (!array_key_exists("other", $data) || !is_array($data['other'])) $data['other'] = array();
+				        array_push($data['other'], str_replace("%s", $minecraftUsername, $dbReward['reward']));
+				        array_push($data['reasons'], $dbReward['name'] . " | " . $dbReward['reward']);
+			        }
+
+		        }
+		        $taskerDataArray['minecraft']['rewards'] = $data;
+
+	        }
+
+	        $taskerDataArray['snapshot'] = array();
+
             $returnUserRecordWater = $this->returnUserRecordWater();
-            $taskerDataArray['today']['water'] = round(($returnUserRecordWater[0]['liquid'] / $returnUserRecordWater[0]['goal']) * 100, 0);
-            $taskerDataArray['cheer']['water'] = $returnUserRecordWater[0]['cheer'];
+            $taskerDataArray['snapshot']['today']['water'] = round(($returnUserRecordWater[0]['liquid'] / $returnUserRecordWater[0]['goal']) * 100, 0);
+            $taskerDataArray['snapshot']['cheer']['water'] = $returnUserRecordWater[0]['cheer'];
 
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'floors', 'steps', 'syncd'), $this->dbWhere());
             $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance', 'floors', 'steps', 'syncd'), $this->dbWhere());
-            $taskerDataArray['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100, 0);
-            $taskerDataArray['today']['distance'] = round((round($dbSteps[0]['distance'], 2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
-            $taskerDataArray['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100, 0);
+            $taskerDataArray['snapshot']['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100, 0);
+            $taskerDataArray['snapshot']['today']['distance'] = round((round($dbSteps[0]['distance'], 2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
+            $taskerDataArray['snapshot']['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100, 0);
 
-            $taskerDataArray['goals']['steps'] = $dbGoals[0]['steps'];
-            $taskerDataArray['goals']['distance'] = $dbGoals[0]['distance'];
-            $taskerDataArray['goals']['floors'] = $dbGoals[0]['floors'];
+            $taskerDataArray['snapshot']['goals']['steps'] = $dbGoals[0]['steps'];
+            $taskerDataArray['snapshot']['goals']['distance'] = round($dbGoals[0]['distance'], 2);
+            $taskerDataArray['snapshot']['goals']['floors'] = $dbGoals[0]['floors'];
 
             $dbActive = $this->getAppClass()->getDatabase()->query("SELECT target, fairlyactive, veryactive, syncd FROM "
                 . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity WHERE user = '" . $this->getUserID() . "' AND date = '" . date("Y-m-d") . "'")->fetchAll();
             $dbActive = $dbActive[0];
-            $taskerDataArray['today']['active'] = round((($dbActive['fairlyactive'] + $dbActive['veryactive']) / $dbActive['target']) * 100, 2);
-            $taskerDataArray['goals']['active'] = $dbActive['target'];
+            $taskerDataArray['snapshot']['today']['active'] = round((($dbActive['fairlyactive'] + $dbActive['veryactive']) / $dbActive['target']) * 100, 2);
+            $taskerDataArray['snapshot']['goals']['active'] = $dbActive['target'];
 
             $taskerDataArray['syncd']['active'] = $dbActive['syncd'];
             $taskerDataArray['syncd']['steps'] = $dbSteps[0]['syncd'];
@@ -2033,28 +2098,28 @@
 
             $cheer = array("distance" => 0, "floors" => 0, "steps" => 0);
             foreach ($cheer as $key => $value) {
-                $taskerDataArray['raw'][ $key ] = $dbSteps[0][ $key ];
+                $taskerDataArray['snapshot']['raw'][ $key ] = round($dbSteps[0][ $key ], 2);
 
                 if ($dbGoals[0][ $key ] > 0) {
                     if ($dbSteps[0][ $key ] >= $dbGoals[0][ $key ] * 3) {
-                        $taskerDataArray['cheer'][ $key ] = 7;
+                        $taskerDataArray['snapshot']['cheer'][ $key ] = 7;
                     } else if ($dbSteps[0][ $key ] >= $dbGoals[0][ $key ] * 2.5) {
-                        $taskerDataArray['cheer'][ $key ] = 6;
+                        $taskerDataArray['snapshot']['cheer'][ $key ] = 6;
                     } else if ($dbSteps[0][ $key ] >= $dbGoals[0][ $key ] * 2) {
-                        $taskerDataArray['cheer'][ $key ] = 5;
+                        $taskerDataArray['snapshot']['cheer'][ $key ] = 5;
                     } else if ($dbSteps[0][ $key ] >= $dbGoals[0][ $key ] * 1.5) {
-                        $taskerDataArray['cheer'][ $key ] = 4;
+                        $taskerDataArray['snapshot']['cheer'][ $key ] = 4;
                     } else if ($dbSteps[0][ $key ] >= $dbGoals[0][ $key ]) {
-                        $taskerDataArray['cheer'][ $key ] = 3;
+                        $taskerDataArray['snapshot']['cheer'][ $key ] = 3;
                     } else if ($dbSteps[0][ $key ] >= $dbGoals[0][ $key ] * 0.75) {
-                        $taskerDataArray['cheer'][ $key ] = 2;
+                        $taskerDataArray['snapshot']['cheer'][ $key ] = 2;
                     } else if ($dbSteps[0][ $key ] >= $dbGoals[0][ $key ] * 0.5) {
-                        $taskerDataArray['cheer'][ $key ] = 1;
+                        $taskerDataArray['snapshot']['cheer'][ $key ] = 1;
                     } else {
-                        $taskerDataArray['cheer'][ $key ] = 0;
+                        $taskerDataArray['snapshot']['cheer'][ $key ] = 0;
                     }
                 } else {
-                    $taskerDataArray['cheer'][ $key ] = 0;
+                    $taskerDataArray['snapshot']['cheer'][ $key ] = 0;
                 }
             }
 
@@ -2075,96 +2140,137 @@
 		        $taskerDataArray['push']['steps']    = round( ( $returnUserRecordPush['current']['steps'] / $returnUserRecordPush['current']['steps_g'] ) * 100, 0 );
 	        }
 
-            $taskerDataArray['devices'] = $this->returnUserRecordDevices();
 
             $returnUserRecordFood = $this->returnUserRecordFood();
-            $taskerDataArray['today']['food'] = round(($returnUserRecordFood['total'] / $returnUserRecordFood['goal']) * 100, 2);
+	        if (array_key_exists("total", $returnUserRecordFood) && array_key_exists("goal", $returnUserRecordFood)) {
+                $taskerDataArray['snapshot']['today']['food'] = round(($returnUserRecordFood['total'] / $returnUserRecordFood['goal']) * 100, 2);
+	        } else {
+		        $taskerDataArray['snapshot']['today']['food'] = 0;
+	        }
 
             if (!is_null($this->getTracking())) {
                 $this->getTracking()->track("JSON Get", $this->getUserID(), "Tasker");
                 $this->getTracking()->track("JSON Goal", $this->getUserID(), "Tasker");
             }
 
-            ksort($taskerDataArray['today']);
-            ksort($taskerDataArray['cheer']);
-            ksort($taskerDataArray['goals']);
+            ksort($taskerDataArray['snapshot']['today']);
+            ksort($taskerDataArray['snapshot']['cheer']);
+            ksort($taskerDataArray['snapshot']['goals']);
             ksort($taskerDataArray['syncd']);
-            ksort($taskerDataArray['raw']);
+            ksort($taskerDataArray['snapshot']['raw']);
 
-	        $taskerDataArray['streak'] = array(
-		        "avg" => array ("days" => round($this->getAppClass()->getDatabase()->avg($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array('length'), array("fuid" => $this->getUserID())), 0) )
-	        );
+	        $taskerDataArray['devices'] = $this->returnUserRecordDevices();
+	        $taskerDataArray['streak'] = $this->returnUserRecordGoalStreak();
 
-	        $taskerDataArray['streak']['current'] = array();
-	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
-		        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null))
-	        )) {
-		        $taskerDataArray['streak']['has'] = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", "start_date",
-			        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null)) );
-		        $date1 = new DateTime();
-		        $date2 = new DateTime($taskerDataArray['streak']['has']);
-
-		        $days_between = $date2->diff($date1)->format("%a");
-		        $days_between = $days_between + 1;
-
-		        $taskerDataArray['streak']['current']['start'] = $taskerDataArray['streak']['has'];
-		        $taskerDataArray['streak']['current']['days'] = $days_between;
+	        $taskerDataArray['journeys'] = array();
+	        $returnUserRecordJourneysState = $this->returnUserRecordJourneysState();
+	        if (array_key_exists("msg", $returnUserRecordJourneysState) && $returnUserRecordJourneysState['msg'] == "Not on any jounry") {
+		        $taskerDataArray['journeys']['name'] = "Not on any journey";
 	        } else {
-		        $taskerDataArray['streak']['current']['start'] = date('Y-m-d');
-		        $taskerDataArray['streak']['current']['days'] = 0;
-	        }
+	        	if (is_array($returnUserRecordJourneysState) && count($returnUserRecordJourneysState) >= 2) {
+			        $returnUserRecordJourneysState             = $returnUserRecordJourneysState[1];
+			        $taskerDataArray['journeys']['name']       = $returnUserRecordJourneysState['name'];
+			        $taskerDataArray['journeys']['blurb']      = $returnUserRecordJourneysState['blurb'];
+			        $taskerDataArray['journeys']['start_date'] = $returnUserRecordJourneysState['start_date'];
+			        $returnUserRecordJourneys                  = $this->returnUserRecordJourneys();
+			        $returnUserRecordJourneys                  = $returnUserRecordJourneys[1];
+			        $taskerDataArray['journeys']['progress']   = $returnUserRecordJourneys['legs_progress'][1];
 
-	        if ($taskerDataArray['streak']['current']['days'] > 0) {
-		        $taskerDataArray['streak']['avg']['dist'] = round( ( $taskerDataArray['streak']['current']['days'] / $taskerDataArray['streak']['avg']['days'] ) * 100, 0 );
-	        } else {
-		        $taskerDataArray['streak']['avg']['dist'] = 0;
-	        }
-
-	        $taskerDataArray['streak']['max'] = array();
-	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
-		        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null))
-	        )) {
-		        $databaseResults = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date", "end_date", "length"),
-			        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null), "LIMIT" => 1, "ORDER" => "length DESC") );
-
-		        $taskerDataArray['streak']['max']['start'] = $databaseResults['start_date'];
-		        $taskerDataArray['streak']['max']['end'] = $databaseResults['end_date'];
-		        $taskerDataArray['streak']['max']['days'] = $databaseResults['length'];
-		        if ($taskerDataArray['streak']['current']['days'] > 0) {
-			        $taskerDataArray['streak']['max']['dist'] = round( ( $taskerDataArray['streak']['current']['days'] / $databaseResults['length'] ) * 100, 0 );
-		        } else {
-			        $taskerDataArray['streak']['max']['dist'] = 0;
+			        $taskerDataArray['journeys']['legs'] = array(
+				        "last" => array(
+					        "name"      => $returnUserRecordJourneysState['legs']['last']['legs_names'],
+					        "miles"     => $returnUserRecordJourneysState['legs']['last']['miles'],
+					        "miles_off" => $returnUserRecordJourneysState['legs']['last']['miles_off'],
+					        "subtitle"  => $returnUserRecordJourneysState['legs']['last']['subtitle'],
+					        "narrative" => $returnUserRecordJourneysState['legs']['last']['narrative']
+				        ),
+				        "next" => array(
+					        "name"      => $returnUserRecordJourneysState['legs']['next']['legs_names'],
+					        "miles"     => $returnUserRecordJourneysState['legs']['next']['miles'],
+					        "miles_off" => $returnUserRecordJourneysState['legs']['next']['miles_off'],
+					        "subtitle"  => $returnUserRecordJourneysState['legs']['next']['subtitle'],
+					        "narrative" => $returnUserRecordJourneysState['legs']['next']['narrative']
+				        )
+			        );
 		        }
-	        } else {
-		        $taskerDataArray['streak']['max']['start'] = date('Y-m-d');
-		        $taskerDataArray['streak']['max']['end'] = date('Y-m-d');
-		        $taskerDataArray['streak']['max']['days'] = 0;
-		        $taskerDataArray['streak']['max']['dist'] = 0;
 	        }
 
-	        $taskerDataArray['streak']['last'] = array();
-	        if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
-		        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null))
-	        )) {
-		        $databaseResults = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date", "end_date", "length"),
-			        array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null), "LIMIT" => 1, "ORDER" => "start_date DESC") );
+	        return $taskerDataArray;
+        }
 
-		        $taskerDataArray['streak']['last']['start'] = $databaseResults['start_date'];
-		        $taskerDataArray['streak']['last']['end'] = $databaseResults['end_date'];
-		        $taskerDataArray['streak']['last']['days'] = $databaseResults['length'];
-		        if ($taskerDataArray['streak']['current']['days'] > 0) {
-			        $taskerDataArray['streak']['last']['dist'] = round (($taskerDataArray['streak']['last']['days']/$databaseResults['length']) * 100, 0);
-		        } else {
-			        $taskerDataArray['streak']['last']['dist'] = 0;
-		        }
-	        } else {
-		        $taskerDataArray['streak']['last']['start'] = date('Y-m-d');
-		        $taskerDataArray['streak']['last']['end'] = date('Y-m-d');
-		        $taskerDataArray['streak']['last']['days'] = 0;
-		        $taskerDataArray['streak']['last']['dist'] = 0;
-	        }
+	    /**
+	     * @return array
+	     */
+	    public function returnUserRecordGoalStreak() {
+		    $taskerDataArray = array(
+			    "avg" => array ("days" => round($this->getAppClass()->getDatabase()->avg($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array('length'), array("fuid" => $this->getUserID())), 0) )
+		    );
 
-            return $taskerDataArray;
+		    $taskerDataArray['current'] = array();
+		    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
+			    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null))
+		    )) {
+			    $currentStreakStart = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date","length"),
+				    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null)) );
+
+			    $taskerDataArray['current']['start'] = $currentStreakStart["start_date"];
+			    $taskerDataArray['current']['days'] = $currentStreakStart["length"];
+		    } else {
+			    $taskerDataArray['current']['start'] = date('Y-m-d');
+			    $taskerDataArray['current']['days'] = 0;
+		    }
+
+		    if ($taskerDataArray['current']['days'] > 0) {
+			    $taskerDataArray['avg']['dist'] = round( ( $taskerDataArray['current']['days'] / $taskerDataArray['avg']['days'] ) * 100, 0 );
+		    } else {
+			    $taskerDataArray['avg']['dist'] = 0;
+		    }
+
+		    $taskerDataArray['max'] = array();
+		    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
+			    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null))
+		    )) {
+			    $databaseResults = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date", "end_date", "length"),
+				    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null), "LIMIT" => 1, "ORDER" => "length DESC") );
+
+			    $taskerDataArray['max']['start'] = $databaseResults['start_date'];
+			    $taskerDataArray['max']['end'] = $databaseResults['end_date'];
+			    $taskerDataArray['max']['days'] = $databaseResults['length'];
+			    if ($taskerDataArray['current']['days'] > 0) {
+				    $taskerDataArray['max']['dist'] = round( ( $taskerDataArray['current']['days'] / $databaseResults['length'] ) * 100, 0 );
+			    } else {
+				    $taskerDataArray['max']['dist'] = 0;
+			    }
+		    } else {
+			    $taskerDataArray['max']['start'] = date('Y-m-d');
+			    $taskerDataArray['max']['end'] = date('Y-m-d');
+			    $taskerDataArray['max']['days'] = 0;
+			    $taskerDataArray['max']['dist'] = 0;
+		    }
+
+		    $taskerDataArray['last'] = array();
+		    if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal",
+			    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null))
+		    )) {
+			    $databaseResults = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "streak_goal", array("start_date", "end_date", "length"),
+				    array("AND" => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null), "LIMIT" => 1, "ORDER" => "start_date DESC") );
+
+			    $taskerDataArray['last']['start'] = $databaseResults['start_date'];
+			    $taskerDataArray['last']['end'] = $databaseResults['end_date'];
+			    $taskerDataArray['last']['days'] = $databaseResults['length'];
+			    if ($taskerDataArray['current']['days'] > 0) {
+				    $taskerDataArray['last']['dist'] = round (($taskerDataArray['last']['days']/$databaseResults['length']) * 100, 0);
+			    } else {
+				    $taskerDataArray['last']['dist'] = 0;
+			    }
+		    } else {
+			    $taskerDataArray['last']['start'] = date('Y-m-d');
+			    $taskerDataArray['last']['end'] = date('Y-m-d');
+			    $taskerDataArray['last']['days'] = 0;
+			    $taskerDataArray['last']['dist'] = 0;
+		    }
+		    
+		    return $taskerDataArray;
         }
 
         /**
@@ -2680,6 +2786,7 @@
                                       'username' => $dbUserName,
                                       "cache"    => TRUE,
                                       "data"     => $get['data'],
+                                      "time"     => 0,
                                       "period"   => $this->getParamPeriod(),
                                       "date"     => $this->getParamDate());
                 $resultsArray['results'] = $this->$functionName();
@@ -2691,6 +2798,9 @@
 
                 if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
                     $resultsArray['dbLog'] = $this->getAppClass()->getDatabase()->log();
+	                foreach ( $resultsArray['dbLog'] as $key => $value ) {
+		                $resultsArray['dbLog'][$key] = str_ireplace("\"", "`", $value);
+	                }
                 }
 
                 if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER))
@@ -2711,110 +2821,97 @@
 	     * @return array
 	     */
 	    public function returnUserRecordNomie() {
-		    $path = dirname(__FILE__) . "/../library/couchdb/";
-
-		    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", NULL, FALSE);
-		    $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", NULL, FALSE);
-		    $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', FALSE);
-		    $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', FALSE);
-		    $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', FALSE);
-
-		    $nomie_user_key = $this->getAppClass()->getUserSetting($this->getUserID(), "nomie_key", 'nomie');
-
-		    require_once $path . 'couch.php';
-		    require_once $path . 'couchClient.php';
-		    require_once $path . 'couchDocument.php';
-
-		    $couchClient = new couchClient ($nomie_protocol.'://'.$nomie_username.':'.$nomie_password.'@'.$nomie_host.':'.$nomie_port,$nomie_user_key . '_meta');
-		    if ( !$couchClient->databaseExists() ) {
-			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-		    }
-
-		    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')->obj), TRUE);
-		    if (array_key_exists("NxFITNESS", $trackerGroups)) {
-			    $trackerGroups = $trackerGroups['NxFITNESS'];
-		    } else {
-			    $trackerGroups = $trackerGroups['All'];
-		    }
-
-		    $couchClient->useDatabase($nomie_user_key . '_trackers');
-		    if ( !$couchClient->databaseExists() ) {
-			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-		    }
+		    $dbTrackers = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "nomie_trackers",
+			    array('id', 'label', 'icon', 'color', 'charge', 'sort'),
+			    array("AND" => array("fuid" => $this->getUserID(), "sort[>]" => -1),
+	            "ORDER"  => "sort ASC"));
 
 		    $trackerShared = array();
-		    foreach ($trackerGroups as $tracker) {
-		    	$doc = $couchClient->getDoc($tracker);
-			    $trackerShared[$tracker] = array(
-				    "label" => $doc->label,
-				    "icon" => $this->translateNomieIcons($doc->icon),
-				    "color" => $doc->color,
-				    "charge" => $doc->charge,
-				    "stats" => array(
-					    "first" => $doc->stats->first,
-					    "last" => $doc->stats->last,
-					    "dayAvg" => $doc->stats->dayAvg,
-					    "monthAvg" => $doc->stats->monthAvg
-				    ),
-			    );
-		    }
+		    foreach ( $dbTrackers as $tracker ) {
+			    unset( $dbEventCount );
+			    unset( $dbEventFirst );
+			    unset( $dbEventLast );
+			    unset( $days_between );
+			    unset( $months_between );
 
-		    $couchClient->useDatabase($nomie_user_key . '_events');
-		    if ( !$couchClient->databaseExists() ) {
-			    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-		    }
-		    $allEvents = $couchClient->getAllDocs();
-		    foreach ($allEvents->rows as $event) {
-			    $eventId = explode("|", $event->id);
-			    if (in_array($eventId[2], $trackerGroups)) {
-				    $trackerShared[$eventId[2]]['events'][] = $event->id;
+			    $dayAvg   = 0;
+			    $monthAvg = 0;
+
+			    $dbEventCount = $this->getAppClass()->getDatabase()->count( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+				    'id', array( "AND" => array( "fuid" => $this->getUserID(), "id" => $tracker['id'] ) ) );
+
+			    if ( $dbEventCount > 0 ) {
+				    $dbEventFirst = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+					    'datestamp', array(
+						    "AND"   => array( "fuid" => $this->getUserID(), "id" => $tracker['id'] ),
+						    "ORDER" => "datestamp ASC",
+						    "LIMIT" => 1
+					    ) );
+
+				    if ( empty( $dbEventFirst ) ) {
+					    $dbEventFirst = "0000-00-00 00:00:00";
+				    }
+
+				    if ( $dbEventFirst != "0000-00-00 00:00:00" ) {
+					    $dbEventLast = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+						    'datestamp', array(
+							    "AND"   => array( "fuid" => $this->getUserID(), "id" => $tracker['id'] ),
+							    "ORDER" => "datestamp DESC",
+							    "LIMIT" => 1
+						    ) );
+
+					    if ( empty( $dbEventLast ) ) {
+						    $dbEventLast = "0000-00-00 00:00:00";
+					    }
+
+
+					    if ( $dbEventLast != "0000-00-00 00:00:00" ) {
+						    $dateTimeFirst  = new DateTime ( $dbEventFirst );
+						    $days_between   = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%a" );
+						    $days_between   = $days_between + 1;
+						    $months_between = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%m" );
+						    $months_between = $months_between + 1;
+					    }
+				    }
+
+				    if ( empty( $dbEventLast ) ) {
+					    $dbEventLast = "0000-00-00 00:00:00";
+				    }
+
+				    if ( ! isset( $days_between ) ) {
+					    $days_between = 0;
+				    } else {
+					    $dayAvg = round( $dbEventCount / $days_between, 2 );
+				    }
+
+				    if ( ! isset( $months_between ) ) {
+					    $months_between = 0;
+				    } else {
+					    $monthAvg = round( $dbEventCount / $months_between, 2 );
+				    }
+
+				    $dateTimeFirst = new DateTime ( $dbEventFirst );
+				    $dateTimeLast  = new DateTime ( $dbEventLast );
+
+				    $trackerShared[ $tracker['id'] ] = array(
+					    "label"    => $tracker['label'],
+					    "icon"     => $tracker['icon'],
+					    "icon_raw" => $tracker['icon'],
+					    "color"    => $tracker['color'],
+					    "charge"   => $tracker['charge'],
+					    "stats"    => array(
+						    "events"   => $dbEventCount,
+						    "first"    => $dateTimeFirst->format( "Y-m-d H:i" ),
+						    "last"     => $dateTimeLast->format( "Y-m-d H:i" ),
+						    "dayAvg"   => $dayAvg,
+						    "monthAvg" => $monthAvg
+					    ),
+				    );
 			    }
 		    }
-
-
-		    foreach ($trackerShared as $id => $tracker) {
-		    	if (is_array($tracker) && array_key_exists("events",$tracker) && count($tracker['events']) == 0) {
-		    		unset($trackerShared[$id]);
-			    }
-		    }
-
 
 		    return array(
 			    "dbTrackers" => $trackerShared
 			    );
-	    }
-
-	    private function translateNomieIcons($inputIcon) {
-		    $inputIcon = trim(str_ireplace("  ", " ", $inputIcon));
-		    switch ( $inputIcon ) {
-			    case "flaticon-leg5":
-			    case "fitnessIcons-person":
-				    return "fa fa-medkit";
-
-			    case "icon-water":
-				    return "fa fa-tint";
-
-			    case "icon-emo-sleep":
-				    return "fa fa-bed";
-
-			    case "foodIcons-soda":
-			    case "drinkIcons-wine-glass":
-				    return "fa fa-glass";
-
-			    case "drinkIcons-glass-2":
-			    case "drinkIcons-jar-of-beer":
-				    return "fa fa-beer";
-
-			    case "flaticon-ice64":
-			    case "flaticon-hamburger2":
-			    case "flaticon-porridge":
-				    return "fa fa-cutlery";
-
-			    case "flaticon-poo":
-			    case "fa flaticon-service":
-				    return "fa fa-universal-access";
-			    default:
-				    return $inputIcon;
-		    }
 	    }
     }
