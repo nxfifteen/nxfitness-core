@@ -4,7 +4,7 @@
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
     header('Content-type: application/json');
 
-    if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
+	if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
 	    $start = microtime(TRUE);
         if (
             is_writable('cache')
@@ -92,7 +92,24 @@
 	        }
 
         }
-    } elseif (!array_key_exists("user", $_GET)) {
+    } elseif (array_key_exists("wmc_key", $_GET)) {
+		$start = microtime(TRUE);
+
+		require_once(dirname(__FILE__) . "/inc/RewardsMinecraft.php");
+		$RewardsMinecraft = new RewardsMinecraft();
+
+		$json = $RewardsMinecraft->query_api();
+
+		$end = microtime(TRUE);
+
+		$json['time'] = round(($end - $start), 4);
+
+		if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
+			print_r($json);
+		} else {
+			echo json_encode($json);
+		}
+	} elseif (!array_key_exists("user", $_GET)) {
         echo json_error(100);
     } elseif (!array_key_exists("data", $_GET)) {
         echo json_error(102);
