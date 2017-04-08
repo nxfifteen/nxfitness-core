@@ -2123,13 +2123,24 @@
 						    $event[5] = date( 'Y-m-d H:i:s', $event[3] / 1000 );
 
 						    if ( in_array( $event[2], $trackedTrackers ) ) {
+						    	if (strlen ($event[2]) > 30) {
+								    $this->getAppClass()->getErrorRecording()->captureMessage( "Observed event ID grater than DB supports", array( 'database' ), array(
+									    'level' => 'warning',
+									    'extra' => array(
+										    'event_id'      => $event[2],
+										    'string_lenght'    => strlen ($event[2]),
+										    'php_version'  => phpversion(),
+										    'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
+									    )
+								    ) );
+							    }
+
 							    if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_events", array( "AND" => array( "fuid"      => $this->activeUser,
 							                                                                                                         "id"        => $event[2],
 							                                                                                                         "datestamp" => $event[5]
 							    )
 							    ) )
 							    ) {
-
 								    $document = json_decode( json_encode( $couchClient->getDoc( $events['id'] ) ), TRUE );
 
 								    $dbStorage = array(
@@ -2159,6 +2170,8 @@
 									    $this->RewardsSystem->EventTriggerNomie( $event );
 								    }
 							    }
+						    } else {
+							    //nxr( "   Already Recorded : " . $event[2] . " from " . $event[3] );
 						    }
 					    }
 				    }
