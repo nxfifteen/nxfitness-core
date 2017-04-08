@@ -244,6 +244,12 @@
                 }
 
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+	            $this->getAppClass()->getErrorRecording()->captureException($e, array(
+		            'extra' => array(
+			            'php_version' => phpversion(),
+			            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		            ),
+	            ));
                 exit($e->getMessage());
             }
 

@@ -122,11 +122,28 @@
                                 nxr("Processing queue item " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
                                 $jobRun = $fitbitApp->getFitbitAPI($job['user'], TRUE)->pull($job['user'], $job['trigger']);
                                 if ($fitbitApp->getFitbitAPI($job['user'])->isApiError($jobRun)) {
+	                                $fitbitApp->getErrorRecording()->captureMessage("Cron Error: " . $fitbitApp->lookupErrorCode($jobRun), array('api'), array(
+		                                'extra' => array(
+			                                'api_req' => $job['trigger'],
+			                                'user' => $job['user'],
+			                                'php_version' => phpversion(),
+			                                'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		                                )
+	                                ));
                                     nxr("* Cron Error: " . $fitbitApp->lookupErrorCode($jobRun));
                                 } else {
                                     $fitbitApp->delCronJob($job['user'], $job['trigger']);
                                 }
                             } else {
+	                            $fitbitApp->getErrorRecording()->captureMessage("API limit reached", array('remote_api'), array(
+		                            'extra' => array(
+			                            'api_req' => $_GET['get'],
+			                            'user' => $_GET['user'],
+			                            'cooldown' => $cooldown,
+			                            'php_version' => phpversion(),
+			                            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		                            )
+	                            ));
                                 nxr("Can not process " . $fitbitApp->supportedApi($job['trigger']) . ". API limit reached for " . $job['user'] . ". Cooldown period ends " . $cooldown);
                                 $fitbitApp->delCronJob($job['user'], $job['trigger']);
                             }
@@ -143,6 +160,14 @@
                             }
                         }
                     } else {
+	                    $fitbitApp->getErrorRecording()->captureMessage("Unknown User", array('authentication'), array(
+		                    'extra' => array(
+			                    'api_req' => $_GET['get'],
+			                    'user' => $_GET['user'],
+			                    'php_version' => phpversion(),
+			                    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		                    )
+	                    ));
                         nxr("  Can not process " . $fitbitApp->supportedApi($job['trigger']) . " since " . $job['user'] . " is no longer a user.");
                         $fitbitApp->delCronJob($job['user'], $job['trigger']);
                     }

@@ -974,6 +974,12 @@
                 return $response;
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
+	            $this->getAppClass()->getErrorRecording()->captureException($e, array(
+		            'extra' => array(
+			            'php_version' => phpversion(),
+			            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		            ),
+	            ));
                 nxr($e->getMessage());
                 die();
             }
@@ -1017,6 +1023,12 @@
                 return $response;
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
+	            $this->getAppClass()->getErrorRecording()->captureException($e, array(
+		            'extra' => array(
+			            'php_version' => phpversion(),
+			            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		            ),
+	            ));
                 nxr($e->getMessage());
                 die();
             }
@@ -1148,6 +1160,15 @@
                             }
 
                             if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
+	                            $this->getAppClass()->getErrorRecording()->captureMessage("Missing Device Image", array('static_files'), array(
+		                            'extra' => array(
+			                            'type' => $device->type,
+			                            'deviceVersion' => $device->deviceVersion,
+			                            'expected_file' => str_ireplace(" ", "", $device->deviceVersion) . ".png",
+			                            'php_version' => phpversion(),
+			                            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		                            )
+	                            ));
                                 nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
                             }
 
@@ -1324,7 +1345,29 @@
 
                         return $userBadges;
                     } else {
-                        nxr("Missing: $badgeFolder");
+                    	nxr("Missing: $badgeFolder");
+
+	                    if (!file_exists($badgeFolder)) {
+		                    $this->getAppClass()->getErrorRecording()->captureMessage("Missing badge folder", array('file_system'), array(
+			                    'extra' => array(
+				                    'folder' => str_ireplace(dirname(__FILE__), "", $badgeFolder),
+				                    'php_version' => phpversion(),
+				                    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+			                    )
+		                    ));
+	                    } else if (!is_writable($badgeFolder)) {
+		                    $this->getAppClass()->getErrorRecording()->captureMessage("Unable to write too badge folder", array('file_system'), array(
+			                    'extra' => array(
+				                    'folder' => str_ireplace(dirname(__FILE__), "", $badgeFolder),
+				                    'permissions' => substr(sprintf('%o', fileperms($badgeFolder)), -4),
+				                    'folder_owner' => posix_getpwuid(fileowner($badgeFolder))['name'],
+				                    'folder_group' => posix_getpwuid(filegroup($badgeFolder))['name'],
+				                    'runing_user' => get_current_user(),
+				                    'php_version' => phpversion(),
+				                    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+			                    )
+		                    ));
+	                    }
 
                         return "-142";
                     }
@@ -1945,9 +1988,21 @@
 				    try {
     				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('hyperStorage-groups')), TRUE);
 				    } catch (couchNotFoundException $e) {
+					    $this->getAppClass()->getErrorRecording()->captureException($e, array(
+						    'extra' => array(
+							    'php_version' => phpversion(),
+							    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+						    ),
+					    ));
     				    try {
         				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')), TRUE);
     				    } catch (couchNotFoundException $e) {
+					        $this->getAppClass()->getErrorRecording()->captureException($e, array(
+						        'extra' => array(
+							        'php_version' => phpversion(),
+							        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+						        ),
+					        ));
     				        $this->api_setLastrun("nomie_trackers", NULL, TRUE);
 				            return "-144";
     				    }
@@ -1977,7 +2032,12 @@
 						    try {
 							    $doc = $couchClient->getDoc( $tracker );
 						    } catch ( couchNotFoundException $e ) {
-
+							    $this->getAppClass()->getErrorRecording()->captureException($e, array(
+								    'extra' => array(
+									    'php_version' => phpversion(),
+									    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+								    ),
+							    ));
 						    }
 
 						    if ( isset( $doc ) && is_object( $doc ) ) {
@@ -2613,6 +2673,12 @@
 
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
+	            $this->getAppClass()->getErrorRecording()->captureException($e, array(
+		            'extra' => array(
+			            'php_version' => phpversion(),
+			            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		            ),
+	            ));
                 nxr(" User validation test failed: " . print_r($e->getMessage(), TRUE));
                 if ($e->getCode() == 400) {
                     $this->getAppClass()->delUserOAuthTokens($_nx_fb_usr);
@@ -2723,6 +2789,12 @@
                 return $response;
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
+	            $this->getAppClass()->getErrorRecording()->captureException($e, array(
+		            'extra' => array(
+			            'php_version' => phpversion(),
+			            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		            ),
+	            ));
 
                 if ($e->getCode() == 429) {
                     nxr(" Rate limit reached. Please try again later");
