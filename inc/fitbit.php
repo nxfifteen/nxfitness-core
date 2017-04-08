@@ -2782,15 +2782,6 @@
                 return $response;
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
-	            $this->getAppClass()->getErrorRecording()->captureException($e, array(
-		            'level' => 'error',
-		            'extra' => array(
-			            'api_path' => $path,
-			            'user' => $this->activeUser,
-			            'php_version' => phpversion(),
-			            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
-		            ),
-	            ));
 
                 if ($e->getCode() == 429) {
                     nxr(" Rate limit reached. Please try again later");
@@ -2801,6 +2792,15 @@
 
                     die();
                 } else {
+	                $this->getAppClass()->getErrorRecording()->captureException($e, array(
+		                'level' => 'error',
+		                'extra' => array(
+			                'api_path' => $path,
+			                'user' => $this->activeUser,
+			                'php_version' => phpversion(),
+			                'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		                ),
+	                ));
                     nxr("Error " . $e->getCode() . ": " . $e->getMessage());
                     nxr($e->getFile() . " @" . $e->getLine());
                     nxr($e->getTraceAsString());
