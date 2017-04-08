@@ -1955,9 +1955,9 @@
 
 				    if (is_array($trackerGroups) && array_key_exists("groups", $trackerGroups)) {
 					    $trackerGroups = $trackerGroups['groups'];
-					    if ( is_array( $trackerGroups ) && array_key_exists( "NxFITNESS", $trackerGroups ) ) {
-						    nxr( "  Downloadnig NxFITNESS Group Trackers" );
-						    $trackerGroups = $trackerGroups['NxFITNESS'];
+					    if ( is_array( $trackerGroups ) && array_key_exists( "NxTracked", $trackerGroups ) ) {
+						    nxr( "  Downloadnig NxTracked Group Trackers" );
+						    $trackerGroups = $trackerGroups['NxTracked'];
 					    } else {
 						    nxr( "  Downloading All Trackers" );
 						    $trackerGroups = $trackerGroups['All'];
