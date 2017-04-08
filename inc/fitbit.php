@@ -1185,7 +1185,7 @@
 	                    $supportedFloors = FALSE;
 
 	                    //nxr( " Using ".count($trackers)." Trackers");
-	                    if (in_array("Surge", $trackers) || in_array("Charge HR", $trackers)) {
+	                    if (in_array("Surge", $trackers) || in_array("Charge HR", $trackers) || in_array("Charge2", $trackers)) {
 		                    $supportedHeart = TRUE;
 		                    $supportedFloors = TRUE;
 	                    } else if (in_array("Charge", $trackers)) {
