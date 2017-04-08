@@ -18,7 +18,7 @@
 	    /**
 	     * @var String
 	     */
-	    protected $VersionInstalling = "0.0.0.6";
+	    protected $VersionInstalling = "0.0.0.7";
 
 	    /**
 	     * @var String
@@ -483,6 +483,20 @@
 		    $this->setSetting("version", "0.0.0.6", TRUE);
 		    return true;
 
+	    }
+
+	    /** @noinspection PhpUnusedPrivateMethodInspection */
+	    private function update_7() {
+		    $db_prefix = $this->getSetting("db_prefix", FALSE);
+
+		    $this->getDatabase()->query("ALTER TABLE `".$db_prefix."nomie_trackers` CHANGE `id` `id` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL; ");
+		    if ($this->wasMySQLError($this->getDatabase()->error())) return false;
+
+		    $this->getDatabase()->query("ALTER TABLE `".$db_prefix."nomie_events` CHANGE `id` `id` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL; ");
+		    if ($this->wasMySQLError($this->getDatabase()->error())) return false;
+
+		    $this->setSetting("version", "0.0.0.7", TRUE);
+		    return true;
 	    }
 
     }
