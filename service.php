@@ -67,6 +67,7 @@
                                     "cooldown" => "1970-01-01 01:00:00"
                                 );
                                 $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user" => $upLoadedRequest->ownerId, "activity" => $upLoadedRequest->collectionType)));
+	                            $fitbitApp->getErrorRecording()->postDatabaseQuery($fitbitApp->getDatabase(), array("METHOD" => __FILE__,"LINE" => __LINE__));
                             } else {
                                 $fields = array(
                                     "user"     => $upLoadedRequest->ownerId,
@@ -75,6 +76,7 @@
                                     "cooldown" => "1970-01-01 01:00:00"
                                 );
                                 $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
+	                            $fitbitApp->getErrorRecording()->postDatabaseQuery($fitbitApp->getDatabase(), array("METHOD" => __FILE__,"LINE" => __LINE__));
                             }
 
                             if ($upLoadedRequest->collectionType == "foods") {
@@ -87,6 +89,7 @@
                                     );
                                     $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user"     => $upLoadedRequest->ownerId,
                                                                                                                                                                  "activity" => "water")));
+	                                $fitbitApp->getErrorRecording()->postDatabaseQuery($fitbitApp->getDatabase(), array("METHOD" => __FILE__,"LINE" => __LINE__));
                                 } else {
                                     $fields = array(
                                         "user"     => $upLoadedRequest->ownerId,
@@ -95,6 +98,7 @@
                                         "cooldown" => "1970-01-01 01:00:00"
                                     );
                                     $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
+	                                $fitbitApp->getErrorRecording()->postDatabaseQuery($fitbitApp->getDatabase(), array("METHOD" => __FILE__,"LINE" => __LINE__));
                                 }
                             }
 
@@ -123,6 +127,7 @@
                                 "unit"  => $unit->key,
                                 "value" => $unit->value
                             ));
+	                        $fitbitApp->getErrorRecording()->postDatabaseQuery($fitbitApp->getDatabase(), array("METHOD" => __FILE__,"LINE" => __LINE__));
                         }
                     } else {
                         nxr(" Invalid API");

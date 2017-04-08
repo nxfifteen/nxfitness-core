@@ -203,10 +203,12 @@
 
                         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$steps->dateTime)))) {
 		                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", $dbValues, array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$steps->dateTime)));
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                         } else {
 	                        $dbValues['user'] = $this->getActiveUser();
 	                        $dbValues['date'] = (String)$steps->dateTime;
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", $dbValues);
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                         }
 
 	                    if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerTracker($steps->dateTime, $trigger, $steps->value);
@@ -251,6 +253,7 @@
                             )
                         )
                     );
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if ( ! is_null( $this->RewardsSystem ) ) {
@@ -268,6 +271,7 @@
                         "end_date"   => NULL,
                         "length"     => 1
                     ) );
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if ( ! is_null( $this->RewardsSystem ) ) {
@@ -296,6 +300,7 @@
                         )
                     )
                 );
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                 if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerStreak($goal, $days_between, TRUE);
                 //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
@@ -376,6 +381,7 @@
                             }
 
                             $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage, array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$series->dateTime)));
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                         } else {
                             $dbStorage = array(
                                 'user'          => $this->getActiveUser(),
@@ -387,6 +393,7 @@
                                 $dbStorage['target'] = (String)$this->holdingVar["data"]->goals->activeMinutes;
                             }
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity", $dbStorage);
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                         }
 
 	                    if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d'))) {
@@ -453,9 +460,11 @@
 
                                     if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)))) {
                                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", $dbStorage);
+	                                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                                         nxr("  Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") add to the database.");
                                     } else {
                                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log", $dbStorage, array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)));
+	                                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                                         nxr("  Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") updated in the database.");
                                     }
 
@@ -570,7 +579,6 @@
                              */
                             foreach ($period as $dt) {
                                 if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array("AND" => array('user' => $this->getActiveUser(), 'date' => $dt->format("Y-m-d"))))) {
-
                                     $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
                                         'caloriesOut'   => (String)$usr_goals->caloriesOut,
                                         'distance'      => (String)$usr_goals->distance,
@@ -579,8 +587,8 @@
                                         'steps'         => (String)$usr_goals->steps,
                                         'syncd'         => date("Y-m-d H:i:s")
                                     ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $dt->format("Y-m-d"))));
+	                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                                 } else {
-
                                     $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array(
                                         'user'          => $this->getActiveUser(),
                                         'date'          => $dt->format("Y-m-d"),
@@ -591,6 +599,7 @@
                                         'steps'         => (String)$usr_goals->steps,
                                         'syncd'         => date("Y-m-d H:i:s")
                                     ));
+	                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                                 }
                             }
 
@@ -633,6 +642,7 @@
                                 'protein'  => (String)$meal->nutritionalValues->protein,
                                 'sodium'   => (String)$meal->nutritionalValues->sodium
                             ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate, 'meal' => (String)$meal->loggedFood->name)));
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                         } else {
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food", array(
                                 'user'     => $this->getActiveUser(),
@@ -645,6 +655,7 @@
                                 'protein'  => (String)$meal->nutritionalValues->protein,
                                 'sodium'   => (String)$meal->nutritionalValues->sodium
                             ));
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 	                        if (!is_null($this->RewardsSystem)) $this->RewardsSystem->EventTriggerNewMeal($meal);
                         }
@@ -748,10 +759,12 @@
 
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)))) {
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray, array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                     } else {
                         $db_insetArray['user'] = $this->getActiveUser();
                         $db_insetArray['date'] = $targetDate;
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body", $db_insetArray);
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                     }
 
 	                if (!is_null($this->RewardsSystem)) {
@@ -799,6 +812,7 @@
                             'startTime'           => (String)$loggedSleep->startTime,
                             'timeInBed'           => (String)$loggedSleep->timeInBed
                         ));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                     }
 
                     if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep_user", array("AND" => array('user' => $this->getActiveUser(), 'sleeplog' => (String)$loggedSleep->logId)))) {
@@ -809,6 +823,7 @@
                             'totalSleepRecords'  => (String)$userSleepLog->summary->totalSleepRecords,
                             'totalTimeInBed'     => (String)$userSleepLog->summary->totalTimeInBed
                         ));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                     }
 
                     $this->api_setLastCleanrun("sleep", new DateTime ($targetDate));
@@ -841,6 +856,7 @@
                             'id'     => $targetDateTime->format("U"),
                             'liquid' => (String)$userWaterLog->summary->water
                         ), array("AND" => array('user' => $this->getActiveUser(), 'date' => $targetDate)));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                     } else {
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water", array(
                             'user'   => $this->getActiveUser(),
@@ -848,6 +864,7 @@
                             'id'     => $targetDateTime->format("U"),
                             'liquid' => (String)$userWaterLog->summary->water
                         ));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                     }
 
                     $this->api_setLastCleanrun("water", $targetDateTime);
@@ -913,9 +930,11 @@
                                         array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$activity->dateTime)))
                                     ) {
                                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", $databaseArray);
+	                                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                                     } else {
                                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heartAverage", $databaseArray,
                                             array("AND" => array('user' => $this->getActiveUser(), 'date' => (String)$activity->dateTime)));
+	                                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                                     }
                                 } else {
                                     nxr("  " . $activity->dateTime . " does have a resting heart rate");
@@ -1071,6 +1090,7 @@
                         "stride_running" => (String)$userProfile['strideLengthRunning'],
                         "stride_walking" => (String)$userProfile['strideLengthWalking']
                     ), array("fuid" => $this->getActiveUser()));
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                     if (!file_exists(dirname(__FILE__) . "/../images/avatars/" . $this->getActiveUser() . ".jpg")) {
                         file_put_contents(dirname(__FILE__) . "/../images/avatars/" . $this->getActiveUser() . ".jpg", fopen((String)$userProfile['avatar150'], 'r'));
@@ -1118,6 +1138,7 @@
                                     'lastSyncTime' => (String)$device->lastSyncTime,
                                     'battery'      => (String)$device->battery
                                 ), array("id" => (String)$device->id));
+	                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 	                            if ($device->battery != $current_battery) {
 		                            $charged = 0;
@@ -1135,6 +1156,7 @@
 			                            'level' => (String) $device->battery,
 			                            'charged' => $charged
 		                            ) );
+		                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 	                            }
                             } else {
                                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices", array(
@@ -1144,11 +1166,13 @@
                                     'lastSyncTime'  => (String)$device->lastSyncTime,
                                     'battery'       => (String)$device->battery
                                 ));
+	                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 	                            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_charges", array(
 		                            'id'            => (String)$device->id,
 		                            'date' => (String)$device->lastSyncTime,
 		                            'level'          => (String)$device->battery
 	                            ));
+	                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                             }
 
                             if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user", array("AND" => array("user" => $this->getActiveUser(),
@@ -1157,6 +1181,7 @@
                                     'user' => $this->getActiveUser(),
                                     'device' => (String)$device->id
                                 ));
+	                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                             }
 
                             if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
@@ -1279,6 +1304,7 @@
 			                                'marketingDescription'    => (String)$badge->marketingDescription,
 			                                'name'                    => (String)$badge->name
 		                                ));
+		                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 	                                }
 
 	                                if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array("AND" => array(
@@ -1294,6 +1320,7 @@
 			                                "badgeid"      => (String)$badge->encodedId,
 			                                "fuid" => $this->getActiveUser()
 		                                )));
+		                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 	                                } else {
 		                                nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->name . ", " . $badge->timesAchieved . " times.");
 		                                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user", array(
@@ -1302,6 +1329,7 @@
 			                                'dateTime'      => (String)$badge->dateTime,
 			                                'timesAchieved' => (String)$badge->timesAchieved
 		                                ));
+		                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 	                                }
 
                                     $imageFileName = basename((String)$badge->image50px);
@@ -1457,6 +1485,7 @@
                                 'friends'  => count($userFriends),
                                 'distance' => $youDistance
                             ), array("fuid" => $this->getActiveUser()));
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 	                        if (count($storedLeaderboard) > 0) $this->getAppClass()->setUserSetting($this->getActiveUser(), "leaderboard", json_encode($storedLeaderboard));
 
@@ -1529,6 +1558,7 @@
                                 'estimatedDate' => $usr_foodplan_estimatedDate,
                                 'personalized'  => $usr_foodplan_personalized,
                             ), array("AND" => array("user" => $this->getActiveUser(), "date" => $currentDate->format("Y-m-d"))));
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                         } else {
                             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals", array(
                                 'user'          => $this->getActiveUser(),
@@ -1538,6 +1568,7 @@
                                 'estimatedDate' => $usr_foodplan_estimatedDate,
                                 'personalized'  => $usr_foodplan_personalized,
                             ));
+	                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                         }
 
                         if ($fallback) {
@@ -1587,6 +1618,7 @@
                 }
 
                 $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields, array("AND" => array("user" => $this->getActiveUser(), "activity" => $activity)));
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
             } else {
                 $fields = array(
                     "user"     => $this->getActiveUser(),
@@ -1599,6 +1631,7 @@
                 }
 
                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", $fields);
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
             }
 
             $cache_dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
@@ -1633,6 +1666,7 @@
 
             $username = $this->getActiveUser();
 
+            //@TODO Add database error response
             if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array("AND" => array("user" => $username, "activity" => $activity)))) {
                 return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", "cooldown", array("AND" => array("user" => $username, "activity" => $activity))));
             } else {
@@ -1720,6 +1754,7 @@
                     'date'    => date("Y-m-d H:i:s"),
                     'lastrun' => $date->format("Y-m-d H:i:s")
                 ), array("AND" => array("user" => $this->getActiveUser(), "activity" => $activity)));
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
             } else {
                 $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "runlog", array(
                     'user'     => $this->getActiveUser(),
@@ -1727,6 +1762,7 @@
                     'date'     => date("Y-m-d H:i:s"),
                     'lastrun'  => $date->format("Y-m-d H:i:s")
                 ));
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
             }
 
             if ($delay == 0) $this->api_setLastrun($activity, NULL, FALSE);
@@ -1763,6 +1799,7 @@
                                 "date[>=]" => $oneWeek,
                                 "date[<=]" => $lastMonday
                             ), "ORDER"  => "date DESC", "LIMIT" => 7));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                         if (count($dbSteps) == 0) {
                             $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_steps_max", 1000);
@@ -1802,6 +1839,7 @@
                             "date[>=]" => $oneWeek,
                             "date[<=]" => $lastMonday
                         ), "ORDER"  => "date DESC", "LIMIT" => 7));
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                     if (count($dbSteps) == 0) {
                         $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_floors_max", 10);
@@ -1851,6 +1889,7 @@
                                 "date[>=]" => $oneWeek,
                                 "date[<=]" => $lastMonday
                             ), "ORDER"  => "date DESC", "LIMIT" => 7));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                         if (count($dbActiveMinutes) == 0) {
                             $plusTargetSteps = $this->getAppClass()->getUserSetting($this->getActiveUser(), "desire_active_max", 30);
@@ -1931,6 +1970,7 @@
 				                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity_log",
 					                array("heartRateZones" => json_encode($heartRateValues['activities-heart'][0]['heartRateZones'])),
 					                array("AND" => array("user" => $this->getActiveUser(), "logId" => (String)$activity->logId)));
+				                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 				                nxr("   Summary Information Added to Activity Log");
 			                }
 		                }
@@ -1947,8 +1987,10 @@
 
 			                if (!$this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)))) {
 				                $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage);
+				                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 			                } else {
 				                $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "heart_activity", $dbStorage, array("AND" => array("user" => $this->activeUser, "logId" => $activity->logId)));
+				                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 			                }
 		                }
 	                } else {
@@ -2056,6 +2098,7 @@
 							    ) )
 							    ) {
 								    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_trackers", $dbStorage );
+								    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 							    } else {
 								    $this->getAppClass()->getDatabase()->update( $db_prefix . "nomie_trackers", $dbStorage, array(
 									    "AND" => array(
@@ -2063,6 +2106,7 @@
 										    "id"   => $tracker
 									    )
 								    ) );
+								    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 							    }
 						    }
 					    }
@@ -2103,6 +2147,7 @@
 								    }
 
 								    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_events", $dbStorage );
+								    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 								    nxr( "   Stored event : " . $event[2] . " from " . $event[3] );
 								    //nxr( print_r($this->getAppClass()->getDatabase()->log(), true) );
 								    //return true;
@@ -2415,6 +2460,7 @@
                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "users", array(
                             "lastrun" => $currentDate->format("Y-m-d H:i:s")
                         ), array("fuid" => $this->getActiveUser()));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                     }
 
 	                //if (!is_null($this->RewardsSystem)) $this->RewardsSystem->check_rewards($user);
@@ -2735,6 +2781,7 @@
                     'friends'        => 0,
                     'distance'       => 0,
                 ));
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                 return TRUE;
             }

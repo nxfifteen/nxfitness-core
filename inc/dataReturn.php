@@ -68,6 +68,7 @@
                 . " JOIN `$db_activity` ON (`$db_steps`.`date` = `$db_activity`.`date`) AND (`$db_steps`.`user` = `$db_activity`.`user`)"
                 . " WHERE `$db_steps`.`user` = '" . $this->getUserID() . "' AND `$db_steps`.`date` <= '" . $userPushEndDate . "' AND `$db_steps`.`date` >= '$userPushStartDate' "
                 . " ORDER BY `$db_steps`.`date` DESC");
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $days = 0;
             $score = 0;
@@ -406,6 +407,7 @@
                     "date[>=]" => $oneWeek,
                     "date[<=]" => $lastMonday
                 ), "ORDER"  => "date DESC", "LIMIT" => 7));
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $totalMinutes = 0;
             foreach ($dbActiveMinutes as $dbStep) {
@@ -470,6 +472,7 @@
             $sqlQueryString .= "ORDER BY `startDate` DESC, `startTime` DESC LIMIT " . $sqlLimit;
 
             $userActivity = $this->getAppClass()->getDatabase()->query($sqlQueryString)->fetchAll();
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $daysStats = array();
             $returnArray = array();
@@ -526,6 +529,7 @@
                         . " JOIN `$db_activity` ON (`$db_steps`.`date` = `$db_activity`.`date`) AND (`$db_steps`.`user` = `$db_activity`.`user`)"
                         . " WHERE `$db_activity`.`user` = '" . $this->getUserID() . "' AND `$db_activity`.`date` = '" . $record['startDate'] . "'"
                         . " ORDER BY `$db_activity`.`date` DESC");
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                     foreach ($dbDaysStatsDb as $dbValue) {
                         $daysStats[ $record['startDate'] ]['active'] = number_format($dbValue['fairlyactive'] + $dbValue['veryactive'], 0);
@@ -829,6 +833,7 @@
 	                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages.value ASC",
 	                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user.dateTime ASC"
                          )));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $badges = array();
             foreach ($userBadges as $userBadge) {
@@ -850,6 +855,7 @@
             $return = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "body",
                 array('date', 'weight', 'weightGoal', 'fat', 'fatGoal', 'bmi', 'calf', 'bicep', 'chest', 'forearm', 'hips', 'neck', 'thigh', 'waist'),
                 $this->dbWhere());
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             return $return;
         }
@@ -877,6 +883,7 @@
             $dbPush = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "push",
                 array('startDate', 'endDate', 'score', 'steps', 'distance', 'veryactive'),
                 array("user" => $this->getUserID()));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             if (!$dbPush) {
                 $dbPush = array();
@@ -989,6 +996,7 @@
                                          "startDate" => $userPushStartDate,
                                          "endDate"   => $userPushEndDate
                     ), "LIMIT"  => 1));
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                 if (!$dbPush) {
                     $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $range_start);
@@ -1003,6 +1011,7 @@
                             'distance'   => $calenderEvents['distance'],
                             'dayData'    => json_encode($calenderEvents['events'])
                         ));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                     }
                 } else {
                     $calenderEvents['events'] = json_decode($dbPush[0]);
@@ -1021,16 +1030,19 @@
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
                 array('distance', 'floors', 'steps'),
                 $this->dbWhere());
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             if (count($dbSteps) > 0) {
                 $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
                     array('distance', 'floors', 'steps'),
                     $this->dbWhere());
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                 if (count($dbGoals) == 0) {
                     // If todays goals are missing download the most recent goals
                     $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
                         array('distance', 'floors', 'steps'),
                         array("user" => $this->getUserID(), "ORDER" => "date DESC"));
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                 }
 
                 $dbActiveMinutes = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity",
@@ -1043,6 +1055,8 @@
                         "user" => $this->getUserID(),
                         "date" => date("Y-m-d")
                     ), "ORDER"  => "date ASC"));
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
+
                 $dbActiveMinutes = array_pop($dbActiveMinutes);
                 $dbGoals[0]['activity'] = (String)round($dbActiveMinutes['target'], 2);
                 $dbActiveMinutes = $dbActiveMinutes['fairlyactive'] + $dbActiveMinutes['veryactive'];
@@ -1191,6 +1205,7 @@
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.lastSyncTime',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'devices.type',
                 ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "devices_user.user" => $this->getUserID()));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             foreach ($dbDevices as $key => $dev) {
                 $dbDevices[ $key ]['image'] = 'images/devices/' . str_ireplace(" ", "", $dbDevices[ $key ]['deviceVersion']) . ".png";
@@ -1238,6 +1253,7 @@
                     "date[>=]" => $oneWeek,
                     "date[<=]" => $lastMonday
                 ), "ORDER"  => "date DESC", "LIMIT" => 7));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $totalSteps = 0;
             foreach ($dbSteps as $dbStep) {
@@ -1269,6 +1285,7 @@
             $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food",
                 array('meal', 'calories'),
                 $this->dbWhere(4));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             if (count($dbFoodLog) > 0) {
                 $total = 0;
@@ -1279,6 +1296,7 @@
                 $dbFoodGoal = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food_goals",
                     array('calories'),
                     $this->dbWhere());
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                 if (!is_null($this->getTracking())) {
                     $this->getTracking()->track("JSON Get", $this->getUserID(), "Food");
@@ -1344,6 +1362,7 @@
             $dbFood = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "food",
                 array('date', 'meal', 'calories', 'carbs', 'fat', 'fiber', 'protein', 'sodium'),
                 $where);
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 	        $returnArray['food']['meals']['Breakfast Summary'] = array();
 	        $returnArray['food']['meals']['Lunch Summary'] = array();
@@ -1397,6 +1416,7 @@
                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'journeys.blurb',
                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'journeys_travellers.start_date',
                     ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_travellers.fuid" => $this->getUserID()));
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                 $journeys = array();
                 foreach ($dbJourneys as $dbJourney) {
@@ -1413,6 +1433,7 @@
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_legs.start_mile[<=]" => $user_miles_travelled,
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_legs.end_mile[>=]"   => $user_miles_travelled
                         )));
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                     $legs = array();
                     $legsNames = array();
@@ -1429,6 +1450,7 @@
                             ), array("AND" => array(
                                 $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.lid" => $dbLeg['lid']
                             )));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                         $narrative = array();
                         $prevNarrativeMiles = 0;
@@ -1484,6 +1506,7 @@
                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'journeys.blurb',
                         $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'journeys_travellers.start_date',
                     ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_travellers.fuid" => $this->getUserID()));
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                 $journeys = array();
                 foreach ($dbJourneys as $dbJourney) {
@@ -1499,6 +1522,7 @@
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_legs.start_mile[<=]" => $user_miles_travelled,
                             $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_legs.end_mile[>=]"   => $user_miles_travelled
                         )));
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                     $legs = array();
                     foreach ($dbLegs as $dbLeg) {
@@ -1514,6 +1538,7 @@
                                 $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.lid"       => $dbLeg['lid'],
                                 $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.miles[<=]" => $user_miles_travelled
                             ), "LIMIT"     => 1, "ORDER" => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.miles DESC"));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                         $prevNarrativeMiles = 0;
                         foreach ($dbNarratives as $dbNarrative) {
@@ -1546,6 +1571,7 @@
                                 $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.lid"       => $dbLeg['lid'],
                                 $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.miles[>=]" => $user_miles_travelled
                             ), "LIMIT"     => 1, "ORDER" => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "journeys_narrative.miles ASC"));
+	                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
                         foreach ($dbNarrativeNext as $dbNarrative) {
                             $narrativeArray = array(
@@ -1612,6 +1638,7 @@
             $dbKeyPoints = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "keypoints",
                 array('category', 'value', 'less', 'more')
             );
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $keyPoints = array();
             foreach ($dbKeyPoints as $point) {
@@ -1776,7 +1803,8 @@
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'sleep.efficiency',
                     $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . 'sleep.awakeningsCount',
                 ), array($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep_user.user" => $this->getUserID(),
-                         "ORDER"                                                                           => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep.startTime DESC"));
+                         "ORDER" => $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "sleep.startTime DESC"));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $returnSleep = array(
                 "lastSleep"           => array(),
@@ -1826,6 +1854,7 @@
                     "date[>=]" => $oneWeek,
                     "date[<=]" => $lastMonday
                 ), "ORDER"  => "date DESC", "LIMIT" => 7));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $totalSteps = 0;
             foreach ($dbSteps as $dbStep) {
@@ -1855,16 +1884,19 @@
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
                 array('distance', 'floors', 'steps'),
                 $this->dbWhere());
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             if (count($dbSteps) > 0) {
                 $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
                     array('distance', 'floors', 'steps'),
                     $this->dbWhere());
+	            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                 if (count($dbGoals) == 0) {
                     // If todays goals are missing download the most recent goals
                     $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
                         array('distance', 'floors', 'steps'),
                         array("user" => $this->getUserID(), "ORDER" => "date DESC"));
+	                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
                 }
 
                 $dbSteps[0]['steps_p'] = ($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100;
@@ -1913,6 +1945,7 @@
 		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
 			    array('date', 'distance', 'floors', 'steps'),
 			    $this->dbWhere());
+		    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 		    $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
@@ -1932,6 +1965,7 @@
 		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals",
 			    array('date', 'steps'),
 			    $this->dbWhere());
+		    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 		    $totalsStepsGoal = 0;
 		    $date = array();
@@ -1991,6 +2025,7 @@
 		    $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
 			    array('date', 'distance', 'floors', 'steps'),
 			    $this->dbWhere());
+		    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 		    $totalsSteps = 0;
 		    $distanceSteps = 0;
@@ -2035,6 +2070,7 @@
 			        . " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`reward` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`rid`)"
 			        . " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_map` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_map`.`rmid` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`rmid`)"
 			        . " WHERE `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`state` = 'pending'");
+		        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 		        $data = array();
 		        $taskerDataArray['minecraft']['count'] = 0;
@@ -2075,7 +2111,9 @@
             $taskerDataArray['snapshot']['cheer']['water'] = $returnUserRecordWater[0]['cheer'];
 
             $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps", array('distance', 'floors', 'steps', 'syncd'), $this->dbWhere());
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
             $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps_goals", array('distance', 'floors', 'steps', 'syncd'), $this->dbWhere());
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
             $taskerDataArray['snapshot']['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100, 0);
             $taskerDataArray['snapshot']['today']['distance'] = round((round($dbSteps[0]['distance'], 2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
             $taskerDataArray['snapshot']['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100, 0);
@@ -2086,6 +2124,8 @@
 
             $dbActive = $this->getAppClass()->getDatabase()->query("SELECT target, fairlyactive, veryactive, syncd FROM "
                 . $this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "activity WHERE user = '" . $this->getUserID() . "' AND date = '" . date("Y-m-d") . "'")->fetchAll();
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
+
             $dbActive = $dbActive[0];
             $taskerDataArray['snapshot']['today']['active'] = round((($dbActive['fairlyactive'] + $dbActive['veryactive']) / $dbActive['target']) * 100, 2);
             $taskerDataArray['snapshot']['goals']['active'] = $dbActive['target'];
@@ -2280,6 +2320,7 @@
             $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "bages_user",
                 array('badgeType', 'value', 'dateTime', 'timesAchieved'),
                 array("user" => $this->getUserID()));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $badges = array();
             foreach ($userBadges as $userBadge) {
@@ -2324,6 +2365,7 @@
                 . " JOIN `$nx_fitbit_steps_goals` ON (`$nx_fitbit_steps`.`date` = `$nx_fitbit_steps_goals`.`date`) AND (`$nx_fitbit_steps`.`user` = `$nx_fitbit_steps_goals`.`user`)"
                 . " WHERE `$nx_fitbit_steps`.`user` = '" . $this->getUserID() . "' AND `$nx_fitbit_steps`.`date` <= '" . $this->getParamDate() . "' AND `$nx_fitbit_steps`.`date` >= '$then' "
                 . " ORDER BY `$nx_fitbit_steps`.`date` DESC LIMIT $days");
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $returnDate = NULL;
             $graph_floors = array();
@@ -2368,6 +2410,7 @@
                     "date[>=]" => $then,
                     "date[<=]" => $this->getParamDate()
                 ), "ORDER"  => "date DESC"));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $graph_active = array();
             $graph_active_g = array();
@@ -2475,6 +2518,7 @@
             $dbWater = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "water",
                 array('date', 'liquid'),
                 $this->dbWhere());
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $dbWater[0]['liquid'] = (String)round($dbWater[0]['liquid'], 2);
             $dbWater[0]['goal'] = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
@@ -2508,6 +2552,7 @@
             $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", NULL, FALSE) . "steps",
                 array('date', 'steps', 'distance', 'floors'),
                 $this->dbWhere());
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             foreach ($userActivity as $key => $value) {
                 $userActivity[ $key ]['distance'] = (String)round($value['distance'], 2);
@@ -2555,6 +2600,7 @@
                                      "date[<=]" => $this->getParamDate(),
                                      "date[>=]" => date('Y-m-d', strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day"))
                 ), "ORDER"  => "date DESC", "LIMIT" => ($days + 10)));
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             $latestDate = 0;
             foreach ($dbWeight as $key => $daysWeight) {
@@ -2825,6 +2871,7 @@
 			    array('id', 'label', 'icon', 'color', 'charge', 'sort'),
 			    array("AND" => array("fuid" => $this->getUserID(), "sort[>]" => -1),
 	            "ORDER"  => "sort ASC"));
+		    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 		    $trackerShared = array();
 		    foreach ( $dbTrackers as $tracker ) {

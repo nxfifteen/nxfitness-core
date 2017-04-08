@@ -47,6 +47,7 @@
         SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where
         UNIX_TIMESTAMP(str_to_date(lastrun,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s", strtotime('-1 day')) . "') AND
         UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
+	    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
         if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0 and $fitbitApp->getSetting('scope_all_cron', TRUE)) {
             foreach ($unfinishedUsers as $user) {
@@ -73,6 +74,7 @@
         } else {
             $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
             SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", NULL, FALSE) . "users where UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date("Y-m-d H:i:s") . "')")->fetchAll();
+	        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
             if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0) {
                 foreach ($unfinishedUsers as $user) {

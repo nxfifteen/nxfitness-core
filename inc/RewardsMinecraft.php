@@ -97,6 +97,7 @@
 					. " FROM `".$db_prefix."reward_map`"
 					. " JOIN `".$db_prefix."rewards` ON (`".$db_prefix."reward_map`.`reward` = `".$db_prefix."rewards`.`rid`)"
 					. " WHERE `".$db_prefix."reward_map`.`cat` = '" . $cat . "' AND `".$db_prefix."reward_map`.`event` = '" . $event . "' AND `".$db_prefix."reward_map`.`rule` = '".$score."' ");
+				$this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 				foreach ( $rewards as $dbReward ) {
 					array_push( $reward, array("rid" => $dbReward['rid'],
 					                           "rmid" => $dbReward['rmid'],
@@ -109,6 +110,7 @@
 					"event" => $event,
 					"rule"  => $score
 				) );
+				$this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 			}
 
 			if ( count( $reward ) == 0 ) {
@@ -121,6 +123,7 @@
 					$currentDate = $currentDate->format( "Y-m-d" );
 					if ( !$this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'date[~]' => $currentDate, 'rmid' => $recordReward['rmid'] ) ) ) ) {
 						$nukeOne = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'rid', array( "AND" => array( "nukeid" => $recordReward['rid'], "directional" => "true" ) ));
+						$this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 						if (count($nukeOne) > 0) {
 							foreach ($nukeOne as $nukeId) {
 								if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) ) ) {
@@ -130,6 +133,7 @@
 						}
 
 						$nukeTwo = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'nukeid', array( "AND" => array( "rid" => $recordReward['rid'], "directional" => "false" ) ));
+						$this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 						if (count($nukeTwo) > 0) {
 							foreach ($nukeTwo as $nukeId) {
 								if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) ) ) {
@@ -144,6 +148,7 @@
 							"rmid" => $recordReward['rmid'],
 							"reward" => $recordReward['rid']
 						) );
+						$this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 						nxr( "    Awarding $cat / $event ($score) = " . print_r($recordReward['description'], TRUE));
 					} else {
 						nxr( "    Already awarded $cat / $event ($score) = " . print_r($recordReward['description'], TRUE));
@@ -262,6 +267,7 @@
 						if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue", array( "rqid" => $processedOrder ) ) ) {
 
 							$this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue", array( "state" => "delivered" ), array( "rqid" => $processedOrder ) );
+							$this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 
 							nxr( " Reward " . $processedOrder . " processed" );
 						} else {

@@ -180,6 +180,7 @@
 						"trigger" => $trigger,
 						"date"    => date( "Y-m-d H:i:s" )
 					) );
+					$this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 				} else {
 					nxr( "Cron job already present" );
 				}
@@ -215,9 +216,11 @@
 				) {
 					//nxr("Cron job $trigger deleted");
 				} else {
+					$this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 					nxr( "Failed to delete $trigger Cron job" );
 				}
 			} else {
+				$this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), array("METHOD" => __METHOD__,"LINE" => __LINE__));
 				nxr( "Failed to delete $trigger Cron job" );
 			}
 		}
