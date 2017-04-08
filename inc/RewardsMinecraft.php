@@ -235,7 +235,7 @@
 					. " `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`rqid` AS `rqid`"
 					. " FROM `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`"
 					. " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`reward` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`rid`)"
-					. " WHERE `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`state` = 'pending' LIMIT 15");
+					. " WHERE `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`state` = 'pending' LIMIT 50");
 
 				$data      = array();
 				foreach ( $rewards as $dbReward ) {
