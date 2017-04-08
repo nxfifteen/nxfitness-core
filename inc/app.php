@@ -551,10 +551,7 @@
 		protected $sentryErrorHandler;
 
 		public function __construct() {
-			if ( ! defined( "SENTRY_DSN" ) ) {
-				require_once( dirname( __FILE__ ) . "/../config.def.php" );
-			}
-
+			require_once( dirname( __FILE__ ) . "/../config.def.php" );
 			require_once( dirname( __FILE__ ) . "/../library/sentry/lib/Raven/Autoloader.php" );
 			Raven_Autoloader::register();
 
@@ -589,7 +586,24 @@
 			return $this->sentryErrorHandler;
 		}
 
-		public function captureException( $error, $array ) {
-			$this->getSentryClient()->captureException( $error, $array );
+		/**
+		 * Log an exception to sentry
+		 *
+		 * @param Exception $exception The Exception object.
+		 * @param array $data Additional attributes to pass with this event (see Sentry docs).
+		 */
+		public function captureException( $exception, $data=null, $logger=null, $vars=null ) {
+			$this->getSentryClient()->captureException( $exception, $data, $logger, $vars );
+		}
+
+		/**
+		 * Log a message to sentry
+		 *
+		 * @param string $message The message (primary description) for the event.
+		 * @param array $params params to use when formatting the message.
+		 * @param array $data Additional attributes to pass with this event (see Sentry docs).
+		 */
+		public function captureMessage( $message, $params=array(), $data=array(), $stack=false, $vars = null ) {
+			$this->getSentryClient()->captureMessage( $message, $params, $data, $stack, $vars );
 		}
 	}
