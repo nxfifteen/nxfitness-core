@@ -620,4 +620,31 @@
 			$this->getSentryClient()->captureMessage( $message, $params, $data, $stack, $vars );
 			nxr("### Message Recorded ###");
 		}
+
+		/**
+		 * @param medoo $medoo
+		 * @param $parameters
+		 */
+		public function postDatabaseQuery( $medoo, $parameters ) {
+			$medoo_error = $medoo->error();
+			if ($medoo_error[0] != 0000) {
+				$medoo_info = $medoo->info();
+				$this->captureMessage($medoo_error[2], array('database'), array(
+					'level' => 'error',
+					'extra' => array(
+						'method' => $parameters['METHOD'],
+						'method_line' => $parameters['LINE'],
+						'sql_server' => $medoo_info['server'],
+						'sql_client' => $medoo_info['client'],
+						'sql_driver' => $medoo_info['driver'],
+						'sql_version' => $medoo_info['version'],
+						'sql_connection' => $medoo_info['connection'],
+						'sql_last_query' => $medoo->last_query(),
+						'php_version' => phpversion(),
+						'core_version' => $this->appClass->getSetting("version", "0.0.0.1", TRUE)
+					)
+				));
+
+			}
+		}
 	}
