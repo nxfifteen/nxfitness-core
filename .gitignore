@@ -1,6 +1,7 @@
 # Created by .gitignore support plugin (hsz.mobi)
 .idea
 config.inc.php
+config.def.php
 admin
 adminfree
 admin_pre
