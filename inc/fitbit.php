@@ -1358,18 +1358,20 @@
 			                    )
 		                    ));
 	                    } else if (!is_writable($badgeFolder)) {
-		                    $this->getAppClass()->getErrorRecording()->captureMessage("Unable to write too badge folder", array('file_system'), array(
-			                    'level' => 'info',
-			                    'extra' => array(
-				                    'folder' => str_ireplace(dirname(__FILE__), "", $badgeFolder),
-				                    'permissions' => substr(sprintf('%o', fileperms($badgeFolder)), -4),
-				                    'folder_owner' => posix_getpwuid(fileowner($badgeFolder))['name'],
-				                    'folder_group' => posix_getpwuid(filegroup($badgeFolder))['name'],
-				                    'runing_user' => get_current_user(),
-				                    'php_version' => phpversion(),
-				                    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
-			                    )
-		                    ));
+	                    	if (get_current_user() == posix_getpwuid( fileowner( $badgeFolder ) )['name']) {
+			                    $this->getAppClass()->getErrorRecording()->captureMessage( "Unable to write too badge folder", array( 'file_system' ), array(
+				                    'level' => 'info',
+				                    'extra' => array(
+					                    'folder'       => str_ireplace( dirname( __FILE__ ), "", $badgeFolder ),
+					                    'permissions'  => substr( sprintf( '%o', fileperms( $badgeFolder ) ), - 4 ),
+					                    'folder_owner' => posix_getpwuid( fileowner( $badgeFolder ) )['name'],
+					                    'folder_group' => posix_getpwuid( filegroup( $badgeFolder ) )['name'],
+					                    'runing_user'  => get_current_user(),
+					                    'php_version'  => phpversion(),
+					                    'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
+				                    )
+			                    ) );
+		                    }
 	                    }
 
                         return "-142";
