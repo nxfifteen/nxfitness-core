@@ -136,6 +136,7 @@
                                 }
                             } else {
 	                            $fitbitApp->getErrorRecording()->captureMessage("API limit reached", array('remote_api'), array(
+		                            'level' => 'info',
 		                            'extra' => array(
 			                            'api_req' => $_GET['get'],
 			                            'user' => $_GET['user'],
@@ -161,6 +162,7 @@
                         }
                     } else {
 	                    $fitbitApp->getErrorRecording()->captureMessage("Unknown User", array('authentication'), array(
+		                    'level' => 'info',
 		                    'extra' => array(
 			                    'api_req' => $_GET['get'],
 			                    'user' => $_GET['user'],

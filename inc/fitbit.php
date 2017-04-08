@@ -1161,6 +1161,7 @@
 
                             if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "", $device->deviceVersion) . ".png")) {
 	                            $this->getAppClass()->getErrorRecording()->captureMessage("Missing Device Image", array('static_files'), array(
+		                            'level' => 'warning',
 		                            'extra' => array(
 			                            'type' => $device->type,
 			                            'deviceVersion' => $device->deviceVersion,
@@ -1349,6 +1350,7 @@
 
 	                    if (!file_exists($badgeFolder)) {
 		                    $this->getAppClass()->getErrorRecording()->captureMessage("Missing badge folder", array('file_system'), array(
+			                    'level' => 'info',
 			                    'extra' => array(
 				                    'folder' => str_ireplace(dirname(__FILE__), "", $badgeFolder),
 				                    'php_version' => phpversion(),
@@ -1357,6 +1359,7 @@
 		                    ));
 	                    } else if (!is_writable($badgeFolder)) {
 		                    $this->getAppClass()->getErrorRecording()->captureMessage("Unable to write too badge folder", array('file_system'), array(
+			                    'level' => 'info',
 			                    'extra' => array(
 				                    'folder' => str_ireplace(dirname(__FILE__), "", $badgeFolder),
 				                    'permissions' => substr(sprintf('%o', fileperms($badgeFolder)), -4),
@@ -2790,7 +2793,10 @@
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 // Failed to get the access token or user details.
 	            $this->getAppClass()->getErrorRecording()->captureException($e, array(
+		            'level' => 'error',
 		            'extra' => array(
+			            'api_path' => $path,
+			            'user' => $this->activeUser,
 			            'php_version' => phpversion(),
 			            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
 		            ),
