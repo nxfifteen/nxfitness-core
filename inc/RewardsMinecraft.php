@@ -93,15 +93,21 @@
 			) )
 			) {
 				$rewards = $this->getAppClass()->getDatabase()->query(
-					"SELECT `".$db_prefix."reward_map`.`rmid` AS `rmid`,`".$db_prefix."reward_map`.`reward` AS `rid`,`".$db_prefix."rewards`.`reward` AS `reward`,`".$db_prefix."rewards`.`description` AS `description`"
-					. " FROM `".$db_prefix."reward_map`"
-					. " JOIN `".$db_prefix."rewards` ON (`".$db_prefix."reward_map`.`reward` = `".$db_prefix."rewards`.`rid`)"
-					. " WHERE `".$db_prefix."reward_map`.`cat` = '" . $cat . "' AND `".$db_prefix."reward_map`.`event` = '" . $event . "' AND `".$db_prefix."reward_map`.`rule` = '".$score."' ");
+					"SELECT `" . $db_prefix . "reward_map`.`rmid` AS `rmid`,`" . $db_prefix . "reward_map`.`reward` AS `rid`,`" . $db_prefix . "rewards`.`reward` AS `reward`,`" . $db_prefix . "rewards`.`description` AS `description`"
+					. " FROM `" . $db_prefix . "reward_map`"
+					. " JOIN `" . $db_prefix . "rewards` ON (`" . $db_prefix . "reward_map`.`reward` = `" . $db_prefix . "rewards`.`rid`)"
+					. " WHERE `" . $db_prefix . "reward_map`.`cat` = '" . $cat . "' AND `" . $db_prefix . "reward_map`.`event` = '" . $event . "' AND `" . $db_prefix . "reward_map`.`rule` = '" . $score . "' " );
+				$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+					"METHOD" => __METHOD__,
+					"LINE"   => __LINE__
+				) );
 				foreach ( $rewards as $dbReward ) {
-					array_push( $reward, array("rid" => $dbReward['rid'],
-					                           "rmid" => $dbReward['rmid'],
-					                           "reward" => $dbReward['reward'],
-					                           "description" => $dbReward['description']) );
+					array_push( $reward, array(
+						"rid"         => $dbReward['rid'],
+						"rmid"        => $dbReward['rmid'],
+						"reward"      => $dbReward['reward'],
+						"description" => $dbReward['description']
+					) );
 				}
 			} elseif ( $this->createRewards ) {
 				$this->getAppClass()->getDatabase()->insert( $db_prefix . "reward_map", array(
@@ -109,31 +115,82 @@
 					"event" => $event,
 					"rule"  => $score
 				) );
+				$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+					"METHOD" => __METHOD__,
+					"LINE"   => __LINE__
+				) );
 			}
 
 			if ( count( $reward ) == 0 ) {
 				return FALSE;
 			} else {
 
-				foreach ($reward as $recordReward) {
+				foreach ( $reward as $recordReward ) {
 
 					$currentDate = new DateTime ( 'now' );
 					$currentDate = $currentDate->format( "Y-m-d" );
-					if ( !$this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'date[~]' => $currentDate, 'rmid' => $recordReward['rmid'] ) ) ) ) {
-						$nukeOne = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'rid', array( "AND" => array( "nukeid" => $recordReward['rid'], "directional" => "true" ) ));
-						if (count($nukeOne) > 0) {
-							foreach ($nukeOne as $nukeId) {
-								if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) ) ) {
-									$this->getAppClass()->getDatabase()->delete( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) );
+					if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array(
+						"AND" => array(
+							'fuid'    => $this->getUserID(),
+							'date[~]' => $currentDate,
+							'rmid'    => $recordReward['rmid']
+						)
+					) )
+					) {
+						$nukeOne = $this->getAppClass()->getDatabase()->select( $db_prefix . "reward_nuke", 'rid', array(
+							"AND" => array(
+								"nukeid"      => $recordReward['rid'],
+								"directional" => "true"
+							)
+						) );
+						$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+							"METHOD" => __METHOD__,
+							"LINE"   => __LINE__
+						) );
+						if ( count( $nukeOne ) > 0 ) {
+							foreach ( $nukeOne as $nukeId ) {
+								if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array(
+									"AND" => array(
+										'fuid'   => $this->getUserID(),
+										'reward' => $nukeId
+									)
+								) )
+								) {
+									$this->getAppClass()->getDatabase()->delete( $db_prefix . "reward_queue", array(
+										"AND" => array(
+											'fuid'   => $this->getUserID(),
+											'reward' => $nukeId
+										)
+									) );
 								}
 							}
 						}
 
-						$nukeTwo = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'nukeid', array( "AND" => array( "rid" => $recordReward['rid'], "directional" => "false" ) ));
-						if (count($nukeTwo) > 0) {
-							foreach ($nukeTwo as $nukeId) {
-								if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) ) ) {
-									$this->getAppClass()->getDatabase()->delete( $db_prefix . "reward_queue", array( "AND" => array( 'fuid' => $this->getUserID(), 'reward' => $nukeId ) ) );
+						$nukeTwo = $this->getAppClass()->getDatabase()->select( $db_prefix . "reward_nuke", 'nukeid', array(
+							"AND" => array(
+								"rid"         => $recordReward['rid'],
+								"directional" => "false"
+							)
+						) );
+						$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+							"METHOD" => __METHOD__,
+							"LINE"   => __LINE__
+						) );
+						if ( count( $nukeTwo ) > 0 ) {
+							foreach ( $nukeTwo as $nukeId ) {
+								if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", array(
+									"AND" => array(
+										'fuid'   => $this->getUserID(),
+										'reward' => $nukeId
+									)
+								) )
+								) {
+									$this->getAppClass()->getDatabase()->delete( $db_prefix . "reward_queue", array(
+										"AND" => array(
+											'fuid'   => $this->getUserID(),
+											'reward' => $nukeId
+										)
+									) );
 								}
 							}
 						}
@@ -141,12 +198,16 @@
 						$this->getAppClass()->getDatabase()->insert( $db_prefix . "reward_queue", array(
 							"fuid"   => $this->getUserID(),
 							"state"  => 'pending',
-							"rmid" => $recordReward['rmid'],
+							"rmid"   => $recordReward['rmid'],
 							"reward" => $recordReward['rid']
 						) );
-						nxr( "    Awarding $cat / $event ($score) = " . print_r($recordReward['description'], TRUE));
+						$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+							"METHOD" => __METHOD__,
+							"LINE"   => __LINE__
+						) );
+						nxr( "    Awarding $cat / $event ($score) = " . print_r( $recordReward['description'], TRUE ) );
 					} else {
-						nxr( "    Already awarded $cat / $event ($score) = " . print_r($recordReward['description'], TRUE));
+						nxr( "    Already awarded $cat / $event ($score) = " . print_r( $recordReward['description'], TRUE ) );
 					}
 
 
@@ -230,25 +291,25 @@
 
 			if ( $_SERVER['REQUEST_METHOD'] == "GET" ) {
 				$rewards = $this->getAppClass()->getDatabase()->query(
-					"SELECT `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`reward` AS `reward`,"
-					. " `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`fuid` AS `fuid`,"
-					. " `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`rqid` AS `rqid`"
-					. " FROM `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`"
-					. " JOIN `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue` ON (`".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`reward` = `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."rewards`.`rid`)"
-					. " WHERE `".$this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue`.`state` = 'pending'");
+					"SELECT `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "rewards`.`reward` AS `reward`,"
+					. " `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue`.`fuid` AS `fuid`,"
+					. " `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue`.`rqid` AS `rqid`"
+					. " FROM `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "rewards`"
+					. " JOIN `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue` ON (`" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue`.`reward` = `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "rewards`.`rid`)"
+					. " WHERE `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue`.`state` = 'pending' LIMIT 50" );
 
-				$data      = array();
+				$data = array();
 				foreach ( $rewards as $dbReward ) {
 					$minecraftUsername = $this->getAppClass()->getUserSetting( $dbReward['fuid'], "minecraft_username", FALSE );
 
 					if ( ! array_key_exists( $minecraftUsername, $data ) ) {
 						$data[ $minecraftUsername ] = array();
 					}
-					if (!array_key_exists($dbReward['rqid'], $data[$minecraftUsername])) {
+					if ( ! array_key_exists( $dbReward['rqid'], $data[ $minecraftUsername ] ) ) {
 						$data[ $minecraftUsername ][ $dbReward['rqid'] ] = array();
 					}
 					$dbReward['reward'] = str_replace( "%s", $minecraftUsername, $dbReward['reward'] );
-					array_push($data[ $minecraftUsername ][ $dbReward['rqid'] ], $dbReward['reward']);
+					array_push( $data[ $minecraftUsername ][ $dbReward['rqid'] ], $dbReward['reward'] );
 				}
 
 				return array( "success" => TRUE, "data" => $data );
@@ -259,9 +320,13 @@
 
 				if ( is_array( $_POST['processedOrders'] ) ) {
 					foreach ( $_POST['processedOrders'] as $processedOrder ) {
-						if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue", array( "rqid" => $processedOrder ) ) ) {
+						if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue", array( "rqid" => $processedOrder ) ) ) {
 
-							$this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE )."reward_queue", array( "state" => "delivered" ), array( "rqid" => $processedOrder ) );
+							$this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue", array( "state" => "delivered" ), array( "rqid" => $processedOrder ) );
+							$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+								"METHOD" => __METHOD__,
+								"LINE"   => __LINE__
+							) );
 
 							nxr( " Reward " . $processedOrder . " processed" );
 						} else {
@@ -281,39 +346,66 @@
 		}
 
 		public function EventTriggerActivity( $activity ) {
-			$currentDate = new DateTime ( 'now' );
-			$currentDate = $currentDate->format( "Y-m-d" );
-			$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
-			$checkForThese = array("Aerobic", "Bicycling", "Bodyweight", "Calisthenics", "Circuit Training", "Elliptical Trainer", "Hike", "Meditating", "Outdoor Bike", "Push-ups", "Run", "Sit-ups", "Skiing", "Stationary bike", "Strength training", "Swimming", "Tai chi", "Treadmill", "Walk", "Workout", "Yoga");
+			$currentDate   = new DateTime ( 'now' );
+			$currentDate   = $currentDate->format( "Y-m-d" );
+			$db_prefix     = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
+			$checkForThese = array(
+				"Aerobic",
+				"Bicycling",
+				"Bodyweight",
+				"Calisthenics",
+				"Circuit Training",
+				"Elliptical Trainer",
+				"Hike",
+				"Meditating",
+				"Outdoor Bike",
+				"Push-ups",
+				"Run",
+				"Sit-ups",
+				"Skiing",
+				"Stationary bike",
+				"Strength training",
+				"Swimming",
+				"Tai chi",
+				"Treadmill",
+				"Walk",
+				"Workout",
+				"Yoga"
+			);
 
-			$supportActivity = false;
-			if ($activity->activityName != "auto_detected") {
+			$supportActivity = FALSE;
+			if ( $activity->activityName != "auto_detected" ) {
 				foreach ( $checkForThese as $tracker ) {
-					if ( !$supportActivity && strpos( $activity->activityName, $tracker ) !== FALSE ) {
+					if ( ! $supportActivity && strpos( $activity->activityName, $tracker ) !== FALSE ) {
 						$supportActivity = TRUE;
 					}
 				}
 			}
 
-			if ($supportActivity) {
-				$sql_search = array( "user" => $this->getUserID(), "activityName[~]" => $tracker, "startDate" => $currentDate, "logType[!]" => 'auto_detected' );
-				$minMaxAvg = array();
-				$minMaxAvg['min'] = ($this->getAppClass()->getDatabase()->min( $db_prefix . "activity_log", "activeDuration", array( "AND" => $sql_search ) ) / 1000) / 60;
-				$minMaxAvg['avg'] = ($this->getAppClass()->getDatabase()->avg( $db_prefix . "activity_log", "activeDuration", array( "AND" => $sql_search ) ) / 1000) / 60;
-				$minMaxAvg['max'] = ($this->getAppClass()->getDatabase()->max( $db_prefix . "activity_log", "activeDuration", array( "AND" => $sql_search ) ) / 1000) / 60;
+			if ( $supportActivity ) {
+				$sql_search       = array(
+					"user"            => $this->getUserID(),
+					"activityName[~]" => $tracker,
+					"startDate"       => $currentDate,
+					"logType[!]"      => 'auto_detected'
+				);
+				$minMaxAvg        = array();
+				$minMaxAvg['min'] = ( $this->getAppClass()->getDatabase()->min( $db_prefix . "activity_log", "activeDuration", array( "AND" => $sql_search ) ) / 1000 ) / 60;
+				$minMaxAvg['avg'] = ( $this->getAppClass()->getDatabase()->avg( $db_prefix . "activity_log", "activeDuration", array( "AND" => $sql_search ) ) / 1000 ) / 60;
+				$minMaxAvg['max'] = ( $this->getAppClass()->getDatabase()->max( $db_prefix . "activity_log", "activeDuration", array( "AND" => $sql_search ) ) / 1000 ) / 60;
 
-				$minMaxAvg['min2avg'] = (($minMaxAvg['avg'] - $minMaxAvg['min']) / 2) + $minMaxAvg['min'];
-				$minMaxAvg['avg2max'] = (($minMaxAvg['max'] - $minMaxAvg['avg']) / 2) + $minMaxAvg['avg'];
+				$minMaxAvg['min2avg'] = ( ( $minMaxAvg['avg'] - $minMaxAvg['min'] ) / 2 ) + $minMaxAvg['min'];
+				$minMaxAvg['avg2max'] = ( ( $minMaxAvg['max'] - $minMaxAvg['avg'] ) / 2 ) + $minMaxAvg['avg'];
 
 				$activeDuration = $activity->duration / 1000 / 60;
 
-				if ($activeDuration == $minMaxAvg['max']) {
+				if ( $activeDuration == $minMaxAvg['max'] ) {
 					$this->CheckForAward( "activity", $tracker, "max" );
-				} else if ($activeDuration >= $minMaxAvg['avg2max']) {
+				} else if ( $activeDuration >= $minMaxAvg['avg2max'] ) {
 					$this->CheckForAward( "activity", $tracker, "avg2max" );
-				} else if ($activeDuration >= $minMaxAvg['avg']) {
+				} else if ( $activeDuration >= $minMaxAvg['avg'] ) {
 					$this->CheckForAward( "activity", $tracker, "avg" );
-				} else if ($activeDuration >= $minMaxAvg['min2avg']) {
+				} else if ( $activeDuration >= $minMaxAvg['min2avg'] ) {
 					$this->CheckForAward( "activity", $tracker, "min2avg" );
 				} else {
 					$this->CheckForAward( "activity", $tracker, "other" );
@@ -341,21 +433,21 @@
 		}
 
 		public function EventTriggerWeightChange( $current, $goal, $last ) {
-			if ($current <= $goal) {
+			if ( $current <= $goal ) {
 				$this->CheckForAward( "body", "weight", "goal" );
-			} else if ($current < $last) {
+			} else if ( $current < $last ) {
 				$this->CheckForAward( "body", "weight", "decreased" );
-			} else if ($current > $last) {
+			} else if ( $current > $last ) {
 				$this->CheckForAward( "body", "weight", "increased" );
 			}
 		}
 
 		public function EventTriggerFatChange( $current, $goal, $last ) {
-			if ($current <= $goal) {
+			if ( $current <= $goal ) {
 				$this->CheckForAward( "body", "fat", "goal" );
-			} else if ($current < $last) {
+			} else if ( $current < $last ) {
 				$this->CheckForAward( "body", "fat", "decreased" );
-			} else if ($current > $last) {
+			} else if ( $current > $last ) {
 				$this->CheckForAward( "body", "fat", "increased" );
 			}
 		}
@@ -414,9 +506,9 @@
 
 				$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
 				if ( $value >= 1 ) {
-					$recordedValue  = round( $value, 3 );
-					$hundredth = round( $recordedValue / $divider, 0 );
-					nxr( " checking awards for $trigger $hundredth");
+					$recordedValue = round( $value, 3 );
+					$hundredth     = round( $recordedValue / $divider, 0 );
+					nxr( " checking awards for $trigger $hundredth" );
 					$this->CheckForAward( "hundredth", $trigger, $hundredth );
 
 				}
@@ -430,7 +522,7 @@
 
 			nxr( "  ** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score );
 
-			if ( !$this->CheckForAward( "nomie", "logged", $event ) ) {
+			if ( ! $this->CheckForAward( "nomie", "logged", $event ) ) {
 				$this->CheckForAward( "nomie", "score", $score );
 			}
 		}
