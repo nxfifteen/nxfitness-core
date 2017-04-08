@@ -110,7 +110,7 @@
 		/**
 		 * @return ErrorRecording
 		 */
-		public function getErrorRecording(): ErrorRecording {
+		public function getErrorRecording() {
 			return $this->errorRecording;
 		}
 
@@ -560,7 +560,7 @@
 		/**
 		 * @return Raven_Client
 		 */
-		public function getSentryClient(): Raven_Client {
+		public function getSentryClient() {
 			if ( is_null( $this->sentryClient ) ) {
 				$this->sentryClient = ( new Raven_Client( SENTRY_DSN ) )
 					->setAppPath( __DIR__ )
@@ -575,7 +575,7 @@
 		/**
 		 * @return Raven_ErrorHandler
 		 */
-		public function getSentryErrorHandler(): Raven_ErrorHandler {
+		public function getSentryErrorHandler() {
 			if ( is_null( $this->sentryErrorHandler ) ) {
 				$this->sentryErrorHandler = new Raven_ErrorHandler( $this->getSentryClient() );
 				$this->sentryErrorHandler->registerExceptionHandler();
@@ -594,6 +594,7 @@
 		 */
 		public function captureException( $exception, $data=null, $logger=null, $vars=null ) {
 			$this->getSentryClient()->captureException( $exception, $data, $logger, $vars );
+			nxr("### Exception Recorded ###");
 		}
 
 		/**
@@ -605,5 +606,6 @@
 		 */
 		public function captureMessage( $message, $params=array(), $data=array(), $stack=false, $vars = null ) {
 			$this->getSentryClient()->captureMessage( $message, $params, $data, $stack, $vars );
+			nxr("### Message Recorded ###");
 		}
 	}
