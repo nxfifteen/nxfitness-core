@@ -573,6 +573,12 @@
 					->setEnvironment( $this->appClass->getSetting("environment", "development", FALSE) )
 					->setPrefixes( array( __DIR__ ) )
 					->install();
+
+				$this->sentryClient->user_context(array(
+					'id' => sha1(gethostbyname(gethostname()) . gethostname() . $this->appClass->getSetting("ownerFuid", "Unknown", FALSE)),
+					'username' => $this->appClass->getSetting("ownerFuid", "Unknown", FALSE),
+					'ip_address' => gethostbyname(gethostname())
+				));
 			}
 
 			return $this->sentryClient;
