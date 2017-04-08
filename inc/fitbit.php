@@ -1993,21 +1993,9 @@
 				    try {
     				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('hyperStorage-groups')), TRUE);
 				    } catch (couchNotFoundException $e) {
-					    $this->getAppClass()->getErrorRecording()->captureException($e, array(
-						    'extra' => array(
-							    'php_version' => phpversion(),
-							    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
-						    ),
-					    ));
     				    try {
         				    $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')), TRUE);
     				    } catch (couchNotFoundException $e) {
-					        $this->getAppClass()->getErrorRecording()->captureException($e, array(
-						        'extra' => array(
-							        'php_version' => phpversion(),
-							        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
-						        ),
-					        ));
     				        $this->api_setLastrun("nomie_trackers", NULL, TRUE);
 				            return "-144";
     				    }
