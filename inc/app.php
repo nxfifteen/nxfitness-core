@@ -85,7 +85,7 @@
 
 			$this->getSettings()->setDatabase( $this->getDatabase() );
 
-			$this->errorRecording = new ErrorRecording();
+			$this->errorRecording = new ErrorRecording($this);
 
 		}
 
@@ -549,12 +549,17 @@
 		 * @var Raven_ErrorHandler
 		 */
 		protected $sentryErrorHandler;
+		/**
+		 * @var NxFitbit
+		 */
+		protected $appClass;
 
-		public function __construct() {
+		public function __construct($appClass) {
 			require_once( dirname( __FILE__ ) . "/../config.def.php" );
 			require_once( dirname( __FILE__ ) . "/../library/sentry/lib/Raven/Autoloader.php" );
 			Raven_Autoloader::register();
 
+			$this->appClass = $appClass;
 		}
 
 		/**
@@ -564,7 +569,8 @@
 			if ( is_null( $this->sentryClient ) ) {
 				$this->sentryClient = ( new Raven_Client( SENTRY_DSN ) )
 					->setAppPath( __DIR__ )
-					->setRelease( Raven_Client::VERSION )
+					->setRelease( $this->appClass->getSetting("version", "0.0.0.1", TRUE) )
+					->setEnvironment( $this->appClass->getSetting("environment", "development", FALSE) )
 					->setPrefixes( array( __DIR__ ) )
 					->install();
 			}
