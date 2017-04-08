@@ -31,8 +31,25 @@
                 print_r($fitbitApp->supportedApi());
             }
         } else {
+        	$fitbitApp->getErrorRecording()->captureMessage("API limit reached", array('remote_api'), array(
+		        'extra' => array(
+			        'api_req' => $_GET['get'],
+			        'user' => $_GET['user'],
+			        'cooldown' => $cooldown,
+			        'php_version' => phpversion(),
+			        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		        )
+	        ));
             nxr("Can not process " . $fitbitApp->supportedApi($_GET['get']) . ". API limit reached for " . $_GET['user'] . ". Cooldown period ends " . $cooldown);
         }
     } else {
+	    $fitbitApp->getErrorRecording()->captureMessage("Unknown User", array('authentication'), array(
+		    'extra' => array(
+			    'api_req' => $_GET['get'],
+			    'user' => $_GET['user'],
+			    'php_version' => phpversion(),
+			    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+		    )
+	    ));
         nxr("Can not process " . $fitbitApp->supportedApi($_GET['get']) . " since " . $_GET['user'] . " is no longer a user.");
     }
