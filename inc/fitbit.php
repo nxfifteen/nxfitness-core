@@ -1953,104 +1953,113 @@
     				    }
 				    }
 
-				    $trackerGroups = $trackerGroups['groups'];
-				    if (is_array($trackerGroups) && array_key_exists("NxFITNESS", $trackerGroups)) {
-					    nxr("  Downloadnig NxFITNESS Group Trackers");
-					    $trackerGroups = $trackerGroups['NxFITNESS'];
-				    } else {
-					    nxr("  Downloading All Trackers");
-					    $trackerGroups = $trackerGroups['All'];
-				    }
-
-				    $couchClient->useDatabase($nomie_user_key . '_trackers');
-				    if ( !$couchClient->databaseExists() ) {
-					    nxr("  Nomie Tracker table missing");
-					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-				    }
-
-				    $trackedTrackers = array();
-				    $indexedTrackers = array();
-				    $db_prefix = $this->getAppClass()->getSetting("db_prefix", NULL, FALSE);
-				    foreach ($trackerGroups as $tracker) {
-				    	try {
-						    $doc = $couchClient->getDoc( $tracker );
-					    } catch (couchNotFoundException $e) {
-
+				    if (is_array($trackerGroups) && array_key_exists("groups", $trackerGroups)) {
+					    $trackerGroups = $trackerGroups['groups'];
+					    if ( is_array( $trackerGroups ) && array_key_exists( "NxFITNESS", $trackerGroups ) ) {
+						    nxr( "  Downloadnig NxFITNESS Group Trackers" );
+						    $trackerGroups = $trackerGroups['NxFITNESS'];
+					    } else {
+						    nxr( "  Downloading All Trackers" );
+						    $trackerGroups = $trackerGroups['All'];
 					    }
 
-					    if (isset($doc) && is_object($doc)) {
-						    nxr( "  Storing " . $doc->label );
+					    $couchClient->useDatabase( $nomie_user_key . '_trackers' );
+					    if ( ! $couchClient->databaseExists() ) {
+						    nxr( "  Nomie Tracker table missing" );
 
-						    $dbStorage = array(
-							    "fuid"   => $this->activeUser,
-							    "id"     => $tracker,
-							    "label"  => $doc->label,
-							    "icon"   => trim( str_ireplace( "  ", " ", $doc->icon ) ),
-							    "color"  => $doc->color,
-							    "charge" => $doc->charge
-						    );
+						    return array( "error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly" );
+					    }
 
-						    array_push( $trackedTrackers, $tracker );
-						    $indexedTrackers[ $tracker ] = $doc->label;
+					    $trackedTrackers = array();
+					    $indexedTrackers = array();
+					    $db_prefix       = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
+					    foreach ( $trackerGroups as $tracker ) {
+						    try {
+							    $doc = $couchClient->getDoc( $tracker );
+						    } catch ( couchNotFoundException $e ) {
 
-						    if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_trackers", array(
-							    "AND" => array(
-								    "fuid" => $this->activeUser,
-								    "id"   => $tracker
-							    )
-						    ) )
-						    ) {
-							    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_trackers", $dbStorage );
-						    } else {
-							    $this->getAppClass()->getDatabase()->update( $db_prefix . "nomie_trackers", $dbStorage, array(
+						    }
+
+						    if ( isset( $doc ) && is_object( $doc ) ) {
+							    nxr( "  Storing " . $doc->label );
+
+							    $dbStorage = array(
+								    "fuid"   => $this->activeUser,
+								    "id"     => $tracker,
+								    "label"  => $doc->label,
+								    "icon"   => trim( str_ireplace( "  ", " ", $doc->icon ) ),
+								    "color"  => $doc->color,
+								    "charge" => $doc->charge
+							    );
+
+							    array_push( $trackedTrackers, $tracker );
+							    $indexedTrackers[ $tracker ] = $doc->label;
+
+							    if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_trackers", array(
 								    "AND" => array(
 									    "fuid" => $this->activeUser,
 									    "id"   => $tracker
 								    )
-							    ) );
+							    ) )
+							    ) {
+								    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_trackers", $dbStorage );
+							    } else {
+								    $this->getAppClass()->getDatabase()->update( $db_prefix . "nomie_trackers", $dbStorage, array(
+									    "AND" => array(
+										    "fuid" => $this->activeUser,
+										    "id"   => $tracker
+									    )
+								    ) );
+							    }
 						    }
 					    }
-				    }
 
-				    $couchClient->useDatabase($nomie_user_key . '_events');
-				    if ( !$couchClient->databaseExists() ) {
-					    nxr("  Nomie Tracker table missing");
-					    return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
-				    }
-				    $trackerEvents = json_decode(json_encode($couchClient->getAllDocs()), TRUE);
-				    foreach ($trackerEvents['rows'] as $events) {
-					    $event = explode("|", $events['id']);
-					    $event[5] = date('Y-m-d H:i:s', $event[3] / 1000);
+					    $couchClient->useDatabase( $nomie_user_key . '_events' );
+					    if ( ! $couchClient->databaseExists() ) {
+						    nxr( "  Nomie Tracker table missing" );
 
-					    if (in_array($event[2], $trackedTrackers)) {
-						    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_events", array("AND" => array("fuid" => $this->activeUser, "id" => $event[2], "datestamp" => $event[5])))) {
+						    return array( "error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly" );
+					    }
+					    $trackerEvents = json_decode( json_encode( $couchClient->getAllDocs() ), TRUE );
+					    foreach ( $trackerEvents['rows'] as $events ) {
+						    $event    = explode( "|", $events['id'] );
+						    $event[5] = date( 'Y-m-d H:i:s', $event[3] / 1000 );
 
-							    $document = json_decode(json_encode($couchClient->getDoc($events['id'])), TRUE);
+						    if ( in_array( $event[2], $trackedTrackers ) ) {
+							    if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_events", array( "AND" => array( "fuid"      => $this->activeUser,
+							                                                                                                         "id"        => $event[2],
+							                                                                                                         "datestamp" => $event[5]
+							    )
+							    ) )
+							    ) {
 
-							    $dbStorage = array(
-								    "fuid"      => $this->activeUser,
-								    "id"        => $event[2],
-								    "type"      => $event[0],
-								    "datestamp" => $event[5],
-								    "value"     => $document['value'],
-								    "score"     => $event[4],
-							    );
+								    $document = json_decode( json_encode( $couchClient->getDoc( $events['id'] ) ), TRUE );
 
-							    if (is_array($document['geo']) and count($document['geo']) == 2) {
-								    $dbStorage["geo_lat"] = $document['geo'][0];
-								    $dbStorage["geo_lon"] = $document['geo'][1];
+								    $dbStorage = array(
+									    "fuid"      => $this->activeUser,
+									    "id"        => $event[2],
+									    "type"      => $event[0],
+									    "datestamp" => $event[5],
+									    "value"     => $document['value'],
+									    "score"     => $event[4],
+								    );
+
+								    if ( is_array( $document['geo'] ) and count( $document['geo'] ) == 2 ) {
+									    $dbStorage["geo_lat"] = $document['geo'][0];
+									    $dbStorage["geo_lon"] = $document['geo'][1];
+								    }
+
+								    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_events", $dbStorage );
+								    nxr( "   Stored event : " . $event[2] . " from " . $event[3] );
+								    //nxr( print_r($this->getAppClass()->getDatabase()->log(), true) );
+								    //return true;
 							    }
 
-							    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_events", $dbStorage );
-							    nxr( "   Stored event : " . $event[2] . " from " . $event[3]);
-							    //nxr( print_r($this->getAppClass()->getDatabase()->log(), true) );
-							    //return true;
-						    }
-
-						    if (!is_null($this->RewardsSystem)) {
-						    	if (date('Y-m-d', $event[3] / 1000) == date('Y-m-d')) {
-								    $event[2] = $indexedTrackers[ $event[2] ];
-								    $this->RewardsSystem->EventTriggerNomie( $event );
+							    if ( ! is_null( $this->RewardsSystem ) ) {
+								    if ( date( 'Y-m-d', $event[3] / 1000 ) == date( 'Y-m-d' ) ) {
+									    $event[2] = $indexedTrackers[ $event[2] ];
+									    $this->RewardsSystem->EventTriggerNomie( $event );
+								    }
 							    }
 						    }
 					    }
