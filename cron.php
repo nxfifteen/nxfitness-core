@@ -51,7 +51,7 @@
         SELECT fuid, name from " . $fitbitApp->getSetting( "db_prefix", NULL, FALSE ) . "users where
         UNIX_TIMESTAMP(str_to_date(lastrun,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date( "Y-m-d H:i:s", strtotime( '-1 day' ) ) . "') AND
         UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date( "Y-m-d H:i:s" ) . "')" )->fetchAll();
-		$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+		$fitbitApp->getErrorRecording()->postDatabaseQuery( $fitbitApp->getDatabase(), array(
 			"METHOD" => __METHOD__,
 			"LINE"   => __LINE__
 		) );
@@ -81,7 +81,7 @@
 		} else {
 			$unfinishedUsers = $fitbitApp->getDatabase()->query( "-- noinspection SqlDialectInspection
             SELECT fuid, name from " . $fitbitApp->getSetting( "db_prefix", NULL, FALSE ) . "users where UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date( "Y-m-d H:i:s" ) . "')" )->fetchAll();
-			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+			$fitbitApp->getErrorRecording()->postDatabaseQuery( $fitbitApp->getDatabase(), array(
 				"METHOD" => __METHOD__,
 				"LINE"   => __LINE__
 			) );
@@ -139,7 +139,7 @@
 											'api_req'      => $job['trigger'],
 											'user'         => $job['user'],
 											'php_version'  => phpversion(),
-											'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
+											'core_version' => $fitbitApp->getSetting( "version", "0.0.0.1", TRUE )
 										)
 									) );
 									nxr( "* Cron Error: " . $fitbitApp->lookupErrorCode( $jobRun ) );
@@ -154,7 +154,7 @@
 										'user'         => $_GET['user'],
 										'cooldown'     => $cooldown,
 										'php_version'  => phpversion(),
-										'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
+										'core_version' => $fitbitApp->getSetting( "version", "0.0.0.1", TRUE )
 									)
 								) );
 								nxr( "Can not process " . $fitbitApp->supportedApi( $job['trigger'] ) . ". API limit reached for " . $job['user'] . ". Cooldown period ends " . $cooldown );
@@ -179,7 +179,7 @@
 								'api_req'      => $_GET['get'],
 								'user'         => $_GET['user'],
 								'php_version'  => phpversion(),
-								'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
+								'core_version' => $fitbitApp->getSetting( "version", "0.0.0.1", TRUE )
 							)
 						) );
 						nxr( "  Can not process " . $fitbitApp->supportedApi( $job['trigger'] ) . " since " . $job['user'] . " is no longer a user." );
