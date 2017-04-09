@@ -11,6 +11,7 @@
 	}
 
 	// composer require djchen/oauth2-fitbit
+	require_once( dirname( __FILE__ ) . "/../config.def.dist.php" );
 	require_once( dirname( __FILE__ ) . "/../vendor/autoload.php" );
 
 	/**
@@ -59,6 +60,24 @@
 			) ) );
 
 			$this->getSettings()->setDatabase( $this->getDatabase() );
+
+			$installedVersion = $this->getSetting( "version", "0.0.0.1", TRUE );
+			if ( $installedVersion != APP_VERSION ) {
+				nxr( "Installed version $installedVersion and should be " . APP_VERSION );
+				require_once( dirname( __FILE__ ) . "/upgrade.php" );
+				$dataReturnClass = new Upgrade();
+
+				echo "Upgrading from " . $dataReturnClass->getInstallVersion() . " to " . $dataReturnClass->getInstallingVersion() . ". ";
+				echo $dataReturnClass->getNumUpdates() . " updates outstanding\n";
+
+				if ( $dataReturnClass->getNumUpdates() > 0 ) {
+					$dataReturnClass->runUpdates();
+				}
+
+				unset( $dataReturnClass );
+				nxr( "Update completed, please re-run the command" );
+				die();
+			}
 
 			$this->errorRecording = new ErrorRecording( $this );
 
@@ -554,7 +573,6 @@
 		protected $appClass;
 
 		public function __construct( $appClass ) {
-			require_once( dirname( __FILE__ ) . "/../config.def.php" );
 			require_once( dirname( __FILE__ ) . "/../library/sentry/lib/Raven/Autoloader.php" );
 			Raven_Autoloader::register();
 
