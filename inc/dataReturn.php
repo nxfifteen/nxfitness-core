@@ -1,10 +1,15 @@
 <?php
 
 	/**
-	 * Created by PhpStorm.
-	 * User: nxad
-	 * Date: 19/02/15
-	 * Time: 21:14
+	 * dataReturn
+	 *
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-dataReturn phpDocumentor wiki for dataReturn.
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/dataReturn DataReturn Wiki.
+	 * @version   0.0.1
+	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class dataReturn {
 

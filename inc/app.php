@@ -40,13 +40,14 @@
 	require_once( dirname( __FILE__ ) . "/../vendor/autoload.php" );
 
 	/**
-	 * NxFitbit
+	 * Main app class
 	 *
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-NxFitbit phpDocumentor wiki for NxFitbit.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
-	 * @link      http://nxfifteen.me.uk NxFIFTEEN
-	 * @copyright 2015 Stuart McCulloch Anderson
-	 * @license   http://stuart.nx15.at/mit/2015 MIT
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class NxFitbit {
 		/**
@@ -552,6 +553,18 @@
 
 	}
 
+	/**
+	 * ErrorRecording
+	 *
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-ErrorRecording
+	 *            phpDocumentor wiki for ErrorRecording.
+	 *
+	 * @version   0.0.1
+	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+	 */
 	class ErrorRecording {
 		/**
 		 * @var Raven_Client

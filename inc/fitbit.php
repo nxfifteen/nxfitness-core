@@ -3,13 +3,14 @@
 	define( "FITBIT_COM", "https://api.fitbit.com" );
 
 	/**
-	 * Fitbit Helper class
+	 * fitbit
 	 *
+	 * @link      http://example.com/my/bar phpDocumentor wiki for fitbit.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
-	 * @link      http://nxfifteen.me.uk NxFIFTEEN
-	 * @copyright 2015 Stuart McCulloch Anderson
-	 * @license   http://stuart.nx15.at/mit/2015 MIT
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class fitbit {
 		/**

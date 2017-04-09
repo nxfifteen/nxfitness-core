@@ -1,10 +1,14 @@
 <?php
 
 	/**
-	 * Created by PhpStorm.
-	 * User: nxad
-	 * Date: 21/02/15
-	 * Time: 13:47
+	 * tracking
+	 *
+	 * @link      http://example.com/my/bar phpDocumentor wiki for tracking.
+	 * @version   0.0.1
+	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class tracking {
 

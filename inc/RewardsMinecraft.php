@@ -27,10 +27,14 @@
 	}
 
 	/**
-	 * Created by IntelliJ IDEA.
-	 * User: stuar
-	 * Date: 15/01/2017
-	 * Time: 12:45
+	 * RewardsMinecraft
+	 *
+	 * @link      http://example.com/my/bar phpDocumentor wiki for RewardsMinecraft.
+	 * @version   0.0.1
+	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class RewardsMinecraft {
 
