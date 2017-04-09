@@ -3,7 +3,7 @@
 	/**
 	 * Upgrade
 	 *
-	 * @link      http://example.com/my/bar phpDocumentor wiki for Upgrade.
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-Upgrade phpDocumentor wiki for Upgrade.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
 	 * @link      https://nxfifteen.me.uk NxFIFTEEN

@@ -5,7 +5,7 @@
 	/**
 	 * fitbit
 	 *
-	 * @link      http://example.com/my/bar phpDocumentor wiki for fitbit.
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-fitbit phpDocumentor wiki for fitbit.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
 	 * @link      https://nxfifteen.me.uk NxFIFTEEN

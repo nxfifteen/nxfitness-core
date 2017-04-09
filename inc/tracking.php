@@ -3,7 +3,7 @@
 	/**
 	 * tracking
 	 *
-	 * @link      http://example.com/my/bar phpDocumentor wiki for tracking.
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-tracking phpDocumentor wiki for tracking.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
 	 * @link      https://nxfifteen.me.uk NxFIFTEEN
