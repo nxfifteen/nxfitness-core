@@ -4,11 +4,12 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.7 false ( Sun Apr 09 2017 12:13:58 GMT+0100 (BST) )
+## v0.0.0.8 false ( Sun Apr 09 2017 20:31:05 GMT+0100 (BST) )
 
 
 
 ## Bug Fixes
+  - Added phpDoc config files ([89a66a08](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/89a66a08a652934785f5be01275075850b1a1faa)), Closes: [#63](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/63)
   - Removed error reporting when token expired ([56f9ef9e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/56f9ef9ea82db9fa13c38373b8d45f999574c541)), Closes: [#61](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/61)
   - Fixed copy/paste error ([4d966220](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/4d966220604fcc360d9fbe7b342c35f06d51b877)), Closes: [#60](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/60)
   - Bumped version to 0.0.0.7 by increasing database size ([b3723dac](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b3723dac2fdeb8edccd173e78f5eca87d1f56b7a)), Closes: [#59](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/59)
@@ -55,6 +56,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
   - Moved goal query. Triggers when fat or weight value recorded ([9847d499](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/9847d49970eb997b36cb7a87c5e280ccde81e303)), Closes: [#8](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/8)
   - Rounded off weight and fat values ([df2edf27](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/df2edf27b24bcbee38877f5e3ffd21ad3ec7186c)), Closes: [#2](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/2)
   - Estimated unrecorded weight values base on formula of a straight line ([b23a4b81](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b23a4b81ef17c2977626b056b625d7227c01035a)), Closes: [#1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/1)
+  - **mysql**
+    - v0.0.0.8 rebuilt badges tables ([759121f9](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/759121f91a84cc3efa2479666b78e4682ccea4d4)) , Closes: [#65](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/65)
+
 
 
 
@@ -93,7 +97,42 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 
 
+## Documentation
+  - **change_log**
+    - Updated template ([9ccd0ba6](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/9ccd0ba6e089199c5b3bd6e1e823d29ddb6757cb)) 
+
+  - **changelog**
+    - Updated changelog ([ff2dbf55](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ff2dbf55394787925f66047bb5147f0cdb3f4d2a)) , Closes: [#63](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/63)
+    - Updated changelog templates ([b31af2b4](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b31af2b47616983928064a12b20fd0cf236eba18)) , Closes: [#63](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/63)
+    - Added templates for changelog ([e78d60e4](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e78d60e4a5dae63183b782bedfb391805f166065)) , Closes: [#63](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/63)
+
+  - **commit_template**
+    - Added commit templates ([6bc80a19](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/6bc80a19559466f0f3fccc502a515d808b2c6123)) , Closes: [#63](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/63)
+
+  - **markdown**
+    - Updated License ([88b22764](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/88b227645106746e60431f707ef9c00402a6291b)) 
+
+  - **phpdoc**
+    - Completed config class ([4a5e40c2](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/4a5e40c2c08c40aff5fd84a7790b344f492bb3d3)) , Closes: [#63](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/63)
+    - Added class comment blocks ([b208e3f2](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b208e3f2ae1b0fd83b86cba2649ba905d57dd1b1)) , Closes: [#63](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/63)
+
+
+
+
+
+## Refactor
+  - **gitignore**
+    - Added ignore folders ([9bf8a737](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/9bf8a737f4ee5e9fba532d922d79384bf58ea622)) 
+
+  - **segregation**
+    - Moved NXR function ([d84c5ae1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d84c5ae101f2eb0405141e5302e2ed3f8c627c75)) 
+
+
+
+
+
 ## Branchs merged
+  - Merge branch 'feature/phpdoc' into develop ([a3e6d4a8](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/a3e6d4a8f18440e97c36b041538e850c82cbc204))
   - Merge branch 'feature/get_sentry' into develop ([5f3b3047](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/5f3b304750c413fd410989db20cb70ae04a08249))
   - Merge branch 'feature/minecraft_woo' into develop ([e487b77c](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e487b77cd49300334ba3b9088e95010e949f981d))
   - Merge branch 'develop' into 'master' ([5263c2c6](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/5263c2c6f8e51fc51535736a93805933e9f21378))
@@ -601,5 +640,5 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 
 ---
-<sub><sup>*Generated with [git-changelog](https://github.com/rafinskipg/git-changelog). If you have any problems or suggestions, create an issue.* :) **Thanks** </sub></sup>
+<sub><sup>*Generated with [git-changelog](https://nxfifteen.me.uk/gitlab/nxfifteen/git-changelog). If you have any problems or suggestions, create an issue.* :) **Thanks** </sub></sup>
 
