@@ -2,7 +2,6 @@
     "app_name": "NxFITNESS Core",
     "logo": "https://nxfifteen.me.uk/wp-content/uploads/2016/01/logo.png",
     "intro": "Use the Fitbit API to cache user stats and allow queries returned over JSON",
-    "branch" : "master",
     "repo_url": "https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core",
     "version_name" : "v0.0.0.7",
     "template": "docs/ChangeLogTemplate.md",
