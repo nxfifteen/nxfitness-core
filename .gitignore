@@ -2,6 +2,7 @@
 .idea
 config.inc.php
 config.def.php
+phpdoc.xml
 admin
 adminfree
 admin_pre
