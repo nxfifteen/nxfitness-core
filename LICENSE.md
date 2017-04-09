@@ -1,7 +1,7 @@
 The MIT License (MIT)
 
-Copyright (c) 2014-2016 [Stuart McCulloch Anderson](https://nxfifteen.me.uk) of [NxFIFTEEN](https://nxfifteen.me.uk)
-This license is available online at [https://nxfifteen.me.uk/api/license/mit/2014/license.html](https://nxfifteen.me.uk/api/license/mit/2014/license.html)
+Copyright (c) 2017 [Stuart McCulloch Anderson](https://nxfifteen.me.uk) of [NxFIFTEEN](https://nxfifteen.me.uk)
+This license is available online at [http://nxfifteen.me.uk/cee/mit/2017/license.html](http://nxfifteen.me.uk/cee/mit/2017/license.html)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,8 @@ authors other employers - past or present.
 
 The views and conclusions contained in the software and documentation are those of the
 authors and should not be interpreted as representing official policies, either expressed
-or implied, of the original authors employers - past or present.
+or implied, of the original
+authors employers - past or present.
 
 OpenPGP Key ID: [1FA1E814](https://nxfifteen.me.uk/pgp/keys/) - FingerPrint: BB2CEB25BE0516A7A9C6F2FBEEB496E61FA1E814
 
