@@ -3,13 +3,14 @@
 	define( "FITBIT_COM", "https://api.fitbit.com" );
 
 	/**
-	 * Fitbit Helper class
+	 * fitbit
 	 *
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-fitbit phpDocumentor wiki for fitbit.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
-	 * @link      http://nxfifteen.me.uk NxFIFTEEN
-	 * @copyright 2015 Stuart McCulloch Anderson
-	 * @license   http://stuart.nx15.at/mit/2015 MIT
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class fitbit {
 		/**
@@ -3332,7 +3333,7 @@
 
 					die();
 				} else {
-					$this->getAppClass()->getErrorRecording()->captureException( $e, array(
+					/*$this->getAppClass()->getErrorRecording()->captureException( $e, array(
 						'level' => 'error',
 						'extra' => array(
 							'api_path'     => $path,
@@ -3340,7 +3341,7 @@
 							'php_version'  => phpversion(),
 							'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
 						),
-					) );
+					) );*/
 					nxr( "Error " . $e->getCode() . ": " . $e->getMessage() );
 					nxr( $e->getFile() . " @" . $e->getLine() );
 					nxr( $e->getTraceAsString() );

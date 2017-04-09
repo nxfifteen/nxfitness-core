@@ -1,7 +1,14 @@
 <?php
 
 	/**
-	 * Class Upgrade
+	 * Upgrade
+	 *
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-Upgrade phpDocumentor wiki for Upgrade.
+	 * @version   0.0.1
+	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class Upgrade {
 
@@ -18,7 +25,7 @@
 		/**
 		 * @var String
 		 */
-		protected $VersionInstalling = "0.0.0.7";
+		protected $VersionInstalling = "0.0.0.8";
 
 		/**
 		 * @var String
@@ -445,6 +452,53 @@
 			}
 
 			$this->setSetting( "version", "0.0.0.7", TRUE );
+
+			return TRUE;
+		}
+
+		/** @noinspection PhpUnusedPrivateMethodInspection */
+		private function update_8() {
+			$db_prefix = $this->getSetting( "db_prefix", FALSE );
+
+			$this->getDatabase()->query( "DROP TABLE IF EXISTS `" . $db_prefix . "bages`; CREATE TABLE `" . $db_prefix . "bages` ( `encodedId` varchar(12) NOT NULL, `badgeType` varchar(120) NOT NULL, `value` int(11) NOT NULL, `category` varchar(150) NOT NULL, `description` varchar(255) NOT NULL, `image` varchar(255) NOT NULL, `badgeGradientEndColor` varchar(6) NOT NULL, `badgeGradientStartColor` varchar(6) NOT NULL, `earnedMessage` longtext NOT NULL, `marketingDescription` longtext NOT NULL, `name` varchar(255) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "DROP TABLE IF EXISTS `" . $db_prefix . "bages_user`; CREATE TABLE `" . $db_prefix . "bages_user` ( `badgeid` varchar(8) NOT NULL, `fuid` varchar(8) NOT NULL, `dateTime` varchar(20) NOT NULL, `timesAchieved` int(11) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "bages` ADD PRIMARY KEY (`encodedId`) USING BTREE;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "bages_user` ADD PRIMARY KEY (`badgeid`,`fuid`), ADD KEY `fuid` (`fuid`);" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "bages_user` ADD CONSTRAINT `" . $db_prefix . "bages_user_ibfk_1` FOREIGN KEY (`badgeid`) REFERENCES `" . $db_prefix . "bages` (`encodedId`) ON DELETE NO ACTION, ADD CONSTRAINT `" . $db_prefix . "bages_user_ibfk_2` FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users` (`fuid`) ON DELETE NO ACTION;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$users = $this->getDatabase()->select( $db_prefix . "users", "fuid" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			require_once( dirname( __FILE__ ) . "/app.php" );
+			$fitbitApp = new NxFitbit();
+
+			echo " Queueing Badges for all users\n";
+			foreach ( $users as $user ) {
+				$fitbitApp->addCronJob( $user, 'badges' );
+			}
+
+			$this->setSetting( "version", "0.0.0.8", TRUE );
 
 			return TRUE;
 		}

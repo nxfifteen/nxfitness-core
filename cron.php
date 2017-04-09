@@ -13,29 +13,7 @@
 	 */
 
 	if ( ! function_exists( "nxr" ) ) {
-		/**
-		 * NXR is a helper function. Past strings are recorded in a text file
-		 * and when run from a command line output is displayed on screen as
-		 * well
-		 *
-		 * @param string $msg String input to be displayed in logs files
-		 * @param bool   $includeDate
-		 * @param bool   $newline
-		 */
-		function nxr( $msg, $includeDate = TRUE, $newline = TRUE ) {
-			if ( $includeDate ) {
-				$msg = date( "Y-m-d H:i:s" ) . ": " . $msg;
-			}
-			if ( $newline ) {
-				$msg = $msg . "\n";
-			}
-
-			if ( is_writable( dirname( __FILE__ ) . "/fitbit.log" ) ) {
-				$fh = fopen( dirname( __FILE__ ) . "/fitbit.log", "a" );
-				fwrite( $fh, $msg );
-				fclose( $fh );
-			}
-		}
+		require_once( dirname( __FILE__ ) . "/inc/functions.php" );
 	}
 
 	require_once( dirname( __FILE__ ) . "/inc/app.php" );
@@ -51,7 +29,7 @@
         SELECT fuid, name from " . $fitbitApp->getSetting( "db_prefix", NULL, FALSE ) . "users where
         UNIX_TIMESTAMP(str_to_date(lastrun,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date( "Y-m-d H:i:s", strtotime( '-1 day' ) ) . "') AND
         UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date( "Y-m-d H:i:s" ) . "')" )->fetchAll();
-		$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+		$fitbitApp->getErrorRecording()->postDatabaseQuery( $fitbitApp->getDatabase(), array(
 			"METHOD" => __METHOD__,
 			"LINE"   => __LINE__
 		) );
@@ -81,7 +59,7 @@
 		} else {
 			$unfinishedUsers = $fitbitApp->getDatabase()->query( "-- noinspection SqlDialectInspection
             SELECT fuid, name from " . $fitbitApp->getSetting( "db_prefix", NULL, FALSE ) . "users where UNIX_TIMESTAMP(str_to_date(cooldown,'%Y-%m-%d %H:%i:%s')) < UNIX_TIMESTAMP('" . date( "Y-m-d H:i:s" ) . "')" )->fetchAll();
-			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+			$fitbitApp->getErrorRecording()->postDatabaseQuery( $fitbitApp->getDatabase(), array(
 				"METHOD" => __METHOD__,
 				"LINE"   => __LINE__
 			) );
@@ -139,7 +117,7 @@
 											'api_req'      => $job['trigger'],
 											'user'         => $job['user'],
 											'php_version'  => phpversion(),
-											'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
+											'core_version' => $fitbitApp->getSetting( "version", "0.0.0.1", TRUE )
 										)
 									) );
 									nxr( "* Cron Error: " . $fitbitApp->lookupErrorCode( $jobRun ) );
@@ -154,7 +132,7 @@
 										'user'         => $_GET['user'],
 										'cooldown'     => $cooldown,
 										'php_version'  => phpversion(),
-										'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
+										'core_version' => $fitbitApp->getSetting( "version", "0.0.0.1", TRUE )
 									)
 								) );
 								nxr( "Can not process " . $fitbitApp->supportedApi( $job['trigger'] ) . ". API limit reached for " . $job['user'] . ". Cooldown period ends " . $cooldown );
@@ -179,7 +157,7 @@
 								'api_req'      => $_GET['get'],
 								'user'         => $_GET['user'],
 								'php_version'  => phpversion(),
-								'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
+								'core_version' => $fitbitApp->getSetting( "version", "0.0.0.1", TRUE )
 							)
 						) );
 						nxr( "  Can not process " . $fitbitApp->supportedApi( $job['trigger'] ) . " since " . $job['user'] . " is no longer a user." );

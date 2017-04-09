@@ -1,26 +1,32 @@
 <?php
 
 	/**
-	 * Class config
+	 * Config helper class. Reads configuration details from config.inc.php file and the MySQL database
 	 *
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-config phpDocumentor wiki for Config.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
-	 * @link      http://nxfifteen.me.uk NxFIFTEEN
-	 * @copyright 2015 Stuart McCulloch Anderson
-	 * @license   http://stuart.nx15.at/mit/2015 MIT
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class config {
 		/**
+		 * Medoo class holding database connection
+		 *
 		 * @var medoo
 		 */
 		private $database;
+
 		/**
+		 * Array holding application settings
+		 *
 		 * @var array
 		 */
 		private $settings = array();
 
 		/**
-		 *
+		 * Class constructor
 		 */
 		public function __construct() {
 			if ( isset( $_SESSION ) && is_array( $_SESSION ) && array_key_exists( "core_config", $_SESSION ) && count( $_SESSION['core_config'] ) > 0 ) {
@@ -35,9 +41,12 @@
 		}
 
 		/**
-		 * @param $activityName
+		 * Return all cache files by activity name
+		 * Takes an activity name and returns an array of all cache files generated when activity is queried
 		 *
-		 * @return array
+		 * @param string $activityName Activity key name
+		 *
+		 * @return array String array of cache files names
 		 */
 		public function getRelatedCacheNames( $activityName ) {
 			$cacheNames = array();
@@ -164,11 +173,15 @@
 		}
 
 		/**
-		 * @param string $key
-		 * @param string $default
-		 * @param bool   $query_db
+		 * Return setting value
+		 * Main function called to query settings for value. Default value can be provided, if not NULL is returned.
+		 * Values can be queried in the database or limited to config file and 'live' values
 		 *
-		 * @return string
+		 * @param string $key      Setting to query
+		 * @param string $default  Default value to return
+		 * @param bool   $query_db Boolean to search database or not
+		 *
+		 * @return string Setting value, or default as per defined
 		 */
 		public function get( $key, $default = NULL, $query_db = TRUE ) {
 			if ( is_array( $this->settings ) && array_key_exists( $key, $this->settings ) ) {
@@ -187,11 +200,14 @@
 		}
 
 		/**
-		 * @param string $key
-		 * @param string $value
-		 * @param bool   $query_db
+		 * Set setting value
+		 * Function to store/change setting values. Values can be stored in the database or held in memory.
 		 *
-		 * @return bool
+		 * @param string $key      Setting to query
+		 * @param string $value    Value to store
+		 * @param bool   $query_db Boolean to store in database or not
+		 *
+		 * @return bool was data stored correctly
 		 */
 		public function set( $key, $value, $query_db = TRUE ) {
 			$this->settings[ $key ] = $value;
@@ -204,16 +220,22 @@
 						"var"  => $key
 					) );
 				}
+			} else {
+				return TRUE;
 			}
 		}
 
 		/**
-		 * @param string $fuid
-		 * @param string $key
-		 * @param string $default
-		 * @param bool   $query_db
+		 * Return user setting value
+		 * Queries user settings for value. Default value can be provided, if not NULL is returned.
+		 * Values can be queried in the database or limited to config file and 'live' values
 		 *
-		 * @return string
+		 * @param string $fuid     User fuid
+		 * @param string $key      Setting to query
+		 * @param string $default  Default value to return
+		 * @param bool   $query_db Boolean to search database or not
+		 *
+		 * @return string Setting value, or default as per defined
 		 */
 		public function getUser( $fuid, $key, $default = NULL, $query_db = TRUE ) {
 			if ( array_key_exists( $key . "_" . $fuid, $this->settings ) ) {
@@ -243,11 +265,14 @@
 		}
 
 		/**
-		 * @param string $fuid
-		 * @param string $key
-		 * @param string $value
+		 * Set user setting value
+		 * Function to store/change setting values. Values are stored in the database.
 		 *
-		 * @return bool
+		 * @param string $fuid  User fuid
+		 * @param string $key   Setting to query
+		 * @param string $value Value to store
+		 *
+		 * @return bool was data stored correctly
 		 */
 		public function setUser( $fuid, $key, $value ) {
 			$this->settings[ $key . "_" . $fuid ] = $value;
@@ -274,7 +299,11 @@
 		}
 
 		/**
-		 * @param medoo $database
+		 * Set class database store
+		 *
+		 * Takes medoo paramater and stores for access within the class
+		 *
+		 * @param medoo $database Application database connection
 		 */
 		public function setDatabase( $database ) {
 			$this->database = $database;
