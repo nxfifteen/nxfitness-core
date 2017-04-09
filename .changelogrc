@@ -1,0 +1,58 @@
+{
+    "app_name": "NxFITNESS Core",
+    "logo": "https://nxfifteen.me.uk/wp-content/uploads/2016/01/logo.png",
+    "intro": "Use the Fitbit API to cache user stats and allow queries returned over JSON",
+    "repo_url": "https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core",
+    "version_name" : "v0.0.0.7",
+    "template": "docs/ChangeLogTemplate.md",
+    "sections": [
+        {
+            "title": "Bug Fixes",
+            "grep": "^fix"
+        },
+        {
+            "title": "WIP",
+            "grep": "^wip"
+        },
+        {
+            "title": "Features",
+            "grep": "^feat"
+        },
+        {
+            "title": "Documentation",
+            "grep": "^docs"
+        },
+        {
+            "title": "Breaking changes",
+            "grep": "BREAKING"
+        },
+        {
+            "title": "Refactor",
+            "grep": "^refactor"
+        },
+        {
+            "title": "Style",
+            "grep": "^style"
+        },
+        {
+            "title": "Test",
+            "grep": "^test"
+        },
+        {
+            "title": "Chore",
+            "grep": "^chore"
+        },
+        {
+            "title": "Branchs merged",
+            "grep": "^Merge branch"
+        },
+        {
+            "title" : "Pull requests merged",
+            "grep": "^Merge pull request"
+        },
+        {
+            "title" : "Other Commits",
+            "grep": "^"
+        }
+    ]
+}

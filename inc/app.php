@@ -7,46 +7,21 @@
 	 * @param $msg
 	 */
 	if ( ! function_exists( "nxr" ) ) {
-		/**
-		 * NXR is a helper function. Past strings are recorded in a text file
-		 * and when run from a command line output is displayed on screen as
-		 * well
-		 *
-		 * @param string $msg String input to be displayed in logs files
-		 * @param bool   $includeDate
-		 * @param bool   $newline
-		 */
-		function nxr( $msg, $includeDate = TRUE, $newline = TRUE ) {
-			if ( $includeDate ) {
-				$msg = date( "Y-m-d H:i:s" ) . ": " . $msg;
-			}
-			if ( $newline ) {
-				$msg = $msg . "\n";
-			}
-
-			if ( is_writable( dirname( __FILE__ ) . "/../fitbit.log" ) ) {
-				$fh = fopen( dirname( __FILE__ ) . "/../fitbit.log", "a" );
-				fwrite( $fh, $msg );
-				fclose( $fh );
-			}
-
-			if ( php_sapi_name() == "cli" ) {
-				echo $msg;
-			}
-		}
+		require_once( dirname( __FILE__ ) . "/functions.php" );
 	}
 
 	// composer require djchen/oauth2-fitbit
 	require_once( dirname( __FILE__ ) . "/../vendor/autoload.php" );
 
 	/**
-	 * NxFitbit
+	 * Main app class
 	 *
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-NxFitbit phpDocumentor wiki for NxFitbit.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
-	 * @link      http://nxfifteen.me.uk NxFIFTEEN
-	 * @copyright 2015 Stuart McCulloch Anderson
-	 * @license   http://stuart.nx15.at/mit/2015 MIT
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class NxFitbit {
 		/**
@@ -552,6 +527,18 @@
 
 	}
 
+	/**
+	 * ErrorRecording
+	 *
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-ErrorRecording
+	 *            phpDocumentor wiki for ErrorRecording.
+	 *
+	 * @version   0.0.1
+	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+	 * @link      https://nxfifteen.me.uk NxFIFTEEN
+	 * @copyright 2017 Stuart McCulloch Anderson
+	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+	 */
 	class ErrorRecording {
 		/**
 		 * @var Raven_Client

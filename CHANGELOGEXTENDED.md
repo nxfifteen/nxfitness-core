@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.7  ( Sun Apr 09 2017 12:13:59 GMT+0100 (BST) )
+## v0.0.0.7 false ( Sun Apr 09 2017 12:13:58 GMT+0100 (BST) )
 
 
 
