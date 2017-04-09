@@ -3332,7 +3332,7 @@
 
 					die();
 				} else {
-					$this->getAppClass()->getErrorRecording()->captureException( $e, array(
+					/*$this->getAppClass()->getErrorRecording()->captureException( $e, array(
 						'level' => 'error',
 						'extra' => array(
 							'api_path'     => $path,
@@ -3340,7 +3340,7 @@
 							'php_version'  => phpversion(),
 							'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
 						),
-					) );
+					) );*/
 					nxr( "Error " . $e->getCode() . ": " . $e->getMessage() );
 					nxr( $e->getFile() . " @" . $e->getLine() );
 					nxr( $e->getTraceAsString() );
