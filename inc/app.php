@@ -65,7 +65,7 @@
 			if ( $installedVersion != APP_VERSION ) {
 				nxr( "Installed version $installedVersion and should be " . APP_VERSION );
 				require_once( dirname( __FILE__ ) . "/upgrade.php" );
-				$dataReturnClass = new Upgrade();
+				$dataReturnClass = new Upgrade( $this );
 
 				echo "Upgrading from " . $dataReturnClass->getInstallVersion() . " to " . $dataReturnClass->getInstallingVersion() . ". ";
 				echo $dataReturnClass->getNumUpdates() . " updates outstanding\n";
