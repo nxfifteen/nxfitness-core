@@ -11,6 +11,7 @@
 	}
 
 	// composer require djchen/oauth2-fitbit
+	require_once( dirname( __FILE__ ) . "/../config.def.dist.php" );
 	require_once( dirname( __FILE__ ) . "/../vendor/autoload.php" );
 
 	/**
@@ -59,6 +60,24 @@
 			) ) );
 
 			$this->getSettings()->setDatabase( $this->getDatabase() );
+
+			$installedVersion = $this->getSetting( "version", "0.0.0.1", TRUE );
+			if ( $installedVersion != APP_VERSION ) {
+				nxr( "Installed version $installedVersion and should be " . APP_VERSION );
+				require_once( dirname( __FILE__ ) . "/upgrade.php" );
+				$dataReturnClass = new Upgrade();
+
+				echo "Upgrading from " . $dataReturnClass->getInstallVersion() . " to " . $dataReturnClass->getInstallingVersion() . ". ";
+				echo $dataReturnClass->getNumUpdates() . " updates outstanding\n";
+
+				if ( $dataReturnClass->getNumUpdates() > 0 ) {
+					$dataReturnClass->runUpdates();
+				}
+
+				unset( $dataReturnClass );
+				nxr( "Update completed, please re-run the command" );
+				die();
+			}
 
 			$this->errorRecording = new ErrorRecording( $this );
 
@@ -554,47 +573,56 @@
 		protected $appClass;
 
 		public function __construct( $appClass ) {
-			require_once( dirname( __FILE__ ) . "/../config.def.php" );
-			require_once( dirname( __FILE__ ) . "/../library/sentry/lib/Raven/Autoloader.php" );
-			Raven_Autoloader::register();
+			if ( defined( 'SENTRY_DSN' ) ) {
+				require_once( dirname( __FILE__ ) . "/../library/sentry/lib/Raven/Autoloader.php" );
+				Raven_Autoloader::register();
 
-			$this->appClass = $appClass;
+				$this->appClass = $appClass;
+			}
 		}
 
 		/**
 		 * @return Raven_Client
 		 */
 		public function getSentryClient() {
-			if ( is_null( $this->sentryClient ) ) {
-				$this->sentryClient = ( new Raven_Client( SENTRY_DSN ) )
-					->setAppPath( __DIR__ )
-					->setRelease( $this->appClass->getSetting( "version", "0.0.0.1", TRUE ) )
-					->setEnvironment( $this->appClass->getSetting( "environment", "development", FALSE ) )
-					->setPrefixes( array( __DIR__ ) )
-					->install();
+			if ( defined( 'SENTRY_DSN' ) ) {
+				if ( is_null( $this->sentryClient ) ) {
+					$this->sentryClient = ( new Raven_Client( SENTRY_DSN ) )
+						->setAppPath( __DIR__ )
+						->setRelease( $this->appClass->getSetting( "version", "0.0.0.1", TRUE ) )
+						->setEnvironment( $this->appClass->getSetting( "environment", "development", FALSE ) )
+						->setPrefixes( array( __DIR__ ) )
+						->install();
 
-				$this->sentryClient->user_context( array(
-					'id'         => sha1( gethostbyname( gethostname() ) . gethostname() . $this->appClass->getSetting( "ownerFuid", "Unknown", FALSE ) ),
-					'username'   => $this->appClass->getSetting( "ownerFuid", "Unknown", FALSE ),
-					'ip_address' => gethostbyname( gethostname() )
-				) );
+					$this->sentryClient->user_context( array(
+						'id'         => sha1( gethostbyname( gethostname() ) . gethostname() . $this->appClass->getSetting( "ownerFuid", "Unknown", FALSE ) ),
+						'username'   => $this->appClass->getSetting( "ownerFuid", "Unknown", FALSE ),
+						'ip_address' => gethostbyname( gethostname() )
+					) );
+				}
+
+				return $this->sentryClient;
+			} else {
+				return NULL;
 			}
-
-			return $this->sentryClient;
 		}
 
 		/**
 		 * @return Raven_ErrorHandler
 		 */
 		public function getSentryErrorHandler() {
-			if ( is_null( $this->sentryErrorHandler ) ) {
-				$this->sentryErrorHandler = new Raven_ErrorHandler( $this->getSentryClient() );
-				$this->sentryErrorHandler->registerExceptionHandler();
-				$this->sentryErrorHandler->registerErrorHandler();
-				$this->sentryErrorHandler->registerShutdownFunction();
-			}
+			if ( defined( 'SENTRY_DSN' ) ) {
+				if ( is_null( $this->sentryErrorHandler ) ) {
+					$this->sentryErrorHandler = new Raven_ErrorHandler( $this->getSentryClient() );
+					$this->sentryErrorHandler->registerExceptionHandler();
+					$this->sentryErrorHandler->registerErrorHandler();
+					$this->sentryErrorHandler->registerShutdownFunction();
+				}
 
-			return $this->sentryErrorHandler;
+				return $this->sentryErrorHandler;
+			} else {
+				return NULL;
+			}
 		}
 
 		/**
@@ -604,8 +632,10 @@
 		 * @param array     $data      Additional attributes to pass with this event (see Sentry docs).
 		 */
 		public function captureException( $exception, $data = NULL, $logger = NULL, $vars = NULL ) {
-			$this->getSentryClient()->captureException( $exception, $data, $logger, $vars );
-			nxr( "### Exception Recorded ###" );
+			if ( defined( 'SENTRY_DSN' ) ) {
+				$this->getSentryClient()->captureException( $exception, $data, $logger, $vars );
+				nxr( "### Exception Recorded ###" );
+			}
 		}
 
 		/**
@@ -616,8 +646,10 @@
 		 * @param array  $data    Additional attributes to pass with this event (see Sentry docs).
 		 */
 		public function captureMessage( $message, $params = array(), $data = array(), $stack = FALSE, $vars = NULL ) {
-			$this->getSentryClient()->captureMessage( $message, $params, $data, $stack, $vars );
-			nxr( "### Message Recorded ###" );
+			if ( defined( 'SENTRY_DSN' ) ) {
+				$this->getSentryClient()->captureMessage( $message, $params, $data, $stack, $vars );
+				nxr( "### Message Recorded ###" );
+			}
 		}
 
 		/**
@@ -625,25 +657,26 @@
 		 * @param       $parameters
 		 */
 		public function postDatabaseQuery( $medoo, $parameters ) {
-			$medoo_error = $medoo->error();
-			if ( $medoo_error[0] != 0000 ) {
-				$medoo_info = $medoo->info();
-				$this->captureMessage( $medoo_error[2], array( 'database' ), array(
-					'level' => 'error',
-					'extra' => array(
-						'method'         => $parameters['METHOD'],
-						'method_line'    => $parameters['LINE'],
-						'sql_server'     => $medoo_info['server'],
-						'sql_client'     => $medoo_info['client'],
-						'sql_driver'     => $medoo_info['driver'],
-						'sql_version'    => $medoo_info['version'],
-						'sql_connection' => $medoo_info['connection'],
-						'sql_last_query' => $medoo->last_query(),
-						'php_version'    => phpversion(),
-						'core_version'   => $this->appClass->getSetting( "version", "0.0.0.1", TRUE )
-					)
-				) );
-
+			if ( defined( 'SENTRY_DSN' ) ) {
+				$medoo_error = $medoo->error();
+				if ( $medoo_error[0] != 0000 ) {
+					$medoo_info = $medoo->info();
+					$this->captureMessage( $medoo_error[2], array( 'database' ), array(
+						'level' => 'error',
+						'extra' => array(
+							'method'         => $parameters['METHOD'],
+							'method_line'    => $parameters['LINE'],
+							'sql_server'     => $medoo_info['server'],
+							'sql_client'     => $medoo_info['client'],
+							'sql_driver'     => $medoo_info['driver'],
+							'sql_version'    => $medoo_info['version'],
+							'sql_connection' => $medoo_info['connection'],
+							'sql_last_query' => $medoo->last_query(),
+							'php_version'    => phpversion(),
+							'core_version'   => $this->appClass->getSetting( "version", "0.0.0.1", TRUE )
+						)
+					) );
+				}
 			}
 		}
 	}

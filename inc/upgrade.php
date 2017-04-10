@@ -1,5 +1,7 @@
 <?php
 
+	require_once( dirname( __FILE__ ) . "/../config.def.dist.php" );
+
 	/**
 	 * Upgrade
 	 *
@@ -25,7 +27,7 @@
 		/**
 		 * @var String
 		 */
-		protected $VersionInstalling = "0.0.0.8";
+		protected $VersionInstalling = APP_VERSION;
 
 		/**
 		 * @var String

@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.8 false ( Sun Apr 09 2017 20:31:05 GMT+0100 (BST) )
+## v0.0.0.8 false ( Mon Apr 10 2017 20:44:25 GMT+0100 (BST) )
 
 
 
@@ -56,6 +56,12 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
   - Moved goal query. Triggers when fat or weight value recorded ([9847d499](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/9847d49970eb997b36cb7a87c5e280ccde81e303)), Closes: [#8](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/8)
   - Rounded off weight and fat values ([df2edf27](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/df2edf27b24bcbee38877f5e3ffd21ad3ec7186c)), Closes: [#2](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/2)
   - Estimated unrecorded weight values base on formula of a straight line ([b23a4b81](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b23a4b81ef17c2977626b056b625d7227c01035a)), Closes: [#1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/1)
+  - **auto_upgrade**
+    - Added version checking ([d447bd32](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d447bd328fc49021e1e736566fa8ad6186ba402e)) , Closes: [#64](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/64)
+
+  - **error_reporting**
+    - Added user option to sentry logging ([b9e2a916](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b9e2a9168d46b9dd3e3b4767f0a075de6d738294)) , Closes: [#66](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/66)
+
   - **mysql**
     - v0.0.0.8 rebuilt badges tables ([759121f9](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/759121f91a84cc3efa2479666b78e4682ccea4d4)) , Closes: [#65](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/65)
 
@@ -126,6 +132,17 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
   - **segregation**
     - Moved NXR function ([d84c5ae1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d84c5ae101f2eb0405141e5302e2ed3f8c627c75)) 
+
+
+
+
+
+## Chore
+  - **changelog**
+    - Updated changelog files ([57ec0268](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/57ec026833577b7e7a8c66bec1110f46e3c43cc7)) 
+    - Updated changelog files ([c3e4483a](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/c3e4483ab219b64fe105009a9a43399b954b87c3)) 
+    - Updated changelog files ([f6340a4e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/f6340a4e4c84397c3c851bf162acc4be8845b757)) 
+    - Updated changelog files ([f4d38be2](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/f4d38be2ce50a690a1ff82e0a5f3aea63aafc5be)) 
 
 
 
