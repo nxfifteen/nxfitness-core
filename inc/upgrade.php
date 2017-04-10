@@ -75,15 +75,7 @@
 			}
 			$this->errorRecording = new ErrorRecording( $appClass );
 
-			require_once( dirname( __FILE__ ) . "/../library/medoo.php" );
-			$this->setDatabase( new medoo( array(
-				'database_type' => 'mysql',
-				'database_name' => $this->getSetting( "db_name" ),
-				'server'        => $this->getSetting( "db_server" ),
-				'username'      => $this->getSetting( "db_username" ),
-				'password'      => $this->getSetting( "db_password" ),
-				'charset'       => 'utf8'
-			) ) );
+			$this->setDatabase( $appClass->getDatabase() );
 
 			$this->getSettings()->setDatabase( $this->getDatabase() );
 
