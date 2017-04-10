@@ -6,7 +6,8 @@
 	/**
 	 * Upgrade
 	 *
-	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-Upgrade phpDocumentor wiki for Upgrade.
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-Upgrade phpDocumentor
+	 *            wiki for Upgrade.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
 	 * @link      https://nxfifteen.me.uk NxFIFTEEN
@@ -71,11 +72,13 @@
 			$this->setSettings( new config() );
 
 			if ( is_null( $appClass ) ) {
-				$appClass = new NxFitbit();
+				$this->appClass = new NxFitbit();
+			} else {
+				$this->appClass = $appClass;
 			}
-			$this->errorRecording = new ErrorRecording( $appClass );
+			$this->errorRecording = new ErrorRecording( $this->appClass );
 
-			$this->setDatabase( $appClass->getDatabase() );
+			$this->setDatabase( $this->appClass->getDatabase() );
 
 			$this->getSettings()->setDatabase( $this->getDatabase() );
 
@@ -472,12 +475,22 @@
 		private function update_8() {
 			$db_prefix = $this->getSetting( "db_prefix", FALSE );
 
-			$this->getDatabase()->query( "DROP TABLE IF EXISTS `" . $db_prefix . "bages`; CREATE TABLE `" . $db_prefix . "bages` ( `encodedId` varchar(12) NOT NULL, `badgeType` varchar(120) NOT NULL, `value` int(11) NOT NULL, `category` varchar(150) NOT NULL, `description` varchar(255) NOT NULL, `image` varchar(255) NOT NULL, `badgeGradientEndColor` varchar(6) NOT NULL, `badgeGradientStartColor` varchar(6) NOT NULL, `earnedMessage` longtext NOT NULL, `marketingDescription` longtext NOT NULL, `name` varchar(255) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+			$this->getDatabase()->query( "SET FOREIGN_KEY_CHECKS=0;DROP TABLE IF EXISTS `" . $db_prefix . "bages`;SET FOREIGN_KEY_CHECKS=1;" );
 			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
 				return FALSE;
 			}
 
-			$this->getDatabase()->query( "DROP TABLE IF EXISTS `" . $db_prefix . "bages_user`; CREATE TABLE `" . $db_prefix . "bages_user` ( `badgeid` varchar(8) NOT NULL, `fuid` varchar(8) NOT NULL, `dateTime` varchar(20) NOT NULL, `timesAchieved` int(11) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+			$this->getDatabase()->query( "SET FOREIGN_KEY_CHECKS=0;DROP TABLE IF EXISTS `" . $db_prefix . "bages_user`;SET FOREIGN_KEY_CHECKS=1;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "CREATE TABLE `" . $db_prefix . "bages` ( `encodedId` varchar(12) NOT NULL, `badgeType` varchar(120) NOT NULL, `value` int(11) NOT NULL, `category` varchar(150) NOT NULL, `description` varchar(255) NOT NULL, `image` varchar(255) NOT NULL, `badgeGradientEndColor` varchar(6) NOT NULL, `badgeGradientStartColor` varchar(6) NOT NULL, `earnedMessage` longtext NOT NULL, `marketingDescription` longtext NOT NULL, `name` varchar(255) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "CREATE TABLE `" . $db_prefix . "bages_user` ( `badgeid` varchar(8) NOT NULL, `fuid` varchar(8) NOT NULL, `dateTime` varchar(20) NOT NULL, `timesAchieved` int(11) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
 			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
 				return FALSE;
 			}
@@ -502,12 +515,26 @@
 				return FALSE;
 			}
 
-			require_once( dirname( __FILE__ ) . "/app.php" );
-			$fitbitApp = new NxFitbit();
-
 			echo " Queueing Badges for all users\n";
 			foreach ( $users as $user ) {
-				$fitbitApp->addCronJob( $user, 'badges' );
+				$this->appClass->addCronJob( $user, 'badges' );
+				if ( ! $this->getDatabase()->has( $this->getSetting( "db_prefix", NULL, FALSE ) . "queue", array(
+					"AND" => array(
+						"user"    => $user,
+						"trigger" => 'badges'
+					)
+				) )
+				) {
+					$this->getDatabase()->insert( $this->getSetting( "db_prefix", NULL, FALSE ) . "queue", array(
+						"user"    => $user,
+						"trigger" => 'badges',
+						"date"    => date( "Y-m-d H:i:s" )
+					) );
+					$this->errorRecording->postDatabaseQuery( $this->getDatabase(), array(
+						"METHOD" => __METHOD__,
+						"LINE"   => __LINE__
+					) );
+				}
 			}
 
 			$this->setSetting( "version", "0.0.0.8", TRUE );
