@@ -1,6 +1,7 @@
 <?php
 
 	require_once( dirname( __FILE__ ) . "/../config.def.dist.php" );
+	require_once( dirname( __FILE__ ) . "/app.php" );
 
 	/**
 	 * Upgrade
@@ -53,27 +54,31 @@
 		 * @var config
 		 */
 		protected $settings;
+		/**
+		 * @var ErrorRecording
+		 */
+		protected $errorRecording;
 
 		/**
 		 * Upgrade constructor.
 		 *
-		 * @param $userFid
+		 * @param NxFitbit $appClass
+		 *
+		 * @internal param $userFid
 		 */
-		public function __construct() {
+		public function __construct( $appClass = NULL ) {
 			require_once( dirname( __FILE__ ) . "/config.php" );
 			$this->setSettings( new config() );
 
-			require_once( dirname( __FILE__ ) . "/../library/medoo.php" );
-			$this->setDatabase( new medoo( array(
-				'database_type' => 'mysql',
-				'database_name' => $this->getSetting( "db_name" ),
-				'server'        => $this->getSetting( "db_server" ),
-				'username'      => $this->getSetting( "db_username" ),
-				'password'      => $this->getSetting( "db_password" ),
-				'charset'       => 'utf8'
-			) ) );
+			if ( is_null( $appClass ) ) {
+				$appClass = new NxFitbit();
+			}
+			$this->errorRecording = new ErrorRecording( $appClass );
+
+			$this->setDatabase( $appClass->getDatabase() );
 
 			$this->getSettings()->setDatabase( $this->getDatabase() );
+
 		}
 
 		/**
@@ -91,6 +96,11 @@
 		}
 
 		private function wasMySQLError( $error ) {
+			$this->errorRecording->postDatabaseQuery( $this->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
 			if ( is_null( $error[2] ) ) {
 				return FALSE;
 			} else {
