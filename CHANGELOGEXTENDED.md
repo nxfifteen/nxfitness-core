@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.8 false ( Mon Apr 10 2017 20:44:25 GMT+0100 (BST) )
+## v0.0.0.8 false ( Mon Apr 10 2017 21:06:15 GMT+0100 (BST) )
 
 
 
@@ -35,12 +35,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
   - Created return for leaderboard items ([1eb39d62](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/1eb39d62c449c897a1302066093c17f3dec7f89b)), Closes: [#29](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/29)
   - Check $_SESSION is an array rather than $_SESSION['core_config'], then check that the core_config key exisits ([61e3439d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/61e3439d7058e7724d2733d5cf272878861e9486)), Closes: [#25](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/25)
   - replaced old database name 'goals_calories' with correct name 'food_goals' ([666993ba](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/666993ba18fb2c7642fb1eb6f97bee0cd5e85a97)), Closes: [#24](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/24)
-  - Updated time series events when theres been no updated in over 6 months Closed #20
-  - Updated activity log to support new format Closed #22 
-  - Downloading TCX files + Double check to remove fitbit path from URLs 
-  - added by library Closed #16 
-  - Downloading event heart rates Closed #23 
-  - Added user cooldown check to pull requests + Check rate limit headers and blocking when less than 2 + Handling 429 (Rate limit) errors better ([344e1938](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/344e1938f2d0740fb975115b39b9edb109e1806a)), Closes: [#21](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/21)
+  - Updated time series events when theres been no updated in over 6 months Closed #20 - Updated activity log to support new format Closed #22 - Downloading TCX files + Double check to remove fitbit path from URLs - added by library Closed #16 - Downloading event heart rates Closed #23 - Added user cooldown check to pull requests + Check rate limit headers and blocking when less than 2 + Handling 429 (Rate limit) errors better ([344e1938](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/344e1938f2d0740fb975115b39b9edb109e1806a)), Closes: [#21](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/21)
   - After setting a last run check for cache files and delete them ([08f2bf09](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/08f2bf099844ae2c7ef6e9167d21fae236e95ddf)), Closes: [#35](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/35)
   - Using _GET peramiters to determin cache filename ([541338c9](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/541338c926b5516aec101de7d800f4f1b085b75e)), Closes: [#36](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/36)
   - Added returnUserRecordKeyPoints support ([1141f11f](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/1141f11fe0cf05d4ad6a7561b59bb341378e2647)), Closes: [#31](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/31)
@@ -65,6 +60,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
     - Added version checking ([d447bd32](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d447bd328fc49021e1e736566fa8ad6186ba402e)) , Closes: [#64](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/64)
 
   - **error_reporting**
+    - Upgrade error reporting ([4e1f5be5](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/4e1f5be56c6de53db0536dde910f524e635a3050)) , Closes: [#68](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/68)
     - Added user option to sentry logging ([b9e2a916](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b9e2a9168d46b9dd3e3b4767f0a075de6d738294)) , Closes: [#66](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/66)
 
   - **mysql**
@@ -132,6 +128,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 
 ## Refactor
+  - **database**
+    - Removed duplicate database connection ([505c10f6](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/505c10f6e107f2d1fd789b0dbbb19f5b7f030eda)) 
+
   - **gitignore**
     - Added ignore folders ([9bf8a737](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/9bf8a737f4ee5e9fba532d922d79384bf58ea622)) 
 
@@ -144,6 +143,8 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 ## Chore
   - **changelog**
+    - Updated changelog files ([cd95ce1d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/cd95ce1d4c97959e5b72a3a3c8b85f41932ea5cd)) 
+    - Updated changelog files ([0f0cb2ab](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/0f0cb2ab919d111d72a83bcd2ff3656b7065299f)) 
     - Updated changelog files ([57ec0268](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/57ec026833577b7e7a8c66bec1110f46e3c43cc7)) 
     - Updated changelog files ([c3e4483a](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/c3e4483ab219b64fe105009a9a43399b954b87c3)) 
     - Updated changelog files ([f6340a4e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/f6340a4e4c84397c3c851bf162acc4be8845b757)) 
