@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.8 false ( Mon Apr 10 2017 21:06:15 GMT+0100 (BST) )
+## v0.0.0.8 false ( Mon Apr 10 2017 21:34:43 GMT+0100 (BST) )
 
 
 
@@ -65,6 +65,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
   - **mysql**
     - v0.0.0.8 rebuilt badges tables ([759121f9](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/759121f91a84cc3efa2479666b78e4682ccea4d4)) , Closes: [#65](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/65)
+
+  - **upgrader**
+    - Removed SQL Foreign key checks ([7f8bb58e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/7f8bb58e7b2575f36abbca811d898d64f86fa8da)) , Closes: [#69](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/69)
 
 
 
@@ -143,6 +146,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 ## Chore
   - **changelog**
+    - Updated changelog files ([2c4a950a](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/2c4a950aa760ac2ac9e1a52b980220346fbd1137)) 
     - Updated changelog files ([cd95ce1d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/cd95ce1d4c97959e5b72a3a3c8b85f41932ea5cd)) 
     - Updated changelog files ([0f0cb2ab](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/0f0cb2ab919d111d72a83bcd2ff3656b7065299f)) 
     - Updated changelog files ([57ec0268](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/57ec026833577b7e7a8c66bec1110f46e3c43cc7)) 
