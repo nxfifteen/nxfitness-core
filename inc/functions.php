@@ -22,7 +22,7 @@
 			fclose( $fh );
 		}
 
-		if ( php_sapi_name() == "cli" ) {
+		if ( ( ! defined( 'IS_CRON_RUN' ) || ! IS_CRON_RUN ) && php_sapi_name() == "cli" ) {
 			echo $msg;
 		}
 	}
