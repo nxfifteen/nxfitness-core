@@ -2456,15 +2456,59 @@
 					$nomie_host     = $this->getAppClass()->getSetting( "db_nomie_host", 'localhost', FALSE );
 					$nomie_port     = $this->getAppClass()->getSetting( "db_nomie_port", '5984', FALSE );
 
+					if ( is_null( $nomie_username ) ) {
+						nxr( "  Nomie credentials missing" );
+
+						return array( "error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly" );
+					}
+
 					require_once $path . 'couch.php';
 					require_once $path . 'couchClient.php';
 					require_once $path . 'couchDocument.php';
 
 					$nomie_url = $nomie_protocol . '://' . $nomie_username . ':' . $nomie_password . '@' . $nomie_host . ':' . $nomie_port;
 
-					$couchClient = new couchClient ( $nomie_url, $nomie_user_key . '_meta', array(
-						"cookie_auth" => "true"
-					) );
+					try {
+						$couchClient = new couchClient ( $nomie_url, $nomie_user_key . '_meta', array(
+							"cookie_auth" => "true"
+						) );
+					} catch ( Exception $e ) {
+						if ( ! isset( $nomie_username ) ) {
+							$was_username_set = "false";
+						} else {
+							$was_username_set = "true";
+						}
+						if ( ! isset( $nomie_password ) ) {
+							$was_id_set = "false";
+						} else {
+							$was_id_set = "true";
+						}
+						if ( ! isset( $nomie_host ) ) {
+							$was_host_set = "false";
+						} else {
+							$was_host_set = "true";
+						}
+						if ( ! isset( $nomie_port ) ) {
+							$was_port_set = "false";
+						} else {
+							$was_port_set = "true";
+						}
+
+						$this->getAppClass()->getErrorRecording()->captureException( $e, array(
+							'extra' => array(
+								'php_version'       => phpversion(),
+								'core_version'      => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE ),
+								'nomie_protocol'    => $nomie_protocol,
+								'nomie_username'    => $was_username_set,
+								'nomie_username_id' => $was_id_set,
+								'nomie_host'        => $was_host_set,
+								'nomie_port'        => $was_port_set,
+							),
+						) );
+
+						return "-144";
+					}
+
 					if ( ! $couchClient->databaseExists() ) {
 						nxr( "  Nomie Meta table missing" );
 
