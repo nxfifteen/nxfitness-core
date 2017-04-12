@@ -12,7 +12,7 @@ If you are interested in this code please [email me](https://nxfifteen.me.uk/abo
 The best live example of this module can be found on my [own site](https://nxfifteen.me.uk/health/)
 
 ## Ways to contribute
-A common misconception about contributing to an open source is that you need to contribute code. In fact, it’s the other parts of this project that are most neglected or overlooked. You’ll do the project a huge 
+A common misconception about contributing to an open source is that you need to contribute code. In fact, it's the other parts of this project that are most neglected or overlooked. You'll do the project a huge 
 favor by offering to pitch in with these types of contributions!
 
 - Feature Requests, via [GitLab Issue Tracker](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues)
