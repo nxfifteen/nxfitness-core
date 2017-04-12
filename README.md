@@ -9,9 +9,12 @@ NxFitness Core is stable and working on this site, but it is heavily tailored to
 If you are interested in this code please [email me](https://nxfifteen.me.uk/about/me/contact/)
 
 ## Demo
+
 The best live example of this module can be found on my [own site](https://nxfifteen.me.uk/health/)
 
+
 ## Ways to contribute
+
 A common misconception about contributing to an open source is that you need to contribute code. In fact, it's the other parts of this project that are most neglected or overlooked. You'll do the project a huge 
 favor by offering to pitch in with these types of contributions!
 
@@ -25,12 +28,15 @@ Code contributions that make the project better are always welcome. Please read 
 
 If you have something that will help please [let me know](https://nxfifteen.me.uk/about/me/contact/).
 
+
 ## License
+
 And of course:
 
 * MIT
 * This license is available online at [http://nxfifteen.me.uk/cee/mit/2017/license.html](http://nxfifteen.me.uk/cee/mit/2017/license.html)
 * Copyright (c) 2014-2017 [Stuart McCulloch Anderson](https://nx15.at/whoami)
+
 
 ## Development contributions from:
 
