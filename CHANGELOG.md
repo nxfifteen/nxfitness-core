@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.8 master..develop ( Thu Apr 13 2017 21:07:50 GMT+0100 (BST) )
+## v0.0.0.8 master..develop ( Thu Apr 13 2017 21:07:53 GMT+0100 (BST) )
 
 
 
@@ -18,6 +18,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 ## Chore
   - **changelog**
+    - Updated changelog files ([e4e95eff](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e4e95eff698295251880a9ff01616470260715c0)) 
     - Updated changelog files ([7fb01342](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/7fb01342845c79f1b7844af0db66dc925fd41de4)) 
     - Updated changelog files ([1a3a107a](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/1a3a107aeffa829749310b8452004ae1702194f6)) 
 
