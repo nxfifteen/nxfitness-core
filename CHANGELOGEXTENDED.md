@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.8 false ( Thu Apr 13 2017 23:03:58 GMT+0100 (BST) )
+## v0.0.0.8 false ( Thu Apr 13 2017 23:09:33 GMT+0100 (BST) )
 
 
 
@@ -155,6 +155,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 ## Chore
   - **changelog**
+    - Updated changelog files ([8ae0b9b9](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/8ae0b9b9ffdee9ef5f314531b53f318bdb440827)) 
     - Updated changelog files ([de9d70bb](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/de9d70bb75d93b7b4422cbfdce85fd8f1c2e1e4f)) 
     - Updated changelog files ([e362391a](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e362391ab1a1131e97ec1a1f968a156b7ff540d2)) 
     - Updated changelog files ([07749ea3](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/07749ea30ada5da57b581fb2fe76bda20315ed48)) 
@@ -176,6 +177,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
     - Moved commit template ([dae715d1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/dae715d1402f93c24863555e0b62f3e949b7558b)) 
 
   - **git_ignore**
+    - Ignore lock not json ([89c40bac](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/89c40bac6e9fff683635f3c0f1a8037407a72bdf)) 
     - Updated ignore file ([b2c91c7c](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b2c91c7c42f4e73cb2d7468cf0a0493ee5602e15)) 
 
   - **phpdoc**
