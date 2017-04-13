@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.8 master..develop ( Thu Apr 13 2017 21:17:37 GMT+0100 (BST) )
+## v0.0.0.8 master..develop ( Thu Apr 13 2017 23:03:57 GMT+0100 (BST) )
 
 
 
@@ -18,12 +18,22 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 ## Chore
   - **changelog**
+    - Updated changelog files ([de9d70bb](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/de9d70bb75d93b7b4422cbfdce85fd8f1c2e1e4f)) 
     - Updated changelog files ([e362391a](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e362391ab1a1131e97ec1a1f968a156b7ff540d2)) 
     - Updated changelog files ([07749ea3](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/07749ea30ada5da57b581fb2fe76bda20315ed48)) 
     - Updated changelog files ([f71db792](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/f71db792afd29cfc4d7423f85439ffdda7f069ab)) 
     - Updated changelog files ([e4e95eff](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e4e95eff698295251880a9ff01616470260715c0)) 
     - Updated changelog files ([7fb01342](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/7fb01342845c79f1b7844af0db66dc925fd41de4)) 
     - Updated changelog files ([1a3a107a](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/1a3a107aeffa829749310b8452004ae1702194f6)) 
+
+  - **commit_template**
+    - Moved commit template ([dae715d1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/dae715d1402f93c24863555e0b62f3e949b7558b)) 
+
+  - **git_ignore**
+    - Updated ignore file ([b2c91c7c](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b2c91c7c42f4e73cb2d7468cf0a0493ee5602e15)) 
+
+  - **phpdoc**
+    - Updated template location ([a21c5948](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/a21c59484d424a089c27a4dad15cb3224ae7848f)) 
 
   - **readme**
     - Updated README ([a6ce7d68](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/a6ce7d687288e1fb5773adf86f87a6dc55640fd4)) 
