@@ -2,8 +2,6 @@
 .idea
 /cache
 /dev/
-/docs/gen/
-/docs/md/
 /fitbit.log
 /log.archives/
 /Thumbs.db
@@ -11,15 +9,14 @@ admin
 admin_pre
 adminfree
 composer.json
-composer.lock
 composer.phar
 config.def.php
 config.inc.php
-fitbitphp-library
 images/avatars/*.jpg
 images/badges/*.png
 images/badges/*/*.png
 phpdoc.xml
 tcx/
 vendor
-
+/docs/wiki.core/
+/docs/development/
