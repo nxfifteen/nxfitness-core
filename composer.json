@@ -1,0 +1,8 @@
+{
+  "require": {
+    "djchen/oauth2-fitbit": "^0.2.0"
+  },
+  "require-dev": {
+    "phpdocumentor/phpdocumentor": "2.*"
+  }
+}

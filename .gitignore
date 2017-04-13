@@ -8,7 +8,7 @@
 admin
 admin_pre
 adminfree
-composer.json
+composer.lock
 composer.phar
 config.def.php
 config.inc.php
