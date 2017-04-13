@@ -26,6 +26,10 @@ favor by offering to pitch in with these types of contributions!
 Code contributions that make the project better are always welcome. Please read the [Git commit guidelines](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/git-commit-guidelines) and 
 [Contributor covenant code of conduct](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/contributor-covenant-code-of-conduct) and submit a pull request for addition to the main source.
 
+Possibly the simplest way to contribute is simply to download and install the software yourself - use it as stable code or try and break it - and report any bugs you find, ether manually or enable the automatic error reports.
+
+During setup just uncomment the sentry io dsn configuration line and core will report code bugs and unexpected exceptions to sentry it's self. Despite this being incredibly useful I've disabled it by default. See the sentry explanation page for information about what is transmitted.
+
 If you have something that will help please [let me know](https://nxfifteen.me.uk/about/me/contact/).
 
 
