@@ -1,6 +1,6 @@
 [Short description of suggestion]
 
-** Scope **
+**Scope**
 
 * User/Admin
 
