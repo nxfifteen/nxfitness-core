@@ -1,3 +1,12 @@
+<?php
+    if (!defined('IN_MY_PROJECT')) define('IN_MY_PROJECT', TRUE);
+	define('PROJECT_ROOT', dirname(__FILE__));
+	define("PATH_ADMIN", dirname(__FILE__) . "/");
+	define("PATH_ROOT", dirname(__FILE__) . "/../");
+
+	require_once(dirname(__FILE__) . "/_class/NxFitAdmin.php");
+	$App = new NxFitAdmin('269VLG');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,6 +56,10 @@
             <a href="https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core">NxFITNESS Core</a> &copy; 2017 Stuart McCulloch Anderson.
             <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a></span>
         </footer>
+
+        <script type="application/javascript">
+            var fitbitUserId = '269VLG';
+        </script>
 
         <!-- Bootstrap and necessary plugins -->
         <script src="bower_components/jquery/dist/jquery.min.js"></script>
