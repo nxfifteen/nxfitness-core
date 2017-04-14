@@ -298,3 +298,18 @@ function init(url) {
     $('[rel="popover"],[data-rel="popover"],[data-toggle="popover"]').popover();
 
 }
+
+function returnDateString(dateObject) {
+    var yyyy = dateObject.getFullYear().toString();
+    var mm = (dateObject.getMonth() + 1).toString(); // getMonth() is zero-based
+    var dd = dateObject.getDate().toString();
+
+    return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
+}
+
+function debug_add_gen_time($apiName, $timeValue) {
+    var newBlock = '<div class="prog-row"> <div class="user-thumb"><i class="fa fa-clock-o" aria-hidden="true" style="font-size: xx-large;color: red;"></i></div> <div class="user-details"> <h4><a href="#">Gen Time ' + $apiName +'</a></h4> <p>' + $timeValue +'</p> </div> </div>';
+
+    var debug_gen_time = $('#debug_gen_time');
+    debug_gen_time.html(debug_gen_time.html() + newBlock);
+}
