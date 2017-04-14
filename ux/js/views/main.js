@@ -1,532 +1,217 @@
 $(function () {
     'use strict';
 
-    //convert Hex to RGBA
-    function convertHex(hex, opacity) {
-        hex = hex.replace('#', '');
-        var r = parseInt(hex.substring(0, 2), 16);
-        var g = parseInt(hex.substring(2, 4), 16);
-        var b = parseInt(hex.substring(4, 6), 16);
+    function loadWeather($, location, woeid) {
+        var weatherDiv = $('#weatherPanel');
+        $.simpleWeather({
+            location: location,
+            woeid: woeid,
+            unit: 'c',
+            success: function (weather) {
+                weatherDiv.find('.wdt-head').html('Conditions in ' + weather.city + ' at ' + weather.updated);
+                $('#frcstTodayDay').html("Today - " + weather.currently);
+                $('#frcstTodayIco').removeClass("ico-weather").addClass(weatherCodeToIcon(weather.code));
+                $('#frcstToday').html(weather.temp);
 
-        var result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
-        return result;
+                setUpWeatherDay($, "One", weather.forecast[1]);
+                setUpWeatherDay($, "Two", weather.forecast[2]);
+                setUpWeatherDay($, "Three", weather.forecast[3]);
+                setUpWeatherDay($, "Four", weather.forecast[4]);
+                setUpWeatherDay($, "Five", weather.forecast[5]);
+                setUpWeatherDay($, "Six", weather.forecast[6]);
+            },
+            error: function (error) {
+                weatherDiv.find('.panel-body').html('<p>' + error + '</p>');
+            }
+        });
     }
 
-    //Cards with Charts
-    var labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-    var data = {
-        labels: labels,
-        datasets: [
-            {
-                label: 'My First dataset',
-                backgroundColor: $.brandPrimary,
-                borderColor: 'rgba(255,255,255,.55)',
-                data: [65, 59, 84, 84, 51, 55, 40]
-            },
-        ]
-    };
-    var options = {
-        maintainAspectRatio: false,
-        legend: {
-            display: false
-        },
-        scales: {
-            xAxes: [{
-                gridLines: {
-                    color: 'transparent',
-                    zeroLineColor: 'transparent'
-                },
-                ticks: {
-                    fontSize: 2,
-                    fontColor: 'transparent',
-                }
-
-            }],
-            yAxes: [{
-                display: false,
-                ticks: {
-                    display: false,
-                    min: Math.min.apply(Math, data.datasets[0].data) - 5,
-                    max: Math.max.apply(Math, data.datasets[0].data) + 5,
-                }
-            }],
-        },
-        elements: {
-            line: {
-                borderWidth: 1
-            },
-            point: {
-                radius: 4,
-                hitRadius: 10,
-                hoverRadius: 4,
-            },
-        }
-    };
-    var ctx = $('#card-chart1');
-    var cardChart1 = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: options
-    });
-
-    var data = {
-        labels: labels,
-        datasets: [
-            {
-                label: 'My First dataset',
-                backgroundColor: $.brandInfo,
-                borderColor: 'rgba(255,255,255,.55)',
-                data: [1, 18, 9, 17, 34, 22, 11]
-            },
-        ]
-    };
-    var options = {
-        maintainAspectRatio: false,
-        legend: {
-            display: false
-        },
-        scales: {
-            xAxes: [{
-                gridLines: {
-                    color: 'transparent',
-                    zeroLineColor: 'transparent'
-                },
-                ticks: {
-                    fontSize: 2,
-                    fontColor: 'transparent',
-                }
-
-            }],
-            yAxes: [{
-                display: false,
-                ticks: {
-                    display: false,
-                    min: Math.min.apply(Math, data.datasets[0].data) - 5,
-                    max: Math.max.apply(Math, data.datasets[0].data) + 5,
-                }
-            }],
-        },
-        elements: {
-            line: {
-                tension: 0.00001,
-                borderWidth: 1
-            },
-            point: {
-                radius: 4,
-                hitRadius: 10,
-                hoverRadius: 4,
-            },
-        }
-    };
-    var ctx = $('#card-chart2');
-    var cardChart2 = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: options
-    });
-
-    var options = {
-        maintainAspectRatio: false,
-        legend: {
-            display: false
-        },
-        scales: {
-            xAxes: [{
-                display: false
-            }],
-            yAxes: [{
-                display: false
-            }],
-        },
-        elements: {
-            line: {
-                borderWidth: 2
-            },
-            point: {
-                radius: 0,
-                hitRadius: 10,
-                hoverRadius: 4,
-            },
-        }
-    };
-    var data = {
-        labels: labels,
-        datasets: [
-            {
-                label: 'My First dataset',
-                backgroundColor: 'rgba(255,255,255,.2)',
-                borderColor: 'rgba(255,255,255,.55)',
-                data: [78, 81, 80, 45, 34, 12, 40]
-            },
-        ]
-    };
-    var ctx = $('#card-chart3');
-    var cardChart3 = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: options
-    });
-
-    //Random Numbers
-    function random(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
+    function setUpWeatherDay($, dayNumber, forecast) {
+        $('#frcst'+dayNumber).html(forecast.high);
+        $('#frcst'+dayNumber+'Ico').removeClass("ico-weather").addClass(weatherCodeToIcon(forecast.code));
+        $('#frcst'+dayNumber+'Day').html(forecast.day);
     }
 
-    var elements = 16;
-    var labels = [];
-    var data = [];
+    function weatherCodeToIcon(weatherCode) {
+        //https://developer.yahoo.com/weather/documentation.html#codes
+        if (weatherCode == 0) {
+            return "ico-windy5";
+        } else if (weatherCode == 1) {
+            return "ico-lightning5";
+        } else if (weatherCode == 2) {
+            return "ico-windy5";
+        } else if (weatherCode == 3) {
+            return "ico-lightning5";
+        } else if (weatherCode == 4) {
+            return "ico-lightning3";
+        } else if (weatherCode == 5) {
+            return "ico-snowy2";
+        } else if (weatherCode == 6) {
+            return "ico-rainy4";
+        } else if (weatherCode == 7) {
+            return "ico-snowy2";
+        } else if (weatherCode == 8) {
+            return "ico-snowy";
+        } else if (weatherCode == 9) {
+            return "ico-rainy";
+        } else if (weatherCode == 10) {
+            return "ico-snowy3";
+        } else if (weatherCode == 11) {
+            return "ico-rainy2";
+        } else if (weatherCode == 12) {
+            return "ico-rainy2";
+        } else if (weatherCode == 13) {
+            return "ico-snowy2";
+        } else if (weatherCode == 14) {
+            return "ico-snowy3";
+        } else if (weatherCode == 15) {
+            return "ico-snowy5";
+        } else if (weatherCode == 16) {
+            return "ico-snowflake";
+        } else if (weatherCode == 17) {
+            return "ico-snowy4";
+        } else if (weatherCode == 18) {
+            return "ico-snowy";
+        } else if (weatherCode == 19) {
+            return "ico-weather3";
+        } else if (weatherCode == 20) {
+            return "ico-weather3";
+        } else if (weatherCode == 21) {
+            return "ico-weather3";
+        } else if (weatherCode == 22) {
+            return "ico-lines";
+        } else if (weatherCode == 23) {
+            return "ico-wind";
+        } else if (weatherCode == 24) {
+            return "ico-windy";
+        } else if (weatherCode == 25) {
+            return "ico-snowflake";
+        } else if (weatherCode == 26) {
+            return "ico-cloud2";
+        } else if (weatherCode == 27) {
+            return "ico-cloud4";
+        } else if (weatherCode == 28) {
+            return "ico-cloudy3";
+        } else if (weatherCode == 29) {
+            return "ico-cloud";
+        } else if (weatherCode == 30) {
+            return "ico-cloudy";
+        } else if (weatherCode == 31) {
+            return "ico-moon";
+        } else if (weatherCode == 32) {
+            return "ico-sun";
+        } else if (weatherCode == 33) {
+            return "ico-moon2";
+        } else if (weatherCode == 34) {
+            return "ico-sun2";
+        } else if (weatherCode == 35) {
+            return "ico-rainy4";
+        } else if (weatherCode == 36) {
+            return "ico-sun3";
+        } else if (weatherCode == 37) {
+            return "ico-lightning";
+        } else if (weatherCode == 38) {
+            return "ico-lightning2";
+        } else if (weatherCode == 39) {
+            return "ico-lightning2";
+        } else if (weatherCode == 40) {
+            return "ico-rainy2";
+        } else if (weatherCode == 41) {
+            return "ico-snowy5";
+        } else if (weatherCode == 42) {
+            return "ico-snowy";
+        } else if (weatherCode == 43) {
+            return "ico-snowy5";
+        } else if (weatherCode == 44) {
+            return "ico-cloud2";
+        } else if (weatherCode == 45) {
+            return "ico-lightning3";
+        } else if (weatherCode == 46) {
+            return "ico-snowy2";
+        } else if (weatherCode == 47) {
+            return "ico-lightning2";
+        } else {
+            return weatherCode;
+        }
 
-    for (var i = 2000; i <= 2000 + elements; i++) {
-        labels.push(i);
-        data.push(random(40, 100));
     }
 
-    var options = {
-        maintainAspectRatio: false,
-        legend: {
-            display: false
-        },
-        scales: {
-            xAxes: [{
-                display: false,
-                barPercentage: 0.6,
-            }],
-            yAxes: [{
-                display: false,
-            }]
-        },
-
-    };
-    var data = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'rgba(255,255,255,.3)',
-                borderColor: 'transparent',
-                data: data
-            },
-        ]
-    };
-    var ctx = $('#card-chart4');
-    var cardChart4 = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: options
-    });
-
-    //Main Chart
-    var elements = 27;
-    var data1 = [];
-    var data2 = [];
-    var data3 = [];
-
-    for (var i = 0; i <= elements; i++) {
-        data1.push(random(50, 200));
-        data2.push(random(80, 100));
-        data3.push(65);
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            loadWeather($, position.coords.latitude + ',' + position.coords.longitude, '');
+        });
     }
 
-    var data = {
-        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
-        datasets: [
-            {
-                label: 'My First dataset',
-                backgroundColor: convertHex($.brandInfo, 10),
-                borderColor: $.brandInfo,
-                pointHoverBackgroundColor: '#fff',
-                borderWidth: 2,
-                data: data1
-            },
-            {
-                label: 'My Second dataset',
-                backgroundColor: 'transparent',
-                borderColor: $.brandSuccess,
-                pointHoverBackgroundColor: '#fff',
-                borderWidth: 2,
-                data: data2
-            },
-            {
-                label: 'My Third dataset',
-                backgroundColor: 'transparent',
-                borderColor: $.brandDanger,
-                pointHoverBackgroundColor: '#fff',
-                borderWidth: 1,
-                borderDash: [8, 5],
-                data: data3
-            }
-        ]
-    };
+    var StreakGoals = $('#StreakGoals');
+    if (StreakGoals.length > 0) {
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=GoalStreak", function (data) {
 
-    var options = {
-        maintainAspectRatio: false,
-        legend: {
-            display: false
-        },
-        scales: {
-            xAxes: [{
-                gridLines: {
-                    drawOnChartArea: false,
+            var CurrentDays = $('#CurrentDays');
+            if (CurrentDays.length > 0) {
+                if (data.results.current.days > 0) {
+                    CurrentDays.html("Current streak started on " + data.results.current.start + " and has lasted " + data.results.current.days + " days");
+                } else {
+                    CurrentDays.html("You need to beat your step goal to start a streak");
                 }
-            }],
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 5,
-                    stepSize: Math.ceil(250 / 5),
-                    max: 250
-                }
-            }]
-        },
-        elements: {
-            point: {
-                radius: 0,
-                hitRadius: 10,
-                hoverRadius: 4,
-                hoverBorderWidth: 3,
             }
-        },
-    };
-    var ctx = $('#main-chart');
-    var mainChart = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: options
-    });
 
+            var AverageDays = $('#AverageDays');
+            if (AverageDays.length > 0) {
+                if (parseInt(data.results.current.days) < parseInt(data.results.avg.days)) {
+                    AverageDays.html("Lasts " + data.results.avg.days + " days and your " + (data.results.avg.days - data.results.current.days) + " days away from it.");
+                } else {
+                    AverageDays.html("Is toast! Your betting your " + data.results.avg.days + " day average by " + (data.results.current.days - data.results.avg.days) + " days.");
+                }
+                $('#AverageDaysProgress').attr('aria-valuenow', data.results.avg.dist).css('width', data.results.avg.dist + '%');
+            }
 
-    //Social Box Charts
-    var labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+            var LastDays = $('#LastDays');
+            if (LastDays.length > 0) {
+                if (parseInt(data.results.current.days) < parseInt(data.results.last.days)) {
+                    LastDays.html("Ran between " + data.results.last.start + " and " + data.results.last.end + ", lasting " + data.results.last.days + " days and your " + (data.results.last.days - data.results.current.days) + " days away from it.");
+                } else {
+                    LastDays.html("Is toast! Your betting your last streak of " + data.results.last.days + " day by " + (data.results.current.days - data.results.last.days) + " days.");
+                }
+                $('#LastDaysProgress').attr('aria-valuenow', data.results.last.dist).css('width', data.results.last.dist + '%');
+            }
 
-    var options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            display: false,
-        },
-        scales: {
-            xAxes: [{
-                display: false,
-            }],
-            yAxes: [{
-                display: false,
-            }]
-        },
-        elements: {
-            point: {
-                radius: 0,
-                hitRadius: 10,
-                hoverRadius: 4,
-                hoverBorderWidth: 3,
+            var LongestDays = $('#LongestDays');
+            if (LongestDays.length > 0) {
+                if (parseInt(data.results.current.days) < parseInt(data.results.max.days)) {
+                    LongestDays.html("Ran between " + data.results.max.start + " and " + data.results.max.end + ", lasting " + data.results.max.days + " days and your " + (data.results.max.days - data.results.current.days) + " days away from it.");
+                } else {
+                    LongestDays.html("Is toast! Your betting your longest streak of " + data.results.max.days + " days by " + data.results.current.days + " days.");
+                }
+                $('#LongestDaysProgress').attr('aria-valuenow', data.results.max.dist).css('width', data.results.max.dist + '%');
+            }
+        });
+    }
+
+    $.getJSON("../json.php?user="+fitbitUserId+"&data=dashboard&date=" + returnDateString(new Date()), function (data) {
+        var returnDate = data.results.returnDate;
+        var reportDate = new Date(returnDate[0], returnDate[1] - 1, returnDate[2]);
+        if (data.results.syncd === null && typeof data.results.syncd === "object") {
+            $('#gaugeStepsPanel').remove();
+            $('#gaugeFloorsPanel').remove();
+            $('#gaugeDistancePanel').remove();
+        } else {
+            var gaugeStepsPanel = $('#gaugeStepsPanel');
+            if (gaugeStepsPanel.length > 0) {
+                $('#gaugeStepsText').html(data.results.steps + ' Steps, ' + data.results.progsteps + '%');
+                $('#gaugeStepsProgress').attr('aria-valuenow', data.results.progsteps).css('width', data.results.progsteps + '%');
+            }
+
+            var gaugeFloorsPanel = $('#gaugeFloorsPanel');
+            if (gaugeFloorsPanel.length > 0) {
+                $('#gaugeFloorsText').html(data.results.floors + ' Floors, ' + data.results.progfloors + '%');
+                $('#gaugeFloorsProgress').attr('aria-valuenow', data.results.progfloors).css('width', data.results.progfloors + '%');
+            }
+
+            var gaugeDistancePanel = $('#gaugeDistancePanel');
+            if (gaugeDistancePanel.length > 0) {
+                $('#gaugeDistanceText').html(data.results.distance + ' Miles, ' + data.results.progdistance + '%');
+                $('#gaugeDistanceProgress').attr('aria-valuenow', data.results.progdistance).css('width', data.results.progdistance + '%');
             }
         }
-    };
-
-    var data1 = {
-        labels: labels,
-        datasets: [{
-            backgroundColor: 'rgba(255,255,255,.1)',
-            borderColor: 'rgba(255,255,255,.55)',
-            pointHoverBackgroundColor: '#fff',
-            borderWidth: 2,
-            data: [65, 59, 84, 84, 51, 55, 40]
-        }]
-    };
-    var ctx = $('#social-box-chart-1');
-    var socialBoxChart1 = new Chart(ctx, {
-        type: 'line',
-        data: data1,
-        options: options
     });
-
-    var data2 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'rgba(255,255,255,.1)',
-                borderColor: 'rgba(255,255,255,.55)',
-                pointHoverBackgroundColor: '#fff',
-                borderWidth: 2,
-                data: [1, 13, 9, 17, 34, 41, 38]
-            }
-        ]
-    };
-    var ctx = $('#social-box-chart-2').get(0).getContext('2d');
-    var socialBoxChart2 = new Chart(ctx, {
-        type: 'line',
-        data: data2,
-        options: options
-    });
-
-    var data3 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'rgba(255,255,255,.1)',
-                borderColor: 'rgba(255,255,255,.55)',
-                pointHoverBackgroundColor: '#fff',
-                borderWidth: 2,
-                data: [78, 81, 80, 45, 34, 12, 40]
-            }
-        ]
-    };
-    var ctx = $('#social-box-chart-3').get(0).getContext('2d');
-    var socialBoxChart3 = new Chart(ctx, {
-        type: 'line',
-        data: data3,
-        options: options
-    });
-
-    var data4 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'rgba(255,255,255,.1)',
-                borderColor: 'rgba(255,255,255,.55)',
-                pointHoverBackgroundColor: '#fff',
-                borderWidth: 2,
-                data: [35, 23, 56, 22, 97, 23, 64]
-            }
-        ]
-    };
-    var ctx = $('#social-box-chart-4').get(0).getContext('2d');
-    var socialBoxChart4 = new Chart(ctx, {
-        type: 'line',
-        data: data4,
-        options: options
-    });
-
-
-    //Sparkline Charts
-    var labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-    var options = {
-        legend: {
-            display: false,
-        },
-        scales: {
-            xAxes: [{
-                display: false,
-            }],
-            yAxes: [{
-                display: false,
-            }]
-        },
-        elements: {
-            point: {
-                radius: 0,
-                hitRadius: 10,
-                hoverRadius: 4,
-                hoverBorderWidth: 3,
-            }
-        },
-    };
-
-    var data1 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'transparent',
-                borderColor: $.brandPrimary,
-                borderWidth: 2,
-                data: [35, 23, 56, 22, 97, 23, 64]
-            }
-        ]
-    };
-    var ctx = $('#sparkline-chart-1');
-    var sparklineChart1 = new Chart(ctx, {
-        type: 'line',
-        data: data1,
-        options: options
-    });
-
-    var data2 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'transparent',
-                borderColor: $.brandDanger,
-                borderWidth: 2,
-                data: [78, 81, 80, 45, 34, 12, 40]
-            }
-        ]
-    };
-    var ctx = $('#sparkline-chart-2');
-    var sparklineChart2 = new Chart(ctx, {
-        type: 'line',
-        data: data2,
-        options: options
-    });
-
-    var data3 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'transparent',
-                borderColor: $.brandWarning,
-                borderWidth: 2,
-                data: [35, 23, 56, 22, 97, 23, 64]
-            }
-        ]
-    };
-    var ctx = $('#sparkline-chart-3');
-    var sparklineChart3 = new Chart(ctx, {
-        type: 'line',
-        data: data3,
-        options: options
-    });
-
-    var data4 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'transparent',
-                borderColor: $.brandSuccess,
-                borderWidth: 2,
-                data: [78, 81, 80, 45, 34, 12, 40]
-            }
-        ]
-    };
-    var ctx = $('#sparkline-chart-4');
-    var sparklineChart4 = new Chart(ctx, {
-        type: 'line',
-        data: data4,
-        options: options
-    });
-
-    var data5 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'transparent',
-                borderColor: '#d1d4d7',
-                borderWidth: 2,
-                data: [35, 23, 56, 22, 97, 23, 64]
-            }
-        ]
-    };
-    var ctx = $('#sparkline-chart-5');
-    var sparklineChart5 = new Chart(ctx, {
-        type: 'line',
-        data: data5,
-        options: options
-    });
-
-    var data6 = {
-        labels: labels,
-        datasets: [
-            {
-                backgroundColor: 'transparent',
-                borderColor: $.brandInfo,
-                borderWidth: 2,
-                data: [78, 81, 80, 45, 34, 12, 40]
-            }
-        ]
-    };
-    var ctx = $('#sparkline-chart-6');
-    var sparklineChart6 = new Chart(ctx, {
-        type: 'line',
-        data: data6,
-        options: options
-    });
-
 });
