@@ -9,7 +9,8 @@
     "simple-line-icons": "latest",
     "pace": "latest",
     "chart.js": "^2.3.0",
-    "raven-js": "^3.14.1"
+    "raven-js": "^3.14.1",
+    "simpleWeather": "^3.1.0"
   },
   "private": true
 }
