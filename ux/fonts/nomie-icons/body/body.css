@@ -1,0 +1,71 @@
+	/*
+  	body icon font: body
+  	Creation date: 19/02/2016 14:53
+  	*/
+
+@font-face {
+  font-family: "body";
+  src: url("../nomie-icons/body/body.eot");
+  src: url("../nomie-icons/body/body.eot?#iefix") format("embedded-opentype"),
+       url("../nomie-icons/body/body.woff") format("woff"),
+       url("../nomie-icons/body/body.ttf") format("truetype"),
+       url("../nomie-icons/body/body.svg#body") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "body";
+    src: url("../nomie-icons/body/body.svg#body") format("svg");
+  }
+}
+
+[class^="body-"]:before, [class*=" body-"]:before,
+[class^="body-"]:after, [class*=" body-"]:after {   
+  font-family: body;
+        
+font-style: normal;
+
+}
+
+.body-ankle:before { content: "\f100"; }
+.body-arm:before { content: "\f101"; }
+.body-articulation-bones:before { content: "\f102"; }
+.body-bladder:before { content: "\f103"; }
+.body-bone:before { content: "\f104"; }
+.body-colon:before { content: "\f105"; }
+.body-dna:before { content: "\f106"; }
+.body-ear:before { content: "\f107"; }
+.body-elbow:before { content: "\f108"; }
+.body-eyebrow:before { content: "\f109"; }
+.body-feet:before { content: "\f10a"; }
+.body-female-body:before { content: "\f10b"; }
+.body-female-torso:before { content: "\f10c"; }
+.body-finger:before { content: "\f10d"; }
+.body-hair:before { content: "\f10e"; }
+.body-hand:before { content: "\f10f"; }
+.body-head-and-neck:before { content: "\f110"; }
+.body-heart:before { content: "\f111"; }
+.body-human-back:before { content: "\f112"; }
+.body-human-back-1:before { content: "\f113"; }
+.body-human-brain:before { content: "\f114"; }
+.body-human-eye:before { content: "\f115"; }
+.body-human-skull:before { content: "\f116"; }
+.body-kidneys:before { content: "\f117"; }
+.body-leg:before { content: "\f118"; }
+.body-liver:before { content: "\f119"; }
+.body-lungs:before { content: "\f11a"; }
+.body-mustache:before { content: "\f11b"; }
+.body-nose:before { content: "\f11c"; }
+.body-pelvis:before { content: "\f11d"; }
+.body-penis:before { content: "\f11e"; }
+.body-ribs:before { content: "\f11f"; }
+.body-spine:before { content: "\f120"; }
+.body-stomach:before { content: "\f121"; }
+.body-thorat:before { content: "\f122"; }
+.body-tongue:before { content: "\f123"; }
+.body-tooth:before { content: "\f124"; }
+.body-uterus:before { content: "\f125"; }
+.body-vagina:before { content: "\f126"; }
+.body-woman-lips:before { content: "\f127"; }

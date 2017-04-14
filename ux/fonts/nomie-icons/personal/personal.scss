@@ -1,0 +1,203 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 28/03/2016 04:39
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-bathroom:before { content: "\f100"; }
+.flaticon-body:before { content: "\f101"; }
+.flaticon-gender-both:before { content: "\f102"; }
+.flaticon-gender-gay:before { content: "\f103"; }
+.flaticon-gender-lesbian:before { content: "\f104"; }
+.flaticon-logo:before { content: "\f105"; }
+.flaticon-love:before { content: "\f106"; }
+.flaticon-love-1:before { content: "\f107"; }
+.flaticon-love-2:before { content: "\f108"; }
+.flaticon-love-3:before { content: "\f109"; }
+.flaticon-love-bed:before { content: "\f10a"; }
+.flaticon-love-bird:before { content: "\f10b"; }
+.flaticon-love-bottle:before { content: "\f10c"; }
+.flaticon-love-boy:before { content: "\f10d"; }
+.flaticon-love-camera:before { content: "\f10e"; }
+.flaticon-love-coffee:before { content: "\f10f"; }
+.flaticon-love-dance:before { content: "\f110"; }
+.flaticon-love-dinner:before { content: "\f111"; }
+.flaticon-love-fav:before { content: "\f112"; }
+.flaticon-love-flower:before { content: "\f113"; }
+.flaticon-love-flower-1:before { content: "\f114"; }
+.flaticon-love-food:before { content: "\f115"; }
+.flaticon-love-gift:before { content: "\f116"; }
+.flaticon-love-girl:before { content: "\f117"; }
+.flaticon-love-men:before { content: "\f118"; }
+.flaticon-love-note:before { content: "\f119"; }
+.flaticon-love-notes:before { content: "\f11a"; }
+.flaticon-love-people:before { content: "\f11b"; }
+.flaticon-love-people-1:before { content: "\f11c"; }
+.flaticon-love-people-2:before { content: "\f11d"; }
+.flaticon-love-people-3:before { content: "\f11e"; }
+.flaticon-love-position:before { content: "\f11f"; }
+.flaticon-love-search:before { content: "\f120"; }
+.flaticon-love-shape:before { content: "\f121"; }
+.flaticon-love-sign:before { content: "\f122"; }
+.flaticon-love-sign-1:before { content: "\f123"; }
+.flaticon-love-sign-2:before { content: "\f124"; }
+.flaticon-love-sign-3:before { content: "\f125"; }
+.flaticon-love-talk:before { content: "\f126"; }
+.flaticon-meds-bottle:before { content: "\f127"; }
+.flaticon-meds-marijuana:before { content: "\f128"; }
+.flaticon-meds-pill:before { content: "\f129"; }
+.flaticon-meds-shootup:before { content: "\f12a"; }
+.flaticon-meds-smoke-cig:before { content: "\f12b"; }
+.flaticon-meds-weed:before { content: "\f12c"; }
+.flaticon-sex-bed:before { content: "\f12d"; }
+.flaticon-sex-black-penis:before { content: "\f12e"; }
+.flaticon-sex-clamp:before { content: "\f12f"; }
+.flaticon-sex-dick:before { content: "\f130"; }
+.flaticon-sex-dick-1:before { content: "\f131"; }
+.flaticon-sex-dress:before { content: "\f132"; }
+.flaticon-sex-gear:before { content: "\f133"; }
+.flaticon-sex-gear-1:before { content: "\f134"; }
+.flaticon-sex-gear-2:before { content: "\f135"; }
+.flaticon-sex-gear-3:before { content: "\f136"; }
+.flaticon-sex-gear-4:before { content: "\f137"; }
+.flaticon-sex-gear-5:before { content: "\f138"; }
+.flaticon-sex-handcuff:before { content: "\f139"; }
+.flaticon-sex-mind:before { content: "\f13a"; }
+.flaticon-sex-naked:before { content: "\f13b"; }
+.flaticon-sex-naked-1:before { content: "\f13c"; }
+.flaticon-sex-penis:before { content: "\f13d"; }
+.flaticon-sex-rope:before { content: "\f13e"; }
+.flaticon-wc-bath:before { content: "\f13f"; }
+.flaticon-wc-bath-1:before { content: "\f140"; }
+.flaticon-wc-brush:before { content: "\f141"; }
+.flaticon-wc-pee:before { content: "\f142"; }
+.flaticon-wc-people:before { content: "\f143"; }
+.flaticon-wc-poop:before { content: "\f144"; }
+.flaticon-wc-poop-1:before { content: "\f145"; }
+.flaticon-wc-shave:before { content: "\f146"; }
+.flaticon-wc-shower:before { content: "\f147"; }
+.flaticon-wc-sign:before { content: "\f148"; }
+.flaticon-wc-soap:before { content: "\f149"; }
+.flaticon-wc-toilet:before { content: "\f14a"; }
+.flaticon-wc-toilet-1:before { content: "\f14b"; }
+.flaticon-wc-toilet-2:before { content: "\f14c"; }
+.flaticon-wc-tool:before { content: "\f14d"; }
+.flaticon-wc-tool-1:before { content: "\f14e"; }
+.flaticon-wc-tool-2:before { content: "\f14f"; }
+.flaticon-wc-tools:before { content: "\f150"; }
+.flaticon-wc-women:before { content: "\f151"; }
+    
+    $font-Flaticon-bathroom: "\f100";
+    $font-Flaticon-body: "\f101";
+    $font-Flaticon-gender-both: "\f102";
+    $font-Flaticon-gender-gay: "\f103";
+    $font-Flaticon-gender-lesbian: "\f104";
+    $font-Flaticon-logo: "\f105";
+    $font-Flaticon-love: "\f106";
+    $font-Flaticon-love-1: "\f107";
+    $font-Flaticon-love-2: "\f108";
+    $font-Flaticon-love-3: "\f109";
+    $font-Flaticon-love-bed: "\f10a";
+    $font-Flaticon-love-bird: "\f10b";
+    $font-Flaticon-love-bottle: "\f10c";
+    $font-Flaticon-love-boy: "\f10d";
+    $font-Flaticon-love-camera: "\f10e";
+    $font-Flaticon-love-coffee: "\f10f";
+    $font-Flaticon-love-dance: "\f110";
+    $font-Flaticon-love-dinner: "\f111";
+    $font-Flaticon-love-fav: "\f112";
+    $font-Flaticon-love-flower: "\f113";
+    $font-Flaticon-love-flower-1: "\f114";
+    $font-Flaticon-love-food: "\f115";
+    $font-Flaticon-love-gift: "\f116";
+    $font-Flaticon-love-girl: "\f117";
+    $font-Flaticon-love-men: "\f118";
+    $font-Flaticon-love-note: "\f119";
+    $font-Flaticon-love-notes: "\f11a";
+    $font-Flaticon-love-people: "\f11b";
+    $font-Flaticon-love-people-1: "\f11c";
+    $font-Flaticon-love-people-2: "\f11d";
+    $font-Flaticon-love-people-3: "\f11e";
+    $font-Flaticon-love-position: "\f11f";
+    $font-Flaticon-love-search: "\f120";
+    $font-Flaticon-love-shape: "\f121";
+    $font-Flaticon-love-sign: "\f122";
+    $font-Flaticon-love-sign-1: "\f123";
+    $font-Flaticon-love-sign-2: "\f124";
+    $font-Flaticon-love-sign-3: "\f125";
+    $font-Flaticon-love-talk: "\f126";
+    $font-Flaticon-meds-bottle: "\f127";
+    $font-Flaticon-meds-marijuana: "\f128";
+    $font-Flaticon-meds-pill: "\f129";
+    $font-Flaticon-meds-shootup: "\f12a";
+    $font-Flaticon-meds-smoke-cig: "\f12b";
+    $font-Flaticon-meds-weed: "\f12c";
+    $font-Flaticon-sex-bed: "\f12d";
+    $font-Flaticon-sex-black-penis: "\f12e";
+    $font-Flaticon-sex-clamp: "\f12f";
+    $font-Flaticon-sex-dick: "\f130";
+    $font-Flaticon-sex-dick-1: "\f131";
+    $font-Flaticon-sex-dress: "\f132";
+    $font-Flaticon-sex-gear: "\f133";
+    $font-Flaticon-sex-gear-1: "\f134";
+    $font-Flaticon-sex-gear-2: "\f135";
+    $font-Flaticon-sex-gear-3: "\f136";
+    $font-Flaticon-sex-gear-4: "\f137";
+    $font-Flaticon-sex-gear-5: "\f138";
+    $font-Flaticon-sex-handcuff: "\f139";
+    $font-Flaticon-sex-mind: "\f13a";
+    $font-Flaticon-sex-naked: "\f13b";
+    $font-Flaticon-sex-naked-1: "\f13c";
+    $font-Flaticon-sex-penis: "\f13d";
+    $font-Flaticon-sex-rope: "\f13e";
+    $font-Flaticon-wc-bath: "\f13f";
+    $font-Flaticon-wc-bath-1: "\f140";
+    $font-Flaticon-wc-brush: "\f141";
+    $font-Flaticon-wc-pee: "\f142";
+    $font-Flaticon-wc-people: "\f143";
+    $font-Flaticon-wc-poop: "\f144";
+    $font-Flaticon-wc-poop-1: "\f145";
+    $font-Flaticon-wc-shave: "\f146";
+    $font-Flaticon-wc-shower: "\f147";
+    $font-Flaticon-wc-sign: "\f148";
+    $font-Flaticon-wc-soap: "\f149";
+    $font-Flaticon-wc-toilet: "\f14a";
+    $font-Flaticon-wc-toilet-1: "\f14b";
+    $font-Flaticon-wc-toilet-2: "\f14c";
+    $font-Flaticon-wc-tool: "\f14d";
+    $font-Flaticon-wc-tool-1: "\f14e";
+    $font-Flaticon-wc-tool-2: "\f14f";
+    $font-Flaticon-wc-tools: "\f150";
+    $font-Flaticon-wc-women: "\f151";
