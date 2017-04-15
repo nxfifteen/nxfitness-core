@@ -77,11 +77,9 @@
                         <li class="nav-title">
                             Tracking
                         </li>
-	                    <?php if ($isDeveloper) { ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="food/food.html"><i class="fa fa-cutlery""></i> Food <span class="badge badge-danger">WIP</span></a>
-                            </li>
-	                    <?php } ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="food/food.html"><i class="fa fa-cutlery""></i> Food</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="nomie/nomie.html"><i class="fa fa-street-view"></i> Nomie</a>
                         </li>
