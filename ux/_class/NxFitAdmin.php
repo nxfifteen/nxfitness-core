@@ -271,25 +271,25 @@
                 $usrCountry = str_ireplace(" ", "", str_ireplace(".", "", $usrCountry));
             }
 
-            $imagePath = PATH_ADMIN . "images/local/";
+            $imagePath = PATH_ADMIN . "img/local/";
 
             if (isset($usrCity) && isset($usrCountry) && file_exists($imagePath . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg")) {
-                return "images/local/" . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg";
+                return "img/local/" . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg";
             }
 
             if (isset($usrCity) && file_exists($imagePath . strtolower($usrCity) . ".jpg")) {
                 if (isset($usrCountry)) nxr(" +** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
 
-                return "images/local/" . strtolower($usrCity) . ".jpg";
+                return "img/local/" . strtolower($usrCity) . ".jpg";
             }
 
             if (isset($usrCountry) && file_exists($imagePath . strtolower($usrCountry) . ".jpg")) {
                 if (isset($usrCity)) nxr(" +** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
 
-                return "images/local/" . strtolower($usrCountry) . ".jpg";
+                return "img/local/" . strtolower($usrCountry) . ".jpg";
             }
 
-            return "images/local/default.jpg";
+            return "img/local/default.jpg";
         }
 
         /**
