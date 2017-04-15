@@ -177,6 +177,22 @@ function loadPage(url) {
     });
 }
 
+function setUpBreadcrumb(urls, active) {
+
+    var i;
+    var breadcrumb = $('.breadcrumb');
+    var crumbs = '';
+    // var crumbAppend = breadcrumb.html();
+    for (i = 0; i < urls.length; i++) {
+        crumbs += '<li class="breadcrumb-item">' + urls[i] + '</li>';
+    }
+
+    crumbs += '<li class="breadcrumb-item active">' + active + '</li>';
+
+    // breadcrumb.html(crumbs + crumbAppend);
+    breadcrumb.html(crumbs);
+
+}
 /****
  * MAIN NAVIGATION
  */
