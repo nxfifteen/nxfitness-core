@@ -5,7 +5,7 @@ $(function () {
     $('#dayImpact').hide();
     var activityHistory = $('#ActivityHistory');
     if (activityHistory.length > 0) {
-        $.getJSON("../json.php?user="+fitbitUserId+"&data=ActivityHistory&period=last90", function (data) {
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=ActivityHistory&period=last90", function (data) {
 
             var isOdd = function (x) {
                 return x & 1;
@@ -22,6 +22,7 @@ $(function () {
                     indexMenu += '<a href="#' + index.split(",").join("").split(" ").join("") + '">' + index + '</a><br />';
                     html += '<article class="timeline-item alt" id="' + index.split(",").join("").split(" ").join("") + '"><div class="text-right"><div class="time-show first"><a href="#" class="btn btn-primary">' + index + '</a></div></div></article>';
                     $.each(month, function (index, event) {
+                        //noinspection JSUnresolvedVariable
                         html += '<article id="evt-' + event.logId + '" class="timeline-item';
                         if (isEven(events)) {
                             html += ' alt';
@@ -29,25 +30,34 @@ $(function () {
                         html += '">';
                         html += '<div class="timeline-desk">';
                         html += '<div class="card">';
+                        //noinspection JSUnresolvedVariable
                         html += '<div class="card-block ' + event.colour + '">';
                         html += '<span class="arrow';
                         if (isEven(events)) {
                             html += '-alt';
                         }
                         html += '"></span>';
+                        //noinspection JSUnresolvedVariable
                         html += '<span class="timeline-icon ' + event.colour + '"><i class="fa fa-check"></i></span>';
+                        //noinspection JSUnresolvedVariable
                         html += '<span class="timeline-date">' + event.startTime + '</span>';
+                        //noinspection JSUnresolvedVariable
                         html += '<h1 class="' + event.colour + '">' + event.name + '</h1>';
                         html += '<div class="row">';
                         html += '<div class="col-md-6">';
+                        //noinspection JSUnresolvedVariable
                         html += '<div class="eventDay">' + event.startTime + '</div>';
+                        //noinspection JSUnresolvedVariable
                         html += '<div class="eventEffect"><i class="fa fa-bolt"></i> ' + event.calPerMinute + ' kcals/min</div>';
                         html += '</div>';
                         html += '<div class="col-md-6">';
-                        if (event.steps != "0") {
+                        if (event.steps !== "0") {
+                            //noinspection JSUnresolvedVariable
                             html += '<div class="eventEffect"><i class="fa fa-trophy"></i> +' + event.steps + ' of ' + event.stats.steps + ' Steps</div>';
                         }
+                        //noinspection JSUnresolvedVariable
                         html += '<div class="eventEffect"><i class="fa fa-fire"></i> +' + event.calories + ' of ' + event.stats.caloriesOut + ' Calories </div>';
+                        //noinspection JSUnresolvedVariable
                         html += '<div class="eventEffect"><i class="fa fa-clock-o"></i> +' + event.duration + ' of ' + event.stats.active + ' Active Minutes</div>';
                         html += '</div>';
                         html += '</div>';
@@ -57,7 +67,7 @@ $(function () {
                         var json = JSON.stringify(event);
                         json = json.split("\"").join("\\\'");
                         html += '<div class="eventEffect"><i class="fa fa-clock-o"></i> <a onclick="display_gpx(document.getElementById(\'gpx\'), \'' + event.gpx + '\', \'' + json + '\');">View on Map <i class="fa fa-map-marker"></i></a>';
-                        if (event.gpx != "none") {
+                        if (event.gpx !== "none") {
                             html += ' | <a href="' + event.gpx + '">Download GPX <i class="fa fa-download"></i></a>';
                         }
                         html += '</div></div>';
@@ -92,14 +102,18 @@ function display_gpx(elt, gpx_source, activityJson) {
     var wrpMap = $('#wrpMap');
 
     var url = gpx_source;
-    var mapid = elt.getAttribute('data-map-target');
-    if (!url || !mapid) return 2;
+    var mapID = elt.getAttribute('data-map-target');
+    if (!url || !mapID) return 2;
 
     var wrpMapWidth = wrpMap.innerWidth();
     var leftMargin = wrpMap.outerWidth(true);
 
     $('#profilePanel').hide();
-    if (gpx_source !== "none") {$('#gpx').show();} else {$('#gpx').hide();}
+    if (gpx_source !== "none") {
+        $('#gpx').show();
+    } else {
+        $('#gpx').hide();
+    }
     $('#dayImpact').show();
 
     wrpMap.css("position", "fixed");
@@ -113,39 +127,44 @@ function display_gpx(elt, gpx_source, activityJson) {
 
     mapContainer.html('<div class="map" id="gpx-map"></div>');
 
-    function _t(t) {
-        return elt.getElementsByTagName(t)[0];
-    }
+    // function _t(t) {
+    //     return elt.getElementsByTagName(t)[0];
+    // }
+    //
+    // function _c(c) {
+    //     return elt.getElementsByClassName(c)[0];
+    // }
 
-    function _c(c) {
-        return elt.getElementsByClassName(c)[0];
-    }
-
-    if (gpx_source != "none") {
+    if (gpx_source !== "none") {
         mapContainer.show();
         mapContainerInfo.show();
-        var map = L.map(mapid);
+        var map = L.map(mapID);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: 'Track data from <a href="http://www.fitbit.com">Fitbit</a> and Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
         }).addTo(map);
 
-         new L.GPX(url, {
-             async: true,
-             marker_options: {
-                 startIconUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-start.png',
-                 endIconUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-end.png',
-                 shadowUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-shadow.png'
-             }
-         }).on('loaded', function (e) {
-             var gpx = e.target;
-             map.fitBounds(gpx.getBounds());
-        
-             var gpxInfo = $('#gpx-info');
-             gpxInfo.find('.distance').html(gpx.get_distance_imp().toFixed(2));
-             gpxInfo.find('.duration').html(gpx.get_duration_string(gpx.get_moving_time()));
-             gpxInfo.find('.pace').html(gpx.get_duration_string(gpx.get_moving_pace_imp(), true));
-             gpxInfo.find('.avghr').html(gpx.get_average_hr());
-         }).addTo(map);
+        new L.GPX(url, {
+            async: true,
+            marker_options: {
+                startIconUrl: 'bower_components/leaflet/dist/images/marker-icon.png',
+                endIconUrl: 'bower_components/leaflet/dist/images/marker-icon.png',
+                shadowUrl: 'bower_components/leaflet/dist/images/marker-shadow.png'
+
+                // startIconUrl: 'img/pin-icon-start.png',
+                // endIconUrl: 'img/pin-icon-end.png',
+                // shadowUrl: 'img/pin-shadow.png'
+            }
+        }).on('loaded', function (e) {
+            var gpx = e.target;
+            map.fitBounds(gpx.getBounds());
+
+            var gpxInfo = $('#gpx-info');
+            gpxInfo.find('.distance').html(gpx.get_distance_imp().toFixed(2));
+            gpxInfo.find('.duration').html(gpx.get_duration_string(gpx.get_moving_time()));
+            gpxInfo.find('.pace').html(gpx.get_duration_string(gpx.get_moving_pace_imp(), true));
+            //noinspection SpellCheckingInspection
+            gpxInfo.find('.avghr').html(gpx.get_average_hr());
+        }).addTo(map);
     } else {
         mapContainer.hide();
         mapContainerInfo.hide();
@@ -153,51 +172,59 @@ function display_gpx(elt, gpx_source, activityJson) {
 
     activityJson = activityJson.split("'").join("\"");
     activityJson = JSON.parse(activityJson);
+    //noinspection JSUnresolvedVariable
     buildDonutActivityLevel(activityJson.activityLevel);
 
     /*==Easy Pie chart ==*/
     if ($.fn.easyPieChart) {
-        var precentageDisplayed = 0;
+        var percentageDisplayed;
         var stepsChart = $('.steps-epie');
         buildDonutImpactLevel(stepsChart, "#ff6c60");
-        precentageDisplayed = Math.round((parseInt(activityJson.steps.split(",").join("")) / parseInt(activityJson.stats.steps.split(",").join(""))) * 100);
-        if (precentageDisplayed > 100) precentageDisplayed = 100;
-        stepsChart.data('easyPieChart').update(precentageDisplayed);
+        percentageDisplayed = Math.round((parseInt(activityJson.steps.split(",").join("")) / parseInt(activityJson.stats.steps.split(",").join(""))) * 100);
+        if (percentageDisplayed > 100) percentageDisplayed = 100;
+        stepsChart.data('easyPieChart').update(percentageDisplayed);
 
         var caloriesChart = $('.calories-epie');
         buildDonutImpactLevel(caloriesChart, "#FCB322");
-        precentageDisplayed = Math.round((parseInt(activityJson.calories) / parseInt(activityJson.stats.caloriesOut.split(",").join(""))) * 100);
-        if (precentageDisplayed > 100) precentageDisplayed = 100;
-        caloriesChart.data('easyPieChart').update(precentageDisplayed);
+        //noinspection JSUnresolvedVariable
+        percentageDisplayed = Math.round((parseInt(activityJson.calories) / parseInt(activityJson.stats.caloriesOut.split(",").join(""))) * 100);
+        if (percentageDisplayed > 100) percentageDisplayed = 100;
+        caloriesChart.data('easyPieChart').update(percentageDisplayed);
 
         var activityChart = $('.activity-epie');
         buildDonutImpactLevel(activityChart, "#a9d86e");
-        precentageDisplayed = Math.round((parseInt(activityJson.duration) / parseInt(activityJson.stats.active)) * 100);
-        if (precentageDisplayed > 100) precentageDisplayed = 100;
-        activityChart.data('easyPieChart').update(precentageDisplayed);
+        //noinspection JSUnresolvedVariable
+        percentageDisplayed = Math.round((parseInt(activityJson.duration) / parseInt(activityJson.stats.active)) * 100);
+        if (percentageDisplayed > 100) percentageDisplayed = 100;
+        activityChart.data('easyPieChart').update(percentageDisplayed);
     }
 
 }
 
 function buildDonutImpactLevel(idName, barColour) {
     idName.easyPieChart({
-        onStep: function(from, to, percent) {
+        onStep: function (from, to, percent) {
             $(this.el).find('.impact').text(Math.round(percent));
         },
         barColor: barColour,
         lineWidth: 5,
-        size:130,
+        size: 130,
         trackColor: "#efefef",
-        scaleColor:"#cccccc"
+        scaleColor: "#cccccc"
     });
 
 }
 
 function buildDonutActivityLevel(activityLevel) {
+    //noinspection JSUnresolvedVariable
     var totalWorkOut = parseInt(activityLevel.sedentary) + parseInt(activityLevel.lightly) + parseInt(activityLevel.fairly) + parseInt(activityLevel.very);
+    //noinspection JSUnresolvedVariable
     var sedentary = Math.round((parseInt(activityLevel.sedentary) / totalWorkOut) * 100);
+    //noinspection JSUnresolvedVariable
     var lightly = Math.round((parseInt(activityLevel.lightly) / totalWorkOut) * 100);
+    //noinspection JSUnresolvedVariable
     var fairly = Math.round((parseInt(activityLevel.fairly) / totalWorkOut) * 100);
+    //noinspection JSUnresolvedVariable
     var very = Math.round((parseInt(activityLevel.very) / totalWorkOut) * 100);
 
     var jsonData = [];
