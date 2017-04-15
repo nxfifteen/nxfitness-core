@@ -101,5 +101,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="settings/feeds.html"><i class="icon-speedometer"></i> Feeds <span class="badge badge-info">NEW</span></a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="settings/progress.html"><i class="icon-speedometer"></i> Sync Progress <span class="badge badge-info">NEW</span></a>
+                        </li>
 
                     </ul>
