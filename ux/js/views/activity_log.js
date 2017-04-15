@@ -1,8 +1,8 @@
 $(function () {
     'use strict';
 
-    // $('#gpx').hide();
-    // $('#dayImpact').hide();
+    $('#gpx').hide();
+    $('#dayImpact').hide();
     var activityHistory = $('#ActivityHistory');
     if (activityHistory.length > 0) {
         $.getJSON("../json.php?user="+fitbitUserId+"&data=ActivityHistory&period=last90", function (data) {
@@ -99,8 +99,7 @@ function display_gpx(elt, gpx_source, activityJson) {
     var leftMargin = wrpMap.outerWidth(true);
 
     $('#profilePanel').hide();
-    // if (gpx_source !== "none") {$('#gpx').show();} else {$('#gpx').hide();}
-    $('#gpx').show();
+    if (gpx_source !== "none") {$('#gpx').show();} else {$('#gpx').hide();}
     $('#dayImpact').show();
 
     wrpMap.css("position", "fixed");
@@ -130,23 +129,23 @@ function display_gpx(elt, gpx_source, activityJson) {
             attribution: 'Track data from <a href="http://www.fitbit.com">Fitbit</a> and Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
         }).addTo(map);
 
-        // new L.GPX(url, {
-        //     async: true,
-        //     marker_options: {
-        //         startIconUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-start.png',
-        //         endIconUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-end.png',
-        //         shadowUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-shadow.png'
-        //     }
-        // }).on('loaded', function (e) {
-        //     var gpx = e.target;
-        //     map.fitBounds(gpx.getBounds());
-        //
-        //     var gpxInfo = $('#gpx-info');
-        //     gpxInfo.find('.distance').html(gpx.get_distance_imp().toFixed(2));
-        //     gpxInfo.find('.duration').html(gpx.get_duration_string(gpx.get_moving_time()));
-        //     gpxInfo.find('.pace').html(gpx.get_duration_string(gpx.get_moving_pace_imp(), true));
-        //     gpxInfo.find('.avghr').html(gpx.get_average_hr());
-        // }).addTo(map);
+         new L.GPX(url, {
+             async: true,
+             marker_options: {
+                 startIconUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-start.png',
+                 endIconUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-end.png',
+                 shadowUrl: 'https://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-shadow.png'
+             }
+         }).on('loaded', function (e) {
+             var gpx = e.target;
+             map.fitBounds(gpx.getBounds());
+        
+             var gpxInfo = $('#gpx-info');
+             gpxInfo.find('.distance').html(gpx.get_distance_imp().toFixed(2));
+             gpxInfo.find('.duration').html(gpx.get_duration_string(gpx.get_moving_time()));
+             gpxInfo.find('.pace').html(gpx.get_duration_string(gpx.get_moving_pace_imp(), true));
+             gpxInfo.find('.avghr').html(gpx.get_average_hr());
+         }).addTo(map);
     } else {
         mapContainer.hide();
         mapContainerInfo.hide();
