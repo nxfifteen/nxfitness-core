@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
-## v0.0.0.8 false ( Sat Apr 15 2017 15:28:16 GMT+0100 (BST) )
+## v0.0.0.8 false ( Sun Apr 16 2017 00:19:16 GMT+0100 (BST) )
 
 
 
@@ -121,6 +121,11 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
     - Corrected indentation ([dec1448e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/dec1448ee317e4ecbc568acbe992ef7ad074847b)) 
 
   - **user_ux**
+    - Started work on authentication ([b5811bf5](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b5811bf543f5ae441c89e6daf7653ebe65233a37)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
+    - Cleaned up Activity Log ([3e44302e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/3e44302e48e76b4157166875bff7fa093917caff)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
+    - Activity Log ([5efae896](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/5efae8961087ed74273ee71dc0867aa349a222cd)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
+    - Corrected timeline cards ([a316fad6](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/a316fad6de7ec5eef42adda0f872ed53305ae131)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
+    - Corrected map ([4f223a92](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/4f223a9213dde226e962767287a881ef7784db41)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
     - Started Activity Log ([ec598816](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ec598816bbb46c84b01c6d5c2592fd2d1977fe3f)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
     - Finalised Food ([e73f546b](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e73f546be873464c72f14bcd591b2e90402b17a1)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
     - Finalised Body Fat ([a63991de](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/a63991debc45187813e602ca14d933668649c22a)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
@@ -196,11 +201,17 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 
 ## Refactor
+  - **$_session['admin_config']**
+    - Rearranged if logic ([6d1babe2](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/6d1babe2fe10a1d470d186718d9b02c6b1d56e2a)) 
+
   - **database**
     - Removed duplicate database connection ([505c10f6](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/505c10f6e107f2d1fd789b0dbbb19f5b7f030eda)) 
 
   - **gitignore**
     - Added ignore folders ([9bf8a737](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/9bf8a737f4ee5e9fba532d922d79384bf58ea622)) 
+
+  - **nxr_destroy_session**
+    - Added nxr_destroy_session ([bfb08779](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/bfb08779783a8c0155366aa6846a4cd8901c8d91)) 
 
   - **segregation**
     - Moved NXR function ([d84c5ae1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d84c5ae101f2eb0405141e5302e2ed3f8c627c75)) 
@@ -211,6 +222,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON_
 
 ## Chore
   - **changelog**
+    - Updated changelog files ([788b2b32](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/788b2b328361811eab994bcc57ff3e5e2aa5cb8f)) 
     - Updated changelog files ([08325248](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/08325248c60cdefdaa4e840e3a8c11856dab4921)) 
     - Updated changelog files ([8ae0b9b9](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/8ae0b9b9ffdee9ef5f314531b53f318bdb440827)) 
     - Updated changelog files ([de9d70bb](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/de9d70bb75d93b7b4422cbfdce85fd8f1c2e1e4f)) 
