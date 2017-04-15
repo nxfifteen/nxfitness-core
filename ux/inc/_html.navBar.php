@@ -22,13 +22,11 @@
                         </li>
                         <li class="nav-item nav-dropdown">
                             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-soccer-ball-o"></i> Activities</a>
-	                        <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="activities/activity.html"><i class="fa fa-percent"></i> Activity <span class="badge badge-danger">WIP</span></a>
+                                    <a class="nav-link" href="activities/activity.html"><i class="fa fa-percent"></i> Activity</a>
                                 </li>
                             </ul>
-	                        <?php } ?>
                             <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
