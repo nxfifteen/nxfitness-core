@@ -14,22 +14,22 @@
 <!-- Left Sidebar -->
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="main.html"><i class="icon-speedometer"></i> Dashboard <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="main.html"><i class="fa fa-dashboard"></i> Dashboard <span class="badge badge-info">NEW</span></a>
                         </li>
 
                         <li class="nav-title">
                             Activities
                         </li>
                         <li class="nav-item nav-dropdown">
-                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-signal"></i> Activities <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-soccer-ball-o"></i> Activities <span class="badge badge-info">NEW</span></a>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="activities/activity.html"><i class="fa fa-signal"></i> Activity <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="activities/activity.html"><i class="fa fa-percent"></i> Activity <span class="badge badge-info">NEW</span></a>
                                 </li>
                             </ul>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="activities/activity/log.html"><i class="fa fa-signal"></i> Activity Log <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="activities/activity/log.html"><i class="fa fa-archive"></i> Activity Log <span class="badge badge-info">NEW</span></a>
                                 </li>
                             </ul>
                             <?php if ($isDeveloper) { ?>
@@ -45,20 +45,20 @@
                             Body
                         </li>
                         <li class="nav-item nav-dropdown">
-                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-signal"></i> Body <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-life-ring"></i> Body <span class="badge badge-info">NEW</span></a>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="body/body.html"><i class="fa fa-signal"></i> Body <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="body/body.html"><i class="fa fa-line-chart"></i> Body <span class="badge badge-info">NEW</span></a>
                                 </li>
                             </ul>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="body/weight.html"><i class="fa fa-signal"></i> Body Weight <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="body/weight.html"><i class="fa fa-heart"></i> Body Weight <span class="badge badge-info">NEW</span></a>
                                 </li>
                             </ul>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="body/fat.html"><i class="fa fa-signal"></i> Body Fat <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="body/fat.html"><i class="fa fa-heartbeat"></i> Body Fat <span class="badge badge-info">NEW</span></a>
                                 </li>
                             </ul>
 		                    <?php if ($isDeveloper) { ?>
@@ -74,10 +74,10 @@
                             Tracking
                         </li>
                         <li class="nav-item nav-dropdown">
-                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-signal"></i> Food <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-cutlery""></i> Food <span class="badge badge-info">NEW</span></a>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="food/food.html"><i class="fa fa-signal"></i> Food <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="food/food.html"><i class="fa fa-cutlery""></i> Food <span class="badge badge-info">NEW</span></a>
                                 </li>
                             </ul>
 		                    <?php if ($isDeveloper) { ?>
@@ -89,30 +89,30 @@
 		                    <?php } ?>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="nomie/nomie.html"><i class="icon-speedometer"></i> Nomie <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="nomie/nomie.html"><i class="fa fa-street-view"></i> Nomie <span class="badge badge-info">NEW</span></a>
                         </li>
 
                         <li class="nav-title">
                             Rewards
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="rewards/badges.html"><i class="icon-speedometer"></i> Badges <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="rewards/badges.html"><i class="fa fa-trophy"></i> Badges <span class="badge badge-info">NEW</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="rewards/leaderboard.html"><i class="icon-speedometer"></i> Leaderboard <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="rewards/leaderboard.html"><i class="fa fa-users"></i> Leaderboard <span class="badge badge-info">NEW</span></a>
                         </li>
 
                         <li class="nav-title">
                             Settings
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="settings/devices.html"><i class="icon-speedometer"></i> Devices <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices <span class="badge badge-info">NEW</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="settings/feeds.html"><i class="icon-speedometer"></i> Feeds <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="settings/feeds.html"><i class="fa fa-gear"></i> Feeds <span class="badge badge-info">NEW</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="settings/progress.html"><i class="icon-speedometer"></i> Sync Progress <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="settings/progress.html"><i class="fa fa-tasks"></i> Sync Progress <span class="badge badge-info">NEW</span></a>
                         </li>
 
                     </ul>
