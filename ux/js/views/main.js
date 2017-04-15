@@ -139,6 +139,11 @@ $(function () {
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function (position) {
             loadWeather($, position.coords.latitude + ',' + position.coords.longitude, '');
+
+            var weatherPanelImage = $('#weatherPanelImage');
+            if (localWeatherImage && weatherPanelImage.length > 0) {
+                weatherPanelImage.attr('src', localWeatherImage)
+            }
         });
     }
 

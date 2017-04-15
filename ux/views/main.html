@@ -1,6 +1,7 @@
 <script>
     var requireJS = ["bower_components/simpleWeather/jquery.simpleWeather.min.js"];
 
+    loadJS(requireJS, "js/env/main.js.php");
     loadJS(requireJS, "js/views/main.js");
     loadCSS("css/bucket-ico-fonts.css");
 </script>
@@ -13,9 +14,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card card-outline-success">
-                        <div class="card-header">
-                            Weather Forecast
-                        </div>
+                        <img id="weatherPanelImage" class="card-img-top" src="img/local/default.jpg" alt="Card image cap">
                         <div class="card-block" id="weatherPanel">
                             <div class="row weather-full-info">
                                 <div class="col-md-3 today-status">
@@ -56,12 +55,6 @@
                                             <div id="frcstSix" class="statistics">0</div>
                                         </li>
                                     </ul>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <img src="img/local/default.jpg" height="243" width="944" alt="" style="margin-left: -20px;margin-top: 20px;margin-bottom: -20px;">
                                 </div>
                             </div>
                         </div>
