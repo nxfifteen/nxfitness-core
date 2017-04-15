@@ -9,7 +9,7 @@
 		 * @param bool   $includeDate If true appends datetime stamp
 		 * @param bool   $newline     If true adds a new line character
 		 */
-		function nxr( $msg, $includeDate = TRUE, $newline = TRUE ) {
+		function nxr( $msg, $includeDate = TRUE, $newline = TRUE, $echoLine = TRUE ) {
 			if ( $includeDate ) {
 				$msg = date( "Y-m-d H:i:s" ) . ": " . $msg;
 			}
@@ -23,7 +23,7 @@
 				fclose( $fh );
 			}
 
-			if ( ( ! defined( 'IS_CRON_RUN' ) || ! IS_CRON_RUN ) && php_sapi_name() == "cli" ) {
+			if ( $echoLine !== FALSE && ( ! defined( 'IS_CRON_RUN' ) || ! IS_CRON_RUN ) && php_sapi_name() == "cli" ) {
 				echo $msg;
 			}
 		}
