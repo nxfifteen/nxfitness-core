@@ -107,11 +107,9 @@
                         <li class="nav-title">
                             Rewards
                         </li>
-	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="rewards/badges.html"><i class="fa fa-trophy"></i> Badges <span class="badge badge-danger">WIP</span></a>
+                            <a class="nav-link" href="rewards/badges.html"><i class="fa fa-trophy"></i> Badges</a>
                         </li>
-	                    <?php } ?>
 	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="rewards/leaderboard.html"><i class="fa fa-users"></i> Leaderboard <span class="badge badge-danger">WIP</span></a>
