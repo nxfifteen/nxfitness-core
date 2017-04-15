@@ -93,6 +93,16 @@
                         </li>
 
                         <li class="nav-title">
+                            Rewards
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="rewards/badges.html"><i class="icon-speedometer"></i> Badges <span class="badge badge-info">NEW</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="rewards/leaderboard.html"><i class="icon-speedometer"></i> Leaderboard <span class="badge badge-info">NEW</span></a>
+                        </li>
+
+                        <li class="nav-title">
                             Settings
                         </li>
                         <li class="nav-item">
