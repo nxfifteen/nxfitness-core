@@ -11,7 +11,8 @@
 		$isDeveloper = false;
 	}
 ?>
-<ul class="nav">
+<!-- Left Sidebar -->
+                    <ul class="nav">
                         <li class="nav-item">
                             <a class="nav-link" href="main.html"><i class="icon-speedometer"></i> Dashboard <span class="badge badge-info">NEW</span></a>
                         </li>
@@ -37,6 +38,35 @@
                                     <a class="nav-link" href="activities/activity/goals.html"><i class="fa fa-bullseye"></i> Activity Goals <span class="badge badge-info">NEW</span></a>
                                 </li>
                             </ul>
+		                    <?php } ?>
+                        </li>
+
+                        <li class="nav-title">
+                            Body
+                        </li>
+                        <li class="nav-item nav-dropdown">
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-signal"></i> Body <span class="badge badge-info">NEW</span></a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="body/body.html"><i class="fa fa-signal"></i> Body <span class="badge badge-info">NEW</span></a>
+                                </li>
+                            </ul>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="body/weight.html"><i class="fa fa-signal"></i> Body Weight <span class="badge badge-info">NEW</span></a>
+                                </li>
+                            </ul>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="body/fat.html"><i class="fa fa-signal"></i> Body Fat <span class="badge badge-info">NEW</span></a>
+                                </li>
+                            </ul>
+		                    <?php if ($isDeveloper) { ?>
+                                <ul class="nav-dropdown-items">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="body/goals.html"><i class="fa fa-bullseye"></i> Body Goals <span class="badge badge-info">NEW</span></a>
+                                    </li>
+                                </ul>
 		                    <?php } ?>
                         </li>
 
