@@ -92,4 +92,11 @@
                             <a class="nav-link" href="nomie/nomie.html"><i class="icon-speedometer"></i> Nomie <span class="badge badge-info">NEW</span></a>
                         </li>
 
+                        <li class="nav-title">
+                            Settings
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="settings/devices.html"><i class="icon-speedometer"></i> Devices <span class="badge badge-info">NEW</span></a>
+                        </li>
+
                     </ul>
