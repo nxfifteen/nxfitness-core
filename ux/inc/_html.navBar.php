@@ -27,13 +27,11 @@
                                     <a class="nav-link" href="activities/activity.html"><i class="fa fa-percent"></i> Activity</a>
                                 </li>
                             </ul>
-                            <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="activities/activity/log.html"><i class="fa fa-archive"></i> Activity Log <span class="badge badge-danger">WIP</span></a>
+                                    <a class="nav-link" href="activities/activity/log.html"><i class="fa fa-archive"></i> Activity Log</a>
                                 </li>
                             </ul>
-	                        <?php } ?>
                             <?php /*if ($isDeveloper) { */?><!--
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
