@@ -70,4 +70,23 @@
 		                    <?php } ?>
                         </li>
 
+                        <li class="nav-title">
+                            Tracking
+                        </li>
+                        <li class="nav-item nav-dropdown">
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-signal"></i> Food <span class="badge badge-info">NEW</span></a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="food/food.html"><i class="fa fa-signal"></i> Food <span class="badge badge-info">NEW</span></a>
+                                </li>
+                            </ul>
+		                    <?php if ($isDeveloper) { ?>
+                                <ul class="nav-dropdown-items">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="food/goals.html"><i class="fa fa-bullseye"></i> Food Goals <span class="badge badge-info">NEW</span></a>
+                                    </li>
+                                </ul>
+		                    <?php } ?>
+                        </li>
+
                     </ul>
