@@ -121,11 +121,9 @@
                         <li class="nav-title">
                             Settings
                         </li>
-	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices <span class="badge badge-danger">WIP</span></a>
+                            <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices</a>
                         </li>
-	                    <?php } ?>
 	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="settings/feeds.html"><i class="fa fa-gear"></i> Feeds <span class="badge badge-danger">WIP</span></a>

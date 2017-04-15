@@ -1,9 +1,29 @@
 <script>
-    //    var requireJS = [];
-    //
-    //    loadJS(requireJS, "");
+    var requireJS = [];
+
+    loadJS(requireJS, "js/views/devices.js");
     //    loadCSS("");
     setUpBreadcrumb(['Settings'], 'Devices');
 </script>
 
-Boiler Plate
+<div class="animated fadeIn">
+
+    <div class="card">
+        <div class="card-block">
+            <table class="table">
+                <thead class="thead-inverse">
+                <tr>
+                    <th class="col-md-1"></th>
+                    <th class="col-md-2">Device</th>
+                    <th class="col-md-2">Last Sync'd</th>
+                    <th class="col-md-7">Battery</th>
+                </tr>
+                </thead>
+                <tbody id="devices">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
