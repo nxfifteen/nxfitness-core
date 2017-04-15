@@ -3,8 +3,7 @@ $(function () {
 
     var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
 
-    //$.getJSON("../json.php?user="+fitbitUserId+"&data=TrackerHistoryChart&period=last7", function (data) {
-    $.getJSON("../json.php?user="+fitbitUserId+"&data=TrackerHistoryChart&period=last7&date=2017-04-14", function (data) {
+    $.getJSON("../json.php?user="+fitbitUserId+"&data=TrackerHistoryChart&period=last7", function (data) {
         var barChartData = {
             labels : data.results.date,
             datasets : [
