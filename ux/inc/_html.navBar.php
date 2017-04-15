@@ -100,11 +100,9 @@
                                 </ul>
 		                    <?php } ?>
                         </li>
-	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="nomie/nomie.html"><i class="fa fa-street-view"></i> Nomie <span class="badge badge-danger">WIP</span></a>
                         </li>
-	                    <?php } ?>
 
                         <li class="nav-title">
                             Rewards
