@@ -16,6 +16,7 @@
         "../admin/js/easypiechart/jquery.easypiechart.js"
     ];
 
+    loadJS([], "js/env/activity_log.js.php");
     loadJS(requireJS, "js/views/activity_log.js");
     loadCSS("bower_components/leaflet/dist/leaflet.css");
     loadCSS("css/activity_log.css");
@@ -25,10 +26,11 @@
 
     <div class="row">
         <div class="col-md-5" id="wrpMap">
-            <div class="card" id="profilePanel">
+            <div class="card feed-box" id="profilePanel">
                 <div class="card-block text-center">
-                    <img alt="hi" src="https://d6y8zfzc2qfsl.cloudfront.net/D321E938-18EA-46C6-204D-09058B35C2AF_profile_150_square.jpg">
-                    <h1>hi</h1>
+                    <div class="corner-ribon blue-ribon"><i class="fa fa-signal"></i></div>
+                    <img id="userProfileAvatar" src="">
+                    <h1 id="userProfileName"></h1>
                     <p id="dateMenu"></p>
                 </div>
             </div>
@@ -41,17 +43,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-muted" id="gpx-info">
+                <div class="card-footer" id="gpx-info">
                     <div class="row" id="gpx-map-info">
                         <div class="col-md-9">
                             <ul class="info">
-                                <li>Distance:&nbsp;<span class="badge bg-inverse distance"></span>&nbsp;mi</li>
-                                <li>Duration:&nbsp;<span class="badge bg-success duration"></span></li>
-                                <li>Pace:&nbsp;<span class="badge bg-primary pace"></span>/mi</li>
+                                <li>Distance:&nbsp;<span class="badge badge-primary distance"></span>&nbsp;mi</li>
+                                <li>Duration:&nbsp;<span class="badge badge-success duration"></span></li>
+                                <li>Pace:&nbsp;<span class="badge badge-warning pace"></span>&nbsp;min/mi</li>
                             </ul>
                         </div>
                         <div class="col-md-3">
-                            <span class="pull-right">Avg&nbsp;HR:&nbsp;<span class="badge bg-important avghr"></span>&nbsp;bpm</span>
+                            <span class="pull-right">Avg&nbsp;HR:&nbsp;<span class="badge badge-info avghr"></span>&nbsp;bpm</span>
                         </div>
                     </div>
                 </div>

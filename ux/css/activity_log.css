@@ -1,8 +1,27 @@
+.corner-ribon {
+    text-align:center;
+    width:71px;
+    height:71px;
+    position:absolute;
+    right:0;
+    top:0;
+    font-size:20px;
+}
+.corner-ribon i {
+    padding:10px 0 0 35px;
+    color:#fff;
+}
+.blue-ribon {
+    background:url("../img/corner_blue.png") no-repeat;
+}
+.black-ribon {
+    background:url("../img/corner_black.png") no-repeat;
+}
 .gpx ul.info {
     list-style: none;
     margin: 0;
     padding: 0;
-    font-size: smaller;
+    /*font-size: smaller;*/
 }
 
 .gpx ul.info li {

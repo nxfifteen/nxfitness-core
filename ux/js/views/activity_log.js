@@ -1,6 +1,9 @@
 $(function () {
     'use strict';
 
+    $('#userProfileAvatar').attr('src', userProfileAvatar);
+    $('#userProfileName').html(userProfileName);
+
     $('#gpx').hide();
     $('#dayImpact').hide();
     var activityHistory = $('#ActivityHistory');
