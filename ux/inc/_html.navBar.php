@@ -60,13 +60,11 @@
                                     <a class="nav-link" href="body/weight.html"><i class="fa fa-heart"></i> Body Weight</a>
                                 </li>
                             </ul>
-	                        <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="body/fat.html"><i class="fa fa-heartbeat"></i> Body Fat <span class="badge badge-danger">WIP</span></a>
+                                    <a class="nav-link" href="body/fat.html"><i class="fa fa-heartbeat"></i> Body Fat</a>
                                 </li>
                             </ul>
-	                        <?php } ?>
 		                    <?php /*if ($isDeveloper) { */?><!--
                                 <ul class="nav-dropdown-items">
                                     <li class="nav-item">

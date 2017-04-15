@@ -1,9 +1,85 @@
 <script>
-    //    var requireJS = [];
-    //
-    //    loadJS(requireJS, "");
-    //    loadCSS("");
+    var requireJS = ["bower_components/moment/moment.js","bower_components/chart.js/dist/Chart.min.js"];
+
+    loadJS(requireJS, "js/views/body_fat.js");
     setUpBreadcrumb(['Body'], 'Fat');
 </script>
 
-Boiler Plate
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="card">
+                <div class="card-header" id="graphFatTitle">Body Fat</div>
+                <div class="card-block">
+                    <div class="chartJS">
+                        <canvas id="fatGraph" height="250" width="800"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer text-muted" >
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="radio-inline">
+                                <label>
+                                    <input type="radio" value="last14" name="confFatTimeRange" class="square-red"><span id="nameFatlast14" style="display: none">over the last 2 weeks</span>
+                                    2 Weeks
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="radio-inline">
+                                <label>
+                                    <input type="radio" value="last28" name="confFatTimeRange" class="square-red"><span id="nameFatlast28" style="display: none">over the last 4 weeks</span>
+                                    4 Weeks
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="radio-inline">
+                                <label>
+                                    <input type="radio" value="last92" name="confFatTimeRange" class="square-red" checked="checked"><span id="nameFatlast92" style="display: none">over the last 3 months</span>
+                                    3 Months
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="radio-inline">
+                                <label>
+                                    <input type="radio" value="last183" name="confFatTimeRange" class="square-red"><span id="nameFatlast183" style="display: none">over the last 6 months</span>
+                                    6 Months
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="radio-inline">
+                                <label>
+                                    <input type="radio" value="last365" name="confFatTimeRange" class="square-red"><span id="nameFatlast365" style="display: none">over the last year</span>
+                                    1 Year
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="radio-inline">
+                                <label>
+                                    <input type="radio" value="all" name="confFatTimeRange" class="square-red"><span id="nameFatall" style="display: none"></span>
+                                    All
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header">Body Fat Trend</div>
+                <div class="card-block">
+                    <span id="FatTrend">Generating Dataset...</span>
+                </div>
+                <div class="card-footer text-muted" ><progress id="animationFatProgress" max="1" value="0" style="width: 100%"></progress></div>
+            </div>
+        </div>
+    </div>
+</div>
