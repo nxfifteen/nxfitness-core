@@ -14,28 +14,32 @@
 <!-- Left Sidebar -->
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="main.html"><i class="fa fa-dashboard"></i> Dashboard <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="main.html"><i class="fa fa-dashboard"></i> Dashboard</a>
                         </li>
 
                         <li class="nav-title">
                             Activities
                         </li>
                         <li class="nav-item nav-dropdown">
-                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-soccer-ball-o"></i> Activities <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-soccer-ball-o"></i> Activities</a>
+	                        <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="activities/activity.html"><i class="fa fa-percent"></i> Activity <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="activities/activity.html"><i class="fa fa-percent"></i> Activity <span class="badge badge-danger">WIP</span></a>
                                 </li>
                             </ul>
-                            <ul class="nav-dropdown-items">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="activities/activity/log.html"><i class="fa fa-archive"></i> Activity Log <span class="badge badge-info">NEW</span></a>
-                                </li>
-                            </ul>
+	                        <?php } ?>
                             <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="activities/activity/goals.html"><i class="fa fa-bullseye"></i> Activity Goals <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="activities/activity/log.html"><i class="fa fa-archive"></i> Activity Log <span class="badge badge-danger">WIP</span></a>
+                                </li>
+                            </ul>
+	                        <?php } ?>
+                            <?php if ($isDeveloper) { ?>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="activities/activity/goals.html"><i class="fa fa-bullseye"></i> Activity Goals <span class="badge badge-danger">WIP</span></a>
                                 </li>
                             </ul>
 		                    <?php } ?>
@@ -45,26 +49,32 @@
                             Body
                         </li>
                         <li class="nav-item nav-dropdown">
-                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-life-ring"></i> Body <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-life-ring"></i> Body</a>
+	                        <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="body/body.html"><i class="fa fa-line-chart"></i> Body <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="body/body.html"><i class="fa fa-line-chart"></i> Body <span class="badge badge-danger">WIP</span></a>
                                 </li>
                             </ul>
+	                        <?php } ?>
+	                        <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="body/weight.html"><i class="fa fa-heart"></i> Body Weight <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="body/weight.html"><i class="fa fa-heart"></i> Body Weight <span class="badge badge-danger">WIP</span></a>
                                 </li>
                             </ul>
+	                        <?php } ?>
+	                        <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="body/fat.html"><i class="fa fa-heartbeat"></i> Body Fat <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="body/fat.html"><i class="fa fa-heartbeat"></i> Body Fat <span class="badge badge-danger">WIP</span></a>
                                 </li>
                             </ul>
+	                        <?php } ?>
 		                    <?php if ($isDeveloper) { ?>
                                 <ul class="nav-dropdown-items">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="body/goals.html"><i class="fa fa-bullseye"></i> Body Goals <span class="badge badge-info">NEW</span></a>
+                                        <a class="nav-link" href="body/goals.html"><i class="fa fa-bullseye"></i> Body Goals <span class="badge badge-danger">WIP</span></a>
                                     </li>
                                 </ul>
 		                    <?php } ?>
@@ -74,45 +84,59 @@
                             Tracking
                         </li>
                         <li class="nav-item nav-dropdown">
-                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-cutlery""></i> Food <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-cutlery""></i> Food</a>
+	                        <?php if ($isDeveloper) { ?>
                             <ul class="nav-dropdown-items">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="food/food.html"><i class="fa fa-cutlery""></i> Food <span class="badge badge-info">NEW</span></a>
+                                    <a class="nav-link" href="food/food.html"><i class="fa fa-cutlery""></i> Food <span class="badge badge-danger">WIP</span></a>
                                 </li>
                             </ul>
+	                        <?php } ?>
 		                    <?php if ($isDeveloper) { ?>
                                 <ul class="nav-dropdown-items">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="food/goals.html"><i class="fa fa-bullseye"></i> Food Goals <span class="badge badge-info">NEW</span></a>
+                                        <a class="nav-link" href="food/goals.html"><i class="fa fa-bullseye"></i> Food Goals <span class="badge badge-danger">WIP</span></a>
                                     </li>
                                 </ul>
 		                    <?php } ?>
                         </li>
+	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="nomie/nomie.html"><i class="fa fa-street-view"></i> Nomie <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="nomie/nomie.html"><i class="fa fa-street-view"></i> Nomie <span class="badge badge-danger">WIP</span></a>
                         </li>
+	                    <?php } ?>
 
                         <li class="nav-title">
                             Rewards
                         </li>
+	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="rewards/badges.html"><i class="fa fa-trophy"></i> Badges <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="rewards/badges.html"><i class="fa fa-trophy"></i> Badges <span class="badge badge-danger">WIP</span></a>
                         </li>
+	                    <?php } ?>
+	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="rewards/leaderboard.html"><i class="fa fa-users"></i> Leaderboard <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="rewards/leaderboard.html"><i class="fa fa-users"></i> Leaderboard <span class="badge badge-danger">WIP</span></a>
                         </li>
+	                    <?php } ?>
 
                         <li class="nav-title">
                             Settings
                         </li>
+	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices <span class="badge badge-danger">WIP</span></a>
                         </li>
+	                    <?php } ?>
+	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="settings/feeds.html"><i class="fa fa-gear"></i> Feeds <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="settings/feeds.html"><i class="fa fa-gear"></i> Feeds <span class="badge badge-danger">WIP</span></a>
                         </li>
+	                    <?php } ?>
+	                    <?php if ($isDeveloper) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="settings/progress.html"><i class="fa fa-tasks"></i> Sync Progress <span class="badge badge-info">NEW</span></a>
+                            <a class="nav-link" href="settings/progress.html"><i class="fa fa-tasks"></i> Sync Progress <span class="badge badge-danger">WIP</span></a>
                         </li>
+	                    <?php } ?>
 
                     </ul>
