@@ -189,6 +189,8 @@ $(function () {
                 }
                 $('#LongestDaysProgress').attr('aria-valuenow', data.results.max.dist).css('width', data.results.max.dist + '%');
             }
+
+            debug_add_gen_time("goal streak", data.time);
         });
     }
 
@@ -218,5 +220,7 @@ $(function () {
                 $('#gaugeDistanceProgress').attr('aria-valuenow', data.results.progdistance).css('width', data.results.progdistance + '%');
             }
         }
+
+        debug_add_gen_time("dashboard", data.time);
     });
 });

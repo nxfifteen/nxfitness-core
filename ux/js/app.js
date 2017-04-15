@@ -324,7 +324,7 @@ function returnDateString(dateObject) {
 }
 
 function debug_add_gen_time($apiName, $timeValue) {
-    var newBlock = '<div class="prog-row"> <div class="user-thumb"><i class="fa fa-clock-o" aria-hidden="true" style="font-size: xx-large;color: red;"></i></div> <div class="user-details"> <h4><a href="#">Gen Time ' + $apiName +'</a></h4> <p>' + $timeValue +'</p> </div> </div>';
+    var newBlock = '<div class="callout callout-warning m-0 py-3"><div>Gen Time <strong>' + $apiName +'</strong></div><small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; ' + $timeValue +'</small></div><hr class="mx-3 my-0">';
 
     var debug_gen_time = $('#debug_gen_time');
     debug_gen_time.html(debug_gen_time.html() + newBlock);
