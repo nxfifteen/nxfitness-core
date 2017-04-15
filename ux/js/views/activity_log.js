@@ -28,8 +28,8 @@ $(function () {
                         }
                         html += '">';
                         html += '<div class="timeline-desk">';
-                        html += '<div class="panel">';
-                        html += '<div class="panel-body ' + event.colour + '">';
+                        html += '<div class="card">';
+                        html += '<div class="card-block ' + event.colour + '">';
                         html += '<span class="arrow';
                         if (isEven(events)) {
                             html += '-alt';
@@ -39,11 +39,11 @@ $(function () {
                         html += '<span class="timeline-date">' + event.startTime + '</span>';
                         html += '<h1 class="' + event.colour + '">' + event.name + '</h1>';
                         html += '<div class="row">';
-                        html += '<div class="col-xs-6">';
+                        html += '<div class="col-md-6">';
                         html += '<div class="eventDay">' + event.startTime + '</div>';
                         html += '<div class="eventEffect"><i class="fa fa-bolt"></i> ' + event.calPerMinute + ' kcals/min</div>';
                         html += '</div>';
-                        html += '<div class="col-xs-6">';
+                        html += '<div class="col-md-6">';
                         if (event.steps != "0") {
                             html += '<div class="eventEffect"><i class="fa fa-trophy"></i> +' + event.steps + ' of ' + event.stats.steps + ' Steps</div>';
                         }
@@ -53,7 +53,7 @@ $(function () {
                         html += '</div>';
 
                         html += '<div class="row">';
-                        html += '<div class="col-xs-12">';
+                        html += '<div class="col-md-12">';
                         var json = JSON.stringify(event);
                         json = json.split("\"").join("\\\'");
                         html += '<div class="eventEffect"><i class="fa fa-clock-o"></i> <a onclick="display_gpx(document.getElementById(\'gpx\'), \'' + event.gpx + '\', \'' + json + '\');">View on Map <i class="fa fa-map-marker"></i></a>';
