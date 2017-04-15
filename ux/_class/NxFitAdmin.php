@@ -67,7 +67,7 @@
          *
          */
         public function __construct() {
-            if (isset($_SESSION) && is_array($_SESSION['admin_config']) && array_key_exists("admin_config", $_SESSION) && count($_SESSION['admin_config']) > 0) {
+            if (isset($_SESSION) && array_key_exists("admin_config", $_SESSION) && is_array($_SESSION['admin_config']) && count($_SESSION['admin_config']) > 0) {
                 $this->setConfig($_SESSION['admin_config']);
             } else {
                 require_once(PATH_ADMIN . "/config.inc.php");
