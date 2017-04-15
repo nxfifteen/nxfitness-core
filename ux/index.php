@@ -1,11 +1,17 @@
 <?php
-    if (!defined('IN_MY_PROJECT')) define('IN_MY_PROJECT', TRUE);
+	session_start();
+
 	define('PROJECT_ROOT', dirname(__FILE__));
 	define("PATH_ADMIN", dirname(__FILE__) . "/");
 	define("PATH_ROOT", dirname(__FILE__) . "/../");
 
+	$_COOKIE['_nx_fb_usr'] = '269VLG';
+	$_SESSION['PROJECT_ROOT'] = PROJECT_ROOT;
+	$_SESSION['PATH_ADMIN'] = PATH_ADMIN;
+	$_SESSION['PATH_ROOT'] = PATH_ROOT;
+
 	require_once(dirname(__FILE__) . "/_class/NxFitAdmin.php");
-	$App = new NxFitAdmin('269VLG');
+	$App = new NxFitAdmin($_COOKIE['_nx_fb_usr']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,7 +64,7 @@
         </footer>
 
         <script type="application/javascript">
-            var fitbitUserId = '269VLG';
+            var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
         </script>
 
         <!-- Bootstrap and necessary plugins -->
