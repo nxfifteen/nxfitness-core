@@ -7,14 +7,14 @@ $(function () {
             var html = '';
             html += '<div class="row">';
             $.each(data.results.friends, function (index, friend) {
-                html += '<div class="col-md-3">';
+                html += '<div class="col-xs-12 col-md-4 col-xl-3">';
                 html += '    <div class="card';
                 //noinspection EqualityComparisonWithCoercionJS
                 if (index == fitbitUserId) { html += ' alert-success'; }
                 html += '        ">';
                 html += '        <div class="card-block">';
                 html += '            <div class="row">';
-                html += '                <div class="col-md-9">';
+                html += '                <div class="col-xs-12 col-xl-7">';
                 html += '                    <div class="h4 mb-0">' + friend.displayName + '</div>';
                 html += '                    <small class="text-muted text-uppercase font-weight-bold">';
                 html += '                        Average - ' + friend.stepsAvg + '<br />';
@@ -23,7 +23,7 @@ $(function () {
                 html += '                        <br />';
                 html += '                    </small>';
                 html += '                </div>';
-                html += '                <div class="col-md-3">';
+                html += '                <div class="col-xl-5 hidden-lg-down">';
                 html += '                    <img class="img-fluid" src="' + friend.avatar + '" />';
                 html += '                </div>';
                 html += '            </div>';
