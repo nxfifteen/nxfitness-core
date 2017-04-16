@@ -8,14 +8,13 @@ $(function () {
 
         $.each(devices, function (i, device) {
             html += '<tr>';
-            html += '    <td rowspan="2"><img src="../'+device.imageSmall+'" style="width: 75%;height: 75%;" /></td>';
-            html += '    <td>'+device.deviceVersion+'<br />'+device.type+'</td>';
+            html += '    <td><img class="hidden-sm-down" src="../'+device.imageSmall+'" style="width: 35%;height: 35%;"><span class="hidden-md-up">'+device.deviceVersion+'<br />'+device.type+'</span></td>';
             if (device.alertTime === 1) {
                 html += '    <td class="badge-warning">'+device.lastSyncTime+'</td>';
             } else {
                 html += '    <td>'+device.lastSyncTime+'</td>';
             }
-            html += '    <td>'+device.battery+' | Charged '+device.charges+' times.</td>';
+            html += '    <td>'+device.battery+' <br /> Charged '+device.charges+' times.</td>';
             html += '</tr>';
 
             if (device.precentage < 50) {
