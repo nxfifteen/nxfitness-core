@@ -1,6 +1,6 @@
 {
-  "name": "CoreUI",
-  "version": "1.0.0-alpha.4 (jQuery & Static Version)",
+  "name": "NxFITNESS Core",
+  "version": "0.0.0.8",
   "dependencies": {
     "bootstrap": "4.0.0-alpha.6",
     "tether": "latest",
