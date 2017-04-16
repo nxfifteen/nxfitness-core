@@ -46,8 +46,9 @@
 
                         <a class="dropdown-item" href="#"><i class="fa fa-user"></i> Profile</a>
                         <a class="dropdown-item" href="#"><i class="fa fa-wrench"></i> Settings</a>
+                        <a class="dropdown-item" href="refresh"><i class="fa fa-refresh"></i> Refresh</a>
                         <div class="divider"></div>
-                        <a class="dropdown-item" href="logout"><i class="fa fa-lock"></i> Logout</a>
+                        <a class="dropdown-item" href="./views/pages/logout"><i class="fa fa-lock"></i> Logout</a>
                     </div>
                 </li>
                 <li class="nav-item d-md-down-none">
