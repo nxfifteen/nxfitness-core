@@ -38,10 +38,12 @@ $.grayLightest = '#f8f9fa';
 function loadJS(jsFiles, pageScript) {
 
     var i;
+    var body;
+    var script;
     for (i = 0; i < jsFiles.length; i++) {
 
-        var body = document.getElementsByTagName('body')[0];
-        var script = document.createElement('script');
+        body = document.getElementsByTagName('body')[0];
+        script = document.createElement('script');
         script.type = 'text/javascript';
         script.async = false;
         script.src = jsFiles[i];
@@ -49,8 +51,8 @@ function loadJS(jsFiles, pageScript) {
     }
 
     if (pageScript) {
-        var body = document.getElementsByTagName('body')[0];
-        var script = document.createElement('script');
+        body = document.getElementsByTagName('body')[0];
+        script = document.createElement('script');
         script.type = 'text/javascript';
         script.async = false;
         script.src = pageScript;
@@ -62,15 +64,17 @@ function loadJS(jsFiles, pageScript) {
 
 function loadCSS(cssFile, end, callback) {
 
+    var s;
+    var head;
     var cssArray = {};
 
     if (!cssArray[cssFile]) {
         cssArray[cssFile] = true;
 
-        if (end == 1) {
+        if (end === 1) {
 
-            var head = document.getElementsByTagName('head')[0];
-            var s = document.createElement('link');
+            head = document.getElementsByTagName('head')[0];
+            s = document.createElement('link');
             s.setAttribute('rel', 'stylesheet');
             s.setAttribute('type', 'text/css');
             s.setAttribute('href', cssFile);
@@ -80,10 +84,10 @@ function loadCSS(cssFile, end, callback) {
 
         } else {
 
-            var head = document.getElementsByTagName('head')[0];
+            head = document.getElementsByTagName('head')[0];
             var style = document.getElementById('main-style');
 
-            var s = document.createElement('link');
+            s = document.createElement('link');
             s.setAttribute('rel', 'stylesheet');
             s.setAttribute('type', 'text/css');
             s.setAttribute('href', cssFile);
@@ -106,6 +110,7 @@ function loadCSS(cssFile, end, callback) {
 
 if ($.ajaxLoad) {
 
+    //noinspection JSUnusedGlobalSymbols
     var paceOptions = {
         elements: false,
         restartOnRequestAfter: false
@@ -113,26 +118,27 @@ if ($.ajaxLoad) {
 
     var url = location.hash.replace(/^#/, '');
 
-    if (url != '') {
+    if (url !== '') {
         setUpUrl(url);
     } else {
         setUpUrl($.defaultPage);
     }
 
     $(document).on('click', '.nav a[href!="#"]', function (e) {
-        if ($(this).parent().parent().hasClass('nav-tabs') || $(this).parent().parent().hasClass('nav-pills')) {
+        var target = $(e.currentTarget);
+        if (target.attr('href').indexOf('logout') !== -1 || target.attr('href').indexOf('refresh') !== -1) {
             e.preventDefault();
-        } else if ($(this).attr('target') == '_top') {
-            e.preventDefault();
-            var target = $(e.currentTarget);
             window.location = (target.attr('href'));
-        } else if ($(this).attr('target') == '_blank') {
+        } else if ($(this).parent().parent().hasClass('nav-tabs') || $(this).parent().parent().hasClass('nav-pills')) {
             e.preventDefault();
-            var target = $(e.currentTarget);
+        } else if ($(this).attr('target') === '_top' ) {
+            e.preventDefault();
+            window.location = (target.attr('href'));
+        } else if ($(this).attr('target') === '_blank') {
+            e.preventDefault();
             window.open(target.attr('href'));
         } else {
             e.preventDefault();
-            var target = $(e.currentTarget);
             setUpUrl(target.attr('href'));
         }
     });
@@ -166,6 +172,7 @@ function loadPage(url) {
         success: function () {
             Pace.restart();
             $('html, body').animate({scrollTop: 0}, 0);
+            //noinspection JSUnusedLocalSymbols
             $.mainContent.load($.subPagesDirectory + url, null, function (responseText) {
                 window.location.hash = url;
             }).delay(250).animate({opacity: 1}, 0);
@@ -204,11 +211,11 @@ $(document).ready(function ($) {
 
         var cUrl = String(window.location).split('?')[0];
 
-        if (cUrl.substr(cUrl.length - 1) == '#') {
+        if (cUrl.substr(cUrl.length - 1) === '#') {
             cUrl = cUrl.slice(0, -1);
         }
 
-        if ($($(this))[0].href == cUrl) {
+        if ($($(this))[0].href === cUrl) {
             $(this).addClass('active');
 
             $(this).parents('ul').add(this).each(function () {
@@ -288,6 +295,7 @@ $(document).on('click', '.card-actions a', function (e) {
     if ($(this).hasClass('btn-close')) {
         $(this).parent().parent().parent().fadeOut();
     } else if ($(this).hasClass('btn-minimize')) {
+        //noinspection JSUnusedLocalSymbols
         var $target = $(this).parent().parent().next('.card-block');
         if (!$(this).hasClass('collapsed')) {
             $('i', $(this)).removeClass($.panelIconOpened).addClass($.panelIconClosed);
@@ -301,10 +309,13 @@ $(document).on('click', '.card-actions a', function (e) {
 
 });
 
+//noinspection JSUnusedGlobalSymbols
 function capitalizeFirstLetter(string) {
+    //noinspection JSUnresolvedFunction
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+//noinspection JSUnusedLocalSymbols
 function init(url) {
 
     /* ---------- Tooltip ---------- */
@@ -316,11 +327,11 @@ function init(url) {
 }
 
 function returnDateString(dateObject) {
-    var yyyy = dateObject.getFullYear().toString();
+    var fullYear = dateObject.getFullYear().toString();
     var mm = (dateObject.getMonth() + 1).toString(); // getMonth() is zero-based
     var dd = dateObject.getDate().toString();
 
-    return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
+    return fullYear + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
 }
 
 function debug_add_gen_time($apiName, $timeValue) {
