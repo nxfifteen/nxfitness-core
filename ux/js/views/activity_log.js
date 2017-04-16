@@ -69,7 +69,7 @@ $(function () {
                         html += '<div class="col-md-12">';
                         var json = JSON.stringify(event);
                         json = json.split("\"").join("\\\'");
-                        html += '<div class="eventEffect"><i class="fa fa-clock-o"></i> <a onclick="display_gpx(document.getElementById(\'gpx\'), \'' + event.gpx + '\', \'' + json + '\');">View on Map <i class="fa fa-map-marker"></i></a>';
+                        html += '<div class="eventEffect"><i class="fa fa-clock-o"></i> <a href="javascript:;" onclick="display_gpx(document.getElementById(\'gpx\'), \'' + event.gpx + '\', \'' + json + '\');">View on Map <i class="fa fa-map-marker"></i></a>';
                         if (event.gpx !== "none") {
                             html += ' | <a href="' + event.gpx + '">Download GPX <i class="fa fa-download"></i></a>';
                         }
