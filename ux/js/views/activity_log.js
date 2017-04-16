@@ -249,6 +249,8 @@ function buildDonutActivityLevel(activityLevel) {
         colourData.push('#39B6AE');
     }
 
+    $('#activity-donut').html("");
+
     // Use Morris.Area instead of Morris.Line
     Morris.Donut({
         element: 'activity-donut',

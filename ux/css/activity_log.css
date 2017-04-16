@@ -58,6 +58,7 @@
     display:inline-block;
     padding-top: 45px;
     z-index:2;
+    font-size: smaller;
 }
 /*timeline*/
 .timeline {
