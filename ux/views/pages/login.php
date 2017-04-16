@@ -63,9 +63,9 @@
 <body class="app flex-row align-items-center">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card-group mb-0">
-                    <div class="card p-4">
+                    <div class="card p-4" style="width:56%">
                         <div class="card-block">
                             <h1>Login</h1>
                             <p class="text-muted">Sign In to your account</p>
@@ -91,12 +91,25 @@
                             </form>
                         </div>
                     </div>
-                    <div class="card card-inverse card-primary py-5 d-md-down-none" style="width:44%">
+                    <div class="card card-inverse card-primary py-5 d-md-down-none" style="width:22%">
                         <div class="card-block text-center">
                             <div>
                                 <h2>Sign up</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                <p>Sign in to your Fitbit account to start creating a Core profile.</p>
                                 <a href="<?php echo $config['http/']; ?>register" class="btn btn-primary active mt-3">Register Now!</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card card-inverse card-info py-5 d-md-down-none" style="width:22%">
+                        <div class="card-block text-center">
+                            <div>
+                                <h2>Beta</h2>
+                                <p>
+                                    Currently Core is in active Beta, you will have to be on my
+                                    Fitbit friends list for your profile to work. You can request
+                                    access to the beta, first read the FAQ bellow.
+                                </p>
+                                <a class="btn btn-info active mt-3" href="https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/beta-access-request" target="_blank">BETA Access FAQ</a>
                             </div>
                         </div>
                     </div>
