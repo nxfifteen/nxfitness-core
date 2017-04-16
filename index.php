@@ -244,11 +244,11 @@
 
 						if ( $NxFitbit->getFitbitAPI( $newUserName )->createNewUser( $newUserProfile->user ) ) {
 							nxr( "  User sent to new password screen" );
-							header( "Location: " . $_SESSION['core_config']['http/admin'] . "/register?usr=" . $newUserName );
+							header( "Location: " . $_SESSION['core_config']['http/admin'] . "/views/pages/register.php?usr=" . $newUserName );
 						}
 					} else {
 						nxr( "  Non Friend registration: " . $resourceOwner->getId() );
-						header( "Location: " . $_SESSION['core_config']['http/admin'] . "/?err=400" );
+						header( "Location: " . $_SESSION['core_config']['http/admin'] . "/?err=500" );
 					}
 
 					// When we don't know what to do put the user over to the user interface screens
@@ -272,7 +272,7 @@
 
 		if ( is_array( $_GET ) && array_key_exists( "verify", $_GET ) ) {
 			require_once( dirname( __FILE__ ) . "/config.inc.php" );
-			if ( ( is_array( $config['api_subValidity'] ) and array_search( $_GET['verify'], $config['api_subValidity'] ) ) OR ( $_GET['verify'] == $config['api_subValidity'] ) ) {
+			if ( ( is_array( $config['api_subValidity'] ) and in_array( $_GET['verify'], $config['api_subValidity'] ) ) OR ( $_GET['verify'] == $config['api_subValidity'] ) ) {
 				header( 'Cache-Control: no-cache, must-revalidate' );
 				header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
 				header( 'Content-type: text/plain' );
@@ -284,7 +284,8 @@
 				header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
 				header( 'HTTP/1.0 404 Not Found' );
 
-				nxr( "Invalid subscriber request - " . $_GET['verify'] . " - " . $url_namespace );
+				nxr( "Invalid subscriber request - '" . $_GET['verify'] . "' - " . $url_namespace );
+				nxr(print_r($config['api_subValidity'], true));
 			}
 
 		} else {

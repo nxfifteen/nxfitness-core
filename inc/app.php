@@ -382,10 +382,12 @@
 		 */
 		public function isUserValid( $user_fitbit_id, $user_fitbit_password ) {
 			if ( strpos( $user_fitbit_id, '@' ) !== FALSE ) {
+				nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
 				$user_fitbit_id = $this->isUserValidEml( $user_fitbit_id );
 			}
 
 			if ( $this->isUser( $user_fitbit_id ) ) {
+				nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
 				if ( $this->getDatabase()->has( $this->getSetting( "db_prefix", NULL, FALSE ) . "users", array(
 					"AND" => array(
 						"fuid"     => $user_fitbit_id,
@@ -393,6 +395,7 @@
 					)
 				) )
 				) {
+					nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
 					return $user_fitbit_id;
 				} else if ( $this->getDatabase()->has( $this->getSetting( "db_prefix", NULL, FALSE ) . "users", array(
 					"AND" => array(
@@ -401,11 +404,14 @@
 					)
 				) )
 				) {
+					nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
 					return - 1;
 				} else {
+					nxr("v::" . __LINE__ . "($user_fitbit_id)", TRUE, TRUE, FALSE);
 					return FALSE;
 				}
 			} else {
+				nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
 				return FALSE;
 			}
 		}
