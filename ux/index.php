@@ -61,7 +61,7 @@
 		setcookie( '_nx_fb_usr', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME'] );
 
 		$path = $_SESSION['admin_config']['http/admin'];
-		nxr($path . '/views/pages/login.php', TRUE, TRUE, FALSE);
+		//nxr($path . '/views/pages/login.php', TRUE, TRUE, FALSE);
 
 		nxr_destroy_session();
 
@@ -73,7 +73,7 @@
 	} else {
 
 		//nxr(__LINE__, TRUE, TRUE, FALSE);
-		nxr(print_r($_SERVER, TRUE), TRUE, TRUE, FALSE);
+		//nxr(print_r($_SERVER, TRUE), TRUE, TRUE, FALSE);
 		$_SESSION['PROJECT_ROOT'] = PROJECT_ROOT;
 		$_SESSION['PATH_ADMIN']   = PATH_ADMIN;
 		$_SESSION['PATH_ROOT']    = PATH_ROOT;
@@ -127,8 +127,7 @@
         </div>
 
         <footer class="app-footer">
-            <a href="https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core">NxFITNESS Core</a> &copy; 2017 Stuart
-                                                                                                  McCulloch Anderson.
+            <a href="https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core">NxFITNESS Core</a> &copy; 2017 Stuart McCulloch Anderson.
             <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a></span>
         </footer>
 

@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.0.8 _Since Last Master_ ( Sun Apr 16 2017 11:19:16 GMT+0100 (BST) )
+## v0.0.0.8 _Since Last Master_ ( Sun Apr 16 2017 22:41:13 GMT+0100 (BST) )
 
 
 
@@ -24,6 +24,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
     - Corrected indentation ([dec1448e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/dec1448ee317e4ecbc568acbe992ef7ad074847b)) 
 
   - **user_ux**
+    - Finalised shipping UX ([d9993af5](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d9993af51102de6d4ae00b16f4ed38faf88dd866)) , Closes: [#73](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/73)
+    - Completed test ([a4a5cb9c](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/a4a5cb9c6c6fb2b6d77cf1dbd5e2b0c6d2c3a8ea)) , Closes: [#95](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/95)
+    - Inital test of register script appear okay ([ac522274](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ac52227488c2f67ac4316bc613cf63b425f2814e)) , Closes: [#95](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/95)
     - Tweeked gride style ([ab8fcff6](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ab8fcff6637223ab1e460a890a764db3decaf1e7)) , Closes: [#103](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/103)
     - Tweeked gride style ([f3c24f69](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/f3c24f69b99a91cc808a46aee481a7f920537c16)) , Closes: [#101](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/101)
     - Tweeked style ([7154269d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/7154269d9c5dfc918362a781d61e4713a2cded0e)) , Closes: [#100](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/100)
