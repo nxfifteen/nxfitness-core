@@ -6,6 +6,13 @@
 	header('Pragma: no-cache');
 
 	session_start();
+
+	$config = array();
+	if ( !array_key_exists("admin_config", $_SESSION) ) {
+		require_once("../../config.inc.php");
+	} else {
+		$config = $_SESSION['admin_config'];
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,12 +22,34 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="CoreUI Bootstrap 4 Admin Template">
-    <meta name="author" content="Lukasz Holeczek">
-    <meta name="keyword" content="CoreUI Bootstrap 4 Admin Template">
-    <!-- <link rel="shortcut icon" href="assets/ico/favicon.png"> -->
+    <meta name="description" content="NxFIFTEEN || NxFITNESS">
+    <meta name="author" content="Stuart McCulloch Anderson">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="../../img/favicon.png">
 
-    <title>CoreUI Bootstrap 4 Admin Template</title>
+    <title>NxFIFTEEN Fitness & Health</title>
+
+    <!-- Icons -->
+    <!--<link href="css/nomie.css" rel="stylesheet">-->
+    <link href="../../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/simple-line-icons.css" rel="stylesheet">
+
+    <!-- Main styles for this application -->
+    <link href="../../css/style.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png?v=A00aBgaPR5">
+    <link rel="icon" type="image/png" href="../../img/favicon-32x32.png?v=A00aBgaPR5" sizes="32x32">
+    <link rel="icon" type="image/png" href="../../img/favicon-194x194.png?v=A00aBgaPR5" sizes="194x194">
+    <link rel="icon" type="image/png" href="../../img/android-chrome-192x192.png?v=A00aBgaPR5" sizes="192x192">
+    <link rel="icon" type="image/png" href="../../img/favicon-16x16.png?v=A00aBgaPR5" sizes="16x16">
+    <link rel="manifest" href="../../img/manifest.json?v=A00aBgaPR5">
+    <link rel="mask-icon" href="../../img/safari-pinned-tab.svg?v=A00aBgaPR5" color="#b91d47">
+    <link rel="shortcut icon" href="../../img/favicon.ico?v=A00aBgaPR6">
+    <meta name="apple-mobile-web-app-title" content="NxFITNESS">
+    <meta name="application-name" content="NxFITNESS">
+    <meta name="msapplication-TileColor" content="#db1d1d">
+    <meta name="msapplication-TileImage" content="img/mstile-144x144.png?v=A00aBgaPR5">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Icons -->
     <link href="../../css/font-awesome.min.css" rel="stylesheet">
@@ -40,7 +69,7 @@
                         <div class="card-block">
                             <h1>Login</h1>
                             <p class="text-muted">Sign In to your account</p>
-                            <form action="<?php echo $_SESSION['admin_config']['http/admin']; ?>/login/redirect" method="post">
+                            <form action="<?php echo $config['http/admin']; ?>/login/redirect" method="post">
                                 <div class="input-group mb-3">
                                     <span class="input-group-addon"><i class="icon-user"></i>
                                     </span>
@@ -67,7 +96,7 @@
                             <div>
                                 <h2>Sign up</h2>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                                <a href="<?php echo $_SESSION['admin_config']['http/']; ?>register" class="btn btn-primary active mt-3">Register Now!</a>
+                                <a href="<?php echo $config['http/']; ?>register" class="btn btn-primary active mt-3">Register Now!</a>
                             </div>
                         </div>
                     </div>
