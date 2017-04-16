@@ -1,0 +1,110 @@
+<script>
+    var requireJS = ["bower_components/chart.js/dist/Chart.min.js"];
+
+    loadJS(requireJS, "js/views/activity.js");
+//    loadCSS("");
+    setUpBreadcrumb(['Activities'], 'Activity');
+</script>
+
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    7-Day Steps
+                </div>
+                <div class="card-block">
+                    <div class="chart-wrapper"><iframe class="chartjs-hidden-iframe" style="display: block; overflow: hidden; border: 0px none; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;" tabindex="-1"></iframe>
+                        <canvas id="canvas-2" style="display: block; width: 770px; height: 308px;" width="770" height="308"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="progress progress-xs">
+                                <div id="stepsProgressbar" class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            Last 7-Day Target is <strong id="weeklyStepsGoal"></strong><br />
+                            You've taken <strong id="weeklyStepsTaken"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Your Average Streak</div>
+                <div class="card-block">
+                    <div class="progress progress-xs">
+                        <div id="AverageDaysProgress" class="progress-bar bg-success" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100" style="width: 1%;"></div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted" id="AverageDays"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Your Last Streak</div>
+                <div class="card-block">
+                    <div class="progress progress-xs">
+                        <div id="LastDaysProgress" class="progress-bar bg-success" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100" style="width: 1%;"></div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted" id="LastDays"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Your Longest Streak</div>
+                <div class="card-block">
+                    <div class="progress progress-xs">
+                        <div id="LongestDaysProgress" class="progress-bar bg-success" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100" style="width: 1%;"></div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted" id="LongestDays"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">7-Day Steps Analysis</div>
+                <div class="card-block">
+                    <h4>7-Day Average</h4>
+                    <span id="steps7Day"></span>
+                    <h4>Beat Yesterday</h4>
+                    <span id="stepsYesterday"></span>
+                </div>
+                <div class="card-footer text-muted"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">7-Day Floors Analysis</div>
+                <div class="card-block">
+                    <h4>7-Day Average</h4>
+                    <span id="floors7Day"></span>
+                    <h4>Beat Yesterday</h4>
+                    <span id="floorsYesterday"></span>
+                </div>
+                <div class="card-footer text-muted"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">7-Day Distance Analysis</div>
+                <div class="card-block">
+                    <h4>7-Day Average</h4>
+                    <span id="distance7Day"></span>
+                    <h4>Beat Yesterday</h4>
+                    <span id="distanceYesterday"></span>
+                </div>
+                <div class="card-footer text-muted"></div>
+            </div>
+        </div>
+    </div>
+</div>

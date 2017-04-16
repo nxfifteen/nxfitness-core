@@ -1,0 +1,315 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 27/03/2016 03:43
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-book:before { content: "\f100"; }
+.flaticon-business:before { content: "\f101"; }
+.flaticon-camera:before { content: "\f102"; }
+.flaticon-computer:before { content: "\f103"; }
+.flaticon-gestures:before { content: "\f104"; }
+.flaticon-group:before { content: "\f105"; }
+.flaticon-line:before { content: "\f106"; }
+.flaticon-people:before { content: "\f107"; }
+.flaticon-people-1:before { content: "\f108"; }
+.flaticon-people-10:before { content: "\f109"; }
+.flaticon-people-100:before { content: "\f10a"; }
+.flaticon-people-101:before { content: "\f10b"; }
+.flaticon-people-102:before { content: "\f10c"; }
+.flaticon-people-103:before { content: "\f10d"; }
+.flaticon-people-104:before { content: "\f10e"; }
+.flaticon-people-105:before { content: "\f10f"; }
+.flaticon-people-106:before { content: "\f110"; }
+.flaticon-people-107:before { content: "\f111"; }
+.flaticon-people-108:before { content: "\f112"; }
+.flaticon-people-109:before { content: "\f113"; }
+.flaticon-people-11:before { content: "\f114"; }
+.flaticon-people-110:before { content: "\f115"; }
+.flaticon-people-111:before { content: "\f116"; }
+.flaticon-people-112:before { content: "\f117"; }
+.flaticon-people-113:before { content: "\f118"; }
+.flaticon-people-114:before { content: "\f119"; }
+.flaticon-people-115:before { content: "\f11a"; }
+.flaticon-people-116:before { content: "\f11b"; }
+.flaticon-people-117:before { content: "\f11c"; }
+.flaticon-people-118:before { content: "\f11d"; }
+.flaticon-people-119:before { content: "\f11e"; }
+.flaticon-people-12:before { content: "\f11f"; }
+.flaticon-people-120:before { content: "\f120"; }
+.flaticon-people-121:before { content: "\f121"; }
+.flaticon-people-13:before { content: "\f122"; }
+.flaticon-people-14:before { content: "\f123"; }
+.flaticon-people-15:before { content: "\f124"; }
+.flaticon-people-16:before { content: "\f125"; }
+.flaticon-people-17:before { content: "\f126"; }
+.flaticon-people-18:before { content: "\f127"; }
+.flaticon-people-19:before { content: "\f128"; }
+.flaticon-people-2:before { content: "\f129"; }
+.flaticon-people-20:before { content: "\f12a"; }
+.flaticon-people-21:before { content: "\f12b"; }
+.flaticon-people-22:before { content: "\f12c"; }
+.flaticon-people-23:before { content: "\f12d"; }
+.flaticon-people-24:before { content: "\f12e"; }
+.flaticon-people-25:before { content: "\f12f"; }
+.flaticon-people-26:before { content: "\f130"; }
+.flaticon-people-27:before { content: "\f131"; }
+.flaticon-people-28:before { content: "\f132"; }
+.flaticon-people-29:before { content: "\f133"; }
+.flaticon-people-3:before { content: "\f134"; }
+.flaticon-people-30:before { content: "\f135"; }
+.flaticon-people-31:before { content: "\f136"; }
+.flaticon-people-32:before { content: "\f137"; }
+.flaticon-people-33:before { content: "\f138"; }
+.flaticon-people-34:before { content: "\f139"; }
+.flaticon-people-35:before { content: "\f13a"; }
+.flaticon-people-36:before { content: "\f13b"; }
+.flaticon-people-37:before { content: "\f13c"; }
+.flaticon-people-38:before { content: "\f13d"; }
+.flaticon-people-39:before { content: "\f13e"; }
+.flaticon-people-4:before { content: "\f13f"; }
+.flaticon-people-40:before { content: "\f140"; }
+.flaticon-people-41:before { content: "\f141"; }
+.flaticon-people-42:before { content: "\f142"; }
+.flaticon-people-43:before { content: "\f143"; }
+.flaticon-people-44:before { content: "\f144"; }
+.flaticon-people-45:before { content: "\f145"; }
+.flaticon-people-46:before { content: "\f146"; }
+.flaticon-people-47:before { content: "\f147"; }
+.flaticon-people-48:before { content: "\f148"; }
+.flaticon-people-49:before { content: "\f149"; }
+.flaticon-people-5:before { content: "\f14a"; }
+.flaticon-people-50:before { content: "\f14b"; }
+.flaticon-people-51:before { content: "\f14c"; }
+.flaticon-people-52:before { content: "\f14d"; }
+.flaticon-people-53:before { content: "\f14e"; }
+.flaticon-people-54:before { content: "\f14f"; }
+.flaticon-people-55:before { content: "\f150"; }
+.flaticon-people-56:before { content: "\f151"; }
+.flaticon-people-57:before { content: "\f152"; }
+.flaticon-people-58:before { content: "\f153"; }
+.flaticon-people-59:before { content: "\f154"; }
+.flaticon-people-6:before { content: "\f155"; }
+.flaticon-people-60:before { content: "\f156"; }
+.flaticon-people-61:before { content: "\f157"; }
+.flaticon-people-62:before { content: "\f158"; }
+.flaticon-people-63:before { content: "\f159"; }
+.flaticon-people-64:before { content: "\f15a"; }
+.flaticon-people-65:before { content: "\f15b"; }
+.flaticon-people-66:before { content: "\f15c"; }
+.flaticon-people-67:before { content: "\f15d"; }
+.flaticon-people-68:before { content: "\f15e"; }
+.flaticon-people-69:before { content: "\f15f"; }
+.flaticon-people-7:before { content: "\f160"; }
+.flaticon-people-70:before { content: "\f161"; }
+.flaticon-people-71:before { content: "\f162"; }
+.flaticon-people-72:before { content: "\f163"; }
+.flaticon-people-73:before { content: "\f164"; }
+.flaticon-people-74:before { content: "\f165"; }
+.flaticon-people-75:before { content: "\f166"; }
+.flaticon-people-76:before { content: "\f167"; }
+.flaticon-people-77:before { content: "\f168"; }
+.flaticon-people-78:before { content: "\f169"; }
+.flaticon-people-79:before { content: "\f16a"; }
+.flaticon-people-8:before { content: "\f16b"; }
+.flaticon-people-80:before { content: "\f16c"; }
+.flaticon-people-81:before { content: "\f16d"; }
+.flaticon-people-82:before { content: "\f16e"; }
+.flaticon-people-83:before { content: "\f16f"; }
+.flaticon-people-84:before { content: "\f170"; }
+.flaticon-people-85:before { content: "\f171"; }
+.flaticon-people-86:before { content: "\f172"; }
+.flaticon-people-87:before { content: "\f173"; }
+.flaticon-people-88:before { content: "\f174"; }
+.flaticon-people-89:before { content: "\f175"; }
+.flaticon-people-9:before { content: "\f176"; }
+.flaticon-people-90:before { content: "\f177"; }
+.flaticon-people-91:before { content: "\f178"; }
+.flaticon-people-92:before { content: "\f179"; }
+.flaticon-people-93:before { content: "\f17a"; }
+.flaticon-people-94:before { content: "\f17b"; }
+.flaticon-people-95:before { content: "\f17c"; }
+.flaticon-people-96:before { content: "\f17d"; }
+.flaticon-people-97:before { content: "\f17e"; }
+.flaticon-people-98:before { content: "\f17f"; }
+.flaticon-people-99:before { content: "\f180"; }
+.flaticon-school:before { content: "\f181"; }
+.flaticon-social:before { content: "\f182"; }
+.flaticon-social-1:before { content: "\f183"; }
+.flaticon-technology:before { content: "\f184"; }
+.flaticon-three:before { content: "\f185"; }
+.flaticon-two:before { content: "\f186"; }
+.flaticon-two-1:before { content: "\f187"; }
+.flaticon-two-2:before { content: "\f188"; }
+.flaticon-two-3:before { content: "\f189"; }
+    
+    $font-Flaticon-book: "\f100";
+    $font-Flaticon-business: "\f101";
+    $font-Flaticon-camera: "\f102";
+    $font-Flaticon-computer: "\f103";
+    $font-Flaticon-gestures: "\f104";
+    $font-Flaticon-group: "\f105";
+    $font-Flaticon-line: "\f106";
+    $font-Flaticon-people: "\f107";
+    $font-Flaticon-people-1: "\f108";
+    $font-Flaticon-people-10: "\f109";
+    $font-Flaticon-people-100: "\f10a";
+    $font-Flaticon-people-101: "\f10b";
+    $font-Flaticon-people-102: "\f10c";
+    $font-Flaticon-people-103: "\f10d";
+    $font-Flaticon-people-104: "\f10e";
+    $font-Flaticon-people-105: "\f10f";
+    $font-Flaticon-people-106: "\f110";
+    $font-Flaticon-people-107: "\f111";
+    $font-Flaticon-people-108: "\f112";
+    $font-Flaticon-people-109: "\f113";
+    $font-Flaticon-people-11: "\f114";
+    $font-Flaticon-people-110: "\f115";
+    $font-Flaticon-people-111: "\f116";
+    $font-Flaticon-people-112: "\f117";
+    $font-Flaticon-people-113: "\f118";
+    $font-Flaticon-people-114: "\f119";
+    $font-Flaticon-people-115: "\f11a";
+    $font-Flaticon-people-116: "\f11b";
+    $font-Flaticon-people-117: "\f11c";
+    $font-Flaticon-people-118: "\f11d";
+    $font-Flaticon-people-119: "\f11e";
+    $font-Flaticon-people-12: "\f11f";
+    $font-Flaticon-people-120: "\f120";
+    $font-Flaticon-people-121: "\f121";
+    $font-Flaticon-people-13: "\f122";
+    $font-Flaticon-people-14: "\f123";
+    $font-Flaticon-people-15: "\f124";
+    $font-Flaticon-people-16: "\f125";
+    $font-Flaticon-people-17: "\f126";
+    $font-Flaticon-people-18: "\f127";
+    $font-Flaticon-people-19: "\f128";
+    $font-Flaticon-people-2: "\f129";
+    $font-Flaticon-people-20: "\f12a";
+    $font-Flaticon-people-21: "\f12b";
+    $font-Flaticon-people-22: "\f12c";
+    $font-Flaticon-people-23: "\f12d";
+    $font-Flaticon-people-24: "\f12e";
+    $font-Flaticon-people-25: "\f12f";
+    $font-Flaticon-people-26: "\f130";
+    $font-Flaticon-people-27: "\f131";
+    $font-Flaticon-people-28: "\f132";
+    $font-Flaticon-people-29: "\f133";
+    $font-Flaticon-people-3: "\f134";
+    $font-Flaticon-people-30: "\f135";
+    $font-Flaticon-people-31: "\f136";
+    $font-Flaticon-people-32: "\f137";
+    $font-Flaticon-people-33: "\f138";
+    $font-Flaticon-people-34: "\f139";
+    $font-Flaticon-people-35: "\f13a";
+    $font-Flaticon-people-36: "\f13b";
+    $font-Flaticon-people-37: "\f13c";
+    $font-Flaticon-people-38: "\f13d";
+    $font-Flaticon-people-39: "\f13e";
+    $font-Flaticon-people-4: "\f13f";
+    $font-Flaticon-people-40: "\f140";
+    $font-Flaticon-people-41: "\f141";
+    $font-Flaticon-people-42: "\f142";
+    $font-Flaticon-people-43: "\f143";
+    $font-Flaticon-people-44: "\f144";
+    $font-Flaticon-people-45: "\f145";
+    $font-Flaticon-people-46: "\f146";
+    $font-Flaticon-people-47: "\f147";
+    $font-Flaticon-people-48: "\f148";
+    $font-Flaticon-people-49: "\f149";
+    $font-Flaticon-people-5: "\f14a";
+    $font-Flaticon-people-50: "\f14b";
+    $font-Flaticon-people-51: "\f14c";
+    $font-Flaticon-people-52: "\f14d";
+    $font-Flaticon-people-53: "\f14e";
+    $font-Flaticon-people-54: "\f14f";
+    $font-Flaticon-people-55: "\f150";
+    $font-Flaticon-people-56: "\f151";
+    $font-Flaticon-people-57: "\f152";
+    $font-Flaticon-people-58: "\f153";
+    $font-Flaticon-people-59: "\f154";
+    $font-Flaticon-people-6: "\f155";
+    $font-Flaticon-people-60: "\f156";
+    $font-Flaticon-people-61: "\f157";
+    $font-Flaticon-people-62: "\f158";
+    $font-Flaticon-people-63: "\f159";
+    $font-Flaticon-people-64: "\f15a";
+    $font-Flaticon-people-65: "\f15b";
+    $font-Flaticon-people-66: "\f15c";
+    $font-Flaticon-people-67: "\f15d";
+    $font-Flaticon-people-68: "\f15e";
+    $font-Flaticon-people-69: "\f15f";
+    $font-Flaticon-people-7: "\f160";
+    $font-Flaticon-people-70: "\f161";
+    $font-Flaticon-people-71: "\f162";
+    $font-Flaticon-people-72: "\f163";
+    $font-Flaticon-people-73: "\f164";
+    $font-Flaticon-people-74: "\f165";
+    $font-Flaticon-people-75: "\f166";
+    $font-Flaticon-people-76: "\f167";
+    $font-Flaticon-people-77: "\f168";
+    $font-Flaticon-people-78: "\f169";
+    $font-Flaticon-people-79: "\f16a";
+    $font-Flaticon-people-8: "\f16b";
+    $font-Flaticon-people-80: "\f16c";
+    $font-Flaticon-people-81: "\f16d";
+    $font-Flaticon-people-82: "\f16e";
+    $font-Flaticon-people-83: "\f16f";
+    $font-Flaticon-people-84: "\f170";
+    $font-Flaticon-people-85: "\f171";
+    $font-Flaticon-people-86: "\f172";
+    $font-Flaticon-people-87: "\f173";
+    $font-Flaticon-people-88: "\f174";
+    $font-Flaticon-people-89: "\f175";
+    $font-Flaticon-people-9: "\f176";
+    $font-Flaticon-people-90: "\f177";
+    $font-Flaticon-people-91: "\f178";
+    $font-Flaticon-people-92: "\f179";
+    $font-Flaticon-people-93: "\f17a";
+    $font-Flaticon-people-94: "\f17b";
+    $font-Flaticon-people-95: "\f17c";
+    $font-Flaticon-people-96: "\f17d";
+    $font-Flaticon-people-97: "\f17e";
+    $font-Flaticon-people-98: "\f17f";
+    $font-Flaticon-people-99: "\f180";
+    $font-Flaticon-school: "\f181";
+    $font-Flaticon-social: "\f182";
+    $font-Flaticon-social-1: "\f183";
+    $font-Flaticon-technology: "\f184";
+    $font-Flaticon-three: "\f185";
+    $font-Flaticon-two: "\f186";
+    $font-Flaticon-two-1: "\f187";
+    $font-Flaticon-two-2: "\f188";
+    $font-Flaticon-two-3: "\f189";

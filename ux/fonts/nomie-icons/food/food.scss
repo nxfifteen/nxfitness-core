@@ -1,0 +1,239 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 19/02/2016 14:48
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-aubergine:before { content: "\f100"; }
+.flaticon-bag-of-sugar:before { content: "\f101"; }
+.flaticon-baked-bun:before { content: "\f102"; }
+.flaticon-bell-covering-hot-dish:before { content: "\f103"; }
+.flaticon-boiled-egg-on-cup:before { content: "\f104"; }
+.flaticon-bowl-of-food:before { content: "\f105"; }
+.flaticon-bowl-of-noodles:before { content: "\f106"; }
+.flaticon-bowl-of-white-rice:before { content: "\f107"; }
+.flaticon-bowl-with-chopsticks:before { content: "\f108"; }
+.flaticon-broccoli-outline:before { content: "\f109"; }
+.flaticon-bunch-of-grapes:before { content: "\f10a"; }
+.flaticon-candy:before { content: "\f10b"; }
+.flaticon-cardboard-box-with-chopsticks:before { content: "\f10c"; }
+.flaticon-carrot:before { content: "\f10d"; }
+.flaticon-cart-wheel:before { content: "\f10e"; }
+.flaticon-cheese-grater:before { content: "\f10f"; }
+.flaticon-cherries:before { content: "\f110"; }
+.flaticon-chicken-leg:before { content: "\f111"; }
+.flaticon-cocktail-glass:before { content: "\f112"; }
+.flaticon-coffee-beans:before { content: "\f113"; }
+.flaticon-coffee-maker-with-coffee-cup:before { content: "\f114"; }
+.flaticon-corn-dog:before { content: "\f115"; }
+.flaticon-corn-snacks:before { content: "\f116"; }
+.flaticon-corncob:before { content: "\f117"; }
+.flaticon-croissant-outline:before { content: "\f118"; }
+.flaticon-crossed-knife-and-fork:before { content: "\f119"; }
+.flaticon-cubes:before { content: "\f11a"; }
+.flaticon-cutlery:before { content: "\f11b"; }
+.flaticon-ear-of-wheat:before { content: "\f11c"; }
+.flaticon-eggs:before { content: "\f11d"; }
+.flaticon-electric-mixer:before { content: "\f11e"; }
+.flaticon-empty-plate:before { content: "\f11f"; }
+.flaticon-filled-glass:before { content: "\f120"; }
+.flaticon-fish:before { content: "\f121"; }
+.flaticon-fried-egg:before { content: "\f122"; }
+.flaticon-fruits-on-branch:before { content: "\f123"; }
+.flaticon-garlic:before { content: "\f124"; }
+.flaticon-glass-of-alcoholic-beverage:before { content: "\f125"; }
+.flaticon-glass-of-drink:before { content: "\f126"; }
+.flaticon-ham:before { content: "\f127"; }
+.flaticon-hot-cup-of-tea:before { content: "\f128"; }
+.flaticon-hot-dog:before { content: "\f129"; }
+.flaticon-hot-pepper-outline:before { content: "\f12a"; }
+.flaticon-hot-soup:before { content: "\f12b"; }
+.flaticon-ice-cream-cone-with-three-scoops:before { content: "\f12c"; }
+.flaticon-ice-cream-with-topping:before { content: "\f12d"; }
+.flaticon-jar-for-measuring-liquids:before { content: "\f12e"; }
+.flaticon-jar-of-beer:before { content: "\f12f"; }
+.flaticon-jar-of-jam:before { content: "\f130"; }
+.flaticon-kitchen-scale:before { content: "\f131"; }
+.flaticon-knife-fork-and-plate:before { content: "\f132"; }
+.flaticon-lemon:before { content: "\f133"; }
+.flaticon-loaf-of-bread:before { content: "\f134"; }
+.flaticon-lollipop-candy:before { content: "\f135"; }
+.flaticon-meat-pie:before { content: "\f136"; }
+.flaticon-meat-steak:before { content: "\f137"; }
+.flaticon-mexican-taco:before { content: "\f138"; }
+.flaticon-mincer:before { content: "\f139"; }
+.flaticon-muffin:before { content: "\f13a"; }
+.flaticon-mushroom-outline:before { content: "\f13b"; }
+.flaticon-nachos-and-dish:before { content: "\f13c"; }
+.flaticon-onion:before { content: "\f13d"; }
+.flaticon-oven-mitt:before { content: "\f13e"; }
+.flaticon-pair-of-bananas:before { content: "\f13f"; }
+.flaticon-pair-of-bottles:before { content: "\f140"; }
+.flaticon-pasta-serving:before { content: "\f141"; }
+.flaticon-pear:before { content: "\f142"; }
+.flaticon-pepper:before { content: "\f143"; }
+.flaticon-piece-of-cake-with-berries:before { content: "\f144"; }
+.flaticon-piece-of-cake-with-berries-1:before { content: "\f145"; }
+.flaticon-piece-of-cheese:before { content: "\f146"; }
+.flaticon-pinecone:before { content: "\f147"; }
+.flaticon-plastic-coffee-cup:before { content: "\f148"; }
+.flaticon-pomegranate:before { content: "\f149"; }
+.flaticon-prawn:before { content: "\f14a"; }
+.flaticon-pumpkin:before { content: "\f14b"; }
+.flaticon-restaurant-tray:before { content: "\f14c"; }
+.flaticon-rice-bowl:before { content: "\f14d"; }
+.flaticon-roast-chicken:before { content: "\f14e"; }
+.flaticon-rolling-pin:before { content: "\f14f"; }
+.flaticon-round-bread:before { content: "\f150"; }
+.flaticon-salami:before { content: "\f151"; }
+.flaticon-sausage-and-fork:before { content: "\f152"; }
+.flaticon-skewer:before { content: "\f153"; }
+.flaticon-slice-of-bread:before { content: "\f154"; }
+.flaticon-slice-of-melon:before { content: "\f155"; }
+.flaticon-slice-of-pizza:before { content: "\f156"; }
+.flaticon-slice-of-watermelon:before { content: "\f157"; }
+.flaticon-smoking-barbecue:before { content: "\f158"; }
+.flaticon-soft-drink-in-paper-cup-with-drinking-straw:before { content: "\f159"; }
+.flaticon-soft-drink-with-straw:before { content: "\f15a"; }
+.flaticon-soup-ladle:before { content: "\f15b"; }
+.flaticon-spatula:before { content: "\f15c"; }
+.flaticon-strawberry:before { content: "\f15d"; }
+.flaticon-tea-bag:before { content: "\f15e"; }
+.flaticon-tetra-brik-with-cap:before { content: "\f15f"; }
+.flaticon-tomato:before { content: "\f160"; }
+.flaticon-toque:before { content: "\f161"; }
+.flaticon-wedding-cake:before { content: "\f162"; }
+.flaticon-wine-glass:before { content: "\f163"; }
+    
+    $font-Flaticon-aubergine: "\f100";
+    $font-Flaticon-bag-of-sugar: "\f101";
+    $font-Flaticon-baked-bun: "\f102";
+    $font-Flaticon-bell-covering-hot-dish: "\f103";
+    $font-Flaticon-boiled-egg-on-cup: "\f104";
+    $font-Flaticon-bowl-of-food: "\f105";
+    $font-Flaticon-bowl-of-noodles: "\f106";
+    $font-Flaticon-bowl-of-white-rice: "\f107";
+    $font-Flaticon-bowl-with-chopsticks: "\f108";
+    $font-Flaticon-broccoli-outline: "\f109";
+    $font-Flaticon-bunch-of-grapes: "\f10a";
+    $font-Flaticon-candy: "\f10b";
+    $font-Flaticon-cardboard-box-with-chopsticks: "\f10c";
+    $font-Flaticon-carrot: "\f10d";
+    $font-Flaticon-cart-wheel: "\f10e";
+    $font-Flaticon-cheese-grater: "\f10f";
+    $font-Flaticon-cherries: "\f110";
+    $font-Flaticon-chicken-leg: "\f111";
+    $font-Flaticon-cocktail-glass: "\f112";
+    $font-Flaticon-coffee-beans: "\f113";
+    $font-Flaticon-coffee-maker-with-coffee-cup: "\f114";
+    $font-Flaticon-corn-dog: "\f115";
+    $font-Flaticon-corn-snacks: "\f116";
+    $font-Flaticon-corncob: "\f117";
+    $font-Flaticon-croissant-outline: "\f118";
+    $font-Flaticon-crossed-knife-and-fork: "\f119";
+    $font-Flaticon-cubes: "\f11a";
+    $font-Flaticon-cutlery: "\f11b";
+    $font-Flaticon-ear-of-wheat: "\f11c";
+    $font-Flaticon-eggs: "\f11d";
+    $font-Flaticon-electric-mixer: "\f11e";
+    $font-Flaticon-empty-plate: "\f11f";
+    $font-Flaticon-filled-glass: "\f120";
+    $font-Flaticon-fish: "\f121";
+    $font-Flaticon-fried-egg: "\f122";
+    $font-Flaticon-fruits-on-branch: "\f123";
+    $font-Flaticon-garlic: "\f124";
+    $font-Flaticon-glass-of-alcoholic-beverage: "\f125";
+    $font-Flaticon-glass-of-drink: "\f126";
+    $font-Flaticon-ham: "\f127";
+    $font-Flaticon-hot-cup-of-tea: "\f128";
+    $font-Flaticon-hot-dog: "\f129";
+    $font-Flaticon-hot-pepper-outline: "\f12a";
+    $font-Flaticon-hot-soup: "\f12b";
+    $font-Flaticon-ice-cream-cone-with-three-scoops: "\f12c";
+    $font-Flaticon-ice-cream-with-topping: "\f12d";
+    $font-Flaticon-jar-for-measuring-liquids: "\f12e";
+    $font-Flaticon-jar-of-beer: "\f12f";
+    $font-Flaticon-jar-of-jam: "\f130";
+    $font-Flaticon-kitchen-scale: "\f131";
+    $font-Flaticon-knife-fork-and-plate: "\f132";
+    $font-Flaticon-lemon: "\f133";
+    $font-Flaticon-loaf-of-bread: "\f134";
+    $font-Flaticon-lollipop-candy: "\f135";
+    $font-Flaticon-meat-pie: "\f136";
+    $font-Flaticon-meat-steak: "\f137";
+    $font-Flaticon-mexican-taco: "\f138";
+    $font-Flaticon-mincer: "\f139";
+    $font-Flaticon-muffin: "\f13a";
+    $font-Flaticon-mushroom-outline: "\f13b";
+    $font-Flaticon-nachos-and-dish: "\f13c";
+    $font-Flaticon-onion: "\f13d";
+    $font-Flaticon-oven-mitt: "\f13e";
+    $font-Flaticon-pair-of-bananas: "\f13f";
+    $font-Flaticon-pair-of-bottles: "\f140";
+    $font-Flaticon-pasta-serving: "\f141";
+    $font-Flaticon-pear: "\f142";
+    $font-Flaticon-pepper: "\f143";
+    $font-Flaticon-piece-of-cake-with-berries: "\f144";
+    $font-Flaticon-piece-of-cake-with-berries-1: "\f145";
+    $font-Flaticon-piece-of-cheese: "\f146";
+    $font-Flaticon-pinecone: "\f147";
+    $font-Flaticon-plastic-coffee-cup: "\f148";
+    $font-Flaticon-pomegranate: "\f149";
+    $font-Flaticon-prawn: "\f14a";
+    $font-Flaticon-pumpkin: "\f14b";
+    $font-Flaticon-restaurant-tray: "\f14c";
+    $font-Flaticon-rice-bowl: "\f14d";
+    $font-Flaticon-roast-chicken: "\f14e";
+    $font-Flaticon-rolling-pin: "\f14f";
+    $font-Flaticon-round-bread: "\f150";
+    $font-Flaticon-salami: "\f151";
+    $font-Flaticon-sausage-and-fork: "\f152";
+    $font-Flaticon-skewer: "\f153";
+    $font-Flaticon-slice-of-bread: "\f154";
+    $font-Flaticon-slice-of-melon: "\f155";
+    $font-Flaticon-slice-of-pizza: "\f156";
+    $font-Flaticon-slice-of-watermelon: "\f157";
+    $font-Flaticon-smoking-barbecue: "\f158";
+    $font-Flaticon-soft-drink-in-paper-cup-with-drinking-straw: "\f159";
+    $font-Flaticon-soft-drink-with-straw: "\f15a";
+    $font-Flaticon-soup-ladle: "\f15b";
+    $font-Flaticon-spatula: "\f15c";
+    $font-Flaticon-strawberry: "\f15d";
+    $font-Flaticon-tea-bag: "\f15e";
+    $font-Flaticon-tetra-brik-with-cap: "\f15f";
+    $font-Flaticon-tomato: "\f160";
+    $font-Flaticon-toque: "\f161";
+    $font-Flaticon-wedding-cake: "\f162";
+    $font-Flaticon-wine-glass: "\f163";

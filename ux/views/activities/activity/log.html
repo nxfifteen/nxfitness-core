@@ -1,0 +1,88 @@
+<script>
+    var requireJS = [
+        "bower_components/fullcalendar/fullcalendar.js",
+        "bower_components/leaflet/dist/leaflet.js",
+        "bower_components/leaflet-gpx/gpx.js",
+        "bower_components/morris.js/morris.js",
+        "bower_components/raphael/raphael.js",
+        "bower_components/bower-jquery-easyPieChart/dist/jquery.easypiechart.js"
+    ];
+    //    var requireJS = [
+    //        "../admin/js/fullcalendar/fullcalendar.min.js",
+    //        "../admin/js/leaflet/leaflet.js",
+    //        "../admin/js/leaflet/GPX.js",
+    //        "../admin/js/morris-chart/morris.js",
+    //        "../admin/js/morris-chart/raphael-min.js",
+    //        "../admin/js/easypiechart/jquery.easypiechart.js"
+    //    ];
+
+    loadJS([], "js/env/activity_log.js.php");
+    loadJS(requireJS, "js/views/activity_log.js");
+    loadCSS("bower_components/leaflet/dist/leaflet.css");
+    loadCSS("css/activity_log.css");
+    setUpBreadcrumb(['Activities', 'Activity'], 'Log');
+</script>
+<div class="animated fadeIn">
+
+    <div class="row">
+        <div class="col-md-5" id="wrpMap">
+            <div class="card feed-box" id="profilePanel">
+                <div class="card-block text-center">
+                    <div class="corner-ribon blue-ribon"><i class="fa fa-signal"></i></div>
+                    <img id="userProfileAvatar" src="">
+                    <h1 id="userProfileName"></h1>
+                    <p id="dateMenu"></p>
+                </div>
+            </div>
+
+            <div class="card gpx" id="gpx" data-map-target="gpx-map">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-md-12" id="gpx-map-container">
+                            <div class="map" id="gpx-map"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer" id="gpx-info">
+                    <div class="row" id="gpx-map-info">
+                        <div class="col-md-9">
+                            <ul class="info">
+                                <li>Distance:&nbsp;<span class="badge badge-primary distance"></span>&nbsp;mi</li>
+                                <li>Duration:&nbsp;<span class="badge badge-success duration"></span></li>
+                                <li>Pace:&nbsp;<span class="badge badge-warning pace"></span>&nbsp;min/mi</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="pull-right">Avg&nbsp;HR:&nbsp;<span class="badge badge-info avghr"></span>&nbsp;bpm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="dayImpact">
+                <div class="card-block" style="padding-bottom: 0px;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div id="activity-donut" style="min-height: 150px;margin-top: -10px;"></div>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="activity-epie" data-percent="0"><span class="impact-mean"><strong class="impact" style="font-size: medium"></strong>% of the<br />days activity</span></span>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="steps-epie" data-percent="0"><span class="impact-mean"><strong class="impact" style="font-size: medium"></strong>% of the <br />days steps</span></span>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="calories-epie" data-percent="0"><span class="impact-mean"><strong class="impact" style="font-size: medium"></strong>% of the <br />days calories</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-7" id="wrpTimeline">
+            <div id="ActivityHistory" class="timeline"></div>
+        </div>
+    </div>
+
+</div>

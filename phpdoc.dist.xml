@@ -2,17 +2,17 @@
 <phpdoc>
     <title>NxFITNESS Core Documentation</title>
     <parser>
-        <target>docs</target>
+        <target>docs/development</target>
         <markers>
             <item>TODO</item>
             <item>FIXME</item>
         </markers>
     </parser>
     <transformer>
-        <target>docs</target>
+        <target>docs/development</target>
     </transformer>
     <transformations>
-        <template name="vendor/cvuorinen/phpdoc-markdown-public/data/templates/markdown-public"/>
+        <template name="responsive-twig"/>
     </transformations>
     <files>
         <directory>.</directory>

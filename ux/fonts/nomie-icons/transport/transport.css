@@ -1,0 +1,74 @@
+	/*
+  	transport icon font: transport
+  	Creation date: 28/03/2016 03:10
+  	*/
+
+@font-face {
+  font-family: "transport";
+  src: url("../nomie-icons/transport/transport.eot");
+  src: url("../nomie-icons/transport/transport.eot?#iefix") format("embedded-opentype"),
+       url("../nomie-icons/transport/transport.woff") format("woff"),
+       url("../nomie-icons/transport/transport.ttf") format("truetype"),
+       url("../nomie-icons/transport/transport.svg#transport") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "transport";
+    src: url("../nomie-icons/transport/transport.svg#transport") format("svg");
+  }
+}
+
+[class^="transport-"]:before, [class*=" transport-"]:before,
+[class^="transport-"]:after, [class*=" transport-"]:after {   
+  font-family: transport;
+        
+font-style: normal;
+
+}
+
+.transport-4-wheeler:before { content: "\f100"; }
+.transport-bik:before { content: "\f101"; }
+.transport-bike:before { content: "\f102"; }
+.transport-bike-1:before { content: "\f103"; }
+.transport-bike-2:before { content: "\f104"; }
+.transport-bike-3:before { content: "\f105"; }
+.transport-bike-4:before { content: "\f106"; }
+.transport-boat:before { content: "\f107"; }
+.transport-bus:before { content: "\f108"; }
+.transport-bus-1:before { content: "\f109"; }
+.transport-buss:before { content: "\f10a"; }
+.transport-car:before { content: "\f10b"; }
+.transport-car-1:before { content: "\f10c"; }
+.transport-car-2:before { content: "\f10d"; }
+.transport-clock:before { content: "\f10e"; }
+.transport-guage:before { content: "\f10f"; }
+.transport-hollicopter:before { content: "\f110"; }
+.transport-jeep:before { content: "\f111"; }
+.transport-lift:before { content: "\f112"; }
+.transport-plane:before { content: "\f113"; }
+.transport-plane-1:before { content: "\f114"; }
+.transport-rocket:before { content: "\f115"; }
+.transport-sail:before { content: "\f116"; }
+.transport-ski:before { content: "\f117"; }
+.transport-stroller:before { content: "\f118"; }
+.transport-stroller-1:before { content: "\f119"; }
+.transport-tain:before { content: "\f11a"; }
+.transport-taxi:before { content: "\f11b"; }
+.transport-train:before { content: "\f11c"; }
+.transport-train-1:before { content: "\f11d"; }
+.transport-train-2:before { content: "\f11e"; }
+.transport-transport:before { content: "\f11f"; }
+.transport-transport-1:before { content: "\f120"; }
+.transport-transport-2:before { content: "\f121"; }
+.transport-transport-3:before { content: "\f122"; }
+.transport-transport-4:before { content: "\f123"; }
+.transport-transport-5:before { content: "\f124"; }
+.transport-transport-6:before { content: "\f125"; }
+.transport-truck:before { content: "\f126"; }
+.transport-truck-1:before { content: "\f127"; }
+.transport-ufo:before { content: "\f128"; }
+.transport-water:before { content: "\f129"; }
+.transport-wheel:before { content: "\f12a"; }

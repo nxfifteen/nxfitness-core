@@ -1,0 +1,5554 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "adventureIcons";
+  src: url("../fonts/nomie-icons/adventureIcons/adventureIcons.eot");
+  src: url("../fonts/nomie-icons/adventureIcons/adventureIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/adventureIcons/adventureIcons.woff") format("woff"), url("../fonts/nomie-icons/adventureIcons/adventureIcons.ttf") format("truetype"), url("../fonts/nomie-icons/adventureIcons/adventureIcons.svg#adventureIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+/*****************************************************
+* Haircare
+*
+******************************************************/
+/*
+  haircare icon font: haircare
+  Creation date: 18/03/2016 11:41
+  */
+@font-face {
+  font-family: "haircare";
+  src: url("../fonts/nomie-icons/haircare/haircare.eot");
+  src: url("../fonts/nomie-icons/haircare/haircare.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/haircare/haircare.woff") format("woff"), url("../fonts/nomie-icons/haircare/haircare.ttf") format("truetype"), url("../fonts/nomie-icons/haircare/haircare.svg#haircare") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "haircare";
+    src: url("../fonts/nomie-icons/haircare/haircare.svg#haircare") format("svg"); } }
+
+[class^="haircare-"]:before, [class*=" haircare-"]:before,
+[class^="haircare-"]:after, [class*=" haircare-"]:after {
+  font-family: haircare;
+  font-style: normal; }
+
+.haircare-barber-shop:before {
+  content: "\f100"; }
+
+.haircare-barette:before {
+  content: "\f101"; }
+
+.haircare-brush:before {
+  content: "\f102"; }
+
+.haircare-cologne:before {
+  content: "\f103"; }
+
+.haircare-comb:before {
+  content: "\f104"; }
+
+.haircare-comb-1:before {
+  content: "\f105"; }
+
+.haircare-comb-2:before {
+  content: "\f106"; }
+
+.haircare-comb-3:before {
+  content: "\f107"; }
+
+.haircare-comb-4:before {
+  content: "\f108"; }
+
+.haircare-cosmetic:before {
+  content: "\f109"; }
+
+.haircare-cream:before {
+  content: "\f10a"; }
+
+.haircare-cream-1:before {
+  content: "\f10b"; }
+
+.haircare-curling:before {
+  content: "\f10c"; }
+
+.haircare-electric-razor:before {
+  content: "\f10d"; }
+
+.haircare-hair-cut:before {
+  content: "\f10e"; }
+
+.haircare-hair-spray:before {
+  content: "\f10f"; }
+
+.haircare-hairdresser-chair:before {
+  content: "\f110"; }
+
+.haircare-hairdryer:before {
+  content: "\f111"; }
+
+.haircare-lipstick:before {
+  content: "\f112"; }
+
+.haircare-liquid-soap:before {
+  content: "\f113"; }
+
+.haircare-lotion:before {
+  content: "\f114"; }
+
+.haircare-mirror:before {
+  content: "\f115"; }
+
+.haircare-mirror-1:before {
+  content: "\f116"; }
+
+.haircare-razor:before {
+  content: "\f117"; }
+
+.haircare-razor-1:before {
+  content: "\f118"; }
+
+.haircare-scissors:before {
+  content: "\f119"; }
+
+.haircare-soap:before {
+  content: "\f11a"; }
+
+.haircare-spray:before {
+  content: "\f11b"; }
+
+.haircare-straightener:before {
+  content: "\f11c"; }
+
+.haircare-towel:before {
+  content: "\f11d"; }
+
+/*****************************************************
+* Real Estate
+*
+******************************************************/
+/*
+  realestate icon font: realestate
+  Creation date: 18/03/2016 11:07
+  */
+@font-face {
+  font-family: "realestate";
+  src: url("../fonts/nomie-icons/realestate/realestate.eot");
+  src: url("../fonts/nomie-icons/realestate/realestate.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/realestate/realestate.woff") format("woff"), url("../fonts/nomie-icons/realestate/realestate.ttf") format("truetype"), url("../fonts/nomie-icons/realestate/realestate.svg#realestate") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "realestate";
+    src: url("../fonts/nomie-icons/realestate/realestate.svg#realestate") format("svg"); } }
+
+[class^="realestate-"]:before, [class*=" realestate-"]:before,
+[class^="realestate-"]:after, [class*=" realestate-"]:after {
+  font-family: realestate;
+  font-style: normal; }
+
+.realestate-air-conditioner:before {
+  content: "\f100"; }
+
+.realestate-amount:before {
+  content: "\f101"; }
+
+.realestate-bathtub:before {
+  content: "\f102"; }
+
+.realestate-blueprint:before {
+  content: "\f103"; }
+
+.realestate-box:before {
+  content: "\f104"; }
+
+.realestate-briefcase:before {
+  content: "\f105"; }
+
+.realestate-calculator:before {
+  content: "\f106"; }
+
+.realestate-camera:before {
+  content: "\f107"; }
+
+.realestate-check:before {
+  content: "\f108"; }
+
+.realestate-coin:before {
+  content: "\f109"; }
+
+.realestate-contract:before {
+  content: "\f10a"; }
+
+.realestate-directions:before {
+  content: "\f10b"; }
+
+.realestate-duplex:before {
+  content: "\f10c"; }
+
+.realestate-fall:before {
+  content: "\f10d"; }
+
+.realestate-fence:before {
+  content: "\f10e"; }
+
+.realestate-flat:before {
+  content: "\f10f"; }
+
+.realestate-garage:before {
+  content: "\f110"; }
+
+.realestate-hammer:before {
+  content: "\f111"; }
+
+.realestate-home:before {
+  content: "\f112"; }
+
+.realestate-house:before {
+  content: "\f113"; }
+
+.realestate-house-1:before {
+  content: "\f114"; }
+
+.realestate-house-2:before {
+  content: "\f115"; }
+
+.realestate-house-3:before {
+  content: "\f116"; }
+
+.realestate-house-4:before {
+  content: "\f117"; }
+
+.realestate-house-5:before {
+  content: "\f118"; }
+
+.realestate-houses:before {
+  content: "\f119"; }
+
+.realestate-investment:before {
+  content: "\f11a"; }
+
+.realestate-key:before {
+  content: "\f11b"; }
+
+.realestate-location:before {
+  content: "\f11c"; }
+
+.realestate-mansion:before {
+  content: "\f11d"; }
+
+.realestate-mobile-phone:before {
+  content: "\f11e"; }
+
+.realestate-new:before {
+  content: "\f11f"; }
+
+.realestate-prize:before {
+  content: "\f120"; }
+
+.realestate-real-estate:before {
+  content: "\f121"; }
+
+.realestate-real-estate-1:before {
+  content: "\f122"; }
+
+.realestate-rent:before {
+  content: "\f123"; }
+
+.realestate-screen:before {
+  content: "\f124"; }
+
+.realestate-signature:before {
+  content: "\f125"; }
+
+.realestate-sold:before {
+  content: "\f126"; }
+
+.realestate-truck:before {
+  content: "\f127"; }
+
+/*****************************************************
+* Birthday
+*
+******************************************************/
+/*
+  birthdayIcons icon font: birthdayIcons
+  Creation date: 18/03/2016 11:58
+  */
+@font-face {
+  font-family: "birthdayIcons";
+  src: url("../fonts/nomie-icons/birthdayIcons/birthdayIcons.eot");
+  src: url("../fonts/nomie-icons/birthdayIcons/birthdayIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/birthdayIcons/birthdayIcons.woff") format("woff"), url("../fonts/nomie-icons/birthdayIcons/birthdayIcons.ttf") format("truetype"), url("../fonts/nomie-icons/birthdayIcons/birthdayIcons.svg#birthdayIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "birthdayIcons";
+    src: url("../fonts/nomie-icons/birthdayIcons/birthdayIcons.svg#birthdayIcons") format("svg"); } }
+
+[class^="birthdayIcons-"]:before, [class*=" birthdayIcons-"]:before,
+[class^="birthdayIcons-"]:after, [class*=" birthdayIcons-"]:after {
+  font-family: birthdayIcons;
+  font-style: normal; }
+
+.birthdayIcons-balloons:before {
+  content: "\f100"; }
+
+.birthdayIcons-beer:before {
+  content: "\f101"; }
+
+.birthdayIcons-birthday-boy:before {
+  content: "\f102"; }
+
+.birthdayIcons-birthday-cake:before {
+  content: "\f103"; }
+
+.birthdayIcons-birthday-cake-piece:before {
+  content: "\f104"; }
+
+.birthdayIcons-birthday-card:before {
+  content: "\f105"; }
+
+.birthdayIcons-birthday-card-1:before {
+  content: "\f106"; }
+
+.birthdayIcons-birthday-girl:before {
+  content: "\f107"; }
+
+.birthdayIcons-calendar:before {
+  content: "\f108"; }
+
+.birthdayIcons-candle:before {
+  content: "\f109"; }
+
+.birthdayIcons-candles:before {
+  content: "\f10a"; }
+
+.birthdayIcons-candy:before {
+  content: "\f10b"; }
+
+.birthdayIcons-cell-phone:before {
+  content: "\f10c"; }
+
+.birthdayIcons-champagne:before {
+  content: "\f10d"; }
+
+.birthdayIcons-champagne-glass:before {
+  content: "\f10e"; }
+
+.birthdayIcons-chocolate:before {
+  content: "\f10f"; }
+
+.birthdayIcons-clown:before {
+  content: "\f110"; }
+
+.birthdayIcons-confetti:before {
+  content: "\f111"; }
+
+.birthdayIcons-crown:before {
+  content: "\f112"; }
+
+.birthdayIcons-cupcake:before {
+  content: "\f113"; }
+
+.birthdayIcons-cutlery:before {
+  content: "\f114"; }
+
+.birthdayIcons-cutlery-1:before {
+  content: "\f115"; }
+
+.birthdayIcons-disco-ball:before {
+  content: "\f116"; }
+
+.birthdayIcons-eye-mask:before {
+  content: "\f117"; }
+
+.birthdayIcons-fireworks:before {
+  content: "\f118"; }
+
+.birthdayIcons-flags:before {
+  content: "\f119"; }
+
+.birthdayIcons-gift-tag:before {
+  content: "\f11a"; }
+
+.birthdayIcons-hamburger:before {
+  content: "\f11b"; }
+
+.birthdayIcons-hat:before {
+  content: "\f11c"; }
+
+.birthdayIcons-horn:before {
+  content: "\f11d"; }
+
+.birthdayIcons-ice-cream:before {
+  content: "\f11e"; }
+
+.birthdayIcons-karaoke:before {
+  content: "\f11f"; }
+
+.birthdayIcons-lollipop:before {
+  content: "\f120"; }
+
+.birthdayIcons-musical-note:before {
+  content: "\f121"; }
+
+.birthdayIcons-party-blower:before {
+  content: "\f122"; }
+
+.birthdayIcons-photo-camera:before {
+  content: "\f123"; }
+
+.birthdayIcons-piano:before {
+  content: "\f124"; }
+
+.birthdayIcons-piata:before {
+  content: "\f125"; }
+
+.birthdayIcons-pizza:before {
+  content: "\f126"; }
+
+.birthdayIcons-polaroid:before {
+  content: "\f127"; }
+
+.birthdayIcons-present:before {
+  content: "\f128"; }
+
+.birthdayIcons-present-1:before {
+  content: "\f129"; }
+
+.birthdayIcons-punch-bowl:before {
+  content: "\f12a"; }
+
+.birthdayIcons-record-player:before {
+  content: "\f12b"; }
+
+.birthdayIcons-sandwich:before {
+  content: "\f12c"; }
+
+.birthdayIcons-shirt:before {
+  content: "\f12d"; }
+
+.birthdayIcons-snack:before {
+  content: "\f12e"; }
+
+.birthdayIcons-soda:before {
+  content: "\f12f"; }
+
+.birthdayIcons-sparkler:before {
+  content: "\f130"; }
+
+.birthdayIcons-speakers:before {
+  content: "\f131"; }
+
+/*****************************************************
+* Body
+*
+******************************************************/
+/*
+  body icon font: body
+  Creation date: 19/02/2016 14:53
+  */
+@font-face {
+  font-family: "body";
+  src: url("../fonts/nomie-icons/body/body.eot");
+  src: url("../fonts/nomie-icons/body/body.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/body/body.woff") format("woff"), url("../fonts/nomie-icons/body/body.ttf") format("truetype"), url("../fonts/nomie-icons/body/body.svg#body") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "body";
+    src: url("../fonts/nomie-icons/body/body.svg#body") format("svg"); } }
+
+[class^="body-"]:before, [class*=" body-"]:before,
+[class^="body-"]:after, [class*=" body-"]:after {
+  font-family: body;
+  font-style: normal; }
+
+.body-ankle:before {
+  content: "\f100"; }
+
+.body-arm:before {
+  content: "\f101"; }
+
+.body-articulation-bones:before {
+  content: "\f102"; }
+
+.body-bladder:before {
+  content: "\f103"; }
+
+.body-bone:before {
+  content: "\f104"; }
+
+.body-colon:before {
+  content: "\f105"; }
+
+.body-dna:before {
+  content: "\f106"; }
+
+.body-ear:before {
+  content: "\f107"; }
+
+.body-elbow:before {
+  content: "\f108"; }
+
+.body-eyebrow:before {
+  content: "\f109"; }
+
+.body-feet:before {
+  content: "\f10a"; }
+
+.body-female-body:before {
+  content: "\f10b"; }
+
+.body-female-torso:before {
+  content: "\f10c"; }
+
+.body-finger:before {
+  content: "\f10d"; }
+
+.body-hair:before {
+  content: "\f10e"; }
+
+.body-hand:before {
+  content: "\f10f"; }
+
+.body-head-and-neck:before {
+  content: "\f110"; }
+
+.body-heart:before {
+  content: "\f111"; }
+
+.body-human-back:before {
+  content: "\f112"; }
+
+.body-human-back-1:before {
+  content: "\f113"; }
+
+.body-human-brain:before {
+  content: "\f114"; }
+
+.body-human-eye:before {
+  content: "\f115"; }
+
+.body-human-skull:before {
+  content: "\f116"; }
+
+.body-kidneys:before {
+  content: "\f117"; }
+
+.body-leg:before {
+  content: "\f118"; }
+
+.body-liver:before {
+  content: "\f119"; }
+
+.body-lungs:before {
+  content: "\f11a"; }
+
+.body-mustache:before {
+  content: "\f11b"; }
+
+.body-nose:before {
+  content: "\f11c"; }
+
+.body-pelvis:before {
+  content: "\f11d"; }
+
+.body-penis:before {
+  content: "\f11e"; }
+
+.body-ribs:before {
+  content: "\f11f"; }
+
+.body-spine:before {
+  content: "\f120"; }
+
+.body-stomach:before {
+  content: "\f121"; }
+
+.body-thorat:before {
+  content: "\f122"; }
+
+.body-tongue:before {
+  content: "\f123"; }
+
+.body-tooth:before {
+  content: "\f124"; }
+
+.body-uterus:before {
+  content: "\f125"; }
+
+.body-vagina:before {
+  content: "\f126"; }
+
+.body-woman-lips:before {
+  content: "\f127"; }
+
+/*****************************************************
+* Transport
+*
+******************************************************/
+/*
+  transport icon font: transport
+  Creation date: 28/03/2016 03:05
+  */
+@font-face {
+  font-family: "transport";
+  src: url("../fonts/nomie-icons/transport/transport.eot");
+  src: url("../fonts/nomie-icons/transport/transport.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/transport/transport.woff") format("woff"), url("../fonts/nomie-icons/transport/transport.ttf") format("truetype"), url("../fonts/nomie-icons/transport/transport.svg#transport") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "transport";
+    src: url("../fonts/nomie-icons/transport/transport.svg#transport") format("svg"); } }
+
+[class^="transport-"]:before, [class*=" transport-"]:before,
+[class^="transport-"]:after, [class*=" transport-"]:after {
+  font-family: transport;
+  font-style: normal; }
+
+.transport-clock:before {
+  content: "\f100"; }
+
+.transport-tool:before {
+  content: "\f101"; }
+
+.transport-transport:before {
+  content: "\f102"; }
+
+.transport-transport-1:before {
+  content: "\f103"; }
+
+.transport-transport-10:before {
+  content: "\f104"; }
+
+.transport-transport-11:before {
+  content: "\f105"; }
+
+.transport-transport-12:before {
+  content: "\f106"; }
+
+.transport-transport-13:before {
+  content: "\f107"; }
+
+.transport-transport-14:before {
+  content: "\f108"; }
+
+.transport-transport-15:before {
+  content: "\f109"; }
+
+.transport-transport-16:before {
+  content: "\f10a"; }
+
+.transport-transport-17:before {
+  content: "\f10b"; }
+
+.transport-transport-18:before {
+  content: "\f10c"; }
+
+.transport-transport-19:before {
+  content: "\f10d"; }
+
+.transport-transport-2:before {
+  content: "\f10e"; }
+
+.transport-transport-20:before {
+  content: "\f10f"; }
+
+.transport-transport-21:before {
+  content: "\f110"; }
+
+.transport-transport-22:before {
+  content: "\f111"; }
+
+.transport-transport-23:before {
+  content: "\f112"; }
+
+.transport-transport-24:before {
+  content: "\f113"; }
+
+.transport-transport-25:before {
+  content: "\f114"; }
+
+.transport-transport-26:before {
+  content: "\f115"; }
+
+.transport-transport-27:before {
+  content: "\f116"; }
+
+.transport-transport-28:before {
+  content: "\f117"; }
+
+.transport-transport-29:before {
+  content: "\f118"; }
+
+.transport-transport-3:before {
+  content: "\f119"; }
+
+.transport-transport-30:before {
+  content: "\f11a"; }
+
+.transport-transport-31:before {
+  content: "\f11b"; }
+
+.transport-transport-32:before {
+  content: "\f11c"; }
+
+.transport-transport-33:before {
+  content: "\f11d"; }
+
+.transport-transport-34:before {
+  content: "\f11e"; }
+
+.transport-transport-35:before {
+  content: "\f11f"; }
+
+.transport-transport-36:before {
+  content: "\f120"; }
+
+.transport-transport-37:before {
+  content: "\f121"; }
+
+.transport-transport-38:before {
+  content: "\f122"; }
+
+.transport-transport-39:before {
+  content: "\f123"; }
+
+.transport-transport-4:before {
+  content: "\f124"; }
+
+.transport-transport-40:before {
+  content: "\f125"; }
+
+.transport-transport-5:before {
+  content: "\f126"; }
+
+.transport-transport-6:before {
+  content: "\f127"; }
+
+.transport-transport-7:before {
+  content: "\f128"; }
+
+.transport-transport-8:before {
+  content: "\f129"; }
+
+.transport-transport-9:before {
+  content: "\f12a"; }
+
+/*****************************************************
+* Music
+*
+******************************************************/
+/*
+  music icon font: music
+  Creation date: 19/02/2016 14:53
+  */
+@font-face {
+  font-family: "music";
+  src: url("../fonts/nomie-icons/music/music.eot");
+  src: url("../fonts/nomie-icons/music/music.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/music/music.woff") format("woff"), url("../fonts/nomie-icons/music/music.ttf") format("truetype"), url("../fonts/nomie-icons/music/music.svg#music") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "music";
+    src: url("../fonts/nomie-icons/music/music.svg#music") format("svg"); } }
+
+[class^="music-"]:before, [class*=" music-"]:before,
+[class^="music-"]:after, [class*=" music-"]:after {
+  font-family: music;
+  font-style: normal; }
+
+.music-acoustic-guitar:before {
+  content: "\f100"; }
+
+.music-backward-button:before {
+  content: "\f101"; }
+
+.music-banjo:before {
+  content: "\f102"; }
+
+.music-bell:before {
+  content: "\f103"; }
+
+.music-cassette:before {
+  content: "\f104"; }
+
+.music-cd:before {
+  content: "\f105"; }
+
+.music-console-panel:before {
+  content: "\f106"; }
+
+.music-drum:before {
+  content: "\f107"; }
+
+.music-drums:before {
+  content: "\f108"; }
+
+.music-drumsticks:before {
+  content: "\f109"; }
+
+.music-earphones:before {
+  content: "\f10a"; }
+
+.music-eject-button:before {
+  content: "\f10b"; }
+
+.music-electric-guitar:before {
+  content: "\f10c"; }
+
+.music-equalizer:before {
+  content: "\f10d"; }
+
+.music-fast-forward-button:before {
+  content: "\f10e"; }
+
+.music-gramophone:before {
+  content: "\f10f"; }
+
+.music-grand-piano:before {
+  content: "\f110"; }
+
+.music-headphones:before {
+  content: "\f111"; }
+
+.music-lyra:before {
+  content: "\f112"; }
+
+.music-mandolin:before {
+  content: "\f113"; }
+
+.music-maracas:before {
+  content: "\f114"; }
+
+.music-megaphone:before {
+  content: "\f115"; }
+
+.music-metronome:before {
+  content: "\f116"; }
+
+.music-microphone:before {
+  content: "\f117"; }
+
+.music-microphone-1:before {
+  content: "\f118"; }
+
+.music-microphone-2:before {
+  content: "\f119"; }
+
+.music-mp3-player:before {
+  content: "\f11a"; }
+
+.music-music-file:before {
+  content: "\f11b"; }
+
+.music-music-folder:before {
+  content: "\f11c"; }
+
+.music-musical-note:before {
+  content: "\f11d"; }
+
+.music-musical-note-1:before {
+  content: "\f11e"; }
+
+.music-mute:before {
+  content: "\f11f"; }
+
+.music-no-sound:before {
+  content: "\f120"; }
+
+.music-pause-button:before {
+  content: "\f121"; }
+
+.music-piano-keys:before {
+  content: "\f122"; }
+
+.music-play-button:before {
+  content: "\f123"; }
+
+.music-radio:before {
+  content: "\f124"; }
+
+.music-sound-frecuency:before {
+  content: "\f125"; }
+
+.music-speaker:before {
+  content: "\f126"; }
+
+.music-speaker-1:before {
+  content: "\f127"; }
+
+.music-speaker-with-waves:before {
+  content: "\f128"; }
+
+.music-triangle:before {
+  content: "\f129"; }
+
+.music-trumpet:before {
+  content: "\f12a"; }
+
+.music-tuning-fork:before {
+  content: "\f12b"; }
+
+.music-vdeo-cmera:before {
+  content: "\f12c"; }
+
+.music-video-camera:before {
+  content: "\f12d"; }
+
+.music-video-player:before {
+  content: "\f12e"; }
+
+.music-violin:before {
+  content: "\f12f"; }
+
+.music-xylophone:before {
+  content: "\f130"; }
+
+/*****************************************************
+* Weather
+*
+******************************************************/
+/*
+  weather icon font: weather
+  Creation date: 19/02/2016 14:53
+  */
+@font-face {
+  font-family: "weather";
+  src: url("../fonts/nomie-icons/weather/weather.eot");
+  src: url("../fonts/nomie-icons/weather/weather.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/weather/weather.woff") format("woff"), url("../fonts/nomie-icons/weather/weather.ttf") format("truetype"), url("../fonts/nomie-icons/weather/weather.svg#weather") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "weather";
+    src: url("../fonts/nomie-icons/weather/weather.svg#weather") format("svg"); } }
+
+[class^="weather-"]:before, [class*=" weather-"]:before,
+[class^="weather-"]:after, [class*=" weather-"]:after {
+  font-family: weather;
+  font-style: normal; }
+
+.weather-blizzard:before {
+  content: "\f100"; }
+
+.weather-breeze:before {
+  content: "\f101"; }
+
+.weather-cloudy-day:before {
+  content: "\f102"; }
+
+.weather-cold:before {
+  content: "\f103"; }
+
+.weather-dark-night:before {
+  content: "\f104"; }
+
+.weather-drizzle:before {
+  content: "\f105"; }
+
+.weather-drought:before {
+  content: "\f106"; }
+
+.weather-flood:before {
+  content: "\f107"; }
+
+.weather-foggy:before {
+  content: "\f108"; }
+
+.weather-hail:before {
+  content: "\f109"; }
+
+.weather-hail-storm:before {
+  content: "\f10a"; }
+
+.weather-hot-weather:before {
+  content: "\f10b"; }
+
+.weather-hurricane:before {
+  content: "\f10c"; }
+
+.weather-lighting:before {
+  content: "\f10d"; }
+
+.weather-mist:before {
+  content: "\f10e"; }
+
+.weather-moon-eclipse:before {
+  content: "\f10f"; }
+
+.weather-night:before {
+  content: "\f110"; }
+
+.weather-overcast-day:before {
+  content: "\f111"; }
+
+.weather-partialy-cloudy:before {
+  content: "\f112"; }
+
+.weather-pour-rain:before {
+  content: "\f113"; }
+
+.weather-puddles:before {
+  content: "\f114"; }
+
+.weather-rainbow:before {
+  content: "\f115"; }
+
+.weather-rainy-day:before {
+  content: "\f116"; }
+
+.weather-sleet:before {
+  content: "\f117"; }
+
+.weather-smog:before {
+  content: "\f118"; }
+
+.weather-snow-cloud:before {
+  content: "\f119"; }
+
+.weather-sun-eclipse:before {
+  content: "\f11a"; }
+
+.weather-sunny-day:before {
+  content: "\f11b"; }
+
+.weather-temperature:before {
+  content: "\f11c"; }
+
+.weather-windy-day:before {
+  content: "\f11d"; }
+
+/*****************************************************
+* Travel
+*
+******************************************************/
+/*
+  travel icon font: travel
+  Creation date: 18/03/2016 14:28
+  */
+@font-face {
+  font-family: "travel";
+  src: url("../fonts/nomie-icons/travel/travel.eot");
+  src: url("../fonts/nomie-icons/travel/travel.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/travel/travel.woff") format("woff"), url("../fonts/nomie-icons/travel/travel.ttf") format("truetype"), url("../fonts/nomie-icons/travel/travel.svg#travel") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "travel";
+    src: url("../fonts/nomie-icons/travel/travel.svg#travel") format("svg"); } }
+
+[class^="travel-"]:before, [class*=" travel-"]:before,
+[class^="travel-"]:after, [class*=" travel-"]:after {
+  font-family: travel;
+  font-style: normal; }
+
+.travel-airplane:before {
+  content: "\f100"; }
+
+.travel-anchor:before {
+  content: "\f101"; }
+
+.travel-backpack:before {
+  content: "\f102"; }
+
+.travel-backpack-1:before {
+  content: "\f103"; }
+
+.travel-backpack-2:before {
+  content: "\f104"; }
+
+.travel-backpack-3:before {
+  content: "\f105"; }
+
+.travel-beach:before {
+  content: "\f106"; }
+
+.travel-bed:before {
+  content: "\f107"; }
+
+.travel-bicycle:before {
+  content: "\f108"; }
+
+.travel-boat:before {
+  content: "\f109"; }
+
+.travel-building:before {
+  content: "\f10a"; }
+
+.travel-bus:before {
+  content: "\f10b"; }
+
+.travel-cabin:before {
+  content: "\f10c"; }
+
+.travel-calendar:before {
+  content: "\f10d"; }
+
+.travel-car:before {
+  content: "\f10e"; }
+
+.travel-church:before {
+  content: "\f10f"; }
+
+.travel-cocktail:before {
+  content: "\f110"; }
+
+.travel-colosseum:before {
+  content: "\f111"; }
+
+.travel-compass:before {
+  content: "\f112"; }
+
+.travel-credit-card:before {
+  content: "\f113"; }
+
+.travel-directions:before {
+  content: "\f114"; }
+
+.travel-dish:before {
+  content: "\f115"; }
+
+.travel-flashlight:before {
+  content: "\f116"; }
+
+.travel-flip-flops:before {
+  content: "\f117"; }
+
+.travel-hot-air-balloon:before {
+  content: "\f118"; }
+
+.travel-house:before {
+  content: "\f119"; }
+
+.travel-info:before {
+  content: "\f11a"; }
+
+.travel-lifesaver:before {
+  content: "\f11b"; }
+
+.travel-location:before {
+  content: "\f11c"; }
+
+.travel-map:before {
+  content: "\f11d"; }
+
+.travel-map-1:before {
+  content: "\f11e"; }
+
+.travel-mountains:before {
+  content: "\f11f"; }
+
+.travel-no-disturb:before {
+  content: "\f120"; }
+
+.travel-photo-camera:before {
+  content: "\f121"; }
+
+.travel-picture:before {
+  content: "\f122"; }
+
+.travel-star:before {
+  content: "\f123"; }
+
+.travel-suitcase:before {
+  content: "\f124"; }
+
+.travel-suitcase-1:before {
+  content: "\f125"; }
+
+.travel-suitcase-2:before {
+  content: "\f126"; }
+
+.travel-suitcase-3:before {
+  content: "\f127"; }
+
+.travel-suitcase-4:before {
+  content: "\f128"; }
+
+.travel-suitcase-5:before {
+  content: "\f129"; }
+
+.travel-tent:before {
+  content: "\f12a"; }
+
+.travel-tent-1:before {
+  content: "\f12b"; }
+
+.travel-towel:before {
+  content: "\f12c"; }
+
+.travel-train:before {
+  content: "\f12d"; }
+
+.travel-tree:before {
+  content: "\f12e"; }
+
+.travel-video-camera:before {
+  content: "\f12f"; }
+
+.travel-wallet:before {
+  content: "\f130"; }
+
+.travel-watch:before {
+  content: "\f131"; }
+
+/*****************************************************
+* Pet Icons
+*
+******************************************************/
+/*
+  petIcons icon font: petIcons
+  Creation date: 27/03/2016 04:56
+  */
+@font-face {
+  font-family: "petIcons";
+  src: url("../fonts/nomie-icons/petIcons/petIcons.eot");
+  src: url("../fonts/nomie-icons/petIcons/petIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/petIcons/petIcons.woff") format("woff"), url("../fonts/nomie-icons/petIcons/petIcons.ttf") format("truetype"), url("../fonts/nomie-icons/petIcons/petIcons.svg#petIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "petIcons";
+    src: url("../fonts/nomie-icons/petIcons/petIcons.svg#petIcons") format("svg"); } }
+
+[class^="petIcons-"]:before, [class*=" petIcons-"]:before,
+[class^="petIcons-"]:after, [class*=" petIcons-"]:after {
+  font-family: petIcons;
+  font-style: normal; }
+
+.petIcons-animal:before {
+  content: "\f100"; }
+
+.petIcons-animal-1:before {
+  content: "\f101"; }
+
+.petIcons-animal-10:before {
+  content: "\f102"; }
+
+.petIcons-animal-11:before {
+  content: "\f103"; }
+
+.petIcons-animal-12:before {
+  content: "\f104"; }
+
+.petIcons-animal-13:before {
+  content: "\f105"; }
+
+.petIcons-animal-14:before {
+  content: "\f106"; }
+
+.petIcons-animal-15:before {
+  content: "\f107"; }
+
+.petIcons-animal-16:before {
+  content: "\f108"; }
+
+.petIcons-animal-17:before {
+  content: "\f109"; }
+
+.petIcons-animal-18:before {
+  content: "\f10a"; }
+
+.petIcons-animal-19:before {
+  content: "\f10b"; }
+
+.petIcons-animal-2:before {
+  content: "\f10c"; }
+
+.petIcons-animal-20:before {
+  content: "\f10d"; }
+
+.petIcons-animal-3:before {
+  content: "\f10e"; }
+
+.petIcons-animal-4:before {
+  content: "\f10f"; }
+
+.petIcons-animal-5:before {
+  content: "\f110"; }
+
+.petIcons-animal-6:before {
+  content: "\f111"; }
+
+.petIcons-animal-7:before {
+  content: "\f112"; }
+
+.petIcons-animal-8:before {
+  content: "\f113"; }
+
+.petIcons-animal-9:before {
+  content: "\f114"; }
+
+.petIcons-animals:before {
+  content: "\f115"; }
+
+.petIcons-animals-1:before {
+  content: "\f116"; }
+
+.petIcons-animals-10:before {
+  content: "\f117"; }
+
+.petIcons-animals-11:before {
+  content: "\f118"; }
+
+.petIcons-animals-12:before {
+  content: "\f119"; }
+
+.petIcons-animals-13:before {
+  content: "\f11a"; }
+
+.petIcons-animals-2:before {
+  content: "\f11b"; }
+
+.petIcons-animals-3:before {
+  content: "\f11c"; }
+
+.petIcons-animals-4:before {
+  content: "\f11d"; }
+
+.petIcons-animals-5:before {
+  content: "\f11e"; }
+
+.petIcons-animals-6:before {
+  content: "\f11f"; }
+
+.petIcons-animals-7:before {
+  content: "\f120"; }
+
+.petIcons-animals-8:before {
+  content: "\f121"; }
+
+.petIcons-animals-9:before {
+  content: "\f122"; }
+
+.petIcons-black:before {
+  content: "\f123"; }
+
+.petIcons-brush:before {
+  content: "\f124"; }
+
+.petIcons-brush-1:before {
+  content: "\f125"; }
+
+.petIcons-buildings:before {
+  content: "\f126"; }
+
+.petIcons-dog:before {
+  content: "\f127"; }
+
+.petIcons-dog-1:before {
+  content: "\f128"; }
+
+.petIcons-dog-2:before {
+  content: "\f129"; }
+
+.petIcons-dog-3:before {
+  content: "\f12a"; }
+
+.petIcons-dog-4:before {
+  content: "\f12b"; }
+
+.petIcons-dog-5:before {
+  content: "\f12c"; }
+
+.petIcons-food:before {
+  content: "\f12d"; }
+
+.petIcons-food-1:before {
+  content: "\f12e"; }
+
+.petIcons-food-2:before {
+  content: "\f12f"; }
+
+.petIcons-food-3:before {
+  content: "\f130"; }
+
+.petIcons-food-4:before {
+  content: "\f131"; }
+
+.petIcons-food-5:before {
+  content: "\f132"; }
+
+.petIcons-hairdresser:before {
+  content: "\f133"; }
+
+.petIcons-hairdresser-1:before {
+  content: "\f134"; }
+
+.petIcons-healthy:before {
+  content: "\f135"; }
+
+.petIcons-market:before {
+  content: "\f136"; }
+
+.petIcons-mechanical:before {
+  content: "\f137"; }
+
+.petIcons-medical:before {
+  content: "\f138"; }
+
+.petIcons-medical-1:before {
+  content: "\f139"; }
+
+.petIcons-medical-2:before {
+  content: "\f13a"; }
+
+.petIcons-music:before {
+  content: "\f13b"; }
+
+.petIcons-people:before {
+  content: "\f13c"; }
+
+.petIcons-person:before {
+  content: "\f13d"; }
+
+.petIcons-skeleton:before {
+  content: "\f13e"; }
+
+.petIcons-snack:before {
+  content: "\f13f"; }
+
+.petIcons-technology:before {
+  content: "\f140"; }
+
+/*****************************************************
+* House hold items
+*
+******************************************************/
+/*
+  house icon font: house
+  Creation date: 18/03/2016 15:24
+  */
+@font-face {
+  font-family: "house";
+  src: url("../fonts/nomie-icons/house/house.eot");
+  src: url("../fonts/nomie-icons/house/house.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/house/house.woff") format("woff"), url("../fonts/nomie-icons/house/house.ttf") format("truetype"), url("../fonts/nomie-icons/house/house.svg#house") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "house";
+    src: url("../fonts/nomie-icons/house/house.svg#house") format("svg"); } }
+
+[class^="house-"]:before, [class*=" house-"]:before,
+[class^="house-"]:after, [class*=" house-"]:after {
+  font-family: house;
+  font-style: normal; }
+
+.house-apron:before {
+  content: "\f100"; }
+
+.house-aquarium:before {
+  content: "\f101"; }
+
+.house-armchair:before {
+  content: "\f102"; }
+
+.house-basket:before {
+  content: "\f103"; }
+
+.house-bath:before {
+  content: "\f104"; }
+
+.house-bed:before {
+  content: "\f105"; }
+
+.house-bleach:before {
+  content: "\f106"; }
+
+.house-bowl:before {
+  content: "\f107"; }
+
+.house-broom:before {
+  content: "\f108"; }
+
+.house-broom-1:before {
+  content: "\f109"; }
+
+.house-brush:before {
+  content: "\f10a"; }
+
+.house-bucket:before {
+  content: "\f10b"; }
+
+.house-cleaner:before {
+  content: "\f10c"; }
+
+.house-clothespin:before {
+  content: "\f10d"; }
+
+.house-detergent:before {
+  content: "\f10e"; }
+
+.house-dustpan:before {
+  content: "\f10f"; }
+
+.house-fan:before {
+  content: "\f110"; }
+
+.house-faucet:before {
+  content: "\f111"; }
+
+.house-flower:before {
+  content: "\f112"; }
+
+.house-fridge:before {
+  content: "\f113"; }
+
+.house-gloves:before {
+  content: "\f114"; }
+
+.house-hammer:before {
+  content: "\f115"; }
+
+.house-house:before {
+  content: "\f116"; }
+
+.house-iron:before {
+  content: "\f117"; }
+
+.house-ironing-board:before {
+  content: "\f118"; }
+
+.house-jug:before {
+  content: "\f119"; }
+
+.house-kettle:before {
+  content: "\f11a"; }
+
+.house-lamp:before {
+  content: "\f11b"; }
+
+.house-liquid-soap:before {
+  content: "\f11c"; }
+
+.house-microwave-oven:before {
+  content: "\f11d"; }
+
+.house-mitten:before {
+  content: "\f11e"; }
+
+.house-mixer:before {
+  content: "\f11f"; }
+
+.house-mop:before {
+  content: "\f120"; }
+
+.house-oven:before {
+  content: "\f121"; }
+
+.house-paint-roller:before {
+  content: "\f122"; }
+
+.house-palette:before {
+  content: "\f123"; }
+
+.house-pan:before {
+  content: "\f124"; }
+
+.house-plunger:before {
+  content: "\f125"; }
+
+.house-screwdriver:before {
+  content: "\f126"; }
+
+.house-shirt:before {
+  content: "\f127"; }
+
+.house-soap:before {
+  content: "\f128"; }
+
+.house-sponge:before {
+  content: "\f129"; }
+
+.house-toilet:before {
+  content: "\f12a"; }
+
+.house-toilet-brush:before {
+  content: "\f12b"; }
+
+.house-towel:before {
+  content: "\f12c"; }
+
+.house-towel-1:before {
+  content: "\f12d"; }
+
+.house-trash-can:before {
+  content: "\f12e"; }
+
+.house-vacuum-cleaner:before {
+  content: "\f12f"; }
+
+.house-washing-machine:before {
+  content: "\f130"; }
+
+.house-wrench:before {
+  content: "\f131"; }
+
+/*****************************************************
+* PEOPLE ICONS
+*
+******************************************************/
+/*
+  peopleIcons icon font: peopleIcons
+  Creation date: 27/03/2016 03:43
+  */
+@font-face {
+  font-family: "peopleIcons";
+  src: url("../fonts/nomie-icons/peopleIcons/peopleIcons.eot");
+  src: url("../fonts/nomie-icons/peopleIcons/peopleIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/peopleIcons/peopleIcons.woff") format("woff"), url("../fonts/nomie-icons/peopleIcons/peopleIcons.ttf") format("truetype"), url("../fonts/nomie-icons/peopleIcons/peopleIcons.svg#peopleIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "peopleIcons";
+    src: url("../fonts/nomie-icons/peopleIcons/peopleIcons.svg#peopleIcons") format("svg"); } }
+
+[class^="peopleIcons-"]:before, [class*=" peopleIcons-"]:before,
+[class^="peopleIcons-"]:after, [class*=" peopleIcons-"]:after {
+  font-family: peopleIcons;
+  font-style: normal; }
+
+.peopleIcons-book:before {
+  content: "\f100"; }
+
+.peopleIcons-business:before {
+  content: "\f101"; }
+
+.peopleIcons-camera:before {
+  content: "\f102"; }
+
+.peopleIcons-computer:before {
+  content: "\f103"; }
+
+.peopleIcons-gestures:before {
+  content: "\f104"; }
+
+.peopleIcons-group:before {
+  content: "\f105"; }
+
+.peopleIcons-line:before {
+  content: "\f106"; }
+
+.peopleIcons-people:before {
+  content: "\f107"; }
+
+.peopleIcons-people-1:before {
+  content: "\f108"; }
+
+.peopleIcons-people-10:before {
+  content: "\f109"; }
+
+.peopleIcons-people-100:before {
+  content: "\f10a"; }
+
+.peopleIcons-people-101:before {
+  content: "\f10b"; }
+
+.peopleIcons-people-102:before {
+  content: "\f10c"; }
+
+.peopleIcons-people-103:before {
+  content: "\f10d"; }
+
+.peopleIcons-people-104:before {
+  content: "\f10e"; }
+
+.peopleIcons-people-105:before {
+  content: "\f10f"; }
+
+.peopleIcons-people-106:before {
+  content: "\f110"; }
+
+.peopleIcons-people-107:before {
+  content: "\f111"; }
+
+.peopleIcons-people-108:before {
+  content: "\f112"; }
+
+.peopleIcons-people-109:before {
+  content: "\f113"; }
+
+.peopleIcons-people-11:before {
+  content: "\f114"; }
+
+.peopleIcons-people-110:before {
+  content: "\f115"; }
+
+.peopleIcons-people-111:before {
+  content: "\f116"; }
+
+.peopleIcons-people-112:before {
+  content: "\f117"; }
+
+.peopleIcons-people-113:before {
+  content: "\f118"; }
+
+.peopleIcons-people-114:before {
+  content: "\f119"; }
+
+.peopleIcons-people-115:before {
+  content: "\f11a"; }
+
+.peopleIcons-people-116:before {
+  content: "\f11b"; }
+
+.peopleIcons-people-117:before {
+  content: "\f11c"; }
+
+.peopleIcons-people-118:before {
+  content: "\f11d"; }
+
+.peopleIcons-people-119:before {
+  content: "\f11e"; }
+
+.peopleIcons-people-12:before {
+  content: "\f11f"; }
+
+.peopleIcons-people-120:before {
+  content: "\f120"; }
+
+.peopleIcons-people-121:before {
+  content: "\f121"; }
+
+.peopleIcons-people-13:before {
+  content: "\f122"; }
+
+.peopleIcons-people-14:before {
+  content: "\f123"; }
+
+.peopleIcons-people-15:before {
+  content: "\f124"; }
+
+.peopleIcons-people-16:before {
+  content: "\f125"; }
+
+.peopleIcons-people-17:before {
+  content: "\f126"; }
+
+.peopleIcons-people-18:before {
+  content: "\f127"; }
+
+.peopleIcons-people-19:before {
+  content: "\f128"; }
+
+.peopleIcons-people-2:before {
+  content: "\f129"; }
+
+.peopleIcons-people-20:before {
+  content: "\f12a"; }
+
+.peopleIcons-people-21:before {
+  content: "\f12b"; }
+
+.peopleIcons-people-22:before {
+  content: "\f12c"; }
+
+.peopleIcons-people-23:before {
+  content: "\f12d"; }
+
+.peopleIcons-people-24:before {
+  content: "\f12e"; }
+
+.peopleIcons-people-25:before {
+  content: "\f12f"; }
+
+.peopleIcons-people-26:before {
+  content: "\f130"; }
+
+.peopleIcons-people-27:before {
+  content: "\f131"; }
+
+.peopleIcons-people-28:before {
+  content: "\f132"; }
+
+.peopleIcons-people-29:before {
+  content: "\f133"; }
+
+.peopleIcons-people-3:before {
+  content: "\f134"; }
+
+.peopleIcons-people-30:before {
+  content: "\f135"; }
+
+.peopleIcons-people-31:before {
+  content: "\f136"; }
+
+.peopleIcons-people-32:before {
+  content: "\f137"; }
+
+.peopleIcons-people-33:before {
+  content: "\f138"; }
+
+.peopleIcons-people-34:before {
+  content: "\f139"; }
+
+.peopleIcons-people-35:before {
+  content: "\f13a"; }
+
+.peopleIcons-people-36:before {
+  content: "\f13b"; }
+
+.peopleIcons-people-37:before {
+  content: "\f13c"; }
+
+.peopleIcons-people-38:before {
+  content: "\f13d"; }
+
+.peopleIcons-people-39:before {
+  content: "\f13e"; }
+
+.peopleIcons-people-4:before {
+  content: "\f13f"; }
+
+.peopleIcons-people-40:before {
+  content: "\f140"; }
+
+.peopleIcons-people-41:before {
+  content: "\f141"; }
+
+.peopleIcons-people-42:before {
+  content: "\f142"; }
+
+.peopleIcons-people-43:before {
+  content: "\f143"; }
+
+.peopleIcons-people-44:before {
+  content: "\f144"; }
+
+.peopleIcons-people-45:before {
+  content: "\f145"; }
+
+.peopleIcons-people-46:before {
+  content: "\f146"; }
+
+.peopleIcons-people-47:before {
+  content: "\f147"; }
+
+.peopleIcons-people-48:before {
+  content: "\f148"; }
+
+.peopleIcons-people-49:before {
+  content: "\f149"; }
+
+.peopleIcons-people-5:before {
+  content: "\f14a"; }
+
+.peopleIcons-people-50:before {
+  content: "\f14b"; }
+
+.peopleIcons-people-51:before {
+  content: "\f14c"; }
+
+.peopleIcons-people-52:before {
+  content: "\f14d"; }
+
+.peopleIcons-people-53:before {
+  content: "\f14e"; }
+
+.peopleIcons-people-54:before {
+  content: "\f14f"; }
+
+.peopleIcons-people-55:before {
+  content: "\f150"; }
+
+.peopleIcons-people-56:before {
+  content: "\f151"; }
+
+.peopleIcons-people-57:before {
+  content: "\f152"; }
+
+.peopleIcons-people-58:before {
+  content: "\f153"; }
+
+.peopleIcons-people-59:before {
+  content: "\f154"; }
+
+.peopleIcons-people-6:before {
+  content: "\f155"; }
+
+.peopleIcons-people-60:before {
+  content: "\f156"; }
+
+.peopleIcons-people-61:before {
+  content: "\f157"; }
+
+.peopleIcons-people-62:before {
+  content: "\f158"; }
+
+.peopleIcons-people-63:before {
+  content: "\f159"; }
+
+.peopleIcons-people-64:before {
+  content: "\f15a"; }
+
+.peopleIcons-people-65:before {
+  content: "\f15b"; }
+
+.peopleIcons-people-66:before {
+  content: "\f15c"; }
+
+.peopleIcons-people-67:before {
+  content: "\f15d"; }
+
+.peopleIcons-people-68:before {
+  content: "\f15e"; }
+
+.peopleIcons-people-69:before {
+  content: "\f15f"; }
+
+.peopleIcons-people-7:before {
+  content: "\f160"; }
+
+.peopleIcons-people-70:before {
+  content: "\f161"; }
+
+.peopleIcons-people-71:before {
+  content: "\f162"; }
+
+.peopleIcons-people-72:before {
+  content: "\f163"; }
+
+.peopleIcons-people-73:before {
+  content: "\f164"; }
+
+.peopleIcons-people-74:before {
+  content: "\f165"; }
+
+.peopleIcons-people-75:before {
+  content: "\f166"; }
+
+.peopleIcons-people-76:before {
+  content: "\f167"; }
+
+.peopleIcons-people-77:before {
+  content: "\f168"; }
+
+.peopleIcons-people-78:before {
+  content: "\f169"; }
+
+.peopleIcons-people-79:before {
+  content: "\f16a"; }
+
+.peopleIcons-people-8:before {
+  content: "\f16b"; }
+
+.peopleIcons-people-80:before {
+  content: "\f16c"; }
+
+.peopleIcons-people-81:before {
+  content: "\f16d"; }
+
+.peopleIcons-people-82:before {
+  content: "\f16e"; }
+
+.peopleIcons-people-83:before {
+  content: "\f16f"; }
+
+.peopleIcons-people-84:before {
+  content: "\f170"; }
+
+.peopleIcons-people-85:before {
+  content: "\f171"; }
+
+.peopleIcons-people-86:before {
+  content: "\f172"; }
+
+.peopleIcons-people-87:before {
+  content: "\f173"; }
+
+.peopleIcons-people-88:before {
+  content: "\f174"; }
+
+.peopleIcons-people-89:before {
+  content: "\f175"; }
+
+.peopleIcons-people-9:before {
+  content: "\f176"; }
+
+.peopleIcons-people-90:before {
+  content: "\f177"; }
+
+.peopleIcons-people-91:before {
+  content: "\f178"; }
+
+.peopleIcons-people-92:before {
+  content: "\f179"; }
+
+.peopleIcons-people-93:before {
+  content: "\f17a"; }
+
+.peopleIcons-people-94:before {
+  content: "\f17b"; }
+
+.peopleIcons-people-95:before {
+  content: "\f17c"; }
+
+.peopleIcons-people-96:before {
+  content: "\f17d"; }
+
+.peopleIcons-people-97:before {
+  content: "\f17e"; }
+
+.peopleIcons-people-98:before {
+  content: "\f17f"; }
+
+.peopleIcons-people-99:before {
+  content: "\f180"; }
+
+.peopleIcons-school:before {
+  content: "\f181"; }
+
+.peopleIcons-social:before {
+  content: "\f182"; }
+
+.peopleIcons-social-1:before {
+  content: "\f183"; }
+
+.peopleIcons-technology:before {
+  content: "\f184"; }
+
+.peopleIcons-three:before {
+  content: "\f185"; }
+
+.peopleIcons-two:before {
+  content: "\f186"; }
+
+.peopleIcons-two-1:before {
+  content: "\f187"; }
+
+.peopleIcons-two-2:before {
+  content: "\f188"; }
+
+.peopleIcons-two-3:before {
+  content: "\f189"; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "adventureIcons";
+    src: url("../fonts/nomie-icons/adventureIcons/adventureIcons.svg#adventureIcons") format("svg"); } }
+
+[class^="adventureIcons-"]:before, [class*=" adventureIcons-"]:before,
+[class^="adventureIcons-"]:after, [class*=" adventureIcons-"]:after {
+  font-family: adventureIcons;
+  font-style: normal; }
+
+.adventureIcons-animals:before {
+  content: "\f100"; }
+
+.adventureIcons-black:before {
+  content: "\f101"; }
+
+.adventureIcons-boat:before {
+  content: "\f102"; }
+
+.adventureIcons-boat-1:before {
+  content: "\f103"; }
+
+.adventureIcons-danger:before {
+  content: "\f104"; }
+
+.adventureIcons-direction:before {
+  content: "\f105"; }
+
+.adventureIcons-line:before {
+  content: "\f106"; }
+
+.adventureIcons-mountain:before {
+  content: "\f107"; }
+
+.adventureIcons-mountain-1:before {
+  content: "\f108"; }
+
+.adventureIcons-mountain-2:before {
+  content: "\f109"; }
+
+.adventureIcons-note:before {
+  content: "\f10a"; }
+
+.adventureIcons-people:before {
+  content: "\f10b"; }
+
+.adventureIcons-people-1:before {
+  content: "\f10c"; }
+
+.adventureIcons-people-2:before {
+  content: "\f10d"; }
+
+.adventureIcons-person:before {
+  content: "\f10e"; }
+
+.adventureIcons-silhouette:before {
+  content: "\f10f"; }
+
+.adventureIcons-silhouette-1:before {
+  content: "\f110"; }
+
+.adventureIcons-silhouette-2:before {
+  content: "\f111"; }
+
+.adventureIcons-silhouette-3:before {
+  content: "\f112"; }
+
+.adventureIcons-sport:before {
+  content: "\f113"; }
+
+.adventureIcons-sport-1:before {
+  content: "\f114"; }
+
+.adventureIcons-sport-2:before {
+  content: "\f115"; }
+
+.adventureIcons-sports:before {
+  content: "\f116"; }
+
+.adventureIcons-sports-1:before {
+  content: "\f117"; }
+
+.adventureIcons-sports-10:before {
+  content: "\f118"; }
+
+.adventureIcons-sports-11:before {
+  content: "\f119"; }
+
+.adventureIcons-sports-12:before {
+  content: "\f11a"; }
+
+.adventureIcons-sports-13:before {
+  content: "\f11b"; }
+
+.adventureIcons-sports-2:before {
+  content: "\f11c"; }
+
+.adventureIcons-sports-3:before {
+  content: "\f11d"; }
+
+.adventureIcons-sports-4:before {
+  content: "\f11e"; }
+
+.adventureIcons-sports-5:before {
+  content: "\f11f"; }
+
+.adventureIcons-sports-6:before {
+  content: "\f120"; }
+
+.adventureIcons-sports-7:before {
+  content: "\f121"; }
+
+.adventureIcons-sports-8:before {
+  content: "\f122"; }
+
+.adventureIcons-sports-9:before {
+  content: "\f123"; }
+
+.adventureIcons-tool:before {
+  content: "\f124"; }
+
+.adventureIcons-transport:before {
+  content: "\f125"; }
+
+/*****************************************************
+* Cooking
+*
+******************************************************/
+/*
+  cookingIcons icon font: cookingIcons
+  Creation date: 17/03/2016 11:14
+  */
+@font-face {
+  font-family: "cookingIcons";
+  src: url("../fonts/nomie-icons/cookingIcons/cookingIcons.eot");
+  src: url("../fonts/nomie-icons/cookingIcons/cookingIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/cookingIcons/cookingIcons.woff") format("woff"), url("../fonts/nomie-icons/cookingIcons/cookingIcons.ttf") format("truetype"), url("../fonts/nomie-icons/cookingIcons/cookingIcons.svg#cookingIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "cookingIcons";
+    src: url("../fonts/nomie-icons/cookingIcons/cookingIcons.svg#cookingIcons") format("svg"); } }
+
+[class^="cookingIcons-"]:before, [class*=" cookingIcons-"]:before,
+[class^="cookingIcons-"]:after, [class*=" cookingIcons-"]:after {
+  font-family: cookingIcons;
+  font-style: normal; }
+
+.cookingIcons-balance:before {
+  content: "\f100"; }
+
+.cookingIcons-bowl:before {
+  content: "\f101"; }
+
+.cookingIcons-clock:before {
+  content: "\f102"; }
+
+.cookingIcons-container:before {
+  content: "\f103"; }
+
+.cookingIcons-cream:before {
+  content: "\f104"; }
+
+.cookingIcons-cutting:before {
+  content: "\f105"; }
+
+.cookingIcons-cutting-1:before {
+  content: "\f106"; }
+
+.cookingIcons-dosimeter:before {
+  content: "\f107"; }
+
+.cookingIcons-egg:before {
+  content: "\f108"; }
+
+.cookingIcons-funnel:before {
+  content: "\f109"; }
+
+.cookingIcons-glass-of-water:before {
+  content: "\f10a"; }
+
+.cookingIcons-grater:before {
+  content: "\f10b"; }
+
+.cookingIcons-grill:before {
+  content: "\f10c"; }
+
+.cookingIcons-knife:before {
+  content: "\f10d"; }
+
+.cookingIcons-knife-1:before {
+  content: "\f10e"; }
+
+.cookingIcons-microwave-oven:before {
+  content: "\f10f"; }
+
+.cookingIcons-milk:before {
+  content: "\f110"; }
+
+.cookingIcons-mitten:before {
+  content: "\f111"; }
+
+.cookingIcons-mix:before {
+  content: "\f112"; }
+
+.cookingIcons-mixer:before {
+  content: "\f113"; }
+
+.cookingIcons-mixer-1:before {
+  content: "\f114"; }
+
+.cookingIcons-mustard:before {
+  content: "\f115"; }
+
+.cookingIcons-oil:before {
+  content: "\f116"; }
+
+.cookingIcons-pan:before {
+  content: "\f117"; }
+
+.cookingIcons-pan-1:before {
+  content: "\f118"; }
+
+.cookingIcons-pot:before {
+  content: "\f119"; }
+
+.cookingIcons-pour:before {
+  content: "\f11a"; }
+
+.cookingIcons-recipes:before {
+  content: "\f11b"; }
+
+.cookingIcons-rolling-pin:before {
+  content: "\f11c"; }
+
+.cookingIcons-salt:before {
+  content: "\f11d"; }
+
+.cookingIcons-salt-1:before {
+  content: "\f11e"; }
+
+.cookingIcons-soup-ladle:before {
+  content: "\f11f"; }
+
+.cookingIcons-spatula:before {
+  content: "\f120"; }
+
+.cookingIcons-spices:before {
+  content: "\f121"; }
+
+.cookingIcons-spices-1:before {
+  content: "\f122"; }
+
+.cookingIcons-spoon:before {
+  content: "\f123"; }
+
+.cookingIcons-steak:before {
+  content: "\f124"; }
+
+.cookingIcons-stove:before {
+  content: "\f125"; }
+
+.cookingIcons-strainer:before {
+  content: "\f126"; }
+
+.cookingIcons-timer:before {
+  content: "\f127"; }
+
+/*****************************************************
+* drink
+*
+******************************************************/
+/*
+  drinkIcons icon font: drinkIcons
+  Creation date: 19/02/2016 14:53
+  */
+@font-face {
+  font-family: "drinkIcons";
+  src: url("../fonts/nomie-icons/drinkIcons/drinkIcons.eot");
+  src: url("../fonts/nomie-icons/drinkIcons/drinkIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/drinkIcons/drinkIcons.woff") format("woff"), url("../fonts/nomie-icons/drinkIcons/drinkIcons.ttf") format("truetype"), url("../fonts/nomie-icons/drinkIcons/drinkIcons.svg#drinkIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "drinkIcons";
+    src: url("../fonts/nomie-icons/drinkIcons/drinkIcons.svg#drinkIcons") format("svg"); } }
+
+[class^="drinkIcons-"]:before, [class*=" drinkIcons-"]:before,
+[class^="drinkIcons-"]:after, [class*=" drinkIcons-"]:after {
+  font-family: drinkIcons;
+  font-style: normal; }
+
+.drinkIcons-beer-bottle:before {
+  content: "\f100"; }
+
+.drinkIcons-beer-jar:before {
+  content: "\f101"; }
+
+.drinkIcons-beer-pint:before {
+  content: "\f102"; }
+
+.drinkIcons-bottle:before {
+  content: "\f103"; }
+
+.drinkIcons-bottle-1:before {
+  content: "\f104"; }
+
+.drinkIcons-bottle-2:before {
+  content: "\f105"; }
+
+.drinkIcons-coffee-pot:before {
+  content: "\f106"; }
+
+.drinkIcons-cup:before {
+  content: "\f107"; }
+
+.drinkIcons-cup-1:before {
+  content: "\f108"; }
+
+.drinkIcons-drink-can:before {
+  content: "\f109"; }
+
+.drinkIcons-fancy-bottle:before {
+  content: "\f10a"; }
+
+.drinkIcons-glass:before {
+  content: "\f10b"; }
+
+.drinkIcons-glass-1:before {
+  content: "\f10c"; }
+
+.drinkIcons-glass-2:before {
+  content: "\f10d"; }
+
+.drinkIcons-glass-3:before {
+  content: "\f10e"; }
+
+.drinkIcons-hip-flask:before {
+  content: "\f10f"; }
+
+.drinkIcons-iced-beverage:before {
+  content: "\f110"; }
+
+.drinkIcons-jar:before {
+  content: "\f111"; }
+
+.drinkIcons-jar-1:before {
+  content: "\f112"; }
+
+.drinkIcons-jar-of-beer:before {
+  content: "\f113"; }
+
+.drinkIcons-keg:before {
+  content: "\f114"; }
+
+.drinkIcons-margarita-glass:before {
+  content: "\f115"; }
+
+.drinkIcons-martini-glass:before {
+  content: "\f116"; }
+
+.drinkIcons-mason-jar:before {
+  content: "\f117"; }
+
+.drinkIcons-old-bottle:before {
+  content: "\f118"; }
+
+.drinkIcons-pint:before {
+  content: "\f119"; }
+
+.drinkIcons-pint-1:before {
+  content: "\f11a"; }
+
+.drinkIcons-pint-glass:before {
+  content: "\f11b"; }
+
+.drinkIcons-plastic-cup:before {
+  content: "\f11c"; }
+
+.drinkIcons-shot-glass:before {
+  content: "\f11d"; }
+
+.drinkIcons-small-glass:before {
+  content: "\f11e"; }
+
+.drinkIcons-take-away-coffee:before {
+  content: "\f11f"; }
+
+.drinkIcons-tall-glass:before {
+  content: "\f120"; }
+
+.drinkIcons-tulip-cup:before {
+  content: "\f121"; }
+
+.drinkIcons-wine-bottle:before {
+  content: "\f122"; }
+
+.drinkIcons-wine-glass:before {
+  content: "\f123"; }
+
+/*****************************************************
+* Emotion
+*
+******************************************************/
+/*
+  emotionIcons icon font: emotionIcons
+  Creation date: 19/02/2016 14:45
+  */
+@font-face {
+  font-family: "emotionIcons";
+  src: url("../fonts/nomie-icons/emotionIcons/emotionIcons.eot");
+  src: url("../fonts/nomie-icons/emotionIcons/emotionIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/emotionIcons/emotionIcons.woff") format("woff"), url("../fonts/nomie-icons/emotionIcons/emotionIcons.ttf") format("truetype"), url("../fonts/nomie-icons/emotionIcons/emotionIcons.svg#emotionIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "emotionIcons";
+    src: url("../fonts/nomie-icons/emotionIcons/emotionIcons.svg#emotionIcons") format("svg"); } }
+
+[class^="emotionIcons-"]:before, [class*=" emotionIcons-"]:before,
+[class^="emotionIcons-"]:after, [class*=" emotionIcons-"]:after {
+  font-family: emotionIcons;
+  font-style: normal; }
+
+.emotionIcons-anger-emoticon-square-face:before {
+  content: "\f100"; }
+
+.emotionIcons-anger-on-emoticon-face-of-rounded-square-outline:before {
+  content: "\f101"; }
+
+.emotionIcons-angry-emoticon-face:before {
+  content: "\f102"; }
+
+.emotionIcons-angry-emoticon-face-with-opened-mouth-in-rounded-square-outline:before {
+  content: "\f103"; }
+
+.emotionIcons-angry-emoticon-square-face:before {
+  content: "\f104"; }
+
+.emotionIcons-angry-emoticon-square-face-1:before {
+  content: "\f105"; }
+
+.emotionIcons-angry-emoticon-square-face-with-closed-eyes:before {
+  content: "\f106"; }
+
+.emotionIcons-annulled-emoticon-square-face:before {
+  content: "\f107"; }
+
+.emotionIcons-bad-emoticon-square-face:before {
+  content: "\f108"; }
+
+.emotionIcons-black-eye-and-opened-mouth-emoticon-square-face:before {
+  content: "\f109"; }
+
+.emotionIcons-crying-emoticon-rounded-square-face:before {
+  content: "\f10a"; }
+
+.emotionIcons-disappointed-emoticon-face:before {
+  content: "\f10b"; }
+
+.emotionIcons-disgusted-emoticon-square-face:before {
+  content: "\f10c"; }
+
+.emotionIcons-doubt-on-emoticon-square-face:before {
+  content: "\f10d"; }
+
+.emotionIcons-emoticon-criminal-face-with-eyes-mask:before {
+  content: "\f10e"; }
+
+.emotionIcons-emoticon-face-of-doubt:before {
+  content: "\f10f"; }
+
+.emotionIcons-emoticon-face-square-with-tongue-out-of-the-mouth-and-closed-eyes:before {
+  content: "\f110"; }
+
+.emotionIcons-emoticon-face-with-the-mouth-at-one-side-like-a-small-smile-in-a-rounded-square:before {
+  content: "\f111"; }
+
+.emotionIcons-emoticon-happy-smiling-square-face-shape:before {
+  content: "\f112"; }
+
+.emotionIcons-emoticon-in-love-face-in-a-square:before {
+  content: "\f113"; }
+
+.emotionIcons-emoticon-in-love-face-with-heart-shaped-eyes-in-square-outline:before {
+  content: "\f114"; }
+
+.emotionIcons-emoticon-rounded-square-criminal-face-with-covered-eyes-with-a-mask:before {
+  content: "\f115"; }
+
+.emotionIcons-emoticon-smiling-square-face:before {
+  content: "\f116"; }
+
+.emotionIcons-emoticon-square-face-with-a-smile:before {
+  content: "\f117"; }
+
+.emotionIcons-emoticon-square-face-with-closed-eyes-and-big-lips:before {
+  content: "\f118"; }
+
+.emotionIcons-emoticon-square-face-with-closed-eyes-and-mouth-of-straight-lines:before {
+  content: "\f119"; }
+
+.emotionIcons-emoticon-square-face-with-closed-eyes-and-straight-mouth-line:before {
+  content: "\f11a"; }
+
+.emotionIcons-emoticon-square-face-with-closed-eyes-and-tongue-out:before {
+  content: "\f11b"; }
+
+.emotionIcons-emoticon-square-face-with-curved-mouth-expression:before {
+  content: "\f11c"; }
+
+.emotionIcons-emoticon-square-face-with-straight-mouth:before {
+  content: "\f11d"; }
+
+.emotionIcons-emoticon-square-face-with-straight-mouth-and-eyes-lines:before {
+  content: "\f11e"; }
+
+.emotionIcons-emoticon-square-face-with-tongue-out:before {
+  content: "\f11f"; }
+
+.emotionIcons-emoticon-square-rounded-face-with-tongue-out-of-the-mouth:before {
+  content: "\f120"; }
+
+.emotionIcons-emoticon-square-smile:before {
+  content: "\f121"; }
+
+.emotionIcons-emoticon-square-smiling-face-with-closed-eyes:before {
+  content: "\f122"; }
+
+.emotionIcons-emoticon-square-surprised-face-with-open-circular-mouth:before {
+  content: "\f123"; }
+
+.emotionIcons-emoticons-face-with-straight-mouth-line-and-closed-eyes:before {
+  content: "\f124"; }
+
+.emotionIcons-emoticons-square-face-with-closed-eyes-and-opened-mouth:before {
+  content: "\f125"; }
+
+.emotionIcons-emoticons-square-face-with-sunglasses:before {
+  content: "\f126"; }
+
+.emotionIcons-evil-smile-square-emoticon-face:before {
+  content: "\f127"; }
+
+.emotionIcons-furious-emoticon-square-face:before {
+  content: "\f128"; }
+
+.emotionIcons-happy-emoticon:before {
+  content: "\f129"; }
+
+.emotionIcons-happy-emoticon-smiling-square:before {
+  content: "\f12a"; }
+
+.emotionIcons-happy-emoticon-with-one-tooth:before {
+  content: "\f12b"; }
+
+.emotionIcons-happy-smiling-emoticon-face-with-open-mouth:before {
+  content: "\f12c"; }
+
+.emotionIcons-happy-smiling-emoticon-square-face:before {
+  content: "\f12d"; }
+
+.emotionIcons-happy-smiling-emoticon-square-face-1:before {
+  content: "\f12e"; }
+
+.emotionIcons-happy-smiling-emoticon-square-face-with-sunglasses:before {
+  content: "\f12f"; }
+
+.emotionIcons-intellectual-emoticon-square-face:before {
+  content: "\f130"; }
+
+.emotionIcons-male-square-face-with-glasses-and-mustache:before {
+  content: "\f131"; }
+
+.emotionIcons-mute-emoticon-square-face:before {
+  content: "\f132"; }
+
+.emotionIcons-mute-emoticon-square-face-1:before {
+  content: "\f133"; }
+
+.emotionIcons-nerd-emoticon-square-face:before {
+  content: "\f134"; }
+
+.emotionIcons-nerd-happy-smiling-face-in-rounded-square-face:before {
+  content: "\f135"; }
+
+.emotionIcons-pirate-emoticon-face-with-one-covered-eye-in-square-outline:before {
+  content: "\f136"; }
+
+.emotionIcons-resting-emoticon-square-face:before {
+  content: "\f137"; }
+
+.emotionIcons-sad-emoticon-square-face:before {
+  content: "\f138"; }
+
+.emotionIcons-sad-emoticon-square-face-with-closed-eyes:before {
+  content: "\f139"; }
+
+.emotionIcons-sad-face-in-rounded-square:before {
+  content: "\f13a"; }
+
+.emotionIcons-sad-rounded-square-emoticon:before {
+  content: "\f13b"; }
+
+.emotionIcons-sad-sleepy-emoticon-face-square:before {
+  content: "\f13c"; }
+
+.emotionIcons-sad-suffering-crying-emoticon-face:before {
+  content: "\f13d"; }
+
+.emotionIcons-scared-emoticon-square-face:before {
+  content: "\f13e"; }
+
+.emotionIcons-singing-emoticon-square-face:before {
+  content: "\f13f"; }
+
+.emotionIcons-sleeping-face-with-opened-mouth-in-square-outline:before {
+  content: "\f140"; }
+
+.emotionIcons-sleepy-emoticon-square-face:before {
+  content: "\f141"; }
+
+.emotionIcons-sleepy-face-square-shape:before {
+  content: "\f142"; }
+
+.emotionIcons-smiley-of-square-face-shape:before {
+  content: "\f143"; }
+
+.emotionIcons-smiley-of-square-rounded-face:before {
+  content: "\f144"; }
+
+.emotionIcons-smiley-square-face:before {
+  content: "\f145"; }
+
+.emotionIcons-smiley-square-face-1:before {
+  content: "\f146"; }
+
+.emotionIcons-smiley-square-face-with-broken-teeth:before {
+  content: "\f147"; }
+
+.emotionIcons-smiley-with-closed-eyes-rounded-square-face:before {
+  content: "\f148"; }
+
+.emotionIcons-smiley-with-tongue-in-a-square-shape:before {
+  content: "\f149"; }
+
+.emotionIcons-smiling-emoticon-face-in-a-square:before {
+  content: "\f14a"; }
+
+.emotionIcons-smiling-emoticon-square-face:before {
+  content: "\f14b"; }
+
+.emotionIcons-smiling-emoticon-square-face-1:before {
+  content: "\f14c"; }
+
+.emotionIcons-smiling-emoticon-square-face-with-closed-eyes:before {
+  content: "\f14d"; }
+
+.emotionIcons-smiling-emoticon-with-raised-eyebrows-and-closed-eyes:before {
+  content: "\f14e"; }
+
+.emotionIcons-smiling-happy-emoticon-face:before {
+  content: "\f14f"; }
+
+.emotionIcons-smiling-happy-emoticon-square-face-with-eyes-like-stars:before {
+  content: "\f150"; }
+
+.emotionIcons-smiling-square-face:before {
+  content: "\f151"; }
+
+.emotionIcons-square-emoticon-angry-face:before {
+  content: "\f152"; }
+
+.emotionIcons-student-smiling-emoticon-square-face:before {
+  content: "\f153"; }
+
+.emotionIcons-surprised-emoticon-square-face:before {
+  content: "\f154"; }
+
+.emotionIcons-surprised-emoticon-square-face-with-open-eyes-and-mouth:before {
+  content: "\f155"; }
+
+.emotionIcons-surprised-rounded-square-face:before {
+  content: "\f156"; }
+
+.emotionIcons-surprised-square-face-with-eyes-and-mouth-opened:before {
+  content: "\f157"; }
+
+.emotionIcons-sweating-emoticon-square-face:before {
+  content: "\f158"; }
+
+.emotionIcons-teardrop-falling-on-sad-emoticon-face:before {
+  content: "\f159"; }
+
+.emotionIcons-tired-emoticon-face-with-open-mouth-and-closed-eyes:before {
+  content: "\f15a"; }
+
+.emotionIcons-very-angry-emoticon-square-face:before {
+  content: "\f15b"; }
+
+.emotionIcons-wink-emoticon-of-rounded-square-face:before {
+  content: "\f15c"; }
+
+.emotionIcons-wink-face-square:before {
+  content: "\f15d"; }
+
+.emotionIcons-winking-emoticon-smiling-face-with-tongue-out-of-the-mouth-in-square-rounded-outline-shape:before {
+  content: "\f15e"; }
+
+.emotionIcons-winking-emoticon-with-tongue-out-of-mouth-and-square-face-shape:before {
+  content: "\f15f"; }
+
+.emotionIcons-wound-cross-on-emoticon-sad-face-of-rounded-square-shape:before {
+  content: "\f160"; }
+
+.emotionIcons-yawning-emoticon-face-in-rounded-square-with-open-oval-mouth-and-closed-small-eyes:before {
+  content: "\f161"; }
+
+.emotionIcons-yawning-emoticon-square-face:before {
+  content: "\f162"; }
+
+.emotionIcons-yawning-emoticon-square-face-1:before {
+  content: "\f163"; }
+
+/*****************************************************
+* Family
+*
+******************************************************/
+/*
+  familyIcons icon font: familyIcons
+  Creation date: 19/02/2016 14:47
+  */
+@font-face {
+  font-family: "familyIcons";
+  src: url("../fonts/nomie-icons/familyIcons/familyIcons.eot");
+  src: url("../fonts/nomie-icons/familyIcons/familyIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/familyIcons/familyIcons.woff") format("woff"), url("../fonts/nomie-icons/familyIcons/familyIcons.ttf") format("truetype"), url("../fonts/nomie-icons/familyIcons/familyIcons.svg#familyIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "familyIcons";
+    src: url("../fonts/nomie-icons/familyIcons/familyIcons.svg#familyIcons") format("svg"); } }
+
+[class^="familyIcons-"]:before, [class*=" familyIcons-"]:before,
+[class^="familyIcons-"]:after, [class*=" familyIcons-"]:after {
+  font-family: familyIcons;
+  font-style: normal; }
+
+.familyIcons-boy-silhouette-playing-soccer:before {
+  content: "\f100"; }
+
+.familyIcons-businessman-with-handbag-standing-silhouette:before {
+  content: "\f101"; }
+
+.familyIcons-couple-in-love:before {
+  content: "\f102"; }
+
+.familyIcons-couple-portrait-with-frame:before {
+  content: "\f103"; }
+
+.familyIcons-couple-silhouette:before {
+  content: "\f104"; }
+
+.familyIcons-couple-with-baby-silhouettes-of-a-family-group:before {
+  content: "\f105"; }
+
+.familyIcons-elderly-couple:before {
+  content: "\f106"; }
+
+.familyIcons-elderly-couple-silhouettes-with-canes:before {
+  content: "\f107"; }
+
+.familyIcons-familiar-group-of-two-children-father-and-mother:before {
+  content: "\f108"; }
+
+.familyIcons-family-group-of-four:before {
+  content: "\f109"; }
+
+.familyIcons-family-group-of-three:before {
+  content: "\f10a"; }
+
+.familyIcons-family-of-six-including-a-baby:before {
+  content: "\f10b"; }
+
+.familyIcons-family-silhouette:before {
+  content: "\f10c"; }
+
+.familyIcons-family-with-balloons:before {
+  content: "\f10d"; }
+
+.familyIcons-father-daughter-and-mother:before {
+  content: "\f10e"; }
+
+.familyIcons-father-mother-and-son-silhouette:before {
+  content: "\f10f"; }
+
+.familyIcons-father-playing-with-son:before {
+  content: "\f110"; }
+
+.familyIcons-father-with-children-raising-arms:before {
+  content: "\f111"; }
+
+.familyIcons-father-with-son-on-shopping-cart:before {
+  content: "\f112"; }
+
+.familyIcons-girl-with-butterflies:before {
+  content: "\f113"; }
+
+.familyIcons-grandmother-and-grandfather-with-child-familiar-silhouettes:before {
+  content: "\f114"; }
+
+.familyIcons-grandson-with-grandfather:before {
+  content: "\f115"; }
+
+.familyIcons-happy-shopper-jumping-with-shopping-bags:before {
+  content: "\f116"; }
+
+.familyIcons-hugging-couple:before {
+  content: "\f117"; }
+
+.familyIcons-jumping-man:before {
+  content: "\f118"; }
+
+.familyIcons-man-giving-flowers-present-to-a-woman:before {
+  content: "\f119"; }
+
+.familyIcons-man-silhouette-playing-soccer:before {
+  content: "\f11a"; }
+
+.familyIcons-mother-and-son-silhouettes:before {
+  content: "\f11b"; }
+
+.familyIcons-mother-and-son-silhouettes-1:before {
+  content: "\f11c"; }
+
+.familyIcons-mother-with-baby:before {
+  content: "\f11d"; }
+
+.familyIcons-mother-with-son-silhouettes:before {
+  content: "\f11e"; }
+
+.familyIcons-mother-with-two-childs:before {
+  content: "\f11f"; }
+
+.familyIcons-person-playing-making-soap-bubbles:before {
+  content: "\f120"; }
+
+.familyIcons-person-riding-a-bike-ecological-transport:before {
+  content: "\f121"; }
+
+.familyIcons-person-with-baby:before {
+  content: "\f122"; }
+
+.familyIcons-two-childs-playing-silhouettes:before {
+  content: "\f123"; }
+
+.familyIcons-walking-family-group-of-father-mother-and-daughter:before {
+  content: "\f124"; }
+
+.familyIcons-woman-holding-a-heart:before {
+  content: "\f125"; }
+
+.familyIcons-woman-silhouette-with-hearts-balloons:before {
+  content: "\f126"; }
+
+.familyIcons-woman-with-balloon:before {
+  content: "\f127"; }
+
+/*****************************************************
+* Fitness
+*
+******************************************************/
+/*
+  fitnessIcons icon font: fitnessIcons
+  Creation date: 17/03/2016 20:43
+  */
+@font-face {
+  font-family: "fitnessIcons";
+  src: url("../fonts/nomie-icons/fitnessIcons/fitnessIcons.eot");
+  src: url("../fonts/nomie-icons/fitnessIcons/fitnessIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/fitnessIcons/fitnessIcons.woff") format("woff"), url("../fonts/nomie-icons/fitnessIcons/fitnessIcons.ttf") format("truetype"), url("../fonts/nomie-icons/fitnessIcons/fitnessIcons.svg#fitnessIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "fitnessIcons";
+    src: url("../fonts/nomie-icons/fitnessIcons/fitnessIcons.svg#fitnessIcons") format("svg"); } }
+
+[class^="fitnessIcons-"]:before, [class*=" fitnessIcons-"]:before,
+[class^="fitnessIcons-"]:after, [class*=" fitnessIcons-"]:after {
+  font-family: fitnessIcons;
+  font-style: normal; }
+
+.fitnessIcons-arrow:before {
+  content: "\f100"; }
+
+.fitnessIcons-arrows:before {
+  content: "\f101"; }
+
+.fitnessIcons-ball:before {
+  content: "\f102"; }
+
+.fitnessIcons-ball-1:before {
+  content: "\f103"; }
+
+.fitnessIcons-ball-2:before {
+  content: "\f104"; }
+
+.fitnessIcons-black:before {
+  content: "\f105"; }
+
+.fitnessIcons-box:before {
+  content: "\f106"; }
+
+.fitnessIcons-exercise:before {
+  content: "\f107"; }
+
+.fitnessIcons-football:before {
+  content: "\f108"; }
+
+.fitnessIcons-game:before {
+  content: "\f109"; }
+
+.fitnessIcons-game-1:before {
+  content: "\f10a"; }
+
+.fitnessIcons-game-2:before {
+  content: "\f10b"; }
+
+.fitnessIcons-game-3:before {
+  content: "\f10c"; }
+
+.fitnessIcons-game-4:before {
+  content: "\f10d"; }
+
+.fitnessIcons-game-5:before {
+  content: "\f10e"; }
+
+.fitnessIcons-gym:before {
+  content: "\f10f"; }
+
+.fitnessIcons-gym-1:before {
+  content: "\f110"; }
+
+.fitnessIcons-gym-abs:before {
+  content: "\f111"; }
+
+.fitnessIcons-gym-bag:before {
+  content: "\f112"; }
+
+.fitnessIcons-gym-ball:before {
+  content: "\f113"; }
+
+.fitnessIcons-gym-bar-bell:before {
+  content: "\f114"; }
+
+.fitnessIcons-gym-barbells:before {
+  content: "\f115"; }
+
+.fitnessIcons-gym-bench:before {
+  content: "\f116"; }
+
+.fitnessIcons-gym-bench2:before {
+  content: "\f117"; }
+
+.fitnessIcons-gym-bike:before {
+  content: "\f118"; }
+
+.fitnessIcons-gym-climb:before {
+  content: "\f119"; }
+
+.fitnessIcons-gym-fly:before {
+  content: "\f11a"; }
+
+.fitnessIcons-gym-globes:before {
+  content: "\f11b"; }
+
+.fitnessIcons-gym-hand-grip:before {
+  content: "\f11c"; }
+
+.fitnessIcons-gym-jumprope:before {
+  content: "\f11d"; }
+
+.fitnessIcons-gym-kettlebell:before {
+  content: "\f11e"; }
+
+.fitnessIcons-gym-man-punch:before {
+  content: "\f11f"; }
+
+.fitnessIcons-gym-mat:before {
+  content: "\f120"; }
+
+.fitnessIcons-gym-notsure:before {
+  content: "\f121"; }
+
+.fitnessIcons-gym-punch:before {
+  content: "\f122"; }
+
+.fitnessIcons-gym-punch-2:before {
+  content: "\f123"; }
+
+.fitnessIcons-gym-pushup:before {
+  content: "\f124"; }
+
+.fitnessIcons-gym-rings:before {
+  content: "\f125"; }
+
+.fitnessIcons-gym-squats:before {
+  content: "\f126"; }
+
+.fitnessIcons-gym-stationary:before {
+  content: "\f127"; }
+
+.fitnessIcons-gym-treadmill:before {
+  content: "\f128"; }
+
+.fitnessIcons-gym-unkonwn:before {
+  content: "\f129"; }
+
+.fitnessIcons-healthy:before {
+  content: "\f12a"; }
+
+.fitnessIcons-man:before {
+  content: "\f12b"; }
+
+.fitnessIcons-medical:before {
+  content: "\f12c"; }
+
+.fitnessIcons-medical-1:before {
+  content: "\f12d"; }
+
+.fitnessIcons-motorcycle:before {
+  content: "\f12e"; }
+
+.fitnessIcons-people:before {
+  content: "\f12f"; }
+
+.fitnessIcons-people-1:before {
+  content: "\f130"; }
+
+.fitnessIcons-person:before {
+  content: "\f131"; }
+
+.fitnessIcons-play:before {
+  content: "\f132"; }
+
+.fitnessIcons-silhouette:before {
+  content: "\f133"; }
+
+.fitnessIcons-silhouette-1:before {
+  content: "\f134"; }
+
+.fitnessIcons-silhouette-2:before {
+  content: "\f135"; }
+
+.fitnessIcons-silhouette-3:before {
+  content: "\f136"; }
+
+.fitnessIcons-silhouette-4:before {
+  content: "\f137"; }
+
+.fitnessIcons-silhouette-5:before {
+  content: "\f138"; }
+
+.fitnessIcons-sport:before {
+  content: "\f139"; }
+
+.fitnessIcons-sport-1:before {
+  content: "\f13a"; }
+
+.fitnessIcons-sport-2:before {
+  content: "\f13b"; }
+
+.fitnessIcons-sport-3:before {
+  content: "\f13c"; }
+
+.fitnessIcons-sport-4:before {
+  content: "\f13d"; }
+
+.fitnessIcons-sport-5:before {
+  content: "\f13e"; }
+
+.fitnessIcons-sports:before {
+  content: "\f13f"; }
+
+.fitnessIcons-sports-1:before {
+  content: "\f140"; }
+
+.fitnessIcons-sports-2:before {
+  content: "\f141"; }
+
+.fitnessIcons-sports-3:before {
+  content: "\f142"; }
+
+.fitnessIcons-square:before {
+  content: "\f143"; }
+
+.fitnessIcons-star:before {
+  content: "\f144"; }
+
+.fitnessIcons-technology:before {
+  content: "\f145"; }
+
+.fitnessIcons-time:before {
+  content: "\f146"; }
+
+.fitnessIcons-tool:before {
+  content: "\f147"; }
+
+.fitnessIcons-tool-1:before {
+  content: "\f148"; }
+
+.fitnessIcons-tool-2:before {
+  content: "\f149"; }
+
+.fitnessIcons-tool-3:before {
+  content: "\f14a"; }
+
+.fitnessIcons-tool-4:before {
+  content: "\f14b"; }
+
+.fitnessIcons-transport:before {
+  content: "\f14c"; }
+
+.fitnessIcons-two:before {
+  content: "\f14d"; }
+
+.fitnessIcons-two-1:before {
+  content: "\f14e"; }
+
+.fitnessIcons-weather:before {
+  content: "\f14f"; }
+
+/*****************************************************
+* Food
+*
+******************************************************/
+/*
+  foodIcons icon font: foodIcons
+  Creation date: 17/03/2016 20:25
+  */
+/*
+  	food icon font: food
+  	Creation date: 19/02/2016 14:48
+  	*/
+@font-face {
+  font-family: "food";
+  src: url("../fonts/nomie-icons/food/food.eot");
+  src: url("../fonts/nomie-icons/food/food.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/food/food.woff") format("woff"), url("../fonts/nomie-icons/food/food.ttf") format("truetype"), url("../fonts/nomie-icons/food/food.svg#food") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "food";
+    src: url("../fonts/nomie-icons/food/food.svg#food") format("svg"); } }
+
+[class^="food-"]:before, [class*=" food-"]:before,
+[class^="food-"]:after, [class*=" food-"]:after {
+  font-family: food;
+  font-style: normal; }
+
+.food-aubergine:before {
+  content: "\f100"; }
+
+.food-bag-of-sugar:before {
+  content: "\f101"; }
+
+.food-baked-bun:before {
+  content: "\f102"; }
+
+.food-bell-covering-hot-dish:before {
+  content: "\f103"; }
+
+.food-boiled-egg-on-cup:before {
+  content: "\f104"; }
+
+.food-bowl-of-food:before {
+  content: "\f105"; }
+
+.food-bowl-of-noodles:before {
+  content: "\f106"; }
+
+.food-bowl-of-white-rice:before {
+  content: "\f107"; }
+
+.food-bowl-with-chopsticks:before {
+  content: "\f108"; }
+
+.food-broccoli-outline:before {
+  content: "\f109"; }
+
+.food-bunch-of-grapes:before {
+  content: "\f10a"; }
+
+.food-candy:before {
+  content: "\f10b"; }
+
+.food-cardboard-box-with-chopsticks:before {
+  content: "\f10c"; }
+
+.food-carrot:before {
+  content: "\f10d"; }
+
+.food-cart-wheel:before {
+  content: "\f10e"; }
+
+.food-cheese-grater:before {
+  content: "\f10f"; }
+
+.food-cherries:before {
+  content: "\f110"; }
+
+.food-chicken-leg:before {
+  content: "\f111"; }
+
+.food-cocktail-glass:before {
+  content: "\f112"; }
+
+.food-coffee-beans:before {
+  content: "\f113"; }
+
+.food-coffee-maker-with-coffee-cup:before {
+  content: "\f114"; }
+
+.food-corn-dog:before {
+  content: "\f115"; }
+
+.food-corn-snacks:before {
+  content: "\f116"; }
+
+.food-corncob:before {
+  content: "\f117"; }
+
+.food-croissant-outline:before {
+  content: "\f118"; }
+
+.food-crossed-knife-and-fork:before {
+  content: "\f119"; }
+
+.food-cubes:before {
+  content: "\f11a"; }
+
+.food-cutlery:before {
+  content: "\f11b"; }
+
+.food-ear-of-wheat:before {
+  content: "\f11c"; }
+
+.food-eggs:before {
+  content: "\f11d"; }
+
+.food-electric-mixer:before {
+  content: "\f11e"; }
+
+.food-empty-plate:before {
+  content: "\f11f"; }
+
+.food-filled-glass:before {
+  content: "\f120"; }
+
+.food-fish:before {
+  content: "\f121"; }
+
+.food-fried-egg:before {
+  content: "\f122"; }
+
+.food-fruits-on-branch:before {
+  content: "\f123"; }
+
+.food-garlic:before {
+  content: "\f124"; }
+
+.food-glass-of-alcoholic-beverage:before {
+  content: "\f125"; }
+
+.food-glass-of-drink:before {
+  content: "\f126"; }
+
+.food-ham:before {
+  content: "\f127"; }
+
+.food-hot-cup-of-tea:before {
+  content: "\f128"; }
+
+.food-hot-dog:before {
+  content: "\f129"; }
+
+.food-hot-pepper-outline:before {
+  content: "\f12a"; }
+
+.food-hot-soup:before {
+  content: "\f12b"; }
+
+.food-ice-cream-cone-with-three-scoops:before {
+  content: "\f12c"; }
+
+.food-ice-cream-with-topping:before {
+  content: "\f12d"; }
+
+.food-jar-for-measuring-liquids:before {
+  content: "\f12e"; }
+
+.food-jar-of-beer:before {
+  content: "\f12f"; }
+
+.food-jar-of-jam:before {
+  content: "\f130"; }
+
+.food-kitchen-scale:before {
+  content: "\f131"; }
+
+.food-knife-fork-and-plate:before {
+  content: "\f132"; }
+
+.food-lemon:before {
+  content: "\f133"; }
+
+.food-loaf-of-bread:before {
+  content: "\f134"; }
+
+.food-lollipop-candy:before {
+  content: "\f135"; }
+
+.food-meat-pie:before {
+  content: "\f136"; }
+
+.food-meat-steak:before {
+  content: "\f137"; }
+
+.food-mexican-taco:before {
+  content: "\f138"; }
+
+.food-mincer:before {
+  content: "\f139"; }
+
+.food-muffin:before {
+  content: "\f13a"; }
+
+.food-mushroom-outline:before {
+  content: "\f13b"; }
+
+.food-nachos-and-dish:before {
+  content: "\f13c"; }
+
+.food-onion:before {
+  content: "\f13d"; }
+
+.food-oven-mitt:before {
+  content: "\f13e"; }
+
+.food-pair-of-bananas:before {
+  content: "\f13f"; }
+
+.food-pair-of-bottles:before {
+  content: "\f140"; }
+
+.food-pasta-serving:before {
+  content: "\f141"; }
+
+.food-pear:before {
+  content: "\f142"; }
+
+.food-pepper:before {
+  content: "\f143"; }
+
+.food-piece-of-cake-with-berries:before {
+  content: "\f144"; }
+
+.food-piece-of-cake-with-berries-1:before {
+  content: "\f145"; }
+
+.food-piece-of-cheese:before {
+  content: "\f146"; }
+
+.food-pinecone:before {
+  content: "\f147"; }
+
+.food-plastic-coffee-cup:before {
+  content: "\f148"; }
+
+.food-pomegranate:before {
+  content: "\f149"; }
+
+.food-prawn:before {
+  content: "\f14a"; }
+
+.food-pumpkin:before {
+  content: "\f14b"; }
+
+.food-restaurant-tray:before {
+  content: "\f14c"; }
+
+.food-rice-bowl:before {
+  content: "\f14d"; }
+
+.food-roast-chicken:before {
+  content: "\f14e"; }
+
+.food-rolling-pin:before {
+  content: "\f14f"; }
+
+.food-round-bread:before {
+  content: "\f150"; }
+
+.food-salami:before {
+  content: "\f151"; }
+
+.food-sausage-and-fork:before {
+  content: "\f152"; }
+
+.food-skewer:before {
+  content: "\f153"; }
+
+.food-slice-of-bread:before {
+  content: "\f154"; }
+
+.food-slice-of-melon:before {
+  content: "\f155"; }
+
+.food-slice-of-pizza:before {
+  content: "\f156"; }
+
+.food-slice-of-watermelon:before {
+  content: "\f157"; }
+
+.food-smoking-barbecue:before {
+  content: "\f158"; }
+
+.food-soft-drink-in-paper-cup-with-drinking-straw:before {
+  content: "\f159"; }
+
+.food-soft-drink-with-straw:before {
+  content: "\f15a"; }
+
+.food-soup-ladle:before {
+  content: "\f15b"; }
+
+.food-spatula:before {
+  content: "\f15c"; }
+
+.food-strawberry:before {
+  content: "\f15d"; }
+
+.food-tea-bag:before {
+  content: "\f15e"; }
+
+.food-tetra-brik-with-cap:before {
+  content: "\f15f"; }
+
+.food-tomato:before {
+  content: "\f160"; }
+
+.food-toque:before {
+  content: "\f161"; }
+
+.food-wedding-cake:before {
+  content: "\f162"; }
+
+.food-wine-glass:before {
+  content: "\f163"; }
+
+@font-face {
+  font-family: "foodIcons";
+  src: url("../fonts/nomie-icons/foodIcons/foodIcons.eot");
+  src: url("../fonts/nomie-icons/foodIcons/foodIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/foodIcons/foodIcons.woff") format("woff"), url("../fonts/nomie-icons/foodIcons/foodIcons.ttf") format("truetype"), url("../fonts/nomie-icons/foodIcons/foodIcons.svg#foodIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "foodIcons";
+    src: url("../fonts/nomie-icons/foodIcons/foodIcons.svg#foodIcons") format("svg"); } }
+
+[class^="foodIcons-"]:before, [class*=" foodIcons-"]:before,
+[class^="foodIcons-"]:after, [class*=" foodIcons-"]:after {
+  font-family: foodIcons;
+  font-style: normal; }
+
+.foodIcons-apple:before {
+  content: "\f100"; }
+
+.foodIcons-avacado:before {
+  content: "\f101"; }
+
+.foodIcons-banana:before {
+  content: "\f102"; }
+
+.foodIcons-berry:before {
+  content: "\f103"; }
+
+.foodIcons-bread:before {
+  content: "\f104"; }
+
+.foodIcons-bread-1:before {
+  content: "\f105"; }
+
+.foodIcons-candy:before {
+  content: "\f106"; }
+
+.foodIcons-candy-1:before {
+  content: "\f107"; }
+
+.foodIcons-carrot:before {
+  content: "\f108"; }
+
+.foodIcons-cheese:before {
+  content: "\f109"; }
+
+.foodIcons-cookie:before {
+  content: "\f10a"; }
+
+.foodIcons-dounut:before {
+  content: "\f10b"; }
+
+.foodIcons-egg:before {
+  content: "\f10c"; }
+
+.foodIcons-fix:before {
+  content: "\f10d"; }
+
+.foodIcons-food-fries:before {
+  content: "\f10e"; }
+
+.foodIcons-food-mushroom:before {
+  content: "\f10f"; }
+
+.foodIcons-food-nanchos:before {
+  content: "\f110"; }
+
+.foodIcons-food-pepper:before {
+  content: "\f111"; }
+
+.foodIcons-food-purple:before {
+  content: "\f112"; }
+
+.foodIcons-food-radish:before {
+  content: "\f113"; }
+
+.foodIcons-food-tomato:before {
+  content: "\f114"; }
+
+.foodIcons-foodstand:before {
+  content: "\f115"; }
+
+.foodIcons-grill:before {
+  content: "\f116"; }
+
+.foodIcons-ham:before {
+  content: "\f117"; }
+
+.foodIcons-hotdog:before {
+  content: "\f118"; }
+
+.foodIcons-icecream:before {
+  content: "\f119"; }
+
+.foodIcons-junk:before {
+  content: "\f11a"; }
+
+.foodIcons-milk:before {
+  content: "\f11b"; }
+
+.foodIcons-milk-1:before {
+  content: "\f11c"; }
+
+.foodIcons-onion:before {
+  content: "\f11d"; }
+
+.foodIcons-pear:before {
+  content: "\f11e"; }
+
+.foodIcons-peas:before {
+  content: "\f11f"; }
+
+.foodIcons-peppers:before {
+  content: "\f120"; }
+
+.foodIcons-pie:before {
+  content: "\f121"; }
+
+.foodIcons-pizza:before {
+  content: "\f122"; }
+
+.foodIcons-popcorn:before {
+  content: "\f123"; }
+
+.foodIcons-rice:before {
+  content: "\f124"; }
+
+.foodIcons-soda:before {
+  content: "\f125"; }
+
+.foodIcons-sodia:before {
+  content: "\f126"; }
+
+.foodIcons-soup:before {
+  content: "\f127"; }
+
+.foodIcons-stew:before {
+  content: "\f128"; }
+
+.foodIcons-strawberry:before {
+  content: "\f129"; }
+
+.foodIcons-sushi:before {
+  content: "\f12a"; }
+
+.foodIcons-taco:before {
+  content: "\f12b"; }
+
+.foodIcons-turkey:before {
+  content: "\f12c"; }
+
+.foodIcons-unknownfood:before {
+  content: "\f12d"; }
+
+.foodIcons-vegtable-olive:before {
+  content: "\f12e"; }
+
+.foodIcons-wheat:before {
+  content: "\f12f"; }
+
+/*****************************************************
+* Medical;
+*
+******************************************************/
+/*
+  medicalIcons icon font: medicalIcons
+  Creation date: 19/02/2016 14:46
+  */
+@font-face {
+  font-family: "medicalIcons";
+  src: url("../fonts/nomie-icons/medicalIcons/medicalIcons.eot");
+  src: url("../fonts/nomie-icons/medicalIcons/medicalIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/medicalIcons/medicalIcons.woff") format("woff"), url("../fonts/nomie-icons/medicalIcons/medicalIcons.ttf") format("truetype"), url("../fonts/nomie-icons/medicalIcons/medicalIcons.svg#medicalIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "medicalIcons";
+    src: url("../fonts/nomie-icons/medicalIcons/medicalIcons.svg#medicalIcons") format("svg"); } }
+
+[class^="medicalIcons-"]:before, [class*=" medicalIcons-"]:before,
+[class^="medicalIcons-"]:after, [class*=" medicalIcons-"]:after {
+  font-family: medicalIcons;
+  font-style: normal; }
+
+.medicalIcons-ambulance:before {
+  content: "\f100"; }
+
+.medicalIcons-baby-face:before {
+  content: "\f101"; }
+
+.medicalIcons-bandage-cross:before {
+  content: "\f102"; }
+
+.medicalIcons-biohazard:before {
+  content: "\f103"; }
+
+.medicalIcons-biology-shape:before {
+  content: "\f104"; }
+
+.medicalIcons-blood-analysis:before {
+  content: "\f105"; }
+
+.medicalIcons-blood-cell:before {
+  content: "\f106"; }
+
+.medicalIcons-blood-drop:before {
+  content: "\f107"; }
+
+.medicalIcons-blood-pressure-control-tool:before {
+  content: "\f108"; }
+
+.medicalIcons-blood-sample:before {
+  content: "\f109"; }
+
+.medicalIcons-blood-transfusion:before {
+  content: "\f10a"; }
+
+.medicalIcons-brain-in-bald-male-head:before {
+  content: "\f10b"; }
+
+.medicalIcons-broken-bone:before {
+  content: "\f10c"; }
+
+.medicalIcons-broken-feet-with-bandage:before {
+  content: "\f10d"; }
+
+.medicalIcons-brush-with-tooth-paste:before {
+  content: "\f10e"; }
+
+.medicalIcons-caduceus-medical-symbol-of-two-ascending-serpents-on-a-cane-with-wings:before {
+  content: "\f10f"; }
+
+.medicalIcons-cells-in-a-circle:before {
+  content: "\f110"; }
+
+.medicalIcons-chemistry-flask-with-liquid:before {
+  content: "\f111"; }
+
+.medicalIcons-crutch:before {
+  content: "\f112"; }
+
+.medicalIcons-crutches-couple:before {
+  content: "\f113"; }
+
+.medicalIcons-dentist-tool:before {
+  content: "\f114"; }
+
+.medicalIcons-dosage-medical-tool:before {
+  content: "\f115"; }
+
+.medicalIcons-drug-pills:before {
+  content: "\f116"; }
+
+.medicalIcons-drugs-capsules-and-pills:before {
+  content: "\f117"; }
+
+.medicalIcons-emergency-light:before {
+  content: "\f118"; }
+
+.medicalIcons-eye-scanner-medical-symbol:before {
+  content: "\f119"; }
+
+.medicalIcons-family-of-heterosexual-couple:before {
+  content: "\f11a"; }
+
+.medicalIcons-female-sign:before {
+  content: "\f11b"; }
+
+.medicalIcons-first-aid-kit:before {
+  content: "\f11c"; }
+
+.medicalIcons-handicap:before {
+  content: "\f11d"; }
+
+.medicalIcons-heart-beats-lifeline-in-a-heart:before {
+  content: "\f11e"; }
+
+.medicalIcons-heart-black-shape:before {
+  content: "\f11f"; }
+
+.medicalIcons-heart-rate-monitor:before {
+  content: "\f120"; }
+
+.medicalIcons-hospital-bed-silhouette-side-view:before {
+  content: "\f121"; }
+
+.medicalIcons-hospital-building-front:before {
+  content: "\f122"; }
+
+.medicalIcons-hospital-letter-sign-in-rounded-square:before {
+  content: "\f123"; }
+
+.medicalIcons-hospital-medical-signal-of-a-cross-in-a-circle:before {
+  content: "\f124"; }
+
+.medicalIcons-hospital-placeholder:before {
+  content: "\f125"; }
+
+.medicalIcons-human-ear-shape:before {
+  content: "\f126"; }
+
+.medicalIcons-human-eye-shape:before {
+  content: "\f127"; }
+
+.medicalIcons-human-feet-shape:before {
+  content: "\f128"; }
+
+.medicalIcons-hurted-finger-with-bandage:before {
+  content: "\f129"; }
+
+.medicalIcons-illness-on-bed:before {
+  content: "\f12a"; }
+
+.medicalIcons-lifeline-of-heartbeats-on-a-paper-on-a-clipboard:before {
+  content: "\f12b"; }
+
+.medicalIcons-lungs-silhouette:before {
+  content: "\f12c"; }
+
+.medicalIcons-male-gender-sign:before {
+  content: "\f12d"; }
+
+.medicalIcons-medical-chain-symbol-of-dna:before {
+  content: "\f12e"; }
+
+.medicalIcons-medical-chopper-transport:before {
+  content: "\f12f"; }
+
+.medicalIcons-medical-circular-glasses:before {
+  content: "\f130"; }
+
+.medicalIcons-medical-doctor-specialist:before {
+  content: "\f131"; }
+
+.medicalIcons-medical-hammer-tool:before {
+  content: "\f132"; }
+
+.medicalIcons-medical-heart-scan:before {
+  content: "\f133"; }
+
+.medicalIcons-medical-notes-symbol-of-a-list-paper-on-a-clipboard:before {
+  content: "\f134"; }
+
+.medicalIcons-medical-pill:before {
+  content: "\f135"; }
+
+.medicalIcons-medical-results-folders:before {
+  content: "\f136"; }
+
+.medicalIcons-medical-samples-in-test-tubes-couple:before {
+  content: "\f137"; }
+
+.medicalIcons-medical-talk-symbol-of-rectangular-speech-bubble-with-a-cross-inside:before {
+  content: "\f138"; }
+
+.medicalIcons-medical-temperature-control-tool:before {
+  content: "\f139"; }
+
+.medicalIcons-medicine-capsules:before {
+  content: "\f13a"; }
+
+.medicalIcons-medicine-small-bottle-with-dropper-included-for-drops-dosage:before {
+  content: "\f13b"; }
+
+.medicalIcons-medicines-bowl:before {
+  content: "\f13c"; }
+
+.medicalIcons-men-silhouette:before {
+  content: "\f13d"; }
+
+.medicalIcons-microscope-tool:before {
+  content: "\f13e"; }
+
+.medicalIcons-mother-with-baby-in-arms:before {
+  content: "\f13f"; }
+
+.medicalIcons-mouth-tube-in-bald-male-head:before {
+  content: "\f140"; }
+
+.medicalIcons-negative-sign-on-medical-clipboard:before {
+  content: "\f141"; }
+
+.medicalIcons-nurse:before {
+  content: "\f142"; }
+
+.medicalIcons-nurse-1:before {
+  content: "\f143"; }
+
+.medicalIcons-opened-medical-scissors:before {
+  content: "\f144"; }
+
+.medicalIcons-oxygen:before {
+  content: "\f145"; }
+
+.medicalIcons-person-with-broken-arm:before {
+  content: "\f146"; }
+
+.medicalIcons-pharmacy-shopping-cart:before {
+  content: "\f147"; }
+
+.medicalIcons-pharmacy-symbol:before {
+  content: "\f148"; }
+
+.medicalIcons-pharmacy-tool:before {
+  content: "\f149"; }
+
+.medicalIcons-poison-bottle-with-a-skull-symbol:before {
+  content: "\f14a"; }
+
+.medicalIcons-positive-verified-symbol-of-a-clipboard:before {
+  content: "\f14b"; }
+
+.medicalIcons-pregnancy:before {
+  content: "\f14c"; }
+
+.medicalIcons-pulse-line:before {
+  content: "\f14d"; }
+
+.medicalIcons-rolled-paper-for-bathroom:before {
+  content: "\f14e"; }
+
+.medicalIcons-scale-balanced-tool:before {
+  content: "\f14f"; }
+
+.medicalIcons-scale-tool-to-control-body-weight-standing-on-it:before {
+  content: "\f150"; }
+
+.medicalIcons-scalpel-or-knife-medical-surgery-cutting-tool:before {
+  content: "\f151"; }
+
+.medicalIcons-screw:before {
+  content: "\f152"; }
+
+.medicalIcons-sperm:before {
+  content: "\f153"; }
+
+.medicalIcons-stethoscope-medical-heart-beats-control-tool:before {
+  content: "\f154"; }
+
+.medicalIcons-stomach-shape:before {
+  content: "\f155"; }
+
+.medicalIcons-symbolic-cancer-ribbon:before {
+  content: "\f156"; }
+
+.medicalIcons-syringe-with-medicine:before {
+  content: "\f157"; }
+
+.medicalIcons-syrup-medicine-bottle:before {
+  content: "\f158"; }
+
+.medicalIcons-tag-with-a-cross:before {
+  content: "\f159"; }
+
+.medicalIcons-teeth-silhouette:before {
+  content: "\f15a"; }
+
+.medicalIcons-thermometer-medical-fever-temperature-control-tool:before {
+  content: "\f15b"; }
+
+.medicalIcons-three-hexagons-cell-symbol:before {
+  content: "\f15c"; }
+
+.medicalIcons-toxic-symbol:before {
+  content: "\f15d"; }
+
+.medicalIcons-unhealthy-medical-condition:before {
+  content: "\f15e"; }
+
+.medicalIcons-united-heterosexual-symbols:before {
+  content: "\f15f"; }
+
+.medicalIcons-water-glass:before {
+  content: "\f160"; }
+
+.medicalIcons-weight-silhouette-for-medical-sport-practice:before {
+  content: "\f161"; }
+
+.medicalIcons-women-silhouette:before {
+  content: "\f162"; }
+
+.medicalIcons-x-ray-of-bones:before {
+  content: "\f163"; }
+
+/*****************************************************
+* Personal
+*
+******************************************************/
+/*
+  personal icon font: personal
+  Creation date: 28/03/2016 04:39
+  */
+@font-face {
+  font-family: "personal";
+  src: url("../fonts/nomie-icons/personal/personal.eot");
+  src: url("../fonts/nomie-icons/personal/personal.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/personal/personal.woff") format("woff"), url("../fonts/nomie-icons/personal/personal.ttf") format("truetype"), url("../fonts/nomie-icons/personal/personal.svg#personal") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "personal";
+    src: url("../fonts/nomie-icons/personal/personal.svg#personal") format("svg"); } }
+
+[class^="personal-"]:before, [class*=" personal-"]:before,
+[class^="personal-"]:after, [class*=" personal-"]:after {
+  font-family: personal;
+  font-style: normal; }
+
+.personal-bathroom:before {
+  content: "\f100"; }
+
+.personal-body:before {
+  content: "\f101"; }
+
+.personal-gender-both:before {
+  content: "\f102"; }
+
+.personal-gender-gay:before {
+  content: "\f103"; }
+
+.personal-gender-lesbian:before {
+  content: "\f104"; }
+
+.personal-logo:before {
+  content: "\f105"; }
+
+.personal-love:before {
+  content: "\f106"; }
+
+.personal-love-1:before {
+  content: "\f107"; }
+
+.personal-love-2:before {
+  content: "\f108"; }
+
+.personal-love-3:before {
+  content: "\f109"; }
+
+.personal-love-bed:before {
+  content: "\f10a"; }
+
+.personal-love-bird:before {
+  content: "\f10b"; }
+
+.personal-love-bottle:before {
+  content: "\f10c"; }
+
+.personal-love-boy:before {
+  content: "\f10d"; }
+
+.personal-love-camera:before {
+  content: "\f10e"; }
+
+.personal-love-coffee:before {
+  content: "\f10f"; }
+
+.personal-love-dance:before {
+  content: "\f110"; }
+
+.personal-love-dinner:before {
+  content: "\f111"; }
+
+.personal-love-fav:before {
+  content: "\f112"; }
+
+.personal-love-flower:before {
+  content: "\f113"; }
+
+.personal-love-flower-1:before {
+  content: "\f114"; }
+
+.personal-love-food:before {
+  content: "\f115"; }
+
+.personal-love-gift:before {
+  content: "\f116"; }
+
+.personal-love-girl:before {
+  content: "\f117"; }
+
+.personal-love-men:before {
+  content: "\f118"; }
+
+.personal-love-note:before {
+  content: "\f119"; }
+
+.personal-love-notes:before {
+  content: "\f11a"; }
+
+.personal-love-people:before {
+  content: "\f11b"; }
+
+.personal-love-people-1:before {
+  content: "\f11c"; }
+
+.personal-love-people-2:before {
+  content: "\f11d"; }
+
+.personal-love-people-3:before {
+  content: "\f11e"; }
+
+.personal-love-position:before {
+  content: "\f11f"; }
+
+.personal-love-search:before {
+  content: "\f120"; }
+
+.personal-love-shape:before {
+  content: "\f121"; }
+
+.personal-love-sign:before {
+  content: "\f122"; }
+
+.personal-love-sign-1:before {
+  content: "\f123"; }
+
+.personal-love-sign-2:before {
+  content: "\f124"; }
+
+.personal-love-sign-3:before {
+  content: "\f125"; }
+
+.personal-love-talk:before {
+  content: "\f126"; }
+
+.personal-meds-bottle:before {
+  content: "\f127"; }
+
+.personal-meds-marijuana:before {
+  content: "\f128"; }
+
+.personal-meds-pill:before {
+  content: "\f129"; }
+
+.personal-meds-shootup:before {
+  content: "\f12a"; }
+
+.personal-meds-smoke-cig:before {
+  content: "\f12b"; }
+
+.personal-meds-weed:before {
+  content: "\f12c"; }
+
+.personal-sex-bed:before {
+  content: "\f12d"; }
+
+.personal-sex-black-penis:before {
+  content: "\f12e"; }
+
+.personal-sex-clamp:before {
+  content: "\f12f"; }
+
+.personal-sex-dick:before {
+  content: "\f130"; }
+
+.personal-sex-dick-1:before {
+  content: "\f131"; }
+
+.personal-sex-dress:before {
+  content: "\f132"; }
+
+.personal-sex-gear:before {
+  content: "\f133"; }
+
+.personal-sex-gear-1:before {
+  content: "\f134"; }
+
+.personal-sex-gear-2:before {
+  content: "\f135"; }
+
+.personal-sex-gear-3:before {
+  content: "\f136"; }
+
+.personal-sex-gear-4:before {
+  content: "\f137"; }
+
+.personal-sex-gear-5:before {
+  content: "\f138"; }
+
+.personal-sex-handcuff:before {
+  content: "\f139"; }
+
+.personal-sex-mind:before {
+  content: "\f13a"; }
+
+.personal-sex-naked:before {
+  content: "\f13b"; }
+
+.personal-sex-naked-1:before {
+  content: "\f13c"; }
+
+.personal-sex-penis:before {
+  content: "\f13d"; }
+
+.personal-sex-rope:before {
+  content: "\f13e"; }
+
+.personal-wc-bath:before {
+  content: "\f13f"; }
+
+.personal-wc-bath-1:before {
+  content: "\f140"; }
+
+.personal-wc-brush:before {
+  content: "\f141"; }
+
+.personal-wc-pee:before {
+  content: "\f142"; }
+
+.personal-wc-people:before {
+  content: "\f143"; }
+
+.personal-wc-poop:before {
+  content: "\f144"; }
+
+.personal-wc-poop-1:before {
+  content: "\f145"; }
+
+.personal-wc-shave:before {
+  content: "\f146"; }
+
+.personal-wc-shower:before {
+  content: "\f147"; }
+
+.personal-wc-sign:before {
+  content: "\f148"; }
+
+.personal-wc-soap:before {
+  content: "\f149"; }
+
+.personal-wc-toilet:before {
+  content: "\f14a"; }
+
+.personal-wc-toilet-1:before {
+  content: "\f14b"; }
+
+.personal-wc-toilet-2:before {
+  content: "\f14c"; }
+
+.personal-wc-tool:before {
+  content: "\f14d"; }
+
+.personal-wc-tool-1:before {
+  content: "\f14e"; }
+
+.personal-wc-tool-2:before {
+  content: "\f14f"; }
+
+.personal-wc-tools:before {
+  content: "\f150"; }
+
+.personal-wc-women:before {
+  content: "\f151"; }
+
+/*****************************************************
+* Sweet
+*
+******************************************************/
+/*
+  sweetIcons icon font: sweetIcons
+  Creation date: 17/03/2016 11:23
+  */
+@font-face {
+  font-family: "sweetIcons";
+  src: url("../fonts/nomie-icons/sweetIcons/sweetIcons.eot");
+  src: url("../fonts/nomie-icons/sweetIcons/sweetIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/sweetIcons/sweetIcons.woff") format("woff"), url("../fonts/nomie-icons/sweetIcons/sweetIcons.ttf") format("truetype"), url("../fonts/nomie-icons/sweetIcons/sweetIcons.svg#sweetIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "sweetIcons";
+    src: url("../fonts/nomie-icons/sweetIcons/sweetIcons.svg#sweetIcons") format("svg"); } }
+
+[class^="sweetIcons-"]:before, [class*=" sweetIcons-"]:before,
+[class^="sweetIcons-"]:after, [class*=" sweetIcons-"]:after {
+  font-family: sweetIcons;
+  font-style: normal; }
+
+.sweetIcons-cake:before {
+  content: "\f100"; }
+
+.sweetIcons-cake-1:before {
+  content: "\f101"; }
+
+.sweetIcons-cake-slice:before {
+  content: "\f102"; }
+
+.sweetIcons-cake-slice-1:before {
+  content: "\f103"; }
+
+.sweetIcons-cake-slice-2:before {
+  content: "\f104"; }
+
+.sweetIcons-candies:before {
+  content: "\f105"; }
+
+.sweetIcons-candies-1:before {
+  content: "\f106"; }
+
+.sweetIcons-candy:before {
+  content: "\f107"; }
+
+.sweetIcons-candy-1:before {
+  content: "\f108"; }
+
+.sweetIcons-candy-2:before {
+  content: "\f109"; }
+
+.sweetIcons-candy-3:before {
+  content: "\f10a"; }
+
+.sweetIcons-candy-4:before {
+  content: "\f10b"; }
+
+.sweetIcons-chocolate:before {
+  content: "\f10c"; }
+
+.sweetIcons-chocolate-1:before {
+  content: "\f10d"; }
+
+.sweetIcons-chocolate-2:before {
+  content: "\f10e"; }
+
+.sweetIcons-chocolate-3:before {
+  content: "\f10f"; }
+
+.sweetIcons-chocolate-4:before {
+  content: "\f110"; }
+
+.sweetIcons-chocolate-5:before {
+  content: "\f111"; }
+
+.sweetIcons-cotton-candy:before {
+  content: "\f112"; }
+
+.sweetIcons-cupcake:before {
+  content: "\f113"; }
+
+.sweetIcons-cupcake-1:before {
+  content: "\f114"; }
+
+.sweetIcons-cupcake-2:before {
+  content: "\f115"; }
+
+.sweetIcons-cupcake-3:before {
+  content: "\f116"; }
+
+.sweetIcons-donut:before {
+  content: "\f117"; }
+
+.sweetIcons-honey:before {
+  content: "\f118"; }
+
+.sweetIcons-ice-cream:before {
+  content: "\f119"; }
+
+.sweetIcons-ice-cream-1:before {
+  content: "\f11a"; }
+
+.sweetIcons-ice-cream-2:before {
+  content: "\f11b"; }
+
+.sweetIcons-ice-cream-3:before {
+  content: "\f11c"; }
+
+.sweetIcons-ice-cream-4:before {
+  content: "\f11d"; }
+
+.sweetIcons-ice-cream-5:before {
+  content: "\f11e"; }
+
+.sweetIcons-ice-cream-6:before {
+  content: "\f11f"; }
+
+.sweetIcons-ice-cream-7:before {
+  content: "\f120"; }
+
+.sweetIcons-jam:before {
+  content: "\f121"; }
+
+.sweetIcons-jelly:before {
+  content: "\f122"; }
+
+.sweetIcons-lollipop:before {
+  content: "\f123"; }
+
+.sweetIcons-lollipop-1:before {
+  content: "\f124"; }
+
+.sweetIcons-lollipop-2:before {
+  content: "\f125"; }
+
+.sweetIcons-marshmallows:before {
+  content: "\f126"; }
+
+.sweetIcons-mint:before {
+  content: "\f127"; }
+
+/*****************************************************
+* Work
+*
+******************************************************/
+/*
+  workIcons icon font: workIcons
+  Creation date: 17/03/2016 20:04
+  */
+@font-face {
+  font-family: "workIcons";
+  src: url("../fonts/nomie-icons/workIcons/workIcons.eot");
+  src: url("../fonts/nomie-icons/workIcons/workIcons.eot?#iefix") format("embedded-opentype"), url("../fonts/nomie-icons/workIcons/workIcons.woff") format("woff"), url("../fonts/nomie-icons/workIcons/workIcons.ttf") format("truetype"), url("../fonts/nomie-icons/workIcons/workIcons.svg#workIcons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "workIcons";
+    src: url("../fonts/nomie-icons/workIcons/workIcons.svg#workIcons") format("svg"); } }
+
+[class^="workIcons-"]:before, [class*=" workIcons-"]:before,
+[class^="workIcons-"]:after, [class*=" workIcons-"]:after {
+  font-family: workIcons;
+  font-style: normal; }
+
+.workIcons-agenda:before {
+  content: "\f100"; }
+
+.workIcons-agenda-1:before {
+  content: "\f101"; }
+
+.workIcons-arrow:before {
+  content: "\f102"; }
+
+.workIcons-arrow-1:before {
+  content: "\f103"; }
+
+.workIcons-briefcase:before {
+  content: "\f104"; }
+
+.workIcons-briefcase-1:before {
+  content: "\f105"; }
+
+.workIcons-business:before {
+  content: "\f106"; }
+
+.workIcons-business-1:before {
+  content: "\f107"; }
+
+.workIcons-business-2:before {
+  content: "\f108"; }
+
+.workIcons-business-3:before {
+  content: "\f109"; }
+
+.workIcons-business-4:before {
+  content: "\f10a"; }
+
+.workIcons-business-5:before {
+  content: "\f10b"; }
+
+.workIcons-chair:before {
+  content: "\f10c"; }
+
+.workIcons-check:before {
+  content: "\f10d"; }
+
+.workIcons-check-1:before {
+  content: "\f10e"; }
+
+.workIcons-clock:before {
+  content: "\f10f"; }
+
+.workIcons-clock-1:before {
+  content: "\f110"; }
+
+.workIcons-clock-2:before {
+  content: "\f111"; }
+
+.workIcons-clock-3:before {
+  content: "\f112"; }
+
+.workIcons-clock-4:before {
+  content: "\f113"; }
+
+.workIcons-clock-5:before {
+  content: "\f114"; }
+
+.workIcons-coins:before {
+  content: "\f115"; }
+
+.workIcons-computer:before {
+  content: "\f116"; }
+
+.workIcons-computer-1:before {
+  content: "\f117"; }
+
+.workIcons-computer-2:before {
+  content: "\f118"; }
+
+.workIcons-cup:before {
+  content: "\f119"; }
+
+.workIcons-education:before {
+  content: "\f11a"; }
+
+.workIcons-eye:before {
+  content: "\f11b"; }
+
+.workIcons-folder:before {
+  content: "\f11c"; }
+
+.workIcons-food:before {
+  content: "\f11d"; }
+
+.workIcons-food-1:before {
+  content: "\f11e"; }
+
+.workIcons-justice:before {
+  content: "\f11f"; }
+
+.workIcons-letter:before {
+  content: "\f120"; }
+
+.workIcons-location:before {
+  content: "\f121"; }
+
+.workIcons-message:before {
+  content: "\f122"; }
+
+.workIcons-money:before {
+  content: "\f123"; }
+
+.workIcons-money-1:before {
+  content: "\f124"; }
+
+.workIcons-money-2:before {
+  content: "\f125"; }
+
+.workIcons-nature:before {
+  content: "\f126"; }
+
+.workIcons-people:before {
+  content: "\f127"; }
+
+.workIcons-people-1:before {
+  content: "\f128"; }
+
+.workIcons-people-2:before {
+  content: "\f129"; }
+
+.workIcons-people-3:before {
+  content: "\f12a"; }
+
+.workIcons-people-4:before {
+  content: "\f12b"; }
+
+.workIcons-people-5:before {
+  content: "\f12c"; }
+
+.workIcons-people-6:before {
+  content: "\f12d"; }
+
+.workIcons-restaurant:before {
+  content: "\f12e"; }
+
+.workIcons-science:before {
+  content: "\f12f"; }
+
+.workIcons-social:before {
+  content: "\f130"; }
+
+.workIcons-speedometer:before {
+  content: "\f131"; }
+
+.workIcons-sport:before {
+  content: "\f132"; }
+
+.workIcons-sports:before {
+  content: "\f133"; }
+
+.workIcons-symbol:before {
+  content: "\f134"; }
+
+.workIcons-target:before {
+  content: "\f135"; }
+
+.workIcons-target-1:before {
+  content: "\f136"; }
+
+.workIcons-technology:before {
+  content: "\f137"; }
+
+.workIcons-technology-1:before {
+  content: "\f138"; }
+
+.workIcons-technology-2:before {
+  content: "\f139"; }
+
+.workIcons-technology-3:before {
+  content: "\f13a"; }
+
+.workIcons-technology-4:before {
+  content: "\f13b"; }
+
+.workIcons-time:before {
+  content: "\f13c"; }
+
+.workIcons-transport:before {
+  content: "\f13d"; }
+
+@font-face {
+  font-family: 'fontello';
+  src: url('../fonts/nomie-icons/fontello/fontello.eot?93871352');
+  src: url('../fonts/nomie-icons/fontello/fontello.eot?93871352#iefix') format('embedded-opentype'),
+  url('../fonts/nomie-icons/fontello/fontello.woff?93871352') format('woff'),
+  url('../fonts/nomie-icons/fontello/fontello.ttf?93871352') format('truetype'),
+  url('../fonts/nomie-icons/fontello/fontello.svg?93871352#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'fontello';
+    src: url('../font/fontello.svg?93871352#fontello') format('svg');
+  }
+}
+*/
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.icon-emo-happy:before { content: '\e800'; } /* 'î €' */
+.icon-emo-wink:before { content: '\e801'; } /* 'î ' */
+.icon-emo-wink2:before { content: '\e802'; } /* 'î ‚' */
+.icon-emo-unhappy:before { content: '\e803'; } /* 'î ƒ' */
+.icon-emo-sleep:before { content: '\e804'; } /* 'î „' */
+.icon-emo-thumbsup:before { content: '\e805'; } /* 'î …' */
+.icon-emo-devil:before { content: '\e806'; } /* 'î †' */
+.icon-emo-surprised:before { content: '\e807'; } /* 'î ‡' */
+.icon-emo-tongue:before { content: '\e808'; } /* 'î ˆ' */
+.icon-emo-coffee:before { content: '\e809'; } /* 'î ‰' */
+.icon-emo-sunglasses:before { content: '\e80a'; } /* 'î Š' */
+.icon-emo-grin:before { content: '\e80b'; } /* 'î ‹' */
+.icon-emo-beer:before { content: '\e80c'; } /* 'î Œ' */
+.icon-emo-displeased:before { content: '\e80d'; } /* 'î ' */
+.icon-emo-angry:before { content: '\e80e'; } /* 'î Ž' */
+.icon-emo-saint:before { content: '\e80f'; } /* 'î ' */
+.icon-emo-cry:before { content: '\e810'; } /* 'î ' */
+.icon-emo-shoot:before { content: '\e811'; } /* 'î ‘' */
+.icon-emo-squint:before { content: '\e812'; } /* 'î ’' */
+.icon-emo-laugh:before { content: '\e813'; } /* 'î “' */
+.icon-crown-minus:before { content: '\e814'; } /* 'î ”' */
+.icon-crown-plus:before { content: '\e815'; } /* 'î •' */
+.icon-crown:before { content: '\e816'; } /* 'î –' */
+.icon-spin6:before { content: '\e817'; } /* 'î —' */
+.icon-marquee:before { content: '\e818'; } /* 'î ˜' */
+.icon-rain:before { content: '\e819'; } /* 'î ™' */
+.icon-cloud-sun:before { content: '\e81a'; } /* 'î š' */
+.icon-video:before { content: '\e81b'; } /* 'î ›' */
+.icon-flashlight:before { content: '\e81c'; } /* 'î œ' */
+.icon-picture:before { content: '\e81d'; } /* 'î ' */
+.icon-attach:before { content: '\e81e'; } /* 'î ž' */
+.icon-logo-db:before { content: '\e81f'; } /* 'î Ÿ' */
+.icon-traffic-cone:before { content: '\e820'; } /* 'î  ' */
+.icon-water:before { content: '\e821'; } /* 'î ¡' */
+.icon-air:before { content: '\e822'; } /* 'î ¢' */
+.icon-credit-card:before { content: '\e823'; } /* 'î £' */
+.icon-clipboard:before { content: '\e824'; } /* 'î ¤' */
+.icon-drizzle:before { content: '\e825'; } /* 'î ¥' */
+.icon-snow:before { content: '\e826'; } /* 'î ¦' */
+.icon-cloud-wind:before { content: '\e827'; } /* 'î §' */
+.icon-cloud-flash:before { content: '\e828'; } /* 'î ¨' */
+.icon-wind:before { content: '\e829'; } /* 'î ©' */
+.icon-music-outline:before { content: '\e82a'; } /* 'î ª' */
+.icon-music:before { content: '\e82b'; } /* 'î «' */
+.icon-religious-christian:before { content: '\e82c'; } /* 'î ¬' */
+.icon-religious-islam:before { content: '\e82d'; } /* 'î ­' */
+.icon-religious-jewish:before { content: '\e82e'; } /* 'î ®' */
+.icon-rail:before { content: '\e82f'; } /* 'î ¯' */
+.icon-prison:before { content: '\e830'; } /* 'î °' */
+.icon-police:before { content: '\e831'; } /* 'î ±' */
+.icon-pitch:before { content: '\e832'; } /* 'î ²' */
+.icon-school:before { content: '\e833'; } /* 'î ³' */
+.icon-restaurant:before { content: '\e834'; } /* 'î ´' */
+.icon-shop:before { content: '\e835'; } /* 'î µ' */
+.icon-skiing:before { content: '\e836'; } /* 'î ¶' */
+.icon-soccer:before { content: '\e837'; } /* 'î ·' */
+.icon-swimming:before { content: '\e838'; } /* 'î ¸' */
+.icon-tennis:before { content: '\e839'; } /* 'î ¹' */
+.icon-theatre:before { content: '\e83a'; } /* 'î º' */
+.icon-toilet:before { content: '\e83b'; } /* 'î »' */
+.icon-town-hall:before { content: '\e83c'; } /* 'î ¼' */
+.icon-trash:before { content: '\e83d'; } /* 'î ½' */
+.icon-pharmacy:before { content: '\e83e'; } /* 'î ¾' */
+.icon-museum:before { content: '\e83f'; } /* 'î ¿' */
+.icon-monument:before { content: '\e840'; } /* 'î¡€' */
+.icon-minefield:before { content: '\e841'; } /* 'î¡' */
+.icon-london-underground:before { content: '\e842'; } /* 'î¡‚' */
+.icon-lodging:before { content: '\e843'; } /* 'î¡ƒ' */
+.icon-library:before { content: '\e844'; } /* 'î¡„' */
+.icon-industrial-building:before { content: '\e845'; } /* 'î¡…' */
+.icon-heliport:before { content: '\e846'; } /* 'î¡†' */
+.icon-harbor:before { content: '\e847'; } /* 'î¡‡' */
+.icon-golf:before { content: '\e848'; } /* 'î¡ˆ' */
+.icon-giraffe:before { content: '\e849'; } /* 'î¡‰' */
+.icon-garden:before { content: '\e84a'; } /* 'î¡Š' */
+.icon-fuel:before { content: '\e84b'; } /* 'î¡‹' */
+.icon-football:before { content: '\e84c'; } /* 'î¡Œ' */
+.icon-fire-station:before { content: '\e84d'; } /* 'î¡' */
+.icon-fast-food:before { content: '\e84e'; } /* 'î¡Ž' */
+.icon-ferry:before { content: '\e84f'; } /* 'î¡' */
+.icon-aboveground-rail:before { content: '\e850'; } /* 'î¡' */
+.icon-airfield:before { content: '\e851'; } /* 'î¡‘' */
+.icon-airport:before { content: '\e852'; } /* 'î¡’' */
+.icon-art-gallery:before { content: '\e853'; } /* 'î¡“' */
+.icon-baseball:before { content: '\e854'; } /* 'î¡”' */
+.icon-basketball:before { content: '\e855'; } /* 'î¡•' */
+.icon-belowground-rail:before { content: '\e856'; } /* 'î¡–' */
+.icon-bicycle:before { content: '\e857'; } /* 'î¡—' */
+.icon-bus:before { content: '\e858'; } /* 'î¡˜' */
+.icon-campsite:before { content: '\e859'; } /* 'î¡™' */
+.icon-cemetery:before { content: '\e85a'; } /* 'î¡š' */
+.icon-cinema:before { content: '\e85b'; } /* 'î¡›' */
+.icon-college:before { content: '\e85c'; } /* 'î¡œ' */
+.icon-commerical-building:before { content: '\e85d'; } /* 'î¡' */
+.icon-cricket:before { content: '\e85e'; } /* 'î¡ž' */
+.icon-female:before { content: '\e85f'; } /* 'î¡Ÿ' */
+.icon-male:before { content: '\e860'; } /* 'î¡ ' */
+.icon-accessibility:before { content: '\e861'; } /* 'î¡¡' */
+.icon-guidedog:before { content: '\e862'; } /* 'î¡¢' */
+.icon-blind:before { content: '\e863'; } /* 'î¡£' */
+.icon-child:before { content: '\e864'; } /* 'î¡¤' */
+.icon-universal-access:before { content: '\e865'; } /* 'î¡¥' */
+.icon-adult:before { content: '\e866'; } /* 'î¡¦' */
+.icon-person:before { content: '\e867'; } /* 'î¡§' */
+.icon-glasses:before { content: '\e868'; } /* 'î¡¨' */
+.icon-hearing-impaired:before { content: '\e869'; } /* 'î¡©' */
+.icon-smiley:before { content: '\e86a'; } /* 'î¡ª' */
+.icon-braille:before { content: '\e86b'; } /* 'î¡«' */
+
+@font-face {
+  font-family: "Flaticon";
+  src: url("../fonts/nomie-icons/flaticon/flaticon.eot");
+  src: url("../fonts/nomie-icons/flaticon/flaticon.eot#iefix") format("embedded-opentype"),
+  url("../fonts/nomie-icons/flaticon/flaticon.woff") format("woff"),
+  url("../fonts/nomie-icons/flaticon/flaticon.ttf") format("truetype"),
+  url("../fonts/nomie-icons/flaticon/flaticon.svg") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {
+  font-family: Flaticon;
+  font-style: normal;
+}.flaticon-151:before {
+   content: "\e000";
+ }
+.flaticon-acoustic4:before {
+  content: "\e001";
+}
+.flaticon-alarm27:before {
+  content: "\e002";
+}
+.flaticon-ambulance9:before {
+  content: "\e003";
+}
+.flaticon-annulled3:before {
+  content: "\e004";
+}
+.flaticon-applause:before {
+  content: "\e005";
+}
+.flaticon-baby63:before {
+  content: "\e006";
+}
+.flaticon-baby78:before {
+  content: "\e007";
+}
+.flaticon-ball15:before {
+  content: "\e008";
+}
+.flaticon-ball3:before {
+  content: "\e009";
+}
+.flaticon-balls:before {
+  content: "\e00a";
+}
+.flaticon-bandaid:before {
+  content: "\e00b";
+}
+.flaticon-barbecue1:before {
+  content: "\e00c";
+}
+.flaticon-barbell:before {
+  content: "\e00d";
+}
+.flaticon-basketball32:before {
+  content: "\e00e";
+}
+.flaticon-basketball35:before {
+  content: "\e00f";
+}
+.flaticon-bath1:before {
+  content: "\e010";
+}
+.flaticon-batman:before {
+  content: "\e011";
+}
+.flaticon-beer8:before {
+  content: "\e012";
+}
+.flaticon-biceps:before {
+  content: "\e013";
+}
+.flaticon-bicycle1:before {
+  content: "\e014";
+}
+.flaticon-bicycle3:before {
+  content: "\e015";
+}
+.flaticon-big1:before {
+  content: "\e016";
+}
+.flaticon-big22:before {
+  content: "\e017";
+}
+.flaticon-black141:before {
+  content: "\e018";
+}
+.flaticon-black150:before {
+  content: "\e019";
+}
+.flaticon-black96:before {
+  content: "\e01a";
+}
+.flaticon-book154:before {
+  content: "\e01b";
+}
+.flaticon-bottle3:before {
+  content: "\e01c";
+}
+.flaticon-box51:before {
+  content: "\e01d";
+}
+.flaticon-boy31:before {
+  content: "\e01e";
+}
+.flaticon-brain5:before {
+  content: "\e01f";
+}
+.flaticon-brief1:before {
+  content: "\e020";
+}
+.flaticon-brush7:before {
+  content: "\e021";
+}
+.flaticon-bugle:before {
+  content: "\e022";
+}
+.flaticon-burn3:before {
+  content: "\e023";
+}
+.flaticon-businessmen13:before {
+  content: "\e024";
+}
+.flaticon-businessmen22:before {
+  content: "\e025";
+}
+.flaticon-calculator44:before {
+  content: "\e026";
+}
+.flaticon-camcorder4:before {
+  content: "\e027";
+}
+.flaticon-canopy:before {
+  content: "\e028";
+}
+.flaticon-canvas:before {
+  content: "\e029";
+}
+.flaticon-carrot3:before {
+  content: "\e02a";
+}
+.flaticon-cassette8:before {
+  content: "\e02b";
+}
+.flaticon-chair10:before {
+  content: "\e02c";
+}
+.flaticon-chef20:before {
+  content: "\e02d";
+}
+.flaticon-chemistry11:before {
+  content: "\e02e";
+}
+.flaticon-christ:before {
+  content: "\e02f";
+}
+.flaticon-claw1:before {
+  content: "\e030";
+}
+.flaticon-climbing6:before {
+  content: "\e031";
+}
+.flaticon-clock18:before {
+  content: "\e032";
+}
+.flaticon-close29:before {
+  content: "\e033";
+}
+.flaticon-cloud14:before {
+  content: "\e034";
+}
+.flaticon-coconut8:before {
+  content: "\e035";
+}
+.flaticon-code26:before {
+  content: "\e036";
+}
+.flaticon-compass65:before {
+  content: "\e037";
+}
+.flaticon-concentric:before {
+  content: "\e038";
+}
+.flaticon-couple13:before {
+  content: "\e039";
+}
+.flaticon-cow9:before {
+  content: "\e03a";
+}
+.flaticon-credit70:before {
+  content: "\e03b";
+}
+.flaticon-cup16:before {
+  content: "\e03c";
+}
+.flaticon-dart13:before {
+  content: "\e03d";
+}
+.flaticon-delivery35:before {
+  content: "\e03e";
+}
+.flaticon-diploma7:before {
+  content: "\e03f";
+}
+.flaticon-disneyland:before {
+  content: "\e040";
+}
+.flaticon-documents11:before {
+  content: "\e041";
+}
+.flaticon-dog56:before {
+  content: "\e042";
+}
+.flaticon-doubt3:before {
+  content: "\e043";
+}
+.flaticon-dreaming:before {
+  content: "\e044";
+}
+.flaticon-drill5:before {
+  content: "\e045";
+}
+.flaticon-drop19:before {
+  content: "\e046";
+}
+.flaticon-drops1:before {
+  content: "\e047";
+}
+.flaticon-dumbbell21:before {
+  content: "\e048";
+}
+.flaticon-earth180:before {
+  content: "\e049";
+}
+.flaticon-educational24:before {
+  content: "\e04a";
+}
+.flaticon-eiffel1:before {
+  content: "\e04b";
+}
+.flaticon-emoticon101:before {
+  content: "\e04c";
+}
+.flaticon-emoticon85:before {
+  content: "\e04d";
+}
+.flaticon-excretory:before {
+  content: "\e04e";
+}
+.flaticon-family:before {
+  content: "\e04f";
+}
+.flaticon-finish:before {
+  content: "\e050";
+}
+.flaticon-fishing11:before {
+  content: "\e051";
+}
+.flaticon-floating1:before {
+  content: "\e052";
+}
+.flaticon-fork:before {
+  content: "\e053";
+}
+.flaticon-fragile:before {
+  content: "\e054";
+}
+.flaticon-girl19:before {
+  content: "\e055";
+}
+.flaticon-good2:before {
+  content: "\e056";
+}
+.flaticon-great4:before {
+  content: "\e057";
+}
+.flaticon-greek1:before {
+  content: "\e058";
+}
+.flaticon-halloween46:before {
+  content: "\e059";
+}
+.flaticon-halloween64:before {
+  content: "\e05a";
+}
+.flaticon-hamburger2:before {
+  content: "\e05b";
+}
+.flaticon-happy38:before {
+  content: "\e05c";
+}
+.flaticon-harley:before {
+  content: "\e05d";
+}
+.flaticon-heart13:before {
+  content: "\e05e";
+}
+.flaticon-helicopter:before {
+  content: "\e05f";
+}
+.flaticon-hoist:before {
+  content: "\e060";
+}
+.flaticon-home87:before {
+  content: "\e061";
+}
+.flaticon-hot22:before {
+  content: "\e062";
+}
+.flaticon-human51:before {
+  content: "\e063";
+}
+.flaticon-ice52:before {
+  content: "\e064";
+}
+.flaticon-ice64:before {
+  content: "\e065";
+}
+.flaticon-idea14:before {
+  content: "\e066";
+}
+.flaticon-injured1:before {
+  content: "\e067";
+}
+.flaticon-international15:before {
+  content: "\e068";
+}
+.flaticon-jeep8:before {
+  content: "\e069";
+}
+.flaticon-jump7:before {
+  content: "\e06a";
+}
+.flaticon-jumping27:before {
+  content: "\e06b";
+}
+.flaticon-key20:before {
+  content: "\e06c";
+}
+.flaticon-kitty:before {
+  content: "\e06d";
+}
+.flaticon-kneel:before {
+  content: "\e06e";
+}
+.flaticon-lab2:before {
+  content: "\e06f";
+}
+.flaticon-lamp14:before {
+  content: "\e070";
+}
+.flaticon-large1:before {
+  content: "\e071";
+}
+.flaticon-large6:before {
+  content: "\e072";
+}
+.flaticon-law2:before {
+  content: "\e073";
+}
+.flaticon-leg5:before {
+  content: "\e074";
+}
+.flaticon-lifebuoy2:before {
+  content: "\e075";
+}
+.flaticon-localization2:before {
+  content: "\e076";
+}
+.flaticon-logistics1:before {
+  content: "\e077";
+}
+.flaticon-london4:before {
+  content: "\e078";
+}
+.flaticon-lungs3:before {
+  content: "\e079";
+}
+.flaticon-luxury1:before {
+  content: "\e07a";
+}
+.flaticon-male100:before {
+  content: "\e07b";
+}
+.flaticon-man236:before {
+  content: "\e07c";
+}
+.flaticon-man362:before {
+  content: "\e07d";
+}
+.flaticon-man421:before {
+  content: "\e07e";
+}
+.flaticon-man82:before {
+  content: "\e07f";
+}
+.flaticon-massage2:before {
+  content: "\e080";
+}
+.flaticon-maths5:before {
+  content: "\e081";
+}
+.flaticon-medal45:before {
+  content: "\e082";
+}
+.flaticon-medical14:before {
+  content: "\e083";
+}
+.flaticon-medicine13:before {
+  content: "\e084";
+}
+.flaticon-medicine14:before {
+  content: "\e085";
+}
+.flaticon-medicine15:before {
+  content: "\e086";
+}
+.flaticon-medicine17:before {
+  content: "\e087";
+}
+.flaticon-microphone67:before {
+  content: "\e088";
+}
+.flaticon-microscope12:before {
+  content: "\e089";
+}
+.flaticon-milk6:before {
+  content: "\e08a";
+}
+.flaticon-mountain24:before {
+  content: "\e08b";
+}
+.flaticon-moustache:before {
+  content: "\e08c";
+}
+.flaticon-music200:before {
+  content: "\e08d";
+}
+.flaticon-music201:before {
+  content: "\e08e";
+}
+.flaticon-mute24:before {
+  content: "\e08f";
+}
+.flaticon-no63:before {
+  content: "\e090";
+}
+.flaticon-old13:before {
+  content: "\e091";
+}
+.flaticon-online15:before {
+  content: "\e092";
+}
+.flaticon-opened13:before {
+  content: "\e093";
+}
+.flaticon-package8:before {
+  content: "\e094";
+}
+.flaticon-padding:before {
+  content: "\e095";
+}
+.flaticon-paint60:before {
+  content: "\e096";
+}
+.flaticon-paint61:before {
+  content: "\e097";
+}
+.flaticon-paperplane:before {
+  content: "\e098";
+}
+.flaticon-park2:before {
+  content: "\e099";
+}
+.flaticon-party1:before {
+  content: "\e09a";
+}
+.flaticon-pen48:before {
+  content: "\e09b";
+}
+.flaticon-pencil5:before {
+  content: "\e09c";
+}
+.flaticon-pencil66:before {
+  content: "\e09d";
+}
+.flaticon-person277:before {
+  content: "\e09e";
+}
+.flaticon-phone25:before {
+  content: "\e09f";
+}
+.flaticon-phone325:before {
+  content: "\e0a0";
+}
+.flaticon-phone328:before {
+  content: "\e0a1";
+}
+.flaticon-photo146:before {
+  content: "\e0a2";
+}
+.flaticon-photo147:before {
+  content: "\e0a3";
+}
+.flaticon-photos1:before {
+  content: "\e0a4";
+}
+.flaticon-picture17:before {
+  content: "\e0a5";
+}
+.flaticon-pig4:before {
+  content: "\e0a6";
+}
+.flaticon-pill:before {
+  content: "\e0a7";
+}
+.flaticon-ping3:before {
+  content: "\e0a8";
+}
+.flaticon-pirate1:before {
+  content: "\e0a9";
+}
+.flaticon-pisces:before {
+  content: "\e0aa";
+}
+.flaticon-plate17:before {
+  content: "\e0ab";
+}
+.flaticon-poo:before {
+  content: "\e0ac";
+}
+.flaticon-porridge:before {
+  content: "\e0ad";
+}
+.flaticon-portrait6:before {
+  content: "\e0ae";
+}
+.flaticon-precious:before {
+  content: "\e0af";
+}
+.flaticon-propeller:before {
+  content: "\e0b0";
+}
+.flaticon-protection3:before {
+  content: "\e0b1";
+}
+.flaticon-radio42:before {
+  content: "\e0b2";
+}
+.flaticon-raindrops2:before {
+  content: "\e0b3";
+}
+.flaticon-regular2:before {
+  content: "\e0b4";
+}
+.flaticon-religious4:before {
+  content: "\e0b5";
+}
+.flaticon-ribbon20:before {
+  content: "\e0b6";
+}
+.flaticon-road24:before {
+  content: "\e0b7";
+}
+.flaticon-robot30:before {
+  content: "\e0b8";
+}
+.flaticon-rocket8:before {
+  content: "\e0b9";
+}
+.flaticon-rugby98:before {
+  content: "\e0ba";
+}
+.flaticon-runner5:before {
+  content: "\e0bb";
+}
+.flaticon-sad34:before {
+  content: "\e0bc";
+}
+.flaticon-sad38:before {
+  content: "\e0bd";
+}
+.flaticon-sad39:before {
+  content: "\e0be";
+}
+.flaticon-sad9:before {
+  content: "\e0bf";
+}
+.flaticon-sandglass1:before {
+  content: "\e0c0";
+}
+.flaticon-saturn11:before {
+  content: "\e0c1";
+}
+.flaticon-scale14:before {
+  content: "\e0c2";
+}
+.flaticon-service:before {
+  content: "\e0c3";
+}
+.flaticon-skidiving:before {
+  content: "\e0c4";
+}
+.flaticon-skiing7:before {
+  content: "\e0c5";
+}
+.flaticon-sleeping4:before {
+  content: "\e0c6";
+}
+.flaticon-sleepy6:before {
+  content: "\e0c7";
+}
+.flaticon-smiley40:before {
+  content: "\e0c8";
+}
+.flaticon-smiley42:before {
+  content: "\e0c9";
+}
+.flaticon-smiling35:before {
+  content: "\e0ca";
+}
+.flaticon-smiling36:before {
+  content: "\e0cb";
+}
+.flaticon-smoking4:before {
+  content: "\e0cc";
+}
+.flaticon-soccer43:before {
+  content: "\e0cd";
+}
+.flaticon-soccer44:before {
+  content: "\e0ce";
+}
+.flaticon-speed3:before {
+  content: "\e0cf";
+}
+.flaticon-spongy:before {
+  content: "\e0d0";
+}
+.flaticon-spoon2:before {
+  content: "\e0d1";
+}
+.flaticon-sport11:before {
+  content: "\e0d2";
+}
+.flaticon-sportive36:before {
+  content: "\e0d3";
+}
+.flaticon-student51:before {
+  content: "\e0d4";
+}
+.flaticon-stylish5:before {
+  content: "\e0d5";
+}
+.flaticon-subdivision:before {
+  content: "\e0d6";
+}
+.flaticon-surprised19:before {
+  content: "\e0d7";
+}
+.flaticon-sushi2:before {
+  content: "\e0d8";
+}
+.flaticon-swimming20:before {
+  content: "\e0d9";
+}
+.flaticon-syringe6:before {
+  content: "\e0da";
+}
+.flaticon-teeth1:before {
+  content: "\e0db";
+}
+.flaticon-telescope7:before {
+  content: "\e0dc";
+}
+.flaticon-tennis18:before {
+  content: "\e0dd";
+}
+.flaticon-thermometer21:before {
+  content: "\e0de";
+}
+.flaticon-thermometer23:before {
+  content: "\e0df";
+}
+.flaticon-tie:before {
+  content: "\e0e0";
+}
+.flaticon-tie1:before {
+  content: "\e0e1";
+}
+.flaticon-time12:before {
+  content: "\e0e2";
+}
+.flaticon-time13:before {
+  content: "\e0e3";
+}
+.flaticon-toilet2:before {
+  content: "\e0e4";
+}
+.flaticon-tool9:before {
+  content: "\e0e5";
+}
+.flaticon-treble4:before {
+  content: "\e0e6";
+}
+.flaticon-tree101:before {
+  content: "\e0e7";
+}
+.flaticon-trekking:before {
+  content: "\e0e8";
+}
+.flaticon-trophy17:before {
+  content: "\e0e9";
+}
+.flaticon-trophy45:before {
+  content: "\e0ea";
+}
+.flaticon-two205:before {
+  content: "\e0eb";
+}
+.flaticon-two210:before {
+  content: "\e0ec";
+}
+.flaticon-umbrella30:before {
+  content: "\e0ed";
+}
+.flaticon-unidentified:before {
+  content: "\e0ee";
+}
+.flaticon-university7:before {
+  content: "\e0ef";
+}
+.flaticon-upper1:before {
+  content: "\e0f0";
+}
+.flaticon-very7:before {
+  content: "\e0f1";
+}
+.flaticon-wallet17:before {
+  content: "\e0f2";
+}
+.flaticon-waterdrop1:before {
+  content: "\e0f3";
+}
+.flaticon-webcam5:before {
+  content: "\e0f4";
+}
+.flaticon-weight11:before {
+  content: "\e0f5";
+}
+.flaticon-weightlift:before {
+  content: "\e0f6";
+}
+.flaticon-wine11:before {
+  content: "\e0f7";
+}
+.flaticon-wine14:before {
+  content: "\e0f8";
+}
+.flaticon-woman93:before {
+  content: "\e0f9";
+}
+.flaticon-wrench5:before {
+  content: "\e0fa";
+}
+.flaticon-writing19:before {
+  content: "\e0fb";
+}
+.flaticon-xylophone6:before {
+  content: "\e0fc";
+}
+.flaticon-yoga12:before {
+  content: "\e0fd";
+}

@@ -1,0 +1,99 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 18/03/2016 11:41
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-barber-shop:before { content: "\f100"; }
+.flaticon-barette:before { content: "\f101"; }
+.flaticon-brush:before { content: "\f102"; }
+.flaticon-cologne:before { content: "\f103"; }
+.flaticon-comb:before { content: "\f104"; }
+.flaticon-comb-1:before { content: "\f105"; }
+.flaticon-comb-2:before { content: "\f106"; }
+.flaticon-comb-3:before { content: "\f107"; }
+.flaticon-comb-4:before { content: "\f108"; }
+.flaticon-cosmetic:before { content: "\f109"; }
+.flaticon-cream:before { content: "\f10a"; }
+.flaticon-cream-1:before { content: "\f10b"; }
+.flaticon-curling:before { content: "\f10c"; }
+.flaticon-electric-razor:before { content: "\f10d"; }
+.flaticon-hair-cut:before { content: "\f10e"; }
+.flaticon-hair-spray:before { content: "\f10f"; }
+.flaticon-hairdresser-chair:before { content: "\f110"; }
+.flaticon-hairdryer:before { content: "\f111"; }
+.flaticon-lipstick:before { content: "\f112"; }
+.flaticon-liquid-soap:before { content: "\f113"; }
+.flaticon-lotion:before { content: "\f114"; }
+.flaticon-mirror:before { content: "\f115"; }
+.flaticon-mirror-1:before { content: "\f116"; }
+.flaticon-razor:before { content: "\f117"; }
+.flaticon-razor-1:before { content: "\f118"; }
+.flaticon-scissors:before { content: "\f119"; }
+.flaticon-soap:before { content: "\f11a"; }
+.flaticon-spray:before { content: "\f11b"; }
+.flaticon-straightener:before { content: "\f11c"; }
+.flaticon-towel:before { content: "\f11d"; }
+    
+    $font-Flaticon-barber-shop: "\f100";
+    $font-Flaticon-barette: "\f101";
+    $font-Flaticon-brush: "\f102";
+    $font-Flaticon-cologne: "\f103";
+    $font-Flaticon-comb: "\f104";
+    $font-Flaticon-comb-1: "\f105";
+    $font-Flaticon-comb-2: "\f106";
+    $font-Flaticon-comb-3: "\f107";
+    $font-Flaticon-comb-4: "\f108";
+    $font-Flaticon-cosmetic: "\f109";
+    $font-Flaticon-cream: "\f10a";
+    $font-Flaticon-cream-1: "\f10b";
+    $font-Flaticon-curling: "\f10c";
+    $font-Flaticon-electric-razor: "\f10d";
+    $font-Flaticon-hair-cut: "\f10e";
+    $font-Flaticon-hair-spray: "\f10f";
+    $font-Flaticon-hairdresser-chair: "\f110";
+    $font-Flaticon-hairdryer: "\f111";
+    $font-Flaticon-lipstick: "\f112";
+    $font-Flaticon-liquid-soap: "\f113";
+    $font-Flaticon-lotion: "\f114";
+    $font-Flaticon-mirror: "\f115";
+    $font-Flaticon-mirror-1: "\f116";
+    $font-Flaticon-razor: "\f117";
+    $font-Flaticon-razor-1: "\f118";
+    $font-Flaticon-scissors: "\f119";
+    $font-Flaticon-soap: "\f11a";
+    $font-Flaticon-spray: "\f11b";
+    $font-Flaticon-straightener: "\f11c";
+    $font-Flaticon-towel: "\f11d";

@@ -1,0 +1,160 @@
+<script>
+    var requireJS = ["bower_components/Flot/jquery.flot.js","bower_components/Flot/jquery.flot.time.js","bower_components/Flot/jquery.flot.pie.js"];
+
+    loadJS(requireJS, "js/views/food.js");
+    setUpBreadcrumb([], 'Food');
+</script>
+
+<style type="text/css">
+    .flot-container { box-sizing: border-box; position: relative; height: 450px; } .flot-placeholder { height: 100%; font-size: 14px; line-height: 1.2em; } .legend table { border-spacing: 5px; } .flot-small-container { height: 300px; } .flot-mini-container { height: 135px; } .flot-medium-container { height: 360px; } .waterIntake { padding: 10px 0 7px; text-align: center; } .waterCons { margin: 10px auto auto; width: 100%; } .waterCons::before, .waterCons::after { content: ""; display: table; } .waterCons::after { clear: both; } .waterCons .goalContainer { background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEkAAACVCAAAAAAx5IhUAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAAAEgAAABIAEbJaz4AAAO1SURBVGje7ZrrkqMgEIXz/m/KRcUriojb3UhMJrNJbDJVU7v2n3GI+YQOHA7gZX0Si7+P5dnNlyefzaW+C1XOTFIvvkbPJHUPpO4k/WjGXSmFkCoGXpaOSVqXVog2ds94uXJJmKnu8fJfIbX7zwU/ZMsihQXCFULYrcAKUTosDAdIwY+dKXDwC6H9Vui1EArKCtPaObxF8rbWMnVFOVzLh71Qmf4R9oUUXKvj3dgjtRlvPhqNxh4agboewxNSmGqFt6mytQ774/3NAYucbSu6SVZ2+RvJ1fg8WXbuaWdew9xX8U4bviP5Fh+l6vE5JmWhwSxI4x5IYSyI48IbHIq5Q5buwz0pdDjWzfQ2h1gNtELW/pa01IAv7CEOPn8q4XvVvJMWAwVmPsihb7bQljh5XbYayfadRH9TrQFaWPmNBMNc9kdbdg0LqCYQycFlywbRMJITkgK0zfCatjUQAQFIsyZkRkCj1AwkK0WV0TaslBHSAumlGL4OktbLa4F+HYQ4SSfpJJ2kqCoDCHomqRFiANIkRZEj4zDLFajfF/o7ZJEGqsuFWqk5828KmFIw00DyBZpRNsiBNyh8nINHdKaH7UWMYNHJookkh4ETMs8YkMNQ5LSJNKMLKzm5mtH2FFev4iv4Nxmqg+HReSWvgvO6YnuV0ENq6uhVYDrP6lDoVSx5FZNnetYAk3lFXoWcRk5A10xexfy7XuW36pPNItkbfSqy9Km40yc+an7QJ27T7vRpyNQnGrVEwvbxchWVzScS6RNrUQYoc6tP0LFkx+1SC65Wt7XU+AF9GpM+NVn61KS1VL4+qf9Bn07SSTpJJ+kknaSTdJJ+ZN1SZq5byrhu8ZpsYkaAUdUeHWubHDUzfEn5ucQdFsNHeRN3eNDZ48lcyT0AwMMbMuFIoqMkPXBsaxg0LgvCmtYtuDvC2oPCzNysW+hUitk8Opmql0jCPQjZcFPuGxltOJAmBYs7vrcPsMRT+xlQ1rrF0GYP9XHF36XDcCr28TH/DKjC8fY71y39R/Spj3nK1KdQxjz57PO7KekT1K3KqdRSJX1yehs5TBD0bO3iCO5h5FTczukqPLldb/WJtYVMG8gP+sSplbvXp4DCUDD1qUBJSnXq+BvI2xZytyZ9ytmuRaFUnzmjXk59ejN+Qp8+lKfP6VP4iD6F9B5Gk6dPatMnFJXq2Osze44m1Kdt3NHIEbJsuuPR4Mt7cdSSPoVOCX4oErr0hpBr9je6DoXUzTZor28tzbZrj0e3v332B9Hp4QW8OZhGAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE0LTAyLTE1VDE4OjUwOjMxLTA1OjAw0LddSgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNC0wMi0xNVQxODo1MDozMS0wNTowMKHq5fYAAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC") no-repeat scroll 0 0 rgba(0, 0, 0, 0); height: 149px; margin: 0 auto 7px; position: relative; width: 73px; } .waterCons .goalContainer .consLevel { background: url("data:image/png;base64,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") no-repeat scroll center bottom rgba(0, 0, 0, 0); bottom: 0; left: 0; width: 100%; } .waterCons .consLevel { left: -9999px; position: absolute; text-indent: -9999px; }#remKilocalories { text-align: center; color: #197910;}  #remFat { text-align: right; color: #197910;}  #remFiber { text-align: right; color: #197910;}  #remCarbs { text-align: right; color: #197910;}  #remSodium { text-align: right; color: #197910;}  #remProtein { text-align: right; color: #197910;}
+</style>
+
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-block">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <a id="datePrev" class="btn btn-danger btn-block" style="text-align: left;color: #ffffff;">
+                                        <span><i class="fa fa-arrow-left"></i></span>
+                                        Yesterday
+                                    </a>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <a id="dateToday" class="btn btn-info btn-block" style="text-align: left;color: #ffffff;">
+                                        <span><i class="fa fa-bullseye"></i></span>
+                                        Today
+                                    </a>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <a id="dateNext" class="btn btn-success btn-block" style="text-align: left;color: #ffffff;">
+                                        <span><i class="fa fa-arrow-right"></i></span>
+                                        Tomorrow
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a id="datePrevMonth" class="btn btn-success btn-block" style="text-align: left;color: #ffffff;">
+                                        <span><i class="fa fa-calendar"></i></span>
+                                        Last Month
+                                    </a>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <a id="datePrevWeek" class="btn btn-info btn-block" style="text-align: left;color: #ffffff;">
+                                        <span><i class="fa fa-calendar-o"></i></span>
+                                        Last Week
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">Totals for <strong id="reportedDate">today</strong></div>
+                        <div class="card-block">
+                            <table class="table table-hover" id="food-table-daily-totals">
+                                <thead>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>Kilocalories</th>
+                                    <th>Fat</th>
+                                    <th>Fiber</th>
+                                    <th>Carbs</th>
+                                    <th>Sodium</th>
+                                    <th>Protein</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td style="text-align: left">Today</td>
+                                    <td id="valueKilocalories" style="text-align: center"><strong class="value"></strong></td>
+                                    <td id="valueFat" style="text-align: right"><span class="value"></span> g</td>
+                                    <td id="valueFiber" style="text-align: right"><span class="value"></span> g</td>
+                                    <td id="valueCarbs" style="text-align: right"><span class="value"></span> g</td>
+                                    <td id="valueSodium" style="text-align: right"><span class="value"></span> mg</td>
+                                    <td id="valueProtein" style="text-align: right"><span class="value"></span> g</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left">Goals</td>
+                                    <td id="goalKilocalories" style="text-align: center"><strong class="value"></strong></td>
+                                    <td id="goalFat" style="text-align: right"><span class="value"></span> g</td>
+                                    <td id="goalFiber" style="text-align: right"><span class="value"></span> g</td>
+                                    <td id="goalCarbs" style="text-align: right"><span class="value"></span> g</td>
+                                    <td id="goalSodium" style="text-align: right"><span class="value"></span> mg</td>
+                                    <td id="goalProtein" style="text-align: right"><span class="value"></span> g</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: left">Remaining</td>
+                                    <td id="remKilocalories"><strong class="value"></strong></td>
+                                    <td id="remFat"><span class="value"></span> g</td>
+                                    <td id="remFiber"><span class="value"></span> g</td>
+                                    <td id="remCarbs"><span class="value"></span> g</td>
+                                    <td id="remSodium"><span class="value"></span> mg</td>
+                                    <td id="remProtein"><span class="value"></span> g</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">Water <strong>Intake</strong></div>
+                        <div class="card-block">
+                            <div class="waterIntake">
+                                <div class="waterCons">
+                                    <div class="goalContainer">
+                                        <span class="consLevel" style="height: 0%"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Intake <strong>Breakdown</strong></div>
+                <div class="card-block">
+                    <div class="flot-small-container">
+                        <div id="splitPieChart" class="flot-placeholder"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header">Meal <strong>Logs</strong></div>
+                <div class="card-block">
+                    <div id="foodDiary"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header">Kilocalories <strong>Per Meal</strong></div>
+                <div class="card-block">
+                    <div class="flot-small-container">
+                        <div id="mealPieChart" class="flot-placeholder"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

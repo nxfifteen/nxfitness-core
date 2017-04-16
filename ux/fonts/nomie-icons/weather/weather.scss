@@ -1,0 +1,99 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 19/02/2016 14:53
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-blizzard:before { content: "\f100"; }
+.flaticon-breeze:before { content: "\f101"; }
+.flaticon-cloudy-day:before { content: "\f102"; }
+.flaticon-cold:before { content: "\f103"; }
+.flaticon-dark-night:before { content: "\f104"; }
+.flaticon-drizzle:before { content: "\f105"; }
+.flaticon-drought:before { content: "\f106"; }
+.flaticon-flood:before { content: "\f107"; }
+.flaticon-foggy:before { content: "\f108"; }
+.flaticon-hail:before { content: "\f109"; }
+.flaticon-hail-storm:before { content: "\f10a"; }
+.flaticon-hot-weather:before { content: "\f10b"; }
+.flaticon-hurricane:before { content: "\f10c"; }
+.flaticon-lighting:before { content: "\f10d"; }
+.flaticon-mist:before { content: "\f10e"; }
+.flaticon-moon-eclipse:before { content: "\f10f"; }
+.flaticon-night:before { content: "\f110"; }
+.flaticon-overcast-day:before { content: "\f111"; }
+.flaticon-partialy-cloudy:before { content: "\f112"; }
+.flaticon-pour-rain:before { content: "\f113"; }
+.flaticon-puddles:before { content: "\f114"; }
+.flaticon-rainbow:before { content: "\f115"; }
+.flaticon-rainy-day:before { content: "\f116"; }
+.flaticon-sleet:before { content: "\f117"; }
+.flaticon-smog:before { content: "\f118"; }
+.flaticon-snow-cloud:before { content: "\f119"; }
+.flaticon-sun-eclipse:before { content: "\f11a"; }
+.flaticon-sunny-day:before { content: "\f11b"; }
+.flaticon-temperature:before { content: "\f11c"; }
+.flaticon-windy-day:before { content: "\f11d"; }
+    
+    $font-Flaticon-blizzard: "\f100";
+    $font-Flaticon-breeze: "\f101";
+    $font-Flaticon-cloudy-day: "\f102";
+    $font-Flaticon-cold: "\f103";
+    $font-Flaticon-dark-night: "\f104";
+    $font-Flaticon-drizzle: "\f105";
+    $font-Flaticon-drought: "\f106";
+    $font-Flaticon-flood: "\f107";
+    $font-Flaticon-foggy: "\f108";
+    $font-Flaticon-hail: "\f109";
+    $font-Flaticon-hail-storm: "\f10a";
+    $font-Flaticon-hot-weather: "\f10b";
+    $font-Flaticon-hurricane: "\f10c";
+    $font-Flaticon-lighting: "\f10d";
+    $font-Flaticon-mist: "\f10e";
+    $font-Flaticon-moon-eclipse: "\f10f";
+    $font-Flaticon-night: "\f110";
+    $font-Flaticon-overcast-day: "\f111";
+    $font-Flaticon-partialy-cloudy: "\f112";
+    $font-Flaticon-pour-rain: "\f113";
+    $font-Flaticon-puddles: "\f114";
+    $font-Flaticon-rainbow: "\f115";
+    $font-Flaticon-rainy-day: "\f116";
+    $font-Flaticon-sleet: "\f117";
+    $font-Flaticon-smog: "\f118";
+    $font-Flaticon-snow-cloud: "\f119";
+    $font-Flaticon-sun-eclipse: "\f11a";
+    $font-Flaticon-sunny-day: "\f11b";
+    $font-Flaticon-temperature: "\f11c";
+    $font-Flaticon-windy-day: "\f11d";

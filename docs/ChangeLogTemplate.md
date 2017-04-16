@@ -1,6 +1,6 @@
 <% if(logo) { %><img width="145px" src="<%= logo %>" /><%= '\n\n' %><% } %># <%= title %>
 <% if(intro) { %><%= '\n' %>_<%= intro %>_<%= '\n' %><% } %>
-<% if(version) { %>## <%= version.name %> <%= version.number %> ( <%= version.date %> )<%= '\n' %><% } %>
+<% if(version) { %>## <%= version.name %> <% if(version.number == "master..develop") { %>_Since Last Master_<% } else { %><%= version.number %><% } %> ( <%= version.date %> )<%= '\n' %><% } %>
 <% _.forEach(sections, function(section) { %>
 <% if(section.commitsCount > 0) { %>
 ## <%= section.title %>

@@ -1,0 +1,119 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 19/02/2016 14:53
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-ankle:before { content: "\f100"; }
+.flaticon-arm:before { content: "\f101"; }
+.flaticon-articulation-bones:before { content: "\f102"; }
+.flaticon-bladder:before { content: "\f103"; }
+.flaticon-bone:before { content: "\f104"; }
+.flaticon-colon:before { content: "\f105"; }
+.flaticon-dna:before { content: "\f106"; }
+.flaticon-ear:before { content: "\f107"; }
+.flaticon-elbow:before { content: "\f108"; }
+.flaticon-eyebrow:before { content: "\f109"; }
+.flaticon-feet:before { content: "\f10a"; }
+.flaticon-female-body:before { content: "\f10b"; }
+.flaticon-female-torso:before { content: "\f10c"; }
+.flaticon-finger:before { content: "\f10d"; }
+.flaticon-hair:before { content: "\f10e"; }
+.flaticon-hand:before { content: "\f10f"; }
+.flaticon-head-and-neck:before { content: "\f110"; }
+.flaticon-heart:before { content: "\f111"; }
+.flaticon-human-back:before { content: "\f112"; }
+.flaticon-human-back-1:before { content: "\f113"; }
+.flaticon-human-brain:before { content: "\f114"; }
+.flaticon-human-eye:before { content: "\f115"; }
+.flaticon-human-skull:before { content: "\f116"; }
+.flaticon-kidneys:before { content: "\f117"; }
+.flaticon-leg:before { content: "\f118"; }
+.flaticon-liver:before { content: "\f119"; }
+.flaticon-lungs:before { content: "\f11a"; }
+.flaticon-mustache:before { content: "\f11b"; }
+.flaticon-nose:before { content: "\f11c"; }
+.flaticon-pelvis:before { content: "\f11d"; }
+.flaticon-penis:before { content: "\f11e"; }
+.flaticon-ribs:before { content: "\f11f"; }
+.flaticon-spine:before { content: "\f120"; }
+.flaticon-stomach:before { content: "\f121"; }
+.flaticon-thorat:before { content: "\f122"; }
+.flaticon-tongue:before { content: "\f123"; }
+.flaticon-tooth:before { content: "\f124"; }
+.flaticon-uterus:before { content: "\f125"; }
+.flaticon-vagina:before { content: "\f126"; }
+.flaticon-woman-lips:before { content: "\f127"; }
+    
+    $font-Flaticon-ankle: "\f100";
+    $font-Flaticon-arm: "\f101";
+    $font-Flaticon-articulation-bones: "\f102";
+    $font-Flaticon-bladder: "\f103";
+    $font-Flaticon-bone: "\f104";
+    $font-Flaticon-colon: "\f105";
+    $font-Flaticon-dna: "\f106";
+    $font-Flaticon-ear: "\f107";
+    $font-Flaticon-elbow: "\f108";
+    $font-Flaticon-eyebrow: "\f109";
+    $font-Flaticon-feet: "\f10a";
+    $font-Flaticon-female-body: "\f10b";
+    $font-Flaticon-female-torso: "\f10c";
+    $font-Flaticon-finger: "\f10d";
+    $font-Flaticon-hair: "\f10e";
+    $font-Flaticon-hand: "\f10f";
+    $font-Flaticon-head-and-neck: "\f110";
+    $font-Flaticon-heart: "\f111";
+    $font-Flaticon-human-back: "\f112";
+    $font-Flaticon-human-back-1: "\f113";
+    $font-Flaticon-human-brain: "\f114";
+    $font-Flaticon-human-eye: "\f115";
+    $font-Flaticon-human-skull: "\f116";
+    $font-Flaticon-kidneys: "\f117";
+    $font-Flaticon-leg: "\f118";
+    $font-Flaticon-liver: "\f119";
+    $font-Flaticon-lungs: "\f11a";
+    $font-Flaticon-mustache: "\f11b";
+    $font-Flaticon-nose: "\f11c";
+    $font-Flaticon-pelvis: "\f11d";
+    $font-Flaticon-penis: "\f11e";
+    $font-Flaticon-ribs: "\f11f";
+    $font-Flaticon-spine: "\f120";
+    $font-Flaticon-stomach: "\f121";
+    $font-Flaticon-thorat: "\f122";
+    $font-Flaticon-tongue: "\f123";
+    $font-Flaticon-tooth: "\f124";
+    $font-Flaticon-uterus: "\f125";
+    $font-Flaticon-vagina: "\f126";
+    $font-Flaticon-woman-lips: "\f127";

@@ -1,0 +1,169 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 27/03/2016 04:56
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-animal:before { content: "\f100"; }
+.flaticon-animal-1:before { content: "\f101"; }
+.flaticon-animal-10:before { content: "\f102"; }
+.flaticon-animal-11:before { content: "\f103"; }
+.flaticon-animal-12:before { content: "\f104"; }
+.flaticon-animal-13:before { content: "\f105"; }
+.flaticon-animal-14:before { content: "\f106"; }
+.flaticon-animal-15:before { content: "\f107"; }
+.flaticon-animal-16:before { content: "\f108"; }
+.flaticon-animal-17:before { content: "\f109"; }
+.flaticon-animal-18:before { content: "\f10a"; }
+.flaticon-animal-19:before { content: "\f10b"; }
+.flaticon-animal-2:before { content: "\f10c"; }
+.flaticon-animal-20:before { content: "\f10d"; }
+.flaticon-animal-3:before { content: "\f10e"; }
+.flaticon-animal-4:before { content: "\f10f"; }
+.flaticon-animal-5:before { content: "\f110"; }
+.flaticon-animal-6:before { content: "\f111"; }
+.flaticon-animal-7:before { content: "\f112"; }
+.flaticon-animal-8:before { content: "\f113"; }
+.flaticon-animal-9:before { content: "\f114"; }
+.flaticon-animals:before { content: "\f115"; }
+.flaticon-animals-1:before { content: "\f116"; }
+.flaticon-animals-10:before { content: "\f117"; }
+.flaticon-animals-11:before { content: "\f118"; }
+.flaticon-animals-12:before { content: "\f119"; }
+.flaticon-animals-13:before { content: "\f11a"; }
+.flaticon-animals-2:before { content: "\f11b"; }
+.flaticon-animals-3:before { content: "\f11c"; }
+.flaticon-animals-4:before { content: "\f11d"; }
+.flaticon-animals-5:before { content: "\f11e"; }
+.flaticon-animals-6:before { content: "\f11f"; }
+.flaticon-animals-7:before { content: "\f120"; }
+.flaticon-animals-8:before { content: "\f121"; }
+.flaticon-animals-9:before { content: "\f122"; }
+.flaticon-black:before { content: "\f123"; }
+.flaticon-brush:before { content: "\f124"; }
+.flaticon-brush-1:before { content: "\f125"; }
+.flaticon-buildings:before { content: "\f126"; }
+.flaticon-dog:before { content: "\f127"; }
+.flaticon-dog-1:before { content: "\f128"; }
+.flaticon-dog-2:before { content: "\f129"; }
+.flaticon-dog-3:before { content: "\f12a"; }
+.flaticon-dog-4:before { content: "\f12b"; }
+.flaticon-dog-5:before { content: "\f12c"; }
+.flaticon-food:before { content: "\f12d"; }
+.flaticon-food-1:before { content: "\f12e"; }
+.flaticon-food-2:before { content: "\f12f"; }
+.flaticon-food-3:before { content: "\f130"; }
+.flaticon-food-4:before { content: "\f131"; }
+.flaticon-food-5:before { content: "\f132"; }
+.flaticon-hairdresser:before { content: "\f133"; }
+.flaticon-hairdresser-1:before { content: "\f134"; }
+.flaticon-healthy:before { content: "\f135"; }
+.flaticon-market:before { content: "\f136"; }
+.flaticon-mechanical:before { content: "\f137"; }
+.flaticon-medical:before { content: "\f138"; }
+.flaticon-medical-1:before { content: "\f139"; }
+.flaticon-medical-2:before { content: "\f13a"; }
+.flaticon-music:before { content: "\f13b"; }
+.flaticon-people:before { content: "\f13c"; }
+.flaticon-person:before { content: "\f13d"; }
+.flaticon-skeleton:before { content: "\f13e"; }
+.flaticon-snack:before { content: "\f13f"; }
+.flaticon-technology:before { content: "\f140"; }
+    
+    $font-Flaticon-animal: "\f100";
+    $font-Flaticon-animal-1: "\f101";
+    $font-Flaticon-animal-10: "\f102";
+    $font-Flaticon-animal-11: "\f103";
+    $font-Flaticon-animal-12: "\f104";
+    $font-Flaticon-animal-13: "\f105";
+    $font-Flaticon-animal-14: "\f106";
+    $font-Flaticon-animal-15: "\f107";
+    $font-Flaticon-animal-16: "\f108";
+    $font-Flaticon-animal-17: "\f109";
+    $font-Flaticon-animal-18: "\f10a";
+    $font-Flaticon-animal-19: "\f10b";
+    $font-Flaticon-animal-2: "\f10c";
+    $font-Flaticon-animal-20: "\f10d";
+    $font-Flaticon-animal-3: "\f10e";
+    $font-Flaticon-animal-4: "\f10f";
+    $font-Flaticon-animal-5: "\f110";
+    $font-Flaticon-animal-6: "\f111";
+    $font-Flaticon-animal-7: "\f112";
+    $font-Flaticon-animal-8: "\f113";
+    $font-Flaticon-animal-9: "\f114";
+    $font-Flaticon-animals: "\f115";
+    $font-Flaticon-animals-1: "\f116";
+    $font-Flaticon-animals-10: "\f117";
+    $font-Flaticon-animals-11: "\f118";
+    $font-Flaticon-animals-12: "\f119";
+    $font-Flaticon-animals-13: "\f11a";
+    $font-Flaticon-animals-2: "\f11b";
+    $font-Flaticon-animals-3: "\f11c";
+    $font-Flaticon-animals-4: "\f11d";
+    $font-Flaticon-animals-5: "\f11e";
+    $font-Flaticon-animals-6: "\f11f";
+    $font-Flaticon-animals-7: "\f120";
+    $font-Flaticon-animals-8: "\f121";
+    $font-Flaticon-animals-9: "\f122";
+    $font-Flaticon-black: "\f123";
+    $font-Flaticon-brush: "\f124";
+    $font-Flaticon-brush-1: "\f125";
+    $font-Flaticon-buildings: "\f126";
+    $font-Flaticon-dog: "\f127";
+    $font-Flaticon-dog-1: "\f128";
+    $font-Flaticon-dog-2: "\f129";
+    $font-Flaticon-dog-3: "\f12a";
+    $font-Flaticon-dog-4: "\f12b";
+    $font-Flaticon-dog-5: "\f12c";
+    $font-Flaticon-food: "\f12d";
+    $font-Flaticon-food-1: "\f12e";
+    $font-Flaticon-food-2: "\f12f";
+    $font-Flaticon-food-3: "\f130";
+    $font-Flaticon-food-4: "\f131";
+    $font-Flaticon-food-5: "\f132";
+    $font-Flaticon-hairdresser: "\f133";
+    $font-Flaticon-hairdresser-1: "\f134";
+    $font-Flaticon-healthy: "\f135";
+    $font-Flaticon-market: "\f136";
+    $font-Flaticon-mechanical: "\f137";
+    $font-Flaticon-medical: "\f138";
+    $font-Flaticon-medical-1: "\f139";
+    $font-Flaticon-medical-2: "\f13a";
+    $font-Flaticon-music: "\f13b";
+    $font-Flaticon-people: "\f13c";
+    $font-Flaticon-person: "\f13d";
+    $font-Flaticon-skeleton: "\f13e";
+    $font-Flaticon-snack: "\f13f";
+    $font-Flaticon-technology: "\f140";

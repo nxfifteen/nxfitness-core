@@ -1,0 +1,139 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 18/03/2016 11:58
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-balloons:before { content: "\f100"; }
+.flaticon-beer:before { content: "\f101"; }
+.flaticon-birthday-boy:before { content: "\f102"; }
+.flaticon-birthday-cake:before { content: "\f103"; }
+.flaticon-birthday-cake-piece:before { content: "\f104"; }
+.flaticon-birthday-card:before { content: "\f105"; }
+.flaticon-birthday-card-1:before { content: "\f106"; }
+.flaticon-birthday-girl:before { content: "\f107"; }
+.flaticon-calendar:before { content: "\f108"; }
+.flaticon-candle:before { content: "\f109"; }
+.flaticon-candles:before { content: "\f10a"; }
+.flaticon-candy:before { content: "\f10b"; }
+.flaticon-cell-phone:before { content: "\f10c"; }
+.flaticon-champagne:before { content: "\f10d"; }
+.flaticon-champagne-glass:before { content: "\f10e"; }
+.flaticon-chocolate:before { content: "\f10f"; }
+.flaticon-clown:before { content: "\f110"; }
+.flaticon-confetti:before { content: "\f111"; }
+.flaticon-crown:before { content: "\f112"; }
+.flaticon-cupcake:before { content: "\f113"; }
+.flaticon-cutlery:before { content: "\f114"; }
+.flaticon-cutlery-1:before { content: "\f115"; }
+.flaticon-disco-ball:before { content: "\f116"; }
+.flaticon-eye-mask:before { content: "\f117"; }
+.flaticon-fireworks:before { content: "\f118"; }
+.flaticon-flags:before { content: "\f119"; }
+.flaticon-gift-tag:before { content: "\f11a"; }
+.flaticon-hamburger:before { content: "\f11b"; }
+.flaticon-hat:before { content: "\f11c"; }
+.flaticon-horn:before { content: "\f11d"; }
+.flaticon-ice-cream:before { content: "\f11e"; }
+.flaticon-karaoke:before { content: "\f11f"; }
+.flaticon-lollipop:before { content: "\f120"; }
+.flaticon-musical-note:before { content: "\f121"; }
+.flaticon-party-blower:before { content: "\f122"; }
+.flaticon-photo-camera:before { content: "\f123"; }
+.flaticon-piano:before { content: "\f124"; }
+.flaticon-piata:before { content: "\f125"; }
+.flaticon-pizza:before { content: "\f126"; }
+.flaticon-polaroid:before { content: "\f127"; }
+.flaticon-present:before { content: "\f128"; }
+.flaticon-present-1:before { content: "\f129"; }
+.flaticon-punch-bowl:before { content: "\f12a"; }
+.flaticon-record-player:before { content: "\f12b"; }
+.flaticon-sandwich:before { content: "\f12c"; }
+.flaticon-shirt:before { content: "\f12d"; }
+.flaticon-snack:before { content: "\f12e"; }
+.flaticon-soda:before { content: "\f12f"; }
+.flaticon-sparkler:before { content: "\f130"; }
+.flaticon-speakers:before { content: "\f131"; }
+    
+    $font-Flaticon-balloons: "\f100";
+    $font-Flaticon-beer: "\f101";
+    $font-Flaticon-birthday-boy: "\f102";
+    $font-Flaticon-birthday-cake: "\f103";
+    $font-Flaticon-birthday-cake-piece: "\f104";
+    $font-Flaticon-birthday-card: "\f105";
+    $font-Flaticon-birthday-card-1: "\f106";
+    $font-Flaticon-birthday-girl: "\f107";
+    $font-Flaticon-calendar: "\f108";
+    $font-Flaticon-candle: "\f109";
+    $font-Flaticon-candles: "\f10a";
+    $font-Flaticon-candy: "\f10b";
+    $font-Flaticon-cell-phone: "\f10c";
+    $font-Flaticon-champagne: "\f10d";
+    $font-Flaticon-champagne-glass: "\f10e";
+    $font-Flaticon-chocolate: "\f10f";
+    $font-Flaticon-clown: "\f110";
+    $font-Flaticon-confetti: "\f111";
+    $font-Flaticon-crown: "\f112";
+    $font-Flaticon-cupcake: "\f113";
+    $font-Flaticon-cutlery: "\f114";
+    $font-Flaticon-cutlery-1: "\f115";
+    $font-Flaticon-disco-ball: "\f116";
+    $font-Flaticon-eye-mask: "\f117";
+    $font-Flaticon-fireworks: "\f118";
+    $font-Flaticon-flags: "\f119";
+    $font-Flaticon-gift-tag: "\f11a";
+    $font-Flaticon-hamburger: "\f11b";
+    $font-Flaticon-hat: "\f11c";
+    $font-Flaticon-horn: "\f11d";
+    $font-Flaticon-ice-cream: "\f11e";
+    $font-Flaticon-karaoke: "\f11f";
+    $font-Flaticon-lollipop: "\f120";
+    $font-Flaticon-musical-note: "\f121";
+    $font-Flaticon-party-blower: "\f122";
+    $font-Flaticon-photo-camera: "\f123";
+    $font-Flaticon-piano: "\f124";
+    $font-Flaticon-piata: "\f125";
+    $font-Flaticon-pizza: "\f126";
+    $font-Flaticon-polaroid: "\f127";
+    $font-Flaticon-present: "\f128";
+    $font-Flaticon-present-1: "\f129";
+    $font-Flaticon-punch-bowl: "\f12a";
+    $font-Flaticon-record-player: "\f12b";
+    $font-Flaticon-sandwich: "\f12c";
+    $font-Flaticon-shirt: "\f12d";
+    $font-Flaticon-snack: "\f12e";
+    $font-Flaticon-soda: "\f12f";
+    $font-Flaticon-sparkler: "\f130";
+    $font-Flaticon-speakers: "\f131";

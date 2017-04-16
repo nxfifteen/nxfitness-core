@@ -1,0 +1,16 @@
+<script>
+    var requireJS = [];
+
+    loadJS(requireJS, "js/views/leaderboard.js");
+    //    loadCSS("");
+    setUpBreadcrumb(['Rewards'], 'Leaderboard');
+</script>
+
+<div class="animated fadeIn">
+
+    <div class="alert alert-success" role="alert">
+        You have <span id="activeFriends"></span> active friends out of <span id="totalFriends"></span> in total
+    </div>
+
+    <div class="row" id="leaderboard"></div>
+</div>
