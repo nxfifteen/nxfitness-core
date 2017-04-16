@@ -22,4 +22,4 @@
 config.def.php
 config.inc.php
 vendor
-
+*.css.map

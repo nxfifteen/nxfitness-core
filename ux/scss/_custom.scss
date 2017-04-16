@@ -1,1 +1,96 @@
 // Here you can add other styles
+/*weather*/
+.weather-bg {
+  background:#8175c7;
+  border-radius:4px 4px 0 0;
+  -webkit-border-radius:4px 4px 0 0;
+  color:#fff;
+  text-align:center;
+  font-size:16px;
+  font-weight:300;
+}
+.weather-bg i {
+  font-size:60px;
+  display:block;
+}
+.weather-bg .degree {
+  font-size:60px;
+}
+.weather-category {
+  padding:15px 0;
+  color:#74829C;
+}
+.weather-category ul {
+  padding:0;
+  margin:0;
+  display:inline-block;
+  width:100%;
+}
+.weather-category ul li {
+  display:inline-block;
+  width:32%;
+  text-align:center;
+  border-right:1px solid #e6e6e6;
+  display:inline-block;
+}
+.weather-category ul li h5 {
+  margin:0 0 5px 0;
+  text-transform:uppercase;
+  font-weight:300;
+}
+.weather-category ul li a {
+}
+.weather-category ul li:last-child {
+  border-right: none;
+}
+.weather-full-info {
+  color:#cbcbcb;
+}
+.weather-full-info h1 {
+  font-size:14px;
+  font-weight:600;
+  margin:0 0 10px 0;
+  text-transform:uppercase;
+}
+.weather-full-info h2 {
+  font-size:14px;
+  font-weight:300;
+  margin:0 0 5px 0;
+}
+.weather-full-info .today-status i {
+  font-size:40px;
+  color:#1fb5ad;
+}
+.weather-full-info .degree {
+  font-size:30px;
+  font-weight:600;
+  display:inline-block;
+  padding-left:20px;
+}
+.weather-full-info .degree:after {
+  content:"o";
+  position:relative;
+  top:-12px;
+  font-size:16px;
+}
+.weather-full-info ul {
+  margin-bottom:0;
+}
+.weather-full-info ul li {
+  display:inline-block;
+  width:16%;
+  text-align:center;
+  border-left:1px solid #f1f2f7;
+}
+.weather-full-info ul li i {
+  font-size:25px;
+}
+.weather-full-info .statistics {
+  padding-top:5px;
+}
+.weather-full-info .statistics:after {
+  content:"o";
+  position:relative;
+  top:-5px;
+  font-size:10px;
+}
