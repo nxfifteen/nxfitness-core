@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.0.8 _Since Last Master_ ( Sun Apr 16 2017 23:04:19 GMT+0100 (BST) )
+## v0.0.0.8 _Since Last Master_ ( Sun Apr 16 2017 23:27:48 GMT+0100 (BST) )
 
 
 
@@ -123,6 +123,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
   - **commit_template**
     - Moved commit template ([dae715d1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/dae715d1402f93c24863555e0b62f3e949b7558b)) 
 
+  - **debug**
+    - Removed debug line ([9b56718d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/9b56718d393567d634b367cf97ef41ca4eecc3f2)) 
+
   - **git_ignore**
     - Ignore lock not json ([89c40bac](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/89c40bac6e9fff683635f3c0f1a8037407a72bdf)) 
     - Updated ignore file ([b2c91c7c](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b2c91c7c42f4e73cb2d7468cf0a0493ee5602e15)) 
@@ -143,6 +146,12 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
     - Updated spacing ([b47c1619](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b47c161995e7386b325036a18621d72fe7349533)) 
     - Changed ` character ([ba254fc9](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ba254fc9a24414121fb49913debf84c7f6d6cccc)) 
 
+
+
+
+
+## Other Commits
+  - Merge remote-tracking branch 'origin/develop' into develop ([7bdedf1d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/7bdedf1d4ce59bf92f17fddc49209bb446227543))
 
 
 

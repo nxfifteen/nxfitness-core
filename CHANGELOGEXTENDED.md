@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.0.8 false ( Sun Apr 16 2017 23:04:19 GMT+0100 (BST) )
+## v0.0.0.8 false ( Sun Apr 16 2017 23:27:49 GMT+0100 (BST) )
 
 
 
@@ -248,6 +248,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
   - **commit_template**
     - Moved commit template ([dae715d1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/dae715d1402f93c24863555e0b62f3e949b7558b)) 
 
+  - **debug**
+    - Removed debug line ([9b56718d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/9b56718d393567d634b367cf97ef41ca4eecc3f2)) 
+
   - **git_ignore**
     - Ignore lock not json ([89c40bac](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/89c40bac6e9fff683635f3c0f1a8037407a72bdf)) 
     - Updated ignore file ([b2c91c7c](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b2c91c7c42f4e73cb2d7468cf0a0493ee5602e15)) 
@@ -290,6 +293,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
 
 
 ## Other Commits
+  - Merge remote-tracking branch 'origin/develop' into develop ([7bdedf1d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/7bdedf1d4ce59bf92f17fddc49209bb446227543))
   - Rearranged all code style ([cfac5c39](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/cfac5c3918e24b82cbee20578a5a981f17f90c28))
   - Added config.def.php to ignore list ([fbd49c18](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/fbd49c1894292afcf3bdf44f05b51927d4389405))
   - Updated Nomie tracked group name to NxTracked ([d9662f32](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d9662f32e29e38435b16f41c34118a206312eaea))
