@@ -17,8 +17,6 @@
 
 			if (count($HeaderNotificationBar) > 0) $_SESSION['HeaderNotificationBar'] = $HeaderNotificationBar;
 		}
-
-		nxr(" * HeaderNotificationBar set in session");
 	}
 ?>
 
