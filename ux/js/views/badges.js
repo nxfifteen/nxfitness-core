@@ -27,17 +27,17 @@ $(function () {
                 htmlBadges += '</ul>';
 
                 html += '<div class="row">';
-                html += '<div class="col-md-12">';
+                html += '<div class="col-12">';
                 html += '<section class="card">';
                 html += '<header class="card-header">';
                 html += badgeCat;
                 html += '</header>';
                 html += '<div class="card-block">';
                 html += '<div class="row" style="margin-bottom: 30px;">';
-                html += '<div class="hidden-xs col-sm-8 wrap-badge">';
+                html += '<div class="hidden-sm-down col-8 wrap-badge">';
                 html += htmlBadges;
                 html += '</div>';
-                html += '<div class="col-xs-12 col-sm-4" style="text-align: center">';
+                html += '<div class="col-12 col-sm-4" style="text-align: center">';
                 html += '<img alt="' + last_badge_name + '" title="' + last_badge_name + '" src="'+last_badge+'"><br />' + last_badge_marketingdescription;
                 html += '</div>';
                 html += '</div>';
