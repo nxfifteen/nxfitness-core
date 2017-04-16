@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.0.8 _Since Last Master_ ( Sun Apr 16 2017 22:41:13 GMT+0100 (BST) )
+## v0.0.0.8 _Since Last Master_ ( Sun Apr 16 2017 23:04:19 GMT+0100 (BST) )
 
 
 
@@ -14,6 +14,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
 
   - **security**
     - Sentry DSN Key ([02fc8d40](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/02fc8d40007fdd0898dec2f82dd1db8f34ab9f6a)) , Closes: [#74](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/74)
+
+  - **user_ux**
+    - Fixed grid ([3681e815](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/3681e8152dcc8ee6694eb77deea8f1efb9be0b0a)) , Closes: [#106](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/106)
 
 
 
