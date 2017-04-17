@@ -3554,6 +3554,41 @@
 		/**
 		 * @return array
 		 */
+		public function returnUserRecordNomieGPS() {
+			if ( array_key_exists( 'tracker', $_GET ) ) {
+				$searchTracker = $_GET['tracker'];
+			} else {
+				return array();
+			}
+
+			$dbTrackers = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+				array( 'geo_lat', 'geo_lon' ),
+				array(
+					"AND"   => array( "fuid" => $this->getUserID(), "id" => $searchTracker ),
+					"LIMIT" => 20
+				) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+
+			$lat  = 0;
+			$long = 0;
+			foreach ( $dbTrackers as $dbTracker ) {
+				$lat  = $lat + $dbTracker['geo_lat'];
+				$long = $long + $dbTracker['geo_lon'];
+			}
+
+			$lat  = $lat / count( $dbTrackers );
+			$long = $long / count( $dbTrackers );
+
+			return array( "lat" => $lat, "long" => $long, "events" => $dbTrackers );
+		}
+
+		/**
+		 * @return array
+		 */
 		public function returnUserRecordNomieScoreGraph() {
 			$days                          = 30;
 			$returnAr                      = array();
