@@ -1,7 +1,8 @@
 <script>
-    var requireJS = [];
+    var requireJS = ["bower_components/leaflet/dist/leaflet.js"];
 
     loadJS(requireJS, "js/views/nomie_trackers.js");
+    loadCSS("bower_components/leaflet/dist/leaflet.css");
     loadCSS("css/nomie.css");
     setUpBreadcrumb(['Tracking', 'Nomie'], 'Trackers');
 </script>
@@ -33,7 +34,30 @@
     .flot-medium-container {
         height: 360px;
     }
+
+    #gpx-map {
+        height: 360px;
+    }
 </style>
 <div class="animated fadeIn">
-    <div class="row" id="trackers"></div>
+
+    <div class="card gpx" id="gpx" data-map-target="gpx-map">
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-12" id="gpx-map-container">
+                    <div class="map" id="gpx-map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" id="trackerCard">
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row" id="trackers"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

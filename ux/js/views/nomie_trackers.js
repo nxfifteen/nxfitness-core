@@ -1,6 +1,7 @@
 $(function () {
     'use strict';
 
+    $('#gpx').hide();
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieTrackers", function (data) {
         var html = '';
         var trackers = $('#trackers');
@@ -49,9 +50,9 @@ $(function () {
             html += '                </div>';
             html += '            </div>';
             html += '        </div>';
-            // html += '        <div class="card-footer px-3 py-2">';
-            // html += '            <a class="font-weight-bold font-xs btn-block text-muted" href="#">View More <i class="fa fa-angle-right float-right font-lg"></i></a>';
-            // html += '        </div>';
+            html += '        <div class="card-footer px-3 py-2">';
+            html += '            <a class="font-weight-bold font-xs btn-block text-muted" <a href="javascript:;" onclick="display_map(document.getElementById(\'gpx\'), \'' + trackerId + '\')">View More <i class="fa fa-angle-right float-right font-lg"></i></a>';
+            html += '        </div>';
             html += '    </div>';
             html += '</div>';
         });
@@ -62,3 +63,51 @@ $(function () {
     });
 
 });
+
+var cities = L.layerGroup();
+var map;
+
+//noinspection JSUnusedGlobalSymbols
+function display_map(elt, trackerId) {
+    if (!elt) {
+        console.log("Z::0");
+        return 0;
+    }
+
+    if (typeof map !== 'undefined') {
+        map.removeLayer(cities);
+    }
+
+    var gpxDiv = $('#gpx');
+    gpxDiv.show();
+
+    var mapID = elt.getAttribute('data-map-target');
+    if (!mapID) {
+        console.log("Z::2");
+        return 2;
+    }
+
+    var mapContainer = $("#gpx-map-container");
+    mapContainer.html('<div class="map" id="gpx-map"></div>');
+
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieGPS&tracker=" + trackerId, function (data) {
+        var cities = new L.LayerGroup();
+        var locations = data.results.events;
+
+        $.each(locations, function (itemId, mapPoint) {
+            // create the marker
+            L.marker([mapPoint.geo_lat, mapPoint.geo_lon]).addTo(cities);
+        });
+
+        map = L.map(mapID, {
+            layers: [cities]
+        });
+
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Track data from <a href="http://www.fitbit.com">Fitbit</a> and Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
+        }).addTo(map);
+
+        map.setView([data.results.lat, data.results.long], '7');
+    });
+}
