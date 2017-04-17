@@ -39,6 +39,9 @@
 			if ( array_key_exists( "debug", $_GET ) ) {
 				$cacheFileName = $cacheFileName . '_' . $_GET['debug'];
 			}
+			if ( array_key_exists( "tracker", $_GET ) ) {
+				$cacheFileName = $cacheFileName . '_' . $_GET['tracker'];
+			}
 			$cacheFile = 'cache' . DIRECTORY_SEPARATOR . $cacheFileName;
 
 			if ( file_exists( $cacheFile ) ) {

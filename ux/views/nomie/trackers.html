@@ -1,0 +1,83 @@
+<script>
+    var requireJS = ["bower_components/leaflet/dist/leaflet.js", "bower_components/leaflet.markercluster/dist/leaflet.markercluster.js"];
+
+    loadJS(requireJS, "js/views/nomie_trackers.js");
+    loadCSS("bower_components/leaflet/dist/leaflet.css");
+    loadCSS("bower_components/leaflet.markercluster/dist/MarkerCluster.css");
+    loadCSS("bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css");
+    loadCSS("css/nomie.css");
+    setUpBreadcrumb(['Tracking', 'Nomie'], 'Trackers');
+</script>
+<style type="text/css">
+    .flot-container {
+        box-sizing: border-box;
+        position: relative;
+        height: 450px;
+    }
+
+    .flot-placeholder {
+        height: 100%;
+        font-size: 14px;
+        line-height: 1.2em;
+    }
+
+    .legend table {
+        border-spacing: 5px;
+    }
+
+    .flot-small-container {
+        height: 300px;
+    }
+
+    .flot-mini-container {
+        height: 135px;
+    }
+
+    .flot-medium-container {
+        height: 360px;
+    }
+
+    #gpx-map {
+        height: 360px;
+    }
+</style>
+<div class="animated fadeIn">
+    <div class="card" id="trackerCard">
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row" id="trackers"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-header">
+                <h4 class="modal-title" id="modal-title">Modal title</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card gpx" id="gpx" data-map-target="gpx-map">
+                    <div class="card-block">
+                        <div class="row">
+                            <div class="col-md-12" id="gpx-map-container">
+                                <div class="map" id="gpx-map"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div><!-- /.modal -->

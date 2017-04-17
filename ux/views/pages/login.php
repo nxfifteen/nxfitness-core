@@ -65,7 +65,7 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card-group mb-0">
-                    <div class="card p-4" style="width:56%">
+                    <div class="card p-4">
                         <div class="card-block">
                             <h1>Login</h1>
                             <p class="text-muted">Sign In to your account</p>

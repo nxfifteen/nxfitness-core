@@ -1309,16 +1309,12 @@
 					if ( ! isset( $userProfile['strideLengthWalking'] ) ) {
 						$userProfile['strideLengthWalking'] = NULL;
 					}
-					if ( ! isset( $userProfile['city'] ) ) {
-						$userProfile['city'] = NULL;
-					}
 					if ( ! isset( $userProfile['country'] ) ) {
 						$userProfile['country'] = NULL;
 					}
 
 					$this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "users", array(
 						"avatar"         => (String) $userProfile['avatar150'],
-						"city"           => (String) $userProfile['city'],
 						"country"        => (String) $userProfile['country'],
 						"name"           => (String) $userProfile['fullName'],
 						"gender"         => (String) $userProfile['gender'],
@@ -2146,7 +2142,8 @@
 		}
 
 		/**
-		 * @param $string
+		 * @param     $string
+		 * @param int $current_goal
 		 *
 		 * @return float|int|string
 		 * @internal param $user

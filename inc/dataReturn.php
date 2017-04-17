@@ -3373,6 +3373,86 @@
 		 * @return array
 		 */
 		public function returnUserRecordNomie() {
+			$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
+
+			$returnArray               = array();
+			$returnArray['dashboard']  = $this->returnUserRecordNomieDashboard();
+			$returnArray['dbTrackers'] = $this->returnUserRecordNomieTrackers();
+
+			return $returnArray;
+		}
+
+		/**
+		 * @return array
+		 */
+		public function returnUserRecordNomieDashboard() {
+			$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
+
+			$returnArray              = array();
+			$returnArray['dashboard'] = array();
+
+			$returnArray['dashboard']['trackers'] = $this->getAppClass()->getDatabase()->count( $db_prefix . "nomie_trackers", 'id', array( "fuid" => $this->getUserID() ) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			$returnArray['dashboard']['events'] = $this->getAppClass()->getDatabase()->count( $db_prefix . "nomie_events", 'id', array( "fuid" => $this->getUserID() ) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			$returnArray['dashboard']['notes'] = 0;
+
+			$returnArray['dashboard']['spread']           = array();
+			$returnArray['dashboard']['spread']['events'] = array();
+
+			$returnArray['dashboard']['spread']['events']['positive'] = $this->getAppClass()->getDatabase()->count( $db_prefix . "nomie_events", 'id', array(
+				"AND" => array(
+					"fuid"     => $this->getUserID(),
+					"score[>]" => "0"
+				)
+			) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			$returnArray['dashboard']['spread']['events']['negative'] = $this->getAppClass()->getDatabase()->count( $db_prefix . "nomie_events", 'id', array(
+				"AND" => array(
+					"fuid"     => $this->getUserID(),
+					"score[<]" => "0"
+				)
+			) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			$returnArray['dashboard']['spread']['events']['netural'] = $this->getAppClass()->getDatabase()->count( $db_prefix . "nomie_events", 'id', array(
+				"AND" => array(
+					"fuid"  => $this->getUserID(),
+					"score" => "0"
+				)
+			) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			$returnArray['dashboard']['spread']['notes']             = array();
+			$returnArray['dashboard']['spread']['notes']['positive'] = 0;
+			$returnArray['dashboard']['spread']['notes']['negative'] = 0;
+			$returnArray['dashboard']['spread']['notes']['netural']  = 0;
+
+			return $returnArray['dashboard'];
+		}
+
+		/**
+		 * @return array
+		 */
+		public function returnUserRecordNomieTrackers() {
 			$dbTrackers = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_trackers",
 				array( 'id', 'label', 'icon', 'color', 'charge', 'sort' ),
 				array(
@@ -3426,9 +3506,9 @@
 						if ( $dbEventLast != "0000-00-00 00:00:00" ) {
 							$dateTimeFirst  = new DateTime ( $dbEventFirst );
 							$days_between   = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%a" );
-							$days_between   = $days_between + 1;
+							$days_between   = (int) $days_between + 1;
 							$months_between = $dateTimeFirst->diff( new DateTime ( $dbEventLast ) )->format( "%m" );
-							$months_between = $months_between + 1;
+							$months_between = (int) $months_between + 1;
 						}
 					}
 
@@ -3468,8 +3548,129 @@
 				}
 			}
 
-			return array(
-				"dbTrackers" => $trackerShared
-			);
+			return $trackerShared;
+		}
+
+		/**
+		 * @return array
+		 */
+		public function returnUserRecordNomieGPS() {
+			if ( array_key_exists( 'tracker', $_GET ) ) {
+				$searchTracker = $_GET['tracker'];
+			} else {
+				return array();
+			}
+
+			$eventLimit = 500;
+
+			$dbTrackers = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", array(
+				'geo_lat',
+				'geo_lon',
+				'datestamp'
+			), array(
+				"AND"   => array(
+					"fuid"       => $this->getUserID(),
+					"id"         => $searchTracker,
+					"geo_lat[!]" => "",
+					"geo_lon[!]" => ""
+				),
+				"LIMIT" => $eventLimit
+			) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			$lat = $this->getAppClass()->getDatabase()->avg( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", 'geo_lat', array(
+				"AND"   => array(
+					"fuid"       => $this->getUserID(),
+					"id"         => $searchTracker,
+					"geo_lat[!]" => "",
+					"geo_lon[!]" => ""
+				),
+				"LIMIT" => $eventLimit
+			) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			$long = $this->getAppClass()->getDatabase()->avg( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", 'geo_lon', array(
+				"AND"   => array(
+					"fuid"       => $this->getUserID(),
+					"id"         => $searchTracker,
+					"geo_lat[!]" => "",
+					"geo_lon[!]" => ""
+				),
+				"LIMIT" => $eventLimit
+			) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			return array( "lat" => $lat, "long" => $long, "events" => $dbTrackers );
+		}
+
+		/**
+		 * @return array
+		 */
+		public function returnUserRecordNomieScoreGraph() {
+			$days                          = 30;
+			$returnAr                      = array();
+			$returnAr['graph']             = array();
+			$returnAr['graph']['dates']    = array();
+			$returnAr['graph']['score']    = array();
+			$returnAr['graph']['positive'] = array();
+			$returnAr['graph']['negative'] = array();
+			$returnAr['graph']['neutral']  = array();
+			$returnAr['db']                = array();
+
+			$dbEvents = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+				array( 'datestamp', 'score' ),
+				array(
+					"AND"   => array(
+						"fuid"          => $this->getUserID(),
+						"datestamp[<=]" => $this->getParamDate() . " 23:59:59",
+						"datestamp[>=]" => date( 'Y-m-d', strtotime( $this->getParamDate() . " -" . ( $days - 1 ) . " day" ) ) . " 00:00:00"
+					),
+					"ORDER" => "datestamp DESC"
+				) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			foreach ( $dbEvents as $dbEvent ) {
+				$dbEvent['datestamp'] = substr( $dbEvent['datestamp'], 0, 10 );
+
+				if ( ! array_key_exists( $dbEvent['datestamp'], $returnAr['db'] ) ) {
+					$returnAr['db'][ $dbEvent['datestamp'] ]             = array();
+					$returnAr['db'][ $dbEvent['datestamp'] ]['score']    = 0;
+					$returnAr['db'][ $dbEvent['datestamp'] ]['positive'] = 0;
+					$returnAr['db'][ $dbEvent['datestamp'] ]['negative'] = 0;
+					$returnAr['db'][ $dbEvent['datestamp'] ]['neutral']  = 0;
+				}
+
+				$returnAr['db'][ $dbEvent['datestamp'] ]['score'] = $returnAr['db'][ $dbEvent['datestamp'] ]['score'] + $dbEvent['score'];
+
+				if ( $dbEvent['score'] < 0 ) {
+					$returnAr['db'][ $dbEvent['datestamp'] ]['positive'] = $returnAr['db'][ $dbEvent['datestamp'] ]['positive'] + 1;
+				} else if ( $dbEvent['score'] > 0 ) {
+					$returnAr['db'][ $dbEvent['datestamp'] ]['negative'] = $returnAr['db'][ $dbEvent['datestamp'] ]['negative'] + 1;
+				} else {
+					$returnAr['db'][ $dbEvent['datestamp'] ]['neutral'] = $returnAr['db'][ $dbEvent['datestamp'] ]['neutral'] + 1;
+				}
+			}
+
+			foreach ( $returnAr['db'] as $date => $collatedDay ) {
+				array_push( $returnAr['graph']['dates'], $date );
+				array_push( $returnAr['graph']['score'], $collatedDay['score'] );
+				array_push( $returnAr['graph']['positive'], $collatedDay['positive'] );
+				array_push( $returnAr['graph']['negative'], $collatedDay['negative'] );
+				array_push( $returnAr['graph']['neutral'], $collatedDay['neutral'] );
+			}
+
+			return $returnAr;
 		}
 	}

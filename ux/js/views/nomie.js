@@ -1,63 +1,145 @@
 $(function () {
     'use strict';
 
-    $.getJSON("../json.php?user="+fitbitUserId+"&data=Nomie", function (data) {
-        var html = '';
-        var trackers = $('#trackers');
-        var dbTrackers = data.results.dbTrackers;
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieDashboard", function (data) {
 
-        $.each(dbTrackers, function (trackerId, dbTracker) {
-            html += '<div class="col-12 col-md-6 col-lg-4" id="'+trackerId+'">';
-            html += '    <div class="card">';
-            html += '        <div class="card-block p-3 clearfix" style="background-color: '+dbTracker.color+' !important; ">';
-            html += '            <div class="row">';
-            html += '                <div class="hidden-sm-down col-md-3">';
-            html += '                    <i class="'+dbTracker.icon+' p-3 mr-3 float-left" style="color: #ffffff !important; font-size: 50px;line-height: 50px;"></i>';
-            html += '                </div>';
-            html += '                <div class="col-12 col-md-9">';
-            html += '                    <div class="row">';
-            html += '                        <div class="col-12 col-md-12">';
-            html += '                            <div class="h5 mb-0 mt-2" style="color: #ffffff;">'+dbTracker.label+'</div>';
-            html += '                        </div>';
-            html += '                    </div>';
-            html += '                    <div class="row">';
-            html += '                        <div class="col-6 col-md-6">';
-            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">'+dbTracker.stats.events+' Events</div>';
-            html += '                        </div>';
-            html += '                        <div class="col-6 col-md-6">';
+        $('#trackerCount').html(data.results.trackers);
+        $('#eventCount').html(data.results.events);
 
-            if (dbTracker.charge < -1) {
-                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">'+dbTracker.charge+' points lost</div>';
-            } else if (dbTracker.charge < 0) {
-                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">'+dbTracker.charge+' point lost</div>';
-            } else if (dbTracker.charge > 1) {
-                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">'+dbTracker.charge+' points awarded</div>';
-            } else if (dbTracker.charge > 0) {
-                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">'+dbTracker.charge+' point awarded</div>';
-            }
+        $('#positiveEvents').html(data.results.spread.events.positive);
+        $('#negativeEvents').html(data.results.spread.events.negative);
+        $('#neutralEvents').html(data.results.spread.events.netural);
 
-            html += '                        </div>';
-            html += '                    </div>';
-            html += '                    <div class="row">';
-            html += '                        <div class="col-6 col-md-6">';
-            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">Daily Avg : '+dbTracker.stats.dayAvg+'<br />Monthly Avg : '+dbTracker.stats.monthAvg+'</div>';
-            html += '                        </div>';
-            html += '                        <div class="col-6 col-md-6">';
-            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">First : '+dbTracker.stats.first+'<br />Last : '+dbTracker.stats.last+'</div>';
-            html += '                        </div>';
-            html += '                    </div>';
-            html += '                </div>';
-            html += '            </div>';
-            html += '        </div>';
-            // html += '        <div class="card-footer px-3 py-2">';
-            // html += '            <a class="font-weight-bold font-xs btn-block text-muted" href="#">View More <i class="fa fa-angle-right float-right font-lg"></i></a>';
-            // html += '        </div>';
-            html += '    </div>';
-            html += '</div>';
-        });
+        var splitPieChart = $('#splitPieChart');
+        if (splitPieChart.length > 0) {
+            var totalPositive = data.results.spread.events.positive;
+            var totalNegative = data.results.spread.events.negative;
+            var totalNetural = data.results.spread.events.netural;
+            var totalIntake = totalPositive + totalNegative + totalNetural;
 
-        trackers.html(html);
+            var splitPieChartData = [];
+            splitPieChartData[0] = {
+                label: "Positive",
+                data: (totalPositive / totalIntake) * 100,
+                color: '#4dbd74'
+            };
+            splitPieChartData[1] = {
+                label: "Negative",
+                data: (totalNegative / totalIntake) * 100,
+                color: '#f86c6b'
+            };
+            splitPieChartData[2] = {
+                label: "Netural",
+                data: (totalNetural / totalIntake) * 100,
+                color: '#63c2de'
+            };
 
-        debug_add_gen_time("nomie", data.time);
+            $.plot(splitPieChart, splitPieChartData, {
+                series: {
+                    pie: {
+                        show: true,
+                        radius: 1,
+                        tilt: 0.5,
+                        label: {
+                            show: true,
+                            radius: 1,
+                            formatter: labelFormatter,
+                            background: {
+                                opacity: 0.8
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    show: false
+                }
+            });
+        }
+
     });
+
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieScoreGraph&period=last92", function (data) {
+        var i, dataSet1, dataSet2, dataSet3, dataSet4, dataTimeScale, aniDuration, pointRadius, weight_units;
+
+        var scoreGraph = $('#scoreGraph');
+        if (scoreGraph.length > 0) {
+            var $progress = $('#animationScoreProgress');
+            var timeFormat = 'MM/DD/YYYY';
+
+            $progress.show();
+
+            aniDuration = 3000;
+
+            dataSet2 = data.results.graph.positive;
+            dataSet3 = data.results.graph.negative;
+            dataSet4 = data.results.graph.neutral;
+
+            var configWeight = {
+                labels: data.results.graph.dates,
+                datasets: [
+                    {
+                        label: 'Positive',
+                        backgroundColor: 'rgba(185,215,195,0.2)',
+                        borderColor: '#4dbd74',
+                        pointBackgroundColor: '#4dbd74',
+                        pointBorderColor: '#fff',
+                        data: dataSet2
+                    },
+                    {
+                        label: 'Negative',
+                        backgroundColor: 'rgba(220,190,190,0.2)',
+                        borderColor: '#f86c6b',
+                        pointBackgroundColor: '#f86c6b',
+                        pointBorderColor: '#fff',
+                        data: dataSet3
+                    },
+                    {
+                        label: 'Netural',
+                        backgroundColor: 'rgba(210,228,240,0.2)',
+                        borderColor: '#63c2de',
+                        pointBackgroundColor: '#63c2de',
+                        pointBorderColor: '#fff',
+                        data: dataSet4
+                    }
+                ]
+            };
+
+            var ctx = document.getElementById("scoreGraph");
+            var weightChart = new Chart(ctx, {
+                type: 'line',
+                data: configWeight,
+                options: {
+                    responsive: true,
+                    tooltips: {
+                        mode: 'label',
+                        callbacks: {
+                            beforeBody: function () {
+                                return 'Events Recorded';
+                            }
+                        }
+                    },
+                    hover: {
+                        mode: 'dataset'
+                    },
+                    animation: {
+                        duration: aniDuration,
+                        onProgress: function (animation) {
+                            $progress.attr({
+                                value: animation.animationObject.currentStep / animation.animationObject.numSteps,
+                            });
+                        },
+                        onComplete: function (animation) {
+                            window.setTimeout(function () {
+                                $progress.hide();
+                            }, (aniDuration * 0.5));
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    function labelFormatter(label, series) {
+        return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+    }
 });

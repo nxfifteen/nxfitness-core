@@ -1,11 +1,136 @@
 <script>
-    var requireJS = [];
+    var requireJS = ["bower_components/moment/moment.js", "bower_components/chart.js/dist/Chart.min.js", "bower_components/Flot/jquery.flot.js", "bower_components/Flot/jquery.flot.time.js", "bower_components/Flot/jquery.flot.pie.js"];
 
     loadJS(requireJS, "js/views/nomie.js");
-    loadCSS("css/nomie.css");
-    setUpBreadcrumb(['Tracking'], 'Nomie');
+    setUpBreadcrumb(['Tracking', 'Nomie'], 'Dashboard');
 </script>
+<style type="text/css">
+    .flot-container {
+        box-sizing: border-box;
+        position: relative;
+        height: 450px;
+    }
 
+    .flot-placeholder {
+        height: 100%;
+        font-size: 14px;
+        line-height: 1.2em;
+    }
+
+    .legend table {
+        border-spacing: 5px;
+    }
+
+    .flot-small-container {
+        height: 300px;
+    }
+
+    .flot-mini-container {
+        height: 135px;
+    }
+
+    .flot-medium-container {
+        height: 360px;
+    }
+</style>
 <div class="animated fadeIn">
-    <div class="row" id="trackers"></div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Positive/Negative</div>
+                <div class="card-block">
+                    <div class="chartJS">
+                        <canvas id="scoreGraph" height="250" width="800"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <progress id="animationScoreProgress" max="1" value="0" style="width: 100%"></progress>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8">
+
+            <div class="card">
+                <div class="card-header">Nomie Overview</div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-block p-0 clearfix">
+                                    <i class="fa fa-pie-chart bg-primary p-4 px-5 font-2xl mr-3 float-left"></i>
+                                    <div class="h5 text-primary mb-0 pt-3" id="trackerCount">0</div>
+                                    <div class="text-muted text-uppercase font-weight-bold font-xs">TRACKERS</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-block p-0 clearfix">
+                                    <i class="fa fa-check-square-o bg-primary p-4 px-5 font-2xl mr-3 float-left"></i>
+                                    <div class="h5 text-primary mb-0 pt-3" id="eventCount">0</div>
+                                    <div class="text-muted text-uppercase font-weight-bold font-xs">EVENTS</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Nomie Overview</div>
+                <div class="card-block">
+
+                    <div class="row">
+                        <div class="col-6 col-lg-4">
+                            <div class="card">
+                                <div class="card-block p-0 clearfix">
+                                    <i class="fa fa-thumbs-o-up bg-success p-4 px-5 font-2xl mr-3 float-left"></i>
+                                    <div class="h5 text-primary mb-0 pt-3" id="positiveEvents">0</div>
+                                    <div class="text-muted text-uppercase font-weight-bold font-xs">POSITIVE</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-lg-4">
+                            <div class="card">
+                                <div class="card-block p-0 clearfix">
+                                    <i class="fa fa-thumbs-o-down bg-danger p-4 px-5 font-2xl mr-3 float-left"></i>
+                                    <div class="h5 text-primary mb-0 pt-3" id="negativeEvents">0</div>
+                                    <div class="text-muted text-uppercase font-weight-bold font-xs">NEGATIVE</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-lg-4">
+                            <div class="card">
+                                <div class="card-block p-0 clearfix">
+                                    <i class="fa fa-hand-spock-o bg-info p-4 px-5 font-2xl mr-3 float-left"></i>
+                                    <div class="h5 text-primary mb-0 pt-3" id="neutralEvents">0</div>
+                                    <div class="text-muted text-uppercase font-weight-bold font-xs">NEUTRAL</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">Positive/Negative</div>
+                <div class="card-block">
+                    <div class="flot-small-container">
+                        <div id="splitPieChart" class="flot-placeholder"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
