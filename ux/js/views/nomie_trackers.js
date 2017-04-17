@@ -60,5 +60,5 @@ $(function () {
 
         debug_add_gen_time("nomie", data.time);
     });
-    
+
 });

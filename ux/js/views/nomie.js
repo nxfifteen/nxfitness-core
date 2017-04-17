@@ -58,6 +58,87 @@ $(function () {
 
     });
 
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieScoreGraph&period=last92", function (data) {
+        var i, dataSet1, dataSet2, dataSet3, dataSet4, dataTimeScale, aniDuration, pointRadius, weight_units;
+
+        var scoreGraph = $('#scoreGraph');
+        if (scoreGraph.length > 0) {
+            var $progress = $('#animationScoreProgress');
+            var timeFormat = 'MM/DD/YYYY';
+
+            $progress.show();
+
+            aniDuration = 3000;
+
+            dataSet2 = data.results.graph.positive;
+            dataSet3 = data.results.graph.negative;
+            dataSet4 = data.results.graph.neutral;
+
+            var configWeight = {
+                labels: data.results.graph.dates,
+                datasets: [
+                    {
+                        label: 'Positive',
+                        backgroundColor: 'rgba(185,215,195,0.2)',
+                        borderColor: '#4dbd74',
+                        pointBackgroundColor: '#4dbd74',
+                        pointBorderColor: '#fff',
+                        data: dataSet2
+                    },
+                    {
+                        label: 'Negative',
+                        backgroundColor: 'rgba(220,190,190,0.2)',
+                        borderColor: '#f86c6b',
+                        pointBackgroundColor: '#f86c6b',
+                        pointBorderColor: '#fff',
+                        data: dataSet3
+                    },
+                    {
+                        label: 'Netural',
+                        backgroundColor: 'rgba(210,228,240,0.2)',
+                        borderColor: '#63c2de',
+                        pointBackgroundColor: '#63c2de',
+                        pointBorderColor: '#fff',
+                        data: dataSet4
+                    }
+                ]
+            };
+
+            var ctx = document.getElementById("scoreGraph");
+            var weightChart = new Chart(ctx, {
+                type: 'line',
+                data: configWeight,
+                options: {
+                    responsive: true,
+                    tooltips: {
+                        mode: 'label',
+                        callbacks: {
+                            beforeBody: function () {
+                                return 'Events Recorded';
+                            }
+                        }
+                    },
+                    hover: {
+                        mode: 'dataset'
+                    },
+                    animation: {
+                        duration: aniDuration,
+                        onProgress: function (animation) {
+                            $progress.attr({
+                                value: animation.animationObject.currentStep / animation.animationObject.numSteps,
+                            });
+                        },
+                        onComplete: function (animation) {
+                            window.setTimeout(function () {
+                                $progress.hide();
+                            }, (aniDuration * 0.5));
+                        }
+                    }
+                }
+            });
+        }
+    });
+
     function labelFormatter(label, series) {
         return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
     }

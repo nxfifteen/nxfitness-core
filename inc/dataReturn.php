@@ -3550,4 +3550,68 @@
 
 			return $trackerShared;
 		}
+
+		/**
+		 * @return array
+		 */
+		public function returnUserRecordNomieScoreGraph() {
+			$days                          = 30;
+			$returnAr                      = array();
+			$returnAr['graph']             = array();
+			$returnAr['graph']['dates']    = array();
+			$returnAr['graph']['score']    = array();
+			$returnAr['graph']['positive'] = array();
+			$returnAr['graph']['negative'] = array();
+			$returnAr['graph']['neutral']  = array();
+			$returnAr['db']                = array();
+
+			//$this->getParamDate()
+
+			$dbEvents = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
+				array( 'datestamp', 'score' ),
+				array(
+					"AND"   => array(
+						"fuid"          => $this->getUserID(),
+						"datestamp[<=]" => "2017-04-14 23:59:59",
+						"datestamp[>=]" => date( 'Y-m-d', strtotime( "2017-04-14 -" . ( $days - 1 ) . " day" ) ) . " 00:00:00"
+					),
+					"ORDER" => "datestamp DESC"
+				) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
+
+			foreach ( $dbEvents as $dbEvent ) {
+				$dbEvent['datestamp'] = substr( $dbEvent['datestamp'], 0, 10 );
+
+				if ( ! array_key_exists( $dbEvent['datestamp'], $returnAr['db'] ) ) {
+					$returnAr['db'][ $dbEvent['datestamp'] ]             = array();
+					$returnAr['db'][ $dbEvent['datestamp'] ]['score']    = 0;
+					$returnAr['db'][ $dbEvent['datestamp'] ]['positive'] = 0;
+					$returnAr['db'][ $dbEvent['datestamp'] ]['negative'] = 0;
+					$returnAr['db'][ $dbEvent['datestamp'] ]['neutral']  = 0;
+				}
+
+				$returnAr['db'][ $dbEvent['datestamp'] ]['score'] = $returnAr['db'][ $dbEvent['datestamp'] ]['score'] + $dbEvent['score'];
+
+				if ( $dbEvent['score'] < 0 ) {
+					$returnAr['db'][ $dbEvent['datestamp'] ]['positive'] = $returnAr['db'][ $dbEvent['datestamp'] ]['positive'] + 1;
+				} else if ( $dbEvent['score'] > 0 ) {
+					$returnAr['db'][ $dbEvent['datestamp'] ]['negative'] = $returnAr['db'][ $dbEvent['datestamp'] ]['negative'] + 1;
+				} else {
+					$returnAr['db'][ $dbEvent['datestamp'] ]['neutral'] = $returnAr['db'][ $dbEvent['datestamp'] ]['neutral'] + 1;
+				}
+			}
+
+			foreach ( $returnAr['db'] as $date => $collatedDay ) {
+				array_push( $returnAr['graph']['dates'], $date );
+				array_push( $returnAr['graph']['score'], $collatedDay['score'] );
+				array_push( $returnAr['graph']['positive'], $collatedDay['positive'] );
+				array_push( $returnAr['graph']['negative'], $collatedDay['negative'] );
+				array_push( $returnAr['graph']['neutral'], $collatedDay['neutral'] );
+			}
+
+			return $returnAr;
+		}
 	}
