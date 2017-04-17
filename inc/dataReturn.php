@@ -3561,27 +3561,52 @@
 				return array();
 			}
 
-			$dbTrackers = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
-				array( 'geo_lat', 'geo_lon' ),
-				array(
-					"AND"   => array( "fuid" => $this->getUserID(), "id" => $searchTracker ),
-					"LIMIT" => 20
-				) );
+			$eventLimit = 10;
+
+			$dbTrackers = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", array(
+				'geo_lat',
+				'geo_lon'
+			), array(
+				"AND"   => array(
+					"fuid"       => $this->getUserID(),
+					"id"         => $searchTracker,
+					"geo_lat[!]" => "",
+					"geo_lon[!]" => ""
+				),
+				"LIMIT" => $eventLimit
+			) );
 			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
 				"METHOD" => __METHOD__,
 				"LINE"   => __LINE__
 			) );
 
+			$lat = $this->getAppClass()->getDatabase()->avg( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", 'geo_lat', array(
+				"AND"   => array(
+					"fuid"       => $this->getUserID(),
+					"id"         => $searchTracker,
+					"geo_lat[!]" => "",
+					"geo_lon[!]" => ""
+				),
+				"LIMIT" => $eventLimit
+			) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
 
-			$lat  = 0;
-			$long = 0;
-			foreach ( $dbTrackers as $dbTracker ) {
-				$lat  = $lat + $dbTracker['geo_lat'];
-				$long = $long + $dbTracker['geo_lon'];
-			}
-
-			$lat  = $lat / count( $dbTrackers );
-			$long = $long / count( $dbTrackers );
+			$long = $this->getAppClass()->getDatabase()->avg( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", 'geo_lon', array(
+				"AND"   => array(
+					"fuid"       => $this->getUserID(),
+					"id"         => $searchTracker,
+					"geo_lat[!]" => "",
+					"geo_lon[!]" => ""
+				),
+				"LIMIT" => $eventLimit
+			) );
+			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+				"METHOD" => __METHOD__,
+				"LINE"   => __LINE__
+			) );
 
 			return array( "lat" => $lat, "long" => $long, "events" => $dbTrackers );
 		}
