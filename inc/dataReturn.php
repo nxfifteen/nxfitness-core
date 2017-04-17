@@ -3634,7 +3634,7 @@
 						"datestamp[<=]" => $this->getParamDate() . " 23:59:59",
 						"datestamp[>=]" => date( 'Y-m-d', strtotime( $this->getParamDate() . " -" . ( $days - 1 ) . " day" ) ) . " 00:00:00"
 					),
-					"ORDER" => "datestamp DESC"
+					"ORDER" => "datestamp ASC"
 				) );
 			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
 				"METHOD" => __METHOD__,
