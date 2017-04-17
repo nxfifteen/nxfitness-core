@@ -2142,7 +2142,8 @@
 		}
 
 		/**
-		 * @param $string
+		 * @param     $string
+		 * @param int $current_goal
 		 *
 		 * @return float|int|string
 		 * @internal param $user
