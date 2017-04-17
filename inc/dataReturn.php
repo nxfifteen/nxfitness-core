@@ -3561,11 +3561,12 @@
 				return array();
 			}
 
-			$eventLimit = 10;
+			$eventLimit = 500;
 
 			$dbTrackers = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", array(
 				'geo_lat',
-				'geo_lon'
+				'geo_lon',
+				'datestamp'
 			), array(
 				"AND"   => array(
 					"fuid"       => $this->getUserID(),
@@ -3625,15 +3626,13 @@
 			$returnAr['graph']['neutral']  = array();
 			$returnAr['db']                = array();
 
-			//$this->getParamDate()
-
 			$dbEvents = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events",
 				array( 'datestamp', 'score' ),
 				array(
 					"AND"   => array(
 						"fuid"          => $this->getUserID(),
-						"datestamp[<=]" => "2017-04-14 23:59:59",
-						"datestamp[>=]" => date( 'Y-m-d', strtotime( "2017-04-14 -" . ( $days - 1 ) . " day" ) ) . " 00:00:00"
+						"datestamp[<=]" => $this->getParamDate() . " 23:59:59",
+						"datestamp[>=]" => date( 'Y-m-d', strtotime( $this->getParamDate() . " -" . ( $days - 1 ) . " day" ) ) . " 00:00:00"
 					),
 					"ORDER" => "datestamp DESC"
 				) );

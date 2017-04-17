@@ -51,7 +51,7 @@ $(function () {
             html += '            </div>';
             html += '        </div>';
             html += '        <div class="card-footer px-3 py-2">';
-            html += '            <a class="font-weight-bold font-xs btn-block text-muted" <a href="javascript:;" onclick="display_map(document.getElementById(\'gpx\'), \'' + trackerId + '\')">View More <i class="fa fa-angle-right float-right font-lg"></i></a>';
+            html += '            <a class="font-weight-bold font-xs btn-block text-muted" <a href="javascript:;" onclick="display_map(document.getElementById(\'gpx\'), \'' + trackerId + '\', \'' + dbTracker.label + '\', \'' + dbTracker.icon + '\', \'' + dbTracker.color + '\')">View on Map <i class="fa fa-angle-right float-right font-lg"></i></a>';
             html += '        </div>';
             html += '    </div>';
             html += '</div>';
@@ -64,21 +64,26 @@ $(function () {
 
 });
 
-var cities = L.layerGroup();
 var map;
+var markers = L.markerClusterGroup();
+var gpxDiv = $('#gpx');
+var mapContainer = $("#gpx-map-container");
+var mapModal = $('#myModal');
 
 //noinspection JSUnusedGlobalSymbols
-function display_map(elt, trackerId) {
+function display_map(elt, trackerId, label, icon, color) {
     if (!elt) {
         console.log("Z::0");
         return 0;
     }
 
     if (typeof map !== 'undefined') {
-        map.removeLayer(cities);
+        markers.clearLayers();
     }
 
-    var gpxDiv = $('#gpx');
+    $('#modal-title').html('<i class="' + icon + ' p-3 mr-3 float-left" style="color: #ffffff !important; font-size: 50px;line-height: 50px;"></i> <span style="color: #ffffff !important;"> ' + label + "</span>");
+    $('#modal-header').css("background-color", color);
+
     gpxDiv.show();
 
     var mapID = elt.getAttribute('data-map-target');
@@ -87,27 +92,41 @@ function display_map(elt, trackerId) {
         return 2;
     }
 
-    var mapContainer = $("#gpx-map-container");
     mapContainer.html('<div class="map" id="gpx-map"></div>');
 
+    var markerList = [];
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieGPS&tracker=" + trackerId, function (data) {
-        var cities = new L.LayerGroup();
+
         var locations = data.results.events;
 
         $.each(locations, function (itemId, mapPoint) {
-            // create the marker
-            L.marker([mapPoint.geo_lat, mapPoint.geo_lon]).addTo(cities);
+
+            var title = "Recorded: " + mapPoint.datestamp;
+            var marker = L.marker([mapPoint.geo_lat, mapPoint.geo_lon]).bindPopup(title);
+            markerList.push(marker);
         });
+
 
         map = L.map(mapID, {
-            layers: [cities]
+            center: [data.results.lat, data.results.long],
+            zoom: 7,
+            maxZoom: 16
         });
 
+        markers.addLayers(markerList);
+        map.addLayer(markers);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Track data from <a href="http://www.fitbit.com">Fitbit</a> and Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
+            attribution: 'Track data from <a href="https://nomie.io" target="_blank">Nomie</a> and Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
         }).addTo(map);
 
         map.setView([data.results.lat, data.results.long], '7');
+
+        debug_add_gen_time("Map " + label, data.time);
+    });
+
+    mapModal.modal('show');
+    mapModal.on("shown.bs.modal", function () {
+        map.invalidateSize();
     });
 }
