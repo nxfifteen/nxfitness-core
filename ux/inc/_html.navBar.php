@@ -78,8 +78,18 @@
                         <li class="nav-item">
                             <a class="nav-link" href="food/food.html"><i class="fa fa-cutlery""></i> Food</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="nomie/nomie.html"><i class="fa fa-street-view"></i> Nomie</a>
+                        <li class="nav-item nav-dropdown">
+                            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-life-ring"></i> Nomie</a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="nomie/nomie.html"><i class="fa fa-heart"></i> Nomie</a>
+                                </li>
+                            </ul>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="nomie/trackers.html"><i class="fa fa-heart"></i> Trackers</a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li class="nav-title">

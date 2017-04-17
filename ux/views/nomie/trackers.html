@@ -1,0 +1,39 @@
+<script>
+    var requireJS = ["bower_components/Flot/jquery.flot.js", "bower_components/Flot/jquery.flot.time.js", "bower_components/Flot/jquery.flot.pie.js"];
+
+    loadJS(requireJS, "js/views/nomie_trackers.js");
+    loadCSS("css/nomie.css");
+    setUpBreadcrumb(['Tracking'], 'Nomie');
+</script>
+<style type="text/css">
+    .flot-container {
+        box-sizing: border-box;
+        position: relative;
+        height: 450px;
+    }
+
+    .flot-placeholder {
+        height: 100%;
+        font-size: 14px;
+        line-height: 1.2em;
+    }
+
+    .legend table {
+        border-spacing: 5px;
+    }
+
+    .flot-small-container {
+        height: 300px;
+    }
+
+    .flot-mini-container {
+        height: 135px;
+    }
+
+    .flot-medium-container {
+        height: 360px;
+    }
+</style>
+<div class="animated fadeIn">
+    <div class="row" id="trackers"></div>
+</div>

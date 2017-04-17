@@ -652,6 +652,7 @@
 		 * @param array  $data    Additional attributes to pass with this event (see Sentry docs).
 		 */
 		public function captureMessage( $message, $params = array(), $data = array(), $stack = FALSE, $vars = NULL ) {
+			nxr( "[ERROR] $message" );
 			if ( defined( 'SENTRY_DSN' ) ) {
 				$this->getSentryClient()->captureMessage( $message, $params, $data, $stack, $vars );
 				nxr( "### Message Recorded ###" );
