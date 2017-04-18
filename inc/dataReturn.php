@@ -3562,17 +3562,25 @@
 			}
 
 			$eventLimit = 500;
+			$db_prefix  = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
 
-			$dbTrackers = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", array(
-				'geo_lat',
-				'geo_lon',
-				'datestamp'
+			$dbTrackers = $this->getAppClass()->getDatabase()->select( $db_prefix . "nomie_events", array(
+				"[>]" . $db_prefix . "nomie_trackers" => array( "id" => "id" )
+			), array(
+				$db_prefix . 'nomie_events.datestamp',
+				$db_prefix . 'nomie_trackers.type',
+				$db_prefix . 'nomie_trackers.math',
+				$db_prefix . 'nomie_trackers.uom',
+				$db_prefix . 'nomie_events.value',
+				$db_prefix . 'nomie_events.score',
+				$db_prefix . 'nomie_events.geo_lat',
+				$db_prefix . 'nomie_events.geo_lon'
 			), array(
 				"AND"   => array(
-					"fuid"       => $this->getUserID(),
-					"id"         => $searchTracker,
-					"geo_lat[!]" => "",
-					"geo_lon[!]" => ""
+					$db_prefix . "nomie_events.fuid"       => $this->getUserID(),
+					$db_prefix . "nomie_events.id"         => $searchTracker,
+					$db_prefix . "nomie_events.geo_lat[!]" => "",
+					$db_prefix . "nomie_events.geo_lon[!]" => ""
 				),
 				"LIMIT" => $eventLimit
 			) );
@@ -3581,7 +3589,7 @@
 				"LINE"   => __LINE__
 			) );
 
-			$lat = $this->getAppClass()->getDatabase()->avg( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", 'geo_lat', array(
+			$lat = $this->getAppClass()->getDatabase()->avg( $db_prefix . "nomie_events", 'geo_lat', array(
 				"AND"   => array(
 					"fuid"       => $this->getUserID(),
 					"id"         => $searchTracker,
@@ -3595,7 +3603,7 @@
 				"LINE"   => __LINE__
 			) );
 
-			$long = $this->getAppClass()->getDatabase()->avg( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "nomie_events", 'geo_lon', array(
+			$long = $this->getAppClass()->getDatabase()->avg( $db_prefix . "nomie_events", 'geo_lon', array(
 				"AND"   => array(
 					"fuid"       => $this->getUserID(),
 					"id"         => $searchTracker,

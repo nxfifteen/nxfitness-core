@@ -101,7 +101,42 @@ function display_map(elt, trackerId, label, icon, color) {
 
         $.each(locations, function (itemId, mapPoint) {
 
-            var title = "Recorded: " + mapPoint.datestamp;
+            var value = '';
+
+            if (mapPoint.type === "numeric") {
+                if (mapPoint.uom === "min") {
+                    if (mapPoint.value > 60) {
+                        var hours = Math.floor(mapPoint.value / 60);
+                        var minutes = Math.floor(mapPoint.value % 60);
+
+                        value = '<strong>Recorded for ' + hours + ' hrs ' + minutes + ' mins</strong>';
+                    } else {
+                        value = '<strong>Recorded for ' + Math.floor(mapPoint.value * Math.pow(10, 2)) / Math.pow(10, 2) + ' ' + mapPoint.uom + '</strong>';
+                    }
+                } else {
+                    value = '<strong>Recorded ' + mapPoint.value + ' ' + mapPoint.uom + '</strong>';
+                }
+            } else if (mapPoint.type === "timer") {
+                value = '<strong>Recorded for ' + mapPoint.value + ' sec</strong>';
+            } else {
+                value = '<strong>Event Recorded</strong>'
+            }
+
+            var title = value + '<br />';
+            title += 'Logged: ' + mapPoint.datestamp + '<br />';
+            var badgeInfo = '';
+            if (mapPoint.score === '-2') {
+                badgeInfo = 'badge-danger';
+            } else if (mapPoint.score === '-1') {
+                badgeInfo = 'badge-warning';
+            } else if (mapPoint.score === '1') {
+                badgeInfo = 'badge-primary';
+            } else if (mapPoint.score === '2') {
+                badgeInfo = 'badge-success';
+            } else {
+                badgeInfo = 'badge-info';
+            }
+            title += 'Awarded: <span class="badge ' + badgeInfo + '">' + mapPoint.score + ' points</span>';
             var marker = L.marker([mapPoint.geo_lat, mapPoint.geo_lon]).bindPopup(title);
             markerList.push(marker);
         });
