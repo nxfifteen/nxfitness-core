@@ -542,6 +542,35 @@
 			return TRUE;
 		}
 
+		/** @noinspection PhpUnusedPrivateMethodInspection */
+		private function update_9() {
+			$db_prefix = $this->getSetting( "db_prefix", FALSE );
+
+			$this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "nomie_trackers` ADD `type` VARCHAR(20) NULL AFTER `charge`, ADD `math` VARCHAR(20) NULL AFTER `type`,  ADD `uom` VARCHAR(20) NULL AFTER `math`;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "nomie_events` DROP PRIMARY KEY;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "nomie_events` DROP `type`;" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "nomie_events` ADD PRIMARY KEY (`fuid`,`id`,`datestamp`);" );
+			if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+				return FALSE;
+			}
+
+			$this->setSetting( "version", "0.0.0.9", TRUE );
+
+			return TRUE;
+		}
+
 		/**
 		 * @return config
 		 */

@@ -1,6 +1,8 @@
 NxFitness Core - A PHP Fitbit API Project
 =========================================
 
+###### Version: 0.0.0.9
+
 I've been using my Fitbit every day without break since I first got it in June 2012 and while the Fitbit dashboard is good, offering everything you could ever want, I felt the need to roll my own - as always. 
 Fitbit offer a fantastic API which I aimed to make full use of. When I started my project I couldn't find anything else on the net like it. My project is slightly further along than this one, I am contacting 
 the developer to offer my code and see if we can both work up a finished product.

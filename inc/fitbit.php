@@ -2440,7 +2440,6 @@
 			$isAllowed = $this->isAllowed( "nomie_trackers" );
 			if ( ! is_numeric( $isAllowed ) ) {
 				if ( $this->api_isCooled( "nomie_trackers" ) ) {
-
 					$nomie_user_key = $this->getAppClass()->getUserSetting( $this->activeUser, "nomie_key", 'nomie' );
 
 					nxr( " Connecting to CouchDB" );
@@ -2557,7 +2556,7 @@
 							}
 
 							if ( isset( $doc ) && is_object( $doc ) ) {
-								nxr( "  Storing " . $doc->label );
+								nxr( "  Storing " . print_r( $doc->label, TRUE ) );
 
 								$dbStorage = array(
 									"fuid"   => $this->activeUser,
@@ -2567,6 +2566,16 @@
 									"color"  => $doc->color,
 									"charge" => $doc->charge
 								);
+
+								if ( isset( $doc->config->type ) ) {
+									$dbStorage['type'] = $doc->config->type;
+								}
+								if ( isset( $doc->config->math ) ) {
+									$dbStorage['math'] = $doc->config->math;
+								}
+								if ( isset( $doc->config->uom ) ) {
+									$dbStorage['uom'] = $doc->config->uom;
+								}
 
 								array_push( $trackedTrackers, $tracker );
 								$indexedTrackers[ $tracker ] = $doc->label;
@@ -2635,7 +2644,6 @@
 									$dbStorage = array(
 										"fuid"      => $this->activeUser,
 										"id"        => $event[2],
-										"type"      => $event[0],
 										"datestamp" => $event[5],
 										"value"     => $document['value'],
 										"score"     => $event[4],
@@ -2771,7 +2779,7 @@
 				}
 
 				// PULL - users profile
-				if ( ( $trigger == "all" || $trigger == "nomie_trackers" ) && ( ! is_array( $_GET ) || ! array_key_exists( "dev", $_GET ) ) ) {
+				if ( $trigger == "all" || $trigger == "nomie_trackers") {
 					$pull = $this->pullNomieTrackers();
 					if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
 						nxr( "  Error profile: " . $this->getAppClass()->lookupErrorCode( $pull ) );
