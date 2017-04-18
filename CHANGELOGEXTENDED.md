@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.0.8 false ( Tue Apr 18 2017 21:55:29 GMT+0100 (BST) )
+## v0.0.0.8 false ( Tue Apr 18 2017 22:42:40 GMT+0100 (BST) )
 
 
 
@@ -58,6 +58,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
   - Estimated unrecorded weight values base on formula of a straight line ([b23a4b81](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b23a4b81ef17c2977626b056b625d7227c01035a)), Closes: [#1](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/1)
   - **auto_upgrade**
     - Added version checking ([d447bd32](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d447bd328fc49021e1e736566fa8ad6186ba402e)) , Closes: [#64](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/64)
+
+  - **changelog**
+    - Bumped version number ([ad61a78c](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ad61a78c95f924da4b519ec92373c38df3955003)) 
 
   - **console_logging**
     - Prevent cron runs writing to console ([d66d2bdb](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/d66d2bdb2b0478dc6a8ca8963188a813f72451e3)) , Closes: [#70](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/70)
@@ -290,6 +293,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
   - **upgrader**
     - Updated spacing ([b47c1619](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b47c161995e7386b325036a18621d72fe7349533)) 
     - Changed ` character ([ba254fc9](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ba254fc9a24414121fb49913debf84c7f6d6cccc)) 
+
+  - **version**
+    - Reverted version numbers ([8dae8c52](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/8dae8c520c0e5134677d570c48eefb9a77d1913c)) 
 
 
 
