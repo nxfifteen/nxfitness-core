@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.0.8 false ( Tue Apr 18 2017 21:03:11 GMT+0100 (BST) )
+## v0.0.0.8 false ( Tue Apr 18 2017 21:35:50 GMT+0100 (BST) )
 
 
 
@@ -130,6 +130,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
     - Corrected indentation ([dec1448e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/dec1448ee317e4ecbc568acbe992ef7ad074847b)) 
 
   - **nomie**
+    - Bumped version number to include DB changes ([2377dbbe](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/2377dbbe9b3294dc7f5879e68b9a9751d8867548)) 
     - Expanded map display ([52fc5a99](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/52fc5a992aaf4f5efd35c8a30d0b0b3e18648e91)) 
     - Moved map to model ([c0a8eb68](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/c0a8eb683538fc724dc5170786961bdc2cffdfa0)) , Closes: [#108](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/108)
     - Don't return events without GPS and limit number of returns ([ed8a93b4](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ed8a93b4129c645b7bc8d3af7c015f3b590228a4)) , Closes: [#108](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/108)
@@ -295,6 +296,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
 
 
 ## Branchs merged
+  - Merge branch 'develop' of nxfifteen.me.uk:nx-fitness/nxfitness-core into develop ([70cbd001](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/70cbd0019754ec4c71e4b08926cd6c77aae58979))
   - Merge branch 'feature/phpdoc' into develop ([a3e6d4a8](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/a3e6d4a8f18440e97c36b041538e850c82cbc204))
   - Merge branch 'feature/get_sentry' into develop ([5f3b3047](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/5f3b304750c413fd410989db20cb70ae04a08249))
   - Merge branch 'feature/minecraft_woo' into develop ([e487b77c](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e487b77cd49300334ba3b9088e95010e949f981d))
