@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.0.8 _Since Last Master_ ( Mon Apr 17 2017 22:18:29 GMT+0100 (BST) )
+## v0.0.0.8 _Since Last Master_ ( Tue Apr 18 2017 21:03:10 GMT+0100 (BST) )
 
 
 
@@ -30,6 +30,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
     - Corrected indentation ([dec1448e](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/dec1448ee317e4ecbc568acbe992ef7ad074847b)) 
 
   - **nomie**
+    - Expanded map display ([52fc5a99](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/52fc5a992aaf4f5efd35c8a30d0b0b3e18648e91)) 
     - Moved map to model ([c0a8eb68](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/c0a8eb683538fc724dc5170786961bdc2cffdfa0)) , Closes: [#108](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/108)
     - Don't return events without GPS and limit number of returns ([ed8a93b4](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ed8a93b4129c645b7bc8d3af7c015f3b590228a4)) , Closes: [#108](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/108)
     - Added map of events ([e6581454](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/e6581454f7e87b186e967d963495da461eba0aac)) , Closes: [#108](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues/108)
@@ -128,6 +129,9 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
 
   - **gitignore**
     - Rearranged ignores ([609d1405](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/609d14054f21cd63f5b43a1151d8e92551fd7e08)) 
+
+  - **nomie**
+    - Changed graph data order ([b3caf266](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/b3caf266dde7fb38fbc5db41cbb10a977c23d676)) 
 
   - **nxr_destroy_session**
     - Added nxr_destroy_session ([bfb08779](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/bfb08779783a8c0155366aa6846a4cd8901c8d91)) 
