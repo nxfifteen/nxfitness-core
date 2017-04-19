@@ -3582,12 +3582,66 @@
 					$db_prefix . "nomie_events.geo_lat[!]" => "",
 					$db_prefix . "nomie_events.geo_lon[!]" => ""
 				),
+				"ORDER" => "datestamp DESC",
 				"LIMIT" => $eventLimit
 			) );
 			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
 				"METHOD" => __METHOD__,
 				"LINE"   => __LINE__
 			) );
+
+			if ( $dbTrackers[0]['type'] == "numeric" ) {
+				$sum = $this->getAppClass()->getDatabase()->sum( $db_prefix . "nomie_events", 'value', array(
+					"AND"   => array(
+						$db_prefix . "nomie_events.fuid"       => $this->getUserID(),
+						$db_prefix . "nomie_events.id"         => $searchTracker,
+						$db_prefix . "nomie_events.geo_lat[!]" => "",
+						$db_prefix . "nomie_events.geo_lon[!]" => ""
+					),
+					"ORDER" => "datestamp DESC",
+					"LIMIT" => $eventLimit
+				) );
+				$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+					"METHOD" => __METHOD__,
+					"LINE"   => __LINE__
+				) );
+
+				$avg = $this->getAppClass()->getDatabase()->avg( $db_prefix . "nomie_events", 'value', array(
+					"AND"   => array(
+						$db_prefix . "nomie_events.fuid"       => $this->getUserID(),
+						$db_prefix . "nomie_events.id"         => $searchTracker,
+						$db_prefix . "nomie_events.geo_lat[!]" => "",
+						$db_prefix . "nomie_events.geo_lon[!]" => ""
+					),
+					"ORDER" => "datestamp DESC",
+					"LIMIT" => $eventLimit
+				) );
+				$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
+					"METHOD" => __METHOD__,
+					"LINE"   => __LINE__
+				) );
+
+				if ( $dbTrackers[0]['uom'] == "min" ) {
+					if ( $sum > 60 ) {
+						$hours   = floor( $sum / 60 );
+						$minutes = ( $sum % 60 );
+						$sum     = sprintf( '%02d hours %02d minutes', $hours, $minutes );
+					} else {
+						$sum = sprintf( '%02d minutes', ( $sum % 60 ) );
+					}
+
+					if ( $avg > 60 ) {
+						$hours   = floor( $avg / 60 );
+						$minutes = ( $avg % 60 );
+						$avg     = sprintf( '%02d hours %02d minutes', $hours, $minutes );
+					} else {
+						$avg = sprintf( '%02d minutes', ( $avg % 60 ) );
+					}
+				}
+			} else {
+				$sum = 0;
+				$avg = 0;
+			}
 
 			$lat = $this->getAppClass()->getDatabase()->avg( $db_prefix . "nomie_events", 'geo_lat', array(
 				"AND"   => array(
@@ -3596,6 +3650,7 @@
 					"geo_lat[!]" => "",
 					"geo_lon[!]" => ""
 				),
+				"ORDER" => "datestamp DESC",
 				"LIMIT" => $eventLimit
 			) );
 			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
@@ -3610,6 +3665,7 @@
 					"geo_lat[!]" => "",
 					"geo_lon[!]" => ""
 				),
+				"ORDER" => "datestamp DESC",
 				"LIMIT" => $eventLimit
 			) );
 			$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
@@ -3617,7 +3673,15 @@
 				"LINE"   => __LINE__
 			) );
 
-			return array( "lat" => $lat, "long" => $long, "events" => $dbTrackers );
+			return array( "lat"    => $lat,
+			              "long"   => $long,
+			              "sum"    => $sum,
+			              "avg"    => $avg,
+			              "count"  => count( $dbTrackers ),
+			              "from"   => $dbTrackers[ count( $dbTrackers ) - 1 ]['datestamp'],
+			              "till"   => $dbTrackers[0]['datestamp'],
+			              "events" => $dbTrackers
+			);
 		}
 
 		/**

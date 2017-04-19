@@ -2525,9 +2525,15 @@
 
 					if ( is_array( $trackerGroups ) && array_key_exists( "groups", $trackerGroups ) ) {
 						$trackerGroups = $trackerGroups['groups'];
-						if ( is_array( $trackerGroups ) && array_key_exists( "NxTracked", $trackerGroups ) ) {
+						if ( is_array( $trackerGroups ) && array_key_exists( "NxTracked", $trackerGroups ) && count( $trackerGroups['NxTracked'] ) > 0 ) {
 							nxr( "  Downloadnig NxTracked Group Trackers" );
 							$trackerGroups = $trackerGroups['NxTracked'];
+						} elseif ( is_array( $trackerGroups ) && array_key_exists( "NxCore", $trackerGroups ) && count( $trackerGroups['NxCore'] ) > 0 ) {
+							nxr( "  Downloadnig NxCore Group Trackers" );
+							$trackerGroups = $trackerGroups['NxCore'];
+						} elseif ( is_array( $trackerGroups ) && array_key_exists( "Main", $trackerGroups ) && count( $trackerGroups['Main'] ) > 0 ) {
+							nxr( "  Downloadnig Main Group Trackers" );
+							$trackerGroups = $trackerGroups['Main'];
 						} else {
 							nxr( "  Downloading All Trackers" );
 							$trackerGroups = $trackerGroups['All'];
@@ -2556,7 +2562,8 @@
 							}
 
 							if ( isset( $doc ) && is_object( $doc ) ) {
-								nxr( "  Storing " . print_r( $doc->label, TRUE ) );
+								array_push( $trackedTrackers, $tracker );
+								$indexedTrackers[ $tracker ] = $doc->label;
 
 								$dbStorage = array(
 									"fuid"   => $this->activeUser,
@@ -2577,9 +2584,6 @@
 									$dbStorage['uom'] = $doc->config->uom;
 								}
 
-								array_push( $trackedTrackers, $tracker );
-								$indexedTrackers[ $tracker ] = $doc->label;
-
 								if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_trackers", array(
 									"AND" => array(
 										"fuid" => $this->activeUser,
@@ -2587,12 +2591,16 @@
 									)
 								) )
 								) {
+									nxr( "   Storing " . print_r( $doc->label, TRUE ) );
+
 									$this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_trackers", $dbStorage );
 									$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
 										"METHOD" => __METHOD__,
 										"LINE"   => __LINE__
 									) );
 								} else {
+									//nxr( "   Updating " . print_r( $doc->label, TRUE ) );
+
 									$this->getAppClass()->getDatabase()->update( $db_prefix . "nomie_trackers", $dbStorage, array(
 										"AND" => array(
 											"fuid" => $this->activeUser,
