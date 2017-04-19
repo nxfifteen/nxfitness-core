@@ -81,7 +81,6 @@ function display_map(elt, trackerId, label, icon, color) {
         markers.clearLayers();
     }
 
-    $('#modal-title').html('<i class="' + icon + ' p-3 mr-3 float-left" style="color: #ffffff !important; font-size: 50px;line-height: 50px;"></i> <span style="color: #ffffff !important;"> ' + label + "</span>");
     $('#modal-header').css("background-color", color);
 
     gpxDiv.show();
@@ -96,6 +95,21 @@ function display_map(elt, trackerId, label, icon, color) {
 
     var markerList = [];
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieGPS&tracker=" + trackerId, function (data) {
+
+        $('#modal-title').html(
+            '<i class="' + icon + ' p-3 mr-3 float-left" style="color: #ffffff !important; font-size: 50px;line-height: 50px;"></i> '
+            + '<span style="color: #ffffff !important;"> ' + label + '</span>'
+        );
+
+        var modalFoot = $('#modal-foot');
+        modalFoot.html(data.results.count + ' event(s), from <strong>' + data.results.from + '</strong> till <strong>' + data.results.till + '</strong> ');
+
+        if (data.results.avg !== 0) {
+            modalFoot.html(modalFoot.html() + '<br />Average: ' + data.results.avg)
+        }
+        if (data.results.sum !== 0) {
+            modalFoot.html(modalFoot.html() + '<br />Total: ' + data.results.sum)
+        }
 
         var locations = data.results.events;
 

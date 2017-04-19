@@ -571,6 +571,13 @@
 			return TRUE;
 		}
 
+		/** @noinspection PhpUnusedPrivateMethodInspection */
+		private function update_10() {
+			$this->setSetting( "version", "0.0.0.10", TRUE );
+
+			return TRUE;
+		}
+
 		/**
 		 * @return config
 		 */
