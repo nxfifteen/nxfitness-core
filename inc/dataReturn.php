@@ -3,7 +3,8 @@
 	/**
 	 * dataReturn
 	 *
-	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-dataReturn phpDocumentor wiki for dataReturn.
+	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-dataReturn phpDocumentor
+	 *            wiki for dataReturn.
 	 * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/dataReturn DataReturn Wiki.
 	 * @version   0.0.1
 	 * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
@@ -277,6 +278,44 @@
 			}
 
 			return $inputWeight;
+		}
+
+		/**
+		 * @param null $scope
+		 *
+		 * @return DateTime
+		 */
+		private function getOldestScope( $scope = NULL ) {
+			if ( is_null( $scope ) ) {
+				if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "runlog", array( "user" => $this->getUserID() ) ) ) {
+					return new DateTime ( $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "runlog", "lastrun", array(
+						"user"  => $this->getUserID(),
+						"ORDER" => "lastrun ASC",
+						"LIMIT" => 1
+					) ) );
+				}
+			} else {
+				if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "runlog", array(
+					"AND" => array(
+						"user"     => $this->getUserID(),
+						"activity" => $scope
+					)
+				) )
+				) {
+					$returnTime = new DateTime ( $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "runlog", "lastrun", array(
+						"AND"   => array(
+							"user"     => $this->getUserID(),
+							"activity" => $scope
+						),
+						"ORDER" => "lastrun ASC",
+						"LIMIT" => 1
+					) ) );
+
+					return $returnTime;
+				}
+			}
+
+			return new DateTime ( "1970-01-01" );
 		}
 
 		/**
@@ -774,20 +813,20 @@
 						}
 					} else /** @noinspection PhpUndefinedFieldInspection */
 						if ( ! isset( $items->Activities->Activity->Lap ) ) {
-						return array(
-							"error"  => "TCX Files contains no GPS Points",
-							"return" => array(
-								"Id"               => "No GPS in TCX file",
-								"TotalTimeSeconds" => 0,
-								"DistanceMeters"   => 0,
-								"Calories"         => 0,
-								"Intensity"        => 0,
-								"LatitudeDegrees"  => "56.462018",
-								"LongitudeDegrees" => "-2.970721",
-								"gpx"              => "none"
-							)
-						);
-					}
+							return array(
+								"error"  => "TCX Files contains no GPS Points",
+								"return" => array(
+									"Id"               => "No GPS in TCX file",
+									"TotalTimeSeconds" => 0,
+									"DistanceMeters"   => 0,
+									"Calories"         => 0,
+									"Intensity"        => 0,
+									"LatitudeDegrees"  => "56.462018",
+									"LongitudeDegrees" => "-2.970721",
+									"gpx"              => "none"
+								)
+							);
+						}
 
 					if ( file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx' ) ) {
 						$gpxFileName = DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
@@ -3084,6 +3123,46 @@
 		/**
 		 * @return array
 		 */
+		public function returnUserRecordSyncState() {
+			$timeToday       = strtotime( date( "Y-m-d H:i:s" ) ) - ( 1 * 60 * 60 );
+			$userFirstSeenDb = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "users", 'seen', array( "fuid" => $this->getUserID() ) );
+			$timeFirstSeen   = strtotime( $userFirstSeenDb . ' 00:00:00' );
+
+			$totalProgress    = 0;
+			$allowed_triggers = Array();
+			foreach ( $this->getAppClass()->supportedApi() as $key => $name ) {
+				if ( $this->getAppClass()->getSetting( 'scope_' . $key ) && $this->getAppClass()->getUserSetting( $this->getUserID(), 'scope_' . $key ) && $key != "all" ) {
+					$allowed_triggers[ $key ]['name'] = $this->getAppClass()->supportedApi( $key );
+
+					$oldestScope = $this->getOldestScope( $key );
+					$timeLastRun = strtotime( $oldestScope->format( "Y-m-d H:i:s" ) );
+
+					$differenceLastRun   = $timeLastRun - $timeToday;
+					$differenceFirstSeen = $timeFirstSeen - $timeToday;
+					$precentageCompleted = round( ( 100 - ( $differenceLastRun / $differenceFirstSeen ) * 100 ), 1 );
+					if ( $precentageCompleted < 1 ) {
+						$precentageCompleted = 0;
+					}
+					if ( $precentageCompleted > 99 ) {
+						$precentageCompleted = 100;
+					}
+
+					$allowed_triggers[ $key ]['precentage'] = $precentageCompleted;
+					$totalProgress                          += $precentageCompleted;
+				}
+			}
+
+			ksort( $allowed_triggers );
+
+			return array(
+				"SyncProgress"       => round( ( $totalProgress / ( 100 * count( $allowed_triggers ) ) ) * 100, 1 ),
+				"SyncProgressScopes" => $allowed_triggers
+			);
+		}
+
+		/**
+		 * @return array
+		 */
 		public function returnUserRecordWeight() {
 			$days         = 7;
 			$returnWeight = array();
@@ -3682,14 +3761,15 @@
 				"LINE"   => __LINE__
 			) );
 
-			return array( "lat"    => $lat,
-			              "long"   => $long,
-			              "sum"    => $sum,
-			              "avg"    => $avg,
-			              "count"  => count( $dbTrackers ),
-			              "from"   => $dbTrackers[ count( $dbTrackers ) - 1 ]['datestamp'],
-			              "till"   => $dbTrackers[0]['datestamp'],
-			              "events" => $dbTrackers
+			return array(
+				"lat"    => $lat,
+				"long"   => $long,
+				"sum"    => $sum,
+				"avg"    => $avg,
+				"count"  => count( $dbTrackers ),
+				"from"   => $dbTrackers[ count( $dbTrackers ) - 1 ]['datestamp'],
+				"till"   => $dbTrackers[0]['datestamp'],
+				"events" => $dbTrackers
 			);
 		}
 
