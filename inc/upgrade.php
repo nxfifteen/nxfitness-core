@@ -41,6 +41,7 @@
 		 */
 		protected $VersionCurrentArray;
 
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * @var medoo
 		 */
@@ -91,6 +92,7 @@
 			$this->settings = $settings;
 		}
 
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * @param medoo $database
 		 */
@@ -190,7 +192,6 @@
 				$streak          = FALSE;
 				$streak_start    = "";
 				$streak_prevdate = "";
-				$streak_end      = "";
 				foreach ( $steps as $step ) {
 					echo "   - " . $step['date'] . " " . $step['steps'] . "/" . $step['step_goal'];
 
@@ -211,7 +212,7 @@
 							$date2 = new DateTime( $streak_start );
 
 							$days_between = $date2->diff( $date1 )->format( "%a" );
-							$days_between = $days_between + 1;
+							$days_between = (int) $days_between + 1;
 
 							echo "\tnew streak broken. " . $streak_start . " to " . $streak_end . " (" . $days_between . ")";
 
@@ -585,6 +586,7 @@
 			return $this->settings;
 		}
 
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * @return medoo
 		 */
@@ -641,7 +643,7 @@
 			$currentNumber = ( $currentVersion[0] . $currentVersion[1] . $currentVersion[2] . $currentVersion[3] ) * 1;
 			$installNumber = ( $installVersion[0] . $installVersion[1] . $installVersion[2] . $installVersion[3] ) * 1;
 
-			for ( $x = ( $currentNumber + 1 ); $x <= $installNumber; $x ++ ) {
+			for ( $x = ( (int) $currentNumber + 1 ); $x <= $installNumber; $x ++ ) {
 				if ( method_exists( $this, "update_" . $x ) ) {
 					array_push( $updateFunctions, "update_" . $x );
 				}
@@ -700,7 +702,7 @@
 				}
 			}
 
-			//$this->setSetting("version", $this->VersionInstalling, TRUE);
+			return TRUE;
 		}
 
 	}

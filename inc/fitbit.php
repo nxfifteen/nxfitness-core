@@ -254,7 +254,7 @@
 		}
 
 		private function GoalStreakCheck( $dateTime, $goal, $value ) {
-			$todaysDate = new DateTime ( 'now' );
+			//$todaysDate = new DateTime ( 'now' );
 			$dateTime   = new DateTime ( $dateTime );
 
 			$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
@@ -287,7 +287,7 @@
 
 					$dateTimeStart = new DateTime ( $streak_start );
 					$days_between  = $dateTimeStart->diff( $dateTime )->format( "%a" );
-					$days_between  = $days_between + 1;
+					$days_between  = (int) $days_between + 1;
 
 					$this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", array(
 						"length" => $days_between
@@ -359,7 +359,7 @@
 				) );
 
 				if ( ! is_null( $this->RewardsSystem ) ) {
-					$this->RewardsSystem->EventTriggerStreak( $goal, $days_between, TRUE );
+					$this->RewardsSystem->EventTriggerStreak( $goal, $days_between );
 				}
 				//nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
 				//nxr(end($this->getAppClass()->getDatabase()->log()));
@@ -1105,13 +1105,13 @@
 		 *
 		 * @return bool|mixed|string
 		 */
-		private function pullBabelHeartRateSeries( $lastCleanRun ) {
+		/*private function pullBabelHeartRateSeries( $lastCleanRun ) {
 			// Check we're allowed to pull these records here rather than at each loop
 			$isAllowed = $this->isAllowed( "heart" );
 			if ( ! is_numeric( $isAllowed ) ) {
 				if ( $this->api_isCooled( "heart" ) ) {
 					$lastCleanRun     = new DateTime ( $lastCleanRun );
-					$userHeartRateLog = $this->pullBabel( 'user/' . $this->getActiveUser() . '/activities/heart/date/today/' . $lastCleanRun->format( 'Y-m-d' ) . '.json', TRUE, TRUE, TRUE );
+					$userHeartRateLog = $this->pullBabel( 'user/' . $this->getActiveUser() . '/activities/heart/date/' . $lastCleanRun->format( 'Y-m-d' ) . '/1d.json', TRUE, FALSE, TRUE );
 					if ( isset( $userHeartRateLog ) and is_numeric( $userHeartRateLog ) ) {
 						return "-" . $userHeartRateLog;
 					}
@@ -1184,7 +1184,7 @@
 			} else {
 				return $isAllowed;
 			}
-		}
+		}*/
 
 		/**
 		 * Add subscription
@@ -1534,11 +1534,11 @@
 									/*
                                     * Check to make sure, some badges do not include unit values
                                     */
-									if ( isset( $badge->unit ) ) {
+									/*if ( isset( $badge->unit ) ) {
 										$unit = (String) $badge->unit;
 									} else {
 										$unit = "";
-									}
+									}*/
 
 									/*
 									* If the badge is not already in the database insert it
@@ -2690,9 +2690,9 @@
 				} else {
 					return "-143";
 				}
-			} else {
-				return $isAllowed;
 			}
+
+			return $isAllowed;
 		}
 
 		/**
@@ -2855,18 +2855,32 @@
 						}
 					}
 
-					/*if ($trigger == "all" || $trigger == "heart") {
-                        $lastCleanRun = $this->api_getLastCleanrun("heart");
-                        nxr(' Downloading Heart Rate Series Logs fron ' . $lastCleanRun->format("l jS M Y"));
-                        $pull = $this->pullBabelHeartRateSeries($lastCleanRun->format("Y-m-d"));
-                        if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error heart: " . $this->getAppClass()->lookupErrorCode($pull));
-                        }
-                    }*/
-
 					// Set variables require bellow
 					$currentDate = new DateTime ( 'now' );
 					$interval    = DateInterval::createFromDateString( '1 day' );
+
+					/*if ( $trigger == "all" || $trigger == "heart" ) {
+						// Check we're allowed to pull these records here rather than at each loop
+						$isAllowed = $this->isAllowed( "heart" );
+						if ( ! is_numeric( $isAllowed ) ) {
+							if ( $this->api_isCooled( "heart" ) ) {
+								$period = new DatePeriod ( $this->api_getLastCleanrun( "heart" ), $interval, $currentDate );
+								foreach ( $period as $dt ) {
+									nxr( ' Downloading Heart Logs for ' . $dt->format( "l jS M Y" ) );
+									$pull = $this->pullBabelHeartRateSeries( $dt->format( "Y-m-d" ) );
+									if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+										nxr( "  Error Heart: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+									}
+
+									die();
+								}
+							} else {
+								if ( ! IS_CRON_RUN ) {
+									nxr( "  Error Heart: " . $this->getAppClass()->lookupErrorCode( - 143 ) );
+								}
+							}
+						}
+					}*/
 
 					if ( $trigger == "all" || $trigger == "water" || $trigger == "foods" ) {
 						// Check we're allowed to pull these records here rather than at each loop
@@ -3035,7 +3049,7 @@
 		 * @param        $baseDate  DateTime or 'today', to_period
 		 * @param        $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
 		 *
-		 * @return array
+		 * @return array|boolean
 		 */
 		public function getTimeSeries( $type, $baseDate, $to_period ) {
 			switch ( $type ) {

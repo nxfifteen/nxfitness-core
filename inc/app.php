@@ -25,6 +25,7 @@
 	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class NxFitbit {
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * @var medoo
 		 */
@@ -50,6 +51,7 @@
 			$this->setSettings( new config() );
 
 			require_once( dirname( __FILE__ ) . "/../library/medoo.php" );
+			/** @noinspection PhpUndefinedClassInspection */
 			$this->setDatabase( new medoo( array(
 				'database_type' => 'mysql',
 				'database_name' => $this->getSetting( "db_name" ),
@@ -90,6 +92,7 @@
 			$this->settings = $settings;
 		}
 
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * @param medoo $database
 		 */
@@ -146,6 +149,7 @@
 		 * Users
 		 */
 
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * @return medoo
 		 */
@@ -269,8 +273,9 @@
 
 		/**
 		 * @param $user_fitbit_id
+		 * @param $datetime
 		 *
-		 * @return int|array
+		 * @return array|int
 		 */
 		public function setUserCooldown( $user_fitbit_id, $datetime ) {
 			if ( $this->isUser( $user_fitbit_id ) ) {
@@ -636,6 +641,8 @@
 		 *
 		 * @param Exception $exception The Exception object.
 		 * @param array     $data      Additional attributes to pass with this event (see Sentry docs).
+		 * @param null      $logger
+		 * @param null      $vars
 		 */
 		public function captureException( $exception, $data = NULL, $logger = NULL, $vars = NULL ) {
 			if ( defined( 'SENTRY_DSN' ) ) {
@@ -650,6 +657,8 @@
 		 * @param string $message The message (primary description) for the event.
 		 * @param array  $params  params to use when formatting the message.
 		 * @param array  $data    Additional attributes to pass with this event (see Sentry docs).
+		 * @param bool   $stack
+		 * @param null   $vars
 		 */
 		public function captureMessage( $message, $params = array(), $data = array(), $stack = FALSE, $vars = NULL ) {
 			nxr( "[ERROR] $message" );
@@ -659,6 +668,7 @@
 			}
 		}
 
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * @param medoo $medoo
 		 * @param       $parameters

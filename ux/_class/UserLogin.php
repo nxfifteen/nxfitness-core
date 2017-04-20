@@ -53,12 +53,13 @@
         header("Location: " . $_SESSION['admin_config']['http/admin'] . "/login");
     }
 
-    /**
-     * @param NxFitbit $fitbitApp
-     * @param array $_POST
-     *
-     * @return string
-     */
+	/**
+	 * @param NxFitbit $fitbitApp
+	 * @param          $fuid
+	 *
+	 * @return string
+	 * @internal param array $_POST
+	 */
     function gen_cookie_hash($fitbitApp, $fuid) {
         return hash("sha256", $fitbitApp->getSetting("salt") . $fuid . $_SERVER['SERVER_NAME'] . $_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR']);
     }

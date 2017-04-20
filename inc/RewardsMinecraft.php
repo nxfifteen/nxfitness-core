@@ -36,9 +36,15 @@
 		 * @var array
 		 */
 		protected $AwardsGiven;
+		/**
+		 * @var null
+		 */
+		private $user;
 
 		/**
-		 * @param $userFid
+		 * @param null $user
+		 *
+		 * @internal param $userFid
 		 */
 		public function __construct( $user = NULL ) {
 			require_once( dirname( __FILE__ ) . "/app.php" );
@@ -46,6 +52,7 @@
 			$this->AwardsGiven   = array();
 			$this->createRewards = TRUE;
 			$this->setUserID( $user );
+			$this->user = $user;
 		}
 
 		/**
@@ -252,7 +259,9 @@
 		}
 
 		/**
-		 * @param String $UserID
+		 * @param $UserMinecraftID
+		 *
+		 * @internal param String $UserID
 		 */
 		public function setUserMinecraftID( $UserMinecraftID ) {
 			$this->UserMinecraftID = $UserMinecraftID;
@@ -269,16 +278,16 @@
 				return array( "success" => FALSE, "data" => array( "msg" => "Incorrect key" ) );
 			}
 
-			$databaseTable = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "rewards_minecraft";
+			$databaseTable = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
 
 			if ( $_SERVER['REQUEST_METHOD'] == "GET" ) {
 				$rewards = $this->getAppClass()->getDatabase()->query(
-					"SELECT `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "rewards`.`reward` AS `reward`,"
-					. " `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue`.`fuid` AS `fuid`,"
-					. " `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue`.`rqid` AS `rqid`"
-					. " FROM `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "rewards`"
-					. " JOIN `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue` ON (`" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue`.`reward` = `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "rewards`.`rid`)"
-					. " WHERE `" . $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue`.`state` = 'pending' LIMIT 50" );
+					"SELECT `" . $databaseTable . "rewards`.`reward` AS `reward`,"
+					. " `" . $databaseTable . "reward_queue`.`fuid` AS `fuid`,"
+					. " `" . $databaseTable . "reward_queue`.`rqid` AS `rqid`"
+					. " FROM `" . $databaseTable . "rewards`"
+					. " JOIN `" . $databaseTable . "reward_queue` ON (`" . $databaseTable . "reward_queue`.`reward` = `" . $databaseTable . "rewards`.`rid`)"
+					. " WHERE `" . $databaseTable . "reward_queue`.`state` = 'pending' LIMIT 50" );
 
 				$data = array();
 				foreach ( $rewards as $dbReward ) {
@@ -302,9 +311,9 @@
 
 				if ( is_array( $_POST['processedOrders'] ) ) {
 					foreach ( $_POST['processedOrders'] as $processedOrder ) {
-						if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue", array( "rqid" => $processedOrder ) ) ) {
+						if ( $this->getAppClass()->getDatabase()->has( $databaseTable . "reward_queue", array( "rqid" => $processedOrder ) ) ) {
 
-							$this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE ) . "reward_queue", array( "state" => "delivered" ), array( "rqid" => $processedOrder ) );
+							$this->getAppClass()->getDatabase()->update( $databaseTable . "reward_queue", array( "state" => "delivered" ), array( "rqid" => $processedOrder ) );
 							$this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), array(
 								"METHOD" => __METHOD__,
 								"LINE"   => __LINE__
@@ -367,7 +376,7 @@
 			if ( $supportActivity ) {
 				$sql_search       = array(
 					"user"            => $this->getUserID(),
-					"activityName[~]" => $tracker,
+					"activityName[~]" => $activity->activityName,
 					"startDate"       => $currentDate,
 					"logType[!]"      => 'auto_detected'
 				);
@@ -382,15 +391,15 @@
 				$activeDuration = $activity->duration / 1000 / 60;
 
 				if ( $activeDuration == $minMaxAvg['max'] ) {
-					$this->CheckForAward( "activity", $tracker, "max" );
+					$this->CheckForAward( "activity", $activity->activityName, "max" );
 				} else if ( $activeDuration >= $minMaxAvg['avg2max'] ) {
-					$this->CheckForAward( "activity", $tracker, "avg2max" );
+					$this->CheckForAward( "activity", $activity->activityName, "avg2max" );
 				} else if ( $activeDuration >= $minMaxAvg['avg'] ) {
-					$this->CheckForAward( "activity", $tracker, "avg" );
+					$this->CheckForAward( "activity", $activity->activityName, "avg" );
 				} else if ( $activeDuration >= $minMaxAvg['min2avg'] ) {
-					$this->CheckForAward( "activity", $tracker, "min2avg" );
+					$this->CheckForAward( "activity", $activity->activityName, "min2avg" );
 				} else {
-					$this->CheckForAward( "activity", $tracker, "other" );
+					$this->CheckForAward( "activity", $activity->activityName, "other" );
 				}
 			}
 
@@ -471,13 +480,13 @@
 					if ( ! $this->smashedGoal( $trigger, $value ) ) {
 						// Reached Step Goal
 						if ( $this->reachedGoal( $trigger, $value ) ) {
-							$reward = $this->CheckForAward( "goal", $trigger, "reached" );
+							$this->CheckForAward( "goal", $trigger, "reached" );
 						}
 					} else {
-						$reward = $this->CheckForAward( "goal", $trigger, "smashed" );
+						$this->CheckForAward( "goal", $trigger, "smashed" );
 					}
 				} else {
-					$reward = $this->CheckForAward( "goal", $trigger, "crushed" );
+					$this->CheckForAward( "goal", $trigger, "crushed" );
 				}
 
 				if ( $trigger == "steps" ) {
@@ -486,7 +495,6 @@
 					$divider = 10;
 				}
 
-				$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
 				if ( $value >= 1 ) {
 					$recordedValue = round( $value, 3 );
 					$hundredth     = round( $recordedValue / $divider, 0 );
@@ -509,7 +517,7 @@
 			}
 		}
 
-		public function EventTriggerStreak( $goal, $length, $ended = FALSE ) {
+		public function EventTriggerStreak( $goal, $length ) {
 			$this->CheckForAward( "streak", $goal, $length );
 		}
 	}

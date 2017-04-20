@@ -529,7 +529,7 @@
 		}
 
 		/**
-		 * @return bool
+		 * @return array
 		 */
 		public function returnUserRecordActivityHistory() {
 			if ( substr( $this->getParamPeriod(), 0, strlen( "last" ) ) === "last" ) {
@@ -700,13 +700,18 @@
 		 * Calculates the great-circle distance between two points, with
 		 * the Haversine formula.
 		 *
-		 * @param float $latitudeFrom  Latitude of start point in [deg decimal]
-		 * @param float $longitudeFrom Longitude of start point in [deg decimal]
-		 * @param float $latitudeTo    Latitude of target point in [deg decimal]
-		 * @param float $longitudeTo   Longitude of target point in [deg decimal]
-		 * @param float $earthRadius   Mean earth radius in [m]
+		 * @param $lat1
+		 * @param $lon1
+		 * @param $lat2
+		 * @param $lon2
+		 * @param $unit
 		 *
 		 * @return float Distance between points in [m] (same as earthRadius)
+		 * @internal param float $latitudeFrom Latitude of start point in [deg decimal]
+		 * @internal param float $longitudeFrom Longitude of start point in [deg decimal]
+		 * @internal param float $latitudeTo Latitude of target point in [deg decimal]
+		 * @internal param float $longitudeTo Longitude of target point in [deg decimal]
+		 * @internal param float $earthRadius Mean earth radius in [m]
 		 */
 		function haversineGreatCircleDistance( $lat1, $lon1, $lat2, $lon2, $unit ) {
 			$theta = $lon1 - $lon2;
@@ -767,7 +772,8 @@
 								);
 							}
 						}
-					} else if ( ! isset( $items->Activities->Activity->Lap ) ) {
+					} else /** @noinspection PhpUndefinedFieldInspection */
+						if ( ! isset( $items->Activities->Activity->Lap ) ) {
 						return array(
 							"error"  => "TCX Files contains no GPS Points",
 							"return" => array(
@@ -796,6 +802,7 @@
 						$gpx .= "\n <metadata>";
 						$gpx .= "\n  <name>" . $tcxTrackName . "</name>";
 						$gpx .= "\n  <link href=\"http://nxfifteen.me.uk/\"><text>" . $tcxFileName . " Fitbit Track</text></link>";
+						/** @noinspection PhpUndefinedFieldInspection */
 						$gpx .= "\n  <time>" . $items->Activities->Activity->Id . "</time>";
 						$gpx .= "\n </metadata>";
 						$gpx .= "\n <trk>";
@@ -812,6 +819,7 @@
 						$endLatitude        = 0;
 						$endLongitude       = 0;
 
+						/** @noinspection PhpUndefinedFieldInspection */
 						foreach ( $items->Activities->Activity->Lap as $Laps ) {
 							$trackCount     = 0;
 							$totalHeartRate = 0;
@@ -852,6 +860,7 @@
 								$endLongitude = (Float) $trkpt->Position->LongitudeDegrees;
 							}
 
+							/** @noinspection PhpUndefinedMethodInspection */
 							$attributes        = json_decode( json_encode( $Laps->attributes() ), TRUE );
 							$gpxMeta['laps'][] = array(
 								"startTime"           => $attributes['@attributes']['StartTime'],
@@ -895,8 +904,10 @@
 						}
 					}
 
+					/** @noinspection PhpUndefinedFieldInspection */
 					$trackPoint = $items->Activities->Activity->Lap->Track->Trackpoint;
 
+					/** @noinspection PhpUndefinedFieldInspection */
 					return array(
 						"error"  => "",
 						"return" => array(
@@ -3373,8 +3384,6 @@
 		 * @return array
 		 */
 		public function returnUserRecordNomie() {
-			$db_prefix = $this->getAppClass()->getSetting( "db_prefix", NULL, FALSE );
-
 			$returnArray               = array();
 			$returnArray['dashboard']  = $this->returnUserRecordNomieDashboard();
 			$returnArray['dbTrackers'] = $this->returnUserRecordNomieTrackers();

@@ -11,6 +11,7 @@
 	 * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
 	 */
 	class config {
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * Medoo class holding database connection
 		 *
@@ -298,6 +299,7 @@
 			}
 		}
 
+		/** @noinspection PhpUndefinedClassInspection */
 		/**
 		 * Set class database store
 		 *

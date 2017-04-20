@@ -8,6 +8,7 @@
 		 * @param string $msg         String input to be displayed in logs files
 		 * @param bool   $includeDate If true appends datetime stamp
 		 * @param bool   $newline     If true adds a new line character
+		 * @param bool   $echoLine
 		 */
 		function nxr( $msg, $includeDate = TRUE, $newline = TRUE, $echoLine = TRUE ) {
 			if ( $includeDate ) {
