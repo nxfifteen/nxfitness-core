@@ -1,9 +1,30 @@
 <script>
-    //    var requireJS = [];
-    //
-    //    loadJS(requireJS, "");
-    //    loadCSS("");
+    var requireJS = [];
+
+    loadJS(requireJS, "js/views/settings_progress.js");
     setUpBreadcrumb(['Settings'], 'Sync Progress');
 </script>
 
-Boiler Plate
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Sync Progress</div>
+                <div class="card-block">
+                    <div class="row" id="syncTotalProgress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Category Progress</div>
+                <div class="card-block">
+                    <div class="row" id="syncProgress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
