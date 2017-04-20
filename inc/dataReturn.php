@@ -3633,6 +3633,21 @@
 							"monthAvg" => $monthAvg
 						),
 					);
+				} else {
+					$trackerShared[ $tracker['id'] ] = array(
+						"label"    => $tracker['label'],
+						"icon"     => $tracker['icon'],
+						"icon_raw" => $tracker['icon'],
+						"color"    => $tracker['color'],
+						"charge"   => $tracker['charge'],
+						"stats"    => array(
+							"events"   => 0,
+							"first"    => "",
+							"last"     => "",
+							"dayAvg"   => 0,
+							"monthAvg" => 0
+						),
+					);
 				}
 			}
 
