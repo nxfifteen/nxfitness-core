@@ -29,7 +29,8 @@
      * Class NxFitAdmin
      */
     class NxFitAdmin {
-        /**
+	    /** @noinspection PhpUndefinedClassInspection */
+	    /**
          * @var medoo
          */
         protected $database;
@@ -55,10 +56,6 @@
         protected $nxFit;
 
         /**
-         * @var ThemeWidgets
-         */
-        protected $ThemeWidgets;
-        /**
          * @var config
          */
         protected $dbUserProfile;
@@ -70,7 +67,8 @@
             if (isset($_SESSION) && array_key_exists("admin_config", $_SESSION) && is_array($_SESSION['admin_config']) && count($_SESSION['admin_config']) > 0) {
                 $this->setConfig($_SESSION['admin_config']);
             } else {
-                require_once(PATH_ADMIN . "/config.inc.php");
+	            /** @noinspection PhpIncludeInspection */
+	            require_once( PATH_ADMIN . "/config.inc.php" );
                 if (isset($config)) {
                     $_SESSION['admin_config'] = $config;
                     $this->setConfig($_SESSION['admin_config']);
@@ -81,7 +79,8 @@
             $this->nxFit = new NxFitbit();
 
             require_once(PATH_ROOT . "/library/medoo.php");
-            $this->setDatabase(new medoo(array(
+	        /** @noinspection PhpUndefinedClassInspection */
+	        $this->setDatabase( new medoo( array(
                 'database_type' => 'mysql',
                 'database_name' => $this->getApiSetting("db_name"),
                 'server'        => $this->getApiSetting("db_server"),
@@ -136,30 +135,15 @@
             return $_SESSION['SyncProgress'];
         }
 
-        /**
-         * @return ThemeWidgets|String
-         */
-        public function getThemeWidgets($type = FALSE, $input = FALSE) {
-            if (!isset($this->ThemeWidgets)) {
-                require_once(PATH_ADMIN . "/_class/ThemeWidgets.php");
-                $this->ThemeWidgets = new ThemeWidgets();
-            }
-
-            if (is_string($type) && is_array($input)) {
-                return $this->ThemeWidgets->buildSnippet($type, $input);
-            } else {
-                return $this->ThemeWidgets;
-            }
-        }
-
-        /**
+	    /** @noinspection PhpUndefinedClassInspection *
+	    /**
          * @return medoo
          */
         public function getDatabase() {
             return $this->database;
-        }
+        }/** @noinspection PhpUndefinedClassInspection */
 
-        /**
+	    /**
          * @param medoo $database
          */
         public function setDatabase($database) {

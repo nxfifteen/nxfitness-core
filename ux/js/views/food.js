@@ -133,9 +133,9 @@ $(function () {
                 html += '<th>Meal</th>';
                 html += '<th>Kilocalories</th>';
                 html += '<th>Fat</th>';
-                html += '<th class="hidden-xs hidden-sm">Fiber</th>';
+                html += '<th class="d-sm-down-none">Fiber</th>';
                 html += '<th>Carbs</th>';
-                html += '<th class="hidden-xs hidden-sm">Sodium</th>';
+                html += '<th class="d-sm-down-none">Sodium</th>';
                 html += '<th>Protein</th>';
                 html += '</tr>';
                 html += '</thead>';
@@ -145,9 +145,9 @@ $(function () {
                     html += '<td>' + meal.replace( " Summary", "" ) + '</td>';
                     html += '<td style="text-align: center"><strong class="value">' + breakdown.calories + '</strong></td>';
                     html += '<td style="text-align: right"><span class="value">' + breakdown.fat + '</span> g</td>';
-                    html += '<td class="hidden-xs hidden-sm" style="text-align: right"><span class="value">' + breakdown.fiber + '</span> g</td>';
+                    html += '<td class="d-sm-down-none" style="text-align: right"><span class="value">' + breakdown.fiber + '</span> g</td>';
                     html += '<td style="text-align: right"><span class="value">' + breakdown.carbs + '</span> g</td>';
-                    html += '<td class="hidden-xs hidden-sm" style="text-align: right"><span class="value">' + breakdown.sodium + '</span> mg</td>';
+                    html += '<td class="d-sm-down-none" style="text-align: right"><span class="value">' + breakdown.sodium + '</span> mg</td>';
                     html += '<td style="text-align: right"><span class="value">' + breakdown.protein + '</span> g</td>';
                     html += '</tr>';
                 } );

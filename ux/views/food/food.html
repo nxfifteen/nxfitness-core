@@ -11,27 +11,27 @@
 
 <div class="animated fadeIn">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-12 col-md-8">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-block">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <a id="datePrev" class="btn btn-danger btn-block" style="text-align: left;color: #ffffff;">
                                         <span><i class="fa fa-arrow-left"></i></span>
                                         Yesterday
                                     </a>
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <a id="dateToday" class="btn btn-info btn-block" style="text-align: left;color: #ffffff;">
                                         <span><i class="fa fa-bullseye"></i></span>
                                         Today
                                     </a>
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <a id="dateNext" class="btn btn-success btn-block" style="text-align: left;color: #ffffff;">
                                         <span><i class="fa fa-arrow-right"></i></span>
                                         Tomorrow
@@ -41,14 +41,14 @@
                         </div>
                         <div class="card-footer text-muted">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <a id="datePrevMonth" class="btn btn-success btn-block" style="text-align: left;color: #ffffff;">
                                         <span><i class="fa fa-calendar"></i></span>
                                         Last Month
                                     </a>
                                 </div>
 
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <a id="datePrevWeek" class="btn btn-info btn-block" style="text-align: left;color: #ffffff;">
                                         <span><i class="fa fa-calendar-o"></i></span>
                                         Last Week
@@ -70,9 +70,9 @@
                                     <th>&nbsp;</th>
                                     <th>Kilocalories</th>
                                     <th>Fat</th>
-                                    <th>Fiber</th>
+                                    <th class="d-sm-down-none">Fiber</th>
                                     <th>Carbs</th>
-                                    <th>Sodium</th>
+                                    <th class="d-sm-down-none">Sodium</th>
                                     <th>Protein</th>
                                 </tr>
                                 </thead>
@@ -81,27 +81,35 @@
                                     <td style="text-align: left">Today</td>
                                     <td id="valueKilocalories" style="text-align: center"><strong class="value"></strong></td>
                                     <td id="valueFat" style="text-align: right"><span class="value"></span> g</td>
-                                    <td id="valueFiber" style="text-align: right"><span class="value"></span> g</td>
+                                    <td id="valueFiber" class="d-sm-down-none" style="text-align: right">
+                                        <span class="value"></span> g
+                                    </td>
                                     <td id="valueCarbs" style="text-align: right"><span class="value"></span> g</td>
-                                    <td id="valueSodium" style="text-align: right"><span class="value"></span> mg</td>
+                                    <td id="valueSodium" class="d-sm-down-none" style="text-align: right">
+                                        <span class="value"></span> mg
+                                    </td>
                                     <td id="valueProtein" style="text-align: right"><span class="value"></span> g</td>
                                 </tr>
                                 <tr>
                                     <td style="text-align: left">Goals</td>
                                     <td id="goalKilocalories" style="text-align: center"><strong class="value"></strong></td>
                                     <td id="goalFat" style="text-align: right"><span class="value"></span> g</td>
-                                    <td id="goalFiber" style="text-align: right"><span class="value"></span> g</td>
+                                    <td id="goalFiber" class="d-sm-down-none" style="text-align: right">
+                                        <span class="value"></span> g
+                                    </td>
                                     <td id="goalCarbs" style="text-align: right"><span class="value"></span> g</td>
-                                    <td id="goalSodium" style="text-align: right"><span class="value"></span> mg</td>
+                                    <td id="goalSodium" class="d-sm-down-none" style="text-align: right">
+                                        <span class="value"></span> mg
+                                    </td>
                                     <td id="goalProtein" style="text-align: right"><span class="value"></span> g</td>
                                 </tr>
                                 <tr>
                                     <td style="text-align: left">Remaining</td>
                                     <td id="remKilocalories"><strong class="value"></strong></td>
                                     <td id="remFat"><span class="value"></span> g</td>
-                                    <td id="remFiber"><span class="value"></span> g</td>
+                                    <td id="remFiber" class="d-sm-down-none"><span class="value"></span> g</td>
                                     <td id="remCarbs"><span class="value"></span> g</td>
-                                    <td id="remSodium"><span class="value"></span> mg</td>
+                                    <td id="remSodium" class="d-sm-down-none"><span class="value"></span> mg</td>
                                     <td id="remProtein"><span class="value"></span> g</td>
                                 </tr>
                                 </tbody>
@@ -109,7 +117,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 d-sm-down-none">
                     <div class="card">
                         <div class="card-header">Water <strong>Intake</strong></div>
                         <div class="card-block">
@@ -125,7 +133,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 d-sm-down-none">
             <div class="card">
                 <div class="card-header">Intake <strong>Breakdown</strong></div>
                 <div class="card-block">
@@ -138,7 +146,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-12 col-md-7">
             <div class="card">
                 <div class="card-header">Meal <strong>Logs</strong></div>
                 <div class="card-block">
@@ -146,7 +154,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-5">
+        <div class="d-sm-down-none col-md-5">
             <div class="card">
                 <div class="card-header">Kilocalories <strong>Per Meal</strong></div>
                 <div class="card-block">

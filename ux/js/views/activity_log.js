@@ -65,7 +65,7 @@ $(function () {
                         html += '</div>';
                         html += '</div>';
 
-                        html += '<div class="row">';
+                        html += '<div class="row d-sm-down-none">';
                         html += '<div class="col-md-12">';
                         var json = JSON.stringify(event);
                         json = json.split("\"").join("\\\'");

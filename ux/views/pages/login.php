@@ -81,12 +81,12 @@
                                     <input type="password" class="form-control" placeholder="Password" name="password">
                                 </div>
                                 <div class="row">
-                                    <div class="col-12 text-right">
+                                    <div class="col-6">
+                                        <input type="checkbox" name="remember" value="remember-me"> Remember me
+                                    </div>
+                                    <div class="col-6 text-right">
                                         <button class="btn btn-primary px-4" type="submit">Login</button>
                                     </div>
-                                    <!--<div class="col-6">-->
-                                    <!--    <button type="button" class="btn btn-link px-0">Forgot password?</button>-->
-                                    <!--</div>-->
                                 </div>
                             </form>
                         </div>
