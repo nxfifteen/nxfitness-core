@@ -3381,20 +3381,40 @@
 				$loss["fat"] = array();
 			}
 
+			// Set variables require bellow
+			$end   = new DateTime( 'this monday' );
+			$begin = new DateTime( 'this monday' );
+			$begin->modify( '-7 weeks' );
+
+			$interval  = DateInterval::createFromDateString( '1 week' );
+			$daterange = new DatePeriod( $begin, $interval, $end );
+
+			$WeighInArray = array();
+			$FatInArray   = array();
+			foreach ( $daterange as $date ) {
+				if ( array_key_exists( $date->format( "Y-m-d" ), $returnWeight ) ) {
+					$FatInArray[ $date->format( "Y-m-d" ) ]   = $returnWeight[ $date->format( "Y-m-d" ) ]['weight'];
+					$WeighInArray[ $date->format( "Y-m-d" ) ] = $returnWeight[ $date->format( "Y-m-d" ) ]['fat'];
+				}
+			}
+
+
 			$userWeightUnits = $this->getAppClass()->getUserSetting( $this->getUserID(), "unit_weight", "kg" );
 
 			return array(
-				'returnDate'        => explode( "-", $this->getParamDate() ),
-				'graph_fat'         => $fat,
-				'graph_fat_max'     => $fatMax,
-				'graph_fat_min'     => $fatMin,
-				'graph_fatAvg'      => $fatAvg,
-				'graph_fatGoal'     => $fatGoal,
-				'graph_fatTrend'    => $fatTrend,
-				'graph_weight'      => $this->convertWeight( $weights, $userWeightUnits ),
-				'graph_weight_max'  => $this->convertWeight( $weightMax, $userWeightUnits ),
-				'graph_weight_min'  => $this->convertWeight( $weightMin, $userWeightUnits ),
-				'graph_weightAvg'   => $this->convertWeight( $weightAvg, $userWeightUnits ),
+				'returnDate'       => explode( "-", $this->getParamDate() ),
+				'WeighInArray'     => $WeighInArray,
+				'FatInArray'       => $FatInArray,
+				'graph_fat'        => $fat,
+				'graph_fat_max'    => $fatMax,
+				'graph_fat_min'    => $fatMin,
+				'graph_fatAvg'     => $fatAvg,
+				'graph_fatGoal'    => $fatGoal,
+				'graph_fatTrend'   => $fatTrend,
+				'graph_weight'     => $this->convertWeight( $weights, $userWeightUnits ),
+				'graph_weight_max' => $this->convertWeight( $weightMax, $userWeightUnits ),
+				'graph_weight_min' => $this->convertWeight( $weightMin, $userWeightUnits ),
+				'graph_weightAvg'  => $this->convertWeight( $weightAvg, $userWeightUnits ),
 				'graph_weightGoal'  => $this->convertWeight( $weightGoal, $userWeightUnits ),
 				'graph_weightTrend' => $this->convertWeight( $weightTrend, $userWeightUnits ),
 				'loss_rate_fat'     => $loss["fat"],
