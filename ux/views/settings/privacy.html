@@ -1,0 +1,51 @@
+<script>
+    var requireJS = ["bower_components/leaflet/dist/leaflet.js"];
+    loadJS(requireJS, "js/views/privacy.js");
+    loadCSS("bower_components/leaflet/dist/leaflet.css");
+    setUpBreadcrumb(['Settings'], 'Privacy');
+</script>
+
+<style type="text/css">
+    #gpx-map {
+        height: 360px;
+    }
+</style>
+
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card gpx" id="gpx" data-map-target="gpx-map">
+                <div class="card-header" id="gpx-header">Sync Progress</div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-md-12" id="gpx-map-container">
+                            <div class="map" id="gpx-map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-block">
+
+                    <div class="row">
+                        <form class="form-inline">
+                            <div class="form-group col-12">
+                                <div class="input-group">
+                                    <input type="text" id="example-text-input" name="example-text-input" class="form-control" value="Stirling Street, Hilltown, Dundee, Dundee City, Scotland, United Kingdom" aria-label="Search for...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button" id="gpx-search">Go!</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

@@ -111,5 +111,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="settings/progress.html"><i class="fa fa-tasks"></i> Sync Progress</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="settings/privacy.html"><i class="fa fa-tasks"></i> Privacy</a>
+                        </li>
 
                     </ul>
