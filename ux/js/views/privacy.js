@@ -11,11 +11,9 @@ $(function () {
         });
     }
 
-    $('input[name="example-text-input"]:text').change(
-        function () {
-            mapQuery();
-        }
-    );
+    $('input[name="example-text-input"]:text').change(function () {
+        mapQuery();
+    });
 
     $("#gpx-search").click(function () {
         mapQuery();
@@ -24,7 +22,7 @@ $(function () {
     function mapQuery() {
         var val = $('#example-text-input').val();
         $.getJSON("http://open.mapquestapi.com/nominatim/v1/search.php?key=PsAr6ZmaaU6y0j5WMhA1SyIDJMtLIAXp&format=json&q=" + val + "&addressdetails=1&limit=3&viewbox=-1.99%2C52.02%2C0.78%2C50.94&exclude_place_ids=41697", function (data) {
-            mapGPS(data.display_name, data.lat, data.lon);
+            mapGPS(data[0].display_name, data[0].lat, data[0].lon);
         });
     }
 
