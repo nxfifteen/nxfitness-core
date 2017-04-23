@@ -3,7 +3,7 @@ NxFitness Core - A PHP Fitbit API Project
 
 ###### Version: 0.0.0.11
 
-[![PHPCi](http://phpci.nxfifteen.uk/build-status/image/2)](http://ww3.nx15.me.uk/build-status/view/2)
+[![PHPCi](http://phpci.nxfifteen.uk/build-status/image/1)](http://ww3.nx15.me.uk/build-status/view/2)
 [![Open Issues](http://ww3.nx15.me.uk/gitlab/149/issue/open)](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues)
 [![Closed Issues](http://ww3.nx15.me.uk/gitlab/149/issue/closed)](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/issues?scope=all&state=closed)
 [![Authors](http://ww3.nx15.me.uk/gitlab/149/authors)](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/graphs/master)
