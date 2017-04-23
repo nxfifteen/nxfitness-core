@@ -9,6 +9,8 @@ NxFitness Core - A PHP Fitbit API Project
 [![Authors](http://ww3.nx15.me.uk/gitlab/149/authors)](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/graphs/master)
 [![MIT License](http://ww3.nx15.me.uk/license/MIT)](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/blob/master/LICENSE.md)
 
+
+
 I've been using my Fitbit every day without break since I first got it in June 2012 and while the Fitbit dashboard is good, offering everything you could ever want, I felt the need to roll my own - as always. 
 Fitbit offer a fantastic API which I aimed to make full use of. When I started my project I couldn't find anything else on the net like it. My project is slightly further along than this one, I am contacting 
 the developer to offer my code and see if we can both work up a finished product.
