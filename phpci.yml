@@ -1,0 +1,59 @@
+build_settings:
+    ignore:
+        - "vendor"
+        - "library"
+        - "ux/bower_components"
+
+setup:
+  composer:
+    action: "install"
+    prefer_dist: false
+
+test:
+  technical_debt:
+  php_loc:
+  php_cs_fixer:
+    verbose: true
+    diff: true
+    level: "psr2"
+  php_cpd:
+    standard: "PSR2"
+  php_spec:
+  php_parallel_lint:
+    ignore:
+      - "vendor"
+      - "library"
+      - "ux/bower_components"
+    extensions: php, html
+  php_code_sniffer:
+      standard: "PSR2"
+      suffixes:
+        - "php"
+      tab_width: 4
+      ignore:
+        - "vendor"
+        - "library"
+        - "ux/bower_components"
+      allowed_errors: -1 # Even a single error will cause the build to fail. -1 = unlimited
+      allowed_warnings: -1
+  php_docblock_checker:
+      allowed_warnings: -1
+      skip_classes: false
+      skip_methods: false
+  php_mess_detector:
+    allowed_warnings: -1
+    rules:
+      - "cleancode"
+      - "controversial"
+      - "codesize"
+      - "design"
+      - "naming"
+      - "unusedcode"
+      - "somedir/customruleset.xml"
+    zero_config: true
+
+#success:
+#    deployer:
+#        webhook_url: "https://deployer.example.com/deploy/QZaF1bMIUqbMFTmKDmgytUuykRN0cjCgW9SooTnwkIGETAYhDTTYoR8C431t"
+#        reason: "PHPCI Build #%BUILD% - %COMMIT_MESSAGE%"
+#        update_only: true
