@@ -581,7 +581,12 @@
 
         /** @noinspection PhpUnusedPrivateMethodInspection */
         private function update_12() {
-            //ALTER TABLE `nx_fitbit_sleep_user` ADD `deep` INT(11) NULL AFTER `totalTimeInBed`, ADD `light` INT(11) NULL AFTER `deep`, ADD `rem` INT(11) NULL AFTER `light`, ADD `wake` INT(11) NULL AFTER `rem`;
+
+            $db_prefix = $this->getSetting("db_prefix", false);
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "sleep_user` ADD `deep` INT(11) NULL AFTER `totalTimeInBed`, ADD `light` INT(11) NULL AFTER `deep`, ADD `rem` INT(11) NULL AFTER `light`, ADD `wake` INT(11) NULL AFTER `rem`;");
+            if ( $this->wasMySQLError($this->getDatabase()->error()) ) {
+                return false;
+            }
 
             $this->setSetting("version", "0.0.0.12", true);
 
