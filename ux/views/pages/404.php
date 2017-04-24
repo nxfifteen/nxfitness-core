@@ -23,22 +23,22 @@
 </head>
 
 <body class="app flex-row align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="clearfix">
-                    <h1 class="float-left display-3 mr-4">404</h1>
-                    <h4 class="pt-3">Oops! You're lost.</h4>
-                    <p class="text-muted">The page you are looking for was not found.</p>
-                </div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="clearfix">
+                <h1 class="float-left display-3 mr-4">404</h1>
+                <h4 class="pt-3">Oops! You're lost.</h4>
+                <p class="text-muted">The page you are looking for was not found.</p>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap and necessary plugins -->
-    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="../../bower_components/tether/dist/js/tether.min.js"></script>
-    <script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Bootstrap and necessary plugins -->
+<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../../bower_components/tether/dist/js/tether.min.js"></script>
+<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 </body>
 
