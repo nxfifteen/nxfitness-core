@@ -1014,13 +1014,30 @@
                         )
                     ))
                     ) {
-                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "sleep_user", array(
+                        $insertData = array(
                             'user'               => $this->getActiveUser(),
                             'sleeplog'           => (String) $loggedSleep->logId,
                             'totalMinutesAsleep' => (String) $userSleepLog->summary->totalMinutesAsleep,
                             'totalSleepRecords'  => (String) $userSleepLog->summary->totalSleepRecords,
                             'totalTimeInBed'     => (String) $userSleepLog->summary->totalTimeInBed
-                        ));
+                        );
+
+                        if ( isset($userSleepLog->summary->stages) ) {
+                            if ( isset($userSleepLog->summary->stages->deep) ) {
+                                $insertData['deep'] = $userSleepLog->summary->stages->deep;
+                            }
+                            if ( isset($userSleepLog->summary->stages->light) ) {
+                                $insertData['light'] = $userSleepLog->summary->stages->light;
+                            }
+                            if ( isset($userSleepLog->summary->stages->rem) ) {
+                                $insertData['rem'] = $userSleepLog->summary->stages->rem;
+                            }
+                            if ( isset($userSleepLog->summary->stages->wake) ) {
+                                $insertData['wake'] = $userSleepLog->summary->stages->wake;
+                            }
+                        }
+
+                        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "sleep_user", $insertData);
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
                             "METHOD" => __METHOD__,
                             "LINE"   => __LINE__
@@ -1106,13 +1123,13 @@
          *
          * @return bool|mixed|string
          */
-        /*private function pullBabelHeartRateSeries( $lastCleanRun ) {
+        private function pullBabelHeartRateSeries($lastCleanRun) {
 			// Check we're allowed to pull these records here rather than at each loop
 			$isAllowed = $this->isAllowed( "heart" );
 			if ( ! is_numeric( $isAllowed ) ) {
 				if ( $this->api_isCooled( "heart" ) ) {
 					$lastCleanRun     = new DateTime ( $lastCleanRun );
-					$userHeartRateLog = $this->pullBabel( 'user/' . $this->getActiveUser() . '/activities/heart/date/' . $lastCleanRun->format( 'Y-m-d' ) . '/1d.json', TRUE, FALSE, TRUE );
+                    $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/' . $lastCleanRun->format('Y-m-d') . '/1d.json', true, true, true);
 					if ( isset( $userHeartRateLog ) and is_numeric( $userHeartRateLog ) ) {
 						return "-" . $userHeartRateLog;
 					}
@@ -1185,7 +1202,7 @@
 			} else {
 				return $isAllowed;
 			}
-		}*/
+        }
 
         /**
          * Add subscription
@@ -2869,7 +2886,7 @@
                     $currentDate = new DateTime ('now');
                     $interval    = DateInterval::createFromDateString('1 day');
 
-                    /*if ( $trigger == "all" || $trigger == "heart" ) {
+                    if ( $trigger == "all" || $trigger == "heart" ) {
 						// Check we're allowed to pull these records here rather than at each loop
 						$isAllowed = $this->isAllowed( "heart" );
 						if ( ! is_numeric( $isAllowed ) ) {
@@ -2890,7 +2907,7 @@
 								}
 							}
 						}
-					}*/
+                    }
 
                     if ( $trigger == "all" || $trigger == "water" || $trigger == "foods" ) {
                         // Check we're allowed to pull these records here rather than at each loop
