@@ -1129,7 +1129,7 @@
 			if ( ! is_numeric( $isAllowed ) ) {
 				if ( $this->api_isCooled( "heart" ) ) {
 					$lastCleanRun     = new DateTime ( $lastCleanRun );
-                    $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/' . $lastCleanRun->format('Y-m-d') . '/1d.json', true, true, true);
+                    $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/' . $lastCleanRun->format('Y-m-d') . '/1d.json', true, false, true);
 					if ( isset( $userHeartRateLog ) and is_numeric( $userHeartRateLog ) ) {
 						return "-" . $userHeartRateLog;
 					}
@@ -2898,8 +2898,6 @@
 									if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
 										nxr( "  Error Heart: " . $this->getAppClass()->lookupErrorCode( $pull ) );
 									}
-
-									die();
 								}
 							} else {
 								if ( ! IS_CRON_RUN ) {
