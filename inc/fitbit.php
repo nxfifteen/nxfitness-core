@@ -1467,10 +1467,19 @@
                         $supportedFloors = false;
 
                         //nxr( " Using ".count($trackers)." Trackers");
-                        if ( in_array("Surge", $trackers) || in_array("Charge HR", $trackers) || in_array("Charge2", $trackers) ) {
+                        if (
+                            in_array("Surge", $trackers) ||
+                            in_array("Blaze", $trackers) ||
+                            in_array("Alta HR", $trackers) ||
+                            in_array("Charge HR", $trackers) ||
+                            in_array("Charge2", $trackers)
+                        ) {
                             $supportedHeart  = true;
                             $supportedFloors = true;
-                        } else if ( in_array("Charge", $trackers) ) {
+                        } else if (
+                            in_array("Charge", $trackers) ||
+                            in_array("Alta", $trackers)
+                        ) {
                             $supportedFloors = true;
                         }
 
