@@ -37,4 +37,4 @@ test:phploc:
 trigger_build:
   stage: deploy
   script:
-    - "curl -X POST -F token=1d05aeabe8f953035ddeffe6f335c3 -F ref=REF_NAME https://nxfifteen.me.uk/gitlab/api/v4/projects/149/trigger/pipeline"
+    - "curl -X POST -F token=036331420c9a310477a5a2ccdb293b -F ref=REF_NAME https://nxfifteen.me.uk/gitlab/api/v4/projects/149/trigger/pipeline"
