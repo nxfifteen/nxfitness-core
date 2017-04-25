@@ -19,8 +19,8 @@ before_script:
 
 # Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
 # See http://docs.gitlab.com/ce/ci/services/README.html for examples.
-services:
-  - mysql:5.7
+#services:
+#  - mysql:5.7
 
 # Set any variables we need
 variables:
@@ -32,3 +32,8 @@ variables:
 test:phploc:
   script:
   - php /usr/local/bin/phploc inc
+
+trigger_build:
+  stage: deploy
+  script:
+    - "curl -X POST -F token=1d05aeabe8f953035ddeffe6f335c3 -F ref=REF_NAME https://nxfifteen.me.uk/gitlab/api/v4/projects/149/trigger/pipeline"
