@@ -1,0 +1,61 @@
+<script>
+    var requireJS = ["bower_components/leaflet/dist/leaflet.js"];
+    loadJS(requireJS, "js/views/privacy.js");
+    loadCSS("bower_components/leaflet/dist/leaflet.css");
+    setUpBreadcrumb(['Settings'], 'Privacy');
+</script>
+
+<style type="text/css">
+    #map {
+        height: 360px;
+    }
+
+    #snapshot {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 50%;
+    }
+</style>
+
+<div class="animated fadeIn">
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card gpx" id="gpx" data-map-target="map">
+                <div class="card-header" id="header">Sync Progress</div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-md-12" id="map-container">
+                            <div class="map" id="map"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form class="form-inline" style="width: 100%">
+                        <div class="form-group" style="width: 100%">
+                            <div class="input-group" style="width: 100%">
+                                <input type="text" id="searchAddress" name="searchAddress" class="form-control" value="" aria-label="Search for...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="button" id="search">Go..!</button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="row" id='locations-map'>
+
+            </div>
+        </div>
+    </div>
+
+</div>

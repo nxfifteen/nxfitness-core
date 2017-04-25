@@ -222,26 +222,38 @@ $(function () {
         if (WeightTrend.length > 0) {
             var classTable = "", htmlString = "";
 
-            if (data.results.loss_rate_weight.length != 0) {
+            if (data.results.loss_rate_weight.length !== 0) {
                 htmlString += "<p>The table bellow shows your month on month weight changes</p>";
-                htmlString += "<table class=\"table table-striped\">";
+                htmlString += "<table class=\"table\">";
                 htmlString += "<tr><th>Date</th><th>Monthly Trend</th></tr>";
 
-                for (var key in data.results.loss_rate_weight) {
-                    if (data.results.loss_rate_weight[key] <= 0) {
-                        classTable = ' class="success"';
-                    } else if (data.results.loss_rate_weight[key] >= 0.1) {
-                        classTable = ' class="danger"';
+                for (var key in data.results.WeighInArray) {
+                    //noinspection JSUnfilteredForInLoop
+                    if (data.results.WeighInArray[key] <= data.results.WeighInArray[key - 1]) {
+                        classTable = ' class="badge-success"';
                     } else {
-                        classTable = "";
+                        classTable = ' class="badge-danger"';
                     }
-                    htmlString += "<tr"+classTable+"><td>" + key + "</td><td>" + data.results.loss_rate_weight[key] + " " + data.results.weight_units + " </td></tr>";
+                    //noinspection JSUnfilteredForInLoop
+                    htmlString += "<tr" + classTable + "><td>" + key + "</td><td>" + data.results.WeighInArray[key] + " " + data.results.weight_units + "</td></tr>";
                 }
+
+                /*for (var key in data.results.loss_rate_weight) {
+                 //noinspection JSUnfilteredForInLoop
+                 if (data.results.loss_rate_weight[key] <= 0) {
+                 classTable = ' class="success"';
+                 } else {
+                 //noinspection JSUnfilteredForInLoop
+                 if (data.results.loss_rate_weight[key] >= 0.1) {classTable = ' class="danger"';} else {classTable = "";}
+                 }
+                 //noinspection JSUnfilteredForInLoop
+                 htmlString += "<tr"+classTable+"><td>" + key + "</td><td>" + data.results.loss_rate_weight[key] + " " + data.results.weight_units + " </td></tr>";
+                 }*/
 
                 htmlString += "</table>";
             }
 
-            if (weightTrends == '') {
+            if (weightTrends === '') {
                 $.getJSON("../json.php?user=" + fitbitUserId + "&data=trend", function (trendData) {
                     weightTrends = '<p>Your last recorded weight was <strong>' + trendData.results.weight + '</strong>, so still has another'+
                         ' <strong>' + trendData.results.weightToLose + '</strong> to lose to reach your ' +
