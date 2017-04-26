@@ -19,7 +19,7 @@ before_script:
 - cd ../
 - mkdir phpspec
 - cd phpspec
-- echo '{"require-dev": {"phpspec/phpspec": "^3.0"},"config": {"bin-dir": "bin"},"autoload": {"psr-0": {"": "src"}}}' > composer.json
+- echo "{\"require-dev\": {\"phpspec/phpspec\": \"^3.0\"},\"config\": {\"bin-dir\": \"bin\"},\"autoload\": {\"psr-0\": {\"\": \"src\"}}}" > composer.json
 - ../composer.phar install >/dev/null 2>&1
 - cd ../
 
