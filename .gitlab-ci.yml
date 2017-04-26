@@ -16,4 +16,4 @@ before_script:
 # Run our tests
 test:phploc:
   script:
-  - php /usr/local/bin/phploc inc
+  - php phploc.phar inc
