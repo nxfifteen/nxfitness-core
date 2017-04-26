@@ -16,7 +16,9 @@
      * @package PiwikTracker
      * @api
      */
-    class PiwikTracker {
+    class PiwikTracker
+    {
+
         const CVAR_INDEX_ECOMMERCE_ITEM_CATEGORY = 5;
         const CVAR_INDEX_ECOMMERCE_ITEM_NAME = 4;
         /**
@@ -76,7 +78,8 @@
          * @param string $apiUrl   "http://example.org/piwik/" or "http://piwik.example.org/"
          *                         If set, will overwrite PiwikTracker::$URL
          */
-        function __construct($idSite, $apiUrl = '') {
+        function __construct($idSite, $apiUrl = '')
+        {
             $this->ecommerceItems  = array();
             $this->attributionInfo = false;
             $this->eventCustomVar  = false;
@@ -107,7 +110,7 @@
             $this->ip             = ! empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : false;
             $this->acceptLanguage = ! empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : false;
             $this->userAgent      = ! empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : false;
-            if ( ! empty($apiUrl) ) {
+            if ( ! empty($apiUrl)) {
                 self::$URL = $apiUrl;
             }
 
@@ -153,7 +156,8 @@
          * @return string
          * @ignore
          */
-        static protected function getCurrentUrl() {
+        static protected function getCurrentUrl()
+        {
             return self::getCurrentScheme() . '://'
                    . self::getCurrentHost()
                    . self::getCurrentScriptName()
@@ -167,9 +171,10 @@
          * @return string 'https' or 'http'
          * @ignore
          */
-        static protected function getCurrentScheme() {
-            if ( isset($_SERVER['HTTPS'])
-                 && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] === true )
+        static protected function getCurrentScheme()
+        {
+            if (isset($_SERVER['HTTPS'])
+                && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] === true)
             ) {
                 return 'https';
             }
@@ -184,8 +189,9 @@
          * @return string
          * @ignore
          */
-        static protected function getCurrentHost() {
-            if ( isset($_SERVER['HTTP_HOST']) ) {
+        static protected function getCurrentHost()
+        {
+            if (isset($_SERVER['HTTP_HOST'])) {
                 return $_SERVER['HTTP_HOST'];
             }
 
@@ -199,22 +205,23 @@
          * @return string
          * @ignore
          */
-        static protected function getCurrentScriptName() {
+        static protected function getCurrentScriptName()
+        {
             $url = '';
-            if ( ! empty($_SERVER['PATH_INFO']) ) {
+            if ( ! empty($_SERVER['PATH_INFO'])) {
                 $url = $_SERVER['PATH_INFO'];
-            } else if ( ! empty($_SERVER['REQUEST_URI']) ) {
-                if ( ( $pos = strpos($_SERVER['REQUEST_URI'], '?') ) !== false ) {
+            } else if ( ! empty($_SERVER['REQUEST_URI'])) {
+                if (($pos = strpos($_SERVER['REQUEST_URI'], '?')) !== false) {
                     $url = substr($_SERVER['REQUEST_URI'], 0, $pos);
                 } else {
                     $url = $_SERVER['REQUEST_URI'];
                 }
             }
-            if ( empty($url) ) {
+            if (empty($url)) {
                 $url = $_SERVER['SCRIPT_NAME'];
             }
 
-            if ( $url[0] !== '/' ) {
+            if ($url[0] !== '/') {
                 $url = '/' . $url;
             }
 
@@ -228,10 +235,11 @@
          * @return string
          * @ignore
          */
-        static protected function getCurrentQueryString() {
+        static protected function getCurrentQueryString()
+        {
             $url = '';
-            if ( isset($_SERVER['QUERY_STRING'])
-                 && ! empty($_SERVER['QUERY_STRING'])
+            if (isset($_SERVER['QUERY_STRING'])
+                && ! empty($_SERVER['QUERY_STRING'])
             ) {
                 $url .= '?' . $_SERVER['QUERY_STRING'];
             }
@@ -242,14 +250,15 @@
         /**
          * Fix-up domain
          */
-        static protected function domainFixup($domain) {
+        static protected function domainFixup($domain)
+        {
             $dl = strlen($domain) - 1;
             // remove trailing '.'
-            if ( $domain{$dl} === '.' ) {
+            if ($domain{$dl} === '.') {
                 $domain = substr($domain, 0, $dl);
             }
             // remove leading '*'
-            if ( substr($domain, 0, 2) === '*.' ) {
+            if (substr($domain, 0, 2) === '*.') {
                 $domain = substr($domain, 1);
             }
 
@@ -259,9 +268,10 @@
         /**
          * @return bool|mixed
          */
-        protected function getCustomVariablesFromCookie() {
+        protected function getCustomVariablesFromCookie()
+        {
             $cookie = $this->getCookieMatchingName('cvar');
-            if ( ! $cookie ) {
+            if ( ! $cookie) {
                 return false;
             }
 
@@ -276,11 +286,12 @@
          * @return string String value of cookie, or false if not found
          * @ignore
          */
-        protected function getCookieMatchingName($name) {
-            if ( $this->configCookiesDisabled ) {
+        protected function getCookieMatchingName($name)
+        {
+            if ($this->configCookiesDisabled) {
                 return false;
             }
-            if ( ! is_array($_COOKIE) ) {
+            if ( ! is_array($_COOKIE)) {
                 return false;
             }
             $name = $this->getCookieName($name);
@@ -288,8 +299,8 @@
             // Piwik cookie names use dots separators in piwik.js,
             // but PHP Replaces . with _ http://www.php.net/manual/en/language.variables.predefined.php#72571
             $name = str_replace('.', '_', $name);
-            foreach ( $_COOKIE as $cookieName => $cookieValue ) {
-                if ( strpos($cookieName, $name) !== false ) {
+            foreach ($_COOKIE as $cookieName => $cookieValue) {
+                if (strpos($cookieName, $name) !== false) {
                     return $cookieValue;
                 }
             }
@@ -304,9 +315,11 @@
          *
          * @return string
          */
-        protected function getCookieName($cookieName) {
+        protected function getCookieName($cookieName)
+        {
             // NOTE: If the cookie name is changed, we must also update the method in piwik.js with the same name.
-            $hash = substr(sha1(( $this->configCookieDomain == '' ? self::getCurrentHost() : $this->configCookieDomain ) . $this->configCookiePath), 0, 4);
+            $hash = substr(sha1(($this->configCookieDomain == '' ? self::getCurrentHost() : $this->configCookieDomain) . $this->configCookiePath),
+                0, 4);
 
             return self::FIRST_PARTY_COOKIES_PREFIX . $cookieName . '.' . $this->idSite . '.' . $hash;
         }
@@ -318,37 +331,43 @@
          *
          * @ignore
          */
-        protected function getUrlTrackEcommerce($grandTotal, $subTotal = 0.0, $tax = 0.0, $shipping = 0.0, $discount = 0.0) {
-            if ( ! is_numeric($grandTotal) ) {
+        protected function getUrlTrackEcommerce(
+            $grandTotal,
+            $subTotal = 0.0,
+            $tax = 0.0,
+            $shipping = 0.0,
+            $discount = 0.0
+        ) {
+            if ( ! is_numeric($grandTotal)) {
                 throw new Exception("You must specifiy a grandTotal for the Ecommerce order (or Cart update)");
             }
 
             $url = $this->getRequest($this->idSite);
             $url .= '&idgoal=0';
-            if ( ! empty($grandTotal) ) {
+            if ( ! empty($grandTotal)) {
                 $grandTotal = $this->forceDotAsSeparatorForDecimalPoint($grandTotal);
                 $url        .= '&revenue=' . $grandTotal;
             }
-            if ( ! empty($subTotal) ) {
+            if ( ! empty($subTotal)) {
                 $subTotal = $this->forceDotAsSeparatorForDecimalPoint($subTotal);
                 $url      .= '&ec_st=' . $subTotal;
             }
-            if ( ! empty($tax) ) {
+            if ( ! empty($tax)) {
                 $tax = $this->forceDotAsSeparatorForDecimalPoint($tax);
                 $url .= '&ec_tx=' . $tax;
             }
-            if ( ! empty($shipping) ) {
+            if ( ! empty($shipping)) {
                 $shipping = $this->forceDotAsSeparatorForDecimalPoint($shipping);
                 $url      .= '&ec_sh=' . $shipping;
             }
-            if ( ! empty($discount) ) {
+            if ( ! empty($discount)) {
                 $discount = $this->forceDotAsSeparatorForDecimalPoint($discount);
                 $url      .= '&ec_dt=' . $discount;
             }
-            if ( ! empty($this->ecommerceItems) ) {
+            if ( ! empty($this->ecommerceItems)) {
                 // Removing the SKU index in the array before JSON encoding
                 $items = array();
-                foreach ( $this->ecommerceItems as $item ) {
+                foreach ($this->ecommerceItems as $item) {
                     $items[] = $item;
                 }
                 $url .= '&ec_items=' . urlencode(json_encode($items));
@@ -363,7 +382,8 @@
          *
          * @return string|int
          */
-        protected function getTimestamp() {
+        protected function getTimestamp()
+        {
             return ! empty($this->forcedDatetime)
                 ? strtotime($this->forcedDatetime)
                 : time();
@@ -372,7 +392,8 @@
         /**
          * @ignore
          */
-        protected function getRequest($idSite) {
+        protected function getRequest($idSite)
+        {
             $this->setFirstPartyCookies();
 
             $url = $this->getBaseUrl() .
@@ -382,62 +403,61 @@
                    '&r=' . substr(strval(mt_rand()), 2, 6) .
 
                    // XDEBUG_SESSIONS_START and KEY are related to the PHP Debugger, this can be ignored in other languages
-                   ( ! empty($_GET['XDEBUG_SESSION_START']) ? '&XDEBUG_SESSION_START=' . @urlencode($_GET['XDEBUG_SESSION_START']) : '' ) .
-                   ( ! empty($_GET['KEY']) ? '&KEY=' . @urlencode($_GET['KEY']) : '' ) .
+                   (! empty($_GET['XDEBUG_SESSION_START']) ? '&XDEBUG_SESSION_START=' . @urlencode($_GET['XDEBUG_SESSION_START']) : '') .
+                   (! empty($_GET['KEY']) ? '&KEY=' . @urlencode($_GET['KEY']) : '') .
 
                    // Only allowed for Super User, token_auth required,
-                   ( ! empty($this->ip) ? '&cip=' . $this->ip : '' ) .
-                   ( ! empty($this->userId) ? '&uid=' . urlencode($this->userId) : '' ) .
-                   ( ! empty($this->forcedDatetime) ? '&cdt=' . urlencode($this->forcedDatetime) : '' ) .
-                   ( ! empty($this->forcedNewVisit) ? '&new_visit=1' : '' ) .
-                   ( ( ! empty($this->token_auth) && ! $this->doBulkRequests ) ? '&token_auth=' . urlencode($this->token_auth) : '' ) .
+                   (! empty($this->ip) ? '&cip=' . $this->ip : '') .
+                   (! empty($this->userId) ? '&uid=' . urlencode($this->userId) : '') .
+                   (! empty($this->forcedDatetime) ? '&cdt=' . urlencode($this->forcedDatetime) : '') .
+                   (! empty($this->forcedNewVisit) ? '&new_visit=1' : '') .
+                   (( ! empty($this->token_auth) && ! $this->doBulkRequests) ? '&token_auth=' . urlencode($this->token_auth) : '') .
 
                    // Values collected from cookie
                    '&_idts=' . $this->createTs .
                    '&_idvc=' . $this->visitCount .
-                   ( ! empty($this->lastVisitTs) ? '&_viewts=' . $this->lastVisitTs : '' ) .
-                   ( ! empty($this->ecommerceLastOrderTimestamp) ? '&_ects=' . urlencode($this->ecommerceLastOrderTimestamp) : '' ) .
+                   (! empty($this->lastVisitTs) ? '&_viewts=' . $this->lastVisitTs : '') .
+                   (! empty($this->ecommerceLastOrderTimestamp) ? '&_ects=' . urlencode($this->ecommerceLastOrderTimestamp) : '') .
 
                    // These parameters are set by the JS, but optional when using API
-                   ( ! empty($this->plugins) ? $this->plugins : '' ) .
-                   ( ( $this->localHour !== false && $this->localMinute !== false && $this->localSecond !== false ) ? '&h=' . $this->localHour . '&m=' . $this->localMinute . '&s=' . $this->localSecond : '' ) .
-                   ( ! empty($this->width) && ! empty($this->height) ? '&res=' . $this->width . 'x' . $this->height : '' ) .
-                   ( ! empty($this->hasCookies) ? '&cookie=' . $this->hasCookies : '' ) .
+                   (! empty($this->plugins) ? $this->plugins : '') .
+                   (($this->localHour !== false && $this->localMinute !== false && $this->localSecond !== false) ? '&h=' . $this->localHour . '&m=' . $this->localMinute . '&s=' . $this->localSecond : '') .
+                   (! empty($this->width) && ! empty($this->height) ? '&res=' . $this->width . 'x' . $this->height : '') .
+                   (! empty($this->hasCookies) ? '&cookie=' . $this->hasCookies : '') .
 
                    // Various important attributes
-                   ( ! empty($this->customData) ? '&data=' . $this->customData : '' ) .
-                   ( ! empty($this->visitorCustomVar) ? '&_cvar=' . urlencode(json_encode($this->visitorCustomVar)) : '' ) .
-                   ( ! empty($this->pageCustomVar) ? '&cvar=' . urlencode(json_encode($this->pageCustomVar)) : '' ) .
-                   ( ! empty($this->eventCustomVar) ? '&e_cvar=' . urlencode(json_encode($this->eventCustomVar)) : '' ) .
-                   ( ! empty($this->generationTime) ? '&gt_ms=' . ( (int) $this->generationTime ) : '' ) .
-                   ( ! empty($this->forcedVisitorId) ? '&cid=' . $this->forcedVisitorId : '&_id=' . $this->getVisitorId() ) .
+                   (! empty($this->customData) ? '&data=' . $this->customData : '') .
+                   (! empty($this->visitorCustomVar) ? '&_cvar=' . urlencode(json_encode($this->visitorCustomVar)) : '') .
+                   (! empty($this->pageCustomVar) ? '&cvar=' . urlencode(json_encode($this->pageCustomVar)) : '') .
+                   (! empty($this->eventCustomVar) ? '&e_cvar=' . urlencode(json_encode($this->eventCustomVar)) : '') .
+                   (! empty($this->generationTime) ? '&gt_ms=' . ((int)$this->generationTime) : '') .
+                   (! empty($this->forcedVisitorId) ? '&cid=' . $this->forcedVisitorId : '&_id=' . $this->getVisitorId()) .
 
                    // URL parameters
                    '&url=' . urlencode($this->pageUrl) .
                    '&urlref=' . urlencode($this->urlReferrer) .
-                   ( ( ! empty($this->pageCharset) && $this->pageCharset != self::DEFAULT_CHARSET_PARAMETER_VALUES ) ? '&cs=' . $this->pageCharset : '' ) .
+                   (( ! empty($this->pageCharset) && $this->pageCharset != self::DEFAULT_CHARSET_PARAMETER_VALUES) ? '&cs=' . $this->pageCharset : '') .
 
                    // Attribution information, so that Goal conversions are attributed to the right referrer or campaign
                    // Campaign name
-                   ( ! empty($this->attributionInfo[0]) ? '&_rcn=' . urlencode($this->attributionInfo[0]) : '' ) .
+                   (! empty($this->attributionInfo[0]) ? '&_rcn=' . urlencode($this->attributionInfo[0]) : '') .
                    // Campaign keyword
-                   ( ! empty($this->attributionInfo[1]) ? '&_rck=' . urlencode($this->attributionInfo[1]) : '' ) .
+                   (! empty($this->attributionInfo[1]) ? '&_rck=' . urlencode($this->attributionInfo[1]) : '') .
                    // Timestamp at which the referrer was set
-                   ( ! empty($this->attributionInfo[2]) ? '&_refts=' . $this->attributionInfo[2] : '' ) .
+                   (! empty($this->attributionInfo[2]) ? '&_refts=' . $this->attributionInfo[2] : '') .
                    // Referrer URL
-                   ( ! empty($this->attributionInfo[3]) ? '&_ref=' . urlencode($this->attributionInfo[3]) : '' ) .
+                   (! empty($this->attributionInfo[3]) ? '&_ref=' . urlencode($this->attributionInfo[3]) : '') .
 
                    // custom location info
-                   ( ! empty($this->country) ? '&country=' . urlencode($this->country) : '' ) .
-                   ( ! empty($this->region) ? '&region=' . urlencode($this->region) : '' ) .
-                   ( ! empty($this->city) ? '&city=' . urlencode($this->city) : '' ) .
-                   ( ! empty($this->lat) ? '&lat=' . urlencode($this->lat) : '' ) .
-                   ( ! empty($this->long) ? '&long=' . urlencode($this->long) : '' ) .
-                   ( ! $this->sendImageResponse ? '&send_image=0' : '' ) .
+                   (! empty($this->country) ? '&country=' . urlencode($this->country) : '') .
+                   (! empty($this->region) ? '&region=' . urlencode($this->region) : '') .
+                   (! empty($this->city) ? '&city=' . urlencode($this->city) : '') .
+                   (! empty($this->lat) ? '&lat=' . urlencode($this->lat) : '') .
+                   (! empty($this->long) ? '&long=' . urlencode($this->long) : '') .
+                   (! $this->sendImageResponse ? '&send_image=0' : '') .
 
                    // DEBUG
                    $this->DEBUG_APPEND_URL;
-
 
             // Reset page level custom variables after this page view
             $this->pageCustomVar  = array();
@@ -453,18 +473,19 @@
          * Sets the first party cookies as would the piwik.js
          * All cookies are supported: 'id' and 'ses' and 'ref' and 'cvar' cookies.
          */
-        protected function setFirstPartyCookies() {
-            if ( $this->configCookiesDisabled ) {
+        protected function setFirstPartyCookies()
+        {
+            if ($this->configCookiesDisabled) {
                 return;
             }
 
-            if ( empty($this->cookieVisitorId) ) {
+            if (empty($this->cookieVisitorId)) {
                 $this->loadVisitorIdCookie();
             }
 
             // Set the 'ref' cookie
             $attributionInfo = $this->getAttributionInfo();
-            if ( ! empty($attributionInfo) ) {
+            if ( ! empty($attributionInfo)) {
                 $this->setCookie('ref', $attributionInfo, $this->configReferralCookieTimeout);
             }
 
@@ -486,21 +507,22 @@
          *
          * @return bool True if cookie exists and is valid, False otherwise
          */
-        protected function loadVisitorIdCookie() {
+        protected function loadVisitorIdCookie()
+        {
             $idCookie = $this->getCookieMatchingName('id');
-            if ( $idCookie === false ) {
+            if ($idCookie === false) {
                 return false;
             }
             $parts = explode('.', $idCookie);
-            if ( strlen($parts[0]) != self::LENGTH_VISITOR_ID ) {
+            if (strlen($parts[0]) != self::LENGTH_VISITOR_ID) {
                 return false;
             }
             $this->cookieVisitorId = $parts[0]; // provides backward compatibility since getVisitorId() didn't change any existing VisitorId value
             $this->createTs        = $parts[1];
-            $this->visitCount      = (int) $parts[2];
+            $this->visitCount      = (int)$parts[2];
             $this->currentVisitTs  = $parts[3];
             $this->lastVisitTs     = $parts[4];
-            if ( isset($parts[5]) ) {
+            if (isset($parts[5])) {
                 $this->ecommerceLastOrderTimestamp = $parts[5];
             }
 
@@ -515,22 +537,25 @@
          * @param $cookieValue
          * @param $cookieTTL
          */
-        protected function setCookie($cookieName, $cookieValue, $cookieTTL) {
+        protected function setCookie($cookieName, $cookieValue, $cookieTTL)
+        {
             $cookieExpire = $this->currentTs + $cookieTTL;
-            if ( ! headers_sent() ) {
-                setcookie($this->getCookieName($cookieName), $cookieValue, $cookieExpire, $this->configCookiePath, $this->configCookieDomain);
+            if ( ! headers_sent()) {
+                setcookie($this->getCookieName($cookieName), $cookieValue, $cookieExpire, $this->configCookiePath,
+                    $this->configCookieDomain);
             }
         }
 
         /**
          * Returns the base URL for the piwik server.
          */
-        protected function getBaseUrl() {
-            if ( empty(self::$URL) ) {
+        protected function getBaseUrl()
+        {
+            if (empty(self::$URL)) {
                 throw new Exception('You must first set the Piwik Tracker URL by calling PiwikTracker::$URL = \'http://your-website.org/piwik/\';');
             }
-            if ( strpos(self::$URL, '/piwik.php') === false
-                 && strpos(self::$URL, '/proxy-piwik.php') === false
+            if (strpos(self::$URL, '/piwik.php') === false
+                && strpos(self::$URL, '/proxy-piwik.php') === false
             ) {
                 self::$URL .= '/piwik.php';
             }
@@ -541,15 +566,16 @@
         /**
          * @ignore
          */
-        protected function sendRequest($url, $method = 'GET', $data = null, $force = false) {
+        protected function sendRequest($url, $method = 'GET', $data = null, $force = false)
+        {
             self::$DEBUG_LAST_REQUESTED_URL = $url;
 
             // if doing a bulk request, store the url
-            if ( $this->doBulkRequests && ! $force ) {
+            if ($this->doBulkRequests && ! $force) {
                 $this->storedTrackingActions[]
                     = $url
-                      . ( ! empty($this->userAgent) ? ( '&ua=' . urlencode($this->userAgent) ) : '' )
-                      . ( ! empty($this->acceptLanguage) ? ( '&lang=' . urlencode($this->acceptLanguage) ) : '' );
+                      . (! empty($this->userAgent) ? ('&ua=' . urlencode($this->userAgent)) : '')
+                      . (! empty($this->acceptLanguage) ? ('&lang=' . urlencode($this->acceptLanguage)) : '');
 
                 // Clear custom variables so they don't get copied over to other users in the bulk request
                 $this->clearCustomVariables();
@@ -559,7 +585,7 @@
                 return true;
             }
 
-            if ( function_exists('curl_init') && function_exists('curl_exec') ) {
+            if (function_exists('curl_init') && function_exists('curl_exec')) {
                 $options = array(
                     CURLOPT_URL            => $url,
                     CURLOPT_USERAGENT      => $this->userAgent,
@@ -571,19 +597,19 @@
                     )
                 );
 
-                switch ( $method ) {
+                switch ($method) {
                     case 'POST':
-                        $options[ CURLOPT_POST ] = true;
+                        $options[CURLOPT_POST] = true;
                         break;
                     default:
                         break;
                 }
 
                 // only supports JSON data
-                if ( ! empty($data) ) {
-                    $options[ CURLOPT_HTTPHEADER ][] = 'Content-Type: application/json';
-                    $options[ CURLOPT_HTTPHEADER ][] = 'Expect:';
-                    $options[ CURLOPT_POSTFIELDS ]   = $data;
+                if ( ! empty($data)) {
+                    $options[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
+                    $options[CURLOPT_HTTPHEADER][] = 'Expect:';
+                    $options[CURLOPT_POSTFIELDS]   = $data;
                 }
 
                 $ch = curl_init();
@@ -592,10 +618,10 @@
                 $response = @curl_exec($ch);
                 ob_end_clean();
                 $content = '';
-                if ( ! empty($response) ) {
+                if ( ! empty($response)) {
                     list($header, $content) = explode("\r\n\r\n", $response, $limitCount = 2);
                 }
-            } else if ( function_exists('stream_context_create') ) {
+            } else if (function_exists('stream_context_create')) {
                 $stream_options = array(
                     'http' => array(
                         'method'     => $method,
@@ -606,7 +632,7 @@
                 );
 
                 // only supports JSON data
-                if ( ! empty($data) ) {
+                if ( ! empty($data)) {
                     $stream_options['http']['header']  .= "Content-Type: application/json \r\n";
                     $stream_options['http']['content'] = $data;
                 }
@@ -626,8 +652,9 @@
          *
          * @return string
          */
-        private function forceDotAsSeparatorForDecimalPoint($value) {
-            if ( null === $value || false === $value ) {
+        private function forceDotAsSeparatorForDecimalPoint($value)
+        {
+            if (null === $value || false === $value) {
                 return $value;
             }
 
@@ -642,14 +669,16 @@
          *
          * @return string
          */
-        static public function getUserIdHashed($id) {
+        static public function getUserIdHashed($id)
+        {
             return substr(sha1($id), 0, 16);
         }
 
         /**
          * Sets the current visitor ID to a random new one.
          */
-        public function setNewVisitorId() {
+        public function setNewVisitorId()
+        {
             $this->randomVisitorId = substr(md5(uniqid(rand(), true)), 0, self::LENGTH_VISITOR_ID);
             $this->userId          = false;
             $this->forcedVisitorId = false;
@@ -674,23 +703,25 @@
          *
          * @throws Exception
          */
-        public function addEcommerceItem($sku, $name = '', $category = '', $price = 0.0, $quantity = 1) {
-            if ( empty($sku) ) {
+        public function addEcommerceItem($sku, $name = '', $category = '', $price = 0.0, $quantity = 1)
+        {
+            if (empty($sku)) {
                 throw new Exception("You must specify a SKU for the Ecommerce item");
             }
 
             $price = $this->forceDotAsSeparatorForDecimalPoint($price);
 
-            $this->ecommerceItems[ $sku ] = array( $sku, $name, $category, $price, $quantity );
+            $this->ecommerceItems[$sku] = array($sku, $name, $category, $price, $quantity);
         }
 
         /**
          * Deletes all first party cookies from the client
          */
-        public function deleteCookies() {
+        public function deleteCookies()
+        {
             $expire  = $this->currentTs - 86400;
-            $cookies = array( 'id', 'ses', 'cvar', 'ref' );
-            foreach ( $cookies as $cookie ) {
+            $cookies = array('id', 'ses', 'cvar', 'ref');
+            foreach ($cookies as $cookie) {
                 $this->setCookie($cookie, '', $expire);
             }
         }
@@ -700,14 +731,16 @@
          * from the request and write updated cookies in the response (using setrawcookie).
          * This can be disabled by calling this function.
          */
-        public function disableCookieSupport() {
+        public function disableCookieSupport()
+        {
             $this->configCookiesDisabled = true;
         }
 
         /**
          * If image response is disabled Piwik will respond with a HTTP 204 header instead of responding with a gif.
          */
-        public function disableSendImageResponse() {
+        public function disableSendImageResponse()
+        {
             $this->sendImageResponse = false;
         }
 
@@ -718,15 +751,16 @@
          * @throws Exception
          * @return string Response
          */
-        public function doBulkTrack() {
-            if ( empty($this->storedTrackingActions) ) {
+        public function doBulkTrack()
+        {
+            if (empty($this->storedTrackingActions)) {
                 throw new Exception("Error:  you must call the function doTrackPageView or doTrackGoal from this class, before calling this method doBulkTrack()");
             }
 
-            $data = array( 'requests' => $this->storedTrackingActions );
+            $data = array('requests' => $this->storedTrackingActions);
 
             // token_auth is not required by default, except if bulk_requests_require_authentication=1
-            if ( ! empty($this->token_auth) ) {
+            if ( ! empty($this->token_auth)) {
                 $data['token_auth'] = $this->token_auth;
             }
 
@@ -746,7 +780,8 @@
          *
          * @return mixed Response or true if using bulk request
          */
-        public function doTrackAction($actionUrl, $actionType) {
+        public function doTrackAction($actionUrl, $actionType)
+        {
             // Referrer could be udpated to be the current URL temporarily (to mimic JS behavior)
             $url = $this->getUrlTrackAction($actionUrl, $actionType);
 
@@ -763,7 +798,8 @@
          *
          * @return string URL to piwik.php with all parameters set to track an action
          */
-        public function getUrlTrackAction($actionUrl, $actionType) {
+        public function getUrlTrackAction($actionUrl, $actionType)
+        {
             $url = $this->getRequest($this->idSite);
             $url .= '&' . $actionType . '=' . $actionUrl;
 
@@ -781,7 +817,8 @@
          *
          * @return mixed Response string or true if using bulk requests.
          */
-        public function doTrackContentImpression($contentName, $contentPiece = 'Unknown', $contentTarget = false) {
+        public function doTrackContentImpression($contentName, $contentPiece = 'Unknown', $contentTarget = false)
+        {
             $url = $this->getUrlTrackContentImpression($contentName, $contentPiece, $contentTarget);
 
             return $this->sendRequest($url);
@@ -801,19 +838,20 @@
          * @throws Exception In case $contentName is empty
          * @return string URL to piwik.php with all parameters set to track the pageview
          */
-        public function getUrlTrackContentImpression($contentName, $contentPiece, $contentTarget) {
+        public function getUrlTrackContentImpression($contentName, $contentPiece, $contentTarget)
+        {
             $url = $this->getRequest($this->idSite);
 
-            if ( strlen($contentName) == 0 ) {
+            if (strlen($contentName) == 0) {
                 throw new Exception("You must specify a content name");
             }
 
             $url .= '&c_n=' . urlencode($contentName);
 
-            if ( ! empty($contentPiece) && strlen($contentPiece) > 0 ) {
+            if ( ! empty($contentPiece) && strlen($contentPiece) > 0) {
                 $url .= '&c_p=' . urlencode($contentPiece);
             }
-            if ( ! empty($contentTarget) && strlen($contentTarget) > 0 ) {
+            if ( ! empty($contentTarget) && strlen($contentTarget) > 0) {
                 $url .= '&c_t=' . urlencode($contentTarget);
             }
 
@@ -834,7 +872,12 @@
          *
          * @return mixed Response string or true if using bulk requests.
          */
-        public function doTrackContentInteraction($interaction, $contentName, $contentPiece = 'Unknown', $contentTarget = false) {
+        public function doTrackContentInteraction(
+            $interaction,
+            $contentName,
+            $contentPiece = 'Unknown',
+            $contentTarget = false
+        ) {
             $url = $this->getUrlTrackContentInteraction($interaction, $contentName, $contentPiece, $contentTarget);
 
             return $this->sendRequest($url);
@@ -855,24 +898,25 @@
          * @throws Exception In case $interaction or $contentName is empty
          * @return string URL to piwik.php with all parameters set to track the pageview
          */
-        public function getUrlTrackContentInteraction($interaction, $contentName, $contentPiece, $contentTarget) {
+        public function getUrlTrackContentInteraction($interaction, $contentName, $contentPiece, $contentTarget)
+        {
             $url = $this->getRequest($this->idSite);
 
-            if ( strlen($interaction) == 0 ) {
+            if (strlen($interaction) == 0) {
                 throw new Exception("You must specify a name for the interaction");
             }
 
-            if ( strlen($contentName) == 0 ) {
+            if (strlen($contentName) == 0) {
                 throw new Exception("You must specify a content name");
             }
 
             $url .= '&c_i=' . urlencode($interaction);
             $url .= '&c_n=' . urlencode($contentName);
 
-            if ( ! empty($contentPiece) && strlen($contentPiece) > 0 ) {
+            if ( ! empty($contentPiece) && strlen($contentPiece) > 0) {
                 $url .= '&c_p=' . urlencode($contentPiece);
             }
-            if ( ! empty($contentTarget) && strlen($contentTarget) > 0 ) {
+            if ( ! empty($contentTarget) && strlen($contentTarget) > 0) {
                 $url .= '&c_t=' . urlencode($contentTarget);
             }
 
@@ -890,7 +934,8 @@
          *
          * @return mixed Response or true if using bulk request
          */
-        public function doTrackEcommerceCartUpdate($grandTotal) {
+        public function doTrackEcommerceCartUpdate($grandTotal)
+        {
             $url = $this->getUrlTrackEcommerceCartUpdate($grandTotal);
 
             return $this->sendRequest($url);
@@ -903,7 +948,8 @@
          *
          * @ignore
          */
-        public function getUrlTrackEcommerceCartUpdate($grandTotal) {
+        public function getUrlTrackEcommerceCartUpdate($grandTotal)
+        {
             $url = $this->getUrlTrackEcommerce($grandTotal);
 
             return $url;
@@ -929,7 +975,14 @@
          *
          * @return mixed Response or true if using bulk request
          */
-        public function doTrackEcommerceOrder($orderId, $grandTotal, $subTotal = 0.0, $tax = 0.0, $shipping = 0.0, $discount = 0.0) {
+        public function doTrackEcommerceOrder(
+            $orderId,
+            $grandTotal,
+            $subTotal = 0.0,
+            $tax = 0.0,
+            $shipping = 0.0,
+            $discount = 0.0
+        ) {
             $url = $this->getUrlTrackEcommerceOrder($orderId, $grandTotal, $subTotal, $tax, $shipping, $discount);
 
             return $this->sendRequest($url);
@@ -942,11 +995,19 @@
          *
          * @ignore
          */
-        public function getUrlTrackEcommerceOrder($orderId, $grandTotal, $subTotal = 0.0, $tax = 0.0, $shipping = 0.0, $discount = 0.0) {
-            if ( empty($orderId) ) {
+        public function getUrlTrackEcommerceOrder(
+            $orderId,
+            $grandTotal,
+            $subTotal = 0.0,
+            $tax = 0.0,
+            $shipping = 0.0,
+            $discount = 0.0
+        ) {
+            if (empty($orderId)) {
                 throw new Exception("You must specifiy an orderId for the Ecommerce order");
             }
-            $url                               = $this->getUrlTrackEcommerce($grandTotal, $subTotal, $tax, $shipping, $discount);
+            $url                               = $this->getUrlTrackEcommerce($grandTotal, $subTotal, $tax, $shipping,
+                $discount);
             $url                               .= '&ec_id=' . urlencode($orderId);
             $this->ecommerceLastOrderTimestamp = $this->getTimestamp();
 
@@ -965,7 +1026,8 @@
          *
          * @return mixed Response string or true if using bulk requests.
          */
-        public function doTrackEvent($category, $action, $name = false, $value = false) {
+        public function doTrackEvent($category, $action, $name = false, $value = false)
+        {
             $url = $this->getUrlTrackEvent($category, $action, $name, $value);
 
             return $this->sendRequest($url);
@@ -986,22 +1048,23 @@
          * @return string URL to piwik.php with all parameters set to track the pageview
          * @throws
          */
-        public function getUrlTrackEvent($category, $action, $name = false, $value = false) {
+        public function getUrlTrackEvent($category, $action, $name = false, $value = false)
+        {
             $url = $this->getRequest($this->idSite);
-            if ( strlen($category) == 0 ) {
+            if (strlen($category) == 0) {
                 throw new Exception("You must specify an Event Category name (Music, Videos, Games...).");
             }
-            if ( strlen($action) == 0 ) {
+            if (strlen($action) == 0) {
                 throw new Exception("You must specify an Event action (click, view, add...).");
             }
 
             $url .= '&e_c=' . urlencode($category);
             $url .= '&e_a=' . urlencode($action);
 
-            if ( strlen($name) > 0 ) {
+            if (strlen($name) > 0) {
                 $url .= '&e_n=' . urlencode($name);
             }
-            if ( strlen($value) > 0 ) {
+            if (strlen($value) > 0) {
                 $value = $this->forceDotAsSeparatorForDecimalPoint($value);
                 $url   .= '&e_v=' . $value;
             }
@@ -1017,7 +1080,8 @@
          *
          * @return mixed Response or true if using bulk request
          */
-        public function doTrackGoal($idGoal, $revenue = 0.0) {
+        public function doTrackGoal($idGoal, $revenue = 0.0)
+        {
             $url = $this->getUrlTrackGoal($idGoal, $revenue);
 
             return $this->sendRequest($url);
@@ -1033,10 +1097,11 @@
          *
          * @return string URL to piwik.php with all parameters set to track the goal conversion
          */
-        public function getUrlTrackGoal($idGoal, $revenue = 0.0) {
+        public function getUrlTrackGoal($idGoal, $revenue = 0.0)
+        {
             $url = $this->getRequest($this->idSite);
             $url .= '&idgoal=' . $idGoal;
-            if ( ! empty($revenue) ) {
+            if ( ! empty($revenue)) {
                 $revenue = $this->forceDotAsSeparatorForDecimalPoint($revenue);
                 $url     .= '&revenue=' . $revenue;
             }
@@ -1051,7 +1116,8 @@
          *
          * @return mixed Response string or true if using bulk requests.
          */
-        public function doTrackPageView($documentTitle) {
+        public function doTrackPageView($documentTitle)
+        {
             $url = $this->getUrlTrackPageView($documentTitle);
 
             return $this->sendRequest($url);
@@ -1066,9 +1132,10 @@
          *
          * @return string URL to piwik.php with all parameters set to track the pageview
          */
-        public function getUrlTrackPageView($documentTitle = '') {
+        public function getUrlTrackPageView($documentTitle = '')
+        {
             $url = $this->getRequest($this->idSite);
-            if ( strlen($documentTitle) > 0 ) {
+            if (strlen($documentTitle) > 0) {
                 $url .= '&action_name=' . urlencode($documentTitle);
             }
 
@@ -1084,8 +1151,9 @@
          *                Will return false if the cookie could not be found
          * @see Piwik.js getAttributionInfo()
          */
-        public function getAttributionInfo() {
-            if ( ! empty($this->attributionInfo) ) {
+        public function getAttributionInfo()
+        {
+            if ( ! empty($this->attributionInfo)) {
                 return json_encode($this->attributionInfo);
             }
 
@@ -1102,14 +1170,15 @@
          *
          * @return string 16 hex chars visitor ID string
          */
-        public function getVisitorId() {
-            if ( ! empty($this->userId) ) {
+        public function getVisitorId()
+        {
+            if ( ! empty($this->userId)) {
                 return $this->getUserIdHashed($this->userId);
             }
-            if ( ! empty($this->forcedVisitorId) ) {
+            if ( ! empty($this->forcedVisitorId)) {
                 return $this->forcedVisitorId;
             }
-            if ( $this->loadVisitorIdCookie() ) {
+            if ($this->loadVisitorIdCookie()) {
                 return $this->cookieVisitorId;
             }
 
@@ -1121,7 +1190,8 @@
          * This can be useful when you have enabled bulk requests,
          * and you wish to clear Custom Variables of 'visit' scope.
          */
-        public function clearCustomVariables() {
+        public function clearCustomVariables()
+        {
             $this->visitorCustomVar = array();
             $this->pageCustomVar    = array();
             $this->eventCustomVar   = array();
@@ -1138,7 +1208,8 @@
          *
          * @return mixed Response or true if using bulk requests.
          */
-        public function doTrackSiteSearch($keyword, $category = '', $countResults = false) {
+        public function doTrackSiteSearch($keyword, $category = '', $countResults = false)
+        {
             $url = $this->getUrlTrackSiteSearch($keyword, $category, $countResults);
 
             return $this->sendRequest($url);
@@ -1155,14 +1226,15 @@
          *
          * @return string
          */
-        public function getUrlTrackSiteSearch($keyword, $category, $countResults) {
+        public function getUrlTrackSiteSearch($keyword, $category, $countResults)
+        {
             $url = $this->getRequest($this->idSite);
             $url .= '&search=' . urlencode($keyword);
-            if ( strlen($category) > 0 ) {
+            if (strlen($category) > 0) {
                 $url .= '&search_cat=' . urlencode($category);
             }
-            if ( ! empty($countResults) || $countResults === 0 ) {
-                $url .= '&search_count=' . (int) $countResults;
+            if ( ! empty($countResults) || $countResults === 0) {
+                $url .= '&search_count=' . (int)$countResults;
             }
 
             return $url;
@@ -1172,7 +1244,8 @@
          * Enables the bulk request feature. When used, each tracking action is stored until the
          * doBulkTrack method is called. This method will send all tracking data at once.
          */
-        public function enableBulkTracking() {
+        public function enableBulkTracking()
+        {
             $this->doBulkRequests = true;
         }
 
@@ -1184,7 +1257,8 @@
          *                       (same as .example.com) or subdomain.example.com
          * @param string $path   (optional) Set first-party cookie path
          */
-        public function enableCookies($domain = '', $path = '/') {
+        public function enableCookies($domain = '', $path = '/')
+        {
             $this->configCookiesDisabled = false;
             $this->configCookieDomain    = self::domainFixup($domain);
             $this->configCookiePath      = $path;
@@ -1202,37 +1276,39 @@
          * @return mixed An array with this format: array( 0 => CustomVariableName, 1 => CustomVariableValue ) or false
          * @see Piwik.js getCustomVariable()
          */
-        public function getCustomVariable($id, $scope = 'visit') {
-            if ( $scope == 'page' ) {
-                return isset($this->pageCustomVar[ $id ]) ? $this->pageCustomVar[ $id ] : false;
-            } elseif ( $scope == 'event' ) {
-                return isset($this->eventCustomVar[ $id ]) ? $this->eventCustomVar[ $id ] : false;
-            } else if ( $scope != 'visit' ) {
+        public function getCustomVariable($id, $scope = 'visit')
+        {
+            if ($scope == 'page') {
+                return isset($this->pageCustomVar[$id]) ? $this->pageCustomVar[$id] : false;
+            } else if ($scope == 'event') {
+                return isset($this->eventCustomVar[$id]) ? $this->eventCustomVar[$id] : false;
+            } else if ($scope != 'visit') {
                 throw new Exception("Invalid 'scope' parameter value");
             }
-            if ( ! empty($this->visitorCustomVar[ $id ]) ) {
-                return $this->visitorCustomVar[ $id ];
+            if ( ! empty($this->visitorCustomVar[$id])) {
+                return $this->visitorCustomVar[$id];
             }
             $cookieDecoded = $this->getCustomVariablesFromCookie();
-            if ( ! is_int($id) ) {
+            if ( ! is_int($id)) {
                 throw new Exception("Parameter to getCustomVariable should be an integer");
             }
             if ( ! is_array($cookieDecoded)
-                 || ! isset($cookieDecoded[ $id ])
-                 || ! is_array($cookieDecoded[ $id ])
-                 || count($cookieDecoded[ $id ]) != 2
+                 || ! isset($cookieDecoded[$id])
+                 || ! is_array($cookieDecoded[$id])
+                 || count($cookieDecoded[$id]) != 2
             ) {
                 return false;
             }
 
-            return $cookieDecoded[ $id ];
+            return $cookieDecoded[$id];
         }
 
         /**
          * Returns the maximum number of seconds the tracker will spend waiting for a response
          * from Piwik. Defaults to 600 seconds.
          */
-        public function getRequestTimeout() {
+        public function getRequestTimeout()
+        {
             return $this->requestTimeout;
         }
 
@@ -1242,7 +1318,8 @@
          *
          * @return bool
          */
-        public function getUserId() {
+        public function getUserId()
+        {
             return $this->userId;
         }
 
@@ -1259,9 +1336,10 @@
          * @throws Exception
          * @see function getAttributionInfo() in https://github.com/piwik/piwik/blob/master/js/piwik.js
          */
-        public function setAttributionInfo($jsonEncoded) {
+        public function setAttributionInfo($jsonEncoded)
+        {
             $decoded = json_decode($jsonEncoded, $assoc = true);
-            if ( ! is_array($decoded) ) {
+            if ( ! is_array($decoded)) {
                 throw new Exception("setAttributionInfo() is expecting a JSON encoded string, $jsonEncoded given");
             }
             $this->attributionInfo = $decoded;
@@ -1273,7 +1351,8 @@
          *
          * @param bool $bool
          */
-        public function setBrowserHasCookies($bool) {
+        public function setBrowserHasCookies($bool)
+        {
             $this->hasCookies = $bool;
         }
 
@@ -1282,7 +1361,8 @@
          *
          * @param string $acceptLanguage For example "fr-fr"
          */
-        public function setBrowserLanguage($acceptLanguage) {
+        public function setBrowserLanguage($acceptLanguage)
+        {
             $this->acceptLanguage = $acceptLanguage;
         }
 
@@ -1293,7 +1373,8 @@
          *
          * @param string $city
          */
-        public function setCity($city) {
+        public function setCity($city)
+        {
             $this->city = $city;
         }
 
@@ -1304,7 +1385,8 @@
          *
          * @param string $country
          */
-        public function setCountry($country) {
+        public function setCountry($country)
+        {
             $this->country = $country;
         }
 
@@ -1319,16 +1401,17 @@
          *
          * @throws Exception
          */
-        public function setCustomVariable($id, $name, $value, $scope = 'visit') {
-            if ( ! is_int($id) ) {
+        public function setCustomVariable($id, $name, $value, $scope = 'visit')
+        {
+            if ( ! is_int($id)) {
                 throw new Exception("Parameter id to setCustomVariable should be an integer");
             }
-            if ( $scope == 'page' ) {
-                $this->pageCustomVar[ $id ] = array( $name, $value );
-            } elseif ( $scope == 'event' ) {
-                $this->eventCustomVar[ $id ] = array( $name, $value );
-            } elseif ( $scope == 'visit' ) {
-                $this->visitorCustomVar[ $id ] = array( $name, $value );
+            if ($scope == 'page') {
+                $this->pageCustomVar[$id] = array($name, $value);
+            } else if ($scope == 'event') {
+                $this->eventCustomVar[$id] = array($name, $value);
+            } else if ($scope == 'visit') {
+                $this->visitorCustomVar[$id] = array($name, $value);
             } else {
                 throw new Exception("Invalid 'scope' parameter value");
             }
@@ -1339,7 +1422,8 @@
          *
          * @param string $string
          */
-        public function setDebugStringAppend($string) {
+        public function setDebugStringAppend($string)
+        {
             $this->DEBUG_APPEND_URL = '&' . $string;
         }
 
@@ -1359,33 +1443,34 @@
          *                                You can also specify an array of up to 5 categories for a given page view.
          * @param float        $price     Specify the price at which the item was displayed
          */
-        public function setEcommerceView($sku = '', $name = '', $category = '', $price = 0.0) {
-            if ( ! empty($category) ) {
-                if ( is_array($category) ) {
+        public function setEcommerceView($sku = '', $name = '', $category = '', $price = 0.0)
+        {
+            if ( ! empty($category)) {
+                if (is_array($category)) {
                     $category = json_encode($category);
                 }
             } else {
                 $category = "";
             }
-            $this->pageCustomVar[ self::CVAR_INDEX_ECOMMERCE_ITEM_CATEGORY ] = array( '_pkc', $category );
+            $this->pageCustomVar[self::CVAR_INDEX_ECOMMERCE_ITEM_CATEGORY] = array('_pkc', $category);
 
-            if ( ! empty($price) ) {
-                $price                                                        = (float) $price;
-                $price                                                        = $this->forceDotAsSeparatorForDecimalPoint($price);
-                $this->pageCustomVar[ self::CVAR_INDEX_ECOMMERCE_ITEM_PRICE ] = array( '_pkp', $price );
+            if ( ! empty($price)) {
+                $price                                                      = (float)$price;
+                $price                                                      = $this->forceDotAsSeparatorForDecimalPoint($price);
+                $this->pageCustomVar[self::CVAR_INDEX_ECOMMERCE_ITEM_PRICE] = array('_pkp', $price);
             }
 
             // On a category page, do not record "Product name not defined"
-            if ( empty($sku) && empty($name) ) {
+            if (empty($sku) && empty($name)) {
                 return;
             }
-            if ( ! empty($sku) ) {
-                $this->pageCustomVar[ self::CVAR_INDEX_ECOMMERCE_ITEM_SKU ] = array( '_pks', $sku );
+            if ( ! empty($sku)) {
+                $this->pageCustomVar[self::CVAR_INDEX_ECOMMERCE_ITEM_SKU] = array('_pks', $sku);
             }
-            if ( empty($name) ) {
+            if (empty($name)) {
                 $name = "";
             }
-            $this->pageCustomVar[ self::CVAR_INDEX_ECOMMERCE_ITEM_NAME ] = array( '_pkn', $name );
+            $this->pageCustomVar[self::CVAR_INDEX_ECOMMERCE_ITEM_NAME] = array('_pkn', $name);
         }
 
         /**
@@ -1393,7 +1478,8 @@
          * By default, Piwik will create a new visit if the last request by this user was more than 30 minutes ago.
          * If you call setForceNewVisit() before calling doTrack*, then a new visit will be created for this request.
          */
-        public function setForceNewVisit() {
+        public function setForceNewVisit()
+        {
             $this->forcedNewVisit = true;
         }
 
@@ -1407,7 +1493,8 @@
          *
          * @param string $dateTime Date with the format 'Y-m-d H:i:s', or a UNIX timestamp
          */
-        public function setForceVisitDateTime($dateTime) {
+        public function setForceVisitDateTime($dateTime)
+        {
             $this->forcedDatetime = $dateTime;
         }
 
@@ -1416,7 +1503,8 @@
          *
          * @param int $timeMs Generation time in ms
          */
-        public function setGenerationTime($timeMs) {
+        public function setGenerationTime($timeMs)
+        {
             $this->generationTime = $timeMs;
         }
 
@@ -1425,7 +1513,8 @@
          *
          * @param int $idSite
          */
-        public function setIdSite($idSite) {
+        public function setIdSite($idSite)
+        {
             $this->idSite = $idSite;
         }
 
@@ -1437,7 +1526,8 @@
          *
          * @param string $ip IP string, eg. 130.54.2.1
          */
-        public function setIp($ip) {
+        public function setIp($ip)
+        {
             $this->ip = $ip;
         }
 
@@ -1448,7 +1538,8 @@
          *
          * @param float $lat
          */
-        public function setLatitude($lat) {
+        public function setLatitude($lat)
+        {
             $this->lat = $lat;
         }
 
@@ -1457,11 +1548,12 @@
          *
          * @param string $time HH:MM:SS format
          */
-        public function setLocalTime($time) {
+        public function setLocalTime($time)
+        {
             list($hour, $minute, $second) = explode(':', $time);
-            $this->localHour   = (int) $hour;
-            $this->localMinute = (int) $minute;
-            $this->localSecond = (int) $second;
+            $this->localHour   = (int)$hour;
+            $this->localMinute = (int)$minute;
+            $this->localSecond = (int)$second;
         }
 
         /**
@@ -1471,7 +1563,8 @@
          *
          * @param float $long
          */
-        public function setLongitude($long) {
+        public function setLongitude($long)
+        {
             $this->long = $long;
         }
 
@@ -1483,7 +1576,8 @@
          *
          * @param string $charset
          */
-        public function setPageCharset($charset = '') {
+        public function setPageCharset($charset = '')
+        {
             $this->pageCharset = $charset;
         }
 
@@ -1500,17 +1594,27 @@
          * @param bool $gears
          * @param bool $silverlight
          */
-        public function setPlugins($flash = false, $java = false, $director = false, $quickTime = false, $realPlayer = false, $pdf = false, $windowsMedia = false, $gears = false, $silverlight = false) {
+        public function setPlugins(
+            $flash = false,
+            $java = false,
+            $director = false,
+            $quickTime = false,
+            $realPlayer = false,
+            $pdf = false,
+            $windowsMedia = false,
+            $gears = false,
+            $silverlight = false
+        ) {
             $this->plugins =
-                '&fla=' . (int) $flash .
-                '&java=' . (int) $java .
-                '&dir=' . (int) $director .
-                '&qt=' . (int) $quickTime .
-                '&realp=' . (int) $realPlayer .
-                '&pdf=' . (int) $pdf .
-                '&wma=' . (int) $windowsMedia .
-                '&gears=' . (int) $gears .
-                '&ag=' . (int) $silverlight;
+                '&fla=' . (int)$flash .
+                '&java=' . (int)$java .
+                '&dir=' . (int)$director .
+                '&qt=' . (int)$quickTime .
+                '&realp=' . (int)$realPlayer .
+                '&pdf=' . (int)$pdf .
+                '&wma=' . (int)$windowsMedia .
+                '&gears=' . (int)$gears .
+                '&ag=' . (int)$silverlight;
         }
 
         /**
@@ -1520,7 +1624,8 @@
          *
          * @param string $region
          */
-        public function setRegion($region) {
+        public function setRegion($region)
+        {
             $this->region = $region;
         }
 
@@ -1532,8 +1637,9 @@
          *
          * @throws Exception
          */
-        public function setRequestTimeout($timeout) {
-            if ( ! is_int($timeout) || $timeout < 0 ) {
+        public function setRequestTimeout($timeout)
+        {
+            if ( ! is_int($timeout) || $timeout < 0) {
                 throw new Exception("Invalid value supplied for request timeout: $timeout");
             }
 
@@ -1546,7 +1652,8 @@
          * @param int $width
          * @param int $height
          */
-        public function setResolution($width, $height) {
+        public function setResolution($width, $height)
+        {
             $this->width  = $width;
             $this->height = $height;
         }
@@ -1560,7 +1667,8 @@
          *
          * @param string $token_auth token_auth 32 chars token_auth string
          */
-        public function setTokenAuth($token_auth) {
+        public function setTokenAuth($token_auth)
+        {
             $this->token_auth = $token_auth;
         }
 
@@ -1569,7 +1677,8 @@
          *
          * @param string $url Raw URL (not URL encoded)
          */
-        public function setUrl($url) {
+        public function setUrl($url)
+        {
             $this->pageUrl = $url;
         }
 
@@ -1577,7 +1686,8 @@
          * @deprecated
          * @ignore
          */
-        public function setUrlReferer($url) {
+        public function setUrlReferer($url)
+        {
             $this->setUrlReferrer($url);
         }
 
@@ -1586,7 +1696,8 @@
          *
          * @param string $url Raw URL (not URL encoded)
          */
-        public function setUrlReferrer($url) {
+        public function setUrlReferrer($url)
+        {
             $this->urlReferrer = $url;
         }
 
@@ -1596,7 +1707,8 @@
          *
          * @param string $userAgent
          */
-        public function setUserAgent($userAgent) {
+        public function setUserAgent($userAgent)
+        {
             $this->userAgent = $userAgent;
         }
 
@@ -1610,13 +1722,14 @@
          *
          * @throws Exception
          */
-        public function setUserId($userId) {
-            if ( $userId === false ) {
+        public function setUserId($userId)
+        {
+            if ($userId === false) {
                 $this->setNewVisitorId();
 
                 return;
             }
-            if ( $userId === '' ) {
+            if ($userId === '') {
                 throw new Exception("User ID cannot be empty.");
             }
             $this->userId = $userId;
@@ -1636,10 +1749,11 @@
          *
          * @throws Exception
          */
-        public function setVisitorId($visitorId) {
+        public function setVisitorId($visitorId)
+        {
             $hexChars = '01234567890abcdefABCDEF';
-            if ( strlen($visitorId) != self::LENGTH_VISITOR_ID
-                 || strspn($visitorId, $hexChars) !== strlen($visitorId)
+            if (strlen($visitorId) != self::LENGTH_VISITOR_ID
+                || strspn($visitorId, $hexChars) !== strlen($visitorId)
             ) {
                 throw new Exception("setVisitorId() expects a "
                                     . self::LENGTH_VISITOR_ID
@@ -1659,7 +1773,8 @@
      *
      * @return string
      */
-    function Piwik_getUrlTrackPageView($idSite, $documentTitle = '') {
+    function Piwik_getUrlTrackPageView($idSite, $documentTitle = '')
+    {
         $tracker = new PiwikTracker($idSite);
 
         return $tracker->getUrlTrackPageView($documentTitle);
@@ -1674,7 +1789,8 @@
      *
      * @return string
      */
-    function Piwik_getUrlTrackGoal($idSite, $idGoal, $revenue = 0.0) {
+    function Piwik_getUrlTrackGoal($idSite, $idGoal, $revenue = 0.0)
+    {
         $tracker = new PiwikTracker($idSite);
 
         return $tracker->getUrlTrackGoal($idGoal, $revenue);

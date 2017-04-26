@@ -15,7 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-
     /**
      * Special class to handle administration tasks
      * - create administrators
@@ -23,12 +22,13 @@
      * - create roles
      * - assign roles to users
      */
-    class couchAdmin {
+    class couchAdmin
+    {
+
         /**
          * @var reference to our CouchDB client
          */
         private $client = null;
-
 
         /**
          * @var the name of the CouchDB server "users" database
@@ -42,38 +42,41 @@
          * @param array       $options array. For now the only option is "users_database" to override the defaults
          *                             "_users"
          */
-        public function __construct(couchClient $client, $options = array()) {
+        public function __construct(couchClient $client, $options = array())
+        {
             $this->client = $client;
-            if ( is_array($options) && isset($options["users_database"]) ) {
+            if (is_array($options) && isset($options["users_database"])) {
                 $this->usersdb = $options["users_database"];
             }
         }
 
-        private function build_url($parts) {
+        private function build_url($parts)
+        {
             $back = $parts["scheme"] . "://";
-            if ( ! empty($parts["user"]) ) {
+            if ( ! empty($parts["user"])) {
                 $back .= $parts["user"];
-                if ( ! empty($parts["pass"]) ) {
+                if ( ! empty($parts["pass"])) {
                     $back .= ":" . $parts["pass"];
                 }
                 $back .= "@";
             }
             $back .= $parts["host"];
-            if ( ! empty($parts["port"]) ) {
+            if ( ! empty($parts["port"])) {
                 $back .= ":" . $parts["port"];
             }
             $back .= "/";
-            if ( ! empty($parts["path"]) ) {
+            if ( ! empty($parts["path"])) {
                 $back .= $parts["path"];
             }
 
             return $back;
         }
 
-        private function rmFromArray($needle, $haystack) {
+        private function rmFromArray($needle, $haystack)
+        {
             $back = array();
-            foreach ( $haystack as $one ) {
-                if ( $one != $needle ) {
+            foreach ($haystack as $one) {
+                if ($one != $needle) {
                     $back[] = $one;
                 }
             }
@@ -86,7 +89,8 @@
          *
          * @param string $name CouchDB users database name (_users is the default)
          */
-        public function setUsersDatabase($name) {
+        public function setUsersDatabase($name)
+        {
             $this->usersdb = $name;
         }
 
@@ -95,7 +99,8 @@
          *
          * @return string users database name
          */
-        public function getUsersDatabase() {
+        public function getUsersDatabase()
+        {
             return $this->usersdb;
         }
 
@@ -109,13 +114,14 @@
          * @return stdClass CouchDB server response
          * @throws InvalidArgumentException|Exception|couchException
          */
-        public function createAdmin($login, $password, $roles = array()) {
+        public function createAdmin($login, $password, $roles = array())
+        {
             $login = urlencode($login);
-            $data  = (string) $password;
-            if ( strlen($login) < 1 ) {
+            $data  = (string)$password;
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
-            if ( strlen($data) < 1 ) {
+            if (strlen($data) < 1) {
                 throw new InvalidArgumentException("Password can't be empty");
             }
             $url = '/_config/admins/' . urlencode($login);
@@ -126,11 +132,11 @@
                     array(),
                     json_encode($data)
                 );
-            } catch ( Exception $e ) {
+            } catch (Exception $e) {
                 throw $e;
             }
             $resp = couch::parseRawResponse($raw);
-            if ( $resp['status_code'] != 200 ) {
+            if ($resp['status_code'] != 200) {
                 throw new couchException($raw);
             }
 
@@ -155,9 +161,10 @@
          * @return stdClass CouchDB server response
          * @throws InvalidArgumentException|couchException
          */
-        public function deleteAdmin($login) {
+        public function deleteAdmin($login)
+        {
             $login = urlencode($login);
-            if ( strlen($login) < 1 ) {
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
 
@@ -165,7 +172,7 @@
                 $client = new couchClient($this->client->dsn(), $this->usersdb);
                 $doc    = $client->getDoc("org.couchdb.user:" . $login);
                 $client->deleteDoc($doc);
-            } catch ( Exception $e ) {
+            } catch (Exception $e) {
             }
 
             $url  = '/_config/admins/' . urlencode($login);
@@ -174,7 +181,7 @@
                 $url
             );
             $resp = couch::parseRawResponse($raw);
-            if ( $resp['status_code'] != 200 ) {
+            if ($resp['status_code'] != 200) {
                 throw new couchException($raw);
             }
 
@@ -191,12 +198,13 @@
          * @return stdClass CouchDB user creation response (the same as a document storage response)
          * @throws InvalidArgumentException
          */
-        public function createUser($login, $password, $roles = array()) {
-            $password = (string) $password;
-            if ( strlen($login) < 1 ) {
+        public function createUser($login, $password, $roles = array())
+        {
+            $password = (string)$password;
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
-            if ( strlen($password) < 1 ) {
+            if (strlen($password) < 1) {
                 throw new InvalidArgumentException("Password can't be empty");
             }
             $user               = new stdClass();
@@ -219,8 +227,9 @@
          * @return stdClass CouchDB server response
          * @throws InvalidArgumentException
          */
-        public function deleteUser($login) {
-            if ( strlen($login) < 1 ) {
+        public function deleteUser($login)
+        {
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
             $client = new couchClient($this->client->dsn(), $this->usersdb);
@@ -237,8 +246,9 @@
          * @return stdClass CouchDB document
          * @throws InvalidArgumentException
          */
-        public function getUser($login) {
-            if ( strlen($login) < 1 ) {
+        public function getUser($login)
+        {
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
             $client = new couchClient($this->client->dsn(), $this->usersdb, $this->client->options());
@@ -253,9 +263,10 @@
          *
          * @return array users array : each row is a stdObject with "id", "rev" and optionally "doc" properties
          */
-        public function getAllUsers($include_docs = false) {
+        public function getAllUsers($include_docs = false)
+        {
             $client = new couchClient($this->client->dsn(), $this->usersdb, $this->client->options());
-            if ( $include_docs ) {
+            if ($include_docs) {
                 $client->include_docs(true);
             }
 
@@ -272,15 +283,16 @@
          * @return boolean true if the user $user now belongs to the role $role
          * @throws InvalidArgumentException
          */
-        public function addRoleToUser($user, $role) {
-            if ( is_string($user) ) {
+        public function addRoleToUser($user, $role)
+        {
+            if (is_string($user)) {
                 $user = $this->getUser($user);
-            } elseif ( ! property_exists($user, "_id") || ! property_exists($user, "roles") ) {
+            } else if ( ! property_exists($user, "_id") || ! property_exists($user, "roles")) {
                 throw new InvalidArgumentException("user parameter should be the login or a user document");
             }
-            if ( ! in_array($role, $user->roles) ) {
+            if ( ! in_array($role, $user->roles)) {
                 $user->roles[] = $role;
-                $client        = clone( $this->client );
+                $client        = clone($this->client);
                 $client->useDatabase($this->usersdb);
                 $client->storeDoc($user);
             }
@@ -298,15 +310,16 @@
          * @return boolean true if the user $user don't belong to the role $role anymore
          * @throws InvalidArgumentException
          */
-        public function removeRoleFromUser($user, $role) {
-            if ( is_string($user) ) {
+        public function removeRoleFromUser($user, $role)
+        {
+            if (is_string($user)) {
                 $user = $this->getUser($user);
-            } elseif ( ! property_exists($user, "_id") || ! property_exists($user, "roles") ) {
+            } else if ( ! property_exists($user, "_id") || ! property_exists($user, "roles")) {
                 throw new InvalidArgumentException("user parameter should be the login or a user document");
             }
-            if ( in_array($role, $user->roles) ) {
+            if (in_array($role, $user->roles)) {
                 $user->roles = $this->rmFromArray($role, $user->roles);
-                $client      = clone( $this->client );
+                $client      = clone($this->client);
                 $client->useDatabase($this->usersdb);
                 $client->storeDoc($user);
             }
@@ -321,17 +334,18 @@
          * @return stdClass security object of the database
          * @throws couchException
          */
-        public function getSecurity() {
+        public function getSecurity()
+        {
             $dbname = $this->client->getDatabaseName();
             $raw    = $this->client->query(
                 "GET",
                 "/" . $dbname . "/_security"
             );
             $resp   = couch::parseRawResponse($raw);
-            if ( $resp['status_code'] != 200 ) {
+            if ($resp['status_code'] != 200) {
                 throw new couchException($raw);
             }
-            if ( ! property_exists($resp['body'], "admins") ) {
+            if ( ! property_exists($resp['body'], "admins")) {
                 $resp["body"]->admins         = new stdClass();
                 $resp["body"]->admins->names  = array();
                 $resp["body"]->admins->roles  = array();
@@ -353,8 +367,9 @@
          * @return stdClass CouchDB server response ( { "ok": true } )
          * @throws InvalidArgumentException|couchException
          */
-        public function setSecurity($security) {
-            if ( ! is_object($security) ) {
+        public function setSecurity($security)
+        {
+            if ( ! is_object($security)) {
                 throw new InvalidArgumentException("Security should be an object");
             }
             $dbname = $this->client->getDatabaseName();
@@ -365,7 +380,7 @@
                 json_encode($security)
             );
             $resp   = couch::parseRawResponse($raw);
-            if ( $resp['status_code'] == 200 ) {
+            if ($resp['status_code'] == 200) {
                 return $resp['body'];
             }
             throw new couchException($raw);
@@ -379,17 +394,18 @@
          * @return boolean true if the user has successfuly been added
          * @throws InvalidArgumentException
          */
-        public function addDatabaseReaderUser($login) {
-            if ( strlen($login) < 1 ) {
+        public function addDatabaseReaderUser($login)
+        {
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( in_array($login, $sec->readers->names) ) {
+            if (in_array($login, $sec->readers->names)) {
                 return true;
             }
             array_push($sec->readers->names, $login);
             $back = $this->setSecurity($sec);
-            if ( is_object($back) && property_exists($back, "ok") && $back->ok == true ) {
+            if (is_object($back) && property_exists($back, "ok") && $back->ok == true) {
                 return true;
             }
 
@@ -404,17 +420,18 @@
          * @return boolean true if the user has successfuly been added
          * @throws InvalidArgumentException
          */
-        public function addDatabaseAdminUser($login) {
-            if ( strlen($login) < 1 ) {
+        public function addDatabaseAdminUser($login)
+        {
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( in_array($login, $sec->admins->names) ) {
+            if (in_array($login, $sec->admins->names)) {
                 return true;
             }
             array_push($sec->admins->names, $login);
             $back = $this->setSecurity($sec);
-            if ( is_object($back) && property_exists($back, "ok") && $back->ok == true ) {
+            if (is_object($back) && property_exists($back, "ok") && $back->ok == true) {
                 return true;
             }
 
@@ -426,7 +443,8 @@
          *
          * @return array database admins logins
          */
-        public function getDatabaseAdminUsers() {
+        public function getDatabaseAdminUsers()
+        {
             $sec = $this->getSecurity();
 
             return $sec->admins->names;
@@ -437,7 +455,8 @@
          *
          * @return array database readers logins
          */
-        public function getDatabaseReaderUsers() {
+        public function getDatabaseReaderUsers()
+        {
             $sec = $this->getSecurity();
 
             return $sec->readers->names;
@@ -451,17 +470,18 @@
          * @return boolean true if the user has successfuly been removed
          * @throws InvalidArgumentException
          */
-        public function removeDatabaseReaderUser($login) {
-            if ( strlen($login) < 1 ) {
+        public function removeDatabaseReaderUser($login)
+        {
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( ! in_array($login, $sec->readers->names) ) {
+            if ( ! in_array($login, $sec->readers->names)) {
                 return true;
             }
             $sec->readers->names = $this->rmFromArray($login, $sec->readers->names);
             $back                = $this->setSecurity($sec);
-            if ( is_object($back) && property_exists($back, "ok") && $back->ok == true ) {
+            if (is_object($back) && property_exists($back, "ok") && $back->ok == true) {
                 return true;
             }
 
@@ -478,17 +498,18 @@
          * @return boolean true if the user has successfuly been removed
          * @throws InvalidArgumentException
          */
-        public function removeDatabaseAdminUser($login) {
-            if ( strlen($login) < 1 ) {
+        public function removeDatabaseAdminUser($login)
+        {
+            if (strlen($login) < 1) {
                 throw new InvalidArgumentException("Login can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( ! in_array($login, $sec->admins->names) ) {
+            if ( ! in_array($login, $sec->admins->names)) {
                 return true;
             }
             $sec->admins->names = $this->rmFromArray($login, $sec->admins->names);
             $back               = $this->setSecurity($sec);
-            if ( is_object($back) && property_exists($back, "ok") && $back->ok == true ) {
+            if (is_object($back) && property_exists($back, "ok") && $back->ok == true) {
                 return true;
             }
 
@@ -503,17 +524,18 @@
          * @return boolean true if the role has successfuly been added
          * @throws InvalidArgumentException
          */
-        public function addDatabaseReaderRole($role) {
-            if ( strlen($role) < 1 ) {
+        public function addDatabaseReaderRole($role)
+        {
+            if (strlen($role) < 1) {
                 throw new InvalidArgumentException("Role can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( in_array($role, $sec->readers->roles) ) {
+            if (in_array($role, $sec->readers->roles)) {
                 return true;
             }
             array_push($sec->readers->roles, $role);
             $back = $this->setSecurity($sec);
-            if ( is_object($back) && property_exists($back, "ok") && $back->ok == true ) {
+            if (is_object($back) && property_exists($back, "ok") && $back->ok == true) {
                 return true;
             }
 
@@ -528,17 +550,18 @@
          * @return boolean true if the role has successfuly been added
          * @throws InvalidArgumentException
          */
-        public function addDatabaseAdminRole($role) {
-            if ( strlen($role) < 1 ) {
+        public function addDatabaseAdminRole($role)
+        {
+            if (strlen($role) < 1) {
                 throw new InvalidArgumentException("Role can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( in_array($role, $sec->admins->roles) ) {
+            if (in_array($role, $sec->admins->roles)) {
                 return true;
             }
             array_push($sec->admins->roles, $role);
             $back = $this->setSecurity($sec);
-            if ( is_object($back) && property_exists($back, "ok") && $back->ok == true ) {
+            if (is_object($back) && property_exists($back, "ok") && $back->ok == true) {
                 return true;
             }
 
@@ -550,7 +573,8 @@
          *
          * @return array database admins roles
          */
-        public function getDatabaseAdminRoles() {
+        public function getDatabaseAdminRoles()
+        {
             $sec = $this->getSecurity();
 
             return $sec->admins->roles;
@@ -561,7 +585,8 @@
          *
          * @return array database readers roles
          */
-        public function getDatabaseReaderRoles() {
+        public function getDatabaseReaderRoles()
+        {
             $sec = $this->getSecurity();
 
             return $sec->readers->roles;
@@ -575,17 +600,18 @@
          * @return boolean true if the role has successfuly been removed
          * @throws InvalidArgumentException
          */
-        public function removeDatabaseReaderRole($role) {
-            if ( strlen($role) < 1 ) {
+        public function removeDatabaseReaderRole($role)
+        {
+            if (strlen($role) < 1) {
                 throw new InvalidArgumentException("Role can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( ! in_array($role, $sec->readers->roles) ) {
+            if ( ! in_array($role, $sec->readers->roles)) {
                 return true;
             }
             $sec->readers->roles = $this->rmFromArray($role, $sec->readers->roles);
             $back                = $this->setSecurity($sec);
-            if ( is_object($back) && property_exists($back, "ok") && $back->ok == true ) {
+            if (is_object($back) && property_exists($back, "ok") && $back->ok == true) {
                 return true;
             }
 
@@ -602,17 +628,18 @@
          * @return boolean true if the role has successfuly been removed
          * @throws InvalidArgumentException|couchException
          */
-        public function removeDatabaseAdminRole($role) {
-            if ( strlen($role) < 1 ) {
+        public function removeDatabaseAdminRole($role)
+        {
+            if (strlen($role) < 1) {
                 throw new InvalidArgumentException("Role can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( ! in_array($role, $sec->admins->roles) ) {
+            if ( ! in_array($role, $sec->admins->roles)) {
                 return true;
             }
             $sec->admins->roles = $this->rmFromArray($role, $sec->admins->roles);
             $back               = $this->setSecurity($sec);
-            if ( is_object($back) && property_exists($back, "ok") && $back->ok == true ) {
+            if (is_object($back) && property_exists($back, "ok") && $back->ok == true) {
                 return true;
             }
 

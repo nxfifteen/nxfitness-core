@@ -1,11 +1,11 @@
 <?php
-    if ( is_array($_SERVER) && array_key_exists("REDIRECT_URL", $_SERVER) ) {
+    if (is_array($_SERVER) && array_key_exists("REDIRECT_URL", $_SERVER)) {
         $url = str_replace($App->getConfig("/admin"), "", $_SERVER['REDIRECT_URL']);
     } else {
         $url = "";
     }
 
-    if ( $_COOKIE['_nx_fb_usr'] == $App->getNxFit()->getSetting('ownerFuid', null, false) ) {
+    if ($_COOKIE['_nx_fb_usr'] == $App->getNxFit()->getSetting('ownerFuid', null, false)) {
         $isDeveloper = true;
     } else {
         $isDeveloper = false;
@@ -101,7 +101,7 @@
     <li class="nav-item">
         <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices</a>
     </li>
-    <?php if ( $isDeveloper ) { ?>
+    <?php if ($isDeveloper) { ?>
         <li class="nav-item">
             <a class="nav-link" href="settings/feeds.html"><i class="fa fa-gear"></i> Feeds
                 <span class="badge badge-danger">WIP</span></a>

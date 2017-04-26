@@ -5,8 +5,11 @@
      *
      * @package raven
      */
-    abstract class Raven_Processor {
-        public function __construct(Raven_Client $client) {
+    abstract class Raven_Processor
+    {
+
+        public function __construct(Raven_Client $client)
+        {
             $this->client = $client;
         }
 

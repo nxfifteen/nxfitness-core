@@ -1,80 +1,126 @@
-	/*
-  	music icon font: music
-  	Creation date: 19/02/2016 14:53
-  	*/
+/*
+  music icon font: music
+  Creation date: 19/02/2016 14:53
+  */
 
 @font-face {
-  font-family: "music";
-  src: url("../nomie-icons/music/music.eot");
-  src: url("../nomie-icons/music/music.eot?#iefix") format("embedded-opentype"),
-       url("../nomie-icons/music/music.woff") format("woff"),
-       url("../nomie-icons/music/music.ttf") format("truetype"),
-       url("../nomie-icons/music/music.svg#music") format("svg");
-  font-weight: normal;
-  font-style: normal;
+    font-family : "music";
+    src         : url("../nomie-icons/music/music.eot");
+    src         : url("../nomie-icons/music/music.eot?#iefix") format("embedded-opentype"),
+    url("../nomie-icons/music/music.woff") format("woff"),
+    url("../nomie-icons/music/music.ttf") format("truetype"),
+    url("../nomie-icons/music/music.svg#music") format("svg");
+    font-weight : normal;
+    font-style  : normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: "music";
-    src: url("../nomie-icons/music/music.svg#music") format("svg");
-  }
+@media screen and (-webkit-min-device-pixel-ratio : 0) {
+    @font-face {
+        font-family : "music";
+        src         : url("../nomie-icons/music/music.svg#music") format("svg");
+    }
 }
 
 [class^="music-"]:before, [class*=" music-"]:before,
-[class^="music-"]:after, [class*=" music-"]:after {   
-  font-family: music;
-        
-font-style: normal;
-
+[class^="music-"]:after, [class*=" music-"]:after {
+    font-family : music;
+    font-style  : normal;
 }
 
-.music-acoustic-guitar:before { content: "\f100"; }
-.music-backward-button:before { content: "\f101"; }
-.music-banjo:before { content: "\f102"; }
-.music-bell:before { content: "\f103"; }
-.music-cassette:before { content: "\f104"; }
-.music-cd:before { content: "\f105"; }
-.music-console-panel:before { content: "\f106"; }
-.music-drum:before { content: "\f107"; }
-.music-drums:before { content: "\f108"; }
-.music-drumsticks:before { content: "\f109"; }
-.music-earphones:before { content: "\f10a"; }
-.music-eject-button:before { content: "\f10b"; }
-.music-electric-guitar:before { content: "\f10c"; }
-.music-equalizer:before { content: "\f10d"; }
-.music-fast-forward-button:before { content: "\f10e"; }
-.music-gramophone:before { content: "\f10f"; }
-.music-grand-piano:before { content: "\f110"; }
-.music-headphones:before { content: "\f111"; }
-.music-lyra:before { content: "\f112"; }
-.music-mandolin:before { content: "\f113"; }
-.music-maracas:before { content: "\f114"; }
-.music-megaphone:before { content: "\f115"; }
-.music-metronome:before { content: "\f116"; }
-.music-microphone:before { content: "\f117"; }
-.music-microphone-1:before { content: "\f118"; }
-.music-microphone-2:before { content: "\f119"; }
-.music-mp3-player:before { content: "\f11a"; }
-.music-music-file:before { content: "\f11b"; }
-.music-music-folder:before { content: "\f11c"; }
-.music-musical-note:before { content: "\f11d"; }
-.music-musical-note-1:before { content: "\f11e"; }
-.music-mute:before { content: "\f11f"; }
-.music-no-sound:before { content: "\f120"; }
-.music-pause-button:before { content: "\f121"; }
-.music-piano-keys:before { content: "\f122"; }
-.music-play-button:before { content: "\f123"; }
-.music-radio:before { content: "\f124"; }
-.music-sound-frecuency:before { content: "\f125"; }
-.music-speaker:before { content: "\f126"; }
-.music-speaker-1:before { content: "\f127"; }
-.music-speaker-with-waves:before { content: "\f128"; }
-.music-triangle:before { content: "\f129"; }
-.music-trumpet:before { content: "\f12a"; }
-.music-tuning-fork:before { content: "\f12b"; }
-.music-vdeo-cmera:before { content: "\f12c"; }
-.music-video-camera:before { content: "\f12d"; }
-.music-video-player:before { content: "\f12e"; }
-.music-violin:before { content: "\f12f"; }
-.music-xylophone:before { content: "\f130"; }
+.music-acoustic-guitar:before { content : "\f100"; }
+
+.music-backward-button:before { content : "\f101"; }
+
+.music-banjo:before { content : "\f102"; }
+
+.music-bell:before { content : "\f103"; }
+
+.music-cassette:before { content : "\f104"; }
+
+.music-cd:before { content : "\f105"; }
+
+.music-console-panel:before { content : "\f106"; }
+
+.music-drum:before { content : "\f107"; }
+
+.music-drums:before { content : "\f108"; }
+
+.music-drumsticks:before { content : "\f109"; }
+
+.music-earphones:before { content : "\f10a"; }
+
+.music-eject-button:before { content : "\f10b"; }
+
+.music-electric-guitar:before { content : "\f10c"; }
+
+.music-equalizer:before { content : "\f10d"; }
+
+.music-fast-forward-button:before { content : "\f10e"; }
+
+.music-gramophone:before { content : "\f10f"; }
+
+.music-grand-piano:before { content : "\f110"; }
+
+.music-headphones:before { content : "\f111"; }
+
+.music-lyra:before { content : "\f112"; }
+
+.music-mandolin:before { content : "\f113"; }
+
+.music-maracas:before { content : "\f114"; }
+
+.music-megaphone:before { content : "\f115"; }
+
+.music-metronome:before { content : "\f116"; }
+
+.music-microphone:before { content : "\f117"; }
+
+.music-microphone-1:before { content : "\f118"; }
+
+.music-microphone-2:before { content : "\f119"; }
+
+.music-mp3-player:before { content : "\f11a"; }
+
+.music-music-file:before { content : "\f11b"; }
+
+.music-music-folder:before { content : "\f11c"; }
+
+.music-musical-note:before { content : "\f11d"; }
+
+.music-musical-note-1:before { content : "\f11e"; }
+
+.music-mute:before { content : "\f11f"; }
+
+.music-no-sound:before { content : "\f120"; }
+
+.music-pause-button:before { content : "\f121"; }
+
+.music-piano-keys:before { content : "\f122"; }
+
+.music-play-button:before { content : "\f123"; }
+
+.music-radio:before { content : "\f124"; }
+
+.music-sound-frecuency:before { content : "\f125"; }
+
+.music-speaker:before { content : "\f126"; }
+
+.music-speaker-1:before { content : "\f127"; }
+
+.music-speaker-with-waves:before { content : "\f128"; }
+
+.music-triangle:before { content : "\f129"; }
+
+.music-trumpet:before { content : "\f12a"; }
+
+.music-tuning-fork:before { content : "\f12b"; }
+
+.music-vdeo-cmera:before { content : "\f12c"; }
+
+.music-video-camera:before { content : "\f12d"; }
+
+.music-video-player:before { content : "\f12e"; }
+
+.music-violin:before { content : "\f12f"; }
+
+.music-xylophone:before { content : "\f130"; }

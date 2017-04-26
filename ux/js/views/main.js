@@ -27,9 +27,9 @@ $(function () {
     }
 
     function setUpWeatherDay($, dayNumber, forecast) {
-        $('#frcst'+dayNumber).html(forecast.high);
-        $('#frcst'+dayNumber+'Ico').removeClass("ico-weather").addClass(weatherCodeToIcon(forecast.code));
-        $('#frcst'+dayNumber+'Day').html(forecast.day);
+        $('#frcst' + dayNumber).html(forecast.high);
+        $('#frcst' + dayNumber + 'Ico').removeClass("ico-weather").addClass(weatherCodeToIcon(forecast.code));
+        $('#frcst' + dayNumber + 'Day').html(forecast.day);
     }
 
     function weatherCodeToIcon(weatherCode) {
@@ -194,7 +194,7 @@ $(function () {
         });
     }
 
-    $.getJSON("../json.php?user="+fitbitUserId+"&data=dashboard&date=" + returnDateString(new Date()), function (data) {
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=dashboard&date=" + returnDateString(new Date()), function (data) {
         var returnDate = data.results.returnDate;
         var reportDate = new Date(returnDate[0], returnDate[1] - 1, returnDate[2]);
         if (data.results.syncd === null && typeof data.results.syncd === "object") {

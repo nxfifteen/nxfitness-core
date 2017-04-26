@@ -1,81 +1,128 @@
-	/*
-  	travel icon font: travel
-  	Creation date: 18/03/2016 14:28
-  	*/
+/*
+  travel icon font: travel
+  Creation date: 18/03/2016 14:28
+  */
 
 @font-face {
-  font-family: "travel";
-  src: url("../nomie-icons/travel/travel.eot");
-  src: url("../nomie-icons/travel/travel.eot?#iefix") format("embedded-opentype"),
-       url("../nomie-icons/travel/travel.woff") format("woff"),
-       url("../nomie-icons/travel/travel.ttf") format("truetype"),
-       url("../nomie-icons/travel/travel.svg#travel") format("svg");
-  font-weight: normal;
-  font-style: normal;
+    font-family : "travel";
+    src         : url("../nomie-icons/travel/travel.eot");
+    src         : url("../nomie-icons/travel/travel.eot?#iefix") format("embedded-opentype"),
+    url("../nomie-icons/travel/travel.woff") format("woff"),
+    url("../nomie-icons/travel/travel.ttf") format("truetype"),
+    url("../nomie-icons/travel/travel.svg#travel") format("svg");
+    font-weight : normal;
+    font-style  : normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: "travel";
-    src: url("../nomie-icons/travel/travel.svg#travel") format("svg");
-  }
+@media screen and (-webkit-min-device-pixel-ratio : 0) {
+    @font-face {
+        font-family : "travel";
+        src         : url("../nomie-icons/travel/travel.svg#travel") format("svg");
+    }
 }
 
 [class^="travel-"]:before, [class*=" travel-"]:before,
-[class^="travel-"]:after, [class*=" travel-"]:after {   
-  font-family: travel;
-        
-font-style: normal;
-
+[class^="travel-"]:after, [class*=" travel-"]:after {
+    font-family : travel;
+    font-style  : normal;
 }
 
-.travel-airplane:before { content: "\f100"; }
-.travel-anchor:before { content: "\f101"; }
-.travel-backpack:before { content: "\f102"; }
-.travel-backpack-1:before { content: "\f103"; }
-.travel-backpack-2:before { content: "\f104"; }
-.travel-backpack-3:before { content: "\f105"; }
-.travel-beach:before { content: "\f106"; }
-.travel-bed:before { content: "\f107"; }
-.travel-bicycle:before { content: "\f108"; }
-.travel-boat:before { content: "\f109"; }
-.travel-building:before { content: "\f10a"; }
-.travel-bus:before { content: "\f10b"; }
-.travel-cabin:before { content: "\f10c"; }
-.travel-calendar:before { content: "\f10d"; }
-.travel-car:before { content: "\f10e"; }
-.travel-church:before { content: "\f10f"; }
-.travel-cocktail:before { content: "\f110"; }
-.travel-colosseum:before { content: "\f111"; }
-.travel-compass:before { content: "\f112"; }
-.travel-credit-card:before { content: "\f113"; }
-.travel-directions:before { content: "\f114"; }
-.travel-dish:before { content: "\f115"; }
-.travel-flashlight:before { content: "\f116"; }
-.travel-flip-flops:before { content: "\f117"; }
-.travel-hot-air-balloon:before { content: "\f118"; }
-.travel-house:before { content: "\f119"; }
-.travel-info:before { content: "\f11a"; }
-.travel-lifesaver:before { content: "\f11b"; }
-.travel-location:before { content: "\f11c"; }
-.travel-map:before { content: "\f11d"; }
-.travel-map-1:before { content: "\f11e"; }
-.travel-mountains:before { content: "\f11f"; }
-.travel-no-disturb:before { content: "\f120"; }
-.travel-photo-camera:before { content: "\f121"; }
-.travel-picture:before { content: "\f122"; }
-.travel-star:before { content: "\f123"; }
-.travel-suitcase:before { content: "\f124"; }
-.travel-suitcase-1:before { content: "\f125"; }
-.travel-suitcase-2:before { content: "\f126"; }
-.travel-suitcase-3:before { content: "\f127"; }
-.travel-suitcase-4:before { content: "\f128"; }
-.travel-suitcase-5:before { content: "\f129"; }
-.travel-tent:before { content: "\f12a"; }
-.travel-tent-1:before { content: "\f12b"; }
-.travel-towel:before { content: "\f12c"; }
-.travel-train:before { content: "\f12d"; }
-.travel-tree:before { content: "\f12e"; }
-.travel-video-camera:before { content: "\f12f"; }
-.travel-wallet:before { content: "\f130"; }
-.travel-watch:before { content: "\f131"; }
+.travel-airplane:before { content : "\f100"; }
+
+.travel-anchor:before { content : "\f101"; }
+
+.travel-backpack:before { content : "\f102"; }
+
+.travel-backpack-1:before { content : "\f103"; }
+
+.travel-backpack-2:before { content : "\f104"; }
+
+.travel-backpack-3:before { content : "\f105"; }
+
+.travel-beach:before { content : "\f106"; }
+
+.travel-bed:before { content : "\f107"; }
+
+.travel-bicycle:before { content : "\f108"; }
+
+.travel-boat:before { content : "\f109"; }
+
+.travel-building:before { content : "\f10a"; }
+
+.travel-bus:before { content : "\f10b"; }
+
+.travel-cabin:before { content : "\f10c"; }
+
+.travel-calendar:before { content : "\f10d"; }
+
+.travel-car:before { content : "\f10e"; }
+
+.travel-church:before { content : "\f10f"; }
+
+.travel-cocktail:before { content : "\f110"; }
+
+.travel-colosseum:before { content : "\f111"; }
+
+.travel-compass:before { content : "\f112"; }
+
+.travel-credit-card:before { content : "\f113"; }
+
+.travel-directions:before { content : "\f114"; }
+
+.travel-dish:before { content : "\f115"; }
+
+.travel-flashlight:before { content : "\f116"; }
+
+.travel-flip-flops:before { content : "\f117"; }
+
+.travel-hot-air-balloon:before { content : "\f118"; }
+
+.travel-house:before { content : "\f119"; }
+
+.travel-info:before { content : "\f11a"; }
+
+.travel-lifesaver:before { content : "\f11b"; }
+
+.travel-location:before { content : "\f11c"; }
+
+.travel-map:before { content : "\f11d"; }
+
+.travel-map-1:before { content : "\f11e"; }
+
+.travel-mountains:before { content : "\f11f"; }
+
+.travel-no-disturb:before { content : "\f120"; }
+
+.travel-photo-camera:before { content : "\f121"; }
+
+.travel-picture:before { content : "\f122"; }
+
+.travel-star:before { content : "\f123"; }
+
+.travel-suitcase:before { content : "\f124"; }
+
+.travel-suitcase-1:before { content : "\f125"; }
+
+.travel-suitcase-2:before { content : "\f126"; }
+
+.travel-suitcase-3:before { content : "\f127"; }
+
+.travel-suitcase-4:before { content : "\f128"; }
+
+.travel-suitcase-5:before { content : "\f129"; }
+
+.travel-tent:before { content : "\f12a"; }
+
+.travel-tent-1:before { content : "\f12b"; }
+
+.travel-towel:before { content : "\f12c"; }
+
+.travel-train:before { content : "\f12d"; }
+
+.travel-tree:before { content : "\f12e"; }
+
+.travel-video-camera:before { content : "\f12f"; }
+
+.travel-wallet:before { content : "\f130"; }
+
+.travel-watch:before { content : "\f131"; }

@@ -1,71 +1,110 @@
-	/*
-  	realestate icon font: realestate
-  	Creation date: 18/03/2016 11:07
-  	*/
+/*
+  realestate icon font: realestate
+  Creation date: 18/03/2016 11:07
+  */
 
 @font-face {
-  font-family: "realestate";
-  src: url("../nomie-icons/realestate/realestate.eot");
-  src: url("../nomie-icons/realestate/realestate.eot?#iefix") format("embedded-opentype"),
-       url("../nomie-icons/realestate/realestate.woff") format("woff"),
-       url("../nomie-icons/realestate/realestate.ttf") format("truetype"),
-       url("../nomie-icons/realestate/realestate.svg#realestate") format("svg");
-  font-weight: normal;
-  font-style: normal;
+    font-family : "realestate";
+    src         : url("../nomie-icons/realestate/realestate.eot");
+    src         : url("../nomie-icons/realestate/realestate.eot?#iefix") format("embedded-opentype"),
+    url("../nomie-icons/realestate/realestate.woff") format("woff"),
+    url("../nomie-icons/realestate/realestate.ttf") format("truetype"),
+    url("../nomie-icons/realestate/realestate.svg#realestate") format("svg");
+    font-weight : normal;
+    font-style  : normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: "realestate";
-    src: url("../nomie-icons/realestate/realestate.svg#realestate") format("svg");
-  }
+@media screen and (-webkit-min-device-pixel-ratio : 0) {
+    @font-face {
+        font-family : "realestate";
+        src         : url("../nomie-icons/realestate/realestate.svg#realestate") format("svg");
+    }
 }
 
 [class^="realestate-"]:before, [class*=" realestate-"]:before,
-[class^="realestate-"]:after, [class*=" realestate-"]:after {   
-  font-family: realestate;
-        font-size: 20px;
-font-style: normal;
-margin-left: 20px;
+[class^="realestate-"]:after, [class*=" realestate-"]:after {
+    font-family : realestate;
+    font-size   : 20px;
+    font-style  : normal;
+    margin-left : 20px;
 }
 
-.realestate-air-conditioner:before { content: "\f100"; }
-.realestate-amount:before { content: "\f101"; }
-.realestate-bathtub:before { content: "\f102"; }
-.realestate-blueprint:before { content: "\f103"; }
-.realestate-box:before { content: "\f104"; }
-.realestate-briefcase:before { content: "\f105"; }
-.realestate-calculator:before { content: "\f106"; }
-.realestate-camera:before { content: "\f107"; }
-.realestate-check:before { content: "\f108"; }
-.realestate-coin:before { content: "\f109"; }
-.realestate-contract:before { content: "\f10a"; }
-.realestate-directions:before { content: "\f10b"; }
-.realestate-duplex:before { content: "\f10c"; }
-.realestate-fall:before { content: "\f10d"; }
-.realestate-fence:before { content: "\f10e"; }
-.realestate-flat:before { content: "\f10f"; }
-.realestate-garage:before { content: "\f110"; }
-.realestate-hammer:before { content: "\f111"; }
-.realestate-home:before { content: "\f112"; }
-.realestate-house:before { content: "\f113"; }
-.realestate-house-1:before { content: "\f114"; }
-.realestate-house-2:before { content: "\f115"; }
-.realestate-house-3:before { content: "\f116"; }
-.realestate-house-4:before { content: "\f117"; }
-.realestate-house-5:before { content: "\f118"; }
-.realestate-houses:before { content: "\f119"; }
-.realestate-investment:before { content: "\f11a"; }
-.realestate-key:before { content: "\f11b"; }
-.realestate-location:before { content: "\f11c"; }
-.realestate-mansion:before { content: "\f11d"; }
-.realestate-mobile-phone:before { content: "\f11e"; }
-.realestate-new:before { content: "\f11f"; }
-.realestate-prize:before { content: "\f120"; }
-.realestate-real-estate:before { content: "\f121"; }
-.realestate-real-estate-1:before { content: "\f122"; }
-.realestate-rent:before { content: "\f123"; }
-.realestate-screen:before { content: "\f124"; }
-.realestate-signature:before { content: "\f125"; }
-.realestate-sold:before { content: "\f126"; }
-.realestate-truck:before { content: "\f127"; }
+.realestate-air-conditioner:before { content : "\f100"; }
+
+.realestate-amount:before { content : "\f101"; }
+
+.realestate-bathtub:before { content : "\f102"; }
+
+.realestate-blueprint:before { content : "\f103"; }
+
+.realestate-box:before { content : "\f104"; }
+
+.realestate-briefcase:before { content : "\f105"; }
+
+.realestate-calculator:before { content : "\f106"; }
+
+.realestate-camera:before { content : "\f107"; }
+
+.realestate-check:before { content : "\f108"; }
+
+.realestate-coin:before { content : "\f109"; }
+
+.realestate-contract:before { content : "\f10a"; }
+
+.realestate-directions:before { content : "\f10b"; }
+
+.realestate-duplex:before { content : "\f10c"; }
+
+.realestate-fall:before { content : "\f10d"; }
+
+.realestate-fence:before { content : "\f10e"; }
+
+.realestate-flat:before { content : "\f10f"; }
+
+.realestate-garage:before { content : "\f110"; }
+
+.realestate-hammer:before { content : "\f111"; }
+
+.realestate-home:before { content : "\f112"; }
+
+.realestate-house:before { content : "\f113"; }
+
+.realestate-house-1:before { content : "\f114"; }
+
+.realestate-house-2:before { content : "\f115"; }
+
+.realestate-house-3:before { content : "\f116"; }
+
+.realestate-house-4:before { content : "\f117"; }
+
+.realestate-house-5:before { content : "\f118"; }
+
+.realestate-houses:before { content : "\f119"; }
+
+.realestate-investment:before { content : "\f11a"; }
+
+.realestate-key:before { content : "\f11b"; }
+
+.realestate-location:before { content : "\f11c"; }
+
+.realestate-mansion:before { content : "\f11d"; }
+
+.realestate-mobile-phone:before { content : "\f11e"; }
+
+.realestate-new:before { content : "\f11f"; }
+
+.realestate-prize:before { content : "\f120"; }
+
+.realestate-real-estate:before { content : "\f121"; }
+
+.realestate-real-estate-1:before { content : "\f122"; }
+
+.realestate-rent:before { content : "\f123"; }
+
+.realestate-screen:before { content : "\f124"; }
+
+.realestate-signature:before { content : "\f125"; }
+
+.realestate-sold:before { content : "\f126"; }
+
+.realestate-truck:before { content : "\f127"; }

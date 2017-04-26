@@ -1,81 +1,128 @@
-	/*
-  	house icon font: house
-  	Creation date: 18/03/2016 15:24
-  	*/
+/*
+  house icon font: house
+  Creation date: 18/03/2016 15:24
+  */
 
 @font-face {
-  font-family: "house";
-  src: url("../nomie-icons/house/house.eot");
-  src: url("../nomie-icons/house/house.eot?#iefix") format("embedded-opentype"),
-       url("../nomie-icons/house/house.woff") format("woff"),
-       url("../nomie-icons/house/house.ttf") format("truetype"),
-       url("../nomie-icons/house/house.svg#house") format("svg");
-  font-weight: normal;
-  font-style: normal;
+    font-family : "house";
+    src         : url("../nomie-icons/house/house.eot");
+    src         : url("../nomie-icons/house/house.eot?#iefix") format("embedded-opentype"),
+    url("../nomie-icons/house/house.woff") format("woff"),
+    url("../nomie-icons/house/house.ttf") format("truetype"),
+    url("../nomie-icons/house/house.svg#house") format("svg");
+    font-weight : normal;
+    font-style  : normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: "house";
-    src: url("../nomie-icons/house/house.svg#house") format("svg");
-  }
+@media screen and (-webkit-min-device-pixel-ratio : 0) {
+    @font-face {
+        font-family : "house";
+        src         : url("../nomie-icons/house/house.svg#house") format("svg");
+    }
 }
 
 [class^="house-"]:before, [class*=" house-"]:before,
-[class^="house-"]:after, [class*=" house-"]:after {   
-  font-family: house;
-        
-font-style: normal;
-
+[class^="house-"]:after, [class*=" house-"]:after {
+    font-family : house;
+    font-style  : normal;
 }
 
-.house-apron:before { content: "\f100"; }
-.house-aquarium:before { content: "\f101"; }
-.house-armchair:before { content: "\f102"; }
-.house-basket:before { content: "\f103"; }
-.house-bath:before { content: "\f104"; }
-.house-bed:before { content: "\f105"; }
-.house-bleach:before { content: "\f106"; }
-.house-bowl:before { content: "\f107"; }
-.house-broom:before { content: "\f108"; }
-.house-broom-1:before { content: "\f109"; }
-.house-brush:before { content: "\f10a"; }
-.house-bucket:before { content: "\f10b"; }
-.house-cleaner:before { content: "\f10c"; }
-.house-clothespin:before { content: "\f10d"; }
-.house-detergent:before { content: "\f10e"; }
-.house-dustpan:before { content: "\f10f"; }
-.house-fan:before { content: "\f110"; }
-.house-faucet:before { content: "\f111"; }
-.house-flower:before { content: "\f112"; }
-.house-fridge:before { content: "\f113"; }
-.house-gloves:before { content: "\f114"; }
-.house-hammer:before { content: "\f115"; }
-.house-house:before { content: "\f116"; }
-.house-iron:before { content: "\f117"; }
-.house-ironing-board:before { content: "\f118"; }
-.house-jug:before { content: "\f119"; }
-.house-kettle:before { content: "\f11a"; }
-.house-lamp:before { content: "\f11b"; }
-.house-liquid-soap:before { content: "\f11c"; }
-.house-microwave-oven:before { content: "\f11d"; }
-.house-mitten:before { content: "\f11e"; }
-.house-mixer:before { content: "\f11f"; }
-.house-mop:before { content: "\f120"; }
-.house-oven:before { content: "\f121"; }
-.house-paint-roller:before { content: "\f122"; }
-.house-palette:before { content: "\f123"; }
-.house-pan:before { content: "\f124"; }
-.house-plunger:before { content: "\f125"; }
-.house-screwdriver:before { content: "\f126"; }
-.house-shirt:before { content: "\f127"; }
-.house-soap:before { content: "\f128"; }
-.house-sponge:before { content: "\f129"; }
-.house-toilet:before { content: "\f12a"; }
-.house-toilet-brush:before { content: "\f12b"; }
-.house-towel:before { content: "\f12c"; }
-.house-towel-1:before { content: "\f12d"; }
-.house-trash-can:before { content: "\f12e"; }
-.house-vacuum-cleaner:before { content: "\f12f"; }
-.house-washing-machine:before { content: "\f130"; }
-.house-wrench:before { content: "\f131"; }
+.house-apron:before { content : "\f100"; }
+
+.house-aquarium:before { content : "\f101"; }
+
+.house-armchair:before { content : "\f102"; }
+
+.house-basket:before { content : "\f103"; }
+
+.house-bath:before { content : "\f104"; }
+
+.house-bed:before { content : "\f105"; }
+
+.house-bleach:before { content : "\f106"; }
+
+.house-bowl:before { content : "\f107"; }
+
+.house-broom:before { content : "\f108"; }
+
+.house-broom-1:before { content : "\f109"; }
+
+.house-brush:before { content : "\f10a"; }
+
+.house-bucket:before { content : "\f10b"; }
+
+.house-cleaner:before { content : "\f10c"; }
+
+.house-clothespin:before { content : "\f10d"; }
+
+.house-detergent:before { content : "\f10e"; }
+
+.house-dustpan:before { content : "\f10f"; }
+
+.house-fan:before { content : "\f110"; }
+
+.house-faucet:before { content : "\f111"; }
+
+.house-flower:before { content : "\f112"; }
+
+.house-fridge:before { content : "\f113"; }
+
+.house-gloves:before { content : "\f114"; }
+
+.house-hammer:before { content : "\f115"; }
+
+.house-house:before { content : "\f116"; }
+
+.house-iron:before { content : "\f117"; }
+
+.house-ironing-board:before { content : "\f118"; }
+
+.house-jug:before { content : "\f119"; }
+
+.house-kettle:before { content : "\f11a"; }
+
+.house-lamp:before { content : "\f11b"; }
+
+.house-liquid-soap:before { content : "\f11c"; }
+
+.house-microwave-oven:before { content : "\f11d"; }
+
+.house-mitten:before { content : "\f11e"; }
+
+.house-mixer:before { content : "\f11f"; }
+
+.house-mop:before { content : "\f120"; }
+
+.house-oven:before { content : "\f121"; }
+
+.house-paint-roller:before { content : "\f122"; }
+
+.house-palette:before { content : "\f123"; }
+
+.house-pan:before { content : "\f124"; }
+
+.house-plunger:before { content : "\f125"; }
+
+.house-screwdriver:before { content : "\f126"; }
+
+.house-shirt:before { content : "\f127"; }
+
+.house-soap:before { content : "\f128"; }
+
+.house-sponge:before { content : "\f129"; }
+
+.house-toilet:before { content : "\f12a"; }
+
+.house-toilet-brush:before { content : "\f12b"; }
+
+.house-towel:before { content : "\f12c"; }
+
+.house-towel-1:before { content : "\f12d"; }
+
+.house-trash-can:before { content : "\f12e"; }
+
+.house-vacuum-cleaner:before { content : "\f12f"; }
+
+.house-washing-machine:before { content : "\f130"; }
+
+.house-wrench:before { content : "\f131"; }

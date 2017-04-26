@@ -22,14 +22,14 @@ $(function () {
         debug_add_gen_time("fat", data.time);
     });
 
-    $( 'input[name="confFatTimeRange"]:radio' ).change(
+    $('input[name="confFatTimeRange"]:radio').change(
         function () {
-            updateFatGraph( $ );
+            updateFatGraph($);
         }
     );
 
     function updateFatGraph($) {
-        var val = $( 'input:radio[name=confFatTimeRange]:checked' ).val();
+        var val = $('input:radio[name=confFatTimeRange]:checked').val();
         var $progressFat = $('#animationFatProgress');
         $progressFat.show();
 
@@ -38,19 +38,19 @@ $(function () {
             FatTrend.html("Generating Dataset...");
         }
 
-        $.getJSON( "../json.php?user=" + fitbitUserId + "&data=weight&period=" + val, function (data) {
-            var graphFatTitle = $( '#graphFatTitle' );
-            if ( graphFatTitle.length > 0 ) {
-                var graphFatTimeTitle = $( '#nameFat' + val );
-                if ( graphFatTimeTitle.length > 0 ) {
-                    graphFatTitle.html( "Body Fat " + graphFatTimeTitle.html() );
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=weight&period=" + val, function (data) {
+            var graphFatTitle = $('#graphFatTitle');
+            if (graphFatTitle.length > 0) {
+                var graphFatTimeTitle = $('#nameFat' + val);
+                if (graphFatTimeTitle.length > 0) {
+                    graphFatTitle.html("Body Fat " + graphFatTimeTitle.html());
                 } else {
-                    graphFatTitle.html( "Body Fat " + val );
+                    graphFatTitle.html("Body Fat " + val);
                 }
             }
 
             var returnDate = data.results.returnDate;
-            var reportDate = new Date( returnDate[0], returnDate[1] - 1, returnDate[2] );
+            var reportDate = new Date(returnDate[0], returnDate[1] - 1, returnDate[2]);
 
             configFat.data.datasets[0].data = data.results.graph_fat;
             configFat.data.datasets[1].data = data.results.graph_fatAvg;
@@ -68,8 +68,8 @@ $(function () {
             configFat.data.datasets[3].pointRadius = pointRadius;
 
             var dataTimeScale = [];
-            for ( var i = 0; i < data.results.graph_fat.length; i++ ) {
-                dataTimeScale.push( reportDate.getTime() - i * 86400000 );
+            for (var i = 0; i < data.results.graph_fat.length; i++) {
+                dataTimeScale.push(reportDate.getTime() - i * 86400000);
             }
             configFat.data.labels = dataTimeScale;
 
@@ -77,7 +77,7 @@ $(function () {
             trendFat($, data);
 
             debug_add_gen_time("fat " + val, data.time);
-        } );
+        });
     }
 
     function graphFat($, data, st) {
@@ -102,22 +102,22 @@ $(function () {
             }
 
             dataTimeScale = [];
-            for ( i = 0; i < dataSet1.length; i++ ) {
-                dataTimeScale.push( st - i * 86400000 );
+            for (i = 0; i < dataSet1.length; i++) {
+                dataTimeScale.push(st - i * 86400000);
             }
 
             configFat = {
                 type: 'line',
                 options: {
                     responsive: true,
-                    title:{
-                        display:true,
-                        text:'Body Fat Chart'
+                    title: {
+                        display: true,
+                        text: 'Body Fat Chart'
                     },
                     tooltips: {
                         mode: 'label',
                         callbacks: {
-                            beforeBody: function() {
+                            beforeBody: function () {
                                 return '% Body Fat';
                             }
                         }
@@ -127,13 +127,13 @@ $(function () {
                     },
                     animation: {
                         duration: aniDuration,
-                        onProgress: function(animation) {
+                        onProgress: function (animation) {
                             $progressFat.attr({
                                 value: animation.animationObject.currentStep / animation.animationObject.numSteps,
                             });
                         },
-                        onComplete: function(animation) {
-                            window.setTimeout(function() {
+                        onComplete: function (animation) {
+                            window.setTimeout(function () {
                                 $progressFat.hide();
                             }, (aniDuration * 0.5));
                         }
@@ -230,7 +230,7 @@ $(function () {
 
             if (fatTrends == '') {
                 $.getJSON("../json.php?user=" + fitbitUserId + "&data=trend", function (trendData) {
-                    fatTrends = '<p>You last recorded <strong>' + trendData.results.fat + '%</strong> body fat, so still has another'+
+                    fatTrends = '<p>You last recorded <strong>' + trendData.results.fat + '%</strong> body fat, so still has another' +
                         ' <strong>' + trendData.results.fatToLose + '%</strong> still to lose to reach your <strong>' + trendData.results.fatGoal + '%</strong> goal.</p>';
 
                     htmlString = fatTrends + htmlString;

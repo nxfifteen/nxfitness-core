@@ -1,167 +1,304 @@
-	/*
-  	peopleIcon icon font: peopleIcon
-  	Creation date: 27/03/2016 03:43
-  	*/
+/*
+  peopleIcon icon font: peopleIcon
+  Creation date: 27/03/2016 03:43
+  */
 
 @font-face {
-  font-family: "peopleIcon";
-  src: url("./nomie-icons/peopleIcons/peopleIcon.eot");
-  src: url("./nomie-icons/peopleIcons/peopleIcon.eot?#iefix") format("embedded-opentype"),
-       url("./nomie-icons/peopleIcons/peopleIcon.woff") format("woff"),
-       url("./nomie-icons/peopleIcons/peopleIcon.ttf") format("truetype"),
-       url("./nomie-icons/peopleIcons/peopleIcon.svg#peopleIcon") format("svg");
-  font-weight: normal;
-  font-style: normal;
+    font-family : "peopleIcon";
+    src         : url("./nomie-icons/peopleIcons/peopleIcon.eot");
+    src         : url("./nomie-icons/peopleIcons/peopleIcon.eot?#iefix") format("embedded-opentype"),
+    url("./nomie-icons/peopleIcons/peopleIcon.woff") format("woff"),
+    url("./nomie-icons/peopleIcons/peopleIcon.ttf") format("truetype"),
+    url("./nomie-icons/peopleIcons/peopleIcon.svg#peopleIcon") format("svg");
+    font-weight : normal;
+    font-style  : normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: "peopleIcon";
-    src: url("./nomie-icons/peopleIcons/peopleIcon.svg#peopleIcon") format("svg");
-  }
+@media screen and (-webkit-min-device-pixel-ratio : 0) {
+    @font-face {
+        font-family : "peopleIcon";
+        src         : url("./nomie-icons/peopleIcons/peopleIcon.svg#peopleIcon") format("svg");
+    }
 }
 
 [class^="peopleIcon-"]:before, [class*=" peopleIcon-"]:before,
 [class^="peopleIcon-"]:after, [class*=" peopleIcon-"]:after {
-  font-family: peopleIcon;
-  font-style: normal;
+    font-family : peopleIcon;
+    font-style  : normal;
 }
 
-.peopleIcon-book:before { content: "\f100"; }
-.peopleIcon-business:before { content: "\f101"; }
-.peopleIcon-camera:before { content: "\f102"; }
-.peopleIcon-computer:before { content: "\f103"; }
-.peopleIcon-gestures:before { content: "\f104"; }
-.peopleIcon-group:before { content: "\f105"; }
-.peopleIcon-line:before { content: "\f106"; }
-.peopleIcon-people:before { content: "\f107"; }
-.peopleIcon-people-1:before { content: "\f108"; }
-.peopleIcon-people-10:before { content: "\f109"; }
-.peopleIcon-people-100:before { content: "\f10a"; }
-.peopleIcon-people-101:before { content: "\f10b"; }
-.peopleIcon-people-102:before { content: "\f10c"; }
-.peopleIcon-people-103:before { content: "\f10d"; }
-.peopleIcon-people-104:before { content: "\f10e"; }
-.peopleIcon-people-105:before { content: "\f10f"; }
-.peopleIcon-people-106:before { content: "\f110"; }
-.peopleIcon-people-107:before { content: "\f111"; }
-.peopleIcon-people-108:before { content: "\f112"; }
-.peopleIcon-people-109:before { content: "\f113"; }
-.peopleIcon-people-11:before { content: "\f114"; }
-.peopleIcon-people-110:before { content: "\f115"; }
-.peopleIcon-people-111:before { content: "\f116"; }
-.peopleIcon-people-112:before { content: "\f117"; }
-.peopleIcon-people-113:before { content: "\f118"; }
-.peopleIcon-people-114:before { content: "\f119"; }
-.peopleIcon-people-115:before { content: "\f11a"; }
-.peopleIcon-people-116:before { content: "\f11b"; }
-.peopleIcon-people-117:before { content: "\f11c"; }
-.peopleIcon-people-118:before { content: "\f11d"; }
-.peopleIcon-people-119:before { content: "\f11e"; }
-.peopleIcon-people-12:before { content: "\f11f"; }
-.peopleIcon-people-120:before { content: "\f120"; }
-.peopleIcon-people-121:before { content: "\f121"; }
-.peopleIcon-people-13:before { content: "\f122"; }
-.peopleIcon-people-14:before { content: "\f123"; }
-.peopleIcon-people-15:before { content: "\f124"; }
-.peopleIcon-people-16:before { content: "\f125"; }
-.peopleIcon-people-17:before { content: "\f126"; }
-.peopleIcon-people-18:before { content: "\f127"; }
-.peopleIcon-people-19:before { content: "\f128"; }
-.peopleIcon-people-2:before { content: "\f129"; }
-.peopleIcon-people-20:before { content: "\f12a"; }
-.peopleIcon-people-21:before { content: "\f12b"; }
-.peopleIcon-people-22:before { content: "\f12c"; }
-.peopleIcon-people-23:before { content: "\f12d"; }
-.peopleIcon-people-24:before { content: "\f12e"; }
-.peopleIcon-people-25:before { content: "\f12f"; }
-.peopleIcon-people-26:before { content: "\f130"; }
-.peopleIcon-people-27:before { content: "\f131"; }
-.peopleIcon-people-28:before { content: "\f132"; }
-.peopleIcon-people-29:before { content: "\f133"; }
-.peopleIcon-people-3:before { content: "\f134"; }
-.peopleIcon-people-30:before { content: "\f135"; }
-.peopleIcon-people-31:before { content: "\f136"; }
-.peopleIcon-people-32:before { content: "\f137"; }
-.peopleIcon-people-33:before { content: "\f138"; }
-.peopleIcon-people-34:before { content: "\f139"; }
-.peopleIcon-people-35:before { content: "\f13a"; }
-.peopleIcon-people-36:before { content: "\f13b"; }
-.peopleIcon-people-37:before { content: "\f13c"; }
-.peopleIcon-people-38:before { content: "\f13d"; }
-.peopleIcon-people-39:before { content: "\f13e"; }
-.peopleIcon-people-4:before { content: "\f13f"; }
-.peopleIcon-people-40:before { content: "\f140"; }
-.peopleIcon-people-41:before { content: "\f141"; }
-.peopleIcon-people-42:before { content: "\f142"; }
-.peopleIcon-people-43:before { content: "\f143"; }
-.peopleIcon-people-44:before { content: "\f144"; }
-.peopleIcon-people-45:before { content: "\f145"; }
-.peopleIcon-people-46:before { content: "\f146"; }
-.peopleIcon-people-47:before { content: "\f147"; }
-.peopleIcon-people-48:before { content: "\f148"; }
-.peopleIcon-people-49:before { content: "\f149"; }
-.peopleIcon-people-5:before { content: "\f14a"; }
-.peopleIcon-people-50:before { content: "\f14b"; }
-.peopleIcon-people-51:before { content: "\f14c"; }
-.peopleIcon-people-52:before { content: "\f14d"; }
-.peopleIcon-people-53:before { content: "\f14e"; }
-.peopleIcon-people-54:before { content: "\f14f"; }
-.peopleIcon-people-55:before { content: "\f150"; }
-.peopleIcon-people-56:before { content: "\f151"; }
-.peopleIcon-people-57:before { content: "\f152"; }
-.peopleIcon-people-58:before { content: "\f153"; }
-.peopleIcon-people-59:before { content: "\f154"; }
-.peopleIcon-people-6:before { content: "\f155"; }
-.peopleIcon-people-60:before { content: "\f156"; }
-.peopleIcon-people-61:before { content: "\f157"; }
-.peopleIcon-people-62:before { content: "\f158"; }
-.peopleIcon-people-63:before { content: "\f159"; }
-.peopleIcon-people-64:before { content: "\f15a"; }
-.peopleIcon-people-65:before { content: "\f15b"; }
-.peopleIcon-people-66:before { content: "\f15c"; }
-.peopleIcon-people-67:before { content: "\f15d"; }
-.peopleIcon-people-68:before { content: "\f15e"; }
-.peopleIcon-people-69:before { content: "\f15f"; }
-.peopleIcon-people-7:before { content: "\f160"; }
-.peopleIcon-people-70:before { content: "\f161"; }
-.peopleIcon-people-71:before { content: "\f162"; }
-.peopleIcon-people-72:before { content: "\f163"; }
-.peopleIcon-people-73:before { content: "\f164"; }
-.peopleIcon-people-74:before { content: "\f165"; }
-.peopleIcon-people-75:before { content: "\f166"; }
-.peopleIcon-people-76:before { content: "\f167"; }
-.peopleIcon-people-77:before { content: "\f168"; }
-.peopleIcon-people-78:before { content: "\f169"; }
-.peopleIcon-people-79:before { content: "\f16a"; }
-.peopleIcon-people-8:before { content: "\f16b"; }
-.peopleIcon-people-80:before { content: "\f16c"; }
-.peopleIcon-people-81:before { content: "\f16d"; }
-.peopleIcon-people-82:before { content: "\f16e"; }
-.peopleIcon-people-83:before { content: "\f16f"; }
-.peopleIcon-people-84:before { content: "\f170"; }
-.peopleIcon-people-85:before { content: "\f171"; }
-.peopleIcon-people-86:before { content: "\f172"; }
-.peopleIcon-people-87:before { content: "\f173"; }
-.peopleIcon-people-88:before { content: "\f174"; }
-.peopleIcon-people-89:before { content: "\f175"; }
-.peopleIcon-people-9:before { content: "\f176"; }
-.peopleIcon-people-90:before { content: "\f177"; }
-.peopleIcon-people-91:before { content: "\f178"; }
-.peopleIcon-people-92:before { content: "\f179"; }
-.peopleIcon-people-93:before { content: "\f17a"; }
-.peopleIcon-people-94:before { content: "\f17b"; }
-.peopleIcon-people-95:before { content: "\f17c"; }
-.peopleIcon-people-96:before { content: "\f17d"; }
-.peopleIcon-people-97:before { content: "\f17e"; }
-.peopleIcon-people-98:before { content: "\f17f"; }
-.peopleIcon-people-99:before { content: "\f180"; }
-.peopleIcon-school:before { content: "\f181"; }
-.peopleIcon-social:before { content: "\f182"; }
-.peopleIcon-social-1:before { content: "\f183"; }
-.peopleIcon-technology:before { content: "\f184"; }
-.peopleIcon-three:before { content: "\f185"; }
-.peopleIcon-two:before { content: "\f186"; }
-.peopleIcon-two-1:before { content: "\f187"; }
-.peopleIcon-two-2:before { content: "\f188"; }
-.peopleIcon-two-3:before { content: "\f189"; }
+.peopleIcon-book:before { content : "\f100"; }
+
+.peopleIcon-business:before { content : "\f101"; }
+
+.peopleIcon-camera:before { content : "\f102"; }
+
+.peopleIcon-computer:before { content : "\f103"; }
+
+.peopleIcon-gestures:before { content : "\f104"; }
+
+.peopleIcon-group:before { content : "\f105"; }
+
+.peopleIcon-line:before { content : "\f106"; }
+
+.peopleIcon-people:before { content : "\f107"; }
+
+.peopleIcon-people-1:before { content : "\f108"; }
+
+.peopleIcon-people-10:before { content : "\f109"; }
+
+.peopleIcon-people-100:before { content : "\f10a"; }
+
+.peopleIcon-people-101:before { content : "\f10b"; }
+
+.peopleIcon-people-102:before { content : "\f10c"; }
+
+.peopleIcon-people-103:before { content : "\f10d"; }
+
+.peopleIcon-people-104:before { content : "\f10e"; }
+
+.peopleIcon-people-105:before { content : "\f10f"; }
+
+.peopleIcon-people-106:before { content : "\f110"; }
+
+.peopleIcon-people-107:before { content : "\f111"; }
+
+.peopleIcon-people-108:before { content : "\f112"; }
+
+.peopleIcon-people-109:before { content : "\f113"; }
+
+.peopleIcon-people-11:before { content : "\f114"; }
+
+.peopleIcon-people-110:before { content : "\f115"; }
+
+.peopleIcon-people-111:before { content : "\f116"; }
+
+.peopleIcon-people-112:before { content : "\f117"; }
+
+.peopleIcon-people-113:before { content : "\f118"; }
+
+.peopleIcon-people-114:before { content : "\f119"; }
+
+.peopleIcon-people-115:before { content : "\f11a"; }
+
+.peopleIcon-people-116:before { content : "\f11b"; }
+
+.peopleIcon-people-117:before { content : "\f11c"; }
+
+.peopleIcon-people-118:before { content : "\f11d"; }
+
+.peopleIcon-people-119:before { content : "\f11e"; }
+
+.peopleIcon-people-12:before { content : "\f11f"; }
+
+.peopleIcon-people-120:before { content : "\f120"; }
+
+.peopleIcon-people-121:before { content : "\f121"; }
+
+.peopleIcon-people-13:before { content : "\f122"; }
+
+.peopleIcon-people-14:before { content : "\f123"; }
+
+.peopleIcon-people-15:before { content : "\f124"; }
+
+.peopleIcon-people-16:before { content : "\f125"; }
+
+.peopleIcon-people-17:before { content : "\f126"; }
+
+.peopleIcon-people-18:before { content : "\f127"; }
+
+.peopleIcon-people-19:before { content : "\f128"; }
+
+.peopleIcon-people-2:before { content : "\f129"; }
+
+.peopleIcon-people-20:before { content : "\f12a"; }
+
+.peopleIcon-people-21:before { content : "\f12b"; }
+
+.peopleIcon-people-22:before { content : "\f12c"; }
+
+.peopleIcon-people-23:before { content : "\f12d"; }
+
+.peopleIcon-people-24:before { content : "\f12e"; }
+
+.peopleIcon-people-25:before { content : "\f12f"; }
+
+.peopleIcon-people-26:before { content : "\f130"; }
+
+.peopleIcon-people-27:before { content : "\f131"; }
+
+.peopleIcon-people-28:before { content : "\f132"; }
+
+.peopleIcon-people-29:before { content : "\f133"; }
+
+.peopleIcon-people-3:before { content : "\f134"; }
+
+.peopleIcon-people-30:before { content : "\f135"; }
+
+.peopleIcon-people-31:before { content : "\f136"; }
+
+.peopleIcon-people-32:before { content : "\f137"; }
+
+.peopleIcon-people-33:before { content : "\f138"; }
+
+.peopleIcon-people-34:before { content : "\f139"; }
+
+.peopleIcon-people-35:before { content : "\f13a"; }
+
+.peopleIcon-people-36:before { content : "\f13b"; }
+
+.peopleIcon-people-37:before { content : "\f13c"; }
+
+.peopleIcon-people-38:before { content : "\f13d"; }
+
+.peopleIcon-people-39:before { content : "\f13e"; }
+
+.peopleIcon-people-4:before { content : "\f13f"; }
+
+.peopleIcon-people-40:before { content : "\f140"; }
+
+.peopleIcon-people-41:before { content : "\f141"; }
+
+.peopleIcon-people-42:before { content : "\f142"; }
+
+.peopleIcon-people-43:before { content : "\f143"; }
+
+.peopleIcon-people-44:before { content : "\f144"; }
+
+.peopleIcon-people-45:before { content : "\f145"; }
+
+.peopleIcon-people-46:before { content : "\f146"; }
+
+.peopleIcon-people-47:before { content : "\f147"; }
+
+.peopleIcon-people-48:before { content : "\f148"; }
+
+.peopleIcon-people-49:before { content : "\f149"; }
+
+.peopleIcon-people-5:before { content : "\f14a"; }
+
+.peopleIcon-people-50:before { content : "\f14b"; }
+
+.peopleIcon-people-51:before { content : "\f14c"; }
+
+.peopleIcon-people-52:before { content : "\f14d"; }
+
+.peopleIcon-people-53:before { content : "\f14e"; }
+
+.peopleIcon-people-54:before { content : "\f14f"; }
+
+.peopleIcon-people-55:before { content : "\f150"; }
+
+.peopleIcon-people-56:before { content : "\f151"; }
+
+.peopleIcon-people-57:before { content : "\f152"; }
+
+.peopleIcon-people-58:before { content : "\f153"; }
+
+.peopleIcon-people-59:before { content : "\f154"; }
+
+.peopleIcon-people-6:before { content : "\f155"; }
+
+.peopleIcon-people-60:before { content : "\f156"; }
+
+.peopleIcon-people-61:before { content : "\f157"; }
+
+.peopleIcon-people-62:before { content : "\f158"; }
+
+.peopleIcon-people-63:before { content : "\f159"; }
+
+.peopleIcon-people-64:before { content : "\f15a"; }
+
+.peopleIcon-people-65:before { content : "\f15b"; }
+
+.peopleIcon-people-66:before { content : "\f15c"; }
+
+.peopleIcon-people-67:before { content : "\f15d"; }
+
+.peopleIcon-people-68:before { content : "\f15e"; }
+
+.peopleIcon-people-69:before { content : "\f15f"; }
+
+.peopleIcon-people-7:before { content : "\f160"; }
+
+.peopleIcon-people-70:before { content : "\f161"; }
+
+.peopleIcon-people-71:before { content : "\f162"; }
+
+.peopleIcon-people-72:before { content : "\f163"; }
+
+.peopleIcon-people-73:before { content : "\f164"; }
+
+.peopleIcon-people-74:before { content : "\f165"; }
+
+.peopleIcon-people-75:before { content : "\f166"; }
+
+.peopleIcon-people-76:before { content : "\f167"; }
+
+.peopleIcon-people-77:before { content : "\f168"; }
+
+.peopleIcon-people-78:before { content : "\f169"; }
+
+.peopleIcon-people-79:before { content : "\f16a"; }
+
+.peopleIcon-people-8:before { content : "\f16b"; }
+
+.peopleIcon-people-80:before { content : "\f16c"; }
+
+.peopleIcon-people-81:before { content : "\f16d"; }
+
+.peopleIcon-people-82:before { content : "\f16e"; }
+
+.peopleIcon-people-83:before { content : "\f16f"; }
+
+.peopleIcon-people-84:before { content : "\f170"; }
+
+.peopleIcon-people-85:before { content : "\f171"; }
+
+.peopleIcon-people-86:before { content : "\f172"; }
+
+.peopleIcon-people-87:before { content : "\f173"; }
+
+.peopleIcon-people-88:before { content : "\f174"; }
+
+.peopleIcon-people-89:before { content : "\f175"; }
+
+.peopleIcon-people-9:before { content : "\f176"; }
+
+.peopleIcon-people-90:before { content : "\f177"; }
+
+.peopleIcon-people-91:before { content : "\f178"; }
+
+.peopleIcon-people-92:before { content : "\f179"; }
+
+.peopleIcon-people-93:before { content : "\f17a"; }
+
+.peopleIcon-people-94:before { content : "\f17b"; }
+
+.peopleIcon-people-95:before { content : "\f17c"; }
+
+.peopleIcon-people-96:before { content : "\f17d"; }
+
+.peopleIcon-people-97:before { content : "\f17e"; }
+
+.peopleIcon-people-98:before { content : "\f17f"; }
+
+.peopleIcon-people-99:before { content : "\f180"; }
+
+.peopleIcon-school:before { content : "\f181"; }
+
+.peopleIcon-social:before { content : "\f182"; }
+
+.peopleIcon-social-1:before { content : "\f183"; }
+
+.peopleIcon-technology:before { content : "\f184"; }
+
+.peopleIcon-three:before { content : "\f185"; }
+
+.peopleIcon-two:before { content : "\f186"; }
+
+.peopleIcon-two-1:before { content : "\f187"; }
+
+.peopleIcon-two-2:before { content : "\f188"; }
+
+.peopleIcon-two-3:before { content : "\f189"; }

@@ -11,7 +11,9 @@
      * @copyright 2017 Stuart McCulloch Anderson
      * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
      */
-    class config {
+    class config
+    {
+
         /** @noinspection PhpUndefinedClassInspection */
         /**
          * Medoo class holding database connection
@@ -30,12 +32,15 @@
         /**
          * Class constructor
          */
-        public function __construct() {
-            if ( isset($_SESSION) && is_array($_SESSION) && array_key_exists("core_config", $_SESSION) && count($_SESSION['core_config']) > 0 ) {
+        public function __construct()
+        {
+            if (isset($_SESSION) && is_array($_SESSION) && array_key_exists("core_config",
+                    $_SESSION) && count($_SESSION['core_config']) > 0
+            ) {
                 $this->settings = $_SESSION['core_config'];
             } else {
-                require_once( dirname(__FILE__) . "/../config.dist.php" );
-                if ( isset($config) ) {
+                require_once(dirname(__FILE__) . "/../config.dist.php");
+                if (isset($config)) {
                     $_SESSION['core_config'] = $config;
                     $this->settings          = $_SESSION['core_config'];
                 }
@@ -50,9 +55,10 @@
          *
          * @return array String array of cache files names
          */
-        public function getRelatedCacheNames($activityName) {
+        public function getRelatedCacheNames($activityName)
+        {
             $cacheNames = array();
-            switch ( $activityName ) {
+            switch ($activityName) {
                 case "activities":
                     $cacheNames = array(
                         'activity',
@@ -70,19 +76,19 @@
                     );
                     break;
                 case "activity_log":
-                    $cacheNames = array( 'activityhistory' );
+                    $cacheNames = array('activityhistory');
                     break;
                 case "badges":
-                    $cacheNames = array( 'topbadges' );
+                    $cacheNames = array('topbadges');
                     break;
                 case "body":
-                    $cacheNames = array( 'trend', 'weight' );
+                    $cacheNames = array('trend', 'weight');
                     break;
                 case "caloriesOut":
-                    $cacheNames = array( 'tasker' );
+                    $cacheNames = array('tasker');
                     break;
                 case "devices":
-                    $cacheNames = array( 'devices', 'tasker' );
+                    $cacheNames = array('devices', 'tasker');
                     break;
                 case "distance":
                     $cacheNames = array(
@@ -116,40 +122,40 @@
                     );
                     break;
                 case "foods":
-                    $cacheNames = array( 'food', 'fooddiary' );
+                    $cacheNames = array('food', 'fooddiary');
                     break;
                 case "goals":
-                    $cacheNames = array( 'dashboard', 'tracked', 'steps', 'tasker' );
+                    $cacheNames = array('dashboard', 'tracked', 'steps', 'tasker');
                     break;
                 case "goals_calories":
-                    $cacheNames = array( 'trend' );
+                    $cacheNames = array('trend');
                     break;
                 case "heart":
                     $cacheNames = array();
                     break;
                 case "leaderboard":
-                    $cacheNames = array( 'trend' );
+                    $cacheNames = array('trend');
                     break;
                 case "minutesFairlyActive":
-                    $cacheNames = array( 'activity', 'tasker', 'challenger', 'push', 'conky' );
+                    $cacheNames = array('activity', 'tasker', 'challenger', 'push', 'conky');
                     break;
                 case "minutesLightlyActive":
-                    $cacheNames = array( 'activity' );
+                    $cacheNames = array('activity');
                     break;
                 case "minutesSedentary":
-                    $cacheNames = array( 'activity' );
+                    $cacheNames = array('activity');
                     break;
                 case "minutesVeryActive":
-                    $cacheNames = array( 'activity', 'tasker', 'challenger', 'push', 'conky' );
+                    $cacheNames = array('activity', 'tasker', 'challenger', 'push', 'conky');
                     break;
                 case "nomie_trackers":
-                    $cacheNames = array( 'nomie' );
+                    $cacheNames = array('nomie');
                     break;
                 case "profile":
-                    $cacheNames = array( 'trend' );
+                    $cacheNames = array('trend');
                     break;
                 case "sleep":
-                    $cacheNames = array( 'sleep' );
+                    $cacheNames = array('sleep');
                     break;
                 case "steps":
                     $cacheNames = array(
@@ -164,7 +170,7 @@
                     );
                     break;
                 case "water":
-                    $cacheNames = array( 'water', 'tasker' );
+                    $cacheNames = array('water', 'tasker');
                     break;
                 default:
                     nxr("Unknown cache file for $activityName");
@@ -185,15 +191,19 @@
          *
          * @return string Setting value, or default as per defined
          */
-        public function get($key, $default = null, $query_db = true) {
-            if ( is_array($this->settings) && array_key_exists($key, $this->settings) ) {
-                return $this->settings[ $key ];
-            } else if ( $query_db && $this->database->has($this->get("db_prefix", null, false) . "settings", array( "var" => $key )) ) {
-                $this->settings[ $key ] = $this->database->get($this->get("db_prefix", null, false) . "settings", "data", array( "var" => $key ));
+        public function get($key, $default = null, $query_db = true)
+        {
+            if (is_array($this->settings) && array_key_exists($key, $this->settings)) {
+                return $this->settings[$key];
+            } else if ($query_db && $this->database->has($this->get("db_prefix", null, false) . "settings",
+                    array("var" => $key))
+            ) {
+                $this->settings[$key] = $this->database->get($this->get("db_prefix", null, false) . "settings", "data",
+                    array("var" => $key));
 
-                return $this->settings[ $key ];
+                return $this->settings[$key];
             } else {
-                if ( $query_db && ! is_null($default) ) {
+                if ($query_db && ! is_null($default)) {
                     $this->set($key, $default);
                 }
 
@@ -211,11 +221,13 @@
          *
          * @return bool was data stored correctly
          */
-        public function set($key, $value, $query_db = true) {
-            $this->settings[ $key ] = $value;
-            if ( $query_db ) {
-                if ( $this->database->has($this->get("db_prefix", false) . "settings", array( "var" => $key )) ) {
-                    return $this->database->update($this->get("db_prefix", false) . "settings", array( "data" => $value ), array( "var" => $key ));
+        public function set($key, $value, $query_db = true)
+        {
+            $this->settings[$key] = $value;
+            if ($query_db) {
+                if ($this->database->has($this->get("db_prefix", false) . "settings", array("var" => $key))) {
+                    return $this->database->update($this->get("db_prefix", false) . "settings", array("data" => $value),
+                        array("var" => $key));
                 } else {
                     return $this->database->insert($this->get("db_prefix", false) . "settings", array(
                         "data" => $value,
@@ -239,26 +251,28 @@
          *
          * @return string Setting value, or default as per defined
          */
-        public function getUser($fuid, $key, $default = null, $query_db = true) {
-            if ( array_key_exists($key . "_" . $fuid, $this->settings) ) {
-                return $this->settings[ $key . "_" . $fuid ];
-            } else if ( $query_db && $this->database->has($this->get("db_prefix", null, false) . "settings_users", array(
+        public function getUser($fuid, $key, $default = null, $query_db = true)
+        {
+            if (array_key_exists($key . "_" . $fuid, $this->settings)) {
+                return $this->settings[$key . "_" . $fuid];
+            } else if ($query_db && $this->database->has($this->get("db_prefix", null, false) . "settings_users", array(
                     "AND" => array(
                         "fuid" => $fuid,
                         "var"  => $key
                     )
                 ))
             ) {
-                $this->settings[ $key . "_" . $fuid ] = $this->database->get($this->get("db_prefix", null, false) . "settings_users", "data", array(
+                $this->settings[$key . "_" . $fuid] = $this->database->get($this->get("db_prefix", null,
+                        false) . "settings_users", "data", array(
                     "AND" => array(
                         "fuid" => $fuid,
                         "var"  => $key
                     )
                 ));
 
-                return $this->settings[ $key . "_" . $fuid ];
+                return $this->settings[$key . "_" . $fuid];
             } else {
-                if ( ! is_null($default) ) {
+                if ( ! is_null($default)) {
                     $this->setUser($fuid, $key, $default);
                 }
 
@@ -276,21 +290,23 @@
          *
          * @return bool was data stored correctly
          */
-        public function setUser($fuid, $key, $value) {
-            $this->settings[ $key . "_" . $fuid ] = $value;
-            if ( $this->database->has($this->get("db_prefix", false) . "settings_users", array(
+        public function setUser($fuid, $key, $value)
+        {
+            $this->settings[$key . "_" . $fuid] = $value;
+            if ($this->database->has($this->get("db_prefix", false) . "settings_users", array(
                 "AND" => array(
                     "fuid" => $fuid,
                     "var"  => $key
                 )
             ))
             ) {
-                return $this->database->update($this->get("db_prefix", false) . "settings_users", array( "data" => $value ), array(
-                    "AND" => array(
-                        "fuid" => $fuid,
-                        "var"  => $key
-                    )
-                ));
+                return $this->database->update($this->get("db_prefix", false) . "settings_users",
+                    array("data" => $value), array(
+                        "AND" => array(
+                            "fuid" => $fuid,
+                            "var"  => $key
+                        )
+                    ));
             } else {
                 return $this->database->insert($this->get("db_prefix", false) . "settings_users", array(
                     "fuid" => $fuid,
@@ -307,7 +323,8 @@
          *
          * @param medoo $database Application database connection
          */
-        public function setDatabase($database) {
+        public function setDatabase($database)
+        {
             $this->database = $database;
         }
     }

@@ -4,8 +4,8 @@
 
     date_default_timezone_set('Europe/London');
 
-    if ( ! function_exists("nxr") ) {
-        require_once( dirname(__FILE__) . "/inc/functions.php" );
+    if ( ! function_exists("nxr")) {
+        require_once(dirname(__FILE__) . "/inc/functions.php");
     }
 
     header('Cache-Control: no-cache, must-revalidate');
@@ -19,33 +19,34 @@
 
     $logMsg = '';
 
-    if ( validate_client() ) {
+    if (validate_client()) {
         // set json string to php variables
-        if ( isset($data) and is_array($data) ) {
-            foreach ( $data as $upLoadedRequest ) {
+        if (isset($data) and is_array($data)) {
+            foreach ($data as $upLoadedRequest) {
                 // Do some data validation to make sure we are getting all we expect
-                if ( empty($upLoadedRequest->collectionType) or $upLoadedRequest->collectionType == "" ) {
+                if (empty($upLoadedRequest->collectionType) or $upLoadedRequest->collectionType == "") {
                     $logMsg .= "collectionType not sent";
-                } else if ( empty($upLoadedRequest->date) or $upLoadedRequest->date == "" ) {
+                } else if (empty($upLoadedRequest->date) or $upLoadedRequest->date == "") {
                     $logMsg .= "date not sent";
-                } else if ( empty($upLoadedRequest->ownerId) or $upLoadedRequest->ownerId == "" ) {
+                } else if (empty($upLoadedRequest->ownerId) or $upLoadedRequest->ownerId == "") {
                     $logMsg .= "ownerId not sent";
-                } else if ( empty($upLoadedRequest->ownerType) or $upLoadedRequest->ownerType == "" ) {
+                } else if (empty($upLoadedRequest->ownerType) or $upLoadedRequest->ownerType == "") {
                     $logMsg .= "ownerType not sent";
-                } else if ( empty($upLoadedRequest->subscriptionId) or $upLoadedRequest->subscriptionId == "" ) {
+                } else if (empty($upLoadedRequest->subscriptionId) or $upLoadedRequest->subscriptionId == "") {
                     $logMsg .= "subscriptionId not sent";
                 } else {
-                    if ( $upLoadedRequest->collectionType == "nomie" ) {
+                    if ($upLoadedRequest->collectionType == "nomie") {
                         $upLoadedRequest->collectionType = "nomie_trackers";
                     }
 
-                    require_once( dirname(__FILE__) . "/inc/app.php" );
+                    require_once(dirname(__FILE__) . "/inc/app.php");
                     $fitbitApp = new NxFitbit();
-                    if ( $fitbitApp->isUser($upLoadedRequest->ownerId) ) {
+                    if ($fitbitApp->isUser($upLoadedRequest->ownerId)) {
                         $cooldown = $fitbitApp->getUserCooldown($upLoadedRequest->ownerId);
-                        if ( strtotime($cooldown) < strtotime(date("Y-m-d H:i:s")) ) {
+                        if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
                             $logMsg .= "Processing queue item " . $fitbitApp->supportedApi($upLoadedRequest->collectionType) . " for " . $upLoadedRequest->ownerId . "";
-                            if ( $fitbitApp->getDatabase()->has($fitbitApp->getSetting("db_prefix", null, false) . "runlog", array(
+                            if ($fitbitApp->getDatabase()->has($fitbitApp->getSetting("db_prefix", null,
+                                    false) . "runlog", array(
                                 "AND" => array(
                                     "user"     => $upLoadedRequest->ownerId,
                                     "activity" => $upLoadedRequest->collectionType
@@ -56,7 +57,8 @@
                                     "date"     => date("Y-m-d H:i:s"),
                                     "cooldown" => "1970-01-01 01:00:00"
                                 );
-                                $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", null, false) . "runlog", $fields, array(
+                                $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", null,
+                                        false) . "runlog", $fields, array(
                                     "AND" => array(
                                         "user"     => $upLoadedRequest->ownerId,
                                         "activity" => $upLoadedRequest->collectionType
@@ -73,15 +75,17 @@
                                     "date"     => date("Y-m-d H:i:s"),
                                     "cooldown" => "1970-01-01 01:00:00"
                                 );
-                                $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", null, false) . "runlog", $fields);
+                                $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", null,
+                                        false) . "runlog", $fields);
                                 $fitbitApp->getErrorRecording()->postDatabaseQuery($fitbitApp->getDatabase(), array(
                                     "METHOD" => __FILE__,
                                     "LINE"   => __LINE__
                                 ));
                             }
 
-                            if ( $upLoadedRequest->collectionType == "foods" ) {
-                                if ( $fitbitApp->getDatabase()->has($fitbitApp->getSetting("db_prefix", null, false) . "runlog", array(
+                            if ($upLoadedRequest->collectionType == "foods") {
+                                if ($fitbitApp->getDatabase()->has($fitbitApp->getSetting("db_prefix", null,
+                                        false) . "runlog", array(
                                     "AND" => array(
                                         "user"     => $upLoadedRequest->ownerId,
                                         "activity" => "water"
@@ -92,7 +96,8 @@
                                         "date"     => date("Y-m-d H:i:s"),
                                         "cooldown" => "1970-01-01 01:00:00"
                                     );
-                                    $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", null, false) . "runlog", $fields, array(
+                                    $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", null,
+                                            false) . "runlog", $fields, array(
                                         "AND" => array(
                                             "user"     => $upLoadedRequest->ownerId,
                                             "activity" => "water"
@@ -109,7 +114,8 @@
                                         "date"     => date("Y-m-d H:i:s"),
                                         "cooldown" => "1970-01-01 01:00:00"
                                     );
-                                    $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", null, false) . "runlog", $fields);
+                                    $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", null,
+                                            false) . "runlog", $fields);
                                     $fitbitApp->getErrorRecording()->postDatabaseQuery($fitbitApp->getDatabase(), array(
                                         "METHOD" => __FILE__,
                                         "LINE"   => __LINE__
@@ -126,18 +132,20 @@
                     }
                 }
             }
-        } else if ( isset($data) and is_object($data) ) {
-            require_once( dirname(__FILE__) . "/inc/app.php" );
+        } else if (isset($data) and is_object($data)) {
+            require_once(dirname(__FILE__) . "/inc/app.php");
             $fitbitApp = new NxFitbit();
-            if ( $fitbitApp->isUser($data->ownerId) ) {
+            if ($fitbitApp->isUser($data->ownerId)) {
                 nxr($data->ownerId . " is a valid user");
-                $api = $fitbitApp->getDatabase()->get($fitbitApp->getSetting("db_prefix", null, false) . "users", "api", array( "fuid" => $data->ownerId ));
-                if ( isset($api) ) {
-                    if ( hash('sha256', $api . date("Y-m-d H:i")) == $data->auth ) {
+                $api = $fitbitApp->getDatabase()->get($fitbitApp->getSetting("db_prefix", null, false) . "users", "api",
+                    array("fuid" => $data->ownerId));
+                if (isset($api)) {
+                    if (hash('sha256', $api . date("Y-m-d H:i")) == $data->auth) {
                         nxr(" Valid API Access Key");
-                        foreach ( $data->unit as $unit ) {
+                        foreach ($data->unit as $unit) {
                             nxr("  Recording " . $unit->key . " as " . $unit->value);
-                            $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", null, false) . "units", array(
+                            $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", null,
+                                    false) . "units", array(
                                 "user"  => $data->ownerId,
                                 "unit"  => $unit->key,
                                 "value" => $unit->value
@@ -152,7 +160,7 @@
                         nxr("  Expected: "
                             . substr(hash('sha256', $api . date("Y-m-d H:i")), 0, 5)
                             . "......................................................"
-                            . substr(hash('sha256', $api . date("Y-m-d H:i")), - 5));
+                            . substr(hash('sha256', $api . date("Y-m-d H:i")), -5));
                         nxr("  Received: " . $data->auth);
                         echo date("Y-m-d H:i:s") . ":: Invalid API";
                         die();
@@ -168,7 +176,7 @@
         $logMsg .= "Could not authorise client IP";
     }
 
-    if ( isset($logMsg) && $logMsg != "" ) {
+    if (isset($logMsg) && $logMsg != "") {
         nxr("New API request: " . $logMsg);
     }
 
@@ -177,7 +185,7 @@
     /**
      * @return bool
      */
-    function validate_client() {
+    function validate_client()
+    {
         return true;
     }
-
