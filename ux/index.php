@@ -5,7 +5,7 @@
     header('Cache-Control: post-check=0, pre-check=0', false);
     header('Pragma: no-cache');
 
-    if ( ! function_exists("nxr") || ! function_exists("nxr_destroy_session")) {
+    if (!function_exists("nxr") || !function_exists("nxr_destroy_session")) {
         require_once(dirname(__FILE__) . "/../inc/functions.php");
     }
 
@@ -15,15 +15,15 @@
 
     // start the session
     session_start();
-    if ( ! array_key_exists("timeout", $_SESSION) || ! is_numeric($_SESSION['timeout'])) {
+    if (!array_key_exists("timeout", $_SESSION) || !is_numeric($_SESSION['timeout'])) {
         $_SESSION['timeout'] = time() + 60 * 5;
     } else if ($_SESSION['timeout'] < time()) {
         nxr_destroy_session();
         header("Location: ./");
     }
 
-    if ( ! array_key_exists("admin_config",
-            $_SESSION) || ! is_array($_SESSION['admin_config']) || count($_SESSION['admin_config']) == 0
+    if (!array_key_exists("admin_config",
+            $_SESSION) || !is_array($_SESSION['admin_config']) || count($_SESSION['admin_config']) == 0
     ) {
         require_once(PATH_ADMIN . "/config.inc.php");
         if (isset($config)) {
@@ -34,7 +34,7 @@
     if (is_array($_GET) && array_key_exists("err", $_GET)) {
 
         //nxr(__LINE__, TRUE, TRUE, FALSE);
-        if ( ! isset($config)) {
+        if (!isset($config)) {
             require_once(PATH_ADMIN . "/config.inc.php");
         }
         nxr_destroy_session();
@@ -78,7 +78,7 @@
         nxr_destroy_session();
 
         header("Location: " . $path . '/views/pages/login.php');
-    } else if ( ! is_array($_COOKIE) || ! array_key_exists("_nx_fb_usr", $_COOKIE)) {
+    } else if (!is_array($_COOKIE) || !array_key_exists("_nx_fb_usr", $_COOKIE)) {
 
         //nxr(__LINE__, TRUE, TRUE, FALSE);
         header("Location: ./views/pages/login.php");

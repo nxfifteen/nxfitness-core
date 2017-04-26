@@ -4,7 +4,7 @@
 
     date_default_timezone_set('Europe/London');
 
-    if ( ! function_exists("nxr")) {
+    if (!function_exists("nxr")) {
         require_once(dirname(__FILE__) . "/inc/functions.php");
     }
 

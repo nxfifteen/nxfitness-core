@@ -12,7 +12,7 @@
      * @license   http://stuart.nx15.at/mit/2015 MIT
      */
 
-    if ( ! function_exists("nxr")) {
+    if (!function_exists("nxr")) {
         require_once(dirname(__FILE__) . "/inc/functions.php");
     }
 
@@ -35,11 +35,11 @@
             "LINE"   => __LINE__
         ));
 
-        if ( ! empty($unfinishedUsers) and count($unfinishedUsers) > 0 and $fitbitApp->getSetting('scope_all_cron',
+        if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0 and $fitbitApp->getSetting('scope_all_cron',
                 true)
         ) {
             foreach ($unfinishedUsers as $user) {
-                if ( ! $fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], false))) {
+                if (!$fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], false))) {
                     nxr($user['name'] . " has not completed the OAuth configuration");
                 } else {
                     if (time() < $end) {
@@ -70,16 +70,16 @@
                 "LINE"   => __LINE__
             ));
 
-            if ( ! empty($unfinishedUsers) and count($unfinishedUsers) > 0) {
+            if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0) {
                 foreach ($unfinishedUsers as $user) {
-                    if ( ! $fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], false))) {
+                    if (!$fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], false))) {
                         nxr($user['name'] . " has not completed the OAuth configuration");
                     } else {
                         nxr(" Repopulating for " . $user['name']);
 
                         $fitbitApp->getFitbitAPI($user['fuid'])->setActiveUser($user['fuid']);
                         foreach ($allowed_triggers as $allowed_trigger) {
-                            if ( ! is_numeric($fitbitApp->getFitbitAPI()->isAllowed($allowed_trigger, true))) {
+                            if (!is_numeric($fitbitApp->getFitbitAPI()->isAllowed($allowed_trigger, true))) {
                                 if ($fitbitApp->getFitbitAPI($user['fuid'])->api_isCooled($allowed_trigger)) {
                                     nxr("  + $allowed_trigger added to queue");
                                     $fitbitApp->addCronJob($user['fuid'], $allowed_trigger);

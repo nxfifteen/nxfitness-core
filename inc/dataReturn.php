@@ -158,7 +158,7 @@
                 }
             }
 
-            if ( ! $startDateCovered) {
+            if (!$startDateCovered) {
                 array_push($calenderEvents, array(
                     "title"     => "Push " . $range_start->format("Y") . "\nStart!",
                     "start"     => $userPushStartDate,
@@ -279,7 +279,7 @@
                 $conversationUnit = 2.20462;
             }
 
-            if ( ! is_array($inputWeight)) {
+            if (!is_array($inputWeight)) {
                 return round($inputWeight * $conversationUnit, 2);
             } else {
                 foreach ($inputWeight as $key => $value) {
@@ -657,7 +657,7 @@
 
                 $startTime = new DateTime($record['startDate'] . " " . $record['startTime']);
                 $recKey    = $startTime->format("F, Y");
-                if ( ! array_key_exists($recKey, $returnArray) || ! is_array($returnArray[$recKey])) {
+                if (!array_key_exists($recKey, $returnArray) || !is_array($returnArray[$recKey])) {
                     $returnArray[$recKey] = array();
                 }
 
@@ -699,7 +699,7 @@
                 $record['calories'] = number_format($record['calories'], 0);
                 $record['steps']    = number_format($record['steps'], 0);
 
-                if ( ! array_key_exists($record['startDate'], $daysStats)) {
+                if (!array_key_exists($record['startDate'], $daysStats)) {
                     $daysStats[$record['startDate']] = array();
 
                     $db_steps      = $this->getAppClass()->getSetting("db_prefix", null, false) . "steps";
@@ -750,10 +750,10 @@
                 ksort($record);
 
                 $tcxFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $record['logId'] . '.tcx';
-                if ( ! file_exists($tcxFile)) {
+                if (!file_exists($tcxFile)) {
                     $record['gpx'] = "none";
                 } else {
-                    if ( ! file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx')) {
+                    if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record['logId'] . '.gpx')) {
                         if (is_writable(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache')) {
                             $record['gpx'] = $this->returnUserRecordActivityTCX($record['logId'],
                                 $record['name'] . ": " . $record['startTime']);
@@ -775,7 +775,7 @@
 
                     if (
                         (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != $_GET['user']) ||
-                        ( ! array_key_exists('_nx_fb_usr', $_COOKIE) && $record['visibility'] != "public")
+                        (!array_key_exists('_nx_fb_usr', $_COOKIE) && $record['visibility'] != "public")
                     ) {
                         $record['gpx'] = "none";
                     }
@@ -836,7 +836,7 @@
                 }
             }
 
-            if ( ! is_null($tcxFileName)) {
+            if (!is_null($tcxFileName)) {
                 if (is_null($tcxTrackName)) {
                     $tcxTrackName = $tcxFileName . " Fitbit Track";
                 }
@@ -845,11 +845,11 @@
 
                 if (file_exists($tcxFile)) {
                     $items = simplexml_load_file($tcxFile);
-                    if ( ! is_object($items)) {
+                    if (!is_object($items)) {
                         $items = simplexml_load_file($tcxFile);
-                        if ( ! is_object($items)) {
+                        if (!is_object($items)) {
                             $items = simplexml_load_file($tcxFile);
-                            if ( ! is_object($items)) {
+                            if (!is_object($items)) {
                                 return array(
                                     "error"  => "Failed to read $tcxFileName TCX file",
                                     "return" => array(
@@ -866,7 +866,7 @@
                             }
                         }
                     } else /** @noinspection PhpUndefinedFieldInspection */
-                        if ( ! isset($items->Activities->Activity->Lap)) {
+                        if (!isset($items->Activities->Activity->Lap)) {
                             return array(
                                 "error"  => "TCX Files contains no GPS Points",
                                 "return" => array(
@@ -994,7 +994,7 @@
                         fwrite($fh, json_encode($gpxMeta));
                         fclose($fh);
 
-                        if ( ! file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
+                        if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
                             $gpxFileName = "none";
                         } else {
                             $gpxFileName = $this->getAppClass()->getSetting("http/") . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
@@ -1087,7 +1087,7 @@
             $badges = array();
             foreach ($userBadges as $userBadge) {
                 $badge_key = $userBadge['category'];
-                if ( ! array_key_exists($badge_key, $badges)) {
+                if (!array_key_exists($badge_key, $badges)) {
                     $badges[$badge_key] = array();
                 }
 
@@ -1163,7 +1163,7 @@
                 "LINE"   => __LINE__
             ));
 
-            if ( ! $dbPush) {
+            if (!$dbPush) {
                 $dbPush = array();
             }
 
@@ -1302,7 +1302,7 @@
         public function returnUserRecordPushCalendar()
         {
             // Short-circuit if the client did not give us a date range.
-            if ( ! isset($_GET['start']) || ! isset($_GET['end'])) {
+            if (!isset($_GET['start']) || !isset($_GET['end'])) {
                 return array("error" => "true", "code" => 105, "msg" => "No start or end date given");
             }
 
@@ -1335,9 +1335,9 @@
                     "LINE"   => __LINE__
                 ));
 
-                if ( ! $dbPush) {
+                if (!$dbPush) {
                     $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $range_start);
-                    if ( ! array_key_exists("debug", $_GET) or $_GET['debug'] != "true") {
+                    if (!array_key_exists("debug", $_GET) or $_GET['debug'] != "true") {
                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null,
                                 false) . "push", array(
                             'user'       => $this->getUserID(),
@@ -1474,7 +1474,7 @@
                     "blurb" => $journeys['blurb'],
                 );
 
-                if ( ! is_null($this->getTracking())) {
+                if (!is_null($this->getTracking())) {
                     $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
                     $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
                 }
@@ -1569,7 +1569,7 @@
             $totalFriends = count($leaderboard);
 
             foreach ($leaderboard as $encodedId => $friend) {
-                if ( ! array_key_exists("stepsSum", $leaderboard[$encodedId])) {
+                if (!array_key_exists("stepsSum", $leaderboard[$encodedId])) {
                     unset($leaderboard[$encodedId]);
                 } else {
                     unset($leaderboard[$encodedId]['gender']);
@@ -1737,7 +1737,7 @@
                     "LINE"   => __LINE__
                 ));
 
-                if ( ! is_null($this->getTracking())) {
+                if (!is_null($this->getTracking())) {
                     $this->getTracking()->track("JSON Get", $this->getUserID(), "Food");
                     $this->getTracking()->track("JSON Goal", $this->getUserID(), "Food");
                 }
@@ -1756,7 +1756,7 @@
             $returnArray = array();
 
             $where = $this->dbWhere();
-            if ( ! array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
+            if (!array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
                 unset($where['AND']['date[<=]']);
                 unset($where['AND']['date[>=]']);
                 $where['AND']['date'] = $this->getParamDate();
@@ -1764,7 +1764,7 @@
 
             $dbWater = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null,
                     false) . "water", 'liquid', $where);
-            if ( ! array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
+            if (!array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
                 /** @var float $dbWater */
                 $returnArray['water'] = array(
                     "liquid" => (String)round($dbWater, 2),
@@ -1793,7 +1793,7 @@
             $returnArray['food']['goals']['calories'] = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix",
                     null, false) . "food_goals", 'calories', $where);
 
-            if ( ! array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
+            if (!array_key_exists("LIMIT", $where) OR $where['LIMIT'] == 1) {
                 $returnArray['food']['goals']['carbs']   = $this->getAppClass()->getUserSetting($this->getUserID(),
                     "goal_food_carbs", 310);
                 $returnArray['food']['goals']['fat']     = $this->getAppClass()->getUserSetting($this->getUserID(),
@@ -1833,22 +1833,22 @@
             $returnArray['food']['meals']['Snacks Summary']    = array();
 
             foreach ($dbFood as $meal) {
-                if ( ! isset($returnArray['food']['meals'][$meal['meal']]['calories'])) {
+                if (!isset($returnArray['food']['meals'][$meal['meal']]['calories'])) {
                     $returnArray['food']['meals'][$meal['meal']]['calories'] = 0;
                 }
-                if ( ! isset($returnArray['food']['meals'][$meal['meal']]['carbs'])) {
+                if (!isset($returnArray['food']['meals'][$meal['meal']]['carbs'])) {
                     $returnArray['food']['meals'][$meal['meal']]['carbs'] = 0;
                 }
-                if ( ! isset($returnArray['food']['meals'][$meal['meal']]['fat'])) {
+                if (!isset($returnArray['food']['meals'][$meal['meal']]['fat'])) {
                     $returnArray['food']['meals'][$meal['meal']]['fat'] = 0;
                 }
-                if ( ! isset($returnArray['food']['meals'][$meal['meal']]['fiber'])) {
+                if (!isset($returnArray['food']['meals'][$meal['meal']]['fiber'])) {
                     $returnArray['food']['meals'][$meal['meal']]['fiber'] = 0;
                 }
-                if ( ! isset($returnArray['food']['meals'][$meal['meal']]['protein'])) {
+                if (!isset($returnArray['food']['meals'][$meal['meal']]['protein'])) {
                     $returnArray['food']['meals'][$meal['meal']]['protein'] = 0;
                 }
-                if ( ! isset($returnArray['food']['meals'][$meal['meal']]['sodium'])) {
+                if (!isset($returnArray['food']['meals'][$meal['meal']]['sodium'])) {
                     $returnArray['food']['meals'][$meal['meal']]['sodium'] = 0;
                 }
 
@@ -2232,7 +2232,7 @@
 
             $keyPoints = array();
             foreach ($dbKeyPoints as $point) {
-                if ( ! array_key_exists($point['category'], $keyPoints)) {
+                if (!array_key_exists($point['category'], $keyPoints)) {
                     $keyPoints[$point['category']] = array();
                 }
 
@@ -2277,7 +2277,7 @@
                     } else {
                         $times = $times . " times";
                     }
-                    if (array_key_exists("more", $values) && ! is_null($values['more']) && $values['more'] != "") {
+                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
                         $msg = $hes . " walked " . $values['more'] . " " . $times;
                     } else {
                         $msg = $hes . " walked " . $values['less'] . " " . $times;
@@ -2330,7 +2330,7 @@
                     } else {
                         $times = $times . " times";
                     }
-                    if (array_key_exists("more", $values) && ! is_null($values['more']) && $values['more'] != "") {
+                    if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
                         $msg = $hes . " climbed " . $values['more'] . " " . $times;
                     } else {
                         $msg = $hes . " climbed " . $values['less'] . " " . $times;
@@ -2589,7 +2589,7 @@
                     }
                 }
 
-                if ( ! is_null($this->getTracking())) {
+                if (!is_null($this->getTracking())) {
                     $this->getTracking()->track("JSON Get", $this->getUserID(), "Steps");
                     $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
                 }
@@ -2616,7 +2616,7 @@
 
             $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
-            if ( ! is_null($this->getTracking())) {
+            if (!is_null($this->getTracking())) {
                 $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
             }
 
@@ -2718,7 +2718,7 @@
                 $dbGoals[$key]['distance'] = round($dbGoals[$key]['distance'], 2);
             }
 
-            if ( ! is_null($this->getTracking())) {
+            if (!is_null($this->getTracking())) {
                 $this->getTracking()->track("JSON Goal", $this->getUserID(), "Steps");
             }
 
@@ -2745,7 +2745,7 @@
             $taskerDataArray = array();
 
             $minecraftUsername = $this->getAppClass()->getUserSetting($this->getUserID(), "minecraft_username");
-            if ( ! is_null($minecraftUsername)) {
+            if (!is_null($minecraftUsername)) {
                 $taskerDataArray['minecraft'] = array();
                 $dbRewards                    = $this->getAppClass()->getDatabase()->query(
                     "SELECT `" . $this->getAppClass()->getSetting("db_prefix", null,
@@ -2771,7 +2771,7 @@
                 $data                                  = array();
                 $taskerDataArray['minecraft']['count'] = 0;
                 foreach ($dbRewards as $dbReward) {
-                    if ( ! array_key_exists("reasons", $data)) {
+                    if (!array_key_exists("reasons", $data)) {
                         $data['reasons'] = array();
                     }
 
@@ -2781,10 +2781,10 @@
                         $dbReward['reward'] = str_replace('give ' . $minecraftUsername . ' ', '', $dbReward['reward']);
                         $dbReward['reward'] = explode(" ", $dbReward['reward']);
 
-                        if ( ! array_key_exists("give", $data)) {
+                        if (!array_key_exists("give", $data)) {
                             $data['give'] = array();
                         }
-                        if ( ! array_key_exists($dbReward['reward'][0], $data['give'])) {
+                        if (!array_key_exists($dbReward['reward'][0], $data['give'])) {
                             $data['give'][$dbReward['reward'][0]] = $dbReward['reward'][1];
                             array_push($data['reasons'],
                                 $dbReward['name'] . " | give " . $dbReward['reward'][1] . " " . $dbReward['reward'][0]);
@@ -2796,7 +2796,7 @@
                         ksort($data['give']);
 
                     } else {
-                        if ( ! array_key_exists("other", $data) || ! is_array($data['other'])) {
+                        if (!array_key_exists("other", $data) || !is_array($data['other'])) {
                             $data['other'] = array();
                         }
                         array_push($data['other'], str_replace("%s", $minecraftUsername, $dbReward['reward']));
@@ -2924,7 +2924,7 @@
                 $taskerDataArray['snapshot']['today']['food'] = 0;
             }
 
-            if ( ! is_null($this->getTracking())) {
+            if (!is_null($this->getTracking())) {
                 $this->getTracking()->track("JSON Get", $this->getUserID(), "Tasker");
                 $this->getTracking()->track("JSON Goal", $this->getUserID(), "Tasker");
             }
@@ -3028,7 +3028,7 @@
                     "length"
                 ),
                     array(
-                        "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => ! null),
+                        "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null),
                         "LIMIT" => 1,
                         "ORDER" => "length DESC"
                     ));
@@ -3062,7 +3062,7 @@
                     "length"
                 ),
                     array(
-                        "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => ! null),
+                        "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null),
                         "LIMIT" => 1,
                         "ORDER" => "start_date DESC"
                     ));
@@ -3102,7 +3102,7 @@
 
             $badges = array();
             foreach ($userBadges as $userBadge) {
-                if ( ! array_key_exists($userBadge['badgeType'], $badges)) {
+                if (!array_key_exists($userBadge['badgeType'], $badges)) {
                     $badges[$userBadge['badgeType']]                  = array();
                     $badges[$userBadge['badgeType']]['type']          = $userBadge['badgeType'];
                     $badges[$userBadge['badgeType']]['value']         = $userBadge['value'];
@@ -3382,7 +3382,7 @@
                 $dbWater[0]['cheer'] = 0;
             }
 
-            if ( ! is_null($this->getTracking())) {
+            if (!is_null($this->getTracking())) {
                 $this->getTracking()->track("JSON Get", $this->getUserID(), "Water");
                 $this->getTracking()->track("JSON Goal", $this->getUserID(), "Water");
             }
@@ -3556,7 +3556,7 @@
                      *
                      * @var DateTime $dt
                      */
-                    if ( ! array_key_exists($dt->format("Y-m-d"), $returnWeight)) {
+                    if (!array_key_exists($dt->format("Y-m-d"), $returnWeight)) {
                         if (strtotime($dt->format("Y-m-d")) > strtotime($latestDate)) {
                             // If missing date is after latest record use that
 
@@ -3689,10 +3689,10 @@
                 }
             } while ($loopMonths);
 
-            if ( ! array_key_exists("weight", $loss)) {
+            if (!array_key_exists("weight", $loss)) {
                 $loss["weight"] = array();
             }
-            if ( ! array_key_exists("fat", $loss)) {
+            if (!array_key_exists("fat", $loss)) {
                 $loss["fat"] = array();
             }
 
@@ -3780,7 +3780,7 @@
                     }
                 }
 
-                if ( ! is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
+                if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
                         $_SERVER)
                 ) {
                     $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
@@ -3788,7 +3788,7 @@
 
                 return $resultsArray;
             } else {
-                if ( ! is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
+                if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
                         $_SERVER)
                 ) {
                     $this->getTracking()->track("Error", 103);
@@ -3955,13 +3955,13 @@
                         $dbEventLast = "0000-00-00 00:00:00";
                     }
 
-                    if ( ! isset($days_between)) {
+                    if (!isset($days_between)) {
                         $days_between = 0;
                     } else {
                         $dayAvg = round($dbEventCount / $days_between, 2);
                     }
 
-                    if ( ! isset($months_between)) {
+                    if (!isset($months_between)) {
                         $months_between = 0;
                     } else {
                         $monthAvg = round($dbEventCount / $months_between, 2);
@@ -4175,7 +4175,7 @@
             foreach ($dbEvents as $dbEvent) {
                 $dbEvent['datestamp'] = substr($dbEvent['datestamp'], 0, 10);
 
-                if ( ! array_key_exists($dbEvent['datestamp'], $returnAr['db'])) {
+                if (!array_key_exists($dbEvent['datestamp'], $returnAr['db'])) {
                     $returnAr['db'][$dbEvent['datestamp']]             = array();
                     $returnAr['db'][$dbEvent['datestamp']]['score']    = 0;
                     $returnAr['db'][$dbEvent['datestamp']]['positive'] = 0;

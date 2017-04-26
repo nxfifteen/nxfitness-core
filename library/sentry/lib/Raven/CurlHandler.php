@@ -54,7 +54,7 @@
 
                 curl_multi_remove_handle($this->multi_handle, $ch);
 
-                if ( ! isset($this->requests[$fd])) {
+                if (!isset($this->requests[$fd])) {
                     return;
                 }
 
@@ -103,7 +103,7 @@
 
         public function join($timeout = null)
         {
-            if ( ! isset($timeout)) {
+            if (!isset($timeout)) {
                 $timeout = $this->join_timeout;
             }
             $start = time();

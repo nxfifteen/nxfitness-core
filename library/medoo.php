@@ -29,7 +29,7 @@
         {
             try {
                 $commands = array();
-                if (is_string($options) && ! empty($options)) {
+                if (is_string($options) && !empty($options)) {
                     if (strtolower($this->database_type) == 'sqlite') {
                         $this->database_file = $options;
                     } else {
@@ -191,11 +191,11 @@
                 if ($single_condition != array()) {
                     $where_clause = ' WHERE ' . $this->data_implode($single_condition, '');
                 }
-                if ( ! empty($where_AND)) {
+                if (!empty($where_AND)) {
                     $value        = array_values($where_AND);
                     $where_clause = ' WHERE ' . $this->data_implode($where[$value[0]], ' AND');
                 }
-                if ( ! empty($where_OR)) {
+                if (!empty($where_OR)) {
                     $value        = array_values($where_OR);
                     $where_clause = ' WHERE ' . $this->data_implode($where[$value[0]], ' OR');
                 }
@@ -303,7 +303,7 @@
                             if ($type == 'string') {
                                 $value = array($value);
                             }
-                            if ( ! empty($value)) {
+                            if (!empty($value)) {
                                 $like_clauses = array();
                                 foreach ($value as $item) {
                                     if ($operator == '!~') {
@@ -411,7 +411,7 @@
 
         public function get($table, $join = null, $column = null, $where = null)
         {
-            if ( ! isset($where)) {
+            if (!isset($where)) {
                 $where = array();
             }
             $where['LIMIT'] = 1;
@@ -460,7 +460,7 @@
         public function insert($table, $datas)
         {
             $lastId = array();
-            if ( ! isset($datas[0])) {
+            if (!isset($datas[0])) {
                 $datas = array($datas);
             }
             foreach ($datas as $data) {

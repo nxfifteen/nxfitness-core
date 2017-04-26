@@ -104,13 +104,13 @@
             $this->localSecond     = false;
 
             $this->idSite         = $idSite;
-            $this->urlReferrer    = ! empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : false;
+            $this->urlReferrer    = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : false;
             $this->pageCharset    = self::DEFAULT_CHARSET_PARAMETER_VALUES;
             $this->pageUrl        = self::getCurrentUrl();
-            $this->ip             = ! empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : false;
-            $this->acceptLanguage = ! empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : false;
-            $this->userAgent      = ! empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : false;
-            if ( ! empty($apiUrl)) {
+            $this->ip             = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : false;
+            $this->acceptLanguage = !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : false;
+            $this->userAgent      = !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : false;
+            if (!empty($apiUrl)) {
                 self::$URL = $apiUrl;
             }
 
@@ -208,9 +208,9 @@
         static protected function getCurrentScriptName()
         {
             $url = '';
-            if ( ! empty($_SERVER['PATH_INFO'])) {
+            if (!empty($_SERVER['PATH_INFO'])) {
                 $url = $_SERVER['PATH_INFO'];
-            } else if ( ! empty($_SERVER['REQUEST_URI'])) {
+            } else if (!empty($_SERVER['REQUEST_URI'])) {
                 if (($pos = strpos($_SERVER['REQUEST_URI'], '?')) !== false) {
                     $url = substr($_SERVER['REQUEST_URI'], 0, $pos);
                 } else {
@@ -239,7 +239,7 @@
         {
             $url = '';
             if (isset($_SERVER['QUERY_STRING'])
-                && ! empty($_SERVER['QUERY_STRING'])
+                && !empty($_SERVER['QUERY_STRING'])
             ) {
                 $url .= '?' . $_SERVER['QUERY_STRING'];
             }
@@ -271,7 +271,7 @@
         protected function getCustomVariablesFromCookie()
         {
             $cookie = $this->getCookieMatchingName('cvar');
-            if ( ! $cookie) {
+            if (!$cookie) {
                 return false;
             }
 
@@ -291,7 +291,7 @@
             if ($this->configCookiesDisabled) {
                 return false;
             }
-            if ( ! is_array($_COOKIE)) {
+            if (!is_array($_COOKIE)) {
                 return false;
             }
             $name = $this->getCookieName($name);
@@ -338,33 +338,33 @@
             $shipping = 0.0,
             $discount = 0.0
         ) {
-            if ( ! is_numeric($grandTotal)) {
+            if (!is_numeric($grandTotal)) {
                 throw new Exception("You must specifiy a grandTotal for the Ecommerce order (or Cart update)");
             }
 
             $url = $this->getRequest($this->idSite);
             $url .= '&idgoal=0';
-            if ( ! empty($grandTotal)) {
+            if (!empty($grandTotal)) {
                 $grandTotal = $this->forceDotAsSeparatorForDecimalPoint($grandTotal);
                 $url        .= '&revenue=' . $grandTotal;
             }
-            if ( ! empty($subTotal)) {
+            if (!empty($subTotal)) {
                 $subTotal = $this->forceDotAsSeparatorForDecimalPoint($subTotal);
                 $url      .= '&ec_st=' . $subTotal;
             }
-            if ( ! empty($tax)) {
+            if (!empty($tax)) {
                 $tax = $this->forceDotAsSeparatorForDecimalPoint($tax);
                 $url .= '&ec_tx=' . $tax;
             }
-            if ( ! empty($shipping)) {
+            if (!empty($shipping)) {
                 $shipping = $this->forceDotAsSeparatorForDecimalPoint($shipping);
                 $url      .= '&ec_sh=' . $shipping;
             }
-            if ( ! empty($discount)) {
+            if (!empty($discount)) {
                 $discount = $this->forceDotAsSeparatorForDecimalPoint($discount);
                 $url      .= '&ec_dt=' . $discount;
             }
-            if ( ! empty($this->ecommerceItems)) {
+            if (!empty($this->ecommerceItems)) {
                 // Removing the SKU index in the array before JSON encoding
                 $items = array();
                 foreach ($this->ecommerceItems as $item) {
@@ -384,7 +384,7 @@
          */
         protected function getTimestamp()
         {
-            return ! empty($this->forcedDatetime)
+            return !empty($this->forcedDatetime)
                 ? strtotime($this->forcedDatetime)
                 : time();
         }
@@ -403,58 +403,58 @@
                    '&r=' . substr(strval(mt_rand()), 2, 6) .
 
                    // XDEBUG_SESSIONS_START and KEY are related to the PHP Debugger, this can be ignored in other languages
-                   (! empty($_GET['XDEBUG_SESSION_START']) ? '&XDEBUG_SESSION_START=' . @urlencode($_GET['XDEBUG_SESSION_START']) : '') .
-                   (! empty($_GET['KEY']) ? '&KEY=' . @urlencode($_GET['KEY']) : '') .
+                   (!empty($_GET['XDEBUG_SESSION_START']) ? '&XDEBUG_SESSION_START=' . @urlencode($_GET['XDEBUG_SESSION_START']) : '') .
+                   (!empty($_GET['KEY']) ? '&KEY=' . @urlencode($_GET['KEY']) : '') .
 
                    // Only allowed for Super User, token_auth required,
-                   (! empty($this->ip) ? '&cip=' . $this->ip : '') .
-                   (! empty($this->userId) ? '&uid=' . urlencode($this->userId) : '') .
-                   (! empty($this->forcedDatetime) ? '&cdt=' . urlencode($this->forcedDatetime) : '') .
-                   (! empty($this->forcedNewVisit) ? '&new_visit=1' : '') .
-                   (( ! empty($this->token_auth) && ! $this->doBulkRequests) ? '&token_auth=' . urlencode($this->token_auth) : '') .
+                   (!empty($this->ip) ? '&cip=' . $this->ip : '') .
+                   (!empty($this->userId) ? '&uid=' . urlencode($this->userId) : '') .
+                   (!empty($this->forcedDatetime) ? '&cdt=' . urlencode($this->forcedDatetime) : '') .
+                   (!empty($this->forcedNewVisit) ? '&new_visit=1' : '') .
+                   ((!empty($this->token_auth) && !$this->doBulkRequests) ? '&token_auth=' . urlencode($this->token_auth) : '') .
 
                    // Values collected from cookie
                    '&_idts=' . $this->createTs .
                    '&_idvc=' . $this->visitCount .
-                   (! empty($this->lastVisitTs) ? '&_viewts=' . $this->lastVisitTs : '') .
-                   (! empty($this->ecommerceLastOrderTimestamp) ? '&_ects=' . urlencode($this->ecommerceLastOrderTimestamp) : '') .
+                   (!empty($this->lastVisitTs) ? '&_viewts=' . $this->lastVisitTs : '') .
+                   (!empty($this->ecommerceLastOrderTimestamp) ? '&_ects=' . urlencode($this->ecommerceLastOrderTimestamp) : '') .
 
                    // These parameters are set by the JS, but optional when using API
-                   (! empty($this->plugins) ? $this->plugins : '') .
+                   (!empty($this->plugins) ? $this->plugins : '') .
                    (($this->localHour !== false && $this->localMinute !== false && $this->localSecond !== false) ? '&h=' . $this->localHour . '&m=' . $this->localMinute . '&s=' . $this->localSecond : '') .
-                   (! empty($this->width) && ! empty($this->height) ? '&res=' . $this->width . 'x' . $this->height : '') .
-                   (! empty($this->hasCookies) ? '&cookie=' . $this->hasCookies : '') .
+                   (!empty($this->width) && !empty($this->height) ? '&res=' . $this->width . 'x' . $this->height : '') .
+                   (!empty($this->hasCookies) ? '&cookie=' . $this->hasCookies : '') .
 
                    // Various important attributes
-                   (! empty($this->customData) ? '&data=' . $this->customData : '') .
-                   (! empty($this->visitorCustomVar) ? '&_cvar=' . urlencode(json_encode($this->visitorCustomVar)) : '') .
-                   (! empty($this->pageCustomVar) ? '&cvar=' . urlencode(json_encode($this->pageCustomVar)) : '') .
-                   (! empty($this->eventCustomVar) ? '&e_cvar=' . urlencode(json_encode($this->eventCustomVar)) : '') .
-                   (! empty($this->generationTime) ? '&gt_ms=' . ((int)$this->generationTime) : '') .
-                   (! empty($this->forcedVisitorId) ? '&cid=' . $this->forcedVisitorId : '&_id=' . $this->getVisitorId()) .
+                   (!empty($this->customData) ? '&data=' . $this->customData : '') .
+                   (!empty($this->visitorCustomVar) ? '&_cvar=' . urlencode(json_encode($this->visitorCustomVar)) : '') .
+                   (!empty($this->pageCustomVar) ? '&cvar=' . urlencode(json_encode($this->pageCustomVar)) : '') .
+                   (!empty($this->eventCustomVar) ? '&e_cvar=' . urlencode(json_encode($this->eventCustomVar)) : '') .
+                   (!empty($this->generationTime) ? '&gt_ms=' . ((int)$this->generationTime) : '') .
+                   (!empty($this->forcedVisitorId) ? '&cid=' . $this->forcedVisitorId : '&_id=' . $this->getVisitorId()) .
 
                    // URL parameters
                    '&url=' . urlencode($this->pageUrl) .
                    '&urlref=' . urlencode($this->urlReferrer) .
-                   (( ! empty($this->pageCharset) && $this->pageCharset != self::DEFAULT_CHARSET_PARAMETER_VALUES) ? '&cs=' . $this->pageCharset : '') .
+                   ((!empty($this->pageCharset) && $this->pageCharset != self::DEFAULT_CHARSET_PARAMETER_VALUES) ? '&cs=' . $this->pageCharset : '') .
 
                    // Attribution information, so that Goal conversions are attributed to the right referrer or campaign
                    // Campaign name
-                   (! empty($this->attributionInfo[0]) ? '&_rcn=' . urlencode($this->attributionInfo[0]) : '') .
+                   (!empty($this->attributionInfo[0]) ? '&_rcn=' . urlencode($this->attributionInfo[0]) : '') .
                    // Campaign keyword
-                   (! empty($this->attributionInfo[1]) ? '&_rck=' . urlencode($this->attributionInfo[1]) : '') .
+                   (!empty($this->attributionInfo[1]) ? '&_rck=' . urlencode($this->attributionInfo[1]) : '') .
                    // Timestamp at which the referrer was set
-                   (! empty($this->attributionInfo[2]) ? '&_refts=' . $this->attributionInfo[2] : '') .
+                   (!empty($this->attributionInfo[2]) ? '&_refts=' . $this->attributionInfo[2] : '') .
                    // Referrer URL
-                   (! empty($this->attributionInfo[3]) ? '&_ref=' . urlencode($this->attributionInfo[3]) : '') .
+                   (!empty($this->attributionInfo[3]) ? '&_ref=' . urlencode($this->attributionInfo[3]) : '') .
 
                    // custom location info
-                   (! empty($this->country) ? '&country=' . urlencode($this->country) : '') .
-                   (! empty($this->region) ? '&region=' . urlencode($this->region) : '') .
-                   (! empty($this->city) ? '&city=' . urlencode($this->city) : '') .
-                   (! empty($this->lat) ? '&lat=' . urlencode($this->lat) : '') .
-                   (! empty($this->long) ? '&long=' . urlencode($this->long) : '') .
-                   (! $this->sendImageResponse ? '&send_image=0' : '') .
+                   (!empty($this->country) ? '&country=' . urlencode($this->country) : '') .
+                   (!empty($this->region) ? '&region=' . urlencode($this->region) : '') .
+                   (!empty($this->city) ? '&city=' . urlencode($this->city) : '') .
+                   (!empty($this->lat) ? '&lat=' . urlencode($this->lat) : '') .
+                   (!empty($this->long) ? '&long=' . urlencode($this->long) : '') .
+                   (!$this->sendImageResponse ? '&send_image=0' : '') .
 
                    // DEBUG
                    $this->DEBUG_APPEND_URL;
@@ -485,7 +485,7 @@
 
             // Set the 'ref' cookie
             $attributionInfo = $this->getAttributionInfo();
-            if ( ! empty($attributionInfo)) {
+            if (!empty($attributionInfo)) {
                 $this->setCookie('ref', $attributionInfo, $this->configReferralCookieTimeout);
             }
 
@@ -540,7 +540,7 @@
         protected function setCookie($cookieName, $cookieValue, $cookieTTL)
         {
             $cookieExpire = $this->currentTs + $cookieTTL;
-            if ( ! headers_sent()) {
+            if (!headers_sent()) {
                 setcookie($this->getCookieName($cookieName), $cookieValue, $cookieExpire, $this->configCookiePath,
                     $this->configCookieDomain);
             }
@@ -571,11 +571,11 @@
             self::$DEBUG_LAST_REQUESTED_URL = $url;
 
             // if doing a bulk request, store the url
-            if ($this->doBulkRequests && ! $force) {
+            if ($this->doBulkRequests && !$force) {
                 $this->storedTrackingActions[]
                     = $url
-                      . (! empty($this->userAgent) ? ('&ua=' . urlencode($this->userAgent)) : '')
-                      . (! empty($this->acceptLanguage) ? ('&lang=' . urlencode($this->acceptLanguage)) : '');
+                      . (!empty($this->userAgent) ? ('&ua=' . urlencode($this->userAgent)) : '')
+                      . (!empty($this->acceptLanguage) ? ('&lang=' . urlencode($this->acceptLanguage)) : '');
 
                 // Clear custom variables so they don't get copied over to other users in the bulk request
                 $this->clearCustomVariables();
@@ -606,7 +606,7 @@
                 }
 
                 // only supports JSON data
-                if ( ! empty($data)) {
+                if (!empty($data)) {
                     $options[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
                     $options[CURLOPT_HTTPHEADER][] = 'Expect:';
                     $options[CURLOPT_POSTFIELDS]   = $data;
@@ -618,7 +618,7 @@
                 $response = @curl_exec($ch);
                 ob_end_clean();
                 $content = '';
-                if ( ! empty($response)) {
+                if (!empty($response)) {
                     list($header, $content) = explode("\r\n\r\n", $response, $limitCount = 2);
                 }
             } else if (function_exists('stream_context_create')) {
@@ -632,7 +632,7 @@
                 );
 
                 // only supports JSON data
-                if ( ! empty($data)) {
+                if (!empty($data)) {
                     $stream_options['http']['header']  .= "Content-Type: application/json \r\n";
                     $stream_options['http']['content'] = $data;
                 }
@@ -760,7 +760,7 @@
             $data = array('requests' => $this->storedTrackingActions);
 
             // token_auth is not required by default, except if bulk_requests_require_authentication=1
-            if ( ! empty($this->token_auth)) {
+            if (!empty($this->token_auth)) {
                 $data['token_auth'] = $this->token_auth;
             }
 
@@ -848,10 +848,10 @@
 
             $url .= '&c_n=' . urlencode($contentName);
 
-            if ( ! empty($contentPiece) && strlen($contentPiece) > 0) {
+            if (!empty($contentPiece) && strlen($contentPiece) > 0) {
                 $url .= '&c_p=' . urlencode($contentPiece);
             }
-            if ( ! empty($contentTarget) && strlen($contentTarget) > 0) {
+            if (!empty($contentTarget) && strlen($contentTarget) > 0) {
                 $url .= '&c_t=' . urlencode($contentTarget);
             }
 
@@ -913,10 +913,10 @@
             $url .= '&c_i=' . urlencode($interaction);
             $url .= '&c_n=' . urlencode($contentName);
 
-            if ( ! empty($contentPiece) && strlen($contentPiece) > 0) {
+            if (!empty($contentPiece) && strlen($contentPiece) > 0) {
                 $url .= '&c_p=' . urlencode($contentPiece);
             }
-            if ( ! empty($contentTarget) && strlen($contentTarget) > 0) {
+            if (!empty($contentTarget) && strlen($contentTarget) > 0) {
                 $url .= '&c_t=' . urlencode($contentTarget);
             }
 
@@ -1101,7 +1101,7 @@
         {
             $url = $this->getRequest($this->idSite);
             $url .= '&idgoal=' . $idGoal;
-            if ( ! empty($revenue)) {
+            if (!empty($revenue)) {
                 $revenue = $this->forceDotAsSeparatorForDecimalPoint($revenue);
                 $url     .= '&revenue=' . $revenue;
             }
@@ -1153,7 +1153,7 @@
          */
         public function getAttributionInfo()
         {
-            if ( ! empty($this->attributionInfo)) {
+            if (!empty($this->attributionInfo)) {
                 return json_encode($this->attributionInfo);
             }
 
@@ -1172,10 +1172,10 @@
          */
         public function getVisitorId()
         {
-            if ( ! empty($this->userId)) {
+            if (!empty($this->userId)) {
                 return $this->getUserIdHashed($this->userId);
             }
-            if ( ! empty($this->forcedVisitorId)) {
+            if (!empty($this->forcedVisitorId)) {
                 return $this->forcedVisitorId;
             }
             if ($this->loadVisitorIdCookie()) {
@@ -1233,7 +1233,7 @@
             if (strlen($category) > 0) {
                 $url .= '&search_cat=' . urlencode($category);
             }
-            if ( ! empty($countResults) || $countResults === 0) {
+            if (!empty($countResults) || $countResults === 0) {
                 $url .= '&search_count=' . (int)$countResults;
             }
 
@@ -1285,17 +1285,17 @@
             } else if ($scope != 'visit') {
                 throw new Exception("Invalid 'scope' parameter value");
             }
-            if ( ! empty($this->visitorCustomVar[$id])) {
+            if (!empty($this->visitorCustomVar[$id])) {
                 return $this->visitorCustomVar[$id];
             }
             $cookieDecoded = $this->getCustomVariablesFromCookie();
-            if ( ! is_int($id)) {
+            if (!is_int($id)) {
                 throw new Exception("Parameter to getCustomVariable should be an integer");
             }
-            if ( ! is_array($cookieDecoded)
-                 || ! isset($cookieDecoded[$id])
-                 || ! is_array($cookieDecoded[$id])
-                 || count($cookieDecoded[$id]) != 2
+            if (!is_array($cookieDecoded)
+                || !isset($cookieDecoded[$id])
+                || !is_array($cookieDecoded[$id])
+                || count($cookieDecoded[$id]) != 2
             ) {
                 return false;
             }
@@ -1339,7 +1339,7 @@
         public function setAttributionInfo($jsonEncoded)
         {
             $decoded = json_decode($jsonEncoded, $assoc = true);
-            if ( ! is_array($decoded)) {
+            if (!is_array($decoded)) {
                 throw new Exception("setAttributionInfo() is expecting a JSON encoded string, $jsonEncoded given");
             }
             $this->attributionInfo = $decoded;
@@ -1403,7 +1403,7 @@
          */
         public function setCustomVariable($id, $name, $value, $scope = 'visit')
         {
-            if ( ! is_int($id)) {
+            if (!is_int($id)) {
                 throw new Exception("Parameter id to setCustomVariable should be an integer");
             }
             if ($scope == 'page') {
@@ -1445,7 +1445,7 @@
          */
         public function setEcommerceView($sku = '', $name = '', $category = '', $price = 0.0)
         {
-            if ( ! empty($category)) {
+            if (!empty($category)) {
                 if (is_array($category)) {
                     $category = json_encode($category);
                 }
@@ -1454,7 +1454,7 @@
             }
             $this->pageCustomVar[self::CVAR_INDEX_ECOMMERCE_ITEM_CATEGORY] = array('_pkc', $category);
 
-            if ( ! empty($price)) {
+            if (!empty($price)) {
                 $price                                                      = (float)$price;
                 $price                                                      = $this->forceDotAsSeparatorForDecimalPoint($price);
                 $this->pageCustomVar[self::CVAR_INDEX_ECOMMERCE_ITEM_PRICE] = array('_pkp', $price);
@@ -1464,7 +1464,7 @@
             if (empty($sku) && empty($name)) {
                 return;
             }
-            if ( ! empty($sku)) {
+            if (!empty($sku)) {
                 $this->pageCustomVar[self::CVAR_INDEX_ECOMMERCE_ITEM_SKU] = array('_pks', $sku);
             }
             if (empty($name)) {
@@ -1639,7 +1639,7 @@
          */
         public function setRequestTimeout($timeout)
         {
-            if ( ! is_int($timeout) || $timeout < 0) {
+            if (!is_int($timeout) || $timeout < 0) {
                 throw new Exception("Invalid value supplied for request timeout: $timeout");
             }
 

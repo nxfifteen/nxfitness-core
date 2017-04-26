@@ -203,7 +203,7 @@
 
                 return $this->settings[$key];
             } else {
-                if ($query_db && ! is_null($default)) {
+                if ($query_db && !is_null($default)) {
                     $this->set($key, $default);
                 }
 
@@ -272,7 +272,7 @@
 
                 return $this->settings[$key . "_" . $fuid];
             } else {
-                if ( ! is_null($default)) {
+                if (!is_null($default)) {
                     $this->setUser($fuid, $key, $default);
                 }
 

@@ -11,7 +11,7 @@
         exit();
     }
 
-    if ( ! function_exists("nxr_destroy_session")) {
+    if (!function_exists("nxr_destroy_session")) {
         function nxr_destroy_session()
         {
             // Unset all of the session variables.
@@ -32,25 +32,25 @@
         }
     }
 
-    if ( ! function_exists("nxr")) {
+    if (!function_exists("nxr")) {
         require_once(dirname(__FILE__) . "/inc/functions.php");
     }
 
-    if ( ! defined('DEBUG_MY_PROJECT')) {
+    if (!defined('DEBUG_MY_PROJECT')) {
         define('DEBUG_MY_PROJECT', false);
     }
 
     // start the session
     session_start();
-    if ( ! array_key_exists("timeout", $_SESSION) || ! is_numeric($_SESSION['timeout'])) {
+    if (!array_key_exists("timeout", $_SESSION) || !is_numeric($_SESSION['timeout'])) {
         $_SESSION['timeout'] = time() + 60 * 5;
     } else if ($_SESSION['timeout'] < time()) {
         nxr_destroy_session();
         header("Location: ./");
     }
 
-    if ( ! array_key_exists("core_config",
-            $_SESSION) || ! is_array($_SESSION['core_config']) || count($_SESSION['core_config']) == 0
+    if (!array_key_exists("core_config",
+            $_SESSION) || !is_array($_SESSION['core_config']) || count($_SESSION['core_config']) == 0
     ) {
         require_once(dirname(__FILE__) . "/config.inc.php");
         if (isset($config)) {
@@ -82,7 +82,7 @@
 
     nxr("Namespace Called: " . $url_namespace);
 
-    if ($url_namespace == "register" && ! array_key_exists("_nx_fb_usr", $_COOKIE)) {
+    if ($url_namespace == "register" && !array_key_exists("_nx_fb_usr", $_COOKIE)) {
         // Authorise a user against Fitbit's OAuth AIP
         nxr("New user registration started");
 

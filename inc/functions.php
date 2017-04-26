@@ -1,5 +1,5 @@
 <?php
-    if ( ! function_exists("nxr")) {
+    if (!function_exists("nxr")) {
         /**
          * NXR is a helper function. Past strings are recorded in a text file
          * and when run from a command line output is displayed on screen as
@@ -25,13 +25,13 @@
                 fclose($fh);
             }
 
-            if ($echoLine !== false && ( ! defined('IS_CRON_RUN') || ! IS_CRON_RUN) && php_sapi_name() == "cli") {
+            if ($echoLine !== false && (!defined('IS_CRON_RUN') || !IS_CRON_RUN) && php_sapi_name() == "cli") {
                 echo $msg;
             }
         }
     }
 
-    if ( ! function_exists("nxr_destroy_session")) {
+    if (!function_exists("nxr_destroy_session")) {
         function nxr_destroy_session()
         {
             // Unset all of the session variables.

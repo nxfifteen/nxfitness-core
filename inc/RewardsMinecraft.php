@@ -1,6 +1,6 @@
 <?php
 
-    if ( ! function_exists("nxr")) {
+    if (!function_exists("nxr")) {
         require_once(dirname(__FILE__) . "/functions.php");
     }
 
@@ -124,7 +124,7 @@
 
                     $currentDate = new DateTime ('now');
                     $currentDate = $currentDate->format("Y-m-d");
-                    if ( ! $this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", array(
+                    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", array(
                         "AND" => array(
                             'fuid'    => $this->getUserID(),
                             'date[~]' => $currentDate,
@@ -231,7 +231,7 @@
                             "date" => $currentDate
                         )
                     )), 3);
-                if ( ! is_numeric($recordedTarget) || $recordedTarget <= 0) {
+                if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
                     $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_" . $goal),
                         3);
                 }
@@ -312,10 +312,10 @@
                     $minecraftUsername = $this->getAppClass()->getUserSetting($dbReward['fuid'], "minecraft_username",
                         false);
 
-                    if ( ! array_key_exists($minecraftUsername, $data)) {
+                    if (!array_key_exists($minecraftUsername, $data)) {
                         $data[$minecraftUsername] = array();
                     }
-                    if ( ! array_key_exists($dbReward['rqid'], $data[$minecraftUsername])) {
+                    if (!array_key_exists($dbReward['rqid'], $data[$minecraftUsername])) {
                         $data[$minecraftUsername][$dbReward['rqid']] = array();
                     }
                     $dbReward['reward'] = str_replace("%s", $minecraftUsername, $dbReward['reward']);
@@ -391,7 +391,7 @@
             $supportActivity = false;
             if ($activity->activityName != "auto_detected") {
                 foreach ($checkForThese as $tracker) {
-                    if ( ! $supportActivity && strpos($activity->activityName, $tracker) !== false) {
+                    if (!$supportActivity && strpos($activity->activityName, $tracker) !== false) {
                         $supportActivity = true;
                     }
                 }
@@ -495,7 +495,7 @@
                             "date" => $currentDate
                         )
                     ));
-                if ( ! is_numeric($recordedTarget) || $recordedTarget <= 0) {
+                if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
                     $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_activity"),
                         30);
                 }
@@ -512,9 +512,9 @@
 
             if (in_array($trigger, $goalsToCheck) && date('Y-m-d') == $date) {
                 // Crushed Step Goal
-                if ( ! $this->crushedGoal($trigger, $value)) {
+                if (!$this->crushedGoal($trigger, $value)) {
                     // Smashed Step Goal
-                    if ( ! $this->smashedGoal($trigger, $value)) {
+                    if (!$this->smashedGoal($trigger, $value)) {
                         // Reached Step Goal
                         if ($this->reachedGoal($trigger, $value)) {
                             $this->CheckForAward("goal", $trigger, "reached");
@@ -550,7 +550,7 @@
 
             nxr("  ** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score);
 
-            if ( ! $this->CheckForAward("nomie", "logged", $event)) {
+            if (!$this->CheckForAward("nomie", "logged", $event)) {
                 $this->CheckForAward("nomie", "score", $score);
             }
         }

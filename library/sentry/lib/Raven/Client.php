@@ -47,38 +47,38 @@
                 $options = array_merge($options_or_dsn, $options);
             }
 
-            if ( ! is_array($options_or_dsn) && ! empty($options_or_dsn)) {
+            if (!is_array($options_or_dsn) && !empty($options_or_dsn)) {
                 $dsn = $options_or_dsn;
-            } else if ( ! empty($_SERVER['SENTRY_DSN'])) {
+            } else if (!empty($_SERVER['SENTRY_DSN'])) {
                 $dsn = @$_SERVER['SENTRY_DSN'];
-            } else if ( ! empty($options['dsn'])) {
+            } else if (!empty($options['dsn'])) {
                 $dsn = $options['dsn'];
             } else {
                 $dsn = null;
             }
 
-            if ( ! empty($dsn)) {
+            if (!empty($dsn)) {
                 $options = array_merge($options, self::parseDSN($dsn));
             }
 
-            $this->logger          = Raven_Util::get($options, 'logger', 'php');
-            $this->server          = Raven_Util::get($options, 'server');
-            $this->secret_key      = Raven_Util::get($options, 'secret_key');
-            $this->public_key      = Raven_Util::get($options, 'public_key');
-            $this->project         = Raven_Util::get($options, 'project', 1);
-            $this->auto_log_stacks = (bool)Raven_Util::get($options, 'auto_log_stacks', false);
-            $this->name            = Raven_Util::get($options, 'name', Raven_Compat::gethostname());
-            $this->site            = Raven_Util::get($options, 'site', $this->_server_variable('SERVER_NAME'));
-            $this->tags            = Raven_Util::get($options, 'tags', array());
-            $this->release         = Raven_Util::get($options, 'release', null);
-            $this->environment     = Raven_Util::get($options, 'environment', null);
-            $this->trace           = (bool)Raven_Util::get($options, 'trace', true);
-            $this->timeout         = Raven_Util::get($options, 'timeout', 2);
-            $this->message_limit   = Raven_Util::get($options, 'message_limit', self::MESSAGE_LIMIT);
-            $this->exclude         = Raven_Util::get($options, 'exclude', array());
-            $this->severity_map    = null;
-            $this->http_proxy      = Raven_Util::get($options, 'http_proxy');
-            $this->extra_data      = Raven_Util::get($options, 'extra', array());
+            $this->logger                  = Raven_Util::get($options, 'logger', 'php');
+            $this->server                  = Raven_Util::get($options, 'server');
+            $this->secret_key              = Raven_Util::get($options, 'secret_key');
+            $this->public_key              = Raven_Util::get($options, 'public_key');
+            $this->project                 = Raven_Util::get($options, 'project', 1);
+            $this->auto_log_stacks         = (bool)Raven_Util::get($options, 'auto_log_stacks', false);
+            $this->name                    = Raven_Util::get($options, 'name', Raven_Compat::gethostname());
+            $this->site                    = Raven_Util::get($options, 'site', $this->_server_variable('SERVER_NAME'));
+            $this->tags                    = Raven_Util::get($options, 'tags', array());
+            $this->release                 = Raven_Util::get($options, 'release', null);
+            $this->environment             = Raven_Util::get($options, 'environment', null);
+            $this->trace                   = (bool)Raven_Util::get($options, 'trace', true);
+            $this->timeout                 = Raven_Util::get($options, 'timeout', 2);
+            $this->message_limit           = Raven_Util::get($options, 'message_limit', self::MESSAGE_LIMIT);
+            $this->exclude                 = Raven_Util::get($options, 'exclude', array());
+            $this->severity_map            = null;
+            $this->http_proxy              = Raven_Util::get($options, 'http_proxy');
+            $this->extra_data              = Raven_Util::get($options, 'extra', array());
             $this->send_callback           = Raven_Util::get($options, 'send_callback', null);
             $this->curl_method             = Raven_Util::get($options, 'curl_method', 'sync');
             $this->curl_path               = Raven_Util::get($options, 'curl_path', 'curl');
@@ -160,13 +160,13 @@
 
             // dont set this as an empty array as PHP will treat it as a numeric array
             // instead of a mapping which goes against the defined Sentry spec
-            if ( ! empty($_POST)) {
+            if (!empty($_POST)) {
                 $result['data'] = $_POST;
             }
-            if ( ! empty($_COOKIE)) {
+            if (!empty($_COOKIE)) {
                 $result['cookies'] = $_COOKIE;
             }
-            if ( ! empty($headers)) {
+            if (!empty($headers)) {
                 $result['headers'] = $headers;
             }
 
@@ -179,13 +179,13 @@
         {
             $user = $this->context->user;
             if ($user === null) {
-                if ( ! function_exists('session_id') || ! session_id()) {
+                if (!function_exists('session_id') || !session_id()) {
                     return array();
                 }
                 $user = array(
                     'id' => session_id(),
                 );
-                if ( ! empty($_SESSION)) {
+                if (!empty($_SESSION)) {
                     $user['data'] = $_SESSION;
                 }
             }
@@ -228,7 +228,7 @@
                 $timeout = max(1, ceil(1000 * $this->timeout));
 
                 // some versions of PHP 5.3 don't have this defined correctly
-                if ( ! defined('CURLOPT_CONNECTTIMEOUT_MS')) {
+                if (!defined('CURLOPT_CONNECTTIMEOUT_MS')) {
                     //see http://stackoverflow.com/questions/9062798/php-curl-timeout-is-not-working/9063006#9063006
                     define('CURLOPT_CONNECTTIMEOUT_MS', 156);
                 }
@@ -255,7 +255,7 @@
             $cmd .= '-d ' . escapeshellarg($data) . ' ';
             $cmd .= escapeshellarg($url) . ' ';
             $cmd .= '-m 5 ';  // 5 second timeout for the whole process (connect + send)
-            if ( ! $this->verify_ssl) {
+            if (!$this->verify_ssl) {
                 $cmd .= '-k ';
             }
             $cmd .= '> /dev/null 2>&1 &'; // ensure exec returns immediately while curl runs in the background
@@ -300,14 +300,14 @@
         protected function get_current_url()
         {
             // When running from commandline the REQUEST_URI is missing.
-            if ( ! isset($_SERVER['REQUEST_URI'])) {
+            if (!isset($_SERVER['REQUEST_URI'])) {
                 return null;
             }
 
             // HTTP_HOST is a client-supplied header that is optional in HTTP 1.0
-            $host = (! empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST']
-                : (! empty($_SERVER['LOCAL_ADDR']) ? $_SERVER['LOCAL_ADDR']
-                    : (! empty($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '')));
+            $host = (!empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST']
+                : (!empty($_SERVER['LOCAL_ADDR']) ? $_SERVER['LOCAL_ADDR']
+                    : (!empty($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '')));
 
             $httpS = $this->isHttps() ? 's' : '';
 
@@ -321,17 +321,17 @@
          */
         protected function isHttps()
         {
-            if ( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+            if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
                 return true;
             }
 
-            if ( ! empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
+            if (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
                 return true;
             }
 
-            if ( ! empty($this->trust_x_forwarded_proto) &&
-                 ! empty($_SERVER['X-FORWARDED-PROTO']) &&
-                 $_SERVER['X-FORWARDED-PROTO'] === 'https'
+            if (!empty($this->trust_x_forwarded_proto) &&
+                !empty($_SERVER['X-FORWARDED-PROTO']) &&
+                $_SERVER['X-FORWARDED-PROTO'] === 'https'
             ) {
                 return true;
             }
@@ -450,7 +450,7 @@
 
             $code    = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             $success = ($code == 200);
-            if ( ! $success) {
+            if (!$success) {
                 // It'd be nice just to raise an exception here, but it's not very PHP-like
                 $this->_lasterror = curl_error($curl);
             } else {
@@ -525,8 +525,8 @@
         {
             $url    = parse_url($dsn);
             $scheme = (isset($url['scheme']) ? $url['scheme'] : '');
-            if ( ! in_array($scheme, array('http', 'https'))) {
-                throw new InvalidArgumentException('Unsupported Sentry DSN scheme: ' . (! empty($scheme) ? $scheme : '<not set>'));
+            if (!in_array($scheme, array('http', 'https'))) {
+                throw new InvalidArgumentException('Unsupported Sentry DSN scheme: ' . (!empty($scheme) ? $scheme : '<not set>'));
             }
             $netloc  = (isset($url['host']) ? $url['host'] : null);
             $netloc  .= (isset($url['port']) ? ':' . $url['port'] : null);
@@ -762,7 +762,7 @@
         ) {
             // Gracefully handle messages which contain formatting characters, but were not
             // intended to be used with formatting.
-            if ( ! empty($params)) {
+            if (!empty($params)) {
                 $formatted_message = vsprintf($message, $params);
             } else {
                 $formatted_message = $message;
@@ -771,7 +771,7 @@
             if ($data === null) {
                 $data = array();
                 // support legacy method of passing in a level name as the third arg
-            } else if ( ! is_array($data)) {
+            } else if (!is_array($data)) {
                 $data = array(
                     'level' => $data,
                 );
@@ -825,7 +825,7 @@
                 array_unshift($trace, $frame_where_exception_thrown);
 
                 // manually trigger autoloading, as it's not done in some edge cases due to PHP bugs (see #60149)
-                if ( ! class_exists('Raven_Stacktrace')) {
+                if (!class_exists('Raven_Stacktrace')) {
                     spl_autoload_call('Raven_Stacktrace');
                 }
 
@@ -918,19 +918,19 @@
 
         public function capture($data, $stack = null, $vars = null)
         {
-            if ( ! isset($data['timestamp'])) {
+            if (!isset($data['timestamp'])) {
                 $data['timestamp'] = gmdate('Y-m-d\TH:i:s\Z');
             }
-            if ( ! isset($data['level'])) {
+            if (!isset($data['level'])) {
                 $data['level'] = self::ERROR;
             }
-            if ( ! isset($data['tags'])) {
+            if (!isset($data['tags'])) {
                 $data['tags'] = array();
             }
-            if ( ! isset($data['extra'])) {
+            if (!isset($data['extra'])) {
                 $data['extra'] = array();
             }
-            if ( ! isset($data['event_id'])) {
+            if (!isset($data['event_id'])) {
                 $data['event_id'] = $this->uuid4();
             }
 
@@ -976,24 +976,24 @@
                 unset($data['request']);
             }
 
-            if ( ! $this->breadcrumbs->is_empty()) {
+            if (!$this->breadcrumbs->is_empty()) {
                 $data['breadcrumbs'] = $this->breadcrumbs->fetch();
             }
 
-            if (( ! $stack && $this->auto_log_stacks) || $stack === true) {
+            if ((!$stack && $this->auto_log_stacks) || $stack === true) {
                 $stack = debug_backtrace();
 
                 // Drop last stack
                 array_shift($stack);
             }
 
-            if ( ! empty($stack)) {
+            if (!empty($stack)) {
                 // manually trigger autoloading, as it's not done in some edge cases due to PHP bugs (see #60149)
-                if ( ! class_exists('Raven_Stacktrace')) {
+                if (!class_exists('Raven_Stacktrace')) {
                     spl_autoload_call('Raven_Stacktrace');
                 }
 
-                if ( ! isset($data['stacktrace']) && ! isset($data['exception'])) {
+                if (!isset($data['stacktrace']) && !isset($data['exception'])) {
                     $data['stacktrace'] = array(
                         'frames' => Raven_Stacktrace::get_stack_info(
                             $stack, $this->trace, $vars, $this->message_limit, $this->prefixes,
@@ -1006,7 +1006,7 @@
             $this->sanitize($data);
             $this->process($data);
 
-            if ( ! $this->store_errors_for_bulk_send) {
+            if (!$this->store_errors_for_bulk_send) {
                 $this->send($data);
             } else {
                 $this->_pending_events[] = $data;
@@ -1020,21 +1020,21 @@
         public function sanitize(&$data)
         {
             // attempt to sanitize any user provided data
-            if ( ! empty($data['request'])) {
+            if (!empty($data['request'])) {
                 $data['request'] = $this->serializer->serialize($data['request']);
             }
-            if ( ! empty($data['user'])) {
+            if (!empty($data['user'])) {
                 $data['user'] = $this->serializer->serialize($data['user'], 3);
             }
-            if ( ! empty($data['extra'])) {
+            if (!empty($data['extra'])) {
                 $data['extra'] = $this->serializer->serialize($data['extra']);
             }
-            if ( ! empty($data['tags'])) {
+            if (!empty($data['tags'])) {
                 foreach ($data['tags'] as $key => $value) {
                     $data['tags'][$key] = @(string)$value;
                 }
             }
-            if ( ! empty($data['contexts'])) {
+            if (!empty($data['contexts'])) {
                 $data['contexts'] = $this->serializer->serialize($data['contexts'], 5);
             }
         }
@@ -1059,7 +1059,7 @@
             $this->_pending_events = array();
             if ($this->store_errors_for_bulk_send) {
                 //in case an error occurs after this is called, on shutdown, send any new errors.
-                $this->store_errors_for_bulk_send = ! defined('RAVEN_CLIENT_END_REACHED');
+                $this->store_errors_for_bulk_send = !defined('RAVEN_CLIENT_END_REACHED');
             }
         }
 
@@ -1100,7 +1100,7 @@
                 return;
             }
 
-            if ( ! $this->server) {
+            if (!$this->server) {
                 return;
             }
 
@@ -1209,7 +1209,7 @@
 
         public function onShutdown()
         {
-            if ( ! defined('RAVEN_CLIENT_END_REACHED')) {
+            if (!defined('RAVEN_CLIENT_END_REACHED')) {
                 define('RAVEN_CLIENT_END_REACHED', true);
             }
             $this->sendUnsentErrors();
@@ -1228,7 +1228,7 @@
         {
             if ($merge && $this->context->user !== null) {
                 // bail if data is null
-                if ( ! $data) {
+                if (!$data) {
                     return;
                 }
                 $this->context->user = array_merge($this->context->user, $data);

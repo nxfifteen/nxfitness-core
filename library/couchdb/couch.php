@@ -69,7 +69,7 @@
             $this->dsn        = preg_replace('@/+$@', '', $dsn);
             $this->options    = $options;
             $this->dsn_parsed = parse_url($this->dsn);
-            if ( ! isset($this->dsn_parsed['port'])) {
+            if (!isset($this->dsn_parsed['port'])) {
                 $this->dsn_parsed['port'] = 80;
             }
             if (function_exists('curl_init')) {
@@ -157,13 +157,13 @@
         protected function _socket_storeFile($url, $file, $content_type)
         {
 
-            if ( ! strlen($url)) {
+            if (!strlen($url)) {
                 throw new InvalidArgumentException("Attachment URL can't be empty");
             }
-            if ( ! strlen($file) OR ! is_file($file) OR ! is_readable($file)) {
+            if (!strlen($file) OR !is_file($file) OR !is_readable($file)) {
                 throw new InvalidArgumentException("Attachment file does not exist or is not readable");
             }
-            if ( ! strlen($content_type)) {
+            if (!strlen($content_type)) {
                 throw new InvalidArgumentException("Attachment Content Type can't be empty");
             }
             $req     = $this->_socket_startRequestHeaders('PUT', $url);
@@ -174,7 +174,7 @@
             fwrite($this->socket, $req);
             stream_copy_to_stream($fstream, $this->socket);
             $response = '';
-            while ( ! feof($this->socket)) {
+            while (!feof($this->socket)) {
                 $response .= fgets($this->socket);
             }
             $this->_disconnect();
@@ -194,7 +194,7 @@
         {
             $ssl          = $this->dsn_part('scheme') == 'https' ? 'ssl://' : '';
             $this->socket = @fsockopen($ssl . $this->dsn_part('host'), $this->dsn_part('port'), $err_num, $err_string);
-            if ( ! $this->socket) {
+            if (!$this->socket) {
                 throw new Exception('Could not open connection to ' . $this->dsn_part('host') . ':' . $this->dsn_part('port') . ': ' . $err_string . ' (' . $err_num . ')');
             }
 
@@ -212,7 +212,7 @@
         {
             fwrite($this->socket, $request);
             $response = '';
-            while ( ! feof($this->socket)) {
+            while (!feof($this->socket)) {
                 $response .= fgets($this->socket);
             }
 
@@ -293,10 +293,10 @@
          */
         public static function parseRawResponse($raw_data, $json_as_array = false)
         {
-            if ( ! strlen($raw_data)) {
+            if (!strlen($raw_data)) {
                 throw new InvalidArgumentException("no data to parse");
             }
-            while ( ! substr_compare($raw_data, "HTTP/1.1 100 Continue\r\n\r\n", 0, 25)) {
+            while (!substr_compare($raw_data, "HTTP/1.1 100 Continue\r\n\r\n", 0, 25)) {
                 $raw_data = substr($raw_data, 25);
             }
             $response = array('body' => null);
@@ -358,7 +358,7 @@
          */
         public function dsn_part($part = null)
         {
-            if ( ! $part) {
+            if (!$part) {
                 return $this->dsn_parsed;
             }
             if (isset($this->dsn_parsed[$part])) {
@@ -442,10 +442,10 @@
          */
         public function continuousQuery($callable, $method, $url, $parameters = array(), $data = null)
         {
-            if ( ! in_array($method, $this->HTTP_METHODS)) {
+            if (!in_array($method, $this->HTTP_METHODS)) {
                 throw new Exception("Bad HTTP method: $method");
             }
-            if ( ! is_callable($callable)) {
+            if (!is_callable($callable)) {
                 throw new InvalidArgumentException("callable argument have to success to is_callable PHP function");
             }
             if (is_array($parameters) AND count($parameters)) {
@@ -453,7 +453,7 @@
             }
             //Send the request to the socket
             $request = $this->_socket_buildRequest($method, $url, $data, null);
-            if ( ! $this->_connect()) {
+            if (!$this->_connect()) {
                 return false;
             }
             fwrite($this->socket, $request);
@@ -461,7 +461,7 @@
             //Read the headers and check that the response is valid
             $response = '';
             $headers  = false;
-            while ( ! feof($this->socket) && ! $headers) {
+            while (!feof($this->socket) && !$headers) {
                 $response .= fgets($this->socket);
                 if ($response == "HTTP/1.1 100 Continue\r\n\r\n") {
                     $response = '';
@@ -476,7 +476,7 @@
             $code    = $split[1];
             unset($split);
             //If an invalid response is sent, read the rest of the response and throw an appropriate couchException
-            if ( ! in_array($code, array(200, 201))) {
+            if (!in_array($code, array(200, 201))) {
                 stream_set_blocking($this->socket, false);
                 $response .= stream_get_contents($this->socket);
                 fclose($this->socket);
@@ -485,7 +485,7 @@
 
             //For as long as the socket is open, read lines and pass them to the callback
             $c = clone $this;
-            while ($this->socket && ! feof($this->socket)) {
+            while ($this->socket && !feof($this->socket)) {
                 $e    = null;
                 $e2   = null;
                 $read = array($this->socket);
@@ -523,7 +523,7 @@
          */
         public function _socket_query($method, $url, $parameters = array(), $data = null, $content_type = null)
         {
-            if ( ! in_array($method, $this->HTTP_METHODS)) {
+            if (!in_array($method, $this->HTTP_METHODS)) {
                 throw new Exception("Bad HTTP method: $method");
             }
 
@@ -532,7 +532,7 @@
             }
 
             $request = $this->_socket_buildRequest($method, $url, $data, $content_type);
-            if ( ! $this->_connect()) {
+            if (!$this->_connect()) {
                 return false;
             }
             // 		echo "DEBUG: Request ------------------ \n$request\n";
@@ -557,10 +557,10 @@
          */
         public function _socket_storeAsFile($url, $data, $content_type)
         {
-            if ( ! strlen($url)) {
+            if (!strlen($url)) {
                 throw new InvalidArgumentException("Attachment URL can't be empty");
             }
-            if ( ! strlen($content_type)) {
+            if (!strlen($content_type)) {
                 throw new InvalidArgumentException("Attachment Content Type can't be empty");
             }
 
@@ -571,7 +571,7 @@
             fwrite($this->socket, $req);
             fwrite($this->socket, $data);
             $response = '';
-            while ( ! feof($this->socket)) {
+            while (!feof($this->socket)) {
                 $response .= fgets($this->socket);
             }
             $this->_disconnect();
@@ -594,7 +594,7 @@
          */
         public function _curl_query($method, $url, $parameters = array(), $data = null, $content_type = null)
         {
-            if ( ! in_array($method, $this->HTTP_METHODS)) {
+            if (!in_array($method, $this->HTTP_METHODS)) {
                 throw new Exception("Bad HTTP method: $method");
             }
 
@@ -627,13 +627,13 @@
          */
         public function _curl_storeFile($url, $file, $content_type)
         {
-            if ( ! strlen($url)) {
+            if (!strlen($url)) {
                 throw new InvalidArgumentException("Attachment URL can't be empty");
             }
-            if ( ! strlen($file) OR ! is_file($file) OR ! is_readable($file)) {
+            if (!strlen($file) OR !is_file($file) OR !is_readable($file)) {
                 throw new InvalidArgumentException("Attachment file does not exist or is not readable");
             }
-            if ( ! strlen($content_type)) {
+            if (!strlen($content_type)) {
                 throw new InvalidArgumentException("Attachment Content Type can't be empty");
             }
             $url          = $this->dsn . $url;
@@ -676,10 +676,10 @@
          */
         public function _curl_storeAsFile($url, $data, $content_type)
         {
-            if ( ! strlen($url)) {
+            if (!strlen($url)) {
                 throw new InvalidArgumentException("Attachment URL can't be empty");
             }
-            if ( ! strlen($content_type)) {
+            if (!strlen($content_type)) {
                 throw new InvalidArgumentException("Attachment Content Type can't be empty");
             }
             $url          = $this->dsn . $url;

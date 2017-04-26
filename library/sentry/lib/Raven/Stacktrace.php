@@ -69,7 +69,7 @@
                 $target = max(0, ($lineno - ($context_lines + 1)));
                 $file->seek($target);
                 $cur_lineno = $target + 1;
-                while ( ! $file->eof()) {
+                while (!$file->eof()) {
                     $line = rtrim($file->current(), "\r\n");
                     if ($cur_lineno == $lineno) {
                         $frame['line'] = $line;
@@ -117,8 +117,8 @@
                 $frame     = isset($frames[$i]) ? $frames[$i] : null;
                 $nextframe = isset($frames[$i + 1]) ? $frames[$i + 1] : null;
 
-                if ( ! array_key_exists('file', $frame)) {
-                    if ( ! empty($frame['class'])) {
+                if (!array_key_exists('file', $frame)) {
+                    if (!empty($frame['class'])) {
                         $context['line'] = sprintf('%s%s%s',
                             $frame['class'], $frame['type'], $frame['function']);
                     } else {
@@ -172,7 +172,7 @@
 
                 // dont set this as an empty array as PHP will treat it as a numeric array
                 // instead of a mapping which goes against the defined Sentry spec
-                if ( ! empty($vars)) {
+                if (!empty($vars)) {
                     $cleanVars = array();
                     foreach ($vars as $key => $value) {
                         $value = $reprSerializer->serialize($value);
@@ -193,7 +193,7 @@
 
         public static function get_default_context($frame, $frame_arg_limit = Raven_Client::MESSAGE_LIMIT)
         {
-            if ( ! isset($frame['args'])) {
+            if (!isset($frame['args'])) {
                 return array();
             }
 
@@ -212,13 +212,13 @@
 
         public static function get_frame_context($frame, $frame_arg_limit = Raven_Client::MESSAGE_LIMIT)
         {
-            if ( ! isset($frame['args'])) {
+            if (!isset($frame['args'])) {
                 return array();
             }
 
             // The reflection API seems more appropriate if we associate it with the frame
             // where the function is actually called (since we're treating them as function context)
-            if ( ! isset($frame['function'])) {
+            if (!isset($frame['function'])) {
                 return self::get_default_context($frame, $frame_arg_limit);
             }
             if (strpos($frame['function'], '__lambda_func') !== false) {

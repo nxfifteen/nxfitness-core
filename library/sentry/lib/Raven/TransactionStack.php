@@ -39,10 +39,10 @@
 
         public function pop($context = null)
         {
-            if ( ! $context) {
+            if (!$context) {
                 return array_pop($this->stack);
             }
-            while ( ! empty($this->stack)) {
+            while (!empty($this->stack)) {
                 if (array_pop($this->stack) === $context) {
                     return $context;
                 }

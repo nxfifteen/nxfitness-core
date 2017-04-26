@@ -8,8 +8,8 @@
         $start = microtime(true);
         if (
             is_writable('cache')
-            && ( ! array_key_exists("debug", $_GET) || (array_key_exists("debug", $_GET) && $_GET['debug'] != "true"))
-            && ( ! array_key_exists("cache", $_GET) || (array_key_exists("cache", $_GET) && $_GET['cache'] != "false"))
+            && (!array_key_exists("debug", $_GET) || (array_key_exists("debug", $_GET) && $_GET['debug'] != "true"))
+            && (!array_key_exists("cache", $_GET) || (array_key_exists("cache", $_GET) && $_GET['cache'] != "false"))
             /* && (!array_key_exists('_nx_fb_usr', $_COOKIE ) || $_COOKIE['_nx_fb_usr'] != $_GET['user'])*/
         ) {
             // cache files are created like cache/...
@@ -113,9 +113,9 @@
         } else {
             echo json_encode($json);
         }
-    } else if ( ! array_key_exists("user", $_GET)) {
+    } else if (!array_key_exists("user", $_GET)) {
         echo json_error(100);
-    } else if ( ! array_key_exists("data", $_GET)) {
+    } else if (!array_key_exists("data", $_GET)) {
         echo json_error(102);
     }
 

@@ -10,7 +10,7 @@
     } else {
 
         $HeaderNotificationBar = array();
-        if ( ! $App->getNxFit()->isUserOAuthAuthorised($_COOKIE['_nx_fb_usr'])) {
+        if (!$App->getNxFit()->isUserOAuthAuthorised($_COOKIE['_nx_fb_usr'])) {
             array_push($HeaderNotificationBar, $App->getThemeWidgets("HeaderNotificationBar", array(
                 "msg"     => "<a href=\"../authorise\">Fitbit OAuth Setup Required</a>",
                 "urgency" => "danger",

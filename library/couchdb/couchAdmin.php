@@ -53,19 +53,19 @@
         private function build_url($parts)
         {
             $back = $parts["scheme"] . "://";
-            if ( ! empty($parts["user"])) {
+            if (!empty($parts["user"])) {
                 $back .= $parts["user"];
-                if ( ! empty($parts["pass"])) {
+                if (!empty($parts["pass"])) {
                     $back .= ":" . $parts["pass"];
                 }
                 $back .= "@";
             }
             $back .= $parts["host"];
-            if ( ! empty($parts["port"])) {
+            if (!empty($parts["port"])) {
                 $back .= ":" . $parts["port"];
             }
             $back .= "/";
-            if ( ! empty($parts["path"])) {
+            if (!empty($parts["path"])) {
                 $back .= $parts["path"];
             }
 
@@ -287,10 +287,10 @@
         {
             if (is_string($user)) {
                 $user = $this->getUser($user);
-            } else if ( ! property_exists($user, "_id") || ! property_exists($user, "roles")) {
+            } else if (!property_exists($user, "_id") || !property_exists($user, "roles")) {
                 throw new InvalidArgumentException("user parameter should be the login or a user document");
             }
-            if ( ! in_array($role, $user->roles)) {
+            if (!in_array($role, $user->roles)) {
                 $user->roles[] = $role;
                 $client        = clone($this->client);
                 $client->useDatabase($this->usersdb);
@@ -314,7 +314,7 @@
         {
             if (is_string($user)) {
                 $user = $this->getUser($user);
-            } else if ( ! property_exists($user, "_id") || ! property_exists($user, "roles")) {
+            } else if (!property_exists($user, "_id") || !property_exists($user, "roles")) {
                 throw new InvalidArgumentException("user parameter should be the login or a user document");
             }
             if (in_array($role, $user->roles)) {
@@ -345,7 +345,7 @@
             if ($resp['status_code'] != 200) {
                 throw new couchException($raw);
             }
-            if ( ! property_exists($resp['body'], "admins")) {
+            if (!property_exists($resp['body'], "admins")) {
                 $resp["body"]->admins         = new stdClass();
                 $resp["body"]->admins->names  = array();
                 $resp["body"]->admins->roles  = array();
@@ -369,7 +369,7 @@
          */
         public function setSecurity($security)
         {
-            if ( ! is_object($security)) {
+            if (!is_object($security)) {
                 throw new InvalidArgumentException("Security should be an object");
             }
             $dbname = $this->client->getDatabaseName();
@@ -476,7 +476,7 @@
                 throw new InvalidArgumentException("Login can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( ! in_array($login, $sec->readers->names)) {
+            if (!in_array($login, $sec->readers->names)) {
                 return true;
             }
             $sec->readers->names = $this->rmFromArray($login, $sec->readers->names);
@@ -504,7 +504,7 @@
                 throw new InvalidArgumentException("Login can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( ! in_array($login, $sec->admins->names)) {
+            if (!in_array($login, $sec->admins->names)) {
                 return true;
             }
             $sec->admins->names = $this->rmFromArray($login, $sec->admins->names);
@@ -606,7 +606,7 @@
                 throw new InvalidArgumentException("Role can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( ! in_array($role, $sec->readers->roles)) {
+            if (!in_array($role, $sec->readers->roles)) {
                 return true;
             }
             $sec->readers->roles = $this->rmFromArray($role, $sec->readers->roles);
@@ -634,7 +634,7 @@
                 throw new InvalidArgumentException("Role can't be empty");
             }
             $sec = $this->getSecurity();
-            if ( ! in_array($role, $sec->admins->roles)) {
+            if (!in_array($role, $sec->admins->roles)) {
                 return true;
             }
             $sec->admins->roles = $this->rmFromArray($role, $sec->admins->roles);

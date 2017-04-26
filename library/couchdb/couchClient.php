@@ -17,7 +17,7 @@
 
     */
 
-    if ( ! function_exists("nxr")) {
+    if (!function_exists("nxr")) {
         /**
          * NXR is a helper function. Past strings are recorded in a text file
          * and when run from a command line output is displayed on screen as
@@ -44,7 +44,7 @@
         }
     }
 
-    if ( ! function_exists("mb_parse_url")) {
+    if (!function_exists("mb_parse_url")) {
         /**
          * UTF-8 aware parse_url() replacement.
          *
@@ -67,7 +67,7 @@
                     '(?P<path>[^?#]*)(\\?(?P<query>[^#]*))?(#(?P<fragment>.*))?~u', $url, $matches)
             ) {
                 foreach ($matches as $key => $value) {
-                    if ( ! isset($keys[$key]) || empty($value)) {
+                    if (!isset($keys[$key]) || empty($value)) {
                         unset($matches[$key]);
                     }
                 }
@@ -160,7 +160,7 @@
             if (array_key_exists("cookie_auth", $options) && $options["cookie_auth"] == "true") {
                 $parts = mb_parse_url($dsn);
 
-                if ( ! array_key_exists("user", $parts) || ! array_key_exists("pass", $parts)) {
+                if (!array_key_exists("user", $parts) || !array_key_exists("pass", $parts)) {
                     throw new Exception("You should provide a user and a password to use cookie based authentification");
                 }
                 $user = $parts["user"];
@@ -186,7 +186,7 @@
                         break;
                     }
                 }
-                if ( ! $this->sessioncookie) {
+                if (!$this->sessioncookie) {
                     throw new Exception("Cookie authentification failed");
                 }
             }
@@ -269,7 +269,7 @@
 
         function __call($name, $args)
         {
-            if ( ! array_key_exists($name, $this->query_defs)) {
+            if (!array_key_exists($name, $this->query_defs)) {
                 throw new Exception("Method $name does not exist");
             }
             if ($this->query_defs[$name]['filter'] == 'int') {
@@ -289,7 +289,7 @@
             } else if ($this->query_defs[$name]['filter'] == 'enum') {
                 $value = (string)reset($args);
                 //handle backward compatibility for stale option
-                if ($name == 'stale' && ! $value) {
+                if ($name == 'stale' && !$value) {
                     $value = 'ok';
                 }
                 if (in_array($value, $this->query_defs[$name]['enum'])) {
@@ -333,10 +333,10 @@
          */
         public function useDatabase($dbname)
         {
-            if ( ! strlen($dbname)) {
+            if (!strlen($dbname)) {
                 throw new InvalidArgumentException("Database name can't be empty");
             }
-            if ( ! $this->isValidDatabaseName($dbname)) {
+            if (!$this->isValidDatabaseName($dbname)) {
                 throw new InvalidArgumentException('Database name contains invalid characters. Only lowercase characters (a-z), digits (0-9), and any of the characters _, $, (, ), +, -, and / are allowed.');
             }
             $this->dbname = $dbname;
@@ -476,7 +476,7 @@
             } else if ($value == 'continuous') {
                 $this->query_parameters['feed']            = $value;
                 $this->query_parameters['continuous_feed'] = $continuous_callback;
-            } else if ( ! empty($this->query_parameters['feed'])) {
+            } else if (!empty($this->query_parameters['feed'])) {
                 unset($this->query_parameters['feed']);
             }
 
@@ -510,7 +510,7 @@
          */
         public function getChanges()
         {
-            if ( ! empty($this->query_parameters['feed']) && $this->query_parameters['feed'] == 'continuous') {
+            if (!empty($this->query_parameters['feed']) && $this->query_parameters['feed'] == 'continuous') {
                 $url                    = '/' . urlencode($this->dbname) . '/_changes';
                 $opts                   = $this->query_parameters;
                 $this->query_parameters = array();
@@ -556,7 +556,7 @@
          */
         public function getDoc($id)
         {
-            if ( ! strlen($id)) {
+            if (!strlen($id)) {
                 throw new InvalidArgumentException ("Document ID is empty");
             }
 
@@ -570,7 +570,7 @@
             $this->query_parameters = array();
 
             $back = $this->_queryAndTest('GET', $url, array(200), $doc_query);
-            if ( ! $this->results_as_cd) {
+            if (!$this->results_as_cd) {
                 return $back;
             }
             $this->results_as_cd = false;
@@ -589,13 +589,13 @@
          */
         public function storeDoc($doc)
         {
-            if ( ! is_object($doc)) {
+            if (!is_object($doc)) {
                 throw new InvalidArgumentException ("Document should be an object");
             }
             foreach (array_keys(get_object_vars($doc)) as $key) {
                 if (in_array($key, couchClient::$underscored_properties_to_remove_on_storage)) {
                     unset($doc->$key);
-                } else if (substr($key, 0, 1) == '_' AND ! in_array($key,
+                } else if (substr($key, 0, 1) == '_' AND !in_array($key,
                         couchClient::$allowed_underscored_properties)
                 ) {
                     throw new InvalidArgumentException("Property $key can't begin with an underscore");
@@ -603,7 +603,7 @@
             }
             $method = 'POST';
             $url    = '/' . urlencode($this->dbname);
-            if ( ! empty($doc->_id)) {
+            if (!empty($doc->_id)) {
                 $method = 'PUT';
                 $url    .= '/' . urlencode($doc->_id);
             }
@@ -624,7 +624,7 @@
          */
         public function storeDocs($docs, $all_or_nothing = false)
         {
-            if ( ! is_array($docs)) {
+            if (!is_array($docs)) {
                 throw new InvalidArgumentException ("docs parameter should be an array");
             }
             /*
@@ -660,7 +660,7 @@
          */
         public function deleteDocs($docs, $all_or_nothing = false)
         {
-            if ( ! is_array($docs)) {
+            if (!is_array($docs)) {
                 throw new InvalidArgumentException ("docs parameter should be an array");
             }
             /*
@@ -708,7 +708,7 @@
          */
         public function updateDoc($ddoc_id, $handler_name, $params, $doc_id = null)
         {
-            if ( ! is_array($params) && ! is_object($params)) {
+            if (!is_array($params) && !is_object($params)) {
                 throw new InvalidArgumentException ("params parameter should be an array or an object");
             }
             if (is_object($params)) {
@@ -768,7 +768,7 @@
             if (array_key_exists("data", $options)) {
                 if (is_string($options["data"])) {
                     $data = $options["data"];
-                    if ( ! $contentType) {
+                    if (!$contentType) {
                         $contentType = "application/x-www-form-urlencoded";
                     }
                 } else if (is_array($options["data"]) || is_object($options["data"])) {
@@ -791,10 +791,10 @@
          */
         public function copyDoc($id, $new_id)
         {
-            if ( ! strlen($id)) {
+            if (!strlen($id)) {
                 throw new InvalidArgumentException ("Document ID is empty");
             }
-            if ( ! strlen($new_id)) {
+            if (!strlen($new_id)) {
                 throw new InvalidArgumentException ("New document ID is empty");
             }
 
@@ -819,10 +819,10 @@
          */
         public function storeAsAttachment($doc, $data, $filename, $content_type = 'application/octet-stream')
         {
-            if ( ! is_object($doc)) {
+            if (!is_object($doc)) {
                 throw new InvalidArgumentException ("Document should be an object");
             }
-            if ( ! $doc->_id) {
+            if (!$doc->_id) {
                 throw new InvalidArgumentException ("Document should have an ID");
             }
             $url = '/' . urlencode($this->dbname) . '/' . urlencode($doc->_id) . '/' . urlencode($filename);
@@ -850,13 +850,13 @@
          */
         public function storeAttachment($doc, $file, $content_type = 'application/octet-stream', $filename = null)
         {
-            if ( ! is_object($doc)) {
+            if (!is_object($doc)) {
                 throw new InvalidArgumentException ("Document should be an object");
             }
-            if ( ! $doc->_id) {
+            if (!$doc->_id) {
                 throw new InvalidArgumentException ("Document should have an ID");
             }
-            if ( ! is_file($file)) {
+            if (!is_file($file)) {
                 throw new InvalidArgumentException ("File $file does not exist");
             }
             $url = '/' . urlencode($this->dbname) . '/' . urlencode($doc->_id) . '/';
@@ -881,13 +881,13 @@
          */
         public function deleteAttachment($doc, $attachment_name)
         {
-            if ( ! is_object($doc)) {
+            if (!is_object($doc)) {
                 throw new InvalidArgumentException ("Document should be an object");
             }
-            if ( ! $doc->_id) {
+            if (!$doc->_id) {
                 throw new InvalidArgumentException ("Document should have an ID");
             }
-            if ( ! strlen($attachment_name)) {
+            if (!strlen($attachment_name)) {
                 throw new InvalidArgumentException ("Attachment name not set");
             }
             $url = '/' . urlencode($this->dbname) .
@@ -908,7 +908,7 @@
          */
         public function deleteDoc($doc)
         {
-            if ( ! is_object($doc)) {
+            if (!is_object($doc)) {
                 throw new InvalidArgumentException ("Document should be an object");
             }
             if (empty($doc->_id) OR empty($doc->_rev)) {
@@ -963,7 +963,7 @@
          */
         public function getView($id, $name)
         {
-            if ( ! $id OR ! $name) {
+            if (!$id OR !$name) {
                 throw new InvalidArgumentException("You should specify view id and name");
             }
             $url = '/' . urlencode($this->dbname) . '/_design/' . urlencode($id) . '/_view/' . urlencode($name);
@@ -975,7 +975,7 @@
 
             list($method, $view_query, $data) = $this->_prepare_view_query();
 
-            if ( ! $results_as_cd) {
+            if (!$results_as_cd) {
                 return $this->_queryAndTest($method, $url, array(200), $view_query, $data);
             }
 
@@ -1003,12 +1003,12 @@
          */
         public function resultsToCouchDocuments($results)
         {
-            if ( ! $results->rows or ! is_array($results->rows)) {
+            if (!$results->rows or !is_array($results->rows)) {
                 return false;
             }
             $back = array();
             foreach ($results->rows as $row) {    // should have $row->key & $row->doc
-                if ( ! $row->key or ! $row->doc) {
+                if (!$row->key or !$row->doc) {
                     return false;
                 }
                 // create couchDocument
@@ -1019,7 +1019,7 @@
                 if (is_string($row->key)) {
                     $key = $row->key;
                 } else if (is_array($row->key)) {
-                    if ( ! is_array(end($row->key)) && ! is_object(end($row->key))) {
+                    if (!is_array(end($row->key)) && !is_object(end($row->key))) {
                         $key = end($row->key);
                     } else {
                         continue;
@@ -1056,10 +1056,10 @@
          */
         public function getList($id, $name, $view_name, $additionnal_parameters = array())
         {
-            if ( ! $id OR ! $name) {
+            if (!$id OR !$name) {
                 throw new InvalidArgumentException("You should specify list id and name");
             }
-            if ( ! $view_name) {
+            if (!$view_name) {
                 throw new InvalidArgumentException("You should specify view name");
             }
             $url                 = '/' . urlencode($this->dbname) . '/_design/' . urlencode($id) . '/_list/' . urlencode($name) . '/' . urlencode($view_name);
@@ -1095,10 +1095,10 @@
          */
         public function getForeignList($id, $name, $view_id, $view_name, $additionnal_parameters = array())
         {
-            if ( ! $id OR ! $name) {
+            if (!$id OR !$name) {
                 throw new InvalidArgumentException("You should specify list id and name");
             }
-            if ( ! $view_id OR ! $view_name) {
+            if (!$view_id OR !$view_name) {
                 throw new InvalidArgumentException("You should specify view id and view name");
             }
             $url                 = '/' . urlencode($this->dbname) .
@@ -1129,7 +1129,7 @@
          */
         public function getShow($id, $name, $doc_id = null, $additionnal_parameters = array())
         {
-            if ( ! $id OR ! $name) {
+            if (!$id OR !$name) {
                 throw new InvalidArgumentException("You should specify list id and name");
             }
             $url = '/' . urlencode($this->dbname) . '/_design/' . urlencode($id) . '/_show/' . urlencode($name);
@@ -1152,7 +1152,7 @@
          */
         public function getViewInfos($id)
         {
-            if ( ! $id) {
+            if (!$id) {
                 throw new InvalidArgumentException("You should specify view id");
             }
             $url = '/' . urlencode($this->dbname) . '/_design/' . urlencode($id) . '/_info';
@@ -1295,7 +1295,7 @@
             if (is_string($response)) {
                 $response = couch::parseRawResponse($response);
             }
-            if ( ! $response) {
+            if (!$response) {
                 return new couchNoResponseException();
             }
             if (isset($response['status_code']) and isset(self::$code_subtypes[$response['status_code']])) {

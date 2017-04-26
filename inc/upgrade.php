@@ -205,7 +205,7 @@
                     echo "   - " . $step['date'] . " " . $step['steps'] . "/" . $step['step_goal'];
 
                     if ($step['steps'] >= $step['step_goal']) {
-                        if ( ! $streak) {
+                        if (!$streak) {
                             $streak       = true;
                             $streak_start = $step['date'];
 
@@ -533,7 +533,7 @@
             echo " Queueing Badges for all users\n";
             foreach ($users as $user) {
                 $this->appClass->addCronJob($user, 'badges');
-                if ( ! $this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
+                if (!$this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
                     "AND" => array(
                         "user"    => $user,
                         "trigger" => 'badges'

@@ -39,7 +39,7 @@
 
         protected function parseException($message)
         {
-            if ( ! preg_match($this->excMatch, $message, $matches)) {
+            if (!preg_match($this->excMatch, $message, $matches)) {
                 return;
             }
 
@@ -52,7 +52,7 @@
         protected function write(array $record)
         {
             // sentry uses the 'nobreadcrumb' attribute to skip reporting
-            if ( ! empty($record['context']['nobreadcrumb'])) {
+            if (!empty($record['context']['nobreadcrumb'])) {
                 return;
             }
 

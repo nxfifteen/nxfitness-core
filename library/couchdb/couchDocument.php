@@ -51,7 +51,7 @@
         protected function setOne($key, $value)
         {
             $key = (string)$key;
-            if ( ! strlen($key)) {
+            if (!strlen($key)) {
                 throw new InvalidArgumentException("property name can't be empty");
             }
             if ($key == '_rev') {
@@ -60,7 +60,7 @@
             if ($key == '_id' AND $this->get('_id')) {
                 throw new InvalidArgumentException("Can't set _id field because it's already set");
             }
-            if (substr($key, 0, 1) == '_' AND ! in_array($key, couchClient::$allowed_underscored_properties)) {
+            if (substr($key, 0, 1) == '_' AND !in_array($key, couchClient::$allowed_underscored_properties)) {
                 throw new InvalidArgumentException("Property $key can't begin with an underscore");
             }
             //echo "setting $key to ".print_r($value,TRUE)."<BR>\n";
@@ -96,7 +96,7 @@
          */
         public function load($id)
         {
-            if ( ! strlen($id)) {
+            if (!strlen($id)) {
                 throw new InvalidArgumentException("No id given");
             }
             $this->__couch_data->fields = $this->__couch_data->client->getDoc($id);
@@ -203,7 +203,7 @@
         {
             //echo "get for $key\n";
             $key = (string)$key;
-            if ( ! strlen($key)) {
+            if (!strlen($key)) {
                 throw new InvalidArgumentException("No key given");
             }
 
@@ -273,7 +273,7 @@
         {
 
             if (func_num_args() == 1) {
-                if ( ! is_array($key) AND ! is_object($key)) {
+                if (!is_array($key) AND !is_object($key)) {
                     throw new InvalidArgumentException("When second argument is null, first argument should ba an array or an object");
                 }
                 foreach ($key as $one_key => $one_value) {
@@ -314,7 +314,7 @@
         public function remove($key)
         {
             $key = (string)$key;
-            if ( ! strlen($key)) {
+            if (!strlen($key)) {
                 throw new InvalidArgumentException("Can't remove a key without name");
             }
             if ($key == '_id' OR $key == '_rev') {
@@ -354,10 +354,10 @@
         public function replicateTo($url, $create_target = false)
         {
             echo "replicateTo : " . $this->_id . ", $url\n";
-            if ( ! isset($this->_id)) {
+            if (!isset($this->_id)) {
                 throw new InvalidArgumentException("Can't replicate a document without id");
             }
-            if ( ! class_exists("couchReplicator")) {
+            if (!class_exists("couchReplicator")) {
                 return false;
             }
             $r = new couchReplicator($this->__couch_data->client);
@@ -387,7 +387,7 @@
         public function replicateFrom($id, $url, $create_target = false)
         {
             echo "replicateFrom : $id, $url\n";
-            if ( ! class_exists("couchReplicator")) {
+            if (!class_exists("couchReplicator")) {
                 return false;
             }
             $r = new couchReplicator($this->__couch_data->client);
@@ -486,7 +486,7 @@
          */
         public function update($id, $name, $additionnal_params = array())
         {
-            if ( ! $this->_id) {
+            if (!$this->_id) {
                 return false;
             }
             $back = $this->__couch_data->client->updateDoc($id, $name, $additionnal_params, $this->_id);

@@ -3,7 +3,7 @@
     /**
      * @param $msg
      */
-    if ( ! function_exists("nxr")) {
+    if (!function_exists("nxr")) {
         /**
          * NXR is a helper function. Past strings are recorded in a text file
          * and when run from a command line output is displayed on screen as
@@ -101,7 +101,7 @@
 
             $this->getApiSettingClass()->setDatabase($this->getDatabase());
 
-            if ( ! isset($_COOKIE['_nx_fb_usr']) || ! isset($_COOKIE['_nx_fb_key'])) {
+            if (!isset($_COOKIE['_nx_fb_usr']) || !isset($_COOKIE['_nx_fb_key'])) {
                 header("Location: " . $this->getConfig('url') . $this->getConfig('/admin') . "/login");
             } else if (isset($_COOKIE['_nx_fb_key']) AND $_COOKIE['_nx_fb_key'] != hash("sha256",
                     $this->getApiSetting("salt") . $_COOKIE['_nx_fb_usr'] . $_SERVER['SERVER_NAME'] . $_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR'])
@@ -115,9 +115,9 @@
 
         public function getSyncStatus()
         {
-            if ( ! array_key_exists("SyncProgress",
-                    $_SESSION) || ! is_numeric($_SESSION['SyncProgress']) || $_SESSION['SyncProgress'] < 0 || $_SESSION['SyncProgress'] > 100 ||
-                 ! array_key_exists("SyncProgressScopes", $_SESSION) || ! is_array($_SESSION['SyncProgressScopes'])
+            if (!array_key_exists("SyncProgress",
+                    $_SESSION) || !is_numeric($_SESSION['SyncProgress']) || $_SESSION['SyncProgress'] < 0 || $_SESSION['SyncProgress'] > 100 ||
+                !array_key_exists("SyncProgressScopes", $_SESSION) || !is_array($_SESSION['SyncProgressScopes'])
             ) {
                 $timeToday     = strtotime(date("Y-m-d H:i:s"));
                 $timeFirstSeen = strtotime($this->getUserProfile()['seen'] . ' 00:00:00');
@@ -200,7 +200,7 @@
          */
         public function getConfig($key = "")
         {
-            if ( ! is_string($key) && $key == "") {
+            if (!is_string($key) && $key == "") {
                 return $this->config;
             } else {
                 return $this->config[$key];
@@ -244,7 +244,7 @@
          */
         public function getUserProfile()
         {
-            if ( ! isset($this->dbUserProfile)) {
+            if (!isset($this->dbUserProfile)) {
                 $userProfile         = $this->getDatabase()->get($this->getApiSetting("db_prefix", null,
                         false) . "users", array(
                     'name',
@@ -277,12 +277,12 @@
             $usrCity    = $usrProfile['city'];
             $usrCountry = $usrProfile['country'];
 
-            if (isset($usrCity) && ( ! is_string($usrCity) || $usrCity == "")) {
+            if (isset($usrCity) && (!is_string($usrCity) || $usrCity == "")) {
                 unset($usrCity);
             } else {
                 $usrCity = str_ireplace(" ", "", str_ireplace(".", "", $usrCity));
             }
-            if (isset($usrCountry) && ( ! is_string($usrCountry) || $usrCountry == "")) {
+            if (isset($usrCountry) && (!is_string($usrCountry) || $usrCountry == "")) {
                 unset($usrCountry);
             } else {
                 $usrCountry = str_ireplace(" ", "", str_ireplace(".", "", $usrCountry));

@@ -100,7 +100,7 @@
         {
             global $_GET;
 
-            if ( ! empty($_GET['show'])) {
+            if (!empty($_GET['show'])) {
                 $this->parseOjwParams();
             } else {
                 $this->parseLiteParams();
@@ -132,7 +132,7 @@
                     $this->height = $this->maxHeight;
                 }
             }
-            if ( ! empty($_GET['markers'])) {
+            if (!empty($_GET['markers'])) {
                 $markers = explode('|', $_GET['markers']);
                 foreach ($markers as $marker) {
                     list($markerLat, $markerLon, $markerType) = explode(',', $marker);
@@ -165,9 +165,9 @@
                 $this->height = $this->maxHeight;
             }
 
-            if ( ! empty($_GET['mlat0'])) {
+            if (!empty($_GET['mlat0'])) {
                 $markerLat = floatval($_GET['mlat0']);
-                if ( ! empty($_GET['mlon0'])) {
+                if (!empty($_GET['mlon0'])) {
                     $markerLon       = floatval($_GET['mlon0']);
                     $this->markers[] = array('lat' => $markerLat, 'lon' => $markerLon, 'type' => "bullseye");
                 }
@@ -260,8 +260,8 @@
                 }
 
                 // check required files or set default
-                if ($markerFilename == '' || ! file_exists($this->markerBaseDir . '/' . $markerFilename)) {
-                    if ( ! isset($markerIndex)) {
+                if ($markerFilename == '' || !file_exists($this->markerBaseDir . '/' . $markerFilename)) {
+                    if (!isset($markerIndex)) {
                         $markerIndex = 0;
                     }
                     $markerIndex++;
@@ -340,7 +340,7 @@
 
         public function mapCacheIDToFilename()
         {
-            if ( ! $this->mapCacheFile) {
+            if (!$this->mapCacheFile) {
                 $this->mapCacheFile = $this->mapCacheBaseDir . "/" . $this->maptype . "/" . $this->zoom . "/cache_" . substr($this->mapCacheID,
                         0, 2) . "/" . substr($this->mapCacheID, 2, 2) . "/" . substr($this->mapCacheID, 4);
             }
@@ -415,7 +415,7 @@
             $this->parseParams();
             if ($this->useMapCache) {
                 // use map cache, so check cache for map
-                if ( ! $this->checkMapCache()) {
+                if (!$this->checkMapCache()) {
                     // map is not in cache, needs to be build
                     $this->makeMap();
                     $this->mkdir_recursive(dirname($this->mapCacheIDToFilename()), 0777);

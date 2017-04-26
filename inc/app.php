@@ -6,7 +6,7 @@
     /**
      * @param $msg
      */
-    if ( ! function_exists("nxr")) {
+    if (!function_exists("nxr")) {
         require_once(dirname(__FILE__) . "/functions.php");
     }
 
@@ -178,7 +178,7 @@
         public function addCronJob($user_fitbit_id, $trigger, $force = false)
         {
             if ($force || $this->getSetting('scope_' . $trigger . '_cron', false)) {
-                if ( ! $this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
+                if (!$this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
                     "AND" => array(
                         "user"    => $user_fitbit_id,
                         "trigger" => $trigger
@@ -384,7 +384,7 @@
             if (is_array($userArray)) {
                 if ($validate && $this->valdidateOAuth($userArray)) {
                     return $userArray;
-                } else if ( ! $validate) {
+                } else if (!$validate) {
                     return $userArray;
                 }
             }
@@ -489,7 +489,7 @@
                 case "-142":
                     return "Unable to create required directory.";
                 case "429":
-                    if ( ! is_null($user)) {
+                    if (!is_null($user)) {
                         $hour = date("H") + 1;
                         $this->getDatabase()->update($this->getSetting("db_prefix", null, false) . "users", array(
                             'cooldown' => date("Y-m-d " . $hour . ":01:00"),
