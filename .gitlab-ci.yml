@@ -18,15 +18,17 @@ before_script:
 - php ../composer.phar install >/dev/null 2>&1
 - cd ../
 - php composer.phar require phpspec/phpspec >/dev/null 2>&1
+- wget https://phar.phpunit.de/phpunit.phar >/dev/null 2>&1
 
 # Run our tests
 test:php:
   stage: test
   script:
   - ./php-docblock-checker-1.3.4/vendor/bin/phploc inc
-  - ./php-docblock-checker-1.3.4/vendor/bin/phpcs --standard="PSR1,PSR2" --ignore="vendor,library,php-docblock-checker-1.3.4,phpspec" ./
+  #- ./php-docblock-checker-1.3.4/vendor/bin/phpcs --standard="PSR1,PSR2" --ignore="vendor,library,php-docblock-checker-1.3.4,phpspec" ./
   - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude php-docblock-checker-1.3.4 --exclude phpspec --blame -e php .
-  - ./vendor/phpspec/phpspec/bin/phpspec run
+#  - php phpunit.phar --version
+#  - ./vendor/phpspec/phpspec/bin/phpspec run
 
 deploy_review:
   stage: deploy
