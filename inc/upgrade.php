@@ -593,6 +593,48 @@
             return true;
         }
 
+        /** @noinspection PhpUnusedPrivateMethodInspection */
+        private function update_13() {
+            $db_prefix = $this->getSetting("db_prefix", false);
+
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "users_xp` ( `xpid` int(8) NOT NULL, `fuid` varchar(8) NOT NULL, `xp` int(4) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            if ( $this->wasMySQLError($this->getDatabase()->error()) ) {
+                return false;
+            }
+
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` ADD PRIMARY KEY (`xpid`);");
+            if ( $this->wasMySQLError($this->getDatabase()->error()) ) {
+                return false;
+            }
+
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` MODIFY `xpid` int(8) NOT NULL AUTO_INCREMENT;");
+            if ( $this->wasMySQLError($this->getDatabase()->error()) ) {
+                return false;
+            }
+
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT; ");
+            if ( $this->wasMySQLError($this->getDatabase()->error()) ) {
+                return false;
+            }
+
+            $users = $this->getDatabase()->select($db_prefix . "users", "fuid");
+            if ( $this->wasMySQLError($this->getDatabase()->error()) ) {
+                return false;
+            }
+
+            echo " Queueing Badges for all users\n";
+            foreach ( $users as $user ) {
+                $this->getDatabase()->query("INSERT INTO `" . $db_prefix . "users_xp` (`xpid`, `fuid`, `xp`) VALUES (NULL, '" . $user . "', '0'); ");
+                if ( $this->wasMySQLError($this->getDatabase()->error()) ) {
+                    return false;
+                }
+            }
+
+            $this->setSetting("version", "0.0.0.13", true);
+
+            return true;
+        }
+
         /**
          * @return config
          */
