@@ -1,5 +1,7 @@
 stages:
   - test
+  - review
+  - stage
   - deploy
 
 # Select what we should cache between builds
@@ -25,26 +27,28 @@ test:php:
   stage: test
   script:
   - ./php-docblock-checker-1.3.4/vendor/bin/phploc inc
-  #- ./php-docblock-checker-1.3.4/vendor/bin/phpcs --standard="PSR1,PSR2" --ignore="vendor,library,php-docblock-checker-1.3.4,phpspec" ./
+  - ./php-docblock-checker-1.3.4/vendor/bin/phpcs --standard="PSR1,PSR2" --ignore="vendor,library,php-docblock-checker-1.3.4,phpspec" --extensions="php,css,js" --error-severity=1 --warning-severity=8 ./
   - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude php-docblock-checker-1.3.4 --exclude phpspec --blame -e php .
 #  - php phpunit.phar --version
 #  - ./vendor/phpspec/phpspec/bin/phpspec run
 
 deploy_review:
-  stage: deploy
+  stage: review
   script:
     - echo "Deploy a review app"
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - ssh nxad@nxfifteen.me.uk /home/nxad/homes/gitrepos/deploy_review
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: https://$CI_ENVIRONMENT_SLUG.itsabeta.nx
-  when: manual
   only:
     - branches
   except:
     - master
 
 deploy_staging:
-  stage: deploy
+  stage: stage
   script:
     - echo "Deploy to staging server"
   environment:
