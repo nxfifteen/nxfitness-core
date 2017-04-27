@@ -24,3 +24,5 @@ vendor
 *.css.map
 /dev/index.php
 /dev/git-bump-version/
+/dev/phpunit.phar
+/dev/composer.phar
