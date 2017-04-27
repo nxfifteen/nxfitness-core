@@ -16,3 +16,8 @@ if [ ! -d "php-docblock-checker-1.3.4" ]; then
     php ../composer.phar install >/dev/null 2>&1
     cd ../
 fi
+
+if [ ! -f "phpunit.phar" ]; then
+    echo "downloading phpunit"
+    wget https://phar.phpunit.de/phpunit.phar >/dev/null 2>&1
+fi
