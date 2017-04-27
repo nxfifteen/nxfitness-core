@@ -13,7 +13,7 @@ cache:
   - vendor/
 
 before_script:
- - ./dev/build_dev_env.sh
+ - bash ./dev/build_dev_env.sh
 
 # Run our tests
 test:phploc:
