@@ -2181,7 +2181,7 @@
          * @return DateTime
          * @internal param $username
          */
-        private function api_getCoolDown($activity, $reset = false)
+        private function getCoolDown($activity, $reset = false)
         {
             if ($reset) {
                 return new DateTime ("1970-01-01");
@@ -3481,7 +3481,7 @@
                 return true;
             } else {
                 $currentDate  = new DateTime ('now');
-                $coolDownTill = $this->api_getCoolDown($trigger, $reset);
+                $coolDownTill = $this->getCoolDown($trigger, $reset);
 
                 //            nxr("coolDownTill " . $coolDownTill->format("Y-m-d H:i:s"));
                 //            nxr("currentDate " . $currentDate->format("Y-m-d H:i:s"));
