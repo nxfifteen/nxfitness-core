@@ -468,7 +468,7 @@
             }
         }
 
-        public function EventTriggerFatChange($current, $goal, $last)
+        public function eventTriggerFatChange($current, $goal, $last)
         {
             if ($current <= $goal) {
                 $this->checkForAward("body", "fat", "goal");
