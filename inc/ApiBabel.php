@@ -1029,7 +1029,7 @@
                     }
 
                     if (!is_null($this->RewardsSystem)) {
-                        $this->RewardsSystem->EventTriggerWeightChange($weight, $goalsweight, $lastWeight);
+                        $this->RewardsSystem->eventTriggerWeightChange($weight, $goalsweight, $lastWeight);
                         $this->RewardsSystem->EventTriggerFatChange($fat, $goalsfat, $lastFat);
                     }
 

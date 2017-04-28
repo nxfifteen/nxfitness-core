@@ -457,7 +457,7 @@
             //}
         }
 
-        public function EventTriggerWeightChange($current, $goal, $last)
+        public function eventTriggerWeightChange($current, $goal, $last)
         {
             if ($current <= $goal) {
                 $this->checkForAward("body", "weight", "goal");
