@@ -665,7 +665,7 @@
                                 $this->setLastCleanRun("activity_log", new DateTime ($startDate));
 
                                 if (!is_null($this->RewardsSystem)) {
-                                    $this->RewardsSystem->EventTriggerActivity($activity);
+                                    $this->RewardsSystem->eventTriggerActivity($activity);
                                 }
                             }
 

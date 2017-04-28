@@ -363,7 +363,7 @@
 
         }
 
-        public function EventTriggerActivity($activity)
+        public function eventTriggerActivity($activity)
         {
             $currentDate   = new DateTime ('now');
             $currentDate   = $currentDate->format("Y-m-d");
