@@ -118,7 +118,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_elevation(): void
+        public function testCacheNamesElevation(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('elevation');
             $this->assertTrue(count($activities) == 0);
