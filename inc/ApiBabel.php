@@ -215,12 +215,12 @@
                             if ($steps->value >= $steps_goals) {
                                 $dbValues[$trigger . '_g'] = 1;
                                 if ($trigger == "steps") {
-                                    $this->GoalStreakCheck($steps->dateTime, $trigger, true);
+                                    $this->checkGoalStreak($steps->dateTime, $trigger, true);
                                 }
                             } else if ($steps->value >= $steps_goals && strtotime($currentDate->format("Y-m-d")) > strtotime($steps->dateTime)) {
                                 $dbValues[$trigger . '_g'] = 0;
                                 if ($trigger == "steps") {
-                                    $this->GoalStreakCheck($steps->dateTime, $trigger, false);
+                                    $this->checkGoalStreak($steps->dateTime, $trigger, false);
                                 }
                             }
                         }
@@ -267,7 +267,7 @@
             return true;
         }
 
-        private function GoalStreakCheck($dateTime, $goal, $value)
+        private function checkGoalStreak($dateTime, $goal, $value)
         {
             //$todaysDate = new DateTime ( 'now' );
             $dateTime = new DateTime ($dateTime);
