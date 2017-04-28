@@ -271,7 +271,7 @@
                         }
 
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->EventTriggerTracker($steps->dateTime, $trigger, $steps->value);
+                            $this->RewardsSystem->eventTriggerTracker($steps->dateTime, $trigger, $steps->value);
                         }
                     }
                 }

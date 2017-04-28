@@ -510,7 +510,7 @@
             }
         }
 
-        public function EventTriggerTracker($date, $trigger, $value)
+        public function eventTriggerTracker($date, $trigger, $value)
         {
             $goalsToCheck = array("steps", "floors", "distance");
 
