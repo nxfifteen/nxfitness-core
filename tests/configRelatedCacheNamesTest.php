@@ -11,6 +11,8 @@
     use Core\Config as Config;
     use PHPUnit\Framework\TestCase;
 
+    require_once (dirname(__FILE__) . '/../inc/Config.php');
+
     class ConfigCacheNamesTest extends TestCase
     {
         /**
@@ -30,18 +32,18 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('activities');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("activity", $activities);
-            $this->assertArrayHasKey("dashboard", $activities);
-            $this->assertArrayHasKey("weekpedometer", $activities);
-            $this->assertArrayHasKey("aboutme", $activities);
-            $this->assertArrayHasKey("keypoints", $activities);
-            $this->assertArrayHasKey("steps", $activities);
-            $this->assertArrayHasKey("tracked", $activities);
-            $this->assertArrayHasKey("tracked", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
-            $this->assertArrayHasKey("challenger", $activities);
-            $this->assertArrayHasKey("push", $activities);
-            $this->assertArrayHasKey("conky", $activities);
+            $this->assertTrue(in_array("activity", $activities));
+            $this->assertTrue(in_array("dashboard", $activities));
+            $this->assertTrue(in_array("weekpedometer", $activities));
+            $this->assertTrue(in_array("aboutme", $activities));
+            $this->assertTrue(in_array("keypoints", $activities));
+            $this->assertTrue(in_array("steps", $activities));
+            $this->assertTrue(in_array("tracked", $activities));
+            $this->assertTrue(in_array("tracked", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
+            $this->assertTrue(in_array("challenger", $activities));
+            $this->assertTrue(in_array("push", $activities));
+            $this->assertTrue(in_array("conky", $activities));
         }
 
         /**
@@ -51,7 +53,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('activity_log');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("activityhistory", $activities);
+            $this->assertTrue(in_array("activityhistory", $activities));
         }
 
         /**
@@ -61,7 +63,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('badges');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("topbadges", $activities);
+            $this->assertTrue(in_array("topbadges", $activities));
         }
 
         /**
@@ -71,8 +73,8 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('body');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("trend", $activities);
-            $this->assertArrayHasKey("weight", $activities);
+            $this->assertTrue(in_array("trend", $activities));
+            $this->assertTrue(in_array("weight", $activities));
         }
 
         /**
@@ -82,7 +84,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('caloriesOut');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("tasker", $activities);
+            $this->assertTrue(in_array("tasker", $activities));
         }
 
         /**
@@ -92,8 +94,8 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('devices');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("devices", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
+            $this->assertTrue(in_array("devices", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
         }
 
         /**
@@ -103,16 +105,16 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('distance');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("dashboard", $activities);
-            $this->assertArrayHasKey("weekpedometer", $activities);
-            $this->assertArrayHasKey("aboutme", $activities);
-            $this->assertArrayHasKey("keypoints", $activities);
-            $this->assertArrayHasKey("steps", $activities);
-            $this->assertArrayHasKey("tracked", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
-            $this->assertArrayHasKey("challenger", $activities);
-            $this->assertArrayHasKey("push", $activities);
-            $this->assertArrayHasKey("conky", $activities);
+            $this->assertTrue(in_array("dashboard", $activities));
+            $this->assertTrue(in_array("weekpedometer", $activities));
+            $this->assertTrue(in_array("aboutme", $activities));
+            $this->assertTrue(in_array("keypoints", $activities));
+            $this->assertTrue(in_array("steps", $activities));
+            $this->assertTrue(in_array("tracked", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
+            $this->assertTrue(in_array("challenger", $activities));
+            $this->assertTrue(in_array("push", $activities));
+            $this->assertTrue(in_array("conky", $activities));
         }
 
         /**
@@ -131,16 +133,16 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('floors');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("dashboard", $activities);
-            $this->assertArrayHasKey("weekpedometer", $activities);
-            $this->assertArrayHasKey("aboutme", $activities);
-            $this->assertArrayHasKey("keypoints", $activities);
-            $this->assertArrayHasKey("steps", $activities);
-            $this->assertArrayHasKey("tracked", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
-            $this->assertArrayHasKey("challenger", $activities);
-            $this->assertArrayHasKey("push", $activities);
-            $this->assertArrayHasKey("conky", $activities);
+            $this->assertTrue(in_array("dashboard", $activities));
+            $this->assertTrue(in_array("weekpedometer", $activities));
+            $this->assertTrue(in_array("aboutme", $activities));
+            $this->assertTrue(in_array("keypoints", $activities));
+            $this->assertTrue(in_array("steps", $activities));
+            $this->assertTrue(in_array("tracked", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
+            $this->assertTrue(in_array("challenger", $activities));
+            $this->assertTrue(in_array("push", $activities));
+            $this->assertTrue(in_array("conky", $activities));
         }
 
         /**
@@ -150,8 +152,8 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('foods');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("food", $activities);
-            $this->assertArrayHasKey("fooddiary", $activities);
+            $this->assertTrue(in_array("food", $activities));
+            $this->assertTrue(in_array("fooddiary", $activities));
         }
 
         /**
@@ -161,10 +163,10 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('goals');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("dashboard", $activities);
-            $this->assertArrayHasKey("tracked", $activities);
-            $this->assertArrayHasKey("steps", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
+            $this->assertTrue(in_array("dashboard", $activities));
+            $this->assertTrue(in_array("tracked", $activities));
+            $this->assertTrue(in_array("steps", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
         }
 
         /**
@@ -174,7 +176,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('goals_calories');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("trend", $activities);
+            $this->assertTrue(in_array("trend", $activities));
         }
 
         /**
@@ -192,7 +194,7 @@
         public function testCacheNamesLeaderboard(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('leaderboard');
-            $this->assertArrayHasKey("trend", $activities);
+            $this->assertTrue(in_array("trend", $activities));
         }
 
         /**
@@ -202,11 +204,11 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesFairlyActive');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("activity", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
-            $this->assertArrayHasKey("challenger", $activities);
-            $this->assertArrayHasKey("push", $activities);
-            $this->assertArrayHasKey("conky", $activities);
+            $this->assertTrue(in_array("activity", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
+            $this->assertTrue(in_array("challenger", $activities));
+            $this->assertTrue(in_array("push", $activities));
+            $this->assertTrue(in_array("conky", $activities));
         }
 
         /**
@@ -216,7 +218,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesLightlyActive');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("activity", $activities);
+            $this->assertTrue(in_array("activity", $activities));
         }
 
         /**
@@ -226,7 +228,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesSedentary');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("activity", $activities);
+            $this->assertTrue(in_array("activity", $activities));
         }
 
         /**
@@ -236,11 +238,11 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesVeryActive');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("activity", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
-            $this->assertArrayHasKey("challenger", $activities);
-            $this->assertArrayHasKey("push", $activities);
-            $this->assertArrayHasKey("conky", $activities);
+            $this->assertTrue(in_array("activity", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
+            $this->assertTrue(in_array("challenger", $activities));
+            $this->assertTrue(in_array("push", $activities));
+            $this->assertTrue(in_array("conky", $activities));
         }
 
         /**
@@ -250,7 +252,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('nomie_trackers');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("nomie", $activities);
+            $this->assertTrue(in_array("nomie", $activities));
         }
 
         /**
@@ -260,7 +262,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('profile');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("trend", $activities);
+            $this->assertTrue(in_array("trend", $activities));
         }
 
         /**
@@ -270,7 +272,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('sleep');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("sleep", $activities);
+            $this->assertTrue(in_array("sleep", $activities));
         }
 
         /**
@@ -280,14 +282,14 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('steps');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("dashboard", $activities);
-            $this->assertArrayHasKey("weekpedometer", $activities);
-            $this->assertArrayHasKey("aboutme", $activities);
-            $this->assertArrayHasKey("keypoints", $activities);
-            $this->assertArrayHasKey("steps", $activities);
-            $this->assertArrayHasKey("tracked", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
-            $this->assertArrayHasKey("conky", $activities);
+            $this->assertTrue(in_array("dashboard", $activities));
+            $this->assertTrue(in_array("weekpedometer", $activities));
+            $this->assertTrue(in_array("aboutme", $activities));
+            $this->assertTrue(in_array("keypoints", $activities));
+            $this->assertTrue(in_array("steps", $activities));
+            $this->assertTrue(in_array("tracked", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
+            $this->assertTrue(in_array("conky", $activities));
         }
 
         /**
@@ -297,7 +299,7 @@
         {
             $activities = $this->configClass->getRelatedCacheNames('water');
             $this->assertContainsOnly('string', $activities);
-            $this->assertArrayHasKey("water", $activities);
-            $this->assertArrayHasKey("tasker", $activities);
+            $this->assertTrue(in_array("water", $activities));
+            $this->assertTrue(in_array("tasker", $activities));
         }
     }
