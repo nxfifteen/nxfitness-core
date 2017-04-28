@@ -78,7 +78,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_caloriesOut(): void
+        public function testCacheNamesCaloriesOut(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('caloriesOut');
             $this->assertContainsOnly('string', $activities);
