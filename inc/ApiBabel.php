@@ -113,7 +113,7 @@
                 } else {
                     nxr("  Requesting $trigger data for $daysSince days");
                     $this->pullBabelTimeSeriesByTrigger($trigger, $daysSince);
-                    $this->api_setLastrun($trigger);
+                    $this->setLastrun($trigger);
                 }
             } else {
                 if (!IS_CRON_RUN) {
@@ -660,12 +660,12 @@
                             nxr("  No recorded activities");
                             $this->api_setLastCleanrun("activity_log",
                                 new DateTime ($userActivityLog->pagination->afterDate), 2);
-                            $this->api_setLastrun("activity_log");
+                            $this->setLastrun("activity_log");
                         }
                     } else {
                         $this->api_setLastCleanrun("activity_log",
                             new DateTime ((String)$targetDateTime->format("Y-m-d")), 7);
-                        $this->api_setLastrun("activity_log");
+                        $this->setLastrun("activity_log");
                     }
 
                 } else {
@@ -797,7 +797,7 @@
                             if (!$fallback) {
                                 $this->api_setLastCleanrun("goals", $currentDate);
                             }
-                            $this->api_setLastrun("goals");
+                            $this->setLastrun("goals");
                         }
 
                     }
@@ -1121,7 +1121,7 @@
                 }
             } else {
                 $this->api_setLastCleanrun("sleep", new DateTime ($targetDate), 7);
-                $this->api_setLastrun("sleep");
+                $this->setLastrun("sleep");
             }
 
             return $userSleepLog;
@@ -1447,7 +1447,7 @@
                             fopen((String)$userProfile['avatar150'], 'r'));
                     }
 
-                    $this->api_setLastrun("profile", null, true);
+                    $this->setLastrun("profile", null, true);
 
                     $subscriptions = $this->pullBabel('user/-/apiSubscriptions.json', true);
                     if (count($subscriptions->apiSubscriptions) == 0) {
@@ -1645,7 +1645,7 @@
                         }
                     }
 
-                    $this->api_setLastrun("devices", null, true);
+                    $this->setLastrun("devices", null, true);
 
                     return $userDevices;
                 } else {
@@ -1803,7 +1803,7 @@
                             }
                         }
 
-                        $this->api_setLastrun("badges", null, true);
+                        $this->setLastrun("badges", null, true);
 
                         return $userBadges;
                     } else {
@@ -1965,7 +1965,7 @@
                         }
                     }
 
-                    $this->api_setLastrun("leaderboard", null, true);
+                    $this->setLastrun("leaderboard", null, true);
 
                     return $userFriends;
                 } else {
@@ -2067,9 +2067,9 @@
                         }
 
                         if ($fallback) {
-                            $this->api_setLastrun("goals_calories");
+                            $this->setLastrun("goals_calories");
                         } else {
-                            $this->api_setLastrun("goals_calories", null, true);
+                            $this->setLastrun("goals_calories", null, true);
                         }
                     }
 
@@ -2098,7 +2098,7 @@
          *
          * @internal param $username
          */
-        private function api_setLastrun($activity, $cron_delay = null, $clean = false)
+        private function setLastrun($activity, $cron_delay = null, $clean = false)
         {
             if (is_null($cron_delay)) {
                 $cron_delay_holder = 'scope_' . $activity . '_timeout';
@@ -2337,7 +2337,7 @@
             }
 
             if ($delay == 0) {
-                $this->api_setLastrun($activity, null, false);
+                $this->setLastrun($activity, null, false);
             }
         }
 
@@ -2754,7 +2754,7 @@
                         try {
                             $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')), true);
                         } catch (couchNotFoundException $e) {
-                            $this->api_setLastrun("nomie_trackers", null, true);
+                            $this->setLastrun("nomie_trackers", null, true);
 
                             return "-144";
                         }
@@ -2935,7 +2935,7 @@
                         }
                     }
 
-                    $this->api_setLastrun("nomie_trackers", null, true);
+                    $this->setLastrun("nomie_trackers", null, true);
 
                 } else {
                     return "-143";
@@ -3253,7 +3253,7 @@
                                 if (isset($this->holdingVar)) {
                                     unset($this->holdingVar);
                                 }
-                                $this->api_setLastrun("activities", null, true);
+                                $this->setLastrun("activities", null, true);
                             }
                         }
                     } else if (array_key_exists($trigger, $timeSeries)) {
