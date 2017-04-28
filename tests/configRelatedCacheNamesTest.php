@@ -146,7 +146,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_foods(): void
+        public function testCacheNamesFoods(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('foods');
             $this->assertContainsOnly('string', $activities);
