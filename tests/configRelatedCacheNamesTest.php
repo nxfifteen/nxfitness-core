@@ -276,7 +276,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_steps(): void
+        public function testCacheNamesSteps(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('steps');
             $this->assertContainsOnly('string', $activities);
