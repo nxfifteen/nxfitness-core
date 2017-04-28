@@ -8,10 +8,10 @@
 
     namespace Core\TestSuite;
 
-    use Core\Config;
+    use Core\Config as Config;
     use PHPUnit\Framework\TestCase;
 
-    class configRelatedCacheNamesTest extends TestCase
+    class ConfigCacheNamesTest extends TestCase
     {
         /**
          * @var Config
@@ -26,7 +26,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_activities(): void
+        public function testCacheNames_activities(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('activities');
             $this->assertContainsOnly('string', $activities);
@@ -47,7 +47,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_activity_log(): void
+        public function testCacheNames_activity_log(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('activity_log');
             $this->assertContainsOnly('string', $activities);
@@ -57,7 +57,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_badges(): void
+        public function testCacheNames_badges(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('badges');
             $this->assertContainsOnly('string', $activities);
@@ -67,7 +67,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_body(): void
+        public function testCacheNames_body(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('body');
             $this->assertContainsOnly('string', $activities);
@@ -78,7 +78,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_caloriesOut(): void
+        public function testCacheNames_caloriesOut(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('caloriesOut');
             $this->assertContainsOnly('string', $activities);
@@ -88,7 +88,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_devices(): void
+        public function testCacheNames_devices(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('devices');
             $this->assertContainsOnly('string', $activities);
@@ -99,7 +99,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_distance(): void
+        public function testCacheNames_distance(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('distance');
             $this->assertContainsOnly('string', $activities);
@@ -118,7 +118,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_elevation(): void
+        public function testCacheNames_elevation(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('elevation');
             $this->assertTrue(count($activities) == 0);
@@ -127,7 +127,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_floors(): void
+        public function testCacheNames_floors(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('floors');
             $this->assertContainsOnly('string', $activities);
@@ -146,7 +146,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_foods(): void
+        public function testCacheNames_foods(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('foods');
             $this->assertContainsOnly('string', $activities);
@@ -157,7 +157,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_goals(): void
+        public function testCacheNames_goals(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('goals');
             $this->assertContainsOnly('string', $activities);
@@ -170,7 +170,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_goals_calories(): void
+        public function testCacheNames_goals_calories(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('goals_calories');
             $this->assertContainsOnly('string', $activities);
@@ -180,7 +180,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_heart(): void
+        public function testCacheNames_heart(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('heart');
             $this->assertTrue(count($activities) == 0);
@@ -189,7 +189,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_leaderboard(): void
+        public function testCacheNames_leaderboard(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('leaderboard');
             $this->assertArrayHasKey("trend", $activities);
@@ -198,7 +198,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_minutesFairlyActive(): void
+        public function testCacheNames_minutesFairlyActive(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesFairlyActive');
             $this->assertContainsOnly('string', $activities);
@@ -212,7 +212,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_minutesLightlyActive(): void
+        public function testCacheNames_minutesLightlyActive(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesLightlyActive');
             $this->assertContainsOnly('string', $activities);
@@ -222,7 +222,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_minutesSedentary(): void
+        public function testCacheNames_minutesSedentary(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesSedentary');
             $this->assertContainsOnly('string', $activities);
@@ -232,7 +232,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_minutesVeryActive(): void
+        public function testCacheNames_minutesVeryActive(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesVeryActive');
             $this->assertContainsOnly('string', $activities);
@@ -246,7 +246,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_nomie_trackers(): void
+        public function testCacheNames_nomie_trackers(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('nomie_trackers');
             $this->assertContainsOnly('string', $activities);
@@ -256,7 +256,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_profile(): void
+        public function testCacheNames_profile(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('profile');
             $this->assertContainsOnly('string', $activities);
@@ -266,7 +266,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_sleep(): void
+        public function testCacheNames_sleep(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('sleep');
             $this->assertContainsOnly('string', $activities);
@@ -276,7 +276,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_steps(): void
+        public function testCacheNames_steps(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('steps');
             $this->assertContainsOnly('string', $activities);
@@ -293,7 +293,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testRelatedCacheNames_water(): void
+        public function testCacheNames_water(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('water');
             $this->assertContainsOnly('string', $activities);
