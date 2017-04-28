@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * staticMapLite 0.3.1
+     * StaticMapLite 0.3.1
      * Copyright 2009 Gerhard Koch
      * Licensed under the Apache License, Version 2.0 (the "License");
      * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
      *
      * @author Gerhard Koch <gerhard.koch AT ymail.com>
      * USAGE:
-     *  staticmap.php?center=40.714728,-73.998672&zoom=14&size=512x512&maptype=mapnik&markers=40.702147,-74.015794,blues|40.711614,-74.012318,greeng|40.718217,-73.998284,redc
+     *  StaticMapLite.php?center=40.714728,-73.998672&zoom=14&size=512x512&maptype=mapnik&markers=40.702147,-74.015794,blues|40.711614,-74.012318,greeng|40.718217,-73.998284,redc
      */
 
     error_reporting(0);
     ini_set('display_errors', 'off');
 
-    Class staticMapLite
+    Class StaticMapLite
     {
 
         protected $maxWidth = 1024;
@@ -445,5 +445,5 @@
 
     }
 
-    $map = new staticMapLite();
+    $map = new StaticMapLite();
     print $map->showMap();
