@@ -466,7 +466,7 @@
         }
 
         /** @noinspection PhpUnusedPrivateMethodInspection */
-        private function update_7()
+        private function updateRun7()
         {
             $db_prefix = $this->getSetting("db_prefix", false);
 
