@@ -250,7 +250,7 @@
          *
          * @return string
          */
-        private function ordinal_suffix($input_num)
+        private function ordinalSuffix($input_num)
         {
             $num = $input_num % 100; // protect against large numbers
             if ($num < 11 || $num > 13) {
@@ -2257,8 +2257,8 @@
             );
             $returnStats["friends"] = $hes . " " . $dbUsers['friends'] . " friends ";
             if ($dbUsers['rank'] > 1) {
-                $returnStats["friends"] .= "and " . $is . " currently ranked " . $this->ordinal_suffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'],
-                        0) . " steps " . $he . " could take " . $this->ordinal_suffix($dbUsers['rank'] - 1) . " place.";
+                $returnStats["friends"] .= "and " . $is . " currently ranked " . $this->ordinalSuffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'],
+                        0) . " steps " . $he . " could take " . $this->ordinalSuffix($dbUsers['rank'] - 1) . " place.";
             } else {
                 $returnStats["friends"] .= "and " . $is . " proudly at the top of the leaderboard.";
             }
