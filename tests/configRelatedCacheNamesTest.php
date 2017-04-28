@@ -222,7 +222,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_minutesSedentary(): void
+        public function testCacheNamesMinutesSedentary(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesSedentary');
             $this->assertContainsOnly('string', $activities);
