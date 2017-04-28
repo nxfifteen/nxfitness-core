@@ -180,7 +180,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_heart(): void
+        public function testCacheNamesHeart(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('heart');
             $this->assertTrue(count($activities) == 0);
