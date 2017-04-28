@@ -559,7 +559,7 @@
             }
         }
 
-        public function EventTriggerStreak($goal, $length)
+        public function eventTriggerStreak($goal, $length)
         {
             $this->checkForAward("streak", $goal, $length);
         }

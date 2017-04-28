@@ -337,7 +337,7 @@
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->EventTriggerStreak($goal, $days_between);
+                            $this->RewardsSystem->eventTriggerStreak($goal, $days_between);
                         }
                     }
 
@@ -359,7 +359,7 @@
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->EventTriggerStreak($goal, 1);
+                            $this->RewardsSystem->eventTriggerStreak($goal, 1);
                         }
                     }
                 }
@@ -390,7 +390,7 @@
                 ));
 
                 if (!is_null($this->RewardsSystem)) {
-                    $this->RewardsSystem->EventTriggerStreak($goal, $days_between);
+                    $this->RewardsSystem->eventTriggerStreak($goal, $days_between);
                 }
                 //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
                 //nxr(end($this->getAppClass()->getDatabase()->log()));
