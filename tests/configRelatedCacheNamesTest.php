@@ -170,7 +170,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_goals_calories(): void
+        public function testCacheNamesGoalsCalories(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('goals_calories');
             $this->assertContainsOnly('string', $activities);
