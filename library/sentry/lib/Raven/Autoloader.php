@@ -14,13 +14,16 @@
      *
      * @package raven
      */
-    class Raven_Autoloader {
+    class Raven_Autoloader
+    {
+
         /**
          * Registers Raven_Autoloader as an SPL autoloader.
          */
-        public static function register() {
+        public static function register()
+        {
             ini_set('unserialize_callback_func', 'spl_autoload_call');
-            spl_autoload_register(array( 'Raven_Autoloader', 'autoload' ));
+            spl_autoload_register(array('Raven_Autoloader', 'autoload'));
         }
 
         /**
@@ -28,15 +31,16 @@
          *
          * @param string $class A class name.
          */
-        public static function autoload($class) {
-            if ( 0 !== strpos($class, 'Raven') ) {
+        public static function autoload($class)
+        {
+            if (0 !== strpos($class, 'Raven')) {
                 return;
             }
 
-            if ( is_file($file = dirname(__FILE__) . '/../' . str_replace(array( '_', "\0" ), array(
+            if (is_file($file = dirname(__FILE__) . '/../' . str_replace(array('_', "\0"), array(
                     '/',
                     ''
-                ), $class) . '.php') ) {
+                ), $class) . '.php')) {
                 require $file;
             }
         }

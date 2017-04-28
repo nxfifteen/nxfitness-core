@@ -9,34 +9,41 @@
      * file that was distributed with this source code.
      */
 
-    class Raven_TransactionStack {
-        public function __construct() {
+    class Raven_TransactionStack
+    {
+
+        public function __construct()
+        {
             $this->stack = array();
         }
 
-        public function clear() {
+        public function clear()
+        {
             $this->stack = array();
         }
 
-        public function peek() {
+        public function peek()
+        {
             $len = count($this->stack);
-            if ( $len === 0 ) {
+            if ($len === 0) {
                 return null;
             }
 
-            return $this->stack[ $len - 1 ];
+            return $this->stack[$len - 1];
         }
 
-        public function push($context) {
+        public function push($context)
+        {
             $this->stack[] = $context;
         }
 
-        public function pop($context = null) {
-            if ( ! $context ) {
+        public function pop($context = null)
+        {
+            if (!$context) {
                 return array_pop($this->stack);
             }
-            while ( ! empty($this->stack) ) {
-                if ( array_pop($this->stack) === $context ) {
+            while (!empty($this->stack)) {
+                if (array_pop($this->stack) === $context) {
                     return $context;
                 }
             }

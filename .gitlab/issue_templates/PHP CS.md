@@ -1,0 +1,1 @@
+Automatically detected error when code is processed by PHP Style Checker

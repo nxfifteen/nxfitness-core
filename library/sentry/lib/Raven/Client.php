@@ -13,7 +13,9 @@
      *
      * @package raven
      */
-    class Raven_Client {
+    class Raven_Client
+    {
+
         const VERSION = '1.6.2';
 
         const PROTOCOL = '6';
@@ -39,22 +41,23 @@
         protected $serializer;
         protected $reprSerializer;
 
-        public function __construct($options_or_dsn = null, $options = array()) {
-            if ( is_array($options_or_dsn) ) {
+        public function __construct($options_or_dsn = null, $options = array())
+        {
+            if (is_array($options_or_dsn)) {
                 $options = array_merge($options_or_dsn, $options);
             }
 
-            if ( ! is_array($options_or_dsn) && ! empty($options_or_dsn) ) {
+            if (!is_array($options_or_dsn) && !empty($options_or_dsn)) {
                 $dsn = $options_or_dsn;
-            } elseif ( ! empty($_SERVER['SENTRY_DSN']) ) {
+            } else if (!empty($_SERVER['SENTRY_DSN'])) {
                 $dsn = @$_SERVER['SENTRY_DSN'];
-            } elseif ( ! empty($options['dsn']) ) {
+            } else if (!empty($options['dsn'])) {
                 $dsn = $options['dsn'];
             } else {
                 $dsn = null;
             }
 
-            if ( ! empty($dsn) ) {
+            if (!empty($dsn)) {
                 $options = array_merge($options, self::parseDSN($dsn));
             }
 
@@ -63,13 +66,13 @@
             $this->secret_key              = Raven_Util::get($options, 'secret_key');
             $this->public_key              = Raven_Util::get($options, 'public_key');
             $this->project                 = Raven_Util::get($options, 'project', 1);
-            $this->auto_log_stacks         = (bool) Raven_Util::get($options, 'auto_log_stacks', false);
+            $this->auto_log_stacks         = (bool)Raven_Util::get($options, 'auto_log_stacks', false);
             $this->name                    = Raven_Util::get($options, 'name', Raven_Compat::gethostname());
             $this->site                    = Raven_Util::get($options, 'site', $this->_server_variable('SERVER_NAME'));
             $this->tags                    = Raven_Util::get($options, 'tags', array());
             $this->release                 = Raven_Util::get($options, 'release', null);
             $this->environment             = Raven_Util::get($options, 'environment', null);
-            $this->trace                   = (bool) Raven_Util::get($options, 'trace', true);
+            $this->trace                   = (bool)Raven_Util::get($options, 'trace', true);
             $this->timeout                 = Raven_Util::get($options, 'timeout', 2);
             $this->message_limit           = Raven_Util::get($options, 'message_limit', self::MESSAGE_LIMIT);
             $this->exclude                 = Raven_Util::get($options, 'exclude', array());
@@ -109,39 +112,43 @@
             $this->serializer     = new Raven_Serializer($this->mb_detect_order);
             $this->reprSerializer = new Raven_ReprSerializer($this->mb_detect_order);
 
-            if ( $this->curl_method == 'async' ) {
+            if ($this->curl_method == 'async') {
                 $this->_curl_handler = new Raven_CurlHandler($this->get_curl_options());
             }
 
             $this->transaction = new Raven_TransactionStack();
-            if ( $this->is_http_request() && isset($_SERVER['PATH_INFO']) ) {
+            if ($this->is_http_request() && isset($_SERVER['PATH_INFO'])) {
                 $this->transaction->push($_SERVER['PATH_INFO']);
             }
 
-            if ( Raven_Util::get($options, 'install_default_breadcrumb_handlers', true) ) {
+            if (Raven_Util::get($options, 'install_default_breadcrumb_handlers', true)) {
                 $this->registerDefaultBreadcrumbHandlers();
             }
 
-            register_shutdown_function(array( $this, 'onShutdown' ));
+            register_shutdown_function(array($this, 'onShutdown'));
         }
 
-        protected function registerDefaultBreadcrumbHandlers() {
+        protected function registerDefaultBreadcrumbHandlers()
+        {
             $handler = new Raven_Breadcrumbs_ErrorHandler($this);
             $handler->install();
         }
 
-        protected function is_http_request() {
+        protected function is_http_request()
+        {
             return isset($_SERVER['REQUEST_METHOD']) && PHP_SAPI !== 'cli';
         }
 
-        protected function get_http_data() {
+        protected function get_http_data()
+        {
             $headers = array();
 
-            foreach ( $_SERVER as $key => $value ) {
-                if ( 0 === strpos($key, 'HTTP_') ) {
-                    $headers[ str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5))))) ] = $value;
-                } elseif ( in_array($key, array( 'CONTENT_TYPE', 'CONTENT_LENGTH' )) && $value !== '' ) {
-                    $headers[ str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $key)))) ] = $value;
+            foreach ($_SERVER as $key => $value) {
+                if (0 === strpos($key, 'HTTP_')) {
+                    $headers[str_replace(' ', '-',
+                        ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
+                } else if (in_array($key, array('CONTENT_TYPE', 'CONTENT_LENGTH')) && $value !== '') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $key))))] = $value;
                 }
             }
 
@@ -153,13 +160,13 @@
 
             // dont set this as an empty array as PHP will treat it as a numeric array
             // instead of a mapping which goes against the defined Sentry spec
-            if ( ! empty($_POST) ) {
+            if (!empty($_POST)) {
                 $result['data'] = $_POST;
             }
-            if ( ! empty($_COOKIE) ) {
+            if (!empty($_COOKIE)) {
                 $result['cookies'] = $_COOKIE;
             }
-            if ( ! empty($headers) ) {
+            if (!empty($headers)) {
                 $result['headers'] = $headers;
             }
 
@@ -168,16 +175,17 @@
             );
         }
 
-        protected function get_user_data() {
+        protected function get_user_data()
+        {
             $user = $this->context->user;
-            if ( $user === null ) {
-                if ( ! function_exists('session_id') || ! session_id() ) {
+            if ($user === null) {
+                if (!function_exists('session_id') || !session_id()) {
                     return array();
                 }
                 $user = array(
                     'id' => session_id(),
                 );
-                if ( ! empty($_SESSION) ) {
+                if (!empty($_SESSION)) {
                     $user['data'] = $_SESSION;
                 }
             }
@@ -187,15 +195,18 @@
             );
         }
 
-        protected function get_extra_data() {
+        protected function get_extra_data()
+        {
             return $this->extra_data;
         }
 
-        protected function get_default_ca_cert() {
+        protected function get_default_ca_cert()
+        {
             return dirname(__FILE__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'cacert.pem';
         }
 
-        protected function get_curl_options() {
+        protected function get_curl_options()
+        {
             $options = array(
                 CURLOPT_VERBOSE        => false,
                 CURLOPT_SSL_VERIFYHOST => 2,
@@ -203,47 +214,48 @@
                 CURLOPT_CAINFO         => $this->ca_cert,
                 CURLOPT_USERAGENT      => 'sentry-php/' . self::VERSION,
             );
-            if ( $this->http_proxy ) {
-                $options[ CURLOPT_PROXY ] = $this->http_proxy;
+            if ($this->http_proxy) {
+                $options[CURLOPT_PROXY] = $this->http_proxy;
             }
-            if ( $this->curl_ssl_version ) {
-                $options[ CURLOPT_SSLVERSION ] = $this->curl_ssl_version;
+            if ($this->curl_ssl_version) {
+                $options[CURLOPT_SSLVERSION] = $this->curl_ssl_version;
             }
-            if ( $this->curl_ipv4 ) {
-                $options[ CURLOPT_IPRESOLVE ] = CURL_IPRESOLVE_V4;
+            if ($this->curl_ipv4) {
+                $options[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
             }
-            if ( defined('CURLOPT_TIMEOUT_MS') ) {
+            if (defined('CURLOPT_TIMEOUT_MS')) {
                 // MS is available in curl >= 7.16.2
                 $timeout = max(1, ceil(1000 * $this->timeout));
 
                 // some versions of PHP 5.3 don't have this defined correctly
-                if ( ! defined('CURLOPT_CONNECTTIMEOUT_MS') ) {
+                if (!defined('CURLOPT_CONNECTTIMEOUT_MS')) {
                     //see http://stackoverflow.com/questions/9062798/php-curl-timeout-is-not-working/9063006#9063006
                     define('CURLOPT_CONNECTTIMEOUT_MS', 156);
                 }
 
-                $options[ CURLOPT_CONNECTTIMEOUT_MS ] = $timeout;
-                $options[ CURLOPT_TIMEOUT_MS ]        = $timeout;
+                $options[CURLOPT_CONNECTTIMEOUT_MS] = $timeout;
+                $options[CURLOPT_TIMEOUT_MS]        = $timeout;
             } else {
                 // fall back to the lower-precision timeout.
-                $timeout                           = max(1, ceil($this->timeout));
-                $options[ CURLOPT_CONNECTTIMEOUT ] = $timeout;
-                $options[ CURLOPT_TIMEOUT ]        = $timeout;
+                $timeout                         = max(1, ceil($this->timeout));
+                $options[CURLOPT_CONNECTTIMEOUT] = $timeout;
+                $options[CURLOPT_TIMEOUT]        = $timeout;
             }
 
             return $options;
         }
 
-        protected function buildCurlCommand($url, $data, $headers) {
+        protected function buildCurlCommand($url, $data, $headers)
+        {
             // TODO(dcramer): support ca_cert
             $cmd = $this->curl_path . ' -X POST ';
-            foreach ( $headers as $key => $value ) {
+            foreach ($headers as $key => $value) {
                 $cmd .= '-H ' . escapeshellarg($key . ': ' . $value) . ' ';
             }
             $cmd .= '-d ' . escapeshellarg($data) . ' ';
             $cmd .= escapeshellarg($url) . ' ';
             $cmd .= '-m 5 ';  // 5 second timeout for the whole process (connect + send)
-            if ( ! $this->verify_ssl ) {
+            if (!$this->verify_ssl) {
                 $cmd .= '-k ';
             }
             $cmd .= '> /dev/null 2>&1 &'; // ensure exec returns immediately while curl runs in the background
@@ -261,21 +273,21 @@
          *
          * @return string
          */
-        protected function get_auth_header($timestamp, $client, $api_key, $secret_key) {
+        protected function get_auth_header($timestamp, $client, $api_key, $secret_key)
+        {
             $header = array(
                 sprintf('sentry_timestamp=%F', $timestamp),
                 "sentry_client={$client}",
                 sprintf('sentry_version=%s', self::PROTOCOL),
             );
 
-            if ( $api_key ) {
+            if ($api_key) {
                 $header[] = "sentry_key={$api_key}";
             }
 
-            if ( $secret_key ) {
+            if ($secret_key) {
                 $header[] = "sentry_secret={$secret_key}";
             }
-
 
             return sprintf('Sentry %s', implode(', ', $header));
         }
@@ -285,16 +297,17 @@
          *
          * @return string|null
          */
-        protected function get_current_url() {
+        protected function get_current_url()
+        {
             // When running from commandline the REQUEST_URI is missing.
-            if ( ! isset($_SERVER['REQUEST_URI']) ) {
+            if (!isset($_SERVER['REQUEST_URI'])) {
                 return null;
             }
 
             // HTTP_HOST is a client-supplied header that is optional in HTTP 1.0
-            $host = ( ! empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST']
-                : ( ! empty($_SERVER['LOCAL_ADDR']) ? $_SERVER['LOCAL_ADDR']
-                    : ( ! empty($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '' ) ) );
+            $host = (!empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST']
+                : (!empty($_SERVER['LOCAL_ADDR']) ? $_SERVER['LOCAL_ADDR']
+                    : (!empty($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '')));
 
             $httpS = $this->isHttps() ? 's' : '';
 
@@ -306,18 +319,19 @@
          *
          * @return bool
          */
-        protected function isHttps() {
-            if ( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ) {
+        protected function isHttps()
+        {
+            if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
                 return true;
             }
 
-            if ( ! empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443 ) {
+            if (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
                 return true;
             }
 
-            if ( ! empty($this->trust_x_forwarded_proto) &&
-                 ! empty($_SERVER['X-FORWARDED-PROTO']) &&
-                 $_SERVER['X-FORWARDED-PROTO'] === 'https'
+            if (!empty($this->trust_x_forwarded_proto) &&
+                !empty($_SERVER['X-FORWARDED-PROTO']) &&
+                $_SERVER['X-FORWARDED-PROTO'] === 'https'
             ) {
                 return true;
             }
@@ -325,21 +339,23 @@
             return false;
         }
 
-        private function getDefaultPrefixes() {
+        private function getDefaultPrefixes()
+        {
             $value = get_include_path();
 
             return explode(':', $value);
         }
 
-        private function _convertPath($value) {
+        private function _convertPath($value)
+        {
             $path = @realpath($value);
-            if ( $path === false ) {
+            if ($path === false) {
                 $path = $value;
             }
             // we need app_path to have a trailing slash otherwise
             // base path detection becomes complex if the same
             // prefix is matched
-            if ( substr($path, 0, 1) === '/' && substr($path, - 1, 1) !== '/' ) {
+            if (substr($path, 0, 1) === '/' && substr($path, -1, 1) !== '/') {
                 $path = $path . '/';
             }
 
@@ -353,9 +369,10 @@
          * @param array  $data    Associative array of data to log
          * @param array  $headers Associative array of headers
          */
-        private function send_remote($url, $data, $headers = array()) {
+        private function send_remote($url, $data, $headers = array())
+        {
             $parts           = parse_url($url);
-            $parts['netloc'] = $parts['host'] . ( isset($parts['port']) ? ':' . $parts['port'] : null );
+            $parts['netloc'] = $parts['host'] . (isset($parts['port']) ? ':' . $parts['port'] : null);
             $this->send_http($url, $data, $headers);
         }
 
@@ -366,10 +383,11 @@
          * @param array  $data    Associative array of data to log
          * @param array  $headers Associative array of headers
          */
-        private function send_http($url, $data, $headers = array()) {
-            if ( $this->curl_method == 'async' ) {
+        private function send_http($url, $data, $headers = array())
+        {
+            if ($this->curl_method == 'async') {
                 $this->_curl_handler->enqueue($url, $data, $headers);
-            } elseif ( $this->curl_method == 'exec' ) {
+            } else if ($this->curl_method == 'exec') {
                 $this->send_http_asynchronous_curl_exec($url, $data, $headers);
             } else {
                 $this->send_http_synchronous($url, $data, $headers);
@@ -385,7 +403,8 @@
          *
          * @return bool
          */
-        private function send_http_asynchronous_curl_exec($url, $data, $headers) {
+        private function send_http_asynchronous_curl_exec($url, $data, $headers)
+        {
             exec($this->buildCurlCommand($url, $data, $headers));
 
             return true; // The exec method is just fire and forget, so just assume it always works
@@ -400,9 +419,10 @@
          *
          * @return bool
          */
-        private function send_http_synchronous($url, $data, $headers) {
+        private function send_http_synchronous($url, $data, $headers)
+        {
             $new_headers = array();
-            foreach ( $headers as $key => $value ) {
+            foreach ($headers as $key => $value) {
                 array_push($new_headers, $key . ': ' . $value);
             }
             // XXX(dcramer): Prevent 100-continue response form server (Fixes GH-216)
@@ -415,22 +435,22 @@
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
             $options = $this->get_curl_options();
-            $ca_cert = $options[ CURLOPT_CAINFO ];
-            unset($options[ CURLOPT_CAINFO ]);
+            $ca_cert = $options[CURLOPT_CAINFO];
+            unset($options[CURLOPT_CAINFO]);
             curl_setopt_array($curl, $options);
 
             curl_exec($curl);
 
             $errno = curl_errno($curl);
             // CURLE_SSL_CACERT || CURLE_SSL_CACERT_BADFILE
-            if ( $errno == 60 || $errno == 77 ) {
+            if ($errno == 60 || $errno == 77) {
                 curl_setopt($curl, CURLOPT_CAINFO, $ca_cert);
                 curl_exec($curl);
             }
 
             $code    = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            $success = ( $code == 200 );
-            if ( ! $success ) {
+            $success = ($code == 200);
+            if (!$success) {
                 // It'd be nice just to raise an exception here, but it's not very PHP-like
                 $this->_lasterror = curl_error($curl);
             } else {
@@ -446,7 +466,8 @@
          *
          * @return string
          */
-        private function uuid4() {
+        private function uuid4()
+        {
             $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
                 // 32 bits for "time_low"
                 mt_rand(0, 0xffff), mt_rand(0, 0xffff),
@@ -477,15 +498,17 @@
          *
          * @return string           Key's value
          */
-        private function _server_variable($key) {
-            if ( isset($_SERVER[ $key ]) ) {
-                return $_SERVER[ $key ];
+        private function _server_variable($key)
+        {
+            if (isset($_SERVER[$key])) {
+                return $_SERVER[$key];
             }
 
             return '';
         }
 
-        public static function getDefaultProcessors() {
+        public static function getDefaultProcessors()
+        {
             return array(
                 'Raven_SanitizeDataProcessor',
             );
@@ -498,18 +521,19 @@
          *
          * @return array            parsed DSN
          */
-        public static function parseDSN($dsn) {
+        public static function parseDSN($dsn)
+        {
             $url    = parse_url($dsn);
-            $scheme = ( isset($url['scheme']) ? $url['scheme'] : '' );
-            if ( ! in_array($scheme, array( 'http', 'https' )) ) {
-                throw new InvalidArgumentException('Unsupported Sentry DSN scheme: ' . ( ! empty($scheme) ? $scheme : '<not set>' ));
+            $scheme = (isset($url['scheme']) ? $url['scheme'] : '');
+            if (!in_array($scheme, array('http', 'https'))) {
+                throw new InvalidArgumentException('Unsupported Sentry DSN scheme: ' . (!empty($scheme) ? $scheme : '<not set>'));
             }
-            $netloc  = ( isset($url['host']) ? $url['host'] : null );
-            $netloc  .= ( isset($url['port']) ? ':' . $url['port'] : null );
-            $rawpath = ( isset($url['path']) ? $url['path'] : null );
-            if ( $rawpath ) {
+            $netloc  = (isset($url['host']) ? $url['host'] : null);
+            $netloc  .= (isset($url['port']) ? ':' . $url['port'] : null);
+            $rawpath = (isset($url['path']) ? $url['path'] : null);
+            if ($rawpath) {
                 $pos = strrpos($rawpath, '/', 1);
-                if ( $pos !== false ) {
+                if ($pos !== false) {
                     $path    = substr($rawpath, 0, $pos);
                     $project = substr($rawpath, $pos + 1);
                 } else {
@@ -520,9 +544,9 @@
                 $project = null;
                 $path    = '';
             }
-            $username = ( isset($url['user']) ? $url['user'] : null );
-            $password = ( isset($url['pass']) ? $url['pass'] : null );
-            if ( empty($netloc) || empty($project) || empty($username) || empty($password) ) {
+            $username = (isset($url['user']) ? $url['user'] : null);
+            $password = (isset($url['pass']) ? $url['pass'] : null);
+            if (empty($netloc) || empty($project) || empty($username) || empty($password)) {
                 throw new InvalidArgumentException('Invalid Sentry DSN: ' . $dsn);
             }
 
@@ -537,8 +561,9 @@
         /**
          * Installs any available automated hooks (such as error_reporting).
          */
-        public function install() {
-            if ( $this->error_handler ) {
+        public function install()
+        {
+            if ($this->error_handler) {
                 throw new Raven_Exception(sprintf('%s->install() must only be called once', get_class($this)));
             }
             $this->error_handler = new Raven_ErrorHandler($this, false, $this->error_types);
@@ -549,32 +574,38 @@
             return $this;
         }
 
-        public function getRelease() {
+        public function getRelease()
+        {
             return $this->release;
         }
 
-        public function setRelease($value) {
+        public function setRelease($value)
+        {
             $this->release = $value;
 
             return $this;
         }
 
-        public function getEnvironment() {
+        public function getEnvironment()
+        {
             return $this->environment;
         }
 
-        public function setEnvironment($value) {
+        public function setEnvironment($value)
+        {
             $this->environment = $value;
 
             return $this;
         }
 
-        public function getAppPath() {
+        public function getAppPath()
+        {
             return $this->app_path;
         }
 
-        public function setAppPath($value) {
-            if ( $value ) {
+        public function setAppPath($value)
+        {
+            if ($value) {
                 $this->app_path = $this->_convertPath($value);
             } else {
                 $this->app_path = null;
@@ -583,13 +614,15 @@
             return $this;
         }
 
-        public function getExcludedAppPaths() {
+        public function getExcludedAppPaths()
+        {
             return $this->excluded_app_paths;
         }
 
-        public function setExcludedAppPaths($value) {
-            if ( $value ) {
-                $this->excluded_app_paths = $value ? array_map(array( $this, '_convertPath' ), $value) : $value;
+        public function setExcludedAppPaths($value)
+        {
+            if ($value) {
+                $this->excluded_app_paths = $value ? array_map(array($this, '_convertPath'), $value) : $value;
             } else {
                 $this->excluded_app_paths = null;
             }
@@ -597,35 +630,42 @@
             return $this;
         }
 
-        public function getPrefixes() {
+        public function getPrefixes()
+        {
             return $this->prefixes;
         }
 
-        public function setPrefixes($value) {
-            $this->prefixes = $value ? array_map(array( $this, '_convertPath' ), $value) : $value;
+        public function setPrefixes($value)
+        {
+            $this->prefixes = $value ? array_map(array($this, '_convertPath'), $value) : $value;
 
             return $this;
         }
 
-        public function getSendCallback() {
+        public function getSendCallback()
+        {
             return $this->send_callback;
         }
 
-        public function setSendCallback($value) {
+        public function setSendCallback($value)
+        {
             $this->send_callback = $value;
 
             return $this;
         }
 
-        public function getTransport() {
+        public function getTransport()
+        {
             return $this->transport;
         }
 
-        public function getServerEndpoint($value) {
+        public function getServerEndpoint($value)
+        {
             return $this->server;
         }
 
-        public function getUserAgent() {
+        public function getUserAgent()
+        {
             return 'sentry-php/' . self::VERSION;
         }
 
@@ -637,7 +677,8 @@
          *
          * @param function $value Function to be called
          */
-        public function setTransport($value) {
+        public function setTransport($value)
+        {
             $this->transport = $value;
 
             return $this;
@@ -651,14 +692,17 @@
          *
          * @return array
          */
-        public function setProcessorsFromOptions($options) {
+        public function setProcessorsFromOptions($options)
+        {
             $processors = array();
-            foreach ( Raven_util::get($options, 'processors', self::getDefaultProcessors()) as $processor ) {
+            foreach (Raven_util::get($options, 'processors', self::getDefaultProcessors()) as $processor) {
                 $new_processor = new $processor($this);
 
-                if ( isset($options['processorOptions']) && is_array($options['processorOptions']) ) {
-                    if ( isset($options['processorOptions'][ $processor ]) && method_exists($processor, 'setProcessorOptions') ) {
-                        $new_processor->setProcessorOptions($options['processorOptions'][ $processor ]);
+                if (isset($options['processorOptions']) && is_array($options['processorOptions'])) {
+                    if (isset($options['processorOptions'][$processor]) && method_exists($processor,
+                            'setProcessorOptions')
+                    ) {
+                        $new_processor->setProcessorOptions($options['processorOptions'][$processor]);
                     }
                 }
                 $processors[] = $new_processor;
@@ -667,14 +711,16 @@
             return $processors;
         }
 
-        public function getLastError() {
+        public function getLastError()
+        {
             return $this->_lasterror;
         }
 
         /**
          * Given an identifier, returns a Sentry searchable string.
          */
-        public function getIdent($ident) {
+        public function getIdent($ident)
+        {
             // XXX: We don't calculate checksums yet, so we only have the ident.
             return $ident;
         }
@@ -683,8 +729,11 @@
          * Deprecated
          */
         public function message(
-            $message, $params = array(), $level = self::INFO,
-            $stack = false, $vars = null
+            $message,
+            $params = array(),
+            $level = self::INFO,
+            $stack = false,
+            $vars = null
         ) {
             return $this->captureMessage($message, $params, $level, $stack, $vars);
         }
@@ -692,7 +741,8 @@
         /**
          * Deprecated
          */
-        public function exception($exception) {
+        public function exception($exception)
+        {
             return $this->captureException($exception);
         }
 
@@ -704,21 +754,24 @@
          * @param array  $data    Additional attributes to pass with this event (see Sentry docs).
          */
         public function captureMessage(
-            $message, $params = array(), $data = array(),
-            $stack = false, $vars = null
+            $message,
+            $params = array(),
+            $data = array(),
+            $stack = false,
+            $vars = null
         ) {
             // Gracefully handle messages which contain formatting characters, but were not
             // intended to be used with formatting.
-            if ( ! empty($params) ) {
+            if (!empty($params)) {
                 $formatted_message = vsprintf($message, $params);
             } else {
                 $formatted_message = $message;
             }
 
-            if ( $data === null ) {
+            if ($data === null) {
                 $data = array();
                 // support legacy method of passing in a level name as the third arg
-            } elseif ( ! is_array($data) ) {
+            } else if (!is_array($data)) {
                 $data = array(
                     'level' => $data,
                 );
@@ -740,14 +793,15 @@
          * @param Exception $exception The Exception object.
          * @param array     $data      Additional attributes to pass with this event (see Sentry docs).
          */
-        public function captureException($exception, $data = null, $logger = null, $vars = null) {
+        public function captureException($exception, $data = null, $logger = null, $vars = null)
+        {
             $has_chained_exceptions = version_compare(PHP_VERSION, '5.3.0', '>=');
 
-            if ( in_array(get_class($exception), $this->exclude) ) {
+            if (in_array(get_class($exception), $this->exclude)) {
                 return null;
             }
 
-            if ( $data === null ) {
+            if ($data === null) {
                 $data = array();
             }
 
@@ -771,7 +825,7 @@
                 array_unshift($trace, $frame_where_exception_thrown);
 
                 // manually trigger autoloading, as it's not done in some edge cases due to PHP bugs (see #60149)
-                if ( ! class_exists('Raven_Stacktrace') ) {
+                if (!class_exists('Raven_Stacktrace')) {
                     spl_autoload_call('Raven_Stacktrace');
                 }
 
@@ -783,17 +837,17 @@
                 );
 
                 $exceptions[] = $exc_data;
-            } while ( $has_chained_exceptions && $exc = $exc->getPrevious() );
+            } while ($has_chained_exceptions && $exc = $exc->getPrevious());
 
             $data['exception'] = array(
                 'values' => array_reverse($exceptions),
             );
-            if ( $logger !== null ) {
+            if ($logger !== null) {
                 $data['logger'] = $logger;
             }
 
-            if ( empty($data['level']) ) {
-                if ( method_exists($exception, 'getSeverity') ) {
+            if (empty($data['level'])) {
+                if (method_exists($exception, 'getSeverity')) {
                     $data['level'] = $this->translateSeverity($exception->getSeverity());
                 } else {
                     $data['level'] = self::ERROR;
@@ -806,8 +860,9 @@
         /**
          * Capture the most recent error (obtained with ``error_get_last``).
          */
-        public function captureLastError() {
-            if ( null === $error = error_get_last() ) {
+        public function captureLastError()
+        {
+            if (null === $error = error_get_last()) {
                 return;
             }
 
@@ -822,7 +877,8 @@
         /**
          * Log an query to sentry
          */
-        public function captureQuery($query, $level = self::INFO, $engine = '') {
+        public function captureQuery($query, $level = self::INFO, $engine = '')
+        {
             $data = array(
                 'message'                 => $query,
                 'level'                   => $level,
@@ -831,7 +887,7 @@
                 )
             );
 
-            if ( $engine !== '' ) {
+            if ($engine !== '') {
                 $data['sentry.interfaces.Query']['engine'] = $engine;
             }
 
@@ -841,11 +897,13 @@
         /**
          * Return the last captured event's ID or null if none available.
          */
-        public function getLastEventID() {
+        public function getLastEventID()
+        {
             return $this->_last_event_id;
         }
 
-        public function get_default_data() {
+        public function get_default_data()
+        {
             return array(
                 'server_name' => $this->name,
                 'project'     => $this->project,
@@ -858,39 +916,40 @@
             );
         }
 
-        public function capture($data, $stack = null, $vars = null) {
-            if ( ! isset($data['timestamp']) ) {
+        public function capture($data, $stack = null, $vars = null)
+        {
+            if (!isset($data['timestamp'])) {
                 $data['timestamp'] = gmdate('Y-m-d\TH:i:s\Z');
             }
-            if ( ! isset($data['level']) ) {
+            if (!isset($data['level'])) {
                 $data['level'] = self::ERROR;
             }
-            if ( ! isset($data['tags']) ) {
+            if (!isset($data['tags'])) {
                 $data['tags'] = array();
             }
-            if ( ! isset($data['extra']) ) {
+            if (!isset($data['extra'])) {
                 $data['extra'] = array();
             }
-            if ( ! isset($data['event_id']) ) {
+            if (!isset($data['event_id'])) {
                 $data['event_id'] = $this->uuid4();
             }
 
-            if ( isset($data['message']) ) {
+            if (isset($data['message'])) {
                 $data['message'] = substr($data['message'], 0, $this->message_limit);
             }
 
             $data = array_merge($this->get_default_data(), $data);
 
-            if ( $this->is_http_request() ) {
+            if ($this->is_http_request()) {
                 $data = array_merge($this->get_http_data(), $data);
             }
 
             $data = array_merge($this->get_user_data(), $data);
 
-            if ( $this->release ) {
+            if ($this->release) {
                 $data['release'] = $this->release;
             }
-            if ( $this->environment ) {
+            if ($this->environment) {
                 $data['environment'] = $this->environment;
             }
 
@@ -904,37 +963,37 @@
                 $this->context->extra,
                 $data['extra']);
 
-            if ( empty($data['extra']) ) {
+            if (empty($data['extra'])) {
                 unset($data['extra']);
             }
-            if ( empty($data['tags']) ) {
+            if (empty($data['tags'])) {
                 unset($data['tags']);
             }
-            if ( empty($data['user']) ) {
+            if (empty($data['user'])) {
                 unset($data['user']);
             }
-            if ( empty($data['request']) ) {
+            if (empty($data['request'])) {
                 unset($data['request']);
             }
 
-            if ( ! $this->breadcrumbs->is_empty() ) {
+            if (!$this->breadcrumbs->is_empty()) {
                 $data['breadcrumbs'] = $this->breadcrumbs->fetch();
             }
 
-            if ( ( ! $stack && $this->auto_log_stacks ) || $stack === true ) {
+            if ((!$stack && $this->auto_log_stacks) || $stack === true) {
                 $stack = debug_backtrace();
 
                 // Drop last stack
                 array_shift($stack);
             }
 
-            if ( ! empty($stack) ) {
+            if (!empty($stack)) {
                 // manually trigger autoloading, as it's not done in some edge cases due to PHP bugs (see #60149)
-                if ( ! class_exists('Raven_Stacktrace') ) {
+                if (!class_exists('Raven_Stacktrace')) {
                     spl_autoload_call('Raven_Stacktrace');
                 }
 
-                if ( ! isset($data['stacktrace']) && ! isset($data['exception']) ) {
+                if (!isset($data['stacktrace']) && !isset($data['exception'])) {
                     $data['stacktrace'] = array(
                         'frames' => Raven_Stacktrace::get_stack_info(
                             $stack, $this->trace, $vars, $this->message_limit, $this->prefixes,
@@ -947,7 +1006,7 @@
             $this->sanitize($data);
             $this->process($data);
 
-            if ( ! $this->store_errors_for_bulk_send ) {
+            if (!$this->store_errors_for_bulk_send) {
                 $this->send($data);
             } else {
                 $this->_pending_events[] = $data;
@@ -958,23 +1017,24 @@
             return $data['event_id'];
         }
 
-        public function sanitize(&$data) {
+        public function sanitize(&$data)
+        {
             // attempt to sanitize any user provided data
-            if ( ! empty($data['request']) ) {
+            if (!empty($data['request'])) {
                 $data['request'] = $this->serializer->serialize($data['request']);
             }
-            if ( ! empty($data['user']) ) {
+            if (!empty($data['user'])) {
                 $data['user'] = $this->serializer->serialize($data['user'], 3);
             }
-            if ( ! empty($data['extra']) ) {
+            if (!empty($data['extra'])) {
                 $data['extra'] = $this->serializer->serialize($data['extra']);
             }
-            if ( ! empty($data['tags']) ) {
-                foreach ( $data['tags'] as $key => $value ) {
-                    $data['tags'][ $key ] = @(string) $value;
+            if (!empty($data['tags'])) {
+                foreach ($data['tags'] as $key => $value) {
+                    $data['tags'][$key] = @(string)$value;
                 }
             }
-            if ( ! empty($data['contexts']) ) {
+            if (!empty($data['contexts'])) {
                 $data['contexts'] = $this->serializer->serialize($data['contexts'], 5);
             }
         }
@@ -984,27 +1044,30 @@
          *
          * @param array $data Associative array of data to log
          */
-        public function process(&$data) {
-            foreach ( $this->processors as $processor ) {
+        public function process(&$data)
+        {
+            foreach ($this->processors as $processor) {
                 $processor->process($data);
             }
         }
 
-        public function sendUnsentErrors() {
-            foreach ( $this->_pending_events as $data ) {
+        public function sendUnsentErrors()
+        {
+            foreach ($this->_pending_events as $data) {
                 $this->send($data);
             }
             $this->_pending_events = array();
-            if ( $this->store_errors_for_bulk_send ) {
+            if ($this->store_errors_for_bulk_send) {
                 //in case an error occurs after this is called, on shutdown, send any new errors.
-                $this->store_errors_for_bulk_send = ! defined('RAVEN_CLIENT_END_REACHED');
+                $this->store_errors_for_bulk_send = !defined('RAVEN_CLIENT_END_REACHED');
             }
         }
 
-        public function encode(&$data) {
+        public function encode(&$data)
+        {
             $message = Raven_Compat::json_encode($data);
-            if ( $message === false ) {
-                if ( function_exists('json_last_error_msg') ) {
+            if ($message === false) {
+                if (function_exists('json_last_error_msg')) {
                     $this->_lasterror = json_last_error_msg();
                 } else {
                     $this->_lasterror = json_last_error();
@@ -1013,7 +1076,7 @@
                 return false;
             }
 
-            if ( function_exists("gzcompress") ) {
+            if (function_exists("gzcompress")) {
                 $message = gzcompress($message);
             }
 
@@ -1028,17 +1091,20 @@
          *
          * @param array $data Associative array of data to log
          */
-        public function send(&$data) {
-            if ( is_callable($this->send_callback) && call_user_func_array($this->send_callback, array( &$data )) === false ) {
+        public function send(&$data)
+        {
+            if (is_callable($this->send_callback) && call_user_func_array($this->send_callback,
+                    array(&$data)) === false
+            ) {
                 // if send_callback returns false, end native send
                 return;
             }
 
-            if ( ! $this->server ) {
+            if (!$this->server) {
                 return;
             }
 
-            if ( $this->transport ) {
+            if ($this->transport) {
                 return call_user_func($this->transport, $this, $data);
             }
 
@@ -1053,7 +1119,8 @@
             $this->send_remote($this->server, $message, $headers);
         }
 
-        public function getAuthHeader() {
+        public function getAuthHeader()
+        {
             $timestamp = microtime(true);
 
             return $this->get_auth_header($timestamp, $this->getUserAgent(), $this->public_key, $this->secret_key);
@@ -1066,11 +1133,12 @@
          *
          * @return string           Sentry log level group
          */
-        public function translateSeverity($severity) {
-            if ( is_array($this->severity_map) && isset($this->severity_map[ $severity ]) ) {
-                return $this->severity_map[ $severity ];
+        public function translateSeverity($severity)
+        {
+            if (is_array($this->severity_map) && isset($this->severity_map[$severity])) {
+                return $this->severity_map[$severity];
             }
-            switch ( $severity ) {
+            switch ($severity) {
                 case E_ERROR:
                     return Raven_Client::ERROR;
                 case E_WARNING:
@@ -1098,8 +1166,8 @@
                 case E_RECOVERABLE_ERROR:
                     return Raven_Client::ERROR;
             }
-            if ( version_compare(PHP_VERSION, '5.3.0', '>=') ) {
-                switch ( $severity ) {
+            if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+                switch ($severity) {
                     case E_DEPRECATED:
                         return Raven_Client::WARN;
                     case E_USER_DEPRECATED:
@@ -1116,7 +1184,8 @@
          *
          * @param array $map
          */
-        public function registerSeverityMap($map) {
+        public function registerSeverityMap($map)
+        {
             $this->severity_map = $map;
         }
 
@@ -1129,20 +1198,22 @@
          * @param string|null $email User's email
          * @param array       $data  Additional user data
          */
-        public function set_user_data($id, $email = null, $data = array()) {
-            $user = array( 'id' => $id );
-            if ( isset($email) ) {
+        public function set_user_data($id, $email = null, $data = array())
+        {
+            $user = array('id' => $id);
+            if (isset($email)) {
                 $user['email'] = $email;
             }
             $this->user_context(array_merge($user, $data));
         }
 
-        public function onShutdown() {
-            if ( ! defined('RAVEN_CLIENT_END_REACHED') ) {
+        public function onShutdown()
+        {
+            if (!defined('RAVEN_CLIENT_END_REACHED')) {
                 define('RAVEN_CLIENT_END_REACHED', true);
             }
             $this->sendUnsentErrors();
-            if ( $this->curl_method == 'async' ) {
+            if ($this->curl_method == 'async') {
                 $this->_curl_handler->join();
             }
         }
@@ -1153,10 +1224,11 @@
          * @param array $data  Associative array of user data
          * @param bool  $merge Merge existing context with new context
          */
-        public function user_context($data, $merge = true) {
-            if ( $merge && $this->context->user !== null ) {
+        public function user_context($data, $merge = true)
+        {
+            if ($merge && $this->context->user !== null) {
                 // bail if data is null
-                if ( ! $data ) {
+                if (!$data) {
                     return;
                 }
                 $this->context->user = array_merge($this->context->user, $data);
@@ -1170,7 +1242,8 @@
          *
          * @param array $data Associative array of tags
          */
-        public function tags_context($data) {
+        public function tags_context($data)
+        {
             $this->context->tags = array_merge($this->context->tags, $data);
         }
 
@@ -1179,14 +1252,16 @@
          *
          * @param array $data Associative array of extra data
          */
-        public function extra_context($data) {
+        public function extra_context($data)
+        {
             $this->context->extra = array_merge($this->context->extra, $data);
         }
 
         /**
          * @param array $processors
          */
-        public function setProcessors(array $processors) {
+        public function setProcessors(array $processors)
+        {
             $this->processors = $processors;
         }
     }

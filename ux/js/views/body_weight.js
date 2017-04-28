@@ -22,14 +22,14 @@ $(function () {
         debug_add_gen_time("weight", data.time);
     });
 
-    $( 'input[name="confWeightTimeRange"]:radio' ).change(
+    $('input[name="confWeightTimeRange"]:radio').change(
         function () {
-            updateWeightGraph( $ );
+            updateWeightGraph($);
         }
     );
 
     function updateWeightGraph($) {
-        var val = $( 'input:radio[name=confWeightTimeRange]:checked' ).val();
+        var val = $('input:radio[name=confWeightTimeRange]:checked').val();
         var $progress = $('#animationWeightProgress');
         $progress.show();
 
@@ -38,19 +38,19 @@ $(function () {
             WeightTrend.html("Generating Dataset...");
         }
 
-        $.getJSON( "../json.php?user=" + fitbitUserId + "&data=weight&period=" + val, function (data) {
-            var graphWeightTitle = $( '#graphWeightTitle' );
-            if ( graphWeightTitle.length > 0 ) {
-                var graphWeightTimeTitle = $( '#nameWeight' + val );
-                if ( graphWeightTimeTitle.length > 0 ) {
-                    graphWeightTitle.html( "Weight " + graphWeightTimeTitle.html() );
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=weight&period=" + val, function (data) {
+            var graphWeightTitle = $('#graphWeightTitle');
+            if (graphWeightTitle.length > 0) {
+                var graphWeightTimeTitle = $('#nameWeight' + val);
+                if (graphWeightTimeTitle.length > 0) {
+                    graphWeightTitle.html("Weight " + graphWeightTimeTitle.html());
                 } else {
-                    graphWeightTitle.html( "Weight " + val );
+                    graphWeightTitle.html("Weight " + val);
                 }
             }
 
             var returnDate = data.results.returnDate;
-            var reportDate = new Date( returnDate[0], returnDate[1] - 1, returnDate[2] );
+            var reportDate = new Date(returnDate[0], returnDate[1] - 1, returnDate[2]);
 
             configWeight.data.datasets[0].data = data.results.graph_weight;
             configWeight.data.datasets[1].data = data.results.graph_weightAvg;
@@ -68,8 +68,8 @@ $(function () {
             configWeight.data.datasets[3].pointRadius = pointRadius;
 
             var dataTimeScale = [];
-            for ( var i = 0; i < data.results.graph_weight.length; i++ ) {
-                dataTimeScale.push( reportDate.getTime() - i * 86400000 );
+            for (var i = 0; i < data.results.graph_weight.length; i++) {
+                dataTimeScale.push(reportDate.getTime() - i * 86400000);
             }
             configWeight.data.labels = dataTimeScale;
 
@@ -77,7 +77,7 @@ $(function () {
             trendWeight($, data);
 
             debug_add_gen_time("weight " + val, data.time);
-        } );
+        });
     }
 
     function graphWeight($, data, st) {
@@ -111,22 +111,22 @@ $(function () {
             }
 
             dataTimeScale = [];
-            for ( i = 0; i < dataSet1.length; i++ ) {
-                dataTimeScale.push( st - i * 86400000 );
+            for (i = 0; i < dataSet1.length; i++) {
+                dataTimeScale.push(st - i * 86400000);
             }
 
             configWeight = {
                 type: 'line',
                 options: {
                     responsive: true,
-                    title:{
-                        display:true,
-                        text:'Body Weight Chart'
+                    title: {
+                        display: true,
+                        text: 'Body Weight Chart'
                     },
                     tooltips: {
                         mode: 'label',
                         callbacks: {
-                            beforeBody: function() {
+                            beforeBody: function () {
                                 return 'Weights in ' + weight_units;
                             }
                         }
@@ -136,13 +136,13 @@ $(function () {
                     },
                     animation: {
                         duration: aniDuration,
-                        onProgress: function(animation) {
+                        onProgress: function (animation) {
                             $progress.attr({
                                 value: animation.animationObject.currentStep / animation.animationObject.numSteps,
                             });
                         },
-                        onComplete: function(animation) {
-                            window.setTimeout(function() {
+                        onComplete: function (animation) {
+                            window.setTimeout(function () {
                                 $progress.hide();
                             }, (aniDuration * 0.5));
                         }
@@ -255,7 +255,7 @@ $(function () {
 
             if (weightTrends === '') {
                 $.getJSON("../json.php?user=" + fitbitUserId + "&data=trend", function (trendData) {
-                    weightTrends = '<p>Your last recorded weight was <strong>' + trendData.results.weight + '</strong>, so still has another'+
+                    weightTrends = '<p>Your last recorded weight was <strong>' + trendData.results.weight + '</strong>, so still has another' +
                         ' <strong>' + trendData.results.weightToLose + '</strong> to lose to reach your ' +
                         ' <strong>' + trendData.results.weightGoal + '</strong> goal.</p>' +
                         '<p>Based on your current <strong>' + trendData.results.caldef + '</strong> calorie deficit you should reach your target' +

@@ -15,11 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-
     /**
      * Special class to handle replication stuff, as the API is still evolving
      */
-    class couchReplicator {
+    class couchReplicator
+    {
+
         /**
          * @var reference to our CouchDB client
          */
@@ -35,11 +36,13 @@
          *
          * @param couchClient $client the couchClient instance
          */
-        function __construct(couchClient $client) {
+        function __construct(couchClient $client)
+        {
             $this->client = $client;
         }
 
-        private function _launch() {
+        private function _launch()
+        {
             $opts       = $this->opts;
             $this->opts = array();
             // 		echo "posting to /_replicate";
@@ -52,11 +55,11 @@
             // 		print_r($raw);
             $resp = couch::parseRawResponse($raw);
             // 		print_r($resp);
-            if ( $resp['status_code'] == 200 ) {
+            if ($resp['status_code'] == 200) {
                 return $resp['body'];
             }
             // continuous setup returns 202 Accepted
-            if ( array_key_exists('continuous', $opts) && $opts['continuous'] == true && $resp['status_code'] == 202 ) {
+            if (array_key_exists('continuous', $opts) && $opts['continuous'] == true && $resp['status_code'] == 202) {
                 return $resp['body'];
             }
             throw new couchException($raw);
@@ -67,7 +70,8 @@
          *
          * @return couchReplicator $this
          */
-        public function create_target() {
+        public function create_target()
+        {
             $this->opts['create_target'] = true;
 
             return $this;
@@ -78,7 +82,8 @@
          *
          * @return couchReplicator $this
          */
-        public function continuous() {
+        public function continuous()
+        {
             $this->opts['continuous'] = true;
 
             return $this;
@@ -90,7 +95,8 @@
          *
          * @return couchReplicator $this
          */
-        public function cancel() {
+        public function cancel()
+        {
             $this->opts['cancel'] = true;
 
             return $this;
@@ -103,7 +109,8 @@
          *
          * @return couchReplicator $this
          */
-        public function doc_ids(array $ids) {
+        public function doc_ids(array $ids)
+        {
             $this->opts['doc_ids'] = $ids;
 
             return $this;
@@ -117,7 +124,8 @@
          *
          * @return couchReplicator $this
          */
-        public function filter($name) {
+        public function filter($name)
+        {
             $this->opts['filter'] = $name;
 
             return $this;
@@ -130,7 +138,8 @@
          *
          * @return couchReplicator $this
          */
-        public function query_params($params) {
+        public function query_params($params)
+        {
             $this->opts['query_params'] = $params;
 
             return $this;
@@ -143,7 +152,8 @@
          *
          * @return object couchDB server response to replication request
          */
-        public function to($url) {
+        public function to($url)
+        {
             $this->opts['source'] = $this->client->getDatabaseName();
             $this->opts['target'] = $url;
 
@@ -157,7 +167,8 @@
          *
          * @return object couchDB server response to replication request
          */
-        public function from($url) {
+        public function from($url)
+        {
             $this->opts['target'] = $this->client->getDatabaseName();
             $this->opts['source'] = $url;
 

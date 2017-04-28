@@ -1,27 +1,29 @@
 $(function () {
     'use strict';
 
-    var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+    var randomScalingFactor = function () {
+        return Math.round(Math.random() * 100)
+    };
 
-    $.getJSON("../json.php?user="+fitbitUserId+"&data=TrackerHistoryChart&period=last7", function (data) {
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=TrackerHistoryChart&period=last7", function (data) {
         var barChartData = {
-            labels : data.results.date,
-            datasets : [
+            labels: data.results.date,
+            datasets: [
                 {
                     label: 'Steps Goal',
                     type: 'line',
                     fill: false,
                     display: false,
-                    backgroundColor : "#ac193d",
-                    borderColor : "#ac193d",
+                    backgroundColor: "#ac193d",
+                    borderColor: "#ac193d",
                     highlightFill: "#ac193d",
                     highlightStroke: "#ac193d",
-                    data : data.results.stepsGoal
+                    data: data.results.stepsGoal
                 },
                 {
                     label: 'Steps',
-                    backgroundColor : "#b1e340",
-                    data : data.results.steps
+                    backgroundColor: "#b1e340",
+                    data: data.results.steps
                 }
             ],
             options: {
@@ -58,7 +60,7 @@ $(function () {
 
         var stepsProgressbar = $('#stepsProgressbar');
         if (stepsProgressbar.length > 0) {
-            stepsProgressbar.attr('aria-valuenow', data.results.precentages.steps).css('width',data.results.precentages.steps+'%');
+            stepsProgressbar.attr('aria-valuenow', data.results.precentages.steps).css('width', data.results.precentages.steps + '%');
         }
 
         var steps7Day = $('#steps7Day');

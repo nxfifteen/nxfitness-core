@@ -1,21 +1,23 @@
 <?php
     $userProfile = $App->getUserProfile();
 
-    if ( array_key_exists("HeaderNotificationBar", $_SESSION) && is_array($_SESSION['HeaderNotificationBar']) && count($_SESSION['HeaderNotificationBar']) > 0 ) {
+    if (array_key_exists("HeaderNotificationBar",
+            $_SESSION) && is_array($_SESSION['HeaderNotificationBar']) && count($_SESSION['HeaderNotificationBar']) > 0
+    ) {
         $HeaderNotificationBar = $_SESSION['HeaderNotificationBar'];
 
         nxr(" * HeaderNotificationBar taken from session");
     } else {
 
         $HeaderNotificationBar = array();
-        if ( ! $App->getNxFit()->isUserOAuthAuthorised($_COOKIE['_nx_fb_usr']) ) {
+        if (!$App->getNxFit()->isUserOAuthAuthorised($_COOKIE['_nx_fb_usr'])) {
             array_push($HeaderNotificationBar, $App->getThemeWidgets("HeaderNotificationBar", array(
                 "msg"     => "<a href=\"../authorise\">Fitbit OAuth Setup Required</a>",
                 "urgency" => "danger",
                 "icon"    => "bug"
             )));
         } else {
-            if ( isset($userProfile['cooldown']) && strtotime($userProfile['cooldown']) > strtotime(date("Y-m-d H:i:s")) ) {
+            if (isset($userProfile['cooldown']) && strtotime($userProfile['cooldown']) > strtotime(date("Y-m-d H:i:s"))) {
                 array_push($HeaderNotificationBar, $App->getThemeWidgets("HeaderNotificationBar", array(
                     "msg"     => "Sync Status - Fitbit API limit reached. ",
                     "urgency" => "danger",
@@ -23,7 +25,7 @@
                 )));
             }
 
-            if ( count($HeaderNotificationBar) > 0 ) {
+            if (count($HeaderNotificationBar) > 0) {
                 $_SESSION['HeaderNotificationBar'] = $HeaderNotificationBar;
             }
         }

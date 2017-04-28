@@ -4,7 +4,6 @@
 /cache
 /composer.lock
 /composer.phar
-/dev/
 /docs/development/
 /docs/wiki.core/
 /fitbit.log
@@ -23,3 +22,7 @@ config.def.php
 config.inc.php
 vendor
 *.css.map
+/dev/index.php
+/dev/git-bump-version/
+/dev/phpunit.phar
+/dev/composer.phar

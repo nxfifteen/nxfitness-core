@@ -20,7 +20,9 @@
      * couch class
      * basics to implement JSON / REST / HTTP CouchDB protocol
      */
-    class couch {
+    class couch
+    {
+
         /**
          * @var string database source name
          */
@@ -38,7 +40,7 @@
         /**
          * @var array allowed HTTP methods for REST dialog
          */
-        protected $HTTP_METHODS = array( 'GET', 'POST', 'PUT', 'DELETE', 'COPY' );
+        protected $HTTP_METHODS = array('GET', 'POST', 'PUT', 'DELETE', 'COPY');
 
         /**
          * @var resource HTTP server socket
@@ -62,14 +64,15 @@
          * @param string $dsn     CouchDB Data Source Name
          * @param array  $options Couch options
          */
-        public function __construct($dsn, $options = array()) {
+        public function __construct($dsn, $options = array())
+        {
             $this->dsn        = preg_replace('@/+$@', '', $dsn);
             $this->options    = $options;
             $this->dsn_parsed = parse_url($this->dsn);
-            if ( ! isset($this->dsn_parsed['port']) ) {
+            if (!isset($this->dsn_parsed['port'])) {
                 $this->dsn_parsed['port'] = 80;
             }
-            if ( function_exists('curl_init') ) {
+            if (function_exists('curl_init')) {
                 $this->curl = true;
             }
         }
@@ -89,15 +92,16 @@
          *
          * @return string start of HTTP request
          */
-        protected function _socket_startRequestHeaders($method, $url) {
-            if ( $this->dsn_part('path') ) {
+        protected function _socket_startRequestHeaders($method, $url)
+        {
+            if ($this->dsn_part('path')) {
                 $url = $this->dsn_part('path') . $url;
             }
             $req = "$method $url HTTP/1.0\r\nHost: " . $this->dsn_part('host') . "\r\n";
-            if ( $this->dsn_part('user') && $this->dsn_part('pass') ) {
+            if ($this->dsn_part('user') && $this->dsn_part('pass')) {
                 $req .= 'Authorization: Basic ' . base64_encode($this->dsn_part('user') . ':' .
                                                                 $this->dsn_part('pass')) . "\r\n";
-            } elseif ( $this->sessioncookie ) {
+            } else if ($this->sessioncookie) {
                 $req .= "Cookie: " . $this->sessioncookie . "\r\n";
             }
             $req .= "Accept: application/json,text/html,text/plain,*/*\r\n";
@@ -116,19 +120,20 @@
          *
          * @return string HTTP request
          */
-        protected function _socket_buildRequest($method, $url, $data, $content_type) {
-            if ( is_object($data) OR is_array($data) ) {
+        protected function _socket_buildRequest($method, $url, $data, $content_type)
+        {
+            if (is_object($data) OR is_array($data)) {
                 $data = json_encode($data);
             }
             $req = $this->_socket_startRequestHeaders($method, $url);
-            if ( $content_type ) {
+            if ($content_type) {
                 $req .= 'Content-Type: ' . $content_type . "\r\n";
             } else {
                 $req .= 'Content-Type: application/json' . "\r\n";
             }
-            if ( $method == 'COPY' ) {
+            if ($method == 'COPY') {
                 $req .= 'Destination: ' . $data . "\r\n\r\n";
-            } elseif ( $data ) {
+            } else if ($data) {
                 $req .= 'Content-Length: ' . strlen($data) . "\r\n\r\n";
                 $req .= $data . "\r\n";
             } else {
@@ -149,15 +154,16 @@
          * @return string server response
          * @throws InvalidArgumentException
          */
-        protected function _socket_storeFile($url, $file, $content_type) {
+        protected function _socket_storeFile($url, $file, $content_type)
+        {
 
-            if ( ! strlen($url) ) {
+            if (!strlen($url)) {
                 throw new InvalidArgumentException("Attachment URL can't be empty");
             }
-            if ( ! strlen($file) OR ! is_file($file) OR ! is_readable($file) ) {
+            if (!strlen($file) OR !is_file($file) OR !is_readable($file)) {
                 throw new InvalidArgumentException("Attachment file does not exist or is not readable");
             }
-            if ( ! strlen($content_type) ) {
+            if (!strlen($content_type)) {
                 throw new InvalidArgumentException("Attachment Content Type can't be empty");
             }
             $req     = $this->_socket_startRequestHeaders('PUT', $url);
@@ -168,7 +174,7 @@
             fwrite($this->socket, $req);
             stream_copy_to_stream($fstream, $this->socket);
             $response = '';
-            while ( ! feof($this->socket) ) {
+            while (!feof($this->socket)) {
                 $response .= fgets($this->socket);
             }
             $this->_disconnect();
@@ -184,10 +190,11 @@
          * @return boolean wheter the connection is successful
          * @throws Exception
          */
-        protected function _connect() {
+        protected function _connect()
+        {
             $ssl          = $this->dsn_part('scheme') == 'https' ? 'ssl://' : '';
             $this->socket = @fsockopen($ssl . $this->dsn_part('host'), $this->dsn_part('port'), $err_num, $err_string);
-            if ( ! $this->socket ) {
+            if (!$this->socket) {
                 throw new Exception('Could not open connection to ' . $this->dsn_part('host') . ':' . $this->dsn_part('port') . ': ' . $err_string . ' (' . $err_num . ')');
             }
 
@@ -201,10 +208,11 @@
          *
          * @return string $response HTTP response from the CouchDB server
          */
-        protected function _execute($request) {
+        protected function _execute($request)
+        {
             fwrite($this->socket, $request);
             $response = '';
-            while ( ! feof($this->socket) ) {
+            while (!feof($this->socket)) {
                 $response .= fgets($this->socket);
             }
 
@@ -214,13 +222,15 @@
         /**
          *closes the connection to the server
          */
-        protected function _disconnect() {
+        protected function _disconnect()
+        {
             @fclose($this->socket);
             $this->socket = null;
         }
 
-        protected function _curl_addCustomOptions($res) {
-            if ( array_key_exists("curl", $this->options) && is_array($this->options["curl"]) ) {
+        protected function _curl_addCustomOptions($res)
+        {
+            if (array_key_exists("curl", $this->options) && is_array($this->options["curl"])) {
                 curl_setopt_array($res, $this->options["curl"]);
             }
         }
@@ -237,25 +247,26 @@
          *
          * @return resource CURL request resource
          */
-        protected function _curl_buildRequest($method, $url, $data, $content_type) {
+        protected function _curl_buildRequest($method, $url, $data, $content_type)
+        {
             $http         = curl_init($url);
-            $http_headers = array( 'Accept: application/json,text/html,text/plain,*/*' );
-            if ( is_object($data) OR is_array($data) ) {
+            $http_headers = array('Accept: application/json,text/html,text/plain,*/*');
+            if (is_object($data) OR is_array($data)) {
                 $data = json_encode($data);
             }
-            if ( $content_type ) {
+            if ($content_type) {
                 $http_headers[] = 'Content-Type: ' . $content_type;
             } else {
                 $http_headers[] = 'Content-Type: application/json';
             }
-            if ( $this->sessioncookie ) {
+            if ($this->sessioncookie) {
                 $http_headers[] = "Cookie: " . $this->sessioncookie;
             }
             curl_setopt($http, CURLOPT_CUSTOMREQUEST, $method);
 
-            if ( $method == 'COPY' ) {
+            if ($method == 'COPY') {
                 $http_headers[] = "Destination: $data";
-            } elseif ( $data ) {
+            } else if ($data) {
                 curl_setopt($http, CURLOPT_POSTFIELDS, $data);
             }
             curl_setopt($http, CURLOPT_HTTPHEADER, $http_headers);
@@ -280,22 +291,24 @@
          * @return array CouchDB response
          * @throws InvalidArgumentException
          */
-        public static function parseRawResponse($raw_data, $json_as_array = false) {
-            if ( ! strlen($raw_data) ) {
+        public static function parseRawResponse($raw_data, $json_as_array = false)
+        {
+            if (!strlen($raw_data)) {
                 throw new InvalidArgumentException("no data to parse");
             }
-            while ( ! substr_compare($raw_data, "HTTP/1.1 100 Continue\r\n\r\n", 0, 25) ) {
+            while (!substr_compare($raw_data, "HTTP/1.1 100 Continue\r\n\r\n", 0, 25)) {
                 $raw_data = substr($raw_data, 25);
             }
-            $response = array( 'body' => null );
+            $response = array('body' => null);
             list($headers, $body) = explode("\r\n\r\n", $raw_data, 2);
             $headers_array              = explode("\n", $headers);
             $status_line                = reset($headers_array);
             $status_array               = explode(' ', $status_line, 3);
             $response['status_code']    = trim($status_array[1]);
             $response['status_message'] = trim($status_array[2]);
-            if ( strlen($body) ) {
-                $response['body'] = preg_match('@Content-Type:\s+application/json@i', $headers) ? json_decode($body, $json_as_array) : $body;
+            if (strlen($body)) {
+                $response['body'] = preg_match('@Content-Type:\s+application/json@i', $headers) ? json_decode($body,
+                    $json_as_array) : $body;
             }
 
             return $response;
@@ -306,7 +319,8 @@
          *
          * @return string DSN
          */
-        public function dsn() {
+        public function dsn()
+        {
             return $this->dsn;
         }
 
@@ -315,7 +329,8 @@
          *
          * @return string DSN
          */
-        public function options() {
+        public function options()
+        {
             return $this->options;
         }
 
@@ -326,7 +341,8 @@
          *
          * @return \couch
          */
-        public function setSessionCookie($cookie) {
+        public function setSessionCookie($cookie)
+        {
             $this->sessioncookie = $cookie;
 
             return $this;
@@ -340,12 +356,13 @@
          *
          * @return string DSN part
          */
-        public function dsn_part($part = null) {
-            if ( ! $part ) {
+        public function dsn_part($part = null)
+        {
+            if (!$part) {
                 return $this->dsn_parsed;
             }
-            if ( isset($this->dsn_parsed[ $part ]) ) {
-                return $this->dsn_parsed[ $part ];
+            if (isset($this->dsn_parsed[$part])) {
+                return $this->dsn_parsed[$part];
             }
         }
 
@@ -360,8 +377,9 @@
          *
          * @return string|false server response on success, false on error
          */
-        public function query($method, $url, $parameters = array(), $data = null, $content_type = null) {
-            if ( $this->curl ) {
+        public function query($method, $url, $parameters = array(), $data = null, $content_type = null)
+        {
+            if ($this->curl) {
                 return $this->_curl_query($method, $url, $parameters, $data, $content_type);
             } else {
                 return $this->_socket_query($method, $url, $parameters, $data, $content_type);
@@ -377,8 +395,9 @@
          *
          * @return string server response
          */
-        public function storeFile($url, $file, $content_type) {
-            if ( $this->curl ) {
+        public function storeFile($url, $file, $content_type)
+        {
+            if ($this->curl) {
                 return $this->_curl_storeFile($url, $file, $content_type);
             } else {
                 return $this->_socket_storeFile($url, $file, $content_type);
@@ -394,8 +413,9 @@
          *
          * @return string server response
          */
-        public function storeAsFile($url, $data, $content_type) {
-            if ( $this->curl ) {
+        public function storeAsFile($url, $data, $content_type)
+        {
+            if ($this->curl) {
                 return $this->_curl_storeAsFile($url, $data, $content_type);
             } else {
                 return $this->_socket_storeAsFile($url, $data, $content_type);
@@ -420,19 +440,20 @@
          * @return string|false server response on success, false on error
          * @throws Exception|InvalidArgumentException|couchException|couchNoResponseException
          */
-        public function continuousQuery($callable, $method, $url, $parameters = array(), $data = null) {
-            if ( ! in_array($method, $this->HTTP_METHODS) ) {
+        public function continuousQuery($callable, $method, $url, $parameters = array(), $data = null)
+        {
+            if (!in_array($method, $this->HTTP_METHODS)) {
                 throw new Exception("Bad HTTP method: $method");
             }
-            if ( ! is_callable($callable) ) {
+            if (!is_callable($callable)) {
                 throw new InvalidArgumentException("callable argument have to success to is_callable PHP function");
             }
-            if ( is_array($parameters) AND count($parameters) ) {
+            if (is_array($parameters) AND count($parameters)) {
                 $url = $url . '?' . http_build_query($parameters);
             }
             //Send the request to the socket
             $request = $this->_socket_buildRequest($method, $url, $data, null);
-            if ( ! $this->_connect() ) {
+            if (!$this->_connect()) {
                 return false;
             }
             fwrite($this->socket, $request);
@@ -440,13 +461,13 @@
             //Read the headers and check that the response is valid
             $response = '';
             $headers  = false;
-            while ( ! feof($this->socket) && ! $headers ) {
+            while (!feof($this->socket) && !$headers) {
                 $response .= fgets($this->socket);
-                if ( $response == "HTTP/1.1 100 Continue\r\n\r\n" ) {
+                if ($response == "HTTP/1.1 100 Continue\r\n\r\n") {
                     $response = '';
                     continue;
                 } //Ignore 'continue' headers, they will be followed by the real header.
-                elseif ( preg_match("/\r\n\r\n$/", $response) ) {
+                else if (preg_match("/\r\n\r\n$/", $response)) {
                     $headers = true;
                 }
             }
@@ -455,7 +476,7 @@
             $code    = $split[1];
             unset($split);
             //If an invalid response is sent, read the rest of the response and throw an appropriate couchException
-            if ( ! in_array($code, array( 200, 201 )) ) {
+            if (!in_array($code, array(200, 201))) {
                 stream_set_blocking($this->socket, false);
                 $response .= stream_get_contents($this->socket);
                 fclose($this->socket);
@@ -464,17 +485,17 @@
 
             //For as long as the socket is open, read lines and pass them to the callback
             $c = clone $this;
-            while ( $this->socket && ! feof($this->socket) ) {
+            while ($this->socket && !feof($this->socket)) {
                 $e    = null;
                 $e2   = null;
-                $read = array( $this->socket );
-                if ( false === ( $num_changed_streams = stream_select($read, $e, $e2, 1) ) ) {
+                $read = array($this->socket);
+                if (false === ($num_changed_streams = stream_select($read, $e, $e2, 1))) {
                     $this->socket = null;
-                } elseif ( $num_changed_streams > 0 ) {
+                } else if ($num_changed_streams > 0) {
                     $line = fgets($this->socket);
-                    if ( strlen(trim($line)) ) {
+                    if (strlen(trim($line))) {
                         $break = call_user_func($callable, json_decode($line), $c);
-                        if ( $break === false ) {
+                        if ($break === false) {
                             fclose($this->socket);
                         }
                     }
@@ -500,17 +521,18 @@
          * @return string|false server response on success, false on error
          * @throws Exception
          */
-        public function _socket_query($method, $url, $parameters = array(), $data = null, $content_type = null) {
-            if ( ! in_array($method, $this->HTTP_METHODS) ) {
+        public function _socket_query($method, $url, $parameters = array(), $data = null, $content_type = null)
+        {
+            if (!in_array($method, $this->HTTP_METHODS)) {
                 throw new Exception("Bad HTTP method: $method");
             }
 
-            if ( is_array($parameters) AND count($parameters) ) {
+            if (is_array($parameters) AND count($parameters)) {
                 $url = $url . '?' . http_build_query($parameters);
             }
 
             $request = $this->_socket_buildRequest($method, $url, $data, $content_type);
-            if ( ! $this->_connect() ) {
+            if (!$this->_connect()) {
                 return false;
             }
             // 		echo "DEBUG: Request ------------------ \n$request\n";
@@ -533,11 +555,12 @@
          * @return string server response
          * @throws InvalidArgumentException
          */
-        public function _socket_storeAsFile($url, $data, $content_type) {
-            if ( ! strlen($url) ) {
+        public function _socket_storeAsFile($url, $data, $content_type)
+        {
+            if (!strlen($url)) {
                 throw new InvalidArgumentException("Attachment URL can't be empty");
             }
-            if ( ! strlen($content_type) ) {
+            if (!strlen($content_type)) {
                 throw new InvalidArgumentException("Attachment Content Type can't be empty");
             }
 
@@ -548,7 +571,7 @@
             fwrite($this->socket, $req);
             fwrite($this->socket, $data);
             $response = '';
-            while ( ! feof($this->socket) ) {
+            while (!feof($this->socket)) {
                 $response .= fgets($this->socket);
             }
             $this->_disconnect();
@@ -569,13 +592,14 @@
          * @return string|false server response on success, false on error
          * @throws Exception
          */
-        public function _curl_query($method, $url, $parameters = array(), $data = null, $content_type = null) {
-            if ( ! in_array($method, $this->HTTP_METHODS) ) {
+        public function _curl_query($method, $url, $parameters = array(), $data = null, $content_type = null)
+        {
+            if (!in_array($method, $this->HTTP_METHODS)) {
                 throw new Exception("Bad HTTP method: $method");
             }
 
             $url = $this->dsn . $url;
-            if ( is_array($parameters) AND count($parameters) ) {
+            if (is_array($parameters) AND count($parameters)) {
                 $url = $url . '?' . http_build_query($parameters);
             }
             $http = $this->_curl_buildRequest($method, $url, $data, $content_type);
@@ -601,14 +625,15 @@
          * @return string server response
          * @throws InvalidArgumentException
          */
-        public function _curl_storeFile($url, $file, $content_type) {
-            if ( ! strlen($url) ) {
+        public function _curl_storeFile($url, $file, $content_type)
+        {
+            if (!strlen($url)) {
                 throw new InvalidArgumentException("Attachment URL can't be empty");
             }
-            if ( ! strlen($file) OR ! is_file($file) OR ! is_readable($file) ) {
+            if (!strlen($file) OR !is_file($file) OR !is_readable($file)) {
                 throw new InvalidArgumentException("Attachment file does not exist or is not readable");
             }
-            if ( ! strlen($content_type) ) {
+            if (!strlen($content_type)) {
                 throw new InvalidArgumentException("Attachment Content Type can't be empty");
             }
             $url          = $this->dsn . $url;
@@ -618,7 +643,7 @@
                 'Content-Type: ' . $content_type,
                 'Expect: '
             );
-            if ( $this->sessioncookie ) {
+            if ($this->sessioncookie) {
                 $http_headers[] = "Cookie: " . $this->sessioncookie;
             }
             curl_setopt($http, CURLOPT_PUT, 1);
@@ -649,11 +674,12 @@
          * @return string server response
          * @throws InvalidArgumentException
          */
-        public function _curl_storeAsFile($url, $data, $content_type) {
-            if ( ! strlen($url) ) {
+        public function _curl_storeAsFile($url, $data, $content_type)
+        {
+            if (!strlen($url)) {
                 throw new InvalidArgumentException("Attachment URL can't be empty");
             }
-            if ( ! strlen($content_type) ) {
+            if (!strlen($content_type)) {
                 throw new InvalidArgumentException("Attachment Content Type can't be empty");
             }
             $url          = $this->dsn . $url;
@@ -664,7 +690,7 @@
                 'Expect: ',
                 'Content-Length: ' . strlen($data)
             );
-            if ( $this->sessioncookie ) {
+            if ($this->sessioncookie) {
                 $http_headers[] = "Cookie: " . $this->sessioncookie;
             }
             curl_setopt($http, CURLOPT_CUSTOMREQUEST, 'PUT');

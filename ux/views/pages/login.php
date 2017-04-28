@@ -8,8 +8,8 @@
     session_start();
 
     $config = array();
-    if ( ! array_key_exists("admin_config", $_SESSION) ) {
-        require_once( "../../config.inc.php" );
+    if (!array_key_exists("admin_config", $_SESSION)) {
+        require_once("../../config.inc.php");
     } else {
         $config = $_SESSION['admin_config'];
     }

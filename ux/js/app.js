@@ -131,7 +131,7 @@ if ($.ajaxLoad) {
             window.location = (target.attr('href'));
         } else if ($(this).parent().parent().hasClass('nav-tabs') || $(this).parent().parent().hasClass('nav-pills')) {
             e.preventDefault();
-        } else if ($(this).attr('target') === '_top' ) {
+        } else if ($(this).attr('target') === '_top') {
             e.preventDefault();
             window.location = (target.attr('href'));
         } else if ($(this).attr('target') === '_blank') {
@@ -335,7 +335,7 @@ function returnDateString(dateObject) {
 }
 
 function debug_add_gen_time($apiName, $timeValue) {
-    var newBlock = '<div class="callout callout-warning m-0 py-3"><div>Gen Time <strong>' + $apiName +'</strong></div><small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; ' + $timeValue +'</small></div><hr class="mx-3 my-0">';
+    var newBlock = '<div class="callout callout-warning m-0 py-3"><div>Gen Time <strong>' + $apiName + '</strong></div><small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; ' + $timeValue + '</small></div><hr class="mx-3 my-0">';
 
     var debug_gen_time = $('#debug_gen_time');
     debug_gen_time.html(debug_gen_time.html() + newBlock);

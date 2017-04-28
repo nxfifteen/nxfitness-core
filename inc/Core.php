@@ -1,42 +1,51 @@
 <?php
 
+    namespace Core;
+    
+    use DateTime;
+    use medoo;
+    use League\OAuth2\Client\Token\AccessToken as AccessToken; 
+
     date_default_timezone_set('Europe/London');
     error_reporting(E_ALL);
 
     /**
      * @param $msg
      */
-    if ( ! function_exists("nxr") ) {
-        require_once( dirname(__FILE__) . "/functions.php" );
+    if (!function_exists("nxr")) {
+        require_once(dirname(__FILE__) . "/functions.php");
     }
 
     // composer require djchen/oauth2-fitbit
-    require_once( dirname(__FILE__) . "/../config.def.dist.php" );
-    require_once( dirname(__FILE__) . "/../vendor/autoload.php" );
+    require_once(dirname(__FILE__) . "/../config.def.dist.php");
+    require_once(dirname(__FILE__) . "/../vendor/autoload.php");
+    require_once(dirname(__FILE__) . "/ErrorRecording.php");
 
     /**
      * Main app class
      *
      * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-NxFitbit phpDocumentor
-     *            wiki for NxFitbit.
+     *            wiki for Core.
      * @version   0.0.1
      * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
      * @link      https://nxfifteen.me.uk NxFIFTEEN
      * @copyright 2017 Stuart McCulloch Anderson
      * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
      */
-    class NxFitbit {
+    class Core
+    {
+
         /** @noinspection PhpUndefinedClassInspection */
         /**
          * @var medoo
          */
         protected $database;
         /**
-         * @var fitbit
+         * @var ApiBabel
          */
         protected $fitbitapi;
         /**
-         * @var config
+         * @var Config
          */
         protected $settings;
         /**
@@ -47,11 +56,12 @@
         /**
          *
          */
-        public function __construct() {
-            require_once( dirname(__FILE__) . "/config.php" );
-            $this->setSettings(new config());
+        public function __construct()
+        {
+            require_once(dirname(__FILE__) . "/Config.php");
+            $this->setSettings(new Config());
 
-            require_once( dirname(__FILE__) . "/../library/medoo.php" );
+            require_once(dirname(__FILE__) . "/../library/medoo.php");
             /** @noinspection PhpUndefinedClassInspection */
             $this->setDatabase(new medoo(array(
                 'database_type' => 'mysql',
@@ -65,15 +75,15 @@
             $this->getSettings()->setDatabase($this->getDatabase());
 
             $installedVersion = $this->getSetting("version", "0.0.0.1", true);
-            if ( $installedVersion != APP_VERSION ) {
+            if ($installedVersion != APP_VERSION) {
                 nxr("Installed version $installedVersion and should be " . APP_VERSION);
-                require_once( dirname(__FILE__) . "/upgrade.php" );
+                require_once(dirname(__FILE__) . "/upgrade.php");
                 $dataReturnClass = new Upgrade($this);
 
                 echo "Upgrading from " . $dataReturnClass->getInstallVersion() . " to " . $dataReturnClass->getInstallingVersion() . ". ";
                 echo $dataReturnClass->getNumUpdates() . " updates outstanding\n";
 
-                if ( $dataReturnClass->getNumUpdates() > 0 ) {
+                if ($dataReturnClass->getNumUpdates() > 0) {
                     $dataReturnClass->runUpdates();
                 }
 
@@ -87,9 +97,10 @@
         }
 
         /**
-         * @param config $settings
+         * @param Config $settings
          */
-        private function setSettings($settings) {
+        private function setSettings($settings)
+        {
             $this->settings = $settings;
         }
 
@@ -97,7 +108,8 @@
         /**
          * @param medoo $database
          */
-        private function setDatabase($database) {
+        private function setDatabase($database)
+        {
             $this->database = $database;
         }
 
@@ -108,7 +120,8 @@
         /**
          * @return ErrorRecording
          */
-        public function getErrorRecording() {
+        public function getErrorRecording()
+        {
             return $this->errorRecording;
         }
 
@@ -121,7 +134,8 @@
          *
          * @return string
          */
-        public function getSetting($key, $default = null, $query_db = true) {
+        public function getSetting($key, $default = null, $query_db = true)
+        {
             return $this->getSettings()->get($key, $default, $query_db);
         }
 
@@ -135,14 +149,16 @@
          *
          * @return string
          */
-        public function getUserSetting($fuid, $key, $default = null, $query_db = true) {
+        public function getUserSetting($fuid, $key, $default = null, $query_db = true)
+        {
             return $this->getSettings()->getUser($fuid, $key, $default, $query_db);
         }
 
         /**
-         * @return config
+         * @return Config
          */
-        public function getSettings() {
+        public function getSettings()
+        {
             return $this->settings;
         }
 
@@ -152,9 +168,10 @@
 
         /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @return medoo
+         * @return \medoo
          */
-        public function getDatabase() {
+        public function getDatabase()
+        {
             return $this->database;
         }
 
@@ -165,9 +182,10 @@
          * @param string $trigger
          * @param bool   $force
          */
-        public function addCronJob($user_fitbit_id, $trigger, $force = false) {
-            if ( $force || $this->getSetting('scope_' . $trigger . '_cron', false) ) {
-                if ( ! $this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
+        public function addCronJob($user_fitbit_id, $trigger, $force = false)
+        {
+            if ($force || $this->getSetting('scope_' . $trigger . '_cron', false)) {
+                if (!$this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
                     "AND" => array(
                         "user"    => $user_fitbit_id,
                         "trigger" => $trigger
@@ -201,15 +219,16 @@
          * @param $user_fitbit_id
          * @param $trigger
          */
-        public function delCronJob($user_fitbit_id, $trigger) {
-            if ( $this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
+        public function delCronJob($user_fitbit_id, $trigger)
+        {
+            if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", array(
                 "AND" => array(
                     "user"    => $user_fitbit_id,
                     "trigger" => $trigger
                 )
             ))
             ) {
-                if ( $this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", array(
+                if ($this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", array(
                     "AND" => array(
                         "user"    => $user_fitbit_id,
                         "trigger" => $trigger
@@ -238,23 +257,26 @@
          *
          * @return array|bool
          */
-        public function getCronJobs() {
-            return $this->getDatabase()->select($this->getSetting("db_prefix", null, false) . "queue", "*", array( "ORDER" => "date ASC" ));
+        public function getCronJobs()
+        {
+            return $this->getDatabase()->select($this->getSetting("db_prefix", null, false) . "queue", "*",
+                array("ORDER" => "date ASC"));
         }
 
         /**
          * @param bool   $reset
          * @param string $userFitbitId
          *
-         * @return fitbit
+         * @return ApiBabel
          */
-        public function getFitbitAPI($userFitbitId = "", $reset = false) {
-            if ( is_null($this->fitbitapi) || $reset ) {
-                require_once( dirname(__FILE__) . "/fitbit.php" );
-                if ( $userFitbitId == $this->getSetting("ownerFuid", null, false) ) {
-                    $this->fitbitapi = new fitbit($this, true);
+        public function getFitbitAPI($userFitbitId = "", $reset = false)
+        {
+            if (is_null($this->fitbitapi) || $reset) {
+                require_once(dirname(__FILE__) . "/ApiBabel.php");
+                if ($userFitbitId == $this->getSetting("ownerFuid", null, false)) {
+                    $this->fitbitapi = new ApiBabel($this, true);
                 } else {
-                    $this->fitbitapi = new fitbit($this, false);
+                    $this->fitbitapi = new ApiBabel($this, false);
                 }
             }
 
@@ -262,9 +284,10 @@
         }
 
         /**
-         * @param fitbit $fitbitapi
+         * @param ApiBabel $fitbitapi
          */
-        public function setFitbitapi($fitbitapi) {
+        public function setFitbitapi($fitbitapi)
+        {
             $this->fitbitapi = $fitbitapi;
         }
 
@@ -278,15 +301,16 @@
          *
          * @return array|int
          */
-        public function setUserCooldown($user_fitbit_id, $datetime) {
-            if ( $this->isUser($user_fitbit_id) ) {
-                if ( is_string($datetime) ) {
+        public function setUserCooldown($user_fitbit_id, $datetime)
+        {
+            if ($this->isUser($user_fitbit_id)) {
+                if (is_string($datetime)) {
                     $datetime = new DateTime ($datetime);
                 }
 
                 return $this->getDatabase()->update($this->getSetting("db_prefix", null, false) . "users", array(
                     'cooldown' => $datetime->format("Y-m-d H:i:s")
-                ), array( "AND" => array( 'fuid' => $user_fitbit_id ) ));
+                ), array("AND" => array('fuid' => $user_fitbit_id)));
             } else {
                 return 0;
             }
@@ -297,9 +321,11 @@
          *
          * @return int|array
          */
-        public function getUserCooldown($user_fitbit_id) {
-            if ( $this->isUser($user_fitbit_id) ) {
-                return $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "cooldown", array( "fuid" => $user_fitbit_id ));
+        public function getUserCooldown($user_fitbit_id)
+        {
+            if ($this->isUser($user_fitbit_id)) {
+                return $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "cooldown",
+                    array("fuid" => $user_fitbit_id));
             } else {
                 return 0;
             }
@@ -310,8 +336,11 @@
          *
          * @return bool
          */
-        public function isUser($user_fitbit_id) {
-            if ( $this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array( "fuid" => $user_fitbit_id )) ) {
+        public function isUser($user_fitbit_id)
+        {
+            if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users",
+                array("fuid" => $user_fitbit_id))
+            ) {
                 return true;
             } else {
                 return false;
@@ -320,27 +349,30 @@
 
         /**
          * @param string                                 $user_fitbit_id
-         * @param League\OAuth2\Client\Token\AccessToken $accessToken
+         * @param AccessToken $accessToken
          */
-        public function setUserOAuthTokens($user_fitbit_id, $accessToken) {
-            $this->getDatabase()->update($this->getSetting("db_prefix", false) . "users",
+        public function setUserOAuthTokens($user_fitbit_id, $accessToken)
+        {
+            $this->getDatabase()->update(
+                $this->getSetting("db_prefix", false) . "users",
                 array(
                     'tkn_access'  => $accessToken->getToken(),
                     'tkn_refresh' => $accessToken->getRefreshToken(),
                     'tkn_expires' => $accessToken->getExpires()
-                ), array( "fuid" => $user_fitbit_id ));
+                ), array("fuid" => $user_fitbit_id));
         }
 
         /**
          * @param $user_fitbit_id
          */
-        public function delUserOAuthTokens($user_fitbit_id) {
+        public function delUserOAuthTokens($user_fitbit_id)
+        {
             $this->getDatabase()->update($this->getSetting("db_prefix", false) . "users",
                 array(
                     'tkn_access'  => '',
                     'tkn_refresh' => '',
                     'tkn_expires' => 0
-                ), array( "fuid" => $user_fitbit_id ));
+                ), array("fuid" => $user_fitbit_id));
         }
 
         /**
@@ -349,16 +381,17 @@
          *
          * @return bool
          */
-        public function getUserOAuthTokens($user_fitbit_id, $validate = true) {
+        public function getUserOAuthTokens($user_fitbit_id, $validate = true)
+        {
             $userArray = $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", array(
                 'tkn_access',
                 'tkn_refresh',
                 'tkn_expires'
-            ), array( "fuid" => $user_fitbit_id ));
-            if ( is_array($userArray) ) {
-                if ( $validate && $this->valdidateOAuth($userArray) ) {
+            ), array("fuid" => $user_fitbit_id));
+            if (is_array($userArray)) {
+                if ($validate && $this->valdidateOAuth($userArray)) {
                     return $userArray;
-                } else if ( ! $validate ) {
+                } else if (!$validate) {
                     return $userArray;
                 }
             }
@@ -371,8 +404,9 @@
          *
          * @return bool
          */
-        public function valdidateOAuth($userArray) {
-            if ( $userArray['tkn_access'] == "" || $userArray['tkn_refresh'] == "" || $userArray['tkn_expires'] == "" ) {
+        public function valdidateOAuth($userArray)
+        {
+            if ($userArray['tkn_access'] == "" || $userArray['tkn_refresh'] == "" || $userArray['tkn_expires'] == "") {
                 //nxr("OAuth is not fully setup for this user");
                 return false;
             } else {
@@ -386,15 +420,16 @@
          *
          * @return bool
          */
-        public function isUserValid($user_fitbit_id, $user_fitbit_password) {
-            if ( strpos($user_fitbit_id, '@') !== false ) {
+        public function isUserValid($user_fitbit_id, $user_fitbit_password)
+        {
+            if (strpos($user_fitbit_id, '@') !== false) {
                 //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
                 $user_fitbit_id = $this->isUserValidEml($user_fitbit_id);
             }
 
-            if ( $this->isUser($user_fitbit_id) ) {
+            if ($this->isUser($user_fitbit_id)) {
                 //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
-                if ( $this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array(
+                if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array(
                     "AND" => array(
                         "fuid"     => $user_fitbit_id,
                         "password" => $user_fitbit_password
@@ -403,7 +438,7 @@
                 ) {
                     //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
                     return $user_fitbit_id;
-                } else if ( $this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array(
+                } else if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array(
                     "AND" => array(
                         "fuid"     => $user_fitbit_id,
                         "password" => ''
@@ -411,7 +446,7 @@
                 ))
                 ) {
                     //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
-                    return - 1;
+                    return -1;
                 } else {
                     //nxr("v::" . __LINE__ . "($user_fitbit_id)", TRUE, TRUE, FALSE);
                     return false;
@@ -427,9 +462,13 @@
          *
          * @return bool
          */
-        public function isUserValidEml($user_fitbit_id) {
-            if ( $this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array( "eml" => $user_fitbit_id )) ) {
-                $user_fuid = $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "fuid", array( "eml" => $user_fitbit_id ));
+        public function isUserValidEml($user_fitbit_id)
+        {
+            if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users",
+                array("eml" => $user_fitbit_id))
+            ) {
+                $user_fuid = $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "fuid",
+                    array("eml" => $user_fitbit_id));
 
                 return $user_fuid;
             } else {
@@ -443,8 +482,9 @@
          *
          * @return string
          */
-        public function lookupErrorCode($errCode, $user = null) {
-            switch ( $errCode ) {
+        public function lookupErrorCode($errCode, $user = null)
+        {
+            switch ($errCode) {
                 case "-146":
                     return "Disabled in user config.";
                 case "-145":
@@ -456,11 +496,11 @@
                 case "-142":
                     return "Unable to create required directory.";
                 case "429":
-                    if ( ! is_null($user) ) {
+                    if (!is_null($user)) {
                         $hour = date("H") + 1;
                         $this->getDatabase()->update($this->getSetting("db_prefix", null, false) . "users", array(
                             'cooldown' => date("Y-m-d " . $hour . ":01:00"),
-                        ), array( 'fuid' => $user ));
+                        ), array('fuid' => $user));
                     }
 
                     return "Either you hit the rate limiting quota for the client or for the viewer";
@@ -478,7 +518,8 @@
          *
          * @return bool
          */
-        public function setSetting($key, $value, $query_db = true) {
+        public function setSetting($key, $value, $query_db = true)
+        {
             return $this->getSettings()->set($key, $value, $query_db);
         }
 
@@ -491,7 +532,8 @@
          *
          * @return string
          */
-        public function setUserSetting($fuid, $key, $value) {
+        public function setUserSetting($fuid, $key, $value)
+        {
             return $this->getSettings()->setUser($fuid, $key, $value);
         }
 
@@ -502,7 +544,8 @@
          *
          * @return array|null|string
          */
-        public function supportedApi($key = null) {
+        public function supportedApi($key = null)
+        {
             $database_array = array(
                 'all'                  => 'Everything',
                 'floors'               => 'Floors Climed',
@@ -531,23 +574,26 @@
             );
             ksort($database_array);
 
-            if ( is_null($key) ) {
+            if (is_null($key)) {
                 return $database_array;
             } else {
-                if ( array_key_exists($key, $database_array) ) {
-                    return $database_array[ $key ];
+                if (array_key_exists($key, $database_array)) {
+                    return $database_array[$key];
                 } else {
                     return $key;
                 }
             }
         }
 
-        public function isUserOAuthAuthorised($_nx_fb_usr) {
-            if ( array_key_exists("userIsOAuth_" . $_nx_fb_usr, $_SESSION) && is_bool($_SESSION[ 'userIsOAuth_' . $_nx_fb_usr ]) && $_SESSION[ 'userIsOAuth_' . $_nx_fb_usr ] !== false ) {
-                return $_SESSION[ 'userIsOAuth_' . $_nx_fb_usr ];
+        public function isUserOAuthAuthorised($_nx_fb_usr)
+        {
+            if (array_key_exists("userIsOAuth_" . $_nx_fb_usr,
+                    $_SESSION) && is_bool($_SESSION['userIsOAuth_' . $_nx_fb_usr]) && $_SESSION['userIsOAuth_' . $_nx_fb_usr] !== false
+            ) {
+                return $_SESSION['userIsOAuth_' . $_nx_fb_usr];
             } else {
-                if ( $this->valdidateOAuth($this->getUserOAuthTokens($_nx_fb_usr, false)) ) {
-                    $_SESSION[ 'userIsOAuth_' . $_nx_fb_usr ] = true;
+                if ($this->valdidateOAuth($this->getUserOAuthTokens($_nx_fb_usr, false))) {
+                    $_SESSION['userIsOAuth_' . $_nx_fb_usr] = true;
 
                     return true;
                 } else {
@@ -556,144 +602,4 @@
             }
         }
 
-    }
-
-    /**
-     * ErrorRecording
-     *
-     * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-ErrorRecording
-     *            phpDocumentor wiki for ErrorRecording.
-     * @version   0.0.1
-     * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
-     * @link      https://nxfifteen.me.uk NxFIFTEEN
-     * @copyright 2017 Stuart McCulloch Anderson
-     * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
-     */
-    class ErrorRecording {
-        /**
-         * @var Raven_Client
-         */
-        protected $sentryClient;
-        /**
-         * @var Raven_ErrorHandler
-         */
-        protected $sentryErrorHandler;
-        /**
-         * @var NxFitbit
-         */
-        protected $appClass;
-
-        public function __construct($appClass) {
-            if ( defined('SENTRY_DSN') ) {
-                require_once( dirname(__FILE__) . "/../library/sentry/lib/Raven/Autoloader.php" );
-                Raven_Autoloader::register();
-
-                $this->appClass = $appClass;
-            }
-        }
-
-        /**
-         * @return Raven_Client
-         */
-        public function getSentryClient() {
-            if ( defined('SENTRY_DSN') ) {
-                if ( is_null($this->sentryClient) ) {
-                    $this->sentryClient = ( new Raven_Client(SENTRY_DSN) )
-                        ->setAppPath(__DIR__)
-                        ->setRelease($this->appClass->getSetting("version", "0.0.0.1", true))
-                        ->setEnvironment($this->appClass->getSetting("environment", "development", false))
-                        ->setPrefixes(array( __DIR__ ))
-                        ->install();
-
-                    $this->sentryClient->user_context(array(
-                        'id'         => sha1(gethostbyname(gethostname()) . gethostname() . $this->appClass->getSetting("ownerFuid", "Unknown", false)),
-                        'username'   => $this->appClass->getSetting("ownerFuid", "Unknown", false),
-                        'ip_address' => gethostbyname(gethostname())
-                    ));
-                }
-
-                return $this->sentryClient;
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * @return Raven_ErrorHandler
-         */
-        public function getSentryErrorHandler() {
-            if ( defined('SENTRY_DSN') ) {
-                if ( is_null($this->sentryErrorHandler) ) {
-                    $this->sentryErrorHandler = new Raven_ErrorHandler($this->getSentryClient());
-                    $this->sentryErrorHandler->registerExceptionHandler();
-                    $this->sentryErrorHandler->registerErrorHandler();
-                    $this->sentryErrorHandler->registerShutdownFunction();
-                }
-
-                return $this->sentryErrorHandler;
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * Log an exception to sentry
-         *
-         * @param Exception $exception The Exception object.
-         * @param array     $data      Additional attributes to pass with this event (see Sentry docs).
-         * @param null      $logger
-         * @param null      $vars
-         */
-        public function captureException($exception, $data = null, $logger = null, $vars = null) {
-            if ( defined('SENTRY_DSN') ) {
-                $this->getSentryClient()->captureException($exception, $data, $logger, $vars);
-                nxr("### Exception Recorded ###");
-            }
-        }
-
-        /**
-         * Log a message to sentry
-         *
-         * @param string $message The message (primary description) for the event.
-         * @param array  $params  params to use when formatting the message.
-         * @param array  $data    Additional attributes to pass with this event (see Sentry docs).
-         * @param bool   $stack
-         * @param null   $vars
-         */
-        public function captureMessage($message, $params = array(), $data = array(), $stack = false, $vars = null) {
-            nxr("[ERROR] $message");
-            if ( defined('SENTRY_DSN') ) {
-                $this->getSentryClient()->captureMessage($message, $params, $data, $stack, $vars);
-                nxr("### Message Recorded ###");
-            }
-        }
-
-        /** @noinspection PhpUndefinedClassInspection */
-        /**
-         * @param medoo $medoo
-         * @param       $parameters
-         */
-        public function postDatabaseQuery($medoo, $parameters) {
-            if ( defined('SENTRY_DSN') ) {
-                $medoo_error = $medoo->error();
-                if ( $medoo_error[0] != 0000 ) {
-                    $medoo_info = $medoo->info();
-                    $this->captureMessage($medoo_error[2], array( 'database' ), array(
-                        'level' => 'error',
-                        'extra' => array(
-                            'method'         => $parameters['METHOD'],
-                            'method_line'    => $parameters['LINE'],
-                            'sql_server'     => $medoo_info['server'],
-                            'sql_client'     => $medoo_info['client'],
-                            'sql_driver'     => $medoo_info['driver'],
-                            'sql_version'    => $medoo_info['version'],
-                            'sql_connection' => $medoo_info['connection'],
-                            'sql_last_query' => $medoo->last_query(),
-                            'php_version'    => phpversion(),
-                            'core_version'   => $this->appClass->getSetting("version", "0.0.0.1", true)
-                        )
-                    ));
-                }
-            }
-        }
     }

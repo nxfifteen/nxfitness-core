@@ -1,20 +1,73 @@
-# This file is a template, and might need editing before it works on your project.
-# Select image from https://hub.docker.com/_/php/
-image: php:7.1.4-alpine
+stages:
+  - test
+  - syntax
+  - info
+  - review
+  - stage
+  - deploy
 
 # Select what we should cache between builds
 cache:
   paths:
   - vendor/
+  - binaries/
 
 before_script:
-# Install and run Composer
-- curl -sS https://getcomposer.org/installer | php
-- php composer.phar install
-# Install and PHP Loc
-- wget https://phar.phpunit.de/phploc.phar
+ - bash ./dev/build_dev_env.sh
+
+# Run our tests
+test:php:
+  stage: test
+  script:
+  - php ./binaries/phpunit.phar -c phpunit.xml
+  - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude binaries/php-docblock-checker-1.3.4 --exclude binaries/phpspec --blame -e php .
+  - ./vendor/phpspec/phpspec/bin/phpspec run
+
+# Run our tests
+test:phpcs:
+  stage: syntax
+  script:
+  - bash ./dev/phpcs_cbf.sh
 
 # Run our tests
 test:phploc:
+  stage: info
   script:
-  - php phploc.phar inc
+  - ./binaries/php-docblock-checker-1.3.4/vendor/bin/phploc inc
+
+deploy_review:
+  stage: review
+  script:
+    - echo "Deploy a review app"
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - ssh nxad@nxfifteen.me.uk /home/nxad/homes/gitrepos/deploy_review
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://$CI_ENVIRONMENT_SLUG.itsabeta.nx
+  only:
+    - branches
+  except:
+    - master
+
+deploy_staging:
+  stage: stage
+  script:
+    - echo "Deploy to staging server"
+  environment:
+    name: staging
+    url: https://staging.example.com
+  when: manual
+  only:
+  - master
+
+deploy_prod:
+  stage: deploy
+  script:
+    - echo "Deploy to production server"
+  environment:
+    name: production
+    url: https://nxfifteen.me.uk/api/fitbit/
+  when: manual
+  only:
+  - master

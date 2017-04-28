@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<ruleset name="Custom Standard">
+
+    <!--
+       The name attribute of the ruleset tag is displayed
+       when running PHP_CodeSniffer with the -v command line
+       argument. The description tag below is not displayed anywhere
+       except in this file, so it can contain information for
+       developers who may change this file in the future.
+    -->
+    <description>A custom coding standard</description>
+
+    <!--
+        If no files or directories are specified on the command line
+        your custom standard can specify what files should be checked
+        instead.
+
+        Note that file and directory paths specified in a ruleset are
+        relative to the ruleset's location, and that specifying any file or
+        directory path on the command line will ignore all file tags.
+     -->
+    <file>.</file>
+
+    <!--
+       You can hard-code ignore patterns directly into your
+       custom standard so you don't have to specify the
+       patterns on the command line.
+
+       The following two tags are equivalent to the command line argument:
+       --ignore=*/tests/*,*/data/*
+    -->
+    <exclude-pattern>*/library/*</exclude-pattern>
+    <exclude-pattern>*/php-docblock-checker-1.3.4/*</exclude-pattern>
+    <exclude-pattern>*/phpspec/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
+    <!--
+       Include all sniffs in the PEAR standard. Note that the
+       path to the standard does not have to be specified as the
+       PEAR standard exists inside the PHP_CodeSniffer install
+       directory.
+    -->
+    <rule ref="PSR1"/>
+    <rule ref="PSR2"/>
+
+</ruleset>

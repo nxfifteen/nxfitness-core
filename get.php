@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * NxFitbit - Cron commandline tool
+     * Core - Cron commandline tool
      *
      * @version   0.0.1
      * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
@@ -10,19 +10,21 @@
      * @license   http://stuart.nx15.at/mit/2015 MIT
      */
 
+    use Core\Core;
+
     parse_str(implode('&', array_slice($argv, 1)), $argv);
-    foreach ( $argv as $key => $value ) {
-        $key          = str_ireplace("--", "", $key);
-        $_GET[ $key ] = $value;
+    foreach ($argv as $key => $value) {
+        $key        = str_ireplace("--", "", $key);
+        $_GET[$key] = $value;
     }
 
-    require_once( dirname(__FILE__) . "/inc/app.php" );
-    $fitbitApp = new NxFitbit();
+    require_once(dirname(__FILE__) . "/inc/Core.php");
+    $fitbitApp = new Core();
 
-    if ( $fitbitApp->isUser($_GET['user']) ) {
+    if ($fitbitApp->isUser($_GET['user'])) {
         $cooldown = $fitbitApp->getUserCooldown($_GET['user']);
-        if ( strtotime($cooldown) < strtotime(date("Y-m-d H:i:s")) ) {
-            if ( $fitbitApp->supportedApi($_GET['get']) != $_GET['get'] ) {
+        if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
+            if ($fitbitApp->supportedApi($_GET['get']) != $_GET['get']) {
                 nxr("Forcing pull of " . $fitbitApp->supportedApi($_GET['get']) . " for " . $_GET['user']);
                 $fitbitApp->getFitbitAPI($_GET['user'])->setForceSync(true);
                 $fitbitApp->getFitbitAPI($_GET['user'])->pull($_GET['user'], $_GET['get']);
@@ -31,7 +33,7 @@
                 print_r($fitbitApp->supportedApi());
             }
         } else {
-            $fitbitApp->getErrorRecording()->captureMessage("API limit reached", array( 'remote_api' ), array(
+            $fitbitApp->getErrorRecording()->captureMessage("API limit reached", array('remote_api'), array(
                 'level' => 'info',
                 'extra' => array(
                     'api_req'      => $_GET['get'],
@@ -44,7 +46,7 @@
             nxr("Can not process " . $fitbitApp->supportedApi($_GET['get']) . ". API limit reached for " . $_GET['user'] . ". Cooldown period ends " . $cooldown);
         }
     } else {
-        $fitbitApp->getErrorRecording()->captureMessage("Unknown User", array( 'authentication' ), array(
+        $fitbitApp->getErrorRecording()->captureMessage("Unknown User", array('authentication'), array(
             'level' => 'info',
             'extra' => array(
                 'api_req'      => $_GET['get'],

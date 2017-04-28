@@ -17,7 +17,8 @@
         along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-    class couchDocument {
+    class couchDocument
+    {
 
         /**
          * @var stdClass object internal data
@@ -29,7 +30,8 @@
          *
          * @param couchClient $client couchClient connection object
          */
-        function __construct(couchClient $client) {
+        function __construct(couchClient $client)
+        {
             $this->__couch_data             = new stdClass();
             $this->__couch_data->client     = $client;
             $this->__couch_data->fields     = new stdClass();
@@ -46,18 +48,19 @@
          * @return boolean TRUE
          * @throws InvalidArgumentException
          */
-        protected function setOne($key, $value) {
-            $key = (string) $key;
-            if ( ! strlen($key) ) {
+        protected function setOne($key, $value)
+        {
+            $key = (string)$key;
+            if (!strlen($key)) {
                 throw new InvalidArgumentException("property name can't be empty");
             }
-            if ( $key == '_rev' ) {
+            if ($key == '_rev') {
                 throw new InvalidArgumentException("Can't set _rev field");
             }
-            if ( $key == '_id' AND $this->get('_id') ) {
+            if ($key == '_id' AND $this->get('_id')) {
                 throw new InvalidArgumentException("Can't set _id field because it's already set");
             }
-            if ( substr($key, 0, 1) == '_' AND ! in_array($key, couchClient::$allowed_underscored_properties) ) {
+            if (substr($key, 0, 1) == '_' AND !in_array($key, couchClient::$allowed_underscored_properties)) {
                 throw new InvalidArgumentException("Property $key can't begin with an underscore");
             }
             //echo "setting $key to ".print_r($value,TRUE)."<BR>\n";
@@ -76,7 +79,8 @@
          *
          * @return couchDocument couch document loaded with data of document $id
          */
-        public static function getInstance(couchClient $client, $id) {
+        public static function getInstance(couchClient $client, $id)
+        {
             $back = new couchDocument($client);
 
             return $back->load($id);
@@ -90,8 +94,9 @@
          * @return couchDocument $this
          * @throws InvalidArgumentException
          */
-        public function load($id) {
-            if ( ! strlen($id) ) {
+        public function load($id)
+        {
+            if (!strlen($id)) {
                 throw new InvalidArgumentException("No id given");
             }
             $this->__couch_data->fields = $this->__couch_data->client->getDoc($id);
@@ -113,8 +118,9 @@
          *
          * @return couchDocument $this
          */
-        public function setAutocommit($commit) {
-            $this->__couch_data->autocommit = (boolean) $commit;
+        public function setAutocommit($commit)
+        {
+            $this->__couch_data->autocommit = (boolean)$commit;
 
             return $this;
         }
@@ -124,7 +130,8 @@
          *
          * @return boolean true if auto-commit is enabled
          */
-        public function getAutocommit() {
+        public function getAutocommit()
+        {
             return $this->__couch_data->autocommit;
         }
 
@@ -136,7 +143,8 @@
          *
          * @return couchDocument $this
          */
-        public function loadFromObject($doc) {
+        public function loadFromObject($doc)
+        {
             $this->__couch_data->fields = clone $doc;
 
             return $this;
@@ -147,7 +155,8 @@
          *
          * @return array list of keys available in this document
          */
-        public function getKeys() {
+        public function getKeys()
+        {
             return array_keys(get_object_vars($this->__couch_data->fields));
         }
 
@@ -156,7 +165,8 @@
          *
          * @return object all fields of the document
          */
-        public function getFields() {
+        public function getFields()
+        {
             return clone $this->__couch_data->fields;
         }
 
@@ -166,7 +176,8 @@
          *
          * @return string document URI
          */
-        public function getUri() {
+        public function getUri()
+        {
             return $this->__couch_data->client->getDatabaseUri() . '/' . $this->id();
         }
 
@@ -175,7 +186,8 @@
          *
          * @return string document id
          */
-        public function id() {
+        public function id()
+        {
             return $this->get('_id');
         }
 
@@ -187,10 +199,11 @@
          * @return mixed field value (or null)
          * @throws InvalidArgumentException
          */
-        public function get($key) {
+        public function get($key)
+        {
             //echo "get for $key\n";
-            $key = (string) $key;
-            if ( ! strlen($key) ) {
+            $key = (string)$key;
+            if (!strlen($key)) {
                 throw new InvalidArgumentException("No key given");
             }
 
@@ -202,7 +215,8 @@
          *
          * @see get()
          */
-        public function __get($key) {
+        public function __get($key)
+        {
             return $this->get($key);
         }
 
@@ -217,16 +231,18 @@
          *
          * @return boolean TRUE
          */
-        public function __set($key, $value) {
+        public function __set($key, $value)
+        {
             return $this->set($key, $value);
         }
 
         /**
          * record the object to the database
          */
-        public function record() {
-            foreach ( couchClient::$underscored_properties_to_remove_on_storage as $key ) {
-                if ( property_exists($this->__couch_data->fields, $key) ) {
+        public function record()
+        {
+            foreach (couchClient::$underscored_properties_to_remove_on_storage as $key) {
+                if (property_exists($this->__couch_data->fields, $key)) {
                     unset($this->__couch_data->fields->$key);
                 }
             }
@@ -253,19 +269,20 @@
          * @return boolean TRUE
          * @throws InvalidArgumentException
          */
-        public function set($key, $value = null) {
+        public function set($key, $value = null)
+        {
 
-            if ( func_num_args() == 1 ) {
-                if ( ! is_array($key) AND ! is_object($key) ) {
+            if (func_num_args() == 1) {
+                if (!is_array($key) AND !is_object($key)) {
                     throw new InvalidArgumentException("When second argument is null, first argument should ba an array or an object");
                 }
-                foreach ( $key as $one_key => $one_value ) {
+                foreach ($key as $one_key => $one_value) {
                     $this->setOne($one_key, $one_value);
                 }
             } else {
                 $this->setOne($key, $value);
             }
-            if ( $this->__couch_data->autocommit ) {
+            if ($this->__couch_data->autocommit) {
                 $this->record();
             }
 
@@ -281,7 +298,8 @@
          *
          * @return boolean
          */
-        public function __isset($key) {
+        public function __isset($key)
+        {
             return property_exists($this->__couch_data->fields, $key);
         }
 
@@ -293,15 +311,16 @@
          * @return boolean whether the removal process ran successfully
          * @throws InvalidArgumentException
          */
-        public function remove($key) {
-            $key = (string) $key;
-            if ( ! strlen($key) ) {
+        public function remove($key)
+        {
+            $key = (string)$key;
+            if (!strlen($key)) {
                 throw new InvalidArgumentException("Can't remove a key without name");
             }
-            if ( $key == '_id' OR $key == '_rev' ) {
+            if ($key == '_id' OR $key == '_rev') {
                 return false;
             }
-            if ( isset($this->$key) ) {
+            if (isset($this->$key)) {
                 unset($this->__couch_data->fields->$key);
                 $this->record();
             }
@@ -318,7 +337,8 @@
          *
          * @return boolean whether the removal process ran successfully
          */
-        public function __unset($key) {
+        public function __unset($key)
+        {
             return $this->remove($key);
         }
 
@@ -331,29 +351,29 @@
          * @return boolean tell if document replication succeded
          * @throws InvalidArgumentException
          */
-        public function replicateTo($url, $create_target = false) {
+        public function replicateTo($url, $create_target = false)
+        {
             echo "replicateTo : " . $this->_id . ", $url\n";
-            if ( ! isset($this->_id) ) {
+            if (!isset($this->_id)) {
                 throw new InvalidArgumentException("Can't replicate a document without id");
             }
-            if ( ! class_exists("couchReplicator") ) {
+            if (!class_exists("couchReplicator")) {
                 return false;
             }
             $r = new couchReplicator($this->__couch_data->client);
-            if ( $create_target ) {
+            if ($create_target) {
                 $r->create_target();
             }
             try {
-                $res = $r->doc_ids(array( $this->_id ))
+                $res = $r->doc_ids(array($this->_id))
                          ->to($url);
-            } catch ( Exception $e ) {
+            } catch (Exception $e) {
                 return false;
             }
             print_r($res);
 
             return true;
         }
-
 
         /**
          * Replicates document on another couchDB database
@@ -364,16 +384,17 @@
          *
          * @return boolean tell if document replication succeded
          */
-        public function replicateFrom($id, $url, $create_target = false) {
+        public function replicateFrom($id, $url, $create_target = false)
+        {
             echo "replicateFrom : $id, $url\n";
-            if ( ! class_exists("couchReplicator") ) {
+            if (!class_exists("couchReplicator")) {
                 return false;
             }
             $r = new couchReplicator($this->__couch_data->client);
-            if ( $create_target ) {
+            if ($create_target) {
                 $r->create_target();
             }
-            $r->doc_ids(array( $id ))->from($url);
+            $r->doc_ids(array($id))->from($url);
             $this->load($id);
 
             return true;
@@ -388,7 +409,8 @@
          *
          * @return object CouchDB attachment storage response
          */
-        public function storeAttachment($file, $content_type = 'application/octet-stream', $filename = null) {
+        public function storeAttachment($file, $content_type = 'application/octet-stream', $filename = null)
+        {
             $back = $this->__couch_data->client->storeAttachment($this, $file, $content_type, $filename);
             $this->load($this->_id);
 
@@ -404,7 +426,8 @@
          *
          * @return object CouchDB attachment storage response
          */
-        public function storeAsAttachment($data, $filename, $content_type = 'application/octet-stream') {
+        public function storeAsAttachment($data, $filename, $content_type = 'application/octet-stream')
+        {
             $back = $this->__couch_data->client->storeAsAttachment($this, $data, $filename, $content_type);
             $this->load($this->_id);
 
@@ -418,7 +441,8 @@
          *
          * @return object CouchDB attachment removal response
          */
-        public function deleteAttachment($attachment_name) {
+        public function deleteAttachment($attachment_name)
+        {
             $back = $this->__couch_data->client->deleteAttachment($this, $attachment_name);
             $this->load($this->_id);
 
@@ -432,7 +456,8 @@
          *
          * @return string the attachment URI
          */
-        public function getAttachmentUri($attachment_name) {
+        public function getAttachmentUri($attachment_name)
+        {
             return $this->getUri() . '/' . $attachment_name;
         }
 
@@ -445,7 +470,8 @@
          *
          * @return mixed CouchDB show response
          */
-        public function show($id, $name, $additionnal_params = array()) {
+        public function show($id, $name, $additionnal_params = array())
+        {
             return $this->__couch_data->client->getShow($id, $name, $this->_id, $additionnal_params);
         }
 
@@ -458,8 +484,9 @@
          *
          * @return mixed couchDB update response
          */
-        public function update($id, $name, $additionnal_params = array()) {
-            if ( ! $this->_id ) {
+        public function update($id, $name, $additionnal_params = array())
+        {
+            if (!$this->_id) {
                 return false;
             }
             $back = $this->__couch_data->client->updateDoc($id, $name, $additionnal_params, $this->_id);

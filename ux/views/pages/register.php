@@ -8,8 +8,8 @@
     session_start();
 
     $config = array();
-    if ( ! array_key_exists("admin_config", $_SESSION) ) {
-        require_once( "../../config.inc.php" );
+    if (!array_key_exists("admin_config", $_SESSION)) {
+        require_once("../../config.inc.php");
     } else {
         $config = $_SESSION['admin_config'];
     }
@@ -71,7 +71,7 @@
                         <p class="text-muted">Create your account</p>
                         <div class="input-group mb-3">
                             <span class="input-group-addon"><i class="icon-user"></i></span>
-                            <input type="text" class="form-control" name="fuid" <?php if ( isset($_GET['usr']) ) {
+                            <input type="text" class="form-control" name="fuid" <?php if (isset($_GET['usr'])) {
                                 echo " value=\"" . $_GET['usr'] . "\"";
                             } else {
                                 echo " placeholder=\"User Name\"";
@@ -80,7 +80,7 @@
 
                         <div class="input-group mb-3">
                             <span class="input-group-addon">@</span>
-                            <input type="text" class="form-control" <?php if ( isset($_GET['eml']) ) {
+                            <input type="text" class="form-control" <?php if (isset($_GET['eml'])) {
                                 echo " value=\"" . $_GET['eml'] . "\"";
                             } else {
                                 echo " placeholder=\"Email\"";

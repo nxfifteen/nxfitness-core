@@ -22,7 +22,9 @@
      *
      * @package raven
      */
-    class Raven_Serializer {
+    class Raven_Serializer
+    {
+
         /*
          * The default mb detect order
          *
@@ -45,40 +47,43 @@
         /**
          * @param null|string $mb_detect_order
          */
-        public function __construct($mb_detect_order = null) {
-            if ( $mb_detect_order != null ) {
+        public function __construct($mb_detect_order = null)
+        {
+            if ($mb_detect_order != null) {
                 $this->mb_detect_order = $mb_detect_order;
             }
         }
 
-        protected function serializeString($value) {
-            $value = (string) $value;
-            if ( function_exists('mb_detect_encoding')
-                 && function_exists('mb_convert_encoding')
+        protected function serializeString($value)
+        {
+            $value = (string)$value;
+            if (function_exists('mb_detect_encoding')
+                && function_exists('mb_convert_encoding')
             ) {
                 // we always guarantee this is coerced, even if we can't detect encoding
-                if ( $currentEncoding = mb_detect_encoding($value, $this->mb_detect_order) ) {
+                if ($currentEncoding = mb_detect_encoding($value, $this->mb_detect_order)) {
                     $value = mb_convert_encoding($value, 'UTF-8', $currentEncoding);
                 } else {
                     $value = mb_convert_encoding($value, 'UTF-8');
                 }
             }
 
-            if ( strlen($value) > 1024 ) {
+            if (strlen($value) > 1024) {
                 $value = substr($value, 0, 1014) . ' {clipped}';
             }
 
             return $value;
         }
 
-        protected function serializeValue($value) {
-            if ( is_null($value) || is_bool($value) || is_float($value) || is_integer($value) ) {
+        protected function serializeValue($value)
+        {
+            if (is_null($value) || is_bool($value) || is_float($value) || is_integer($value)) {
                 return $value;
-            } elseif ( is_object($value) || gettype($value) == 'object' ) {
+            } else if (is_object($value) || gettype($value) == 'object') {
                 return 'Object ' . get_class($value);
-            } elseif ( is_resource($value) ) {
+            } else if (is_resource($value)) {
                 return 'Resource ' . get_resource_type($value);
-            } elseif ( is_array($value) ) {
+            } else if (is_array($value)) {
                 return 'Array of length ' . count($value);
             } else {
                 return $this->serializeString($value);
@@ -89,13 +94,14 @@
          * Serialize an object (recursively) into something safe for data
          * sanitization and encoding.
          */
-        public function serialize($value, $max_depth = 3, $_depth = 0) {
+        public function serialize($value, $max_depth = 3, $_depth = 0)
+        {
             $className = is_object($value) ? get_class($value) : null;
             $toArray   = is_array($value) || $className === 'stdClass';
-            if ( $toArray && $_depth < $max_depth ) {
+            if ($toArray && $_depth < $max_depth) {
                 $new = array();
-                foreach ( $value as $k => $v ) {
-                    $new[ $this->serializeValue($k) ] = $this->serialize($v, $max_depth, $_depth + 1);
+                foreach ($value as $k => $v) {
+                    $new[$this->serializeValue($k)] = $this->serialize($v, $max_depth, $_depth + 1);
                 }
 
                 return $new;
@@ -107,7 +113,8 @@
         /**
          * @return string
          */
-        public function getMbDetectOrder() {
+        public function getMbDetectOrder()
+        {
             return $this->mb_detect_order;
         }
 
@@ -116,7 +123,8 @@
          *
          * @return Raven_Serializer
          */
-        public function setMbDetectOrder($mb_detect_order) {
+        public function setMbDetectOrder($mb_detect_order)
+        {
             $this->mb_detect_order = $mb_detect_order;
 
             return $this;

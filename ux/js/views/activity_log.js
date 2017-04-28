@@ -98,15 +98,21 @@ $(function () {
 
 //noinspection JSUnusedGlobalSymbols
 function display_gpx(elt, gpx_source, activityJson) {
-    if (!elt) return 0;
-    if (!gpx_source) return 1;
+    if (!elt) {
+        return 0;
+    }
+    if (!gpx_source) {
+        return 1;
+    }
 
     var wrpTimeline = $('#wrpTimeline');
     var wrpMap = $('#wrpMap');
 
     var url = gpx_source;
     var mapID = elt.getAttribute('data-map-target');
-    if (!url || !mapID) return 2;
+    if (!url || !mapID) {
+        return 2;
+    }
 
     var wrpMapWidth = wrpMap.innerWidth();
     var leftMargin = wrpMap.outerWidth(true);
@@ -184,21 +190,27 @@ function display_gpx(elt, gpx_source, activityJson) {
         var stepsChart = $('.steps-epie');
         buildDonutImpactLevel(stepsChart, "#ff6c60");
         percentageDisplayed = Math.round((parseInt(activityJson.steps.split(",").join("")) / parseInt(activityJson.stats.steps.split(",").join(""))) * 100);
-        if (percentageDisplayed > 100) percentageDisplayed = 100;
+        if (percentageDisplayed > 100) {
+            percentageDisplayed = 100;
+        }
         stepsChart.data('easyPieChart').update(percentageDisplayed);
 
         var caloriesChart = $('.calories-epie');
         buildDonutImpactLevel(caloriesChart, "#FCB322");
         //noinspection JSUnresolvedVariable
         percentageDisplayed = Math.round((parseInt(activityJson.calories) / parseInt(activityJson.stats.caloriesOut.split(",").join(""))) * 100);
-        if (percentageDisplayed > 100) percentageDisplayed = 100;
+        if (percentageDisplayed > 100) {
+            percentageDisplayed = 100;
+        }
         caloriesChart.data('easyPieChart').update(percentageDisplayed);
 
         var activityChart = $('.activity-epie');
         buildDonutImpactLevel(activityChart, "#a9d86e");
         //noinspection JSUnresolvedVariable
         percentageDisplayed = Math.round((parseInt(activityJson.duration) / parseInt(activityJson.stats.active)) * 100);
-        if (percentageDisplayed > 100) percentageDisplayed = 100;
+        if (percentageDisplayed > 100) {
+            percentageDisplayed = 100;
+        }
         activityChart.data('easyPieChart').update(percentageDisplayed);
     }
 

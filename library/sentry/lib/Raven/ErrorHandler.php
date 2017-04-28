@@ -23,7 +23,9 @@
     // TODO(dcramer): deprecate default error types in favor of runtime configuration
     // unless a reason can be determined that making them dynamic is better. They
     // currently are not used outside of the fatal handler.
-    class Raven_ErrorHandler {
+    class Raven_ErrorHandler
+    {
+
         private $old_exception_handler;
         private $call_existing_exception_handler = false;
         private $old_error_handler;
@@ -50,54 +52,59 @@
         private $error_types = null;
 
         public function __construct(
-            $client, $send_errors_last = false, $error_types = null,
+            $client,
+            $send_errors_last = false,
+            $error_types = null,
             $__error_types = null
         ) {
             // support legacy fourth argument for error types
-            if ( $error_types === null ) {
+            if ($error_types === null) {
                 $error_types = $__error_types;
             }
 
             $this->client            = $client;
             $this->error_types       = $error_types;
-            $this->fatal_error_types = array_reduce($this->fatal_error_types, array( $this, 'bitwiseOr' ));
-            if ( $send_errors_last ) {
+            $this->fatal_error_types = array_reduce($this->fatal_error_types, array($this, 'bitwiseOr'));
+            if ($send_errors_last) {
                 $this->send_errors_last                   = true;
                 $this->client->store_errors_for_bulk_send = true;
             }
         }
 
-        public function bitwiseOr($a, $b) {
+        public function bitwiseOr($a, $b)
+        {
             return $a | $b;
         }
 
-        public function handleException($e, $isError = false, $vars = null) {
+        public function handleException($e, $isError = false, $vars = null)
+        {
             $e->event_id = $this->client->captureException($e, null, null, $vars);
 
-            if ( ! $isError && $this->call_existing_exception_handler && $this->old_exception_handler ) {
+            if (!$isError && $this->call_existing_exception_handler && $this->old_exception_handler) {
                 call_user_func($this->old_exception_handler, $e);
             }
         }
 
-        public function handleError($type, $message, $file = '', $line = 0, $context = array()) {
+        public function handleError($type, $message, $file = '', $line = 0, $context = array())
+        {
             // http://php.net/set_error_handler
             // The following error types cannot be handled with a user defined function: E_ERROR,
             // E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING, and
             // most of E_STRICT raised in the file where set_error_handler() is called.
 
-            if ( error_reporting() !== 0 ) {
+            if (error_reporting() !== 0) {
                 $error_types = $this->error_types;
-                if ( $error_types === null ) {
+                if ($error_types === null) {
                     $error_types = error_reporting();
                 }
-                if ( $error_types & $type ) {
+                if ($error_types & $type) {
                     $e = new ErrorException($message, 0, $type, $file, $line);
                     $this->handleException($e, true, $context);
                 }
             }
 
-            if ( $this->call_existing_error_handler ) {
-                if ( $this->old_error_handler !== null ) {
+            if ($this->call_existing_error_handler) {
+                if ($this->old_error_handler !== null) {
                     return call_user_func(
                         $this->old_error_handler,
                         $type,
@@ -114,14 +121,15 @@
             return true;
         }
 
-        public function handleFatalError() {
+        public function handleFatalError()
+        {
             unset($this->reservedMemory);
 
-            if ( null === $error = error_get_last() ) {
+            if (null === $error = error_get_last()) {
                 return;
             }
 
-            if ( $this->shouldCaptureFatalError($error['type']) ) {
+            if ($this->shouldCaptureFatalError($error['type'])) {
                 $e = new ErrorException(
                     @$error['message'], 0, @$error['type'],
                     @$error['file'], @$error['line']
@@ -130,7 +138,8 @@
             }
         }
 
-        public function shouldCaptureFatalError($type) {
+        public function shouldCaptureFatalError($type)
+        {
             return $type & $this->fatal_error_types;
         }
 
@@ -143,8 +152,9 @@
          *
          * @return $this
          */
-        public function registerExceptionHandler($call_existing = true) {
-            $this->old_exception_handler           = set_exception_handler(array( $this, 'handleException' ));
+        public function registerExceptionHandler($call_existing = true)
+        {
+            $this->old_exception_handler           = set_exception_handler(array($this, 'handleException'));
             $this->call_existing_exception_handler = $call_existing;
 
             return $this;
@@ -160,11 +170,12 @@
          *
          * @return $this
          */
-        public function registerErrorHandler($call_existing = true, $error_types = null) {
-            if ( $error_types !== null ) {
+        public function registerErrorHandler($call_existing = true, $error_types = null)
+        {
+            if ($error_types !== null) {
                 $this->error_types = $error_types;
             }
-            $this->old_error_handler           = set_error_handler(array( $this, 'handleError' ), E_ALL);
+            $this->old_error_handler           = set_error_handler(array($this, 'handleError'), E_ALL);
             $this->call_existing_error_handler = $call_existing;
 
             return $this;
@@ -179,8 +190,9 @@
          *
          * @return $this
          */
-        public function registerShutdownFunction($reservedMemorySize = 10) {
-            register_shutdown_function(array( $this, 'handleFatalError' ));
+        public function registerShutdownFunction($reservedMemorySize = 10)
+        {
+            register_shutdown_function(array($this, 'handleFatalError'));
 
             $this->reservedMemory = str_repeat('x', 1024 * $reservedMemorySize);
 

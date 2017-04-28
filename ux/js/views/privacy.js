@@ -17,7 +17,7 @@ $(function () {
             html += '    <div class="card card-inverse card-primary">';
             html += '      <div class="card-header" id="header">' + locationPoint.display_name + '</div>';
             html += '      <div class="card-block" id="location-map-' + index + '">';
-            html += '        <img class="img-fluid" src="inc/staticmap.php?center=' + locationPoint.lat + ',' + locationPoint.lon + '&zoom=14&size=380x150&maptype=mapnik&markers=' + locationPoint.lat + ',' + locationPoint.lon + ',ol-marker" width="380" height="150" />';
+            html += '        <img class="img-fluid" src="inc/StaticMapLite.php?center=' + locationPoint.lat + ',' + locationPoint.lon + '&zoom=14&size=380x150&maptype=mapnik&markers=' + locationPoint.lat + ',' + locationPoint.lon + ',ol-marker" width="380" height="150" />';
             html += '      </div>';
             html += '      <div class="card-footer">';
             html += '        <button class="btn btn-danger" type="button">Delete</button>';

@@ -14,59 +14,65 @@
      * @package raven
      */
     // TODO(dcramer): handle ca_cert
-    class Raven_CurlHandler {
+    class Raven_CurlHandler
+    {
+
         private $join_timeout;
         private $multi_handle;
         private $options;
         private $requests;
 
-        public function __construct($options, $join_timeout = 5) {
+        public function __construct($options, $join_timeout = 5)
+        {
             $this->options      = $options;
             $this->multi_handle = curl_multi_init();
             $this->requests     = array();
             $this->join_timeout = 5;
 
-            register_shutdown_function(array( $this, 'join' ));
+            register_shutdown_function(array($this, 'join'));
         }
 
-        private function select() {
+        private function select()
+        {
             do {
                 $mrc = curl_multi_exec($this->multi_handle, $active);
-            } while ( $mrc == CURLM_CALL_MULTI_PERFORM );
+            } while ($mrc == CURLM_CALL_MULTI_PERFORM);
 
-            while ( $active && $mrc == CURLM_OK ) {
-                if ( curl_multi_select($this->multi_handle) !== - 1 ) {
+            while ($active && $mrc == CURLM_OK) {
+                if (curl_multi_select($this->multi_handle) !== -1) {
                     do {
                         $mrc = curl_multi_exec($this->multi_handle, $active);
-                    } while ( $mrc == CURLM_CALL_MULTI_PERFORM );
+                    } while ($mrc == CURLM_CALL_MULTI_PERFORM);
                 } else {
                     return;
                 }
             }
 
-            while ( $info = curl_multi_info_read($this->multi_handle) ) {
+            while ($info = curl_multi_info_read($this->multi_handle)) {
                 $ch = $info['handle'];
-                $fd = (int) $ch;
+                $fd = (int)$ch;
 
                 curl_multi_remove_handle($this->multi_handle, $ch);
 
-                if ( ! isset($this->requests[ $fd ]) ) {
+                if (!isset($this->requests[$fd])) {
                     return;
                 }
 
-                unset($this->requests[ $fd ]);
+                unset($this->requests[$fd]);
             }
         }
 
-        public function __destruct() {
+        public function __destruct()
+        {
             $this->join();
         }
 
-        public function enqueue($url, $data = null, $headers = array()) {
+        public function enqueue($url, $data = null, $headers = array())
+        {
             $ch = curl_init();
 
             $new_headers = array();
-            foreach ( $headers as $key => $value ) {
+            foreach ($headers as $key => $value) {
                 array_push($new_headers, $key . ': ' . $value);
             }
             // XXX(dcramer): Prevent 100-continue response form server (Fixes GH-216)
@@ -78,15 +84,15 @@
 
             curl_setopt_array($ch, $this->options);
 
-            if ( isset($data) ) {
+            if (isset($data)) {
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             }
 
             curl_multi_add_handle($this->multi_handle, $ch);
 
-            $fd                    = (int) $ch;
-            $this->requests[ $fd ] = 1;
+            $fd                  = (int)$ch;
+            $this->requests[$fd] = 1;
 
             $this->select();
 
@@ -95,17 +101,18 @@
 
         // http://se2.php.net/manual/en/function.curl-multi-exec.php
 
-        public function join($timeout = null) {
-            if ( ! isset($timeout) ) {
+        public function join($timeout = null)
+        {
+            if (!isset($timeout)) {
                 $timeout = $this->join_timeout;
             }
             $start = time();
             do {
                 $this->select();
-                if ( count($this->requests) === 0 ) {
+                if (count($this->requests) === 0) {
                     break;
                 }
                 usleep(10000);
-            } while ( $timeout !== 0 && time() - $start < $timeout );
+            } while ($timeout !== 0 && time() - $start < $timeout);
         }
     }

@@ -5,15 +5,19 @@
      *
      * @package raven
      */
-    class Raven_Context {
-        public function __construct() {
+    class Raven_Context
+    {
+
+        public function __construct()
+        {
             $this->clear();
         }
 
         /**
          * Clean up existing context.
          */
-        public function clear() {
+        public function clear()
+        {
             $this->tags  = array();
             $this->extra = array();
             $this->user  = null;

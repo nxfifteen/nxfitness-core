@@ -3,14 +3,16 @@ $(function () {
 
     var leaderboard = $('#leaderboard');
     if (leaderboard.length > 0) {
-        $.getJSON("../json.php?user="+fitbitUserId+"&data=Leaderboard&period=last30", function (data) {
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=Leaderboard&period=last30", function (data) {
             var html = '';
             html += '<div class="row">';
             $.each(data.results.friends, function (index, friend) {
                 html += '<div class="col-12 col-md-4 col-xl-3">';
                 html += '    <div class="card';
                 //noinspection EqualityComparisonWithCoercionJS
-                if (index == fitbitUserId) { html += ' alert-success'; }
+                if (index == fitbitUserId) {
+                    html += ' alert-success';
+                }
                 html += '        ">';
                 html += '        <div class="card-block">';
                 html += '            <div class="row">';
