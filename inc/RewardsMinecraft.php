@@ -546,7 +546,7 @@
             }
         }
 
-        public function EventTriggerNomie($inputArray)
+        public function eventTriggerNomie($inputArray)
         {
             $event = $inputArray[2];
             $date  = $inputArray[5];

@@ -2939,7 +2939,7 @@
                                 if (!is_null($this->RewardsSystem)) {
                                     if (date('Y-m-d', $event[3] / 1000) == date('Y-m-d')) {
                                         $event[2] = $indexedTrackers[$event[2]];
-                                        $this->RewardsSystem->EventTriggerNomie($event);
+                                        $this->RewardsSystem->eventTriggerNomie($event);
                                     }
                                 }
                             } else {
