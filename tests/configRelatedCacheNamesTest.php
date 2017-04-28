@@ -47,7 +47,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_activity_log(): void
+        public function testCacheNamesActivityLog(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('activity_log');
             $this->assertContainsOnly('string', $activities);
