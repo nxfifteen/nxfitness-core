@@ -232,7 +232,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_minutesVeryActive(): void
+        public function testCacheNamesMinutesVeryActive(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesVeryActive');
             $this->assertContainsOnly('string', $activities);
