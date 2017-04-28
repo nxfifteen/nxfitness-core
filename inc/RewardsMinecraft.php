@@ -78,7 +78,7 @@
             return $this->AppClass;
         }
 
-        private function CheckForAward($cat, $event, $score)
+        private function checkForAward($cat, $event, $score)
         {
             $reward    = array();
             $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
@@ -422,15 +422,15 @@
                 $activeDuration = $activity->duration / 1000 / 60;
 
                 if ($activeDuration == $minMaxAvg['max']) {
-                    $this->CheckForAward("activity", $activity->activityName, "max");
+                    $this->checkForAward("activity", $activity->activityName, "max");
                 } else if ($activeDuration >= $minMaxAvg['avg2max']) {
-                    $this->CheckForAward("activity", $activity->activityName, "avg2max");
+                    $this->checkForAward("activity", $activity->activityName, "avg2max");
                 } else if ($activeDuration >= $minMaxAvg['avg']) {
-                    $this->CheckForAward("activity", $activity->activityName, "avg");
+                    $this->checkForAward("activity", $activity->activityName, "avg");
                 } else if ($activeDuration >= $minMaxAvg['min2avg']) {
-                    $this->CheckForAward("activity", $activity->activityName, "min2avg");
+                    $this->checkForAward("activity", $activity->activityName, "min2avg");
                 } else {
-                    $this->CheckForAward("activity", $activity->activityName, "other");
+                    $this->checkForAward("activity", $activity->activityName, "other");
                 }
             }
 
@@ -443,15 +443,15 @@
             //if (date('Y-m-d') == $badge->dateTime) {
             nxr("    " . $badge->shortName . " (" . $badge->category . ") awarded " . $badge->timesAchieved . " on " . $badge->dateTime);
 
-            if ($this->CheckForAward("badge", $badge->category . " | " . $badge->shortName, "awarded")) {
+            if ($this->checkForAward("badge", $badge->category . " | " . $badge->shortName, "awarded")) {
 
-            } else if ($this->CheckForAward("badge", $badge->category, "awarded")) {
+            } else if ($this->checkForAward("badge", $badge->category, "awarded")) {
 
-            } else if ($this->CheckForAward("badge", $badge->category . " | " . $badge->shortName,
+            } else if ($this->checkForAward("badge", $badge->category . " | " . $badge->shortName,
                 $badge->timesAchieved)
             ) {
 
-            } else if ($this->CheckForAward("badge", $badge->category, $badge->timesAchieved)) {
+            } else if ($this->checkForAward("badge", $badge->category, $badge->timesAchieved)) {
 
             }
             //}
@@ -460,22 +460,22 @@
         public function EventTriggerWeightChange($current, $goal, $last)
         {
             if ($current <= $goal) {
-                $this->CheckForAward("body", "weight", "goal");
+                $this->checkForAward("body", "weight", "goal");
             } else if ($current < $last) {
-                $this->CheckForAward("body", "weight", "decreased");
+                $this->checkForAward("body", "weight", "decreased");
             } else if ($current > $last) {
-                $this->CheckForAward("body", "weight", "increased");
+                $this->checkForAward("body", "weight", "increased");
             }
         }
 
         public function EventTriggerFatChange($current, $goal, $last)
         {
             if ($current <= $goal) {
-                $this->CheckForAward("body", "fat", "goal");
+                $this->checkForAward("body", "fat", "goal");
             } else if ($current < $last) {
-                $this->CheckForAward("body", "fat", "decreased");
+                $this->checkForAward("body", "fat", "decreased");
             } else if ($current > $last) {
-                $this->CheckForAward("body", "fat", "increased");
+                $this->checkForAward("body", "fat", "increased");
             }
         }
 
@@ -505,7 +505,7 @@
                 }
 
                 if ($recordedValue >= $recordedTarget) {
-                    $this->CheckForAward("goal", "veryactive", "reached");
+                    $this->checkForAward("goal", "veryactive", "reached");
                 }
             }
         }
@@ -521,13 +521,13 @@
                     if (!$this->smashedGoal($trigger, $value)) {
                         // Reached Step Goal
                         if ($this->reachedGoal($trigger, $value)) {
-                            $this->CheckForAward("goal", $trigger, "reached");
+                            $this->checkForAward("goal", $trigger, "reached");
                         }
                     } else {
-                        $this->CheckForAward("goal", $trigger, "smashed");
+                        $this->checkForAward("goal", $trigger, "smashed");
                     }
                 } else {
-                    $this->CheckForAward("goal", $trigger, "crushed");
+                    $this->checkForAward("goal", $trigger, "crushed");
                 }
 
                 if ($trigger == "steps") {
@@ -540,7 +540,7 @@
                     $recordedValue = round($value, 3);
                     $hundredth     = round($recordedValue / $divider, 0);
                     nxr(" checking awards for $trigger $hundredth");
-                    $this->CheckForAward("hundredth", $trigger, $hundredth);
+                    $this->checkForAward("hundredth", $trigger, $hundredth);
 
                 }
             }
@@ -554,13 +554,13 @@
 
             nxr("  ** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score);
 
-            if (!$this->CheckForAward("nomie", "logged", $event)) {
-                $this->CheckForAward("nomie", "score", $score);
+            if (!$this->checkForAward("nomie", "logged", $event)) {
+                $this->checkForAward("nomie", "score", $score);
             }
         }
 
         public function EventTriggerStreak($goal, $length)
         {
-            $this->CheckForAward("streak", $goal, $length);
+            $this->checkForAward("streak", $goal, $length);
         }
     }
