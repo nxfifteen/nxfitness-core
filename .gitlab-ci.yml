@@ -1,6 +1,6 @@
 stages:
-  - syntax
   - test
+  - syntax
   - info
   - review
   - stage
@@ -16,18 +16,18 @@ before_script:
  - bash ./dev/build_dev_env.sh
 
 # Run our tests
+test:php:
+  stage: test
+  script:
+  - php ./binaries/phpunit.phar -c phpunit.xml
+  - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude php-docblock-checker-1.3.4 --exclude phpspec --blame -e php .
+  - ./vendor/phpspec/phpspec/bin/phpspec run
+
+# Run our tests
 test:phpcs:
   stage: syntax
   script:
   - bash ./dev/phpcs_cbf.sh
-
-# Run our tests
-test:php:
-  stage: test
-  script:
-  - php ./binaries/phpunit.phar
-  - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude php-docblock-checker-1.3.4 --exclude phpspec --blame -e php .
-  - ./vendor/phpspec/phpspec/bin/phpspec run
 
 # Run our tests
 test:phploc:
