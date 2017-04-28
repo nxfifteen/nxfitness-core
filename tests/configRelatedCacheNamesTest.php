@@ -127,7 +127,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_floors(): void
+        public function testCacheNamesFloors(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('floors');
             $this->assertContainsOnly('string', $activities);
