@@ -6,6 +6,9 @@
      * Time: 22:53
      */
 
+    namespace Core\TestSuite;
+
+    use Core\Config;
     use PHPUnit\Framework\TestCase;
 
     class configRelatedCacheNamesTest extends TestCase
