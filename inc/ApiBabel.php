@@ -82,7 +82,7 @@
          */
         private function pullBabelTimeSeries($trigger, $force = false)
         {
-            if ($force || $this->api_isCooled($trigger)) {
+            if ($force || $this->isTriggerCooled($trigger)) {
                 $currentDate = new DateTime();
 
                 $lastrun   = $this->getLastCleanRun($trigger);
@@ -522,7 +522,7 @@
         {
             $isAllowed = $this->isAllowed("activity_log");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("activity_log")) {
+                if ($this->isTriggerCooled("activity_log")) {
                     $targetDateTime = $this->getLastCleanRun("activity_log");
 
                     nxr(' Downloading activity logs from ' . $targetDateTime->format("Y-m-d"));
@@ -684,7 +684,7 @@
         {
             $isAllowed = $this->isAllowed("goals");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("goals")) {
+                if ($this->isTriggerCooled("goals")) {
                     $userGoals = $this->pullBabel('user/-/activities/goals/daily.json', true);
 
                     if (isset($userGoals) && isset($userGoals->goals)) {
@@ -1208,7 +1208,7 @@
             // Check we're allowed to pull these records here rather than at each loop
             $isAllowed = $this->isAllowed("heart");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("heart")) {
+                if ($this->isTriggerCooled("heart")) {
                     $lastCleanRun     = new DateTime ($lastCleanRun);
                     $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/' . $lastCleanRun->format('Y-m-d') . '/1d.json',
                         true, false, true);
@@ -1408,7 +1408,7 @@
         {
             $isAllowed = $this->isAllowed("profile");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("profile")) {
+                if ($this->isTriggerCooled("profile")) {
                     $userProfile = $this->pullBabel('user/-/profile.json');
                     $userProfile = $userProfile['user'];
 
@@ -1478,7 +1478,7 @@
         {
             $isAllowed = $this->isAllowed("devices");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("devices")) {
+                if ($this->isTriggerCooled("devices")) {
                     $userDevices = $this->pullBabel('user/-/devices.json', true);
 
                     $trackers = array();
@@ -1666,7 +1666,7 @@
         {
             $isAllowed = $this->isAllowed("badges");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("badges")) {
+                if ($this->isTriggerCooled("badges")) {
                     $badgeFolder = dirname(__FILE__) . "/../images/badges/";
                     if (file_exists($badgeFolder) AND is_writable($badgeFolder)) {
 
@@ -1856,7 +1856,7 @@
         {
             $isAllowed = $this->isAllowed("leaderboard");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("leaderboard")) {
+                if ($this->isTriggerCooled("leaderboard")) {
                     $userFriends = $this->pullBabel('user/-/friends/leaderboard.json', true);
 
                     if (isset($userFriends)) {
@@ -1985,7 +1985,7 @@
         {
             $isAllowed = $this->isAllowed("goals_calories");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("goals_calories")) {
+                if ($this->isTriggerCooled("goals_calories")) {
                     $userCaloriesGoals = $this->pullBabel('user/-/foods/log/goal.json', true);
 
                     if (isset($userCaloriesGoals) && isset($userCaloriesGoals->goals) && isset($userCaloriesGoals->foodPlan)) {
@@ -2676,7 +2676,7 @@
         {
             $isAllowed = $this->isAllowed("nomie_trackers");
             if (!is_numeric($isAllowed)) {
-                if ($this->api_isCooled("nomie_trackers")) {
+                if ($this->isTriggerCooled("nomie_trackers")) {
                     $nomie_user_key = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", 'nomie');
 
                     nxr(" Connecting to CouchDB");
@@ -3121,7 +3121,7 @@
                         // Check we're allowed to pull these records here rather than at each loop
                         $isAllowed = $this->isAllowed("heart");
                         if (!is_numeric($isAllowed)) {
-                            if ($this->api_isCooled("heart")) {
+                            if ($this->isTriggerCooled("heart")) {
                                 $period = new DatePeriod ($this->getLastCleanRun("heart"), $interval, $currentDate);
                                 foreach ($period as $dt) {
                                     nxr(' Downloading Heart Logs for ' . $dt->format("l jS M Y"));
@@ -3142,7 +3142,7 @@
                         // Check we're allowed to pull these records here rather than at each loop
                         $isAllowed = $this->isAllowed("water");
                         if (!is_numeric($isAllowed)) {
-                            if ($this->api_isCooled("water")) {
+                            if ($this->isTriggerCooled("water")) {
                                 $period = new DatePeriod ($this->getLastCleanRun("water"), $interval, $currentDate);
                                 /**
                                  * @var DateTime $dt
@@ -3165,7 +3165,7 @@
                     if ($trigger == "all" || $trigger == "sleep") {
                         $isAllowed = $this->isAllowed("sleep");
                         if (!is_numeric($isAllowed)) {
-                            if ($this->api_isCooled("sleep")) {
+                            if ($this->isTriggerCooled("sleep")) {
                                 $period = new DatePeriod ($this->getLastCleanRun("sleep"), $interval, $currentDate);
                                 /**
                                  * @var DateTime $dt
@@ -3188,7 +3188,7 @@
                     if ($trigger == "all" || $trigger == "body") {
                         $isAllowed = $this->isAllowed("body");
                         if (!is_numeric($isAllowed)) {
-                            if ($this->api_isCooled("body")) {
+                            if ($this->isTriggerCooled("body")) {
                                 $period = new DatePeriod ($this->getLastCleanRun("body"), $interval, $currentDate);
                                 /**
                                  * @var DateTime $dt
@@ -3211,7 +3211,7 @@
                     if ($trigger == "all" || $trigger == "foods") {
                         $isAllowed = $this->isAllowed("foods");
                         if (!is_numeric($isAllowed)) {
-                            if ($this->api_isCooled("foods")) {
+                            if ($this->isTriggerCooled("foods")) {
                                 $period = new DatePeriod ($this->getLastCleanRun("foods"), $interval, $currentDate);
                                 /**
                                  * @var DateTime $dt
@@ -3245,7 +3245,7 @@
                     if ($trigger == "all" || $trigger == "activities") {
                         $isAllowed = $this->isAllowed("activities");
                         if (!is_numeric($isAllowed)) {
-                            if ($this->api_isCooled("activities")) {
+                            if ($this->isTriggerCooled("activities")) {
                                 nxr(" Downloading Series Info");
                                 foreach ($timeSeries as $activity => $timeout) {
                                     $this->pullBabelTimeSeries($activity, true);
@@ -3475,7 +3475,7 @@
          *
          * @return bool
          */
-        public function api_isCooled($trigger, $reset = false)
+        public function isTriggerCooled($trigger, $reset = false)
         {
             if ($this->forceSync) {
                 return true;

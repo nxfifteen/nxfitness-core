@@ -80,7 +80,7 @@
                         $fitbitApp->getFitbitAPI($user['fuid'])->setActiveUser($user['fuid']);
                         foreach ($allowed_triggers as $allowed_trigger) {
                             if (!is_numeric($fitbitApp->getFitbitAPI()->isAllowed($allowed_trigger, true))) {
-                                if ($fitbitApp->getFitbitAPI($user['fuid'])->api_isCooled($allowed_trigger)) {
+                                if ($fitbitApp->getFitbitAPI($user['fuid'])->isTriggerCooled($allowed_trigger)) {
                                     nxr("  + $allowed_trigger added to queue");
                                     $fitbitApp->addCronJob($user['fuid'], $allowed_trigger);
                                 } else {
