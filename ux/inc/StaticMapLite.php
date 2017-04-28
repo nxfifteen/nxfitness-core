@@ -84,8 +84,18 @@
         protected $mapCacheFile = '';
         protected $mapCacheExtension = 'png';
 
-        protected $zoom, $lat, $lon, $width, $height, $markers, $image, $maptype;
-        protected $centerX, $centerY, $offsetX, $offsetY;
+        protected $zoom;
+        protected $lat;
+        protected $lon;
+        protected $width;
+        protected $height;
+        protected $markers;
+        protected $image;
+        protected $maptype;
+        protected $centerX;
+        protected $centerY;
+        protected $offsetX;
+        protected $offsetY;
 
         public function __construct()
         {
