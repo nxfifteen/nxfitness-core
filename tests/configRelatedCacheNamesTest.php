@@ -11,17 +11,17 @@
     class configRelatedCacheNamesTest extends TestCase
     {
         /**
-         * @var config
+         * @var Config
          */
         protected $configClass;
 
         protected function setUp()
         {
-            $this->configClass = new config();
+            $this->configClass = new Config();
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_activities(): void
         {
@@ -42,7 +42,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_activity_log(): void
         {
@@ -52,7 +52,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_badges(): void
         {
@@ -62,7 +62,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_body(): void
         {
@@ -73,7 +73,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_caloriesOut(): void
         {
@@ -83,7 +83,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_devices(): void
         {
@@ -94,7 +94,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_distance(): void
         {
@@ -113,7 +113,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_elevation(): void
         {
@@ -122,7 +122,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_floors(): void
         {
@@ -141,7 +141,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_foods(): void
         {
@@ -152,7 +152,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_goals(): void
         {
@@ -165,7 +165,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_goals_calories(): void
         {
@@ -175,7 +175,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_heart(): void
         {
@@ -184,7 +184,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_leaderboard(): void
         {
@@ -193,7 +193,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_minutesFairlyActive(): void
         {
@@ -207,7 +207,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_minutesLightlyActive(): void
         {
@@ -217,7 +217,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_minutesSedentary(): void
         {
@@ -227,7 +227,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_minutesVeryActive(): void
         {
@@ -241,7 +241,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_nomie_trackers(): void
         {
@@ -251,7 +251,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_profile(): void
         {
@@ -261,7 +261,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_sleep(): void
         {
@@ -271,7 +271,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_steps(): void
         {
@@ -288,7 +288,7 @@
         }
 
         /**
-         * @covers config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testRelatedCacheNames_water(): void
         {

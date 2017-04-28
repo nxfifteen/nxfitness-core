@@ -53,7 +53,7 @@
         protected $config;
 
         /**
-         * @var config
+         * @var Config
          */
         protected $apiSettings;
 
@@ -63,7 +63,7 @@
         protected $nxFit;
 
         /**
-         * @var config
+         * @var Config
          */
         protected $dbUserProfile;
 
@@ -174,7 +174,7 @@
         }
 
         /**
-         * @return config
+         * @return Config
          */
         public function getApiSettingClass()
         {
@@ -240,7 +240,7 @@
         }
 
         /**
-         * @return config
+         * @return Config
          */
         public function getUserProfile()
         {

@@ -54,7 +54,7 @@
         protected $fitbitapi;
 
         /**
-         * @var config
+         * @var Config
          */
         protected $settings;
         /**
@@ -71,8 +71,8 @@
          */
         public function __construct($appClass = null)
         {
-            require_once(dirname(__FILE__) . "/config.php");
-            $this->setSettings(new config());
+            require_once(dirname(__FILE__) . "/Config.php");
+            $this->setSettings(new Config());
 
             if (is_null($appClass)) {
                 $this->appClass = new NxFitbit();
@@ -88,7 +88,7 @@
         }
 
         /**
-         * @param config $settings
+         * @param Config $settings
          */
         private function setSettings($settings)
         {
@@ -654,7 +654,7 @@
         }
 
         /**
-         * @return config
+         * @return Config
          */
         public function getSettings()
         {

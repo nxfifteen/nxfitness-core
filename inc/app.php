@@ -38,7 +38,7 @@
          */
         protected $fitbitapi;
         /**
-         * @var config
+         * @var Config
          */
         protected $settings;
         /**
@@ -51,8 +51,8 @@
          */
         public function __construct()
         {
-            require_once(dirname(__FILE__) . "/config.php");
-            $this->setSettings(new config());
+            require_once(dirname(__FILE__) . "/Config.php");
+            $this->setSettings(new Config());
 
             require_once(dirname(__FILE__) . "/../library/medoo.php");
             /** @noinspection PhpUndefinedClassInspection */
@@ -90,7 +90,7 @@
         }
 
         /**
-         * @param config $settings
+         * @param Config $settings
          */
         private function setSettings($settings)
         {
@@ -148,7 +148,7 @@
         }
 
         /**
-         * @return config
+         * @return Config
          */
         public function getSettings()
         {
