@@ -479,7 +479,7 @@
             }
         }
 
-        public function EventTriggerNewMeal($meal)
+        public function eventTriggerNewMeal($meal)
         {
             nxr(" ** API Event Meal Logged");
             nxr("      " . $meal->loggedFood->name . " recorded");

@@ -890,7 +890,7 @@
                                 ));
 
                             if (!is_null($this->RewardsSystem)) {
-                                $this->RewardsSystem->EventTriggerNewMeal($meal);
+                                $this->RewardsSystem->eventTriggerNewMeal($meal);
                             }
                         }
 
