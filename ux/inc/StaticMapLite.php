@@ -378,9 +378,9 @@
             return $this->mapCacheFile . "." . $this->mapCacheExtension;
         }
 
-        public function mkdir_recursive($pathname, $mode)
+        public function mkdirRecursive($pathname, $mode)
         {
-            is_dir(dirname($pathname)) || $this->mkdir_recursive(dirname($pathname), $mode);
+            is_dir(dirname($pathname)) || $this->mkdirRecursive(dirname($pathname), $mode);
 
             return is_dir($pathname) || @mkdir($pathname, $mode);
         }
@@ -388,7 +388,7 @@
         public function writeTileToCache($url, $data)
         {
             $filename = $this->tileUrlToFilename($url);
-            $this->mkdir_recursive(dirname($filename), 0777);
+            $this->mkdirRecursive(dirname($filename), 0777);
             file_put_contents($filename, $data);
         }
 
@@ -448,7 +448,7 @@
                 if (!$this->checkMapCache()) {
                     // map is not in cache, needs to be build
                     $this->makeMap();
-                    $this->mkdir_recursive(dirname($this->mapCacheIDToFilename()), 0777);
+                    $this->mkdirRecursive(dirname($this->mapCacheIDToFilename()), 0777);
                     imagepng($this->image, $this->mapCacheIDToFilename(), 9);
                     $this->sendHeader();
                     if (file_exists($this->mapCacheIDToFilename())) {
