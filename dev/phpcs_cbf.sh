@@ -5,4 +5,9 @@ echo "[DONE]"
 
 echo -n "Running syntax checks..."
 ./vendor/bin/phpcs --standard="PSR2" --ignore="vendor,library,php-docblock-checker-1.3.4,phpspec" --extensions="php,css,js" --error-severity=1 --warning-severity=8 --exclude=Generic.WhiteSpace.ScopeIndent ./
-exit $?
+if [ $? == 0 ]; then
+    echo "[DONE]"
+    exit 0
+else
+    exit 1
+fi
