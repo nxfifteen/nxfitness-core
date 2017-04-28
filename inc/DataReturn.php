@@ -810,7 +810,7 @@
          * @internal param float $longitudeTo Longitude of target point in [deg decimal]
          * @internal param float $earthRadius Mean earth radius in [m]
          */
-        function haversineGreatCircleDistance($lat1, $lon1, $lat2, $lon2, $unit)
+        private function haversineGreatCircleDistance($lat1, $lon1, $lat2, $lon2, $unit)
         {
             $theta = $lon1 - $lon2;
             $dist  = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
