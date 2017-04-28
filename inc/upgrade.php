@@ -725,8 +725,8 @@
             $installNumber = ($installVersion[0] . $installVersion[1] . $installVersion[2] . $installVersion[3]) * 1;
 
             for ($x = ((int)$currentNumber + 1); $x <= $installNumber; $x++) {
-                if (method_exists($this, "update_" . $x)) {
-                    array_push($updateFunctions, "update_" . $x);
+                if (method_exists($this, "updateRun" . $x)) {
+                    array_push($updateFunctions, "updateRun" . $x);
                 }
             }
 
