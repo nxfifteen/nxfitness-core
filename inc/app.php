@@ -34,7 +34,7 @@
          */
         protected $database;
         /**
-         * @var fitbit
+         * @var ApiBabel
          */
         protected $fitbitapi;
         /**
@@ -260,16 +260,16 @@
          * @param bool   $reset
          * @param string $userFitbitId
          *
-         * @return fitbit
+         * @return ApiBabel
          */
         public function getFitbitAPI($userFitbitId = "", $reset = false)
         {
             if (is_null($this->fitbitapi) || $reset) {
-                require_once(dirname(__FILE__) . "/fitbit.php");
+                require_once(dirname(__FILE__) . "/ApiBabel.php");
                 if ($userFitbitId == $this->getSetting("ownerFuid", null, false)) {
-                    $this->fitbitapi = new fitbit($this, true);
+                    $this->fitbitapi = new ApiBabel($this, true);
                 } else {
-                    $this->fitbitapi = new fitbit($this, false);
+                    $this->fitbitapi = new ApiBabel($this, false);
                 }
             }
 
@@ -277,7 +277,7 @@
         }
 
         /**
-         * @param fitbit $fitbitapi
+         * @param ApiBabel $fitbitapi
          */
         public function setFitbitapi($fitbitapi)
         {
