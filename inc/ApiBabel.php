@@ -180,14 +180,14 @@
                             $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($steps->dateTime)) / (60 * 60 * 24);
                             nxr("   No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago");
                             if ($daysSinceReading > 180) {
-                                $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
+                                $this->setLastCleanRun($trigger, new DateTime ($steps->dateTime));
                             }
                         } else {
                             nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
                         }
 
                         if ($steps->value > 0) {
-                            $this->api_setLastCleanrun($trigger, new DateTime ($steps->dateTime));
+                            $this->setLastCleanRun($trigger, new DateTime ($steps->dateTime));
                         }
 
                         $dbValues = array(
@@ -450,7 +450,7 @@
                         nxr("    " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
 
                         if ($series->value > 0) {
-                            $this->api_setLastCleanrun($trigger, new DateTime ($series->dateTime));
+                            $this->setLastCleanRun($trigger, new DateTime ($series->dateTime));
                         }
 
                         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
@@ -649,7 +649,7 @@
                                         $this->pullBabelHeartIntraday($activity);
                                     }
                                 }
-                                $this->api_setLastCleanrun("activity_log", new DateTime ($startDate));
+                                $this->setLastCleanRun("activity_log", new DateTime ($startDate));
 
                                 if (!is_null($this->RewardsSystem)) {
                                     $this->RewardsSystem->EventTriggerActivity($activity);
@@ -658,12 +658,12 @@
 
                         } else {
                             nxr("  No recorded activities");
-                            $this->api_setLastCleanrun("activity_log",
+                            $this->setLastCleanRun("activity_log",
                                 new DateTime ($userActivityLog->pagination->afterDate), 2);
                             $this->setLastrun("activity_log");
                         }
                     } else {
-                        $this->api_setLastCleanrun("activity_log",
+                        $this->setLastCleanRun("activity_log",
                             new DateTime ((String)$targetDateTime->format("Y-m-d")), 7);
                         $this->setLastrun("activity_log");
                     }
@@ -795,7 +795,7 @@
                             }
 
                             if (!$fallback) {
-                                $this->api_setLastCleanrun("goals", $currentDate);
+                                $this->setLastCleanRun("goals", $currentDate);
                             }
                             $this->setLastrun("goals");
                         }
@@ -881,14 +881,14 @@
                             }
                         }
 
-                        $this->api_setLastCleanrun("foods", $targetDateTime);
+                        $this->setLastCleanRun("foods", $targetDateTime);
                     }
                 } else {
                     $currentDate      = new DateTime();
                     $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
                     nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
                     if ($daysSinceReading > 7) {
-                        $this->api_setLastCleanrun("foods", $targetDateTime);
+                        $this->setLastCleanRun("foods", $targetDateTime);
                     }
                 }
             }
@@ -1021,14 +1021,14 @@
                     }
 
                     if (!$fallback) {
-                        $this->api_setLastCleanrun("body", new DateTime ($targetDate));
+                        $this->setLastCleanRun("body", new DateTime ($targetDate));
                     }
                 } else {
                     $currentDate      = new DateTime();
                     $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
                     nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
                     if ($daysSinceReading > 7) {
-                        $this->api_setLastCleanrun("body", new DateTime ($targetDate));
+                        $this->setLastCleanRun("body", new DateTime ($targetDate));
                     }
                 }
             }
@@ -1115,12 +1115,12 @@
                             ));
                     }
 
-                    $this->api_setLastCleanrun("sleep", new DateTime ($targetDate));
+                    $this->setLastCleanRun("sleep", new DateTime ($targetDate));
 
                     nxr("  Sleeplog " . $loggedSleep->logId . " recorded");
                 }
             } else {
-                $this->api_setLastCleanrun("sleep", new DateTime ($targetDate), 7);
+                $this->setLastCleanRun("sleep", new DateTime ($targetDate), 7);
                 $this->setLastrun("sleep");
             }
 
@@ -1175,7 +1175,7 @@
                             ));
                     }
 
-                    $this->api_setLastCleanrun("water", $targetDateTime);
+                    $this->setLastCleanRun("water", $targetDateTime);
                 }
             }
 
@@ -1279,7 +1279,7 @@
                         }
 
                         if (isset($lastDateReturned)) {
-                            $this->api_setLastCleanrun("heart", new DateTime ($lastDateReturned));
+                            $this->setLastCleanRun("heart", new DateTime ($lastDateReturned));
                         }
                     }
 
@@ -2295,7 +2295,7 @@
          *
          * @internal param $user
          */
-        private function api_setLastCleanrun($activity, $date = null, $delay = 0)
+        private function setLastCleanRun($activity, $date = null, $delay = 0)
         {
             if (is_null($date)) {
                 $date = new DateTime("now");
