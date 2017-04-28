@@ -57,7 +57,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_badges(): void
+        public function testCacheNamesBadges(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('badges');
             $this->assertContainsOnly('string', $activities);
