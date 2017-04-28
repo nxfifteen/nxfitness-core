@@ -1,7 +1,7 @@
 stages:
-  - info
   - syntax
   - test
+  - info
   - review
   - stage
   - deploy
@@ -15,12 +15,6 @@ before_script:
  - bash ./dev/build_dev_env.sh
 
 # Run our tests
-test:phploc:
-  stage: info
-  script:
-  - ./php-docblock-checker-1.3.4/vendor/bin/phploc inc
-
-# Run our tests
 test:phpcs:
   stage: syntax
   script:
@@ -30,9 +24,15 @@ test:phpcs:
 test:php:
   stage: test
   script:
-  - php phpunit.phar --version
+  - php phpunit.phar
   - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude php-docblock-checker-1.3.4 --exclude phpspec --blame -e php .
   - ./vendor/phpspec/phpspec/bin/phpspec run
+
+# Run our tests
+test:phploc:
+  stage: info
+  script:
+  - ./php-docblock-checker-1.3.4/vendor/bin/phploc inc
 
 deploy_review:
   stage: review

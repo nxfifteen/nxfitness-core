@@ -1,17 +1,11 @@
 <?php
-    /**
-     * Created by IntelliJ IDEA.
-     * User: stuar
-     * Date: 27/04/2017
-     * Time: 22:53
-     */
 
-    namespace Core\TestSuite;
-
-    use Core\Config as Config;
-    use PHPUnit\Framework\TestCase;
+    namespace TestNamespace;
 
     require_once (dirname(__FILE__) . '/../inc/Config.php');
+
+    use Core\Config as Config;
+    use \PHPUnit\Framework\TestCase;
 
     class ConfigCacheNamesTest extends TestCase
     {
@@ -26,9 +20,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesActivities(): void
+        public function testCacheNamesActivities()
         {
             $activities = $this->configClass->getRelatedCacheNames('activities');
             $this->assertContainsOnly('string', $activities);
@@ -47,9 +41,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesActivityLog(): void
+        public function testCacheNamesActivityLog()
         {
             $activities = $this->configClass->getRelatedCacheNames('activity_log');
             $this->assertContainsOnly('string', $activities);
@@ -57,9 +51,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesBadges(): void
+        public function testCacheNamesBadges()
         {
             $activities = $this->configClass->getRelatedCacheNames('badges');
             $this->assertContainsOnly('string', $activities);
@@ -67,9 +61,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesBody(): void
+        public function testCacheNamesBody()
         {
             $activities = $this->configClass->getRelatedCacheNames('body');
             $this->assertContainsOnly('string', $activities);
@@ -78,9 +72,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesCaloriesOut(): void
+        public function testCacheNamesCaloriesOut()
         {
             $activities = $this->configClass->getRelatedCacheNames('caloriesOut');
             $this->assertContainsOnly('string', $activities);
@@ -88,9 +82,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesDevices(): void
+        public function testCacheNamesDevices()
         {
             $activities = $this->configClass->getRelatedCacheNames('devices');
             $this->assertContainsOnly('string', $activities);
@@ -99,9 +93,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesDistance(): void
+        public function testCacheNamesDistance()
         {
             $activities = $this->configClass->getRelatedCacheNames('distance');
             $this->assertContainsOnly('string', $activities);
@@ -118,18 +112,18 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesElevation(): void
+        public function testCacheNamesElevation()
         {
             $activities = $this->configClass->getRelatedCacheNames('elevation');
             $this->assertTrue(count($activities) == 0);
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesFloors(): void
+        public function testCacheNamesFloors()
         {
             $activities = $this->configClass->getRelatedCacheNames('floors');
             $this->assertContainsOnly('string', $activities);
@@ -146,9 +140,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesFoods(): void
+        public function testCacheNamesFoods()
         {
             $activities = $this->configClass->getRelatedCacheNames('foods');
             $this->assertContainsOnly('string', $activities);
@@ -157,9 +151,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesGoals(): void
+        public function testCacheNamesGoals()
         {
             $activities = $this->configClass->getRelatedCacheNames('goals');
             $this->assertContainsOnly('string', $activities);
@@ -170,9 +164,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesGoalsCalories(): void
+        public function testCacheNamesGoalsCalories()
         {
             $activities = $this->configClass->getRelatedCacheNames('goals_calories');
             $this->assertContainsOnly('string', $activities);
@@ -180,27 +174,27 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesHeart(): void
+        public function testCacheNamesHeart()
         {
             $activities = $this->configClass->getRelatedCacheNames('heart');
             $this->assertTrue(count($activities) == 0);
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesLeaderboard(): void
+        public function testCacheNamesLeaderboard()
         {
             $activities = $this->configClass->getRelatedCacheNames('leaderboard');
             $this->assertTrue(in_array("trend", $activities));
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesMinutesFairlyActive(): void
+        public function testCacheNamesMinutesFairlyActive()
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesFairlyActive');
             $this->assertContainsOnly('string', $activities);
@@ -212,9 +206,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesMinutesLightlyActive(): void
+        public function testCacheNamesMinutesLightlyActive()
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesLightlyActive');
             $this->assertContainsOnly('string', $activities);
@@ -222,9 +216,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesMinutesSedentary(): void
+        public function testCacheNamesMinutesSedentary()
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesSedentary');
             $this->assertContainsOnly('string', $activities);
@@ -232,9 +226,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesMinutesVeryActive(): void
+        public function testCacheNamesMinutesVeryActive()
         {
             $activities = $this->configClass->getRelatedCacheNames('minutesVeryActive');
             $this->assertContainsOnly('string', $activities);
@@ -246,9 +240,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesNomieTrackers(): void
+        public function testCacheNamesNomieTrackers()
         {
             $activities = $this->configClass->getRelatedCacheNames('nomie_trackers');
             $this->assertContainsOnly('string', $activities);
@@ -256,9 +250,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesProfile(): void
+        public function testCacheNamesProfile()
         {
             $activities = $this->configClass->getRelatedCacheNames('profile');
             $this->assertContainsOnly('string', $activities);
@@ -266,9 +260,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesSleep(): void
+        public function testCacheNamesSleep()
         {
             $activities = $this->configClass->getRelatedCacheNames('sleep');
             $this->assertContainsOnly('string', $activities);
@@ -276,9 +270,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesSteps(): void
+        public function testCacheNamesSteps()
         {
             $activities = $this->configClass->getRelatedCacheNames('steps');
             $this->assertContainsOnly('string', $activities);
@@ -293,9 +287,9 @@
         }
 
         /**
-         * @covers Config::getRelatedCacheNames
+         * @covers \Core\Config::getRelatedCacheNames
          */
-        public function testCacheNamesWater(): void
+        public function testCacheNamesWater()
         {
             $activities = $this->configClass->getRelatedCacheNames('water');
             $this->assertContainsOnly('string', $activities);
