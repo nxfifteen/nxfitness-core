@@ -266,7 +266,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_sleep(): void
+        public function testCacheNamesSleep(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('sleep');
             $this->assertContainsOnly('string', $activities);
