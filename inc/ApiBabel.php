@@ -171,7 +171,7 @@
             $userTimeSeries = $this->getTimeSeries($trigger, $currentDate, $daysSince);
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
-                $FirstSeen = $this->user_getFirstSeen()->format("Y-m-d");
+                $FirstSeen = $this->getUserFirstSeen()->format("Y-m-d");
 
                 foreach ($userTimeSeries as $steps) {
                     if (strtotime($steps->dateTime) >= strtotime($FirstSeen)) {
@@ -443,7 +443,7 @@
                     }
                 }
 
-                $FirstSeen  = $this->user_getFirstSeen()->format("Y-m-d");
+                $FirstSeen  = $this->getUserFirstSeen()->format("Y-m-d");
                 $todaysDate = new DateTime ('now');
                 foreach ($userTimeSeries as $series) {
                     if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
@@ -2274,7 +2274,7 @@
                     )
                 )));
             } else {
-                return $this->user_getFirstSeen();
+                return $this->getUserFirstSeen();
             }
         }
 
@@ -2282,7 +2282,7 @@
          * @return DateTime
          * @internal param $user
          */
-        private function user_getFirstSeen()
+        private function getUserFirstSeen()
         {
             return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
                     null, false) . "users", "seen", array("fuid" => $this->getActiveUser())));
