@@ -485,7 +485,7 @@
             nxr("      " . $meal->loggedFood->name . " recorded");
         }
 
-        public function EventTriggerVeryActive($veryActive)
+        public function eventTriggerVeryActive($veryActive)
         {
             $currentDate = new DateTime ('now');
             $currentDate = $currentDate->format("Y-m-d");

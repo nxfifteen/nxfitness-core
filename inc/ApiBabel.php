@@ -516,7 +516,7 @@
 
                         if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d'))) {
                             if (!is_null($this->RewardsSystem)) {
-                                $this->RewardsSystem->EventTriggerVeryActive($series->value);
+                                $this->RewardsSystem->eventTriggerVeryActive($series->value);
                             }
                             //$this->GoalStreakCheck($series->dateTime, "veryactive", $series->value);
                         }
