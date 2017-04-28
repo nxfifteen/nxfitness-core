@@ -21,7 +21,7 @@ if [ ! -d "php-docblock-checker-1.3.4" ]; then
     unzip 1.3.4.zip >/dev/null 2>&1
     rm 1.3.4.zip
     cd php-docblock-checker-1.3.4/
-    php ../binaries/composer.phar install >/dev/null 2>&1
+    php ../composer.phar install >/dev/null 2>&1
     cd ../../
 fi
 
