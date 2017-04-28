@@ -189,7 +189,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_leaderboard(): void
+        public function testCacheNamesLeaderboard(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('leaderboard');
             $this->assertArrayHasKey("trend", $activities);
