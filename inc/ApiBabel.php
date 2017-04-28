@@ -1810,7 +1810,7 @@
                                     }
 
                                     if (!is_null($this->RewardsSystem)) {
-                                        $this->RewardsSystem->EventTriggerBadgeAwarded($badge);
+                                        $this->RewardsSystem->eventTriggerBadgeAwarded($badge);
                                     }
                                 }
                             }

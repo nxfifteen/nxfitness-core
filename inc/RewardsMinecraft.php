@@ -436,7 +436,7 @@
 
         }
 
-        public function EventTriggerBadgeAwarded($badge)
+        public function eventTriggerBadgeAwarded($badge)
         {
             nxr(" ** API Event Trigger Badge");
 
