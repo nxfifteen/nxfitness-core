@@ -34,7 +34,7 @@
          */
         protected $paramPeriod;
         /**
-         * @var tracking
+         * @var UserAnalytics
          */
         protected $tracking;
 
@@ -49,8 +49,8 @@
             $this->setForCache(true);
 
             if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
-                require_once(dirname(__FILE__) . "/tracking.php");
-                $this->setTracking(new tracking($this->getAppClass()->getSetting("trackingId"),
+                require_once(dirname(__FILE__) . "/UserAnalytics.php");
+                $this->setTracking(new UserAnalytics($this->getAppClass()->getSetting("trackingId"),
                     $this->getAppClass()->getSetting("trackingPath")));
             }
         }
@@ -447,7 +447,7 @@
         }
 
         /**
-         * @return tracking
+         * @return UserAnalytics
          */
         public function getTracking()
         {
@@ -455,7 +455,7 @@
         }
 
         /**
-         * @param tracking $tracking
+         * @param UserAnalytics $tracking
          */
         public function setTracking($tracking)
         {
