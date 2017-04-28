@@ -293,7 +293,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_water(): void
+        public function testCacheNamesWater(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('water');
             $this->assertContainsOnly('string', $activities);
