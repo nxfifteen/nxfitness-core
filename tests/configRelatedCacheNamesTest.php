@@ -246,7 +246,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_nomie_trackers(): void
+        public function testCacheNamesNomieTrackers(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('nomie_trackers');
             $this->assertContainsOnly('string', $activities);
