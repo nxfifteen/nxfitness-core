@@ -99,7 +99,7 @@
         /**
          * @covers Config::getRelatedCacheNames
          */
-        public function testCacheNames_distance(): void
+        public function testCacheNamesDistance(): void
         {
             $activities = $this->configClass->getRelatedCacheNames('distance');
             $this->assertContainsOnly('string', $activities);
