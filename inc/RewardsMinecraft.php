@@ -284,7 +284,7 @@
             $this->UserMinecraftID = $UserMinecraftID;
         }
 
-        public function query_api()
+        public function queryRewards()
         {
             $wmc_key_provided = $_GET['wmc_key'];
             $wmc_key_correct  = $this->getAppClass()->getSetting("wmc_key", null, true);

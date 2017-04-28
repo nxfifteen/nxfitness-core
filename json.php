@@ -102,7 +102,7 @@
         require_once(dirname(__FILE__) . "/inc/RewardsMinecraft.php");
         $RewardsMinecraft = new RewardsMinecraft();
 
-        $json = $RewardsMinecraft->query_api();
+        $json = $RewardsMinecraft->queryRewards();
 
         $end = microtime(true);
 
