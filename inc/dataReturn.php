@@ -1,11 +1,11 @@
 <?php
 
     /**
-     * dataReturn
+     * DataReturn
      *
-     * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-dataReturn phpDocumentor
+     * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-DataReturn phpDocumentor
      *            wiki for dataReturn.
-     * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/dataReturn DataReturn Wiki.
+     * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/DataReturn DataReturn Wiki.
      * @version   0.0.1
      * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
      * @link      https://nxfifteen.me.uk NxFIFTEEN
