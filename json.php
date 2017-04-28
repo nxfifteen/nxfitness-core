@@ -124,8 +124,8 @@
      */
     function query_api()
     {
-        require_once(dirname(__FILE__) . "/inc/dataReturn.php");
-        $dataReturnClass = new dataReturn($_GET['user']);
+        require_once(dirname(__FILE__) . "/inc/DataReturn.php");
+        $dataReturnClass = new DataReturn($_GET['user']);
         if ($dataReturnClass->isUser()) {
             $json = $dataReturnClass->returnUserRecords($_GET);
 

@@ -12,7 +12,7 @@
      * @copyright 2017 Stuart McCulloch Anderson
      * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
      */
-    class dataReturn
+    class DataReturn
     {
 
         /**
