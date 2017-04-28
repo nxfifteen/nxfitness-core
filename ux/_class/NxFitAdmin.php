@@ -58,7 +58,7 @@
         protected $apiSettings;
 
         /**
-         * @var NxFitbit
+         * @var Core
          */
         protected $nxFit;
 
@@ -85,8 +85,8 @@
                 }
             }
 
-            require_once(PATH_ROOT . "/inc/app.php");
-            $this->nxFit = new NxFitbit();
+            require_once(PATH_ROOT . "/inc/Core.php");
+            $this->nxFit = new Core();
 
             require_once(PATH_ROOT . "/library/medoo.php");
             /** @noinspection PhpUndefinedClassInspection */
@@ -216,7 +216,7 @@
         }
 
         /**
-         * @return NxFitbit
+         * @return Core
          */
         public function getNxFit()
         {

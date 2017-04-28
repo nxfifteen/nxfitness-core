@@ -5,8 +5,8 @@
     header('Cache-Control: post-check=0, pre-check=0', false);
     header('Pragma: no-cache');
 
-    require_once(dirname(__FILE__) . "/../../inc/app.php");
-    $fitbitApp = new NxFitbit();
+    require_once(dirname(__FILE__) . "/../../inc/Core.php");
+    $fitbitApp = new Core();
 
     if (array_key_exists("fuid", $_POST)) {
         $valid = $fitbitApp->isUserValid($_POST['fuid'],
@@ -63,7 +63,7 @@
     }
 
     /**
-     * @param NxFitbit $fitbitApp
+     * @param Core     $fitbitApp
      * @param          $fuid
      *
      * @return string

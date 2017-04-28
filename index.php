@@ -87,8 +87,8 @@
         nxr("New user registration started");
 
         // Setup the App
-        require_once(dirname(__FILE__) . "/inc/app.php");
-        $NxFitbit = new NxFitbit();
+        require_once(dirname(__FILE__) . "/inc/Core.php");
+        $NxFitbit = new Core();
 
         // Sent the user off too Fitbit to authenticate
         $helper = new djchen\OAuth2\Client\Provider\Fitbit([
@@ -130,8 +130,8 @@
         }
 
         // Setup the App
-        require_once(dirname(__FILE__) . "/inc/app.php");
-        $NxFitbit = new NxFitbit();
+        require_once(dirname(__FILE__) . "/inc/Core.php");
+        $NxFitbit = new Core();
 
         // We're even talking about a valid user right?
         if ($NxFitbit->isUser($_COOKIE['_nx_fb_usr'])) {
@@ -200,8 +200,8 @@
         } else {
             try {
                 // Setup the App
-                require_once(dirname(__FILE__) . "/inc/app.php");
-                $NxFitbit = new NxFitbit();
+                require_once(dirname(__FILE__) . "/inc/Core.php");
+                $NxFitbit = new Core();
 
                 // Sent the user off too Fitbit to authenticate
                 if ($url_namespace == "rti") {

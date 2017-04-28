@@ -3,7 +3,7 @@
     define('IS_CRON_RUN', true);
 
     /**
-     * NxFitbit - Cron commandline tool
+     * Core - Cron commandline tool
      *
      * @version   0.0.1
      * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
@@ -16,8 +16,8 @@
         require_once(dirname(__FILE__) . "/inc/functions.php");
     }
 
-    require_once(dirname(__FILE__) . "/inc/app.php");
-    $fitbitApp = new NxFitbit();
+    require_once(dirname(__FILE__) . "/inc/Core.php");
+    $fitbitApp = new Core();
 
     $end              = time() + 20;
     $repopulate_queue = run_through_queue();

@@ -1,7 +1,7 @@
 <?php
 
     require_once(dirname(__FILE__) . "/../config.def.dist.php");
-    require_once(dirname(__FILE__) . "/app.php");
+    require_once(dirname(__FILE__) . "/Core.php");
 
     /**
      * Upgrade
@@ -65,7 +65,7 @@
         /**
          * Upgrade constructor.
          *
-         * @param NxFitbit $appClass
+         * @param Core $appClass
          *
          * @internal param $userFid
          */
@@ -75,7 +75,7 @@
             $this->setSettings(new Config());
 
             if (is_null($appClass)) {
-                $this->appClass = new NxFitbit();
+                $this->appClass = new Core();
             } else {
                 $this->appClass = $appClass;
             }

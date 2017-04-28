@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * NxFitbit - Cron commandline tool
+     * Core - Cron commandline tool
      *
      * @version   0.0.1
      * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
@@ -16,8 +16,8 @@
         $_GET[$key] = $value;
     }
 
-    require_once(dirname(__FILE__) . "/inc/app.php");
-    $fitbitApp = new NxFitbit();
+    require_once(dirname(__FILE__) . "/inc/Core.php");
+    $fitbitApp = new Core();
 
     if ($fitbitApp->isUser($_GET['user'])) {
         $cooldown = $fitbitApp->getUserCooldown($_GET['user']);

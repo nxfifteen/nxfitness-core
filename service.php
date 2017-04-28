@@ -39,8 +39,8 @@
                         $upLoadedRequest->collectionType = "nomie_trackers";
                     }
 
-                    require_once(dirname(__FILE__) . "/inc/app.php");
-                    $fitbitApp = new NxFitbit();
+                    require_once(dirname(__FILE__) . "/inc/Core.php");
+                    $fitbitApp = new Core();
                     if ($fitbitApp->isUser($upLoadedRequest->ownerId)) {
                         $cooldown = $fitbitApp->getUserCooldown($upLoadedRequest->ownerId);
                         if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
@@ -133,8 +133,8 @@
                 }
             }
         } else if (isset($data) and is_object($data)) {
-            require_once(dirname(__FILE__) . "/inc/app.php");
-            $fitbitApp = new NxFitbit();
+            require_once(dirname(__FILE__) . "/inc/Core.php");
+            $fitbitApp = new Core();
             if ($fitbitApp->isUser($data->ownerId)) {
                 nxr($data->ownerId . " is a valid user");
                 $api = $fitbitApp->getDatabase()->get($fitbitApp->getSetting("db_prefix", null, false) . "users", "api",

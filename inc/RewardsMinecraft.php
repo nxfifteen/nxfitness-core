@@ -19,7 +19,7 @@
     {
 
         /**
-         * @var NxFitbit
+         * @var Core
          */
         protected $AppClass;
 
@@ -50,8 +50,8 @@
          */
         public function __construct($user = null)
         {
-            require_once(dirname(__FILE__) . "/app.php");
-            $this->setAppClass(new NxFitbit());
+            require_once(dirname(__FILE__) . "/Core.php");
+            $this->setAppClass(new Core());
             $this->AwardsGiven   = array();
             $this->createRewards = true;
             $this->setUserID($user);
@@ -59,7 +59,7 @@
         }
 
         /**
-         * @param NxFitbit $paramClass
+         * @param Core $paramClass
          */
         private function setAppClass($paramClass)
         {
@@ -67,7 +67,7 @@
         }
 
         /**
-         * @return NxFitbit
+         * @return Core
          */
         private function getAppClass()
         {

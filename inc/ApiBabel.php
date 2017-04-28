@@ -17,7 +17,7 @@
     {
 
         /**
-         * @var NxFitbit
+         * @var Core
          */
         protected $AppClass;
         /**
@@ -49,8 +49,8 @@
         private $userAccessToken;
 
         /**
-         * @param NxFitbit $fitbitApp
-         * @param bool     $personal
+         * @param Core $fitbitApp
+         * @param bool $personal
          */
         public function __construct($fitbitApp, $personal = false)
         {
@@ -1191,7 +1191,7 @@
         }
 
         /**
-         * @return NxFitbit
+         * @return Core
          */
         private function getAppClass()
         {
