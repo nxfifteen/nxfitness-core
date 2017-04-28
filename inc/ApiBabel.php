@@ -85,7 +85,7 @@
             if ($force || $this->api_isCooled($trigger)) {
                 $currentDate = new DateTime();
 
-                $lastrun   = $this->api_getLastCleanrun($trigger);
+                $lastrun   = $this->getLastCleanRun($trigger);
                 $daysSince = (strtotime($currentDate->format("Y-m-d")) - strtotime($lastrun->format("l jS M Y"))) / (60 * 60 * 24);
 
                 nxr("  Last download: $daysSince days ago. ");
@@ -523,7 +523,7 @@
             $isAllowed = $this->isAllowed("activity_log");
             if (!is_numeric($isAllowed)) {
                 if ($this->api_isCooled("activity_log")) {
-                    $targetDateTime = $this->api_getLastCleanrun("activity_log");
+                    $targetDateTime = $this->getLastCleanRun("activity_log");
 
                     nxr(' Downloading activity logs from ' . $targetDateTime->format("Y-m-d"));
 
@@ -742,7 +742,7 @@
                             }
 
                             $interval = DateInterval::createFromDateString('1 day');
-                            $period   = new DatePeriod ($this->api_getLastCleanrun("goals"), $interval, $currentDate);
+                            $period   = new DatePeriod ($this->getLastCleanRun("goals"), $interval, $currentDate);
                             /**
                              * @var DateTime $dt
                              */
@@ -2256,7 +2256,7 @@
          * @return DateTime
          * @internal param $user
          */
-        private function api_getLastCleanrun($activity)
+        private function getLastCleanRun($activity)
         {
             if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
                     false) . "runlog", array(
@@ -3122,7 +3122,7 @@
                         $isAllowed = $this->isAllowed("heart");
                         if (!is_numeric($isAllowed)) {
                             if ($this->api_isCooled("heart")) {
-                                $period = new DatePeriod ($this->api_getLastCleanrun("heart"), $interval, $currentDate);
+                                $period = new DatePeriod ($this->getLastCleanRun("heart"), $interval, $currentDate);
                                 foreach ($period as $dt) {
                                     nxr(' Downloading Heart Logs for ' . $dt->format("l jS M Y"));
                                     $pull = $this->pullBabelHeartRateSeries($dt->format("Y-m-d"));
@@ -3143,7 +3143,7 @@
                         $isAllowed = $this->isAllowed("water");
                         if (!is_numeric($isAllowed)) {
                             if ($this->api_isCooled("water")) {
-                                $period = new DatePeriod ($this->api_getLastCleanrun("water"), $interval, $currentDate);
+                                $period = new DatePeriod ($this->getLastCleanRun("water"), $interval, $currentDate);
                                 /**
                                  * @var DateTime $dt
                                  */
@@ -3166,7 +3166,7 @@
                         $isAllowed = $this->isAllowed("sleep");
                         if (!is_numeric($isAllowed)) {
                             if ($this->api_isCooled("sleep")) {
-                                $period = new DatePeriod ($this->api_getLastCleanrun("sleep"), $interval, $currentDate);
+                                $period = new DatePeriod ($this->getLastCleanRun("sleep"), $interval, $currentDate);
                                 /**
                                  * @var DateTime $dt
                                  */
@@ -3189,7 +3189,7 @@
                         $isAllowed = $this->isAllowed("body");
                         if (!is_numeric($isAllowed)) {
                             if ($this->api_isCooled("body")) {
-                                $period = new DatePeriod ($this->api_getLastCleanrun("body"), $interval, $currentDate);
+                                $period = new DatePeriod ($this->getLastCleanRun("body"), $interval, $currentDate);
                                 /**
                                  * @var DateTime $dt
                                  */
@@ -3212,7 +3212,7 @@
                         $isAllowed = $this->isAllowed("foods");
                         if (!is_numeric($isAllowed)) {
                             if ($this->api_isCooled("foods")) {
-                                $period = new DatePeriod ($this->api_getLastCleanrun("foods"), $interval, $currentDate);
+                                $period = new DatePeriod ($this->getLastCleanRun("foods"), $interval, $currentDate);
                                 /**
                                  * @var DateTime $dt
                                  */
