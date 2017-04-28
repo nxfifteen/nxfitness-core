@@ -1,5 +1,18 @@
 <?php
 
+    namespace Core;
+
+    use couchClient;
+    use couchNotFoundException;
+    use DateInterval;
+    use DatePeriod;
+    use DateTime;
+    use djchen\OAuth2\Client\Provider\Fitbit as Fitbit;
+    use Exception;
+    use League\OAuth2\Client\Provider\Exception\IdentityProviderException as IdentityProviderException;
+    use League\OAuth2\Client\Token\AccessToken as AccessToken;
+    use SimpleXMLElement;
+
     define("FITBIT_COM", "https://api.fitbit.com");
 
     /**
@@ -25,7 +38,7 @@
          */
         protected $RewardsSystem;
         /**
-         * @var djchen\OAuth2\Client\Provider\Fitbit
+         * @var Fitbit
          */
         protected $fitbitapi;
         /**
@@ -58,7 +71,7 @@
 
             $personal = $personal ? "_personal" : "";
 
-            $this->setLibrary(new djchen\OAuth2\Client\Provider\Fitbit([
+            $this->setLibrary(new Fitbit([
                 'clientId'     => $fitbitApp->getSetting("api_clientId" . $personal, null, false),
                 'clientSecret' => $fitbitApp->getSetting("api_clientSecret" . $personal, null, false),
                 'redirectUri'  => $fitbitApp->getSetting("api_redirectUri" . $personal, null, false)
@@ -1334,7 +1347,7 @@
                 //nxr(print_r($request->getBody()->getContents(), true));
                 //nxr(print_r($response, true));
                 return $response;
-            } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            } catch (IdentityProviderException $e) {
                 // Failed to get the access token or user details.
                 $this->getAppClass()->getErrorRecording()->captureException($e, array(
                     'extra' => array(
@@ -1388,7 +1401,7 @@
                 //nxr(print_r($request->getBody()->getContents(), true));
                 //nxr(print_r($response, true));
                 return $response;
-            } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            } catch (IdentityProviderException $e) {
                 // Failed to get the access token or user details.
                 $this->getAppClass()->getErrorRecording()->captureException($e, array(
                     'extra' => array(
@@ -2211,7 +2224,7 @@
         }
 
         /**
-         * @return League\OAuth2\Client\Token\AccessToken
+         * @return AccessToken
          */
         private function getAccessToken()
         {
@@ -2220,7 +2233,7 @@
 
                 $userArray = $this->getAppClass()->getUserOAuthTokens($user);
                 if (is_array($userArray)) {
-                    $accessToken = new League\OAuth2\Client\Token\AccessToken([
+                    $accessToken = new AccessToken([
                         'access_token'  => $userArray['tkn_access'],
                         'refresh_token' => $userArray['tkn_refresh'],
                         'expires'       => $userArray['tkn_expires']
@@ -2954,7 +2967,7 @@
         }
 
         /**
-         * @param djchen\OAuth2\Client\Provider\Fitbit $fitbitapi
+         * @param Fitbit $fitbitapi
          */
         public function setLibrary($fitbitapi)
         {
@@ -2988,7 +3001,7 @@
 
         /**
          * @deprecated Use getLibrary() instead
-         * @return djchen\OAuth2\Client\Provider\Fitbit
+         * @return Fitbit
          */
         public function getFitbitLibrary()
         {
@@ -2998,7 +3011,7 @@
         /**
          * @deprecated Use setLibrary() instead
          *
-         * @param djchen\OAuth2\Client\Provider\Fitbit $fitbitapi
+         * @param Fitbit $fitbitapi
          */
         public function setFitbitapi($fitbitapi)
         {
@@ -3006,7 +3019,7 @@
         }
 
         /**
-         * @return djchen\OAuth2\Client\Provider\Fitbit
+         * @return Fitbit
          */
         public function getLibrary()
         {
@@ -3123,6 +3136,7 @@
                         if (!is_numeric($isAllowed)) {
                             if ($this->isTriggerCooled("heart")) {
                                 $period = new DatePeriod ($this->getLastCleanRun("heart"), $interval, $currentDate);
+                                /** @var DateTime $dt */
                                 foreach ($period as $dt) {
                                     nxr(' Downloading Heart Logs for ' . $dt->format("l jS M Y"));
                                     $pull = $this->pullBabelHeartRateSeries($dt->format("Y-m-d"));
@@ -3535,7 +3549,7 @@
                     return false;
                 }
 
-            } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            } catch (IdentityProviderException $e) {
                 // Failed to get the access token or user details.
                 $this->getAppClass()->getErrorRecording()->captureException($e, array(
                     'extra' => array(
@@ -3662,7 +3676,7 @@
                 }
 
                 return $response;
-            } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            } catch (IdentityProviderException $e) {
                 // Failed to get the access token or user details.
 
                 if ($e->getCode() == 429) {

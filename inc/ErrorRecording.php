@@ -1,5 +1,12 @@
 <?php
 
+    namespace Core;
+
+    use Exception;
+    use Raven_Autoloader;
+    use Raven_Client;
+    use Raven_ErrorHandler;
+
     /**
      * ErrorRecording
      *
@@ -120,7 +127,7 @@
 
         /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @param medoo $medoo
+         * @param \medoo $medoo
          * @param       $parameters
          */
         public function postDatabaseQuery($medoo, $parameters)

@@ -1,4 +1,6 @@
 <?php
+    use Core\DataReturn;
+
     require_once(dirname(__FILE__) . "/inc/DataReturn.php");
 
     $test            = array("user" => "269VLG", "data" => "Badges");

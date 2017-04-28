@@ -1,4 +1,6 @@
 <?php
+    use Core\Core;
+
     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
     header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -276,6 +278,7 @@
         nxr("Namespace Called: " . $url_namespace);
 
         if (is_array($_GET) && array_key_exists("verify", $_GET)) {
+            $config = array();
             require_once(dirname(__FILE__) . "/config.inc.php");
             if ((is_array($config['api_subValidity']) and in_array($_GET['verify'],
                         $config['api_subValidity'])) OR ($_GET['verify'] == $config['api_subValidity'])

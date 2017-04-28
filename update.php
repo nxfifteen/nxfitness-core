@@ -1,4 +1,6 @@
 <?php
+    use Core\Upgrade;
+
     parse_str(implode('&', array_slice($argv, 1)), $argv);
     foreach ($argv as $key => $value) {
         $key        = str_ireplace("--", "", $key);

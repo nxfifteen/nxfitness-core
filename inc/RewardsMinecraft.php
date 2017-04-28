@@ -1,5 +1,9 @@
 <?php
 
+    namespace Core;
+
+    use DateTime;
+
     if (!function_exists("nxr")) {
         require_once(dirname(__FILE__) . "/functions.php");
     }

@@ -1,5 +1,11 @@
 <?php
 
+    namespace Core;
+
+    use DateInterval;
+    use DatePeriod;
+    use DateTime;
+
     /**
      * DataReturn
      *
@@ -3706,6 +3712,7 @@
 
             $WeighInArray = array();
             $FatInArray   = array();
+            /** @var DateTime $date */
             foreach ($daterange as $date) {
                 if (array_key_exists($date->format("Y-m-d"), $returnWeight)) {
                     $FatInArray[$date->format("Y-m-d")]   = $returnWeight[$date->format("Y-m-d")]['weight'];

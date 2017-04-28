@@ -1,4 +1,7 @@
 <?php
+    use Core\DataReturn;
+    use Core\RewardsMinecraft;
+
     header('Access-Control-Allow-Origin: https://wp.dev.psi.nxfifteen.me.uk');
     header('Cache-Control: no-cache, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

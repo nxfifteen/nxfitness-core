@@ -1,5 +1,7 @@
 <?php
 
+    namespace Core;
+
     /**
      * tracking
      *
@@ -15,7 +17,7 @@
     {
 
         /**
-         * @var PiwikTracker
+         * @var \PiwikTracker
          */
         protected $PiwikTracker;
         /**
@@ -32,7 +34,7 @@
             $this->setSiteId($trackingId);
             require_once(dirname(__FILE__) . "/../library/PiwikTracker.php");
 
-            $this->PiwikTracker = new PiwikTracker($this->getSiteId(), $api_url);
+            $this->PiwikTracker = new \PiwikTracker($this->getSiteId(), $api_url);
 
             if (array_key_exists("HTTPS", $_SERVER) && $_SERVER["HTTPS"] == "on") {
                 $protocol = "https://";

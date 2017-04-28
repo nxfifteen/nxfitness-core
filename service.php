@@ -2,6 +2,8 @@
     // JSon request format is :
     //[{"collectionType":"activities","date":"2015-03-06","ownerId":"269VLG","ownerType":"user","subscriptionId":"1"}]
 
+    use Core\Core;
+
     date_default_timezone_set('Europe/London');
 
     if (!function_exists("nxr")) {

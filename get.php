@@ -10,6 +10,8 @@
      * @license   http://stuart.nx15.at/mit/2015 MIT
      */
 
+    use Core\Core;
+
     parse_str(implode('&', array_slice($argv, 1)), $argv);
     foreach ($argv as $key => $value) {
         $key        = str_ireplace("--", "", $key);

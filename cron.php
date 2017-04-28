@@ -1,5 +1,7 @@
 <?php
 
+    use Core\Core;
+
     define('IS_CRON_RUN', true);
 
     /**

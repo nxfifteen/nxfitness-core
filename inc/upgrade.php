@@ -1,5 +1,10 @@
 <?php
 
+    namespace Core;
+
+    use DateTime;
+    use medoo;
+
     require_once(dirname(__FILE__) . "/../config.def.dist.php");
     require_once(dirname(__FILE__) . "/Core.php");
 
@@ -44,14 +49,14 @@
 
         /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @var medoo
+         * @var \medoo
          */
         protected $database;
 
         /**
          * @var ApiBabel
          */
-        protected $fitbitapi;
+        protected $apiBabel;
 
         /**
          * @var Config
@@ -663,7 +668,7 @@
 
         /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @return medoo
+         * @return \medoo
          */
         public function getDatabase()
         {

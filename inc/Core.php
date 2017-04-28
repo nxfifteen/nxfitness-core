@@ -1,5 +1,11 @@
 <?php
 
+    namespace Core;
+    
+    use DateTime;
+    use medoo;
+    use League\OAuth2\Client\Token\AccessToken as AccessToken; 
+
     date_default_timezone_set('Europe/London');
     error_reporting(E_ALL);
 
@@ -162,7 +168,7 @@
 
         /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @return medoo
+         * @return \medoo
          */
         public function getDatabase()
         {
@@ -343,7 +349,7 @@
 
         /**
          * @param string                                 $user_fitbit_id
-         * @param League\OAuth2\Client\Token\AccessToken $accessToken
+         * @param AccessToken $accessToken
          */
         public function setUserOAuthTokens($user_fitbit_id, $accessToken)
         {
