@@ -1,5 +1,7 @@
 <?php
 
+    namespace Map;
+
     /**
      * StaticMapLite 0.3.1
      * Copyright 2009 Gerhard Koch
@@ -288,11 +290,25 @@
                 $destY = floor(($this->height / 2) - $this->tileSize * ($this->centerY - $this->latToTile($markerLat,
                             $this->zoom)));
 
+                if (!isset($markerShadowOffsetY)) {
+                    $markerShadowOffsetY = 0;
+                }
+                if (!isset($markerShadowOffsetX)) {
+                    $markerShadowOffsetX = 0;
+                }
+
                 // copy shadow on basemap
-                if ($markerShadow && $markerShadowImg) {
+                if ($markerShadow && isset($markerShadowImg)) {
                     imagecopy($this->image, $markerShadowImg, $destX + intval($markerShadowOffsetX),
                         $destY + intval($markerShadowOffsetY),
                         0, 0, imagesx($markerShadowImg), imagesy($markerShadowImg));
+                }
+
+                if (!isset($markerImageOffsetY)) {
+                    $markerImageOffsetY = 0;
+                }
+                if (!isset($markerImageOffsetX)) {
+                    $markerImageOffsetX = 0;
                 }
 
                 // copy marker on basemap above shadow
@@ -313,6 +329,8 @@
             $filename = $this->tileUrlToFilename($url);
             if (file_exists($filename)) {
                 return file_get_contents($filename);
+            } else {
+                return null;
             }
         }
 
@@ -322,6 +340,8 @@
             $filename         = $this->mapCacheIDToFilename();
             if (file_exists($filename)) {
                 return true;
+            } else {
+                return null;
             }
         }
 
