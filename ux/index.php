@@ -9,9 +9,9 @@
         require_once(dirname(__FILE__) . "/../inc/functions.php");
     }
 
-    define('PROJECT_ROOT', dirname(__FILE__));
-    define("PATH_ADMIN", dirname(__FILE__) . "/");
-    define("PATH_ROOT", dirname(__FILE__) . "/../");
+    define("CORE_UX", dirname(__FILE__) . "/");
+    define("CORE_ROOT", dirname(__FILE__) . "/../");
+    define('CORE_PROJECT_ROOT', dirname(__FILE__));
 
     // start the session
     session_start();
@@ -25,7 +25,7 @@
     if (!array_key_exists("admin_config",
             $_SESSION) || !is_array($_SESSION['admin_config']) || count($_SESSION['admin_config']) == 0
     ) {
-        require_once(PATH_ADMIN . "/config.inc.php");
+        require_once(CORE_UX . "/config.inc.php");
         if (isset($config)) {
             $_SESSION['admin_config'] = $config;
         }
@@ -35,7 +35,7 @@
 
         //nxr(__LINE__, TRUE, TRUE, FALSE);
         if (!isset($config)) {
-            require_once(PATH_ADMIN . "/config.inc.php");
+            require_once(CORE_UX . "/config.inc.php");
         }
         nxr_destroy_session();
         header("Location: ./views/pages/500.html");
@@ -86,9 +86,9 @@
 
         //nxr(__LINE__, TRUE, TRUE, FALSE);
         //nxr(print_r($_SERVER, TRUE), TRUE, TRUE, FALSE);
-        $_SESSION['PROJECT_ROOT'] = PROJECT_ROOT;
-        $_SESSION['PATH_ADMIN']   = PATH_ADMIN;
-        $_SESSION['PATH_ROOT']    = PATH_ROOT;
+        $_SESSION['CORE_PROJECT_ROOT'] = CORE_PROJECT_ROOT;
+        $_SESSION['CORE_UX']   = CORE_UX;
+        $_SESSION['CORE_ROOT']    = CORE_ROOT;
 
         require_once(dirname(__FILE__) . "/_class/NxFitAdmin.php");
         $App = new NxFitAdmin($_COOKIE['_nx_fb_usr']);

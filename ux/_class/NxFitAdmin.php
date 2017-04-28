@@ -1,8 +1,15 @@
 <?php
 
+    namespace UX;
+
     /**
      * @param $msg
      */
+    use Core\Config;
+    use Core\Core;
+    use DateTime;
+    use medoo;
+
     if (!function_exists("nxr")) {
         /**
          * NXR is a helper function. Past strings are recorded in a text file
@@ -22,8 +29,8 @@
                 $msg = $msg . "\n";
             }
 
-            if (is_writable(PATH_ROOT . "/fitbit.log")) {
-                $fh = fopen(PATH_ROOT . "/fitbit.log", "a");
+            if (is_writable(CORE_ROOT . "/fitbit.log")) {
+                $fh = fopen(CORE_ROOT . "/fitbit.log", "a");
                 fwrite($fh, $msg);
                 fclose($fh);
             }
@@ -78,17 +85,19 @@
                 $this->setConfig($_SESSION['admin_config']);
             } else {
                 /** @noinspection PhpIncludeInspection */
-                require_once(PATH_ADMIN . "/config.inc.php");
+                require_once(CORE_UX . "/config.inc.php");
                 if (isset($config)) {
                     $_SESSION['admin_config'] = $config;
                     $this->setConfig($_SESSION['admin_config']);
                 }
             }
 
-            require_once(PATH_ROOT . "/inc/Core.php");
+            /** @noinspection PhpIncludeInspection */
+            require_once(CORE_ROOT . "/inc/Core.php");
             $this->nxFit = new Core();
 
-            require_once(PATH_ROOT . "/library/medoo.php");
+            /** @noinspection PhpIncludeInspection */
+            require_once(CORE_ROOT . "/library/medoo.php");
             /** @noinspection PhpUndefinedClassInspection */
             $this->setDatabase(new medoo(array(
                 'database_type' => 'mysql',
@@ -130,6 +139,7 @@
                     ) {
                         $allowed_triggers[$key]['name'] = $this->getNxFit()->supportedApi($key);
 
+                        /** @var \DateTime $oldestScope */
                         $oldestScope = $this->getOldestScope($key);
                         $timeLastRun = strtotime($oldestScope->format("Y-m-d H:i:s"));
 
@@ -288,7 +298,7 @@
                 $usrCountry = str_ireplace(" ", "", str_ireplace(".", "", $usrCountry));
             }
 
-            $imagePath = PATH_ADMIN . "img/local/";
+            $imagePath = CORE_UX . "img/local/";
 
             if (isset($usrCity) && isset($usrCountry) && file_exists($imagePath . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg")) {
                 return "img/local/" . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg";
