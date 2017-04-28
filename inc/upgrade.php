@@ -588,7 +588,7 @@
         }
 
         /** @noinspection PhpUnusedPrivateMethodInspection */
-        private function update_10()
+        private function updateRun10()
         {
             $this->setSetting("version", "0.0.0.10", true);
 
