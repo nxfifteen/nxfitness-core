@@ -48,3 +48,8 @@ else
 fi
 
 php "$ROOTPATH/binaries/phpdoc-md/bin/phpdocmd" "$ROOTPATH/docs/development/structure.xml" "$ROOTPATH/docs/wiki.core/phpdoc/class"
+
+cd "$ROOTPATH/docs/wiki.core"
+git add .
+git commit -m "chore(wiki): Updated phpdoc"
+git push

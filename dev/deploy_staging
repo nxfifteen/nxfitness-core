@@ -33,5 +33,5 @@ fi
 echo "running composer install dev"
 php "$ROOTPATH/binaries/composer.phar" install --dev >/dev/null 2>&1
 
-bash "$ROOTPATH/dev/genDocs" "$ROOTPATH"
 bash "$ROOTPATH/dev/genPHPDocs" "$ROOTPATH"
+bash "$ROOTPATH/dev/genDocs" "$ROOTPATH"

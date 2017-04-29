@@ -26,9 +26,10 @@ if [ -f "$ROOTPATH/dev/.lastChangeLog" ]; then
     fi
 fi
 
-/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file CHANGELOG.md $FROMTAG;
-/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file CHANGELOGEXTENDED.md --extended;
+/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/change-log.md" $FROMTAG;
+/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/extended-change-log.md" --extended;
 
-git add CHANGELOG.md CHANGELOGEXTENDED.md
+cd "$ROOTPATH/docs/wiki.core"
+git add change-log.md extended-change-log.md
 git commit -m "chore(changelog): Updated changelog files"
 git push
