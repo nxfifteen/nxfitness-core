@@ -42,8 +42,6 @@ deploy_review:
   stage: review
   script:
     - echo "Deploy a review app"
-    - eval $(ssh-agent -s)
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
     - ssh nxad@10.1.1.1 /home/nxad/gits/deploy_review "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: review/$CI_COMMIT_REF_NAME
