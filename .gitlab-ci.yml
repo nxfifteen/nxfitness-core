@@ -42,7 +42,7 @@ deploy_review:
   stage: review
   script:
     - echo "Deploy a review app"
-    - ssh nxad@10.1.1.1 /home/nxad/gits/deploy_review "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    - /home/nxad/gits/deploy_review "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: review/$CI_COMMIT_REF_NAME
   only:
@@ -54,9 +54,7 @@ deploy_staging:
   stage: stage
   script:
     - echo "Deploy to staging server"
-    - eval $(ssh-agent -s)
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - ssh nxad@10.1.1.1 /home/nxad/gits/deploy_staging "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    - /home/nxad/gits/deploy_staging "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: staging
     url: http://fit.itsabeta.nx/api/$CI_ENVIRONMENT_SLUG/ux/
