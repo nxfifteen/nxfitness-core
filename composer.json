@@ -1,6 +1,7 @@
 {
   "require": {
-    "djchen/oauth2-fitbit": "^1.0"
+    "djchen/oauth2-fitbit": "^1.0",
+    "catfan/Medoo": "^1.2"
   },
   "require-dev": {
     "phpdocumentor/phpdocumentor": "2.*",
