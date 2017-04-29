@@ -4,21 +4,6 @@ ROOTPATH="$1"
 eval $(ssh-agent -s)
 ssh-add /home/nxad/.ssh/id_rsa_pss
 
-if [ ! -d "$ROOTPATH/binaries" ]; then
-    echo "creating binaries"
-    mkdir "$ROOTPATH/binaries"
-fi
-
-if [ ! -f "$ROOTPATH/binaries/composer.phar" ]; then
-    echo "downloading composer"
-    cd "$ROOTPATH/binaries"
-    curl -sS https://getcomposer.org/installer | php #>/dev/null 2>&1
-    cd "$ROOTPATH"
-fi
-
-echo "running composer install dev"
-php "$ROOTPATH/binaries/composer.phar" install --dev #>/dev/null 2>&1
-
 FROMTAG=""
 CURRENTCOMIT=`git rev-parse --verify HEAD`
 if [ -f "$ROOTPATH/dev/.lastChangeLog" ]; then
@@ -29,34 +14,32 @@ if [ -f "$ROOTPATH/dev/.lastChangeLog" ]; then
     fi
 fi
 
-php "$ROOTPATH/vendor/phpdocumentor/phpdocumentor/bin/phpdoc" --progressbar;
-
-echo "$ROOTPATH"
+php "$ROOTPATH/vendor/phpdocumentor/phpdocumentor/bin/phpdoc"  >/dev/null 2>&1
 
 if [ ! -d "$ROOTPATH/binaries/phpdoc-md" ]; then
     echo "cloning phpdoc-md"
     cd "$ROOTPATH/binaries"
-    git clone git@nxfifteen.me.uk:nx-style/phpdoc-md.git
+    git clone git@nxfifteen.me.uk:nx-style/phpdoc-md.git >/dev/null 2>&1
     cd "$ROOTPATH/binaries/phpdoc-md"
-    php "$ROOTPATH/binaries/composer.phar" install
+    php "$ROOTPATH/binaries/composer.phar" install >/dev/null 2>&1
     cd "$ROOTPATH"
 else
     echo "updating phpdoc-md"
     cd "$ROOTPATH/binaries/phpdoc-md"
-    git pull
+    git pull >/dev/null 2>&1
     cd "$ROOTPATH"
 fi
 
 if [ ! -d "$ROOTPATH/docs/wiki.core" ]; then
     echo "creating markdown"
     cd "$ROOTPATH/docs/"
-    git clone git@nxfifteen.me.uk:nx-fitness/nxfitness-core.wiki.git ./wiki.core
+    git clone git@nxfifteen.me.uk:nx-fitness/nxfitness-core.wiki.git ./wiki.core >/dev/null 2>&1
     cd "$ROOTPATH"
 else
     echo "updating markdown"
     cd "$ROOTPATH/docs/wiki.core"
     pwd
-    git pull
+    git pull >/dev/null 2>&1
     cd "$ROOTPATH"
 fi
 
@@ -65,8 +48,6 @@ php "$ROOTPATH/binaries/phpdoc-md/bin/phpdocmd" "$ROOTPATH/docs/development/stru
 cd "$ROOTPATH/docs/wiki.core"
 rsync -vhru --delete-after ./ /var/www/dev/development/
 
-ssh-add -D
-ssh-add /home/nxad/.ssh/id_rsa_wiki
 
 /home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/change-log.md" $FROMTAG;
 /home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/extended-change-log.md" --extended;
@@ -75,4 +56,8 @@ git commit -m "chore(changelog): Updated changelog files"
 
 git add .
 git commit -m "chore(wiki): Updated phpdoc"
+
+ssh-add -D
+ssh-add /home/nxad/.ssh/id_rsa_wiki
+
 git push

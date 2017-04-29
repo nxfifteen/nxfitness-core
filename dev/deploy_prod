@@ -11,6 +11,8 @@ if [ -d "/home/nxad/public_html/api/fitbit" ]; then
     git checkout master
     git pull
 
+    /home/nxad/bin/composer update --no-dev
+
     php5 ./get.php --user=269VLG --get=nomie_trackers
 fi
 
