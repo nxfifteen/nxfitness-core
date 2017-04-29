@@ -1,5 +1,5 @@
 #!/bin/bash
-ROOTPATH="/home/nxad/gits/nxfitness-core"
+ROOTPATH="$1"
 
 if [ ! -d "$ROOTPATH/binaries" ]; then
     echo "creating binaries"

@@ -1,6 +1,6 @@
 stages:
-  - test
-  - syntax
+#  - test
+#  - syntax
   - info
   - review
   - stage
@@ -44,7 +44,7 @@ deploy_review:
     - echo "Deploy a review app"
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - ssh nxad@10.1.1.1 /home/nxad/gits/deploy_review
+    - ssh nxad@10.1.1.1 /home/nxad/gits/deploy_review "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: review/$CI_COMMIT_REF_NAME
   only:
@@ -58,7 +58,7 @@ deploy_staging:
     - echo "Deploy to staging server"
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - ssh nxad@10.1.1.1 /home/nxad/gits/deploy_staging
+    - ssh nxad@10.1.1.1 /home/nxad/gits/deploy_staging "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: staging
     url: http://fit.itsabeta.nx/api/$CI_ENVIRONMENT_SLUG/ux/
