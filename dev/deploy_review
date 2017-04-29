@@ -1,0 +1,36 @@
+#!/bin/bash
+ROOTPATH="/home/nxad/gits/nxfitness-core.review"
+CI_COMMIT_REF_NAME="$1"
+CI_ENVIRONMENT_SLUG="$2"
+
+eval $(ssh-agent -s)
+ssh-add /home/nxad/.ssh/id_rsa_pss
+
+cd "$ROOTPATH"
+if [ ! -d "$ROOTPATH" ]; then
+    mkdir "$ROOTPATH"
+    cd "$ROOTPATH"
+    git clone git@nxfifteen.me.uk:nx-fitness/nxfitness-core.git ./
+fi
+
+cd "$ROOTPATH"
+git checkout develop
+git pull
+
+if [ ! -d "$ROOTPATH/binaries" ]; then
+    echo "creating binaries"
+    mkdir "$ROOTPATH/binaries"
+fi
+
+if [ ! -f "composer.phar" ]; then
+    echo "downloading composer"
+    cd "$ROOTPATH/binaries"
+    curl -sS https://getcomposer.org/installer | php >/dev/null 2>&1
+    cd "$ROOTPATH"
+fi
+
+echo "running composer install dev"
+php "$ROOTPATH/binaries/composer.phar" install --dev >/dev/null 2>&1
+
+bash "$ROOTPATH/dev/genDocs"
+bash "$ROOTPATH/dev/genPHPDocs"
