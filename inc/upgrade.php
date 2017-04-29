@@ -739,7 +739,7 @@
             $this->NumUpdates      = count($updateFunctions);
 
             if ($this->NumUpdates == 0 && $currentNumber != $installNumber) {
-                nxr("No pending updates, but missmatch version numbers");
+                nxr(0, "No pending updates, but missmatch version numbers");
                 $this->setSetting("version",
                     $installVersion[0] . "." . $installVersion[1] . "." . $installVersion[2] . "." . $installVersion[3],
                     true);

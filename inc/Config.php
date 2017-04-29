@@ -175,7 +175,7 @@
                     $cacheNames = array('water', 'tasker');
                     break;
                 default:
-                    nxr("Unknown cache file for $activityName");
+                    nxr(0, "Unknown cache file for $activityName");
                     break;
             }
 

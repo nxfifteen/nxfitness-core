@@ -5,13 +5,18 @@
          * and when run from a command line output is displayed on screen as
          * well
          *
+         * @param integer       $indentation
          * @param string $msg         String input to be displayed in logs files
          * @param bool   $includeDate If true appends datetime stamp
          * @param bool   $newline     If true adds a new line character
          * @param bool   $echoLine
          */
-        function nxr($msg, $includeDate = true, $newline = true, $echoLine = true)
+        function nxr($indentation, $msg, $includeDate = true, $newline = true, $echoLine = true)
         {
+            for ($counter = 0; $counter <= $indentation; $counter++) {
+                $msg = " " . $msg;
+            }
+
             if ($includeDate) {
                 $msg = date("Y-m-d H:i:s") . ": " . $msg;
             }

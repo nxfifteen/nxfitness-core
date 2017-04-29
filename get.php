@@ -25,11 +25,11 @@
         $cooldown = $fitbitApp->getUserCooldown($_GET['user']);
         if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
             if ($fitbitApp->supportedApi($_GET['get']) != $_GET['get']) {
-                nxr("Forcing pull of " . $fitbitApp->supportedApi($_GET['get']) . " for " . $_GET['user']);
+                nxr(0, "Forcing pull of " . $fitbitApp->supportedApi($_GET['get']) . " for " . $_GET['user']);
                 $fitbitApp->getFitbitAPI($_GET['user'])->setForceSync(true);
                 $fitbitApp->getFitbitAPI($_GET['user'])->pull($_GET['user'], $_GET['get']);
             } else {
-                nxr("Unknown trigger " . $_GET['get'] . ". Supported calls are:");
+                nxr(0, "Unknown trigger " . $_GET['get'] . ". Supported calls are:");
                 print_r($fitbitApp->supportedApi());
             }
         } else {
@@ -43,7 +43,7 @@
                     'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
                 )
             ));
-            nxr("Can not process " . $fitbitApp->supportedApi($_GET['get']) . ". API limit reached for " . $_GET['user'] . ". Cooldown period ends " . $cooldown);
+            nxr(0, "Can not process " . $fitbitApp->supportedApi($_GET['get']) . ". API limit reached for " . $_GET['user'] . ". Cooldown period ends " . $cooldown);
         }
     } else {
         $fitbitApp->getErrorRecording()->captureMessage("Unknown User", array('authentication'), array(
@@ -55,5 +55,5 @@
                 'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
             )
         ));
-        nxr("Can not process " . $fitbitApp->supportedApi($_GET['get']) . " since " . $_GET['user'] . " is no longer a user.");
+        nxr(0, "Can not process " . $fitbitApp->supportedApi($_GET['get']) . " since " . $_GET['user'] . " is no longer a user.");
     }

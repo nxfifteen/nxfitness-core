@@ -27,8 +27,12 @@
          * @param bool   $includeDate
          * @param bool   $newline
          */
-        function nxr($msg, $includeDate = true, $newline = true)
+        function nxr($indentation, $msg, $includeDate = true, $newline = true)
         {
+            for ($counter = 0; $counter <= $indentation; $counter++) {
+                $msg = " " . $msg;
+            }
+
             if ($includeDate) {
                 $msg = date("Y-m-d H:i:s") . ": " . $msg;
             }

@@ -35,7 +35,7 @@
 
     if (is_array($_GET) && array_key_exists("err", $_GET)) {
 
-        //nxr(__LINE__, TRUE, TRUE, FALSE);
+        //nxr(0, __LINE__, TRUE, TRUE, FALSE);
         if (!isset($config)) {
             require_once(CORE_UX . "/config.inc.php");
         }
@@ -45,49 +45,49 @@
             $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/login"
     ) {
 
-        //nxr(__LINE__, TRUE, TRUE, FALSE);
+        //nxr(0, __LINE__, TRUE, TRUE, FALSE);
         header("Location: ./views/pages/login.php");
     } else if (array_key_exists("REDIRECT_URL",
             $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/refresh"
     ) {
 
-        //nxr(__LINE__, TRUE, TRUE, FALSE);
+        //nxr(0, __LINE__, TRUE, TRUE, FALSE);
         nxr_destroy_session();
         header("Location: ./");
     } else if (array_key_exists("REDIRECT_URL",
             $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/login/redirect"
     ) {
 
-        //nxr(__LINE__, TRUE, TRUE, FALSE);
+        //nxr(0, __LINE__, TRUE, TRUE, FALSE);
         require_once("_class/UserLogin.php");
     } else if (array_key_exists("REDIRECT_URL",
             $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/views/pages/register"
     ) {
 
-        //nxr(__LINE__, TRUE, TRUE, FALSE);
+        //nxr(0, __LINE__, TRUE, TRUE, FALSE);
         header("Location: ./views/pages/register.php");
     } else if (array_key_exists("REDIRECT_URL",
             $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/views/pages/logout"
     ) {
 
-        //nxr(__LINE__, TRUE, TRUE, FALSE);
+        //nxr(0, __LINE__, TRUE, TRUE, FALSE);
         setcookie('_nx_fb_key', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
         setcookie('_nx_fb_usr', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
 
         $path = $_SESSION['admin_config']['http/admin'];
-        //nxr($path . '/views/pages/login.php', TRUE, TRUE, FALSE);
+        //nxr(0, $path . '/views/pages/login.php', TRUE, TRUE, FALSE);
 
         nxr_destroy_session();
 
         header("Location: " . $path . '/views/pages/login.php');
     } else if (!is_array($_COOKIE) || !array_key_exists("_nx_fb_usr", $_COOKIE)) {
 
-        //nxr(__LINE__, TRUE, TRUE, FALSE);
+        //nxr(0, __LINE__, TRUE, TRUE, FALSE);
         header("Location: ./views/pages/login.php");
     } else {
 
-        //nxr(__LINE__, TRUE, TRUE, FALSE);
-        //nxr(print_r($_SERVER, TRUE), TRUE, TRUE, FALSE);
+        //nxr(0, __LINE__, TRUE, TRUE, FALSE);
+        //nxr(0, print_r($_SERVER, TRUE), TRUE, TRUE, FALSE);
         $_SESSION['CORE_PROJECT_ROOT'] = CORE_PROJECT_ROOT;
         $_SESSION['CORE_UX']   = CORE_UX;
         $_SESSION['CORE_ROOT']    = CORE_ROOT;

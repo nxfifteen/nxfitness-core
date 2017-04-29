@@ -20,8 +20,12 @@
          * @param bool   $includeDate
          * @param bool   $newline
          */
-        function nxr($msg, $includeDate = true, $newline = true)
+        function nxr($indentation, $msg, $includeDate = true, $newline = true)
         {
+            for ($counter = 0; $counter <= $indentation; $counter++) {
+                $msg = " " . $msg;
+            }
+
             if ($includeDate) {
                 $msg = date("Y-m-d H:i:s") . ": " . $msg;
             }
@@ -306,7 +310,7 @@
 
             if (isset($usrCity) && file_exists($imagePath . strtolower($usrCity) . ".jpg")) {
                 if (isset($usrCountry)) {
-                    nxr(" +** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
+                    nxr(1, "+** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
                 }
 
                 return "img/local/" . strtolower($usrCity) . ".jpg";
@@ -314,7 +318,7 @@
 
             if (isset($usrCountry) && file_exists($imagePath . strtolower($usrCountry) . ".jpg")) {
                 if (isset($usrCity)) {
-                    nxr(" +** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
+                    nxr(1, "+** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
                 }
 
                 return "img/local/" . strtolower($usrCountry) . ".jpg";

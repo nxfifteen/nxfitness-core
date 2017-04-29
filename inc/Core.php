@@ -76,7 +76,7 @@
 
             $installedVersion = $this->getSetting("version", "0.0.0.1", true);
             if ($installedVersion != APP_VERSION) {
-                nxr("Installed version $installedVersion and should be " . APP_VERSION);
+                nxr(0, "Installed version $installedVersion and should be " . APP_VERSION);
                 require_once(dirname(__FILE__) . "/upgrade.php");
                 $dataReturnClass = new Upgrade($this);
 
@@ -88,7 +88,7 @@
                 }
 
                 unset($dataReturnClass);
-                nxr("Update completed, please re-run the command");
+                nxr(0, "Update completed, please re-run the command");
                 die();
             }
 
@@ -202,10 +202,10 @@
                         "LINE"   => __LINE__
                     ));
                 } else {
-                    nxr("Cron job already present");
+                    nxr(0, "Cron job already present");
                 }
             } else {
-                nxr("I am not allowed to queue $trigger");
+                nxr(0, "I am not allowed to queue $trigger");
             }
         }
 
@@ -235,20 +235,20 @@
                     )
                 ))
                 ) {
-                    //nxr("Cron job $trigger deleted");
+                    //nxr(0, "Cron job $trigger deleted");
                 } else {
                     $this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), array(
                         "METHOD" => __METHOD__,
                         "LINE"   => __LINE__
                     ));
-                    nxr("Failed to delete $trigger Cron job");
+                    nxr(0, "Failed to delete $trigger Cron job");
                 }
             } else {
                 $this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), array(
                     "METHOD" => __METHOD__,
                     "LINE"   => __LINE__
                 ));
-                nxr("Failed to delete $trigger Cron job");
+                nxr(0, "Failed to delete $trigger Cron job");
             }
         }
 
@@ -407,7 +407,7 @@
         public function valdidateOAuth($userArray)
         {
             if ($userArray['tkn_access'] == "" || $userArray['tkn_refresh'] == "" || $userArray['tkn_expires'] == "") {
-                //nxr("OAuth is not fully setup for this user");
+                //nxr(0, "OAuth is not fully setup for this user");
                 return false;
             } else {
                 return true;
@@ -423,12 +423,12 @@
         public function isUserValid($user_fitbit_id, $user_fitbit_password)
         {
             if (strpos($user_fitbit_id, '@') !== false) {
-                //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
+                //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                 $user_fitbit_id = $this->isUserValidEml($user_fitbit_id);
             }
 
             if ($this->isUser($user_fitbit_id)) {
-                //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
+                //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                 if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array(
                     "AND" => array(
                         "fuid"     => $user_fitbit_id,
@@ -436,7 +436,7 @@
                     )
                 ))
                 ) {
-                    //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
+                    //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                     return $user_fitbit_id;
                 } else if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array(
                     "AND" => array(
@@ -445,14 +445,14 @@
                     )
                 ))
                 ) {
-                    //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
+                    //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                     return -1;
                 } else {
-                    //nxr("v::" . __LINE__ . "($user_fitbit_id)", TRUE, TRUE, FALSE);
+                    //nxr(0, "v::" . __LINE__ . "($user_fitbit_id)", TRUE, TRUE, FALSE);
                     return false;
                 }
             } else {
-                //nxr("v::" . __LINE__, TRUE, TRUE, FALSE);
+                //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                 return false;
             }
         }

@@ -208,9 +208,9 @@
                                 "METHOD" => __METHOD__,
                                 "LINE"   => __LINE__
                             ));
-                        nxr("    Awarding $cat / $event ($score) = " . print_r($recordReward['description'], true));
+                        nxr(4, "Awarding $cat / $event ($score) = " . print_r($recordReward['description'], true));
                     } else {
-                        nxr("    Already awarded $cat / $event ($score) = " . print_r($recordReward['description'],
+                        nxr(4, "Already awarded $cat / $event ($score) = " . print_r($recordReward['description'],
                                 true));
                     }
 
@@ -244,7 +244,7 @@
                     return true;
                 }
             } else {
-                nxr("    No $goal data recorded for $currentDate");
+                nxr(4, "No $goal data recorded for $currentDate");
             }
 
             return false;
@@ -292,10 +292,10 @@
         {
             $wmc_key_provided = $_GET['wmc_key'];
             $wmc_key_correct  = $this->getAppClass()->getSetting("wmc_key", null, true);
-            nxr("Minecraft rewards Check");
+            nxr(0, "Minecraft rewards Check");
 
             if ($wmc_key_provided != $wmc_key_correct) {
-                nxr(" Key doesnt match");
+                nxr(1, "Key doesnt match");
 
                 return array("success" => false, "data" => array("msg" => "Incorrect key"));
             }
@@ -346,13 +346,13 @@
                                     "LINE"   => __LINE__
                                 ));
 
-                            nxr(" Reward " . $processedOrder . " processed");
+                            nxr(1, "Reward " . $processedOrder . " processed");
                         } else {
-                            nxr(" Reward " . $processedOrder . " is invalid ID");
+                            nxr(1, "Reward " . $processedOrder . " is invalid ID");
                         }
                     }
                 } else {
-                    nxr(" No processed rewards recived");
+                    nxr(1, "No processed rewards recived");
                 }
 
                 return array("success" => true);
@@ -438,10 +438,10 @@
 
         public function eventTriggerBadgeAwarded($badge)
         {
-            nxr(" ** API Event Trigger Badge");
+            nxr(1, "** API Event Trigger Badge");
 
             //if (date('Y-m-d') == $badge->dateTime) {
-            nxr("    " . $badge->shortName . " (" . $badge->category . ") awarded " . $badge->timesAchieved . " on " . $badge->dateTime);
+            nxr(4, $badge->shortName . " (" . $badge->category . ") awarded " . $badge->timesAchieved . " on " . $badge->dateTime);
 
             if ($this->checkForAward("badge", $badge->category . " | " . $badge->shortName, "awarded")) {
 
@@ -481,8 +481,8 @@
 
         public function eventTriggerNewMeal($meal)
         {
-            nxr(" ** API Event Meal Logged");
-            nxr("      " . $meal->loggedFood->name . " recorded");
+            nxr(1, "** API Event Meal Logged");
+            nxr(6, $meal->loggedFood->name . " recorded");
         }
 
         public function eventTriggerVeryActive($veryActive)
@@ -539,7 +539,7 @@
                 if ($value >= 1) {
                     $recordedValue = round($value, 3);
                     $hundredth     = round($recordedValue / $divider, 0);
-                    nxr(" checking awards for $trigger $hundredth");
+                    nxr(1, "checking awards for $trigger $hundredth");
                     $this->checkForAward("hundredth", $trigger, $hundredth);
 
                 }
@@ -552,7 +552,7 @@
             $date  = $inputArray[5];
             $score = $inputArray[4];
 
-            nxr("  ** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score);
+            nxr(2, "** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score);
 
             if (!$this->checkForAward("nomie", "logged", $event)) {
                 $this->checkForAward("nomie", "score", $score);

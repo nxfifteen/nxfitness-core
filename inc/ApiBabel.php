@@ -77,7 +77,7 @@
                 'redirectUri'  => $fitbitApp->getSetting("api_redirectUri" . $personal, null, false)
             ]));
 
-            nxr("clientId: " . $fitbitApp->getSetting("api_clientId" . $personal, null, false) . " used");
+            nxr(0, "clientId: " . $fitbitApp->getSetting("api_clientId" . $personal, null, false) . " used");
 
             $this->forceSync = false;
 
@@ -101,7 +101,7 @@
                 $lastrun   = $this->getLastCleanRun($trigger);
                 $daysSince = (strtotime($currentDate->format("Y-m-d")) - strtotime($lastrun->format("l jS M Y"))) / (60 * 60 * 24);
 
-                nxr("  Last download: $daysSince days ago. ");
+                nxr(2, "Last download: $daysSince days ago. ");
 
                 $allRecords = false;
                 if ($daysSince < 8) {
@@ -121,16 +121,16 @@
                 }
 
                 if ($allRecords) {
-                    nxr("  Requesting $trigger data for $daysSince days");
+                    nxr(2, "Requesting $trigger data for $daysSince days");
                     $this->pullBabelTimeSeriesByTrigger($trigger, $daysSince, $lastrun);
                 } else {
-                    nxr("  Requesting $trigger data for $daysSince days");
+                    nxr(2, "Requesting $trigger data for $daysSince days");
                     $this->pullBabelTimeSeriesByTrigger($trigger, $daysSince);
                     $this->setLastrun($trigger);
                 }
             } else {
                 if (!IS_CRON_RUN) {
-                    nxr("   Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143));
+                    nxr(3, "Error " . $trigger . ": " . $this->getAppClass()->lookupErrorCode(-143));
                 }
             }
 
@@ -180,7 +180,7 @@
                 $currentDate = new DateTime ('now');
             }
 
-            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records from ' . $currentDate->format("Y-m-d"));
+            nxr(0, '   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records from ' . $currentDate->format("Y-m-d"));
             $userTimeSeries = $this->getTimeSeries($trigger, $currentDate, $daysSince);
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
@@ -191,12 +191,12 @@
                         if ($steps->value == 0) {
                             $currentDate      = new DateTime();
                             $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($steps->dateTime)) / (60 * 60 * 24);
-                            nxr("   No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago");
+                            nxr(3, "No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago");
                             if ($daysSinceReading > 180) {
                                 $this->setLastCleanRun($trigger, new DateTime ($steps->dateTime));
                             }
                         } else {
-                            nxr("   " . $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
+                            nxr(3, $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
                         }
 
                         if ($steps->value > 0) {
@@ -310,9 +310,9 @@
             }
 
             if ($value) {
-                //nxr("    Beat your target for " . $dateTime->format("Y-m-d"));
+                //nxr(4, "Beat your target for " . $dateTime->format("Y-m-d"));
                 if ($streak) {
-                    nxr("     Streak continuing from " . $streak_start);
+                    nxr(5, "Streak continuing from " . $streak_start);
 
                     $dateTimeStart = new DateTime ($streak_start);
                     $days_between  = $dateTimeStart->diff($dateTime)->format("%a");
@@ -342,7 +342,7 @@
                     }
 
                 } else {
-                    nxr("     New Streak started");
+                    nxr(5, "New Streak started");
 
                     $this->getAppClass()->getDatabase()->insert($db_prefix . "streak_goal", array(
                         "fuid"       => $this->getActiveUser(),
@@ -367,7 +367,7 @@
                 $dateTimeEnd = $dateTime;
                 $dateTimeEnd->add(DateInterval::createFromDateString('yesterday'));
                 $streak_end = $dateTimeEnd->format('Y-m-d');
-                nxr("     Steak ran from " . $streak_start . " till " . $streak_end);
+                nxr(5, "Steak ran from " . $streak_start . " till " . $streak_end);
 
                 $days_between = $dateTime->diff($dateTimeEnd)->format("%a");
                 $days_between = 1 + (int)$days_between;
@@ -392,8 +392,8 @@
                 if (!is_null($this->RewardsSystem)) {
                     $this->RewardsSystem->eventTriggerStreak($goal, $days_between);
                 }
-                //nxr(print_r($this->getAppClass()->getDatabase()->error(), true));
-                //nxr(end($this->getAppClass()->getDatabase()->log()));
+                //nxr(0, print_r($this->getAppClass()->getDatabase()->error(), true));
+                //nxr(0, end($this->getAppClass()->getDatabase()->log()));
             }
         }
 
@@ -430,7 +430,7 @@
                 $currentDate = new DateTime ('now');
             }
 
-            nxr('   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records ' . $currentDate->format("Y-m-d"));
+            nxr(0, '   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records ' . $currentDate->format("Y-m-d"));
             $userTimeSeries = $this->getTimeSeries($trigger, $currentDate, $daysSince);
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
@@ -448,10 +448,10 @@
                         $newGoal = $this->thisWeeksGoal("activeMinutes",
                             $this->holdingVar["data"]->goals->activeMinutes);
                         if ($newGoal > 0 && $this->holdingVar["data"]->goals->activeMinutes != $newGoal) {
-                            nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
+                            nxr(4, "Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
                             $this->pushBabel('user/-/activities/goals/daily.json', array('activeMinutes' => $newGoal));
                         } else if ($newGoal > 0) {
-                            nxr("    Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " which is right for this week goal of " . $newGoal);
+                            nxr(4, "Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " which is right for this week goal of " . $newGoal);
                         }
                     }
                 }
@@ -460,7 +460,7 @@
                 $todaysDate = new DateTime ('now');
                 foreach ($userTimeSeries as $series) {
                     if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
-                        nxr("    " . $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
+                        nxr(4, $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
 
                         if ($series->value > 0) {
                             $this->setLastCleanRun($trigger, new DateTime ($series->dateTime));
@@ -538,7 +538,7 @@
                 if ($this->isTriggerCooled("activity_log")) {
                     $targetDateTime = $this->getLastCleanRun("activity_log");
 
-                    nxr(' Downloading activity logs from ' . $targetDateTime->format("Y-m-d"));
+                    nxr(0, ' Downloading activity logs from ' . $targetDateTime->format("Y-m-d"));
 
                     $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0',
                         true);
@@ -619,7 +619,7 @@
                                                 "METHOD" => __METHOD__,
                                                 "LINE"   => __LINE__
                                             ));
-                                        nxr("  Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") add to the database.");
+                                        nxr(2, "Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") add to the database.");
                                     } else {
                                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix",
                                                 null, false) . "activity_log", $dbStorage, array(
@@ -633,7 +633,7 @@
                                                 "METHOD" => __METHOD__,
                                                 "LINE"   => __LINE__
                                             ));
-                                        nxr("  Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") updated in the database.");
+                                        nxr(2, "Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") updated in the database.");
                                     }
 
                                     if (isset($activity->tcxLink)) {
@@ -670,7 +670,7 @@
                             }
 
                         } else {
-                            nxr("  No recorded activities");
+                            nxr(0, "  No recorded activities");
                             $this->setLastCleanRun("activity_log",
                                 new DateTime ($userActivityLog->pagination->afterDate), 2);
                             $this->setLastrun("activity_log");
@@ -682,7 +682,7 @@
                     }
 
                 } else {
-                    nxr("  Error activity log: " . $this->getAppClass()->lookupErrorCode(-143));
+                    nxr(0, "  Error activity log: " . $this->getAppClass()->lookupErrorCode(-143));
                 }
             }
 
@@ -735,10 +735,10 @@
                             if ($usr_goals->steps > 1) {
                                 $newGoal = $this->thisWeeksGoal("steps", $usr_goals->steps);
                                 if ($newGoal > 0 && $usr_goals->steps != $newGoal) {
-                                    nxr("  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
+                                    nxr(0, "  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
                                     $this->pushBabel('user/-/activities/goals/daily.json', array('steps' => $newGoal));
                                 } else if ($newGoal > 0) {
-                                    nxr("  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
+                                    nxr(0, "  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
                                 }
 
                                 $this->getAppClass()->getUserSetting($this->getActiveUser(), "goal_steps", $newGoal);
@@ -747,10 +747,10 @@
                             if ($usr_goals->floors > 1) {
                                 $newGoal = $this->thisWeeksGoal("floors", $usr_goals->floors);
                                 if ($newGoal > 0 && $usr_goals->floors != $newGoal) {
-                                    nxr("  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
+                                    nxr(0, "  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
                                     $this->pushBabel('user/-/activities/goals/daily.json', array('floors' => $newGoal));
                                 } else if ($newGoal > 0) {
-                                    nxr("  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal);
+                                    nxr(0, "  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal);
                                 }
                             }
 
@@ -839,7 +839,7 @@
             if (isset($userFoodLog)) {
                 if (count($userFoodLog->foods) > 0) {
                     foreach ($userFoodLog->foods as $meal) {
-                        nxr("  Logging meal " . $meal->loggedFood->name);
+                        nxr(0, "  Logging meal " . $meal->loggedFood->name);
 
                         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
                                 false) . "food", array(
@@ -899,7 +899,7 @@
                 } else {
                     $currentDate      = new DateTime();
                     $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
-                    nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
+                    nxr(3, "No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
                     if ($daysSinceReading > 7) {
                         $this->setLastCleanRun("foods", $targetDateTime);
                     }
@@ -933,7 +933,7 @@
 
                 $insertToDB = false;
                 if (!isset($userBodyLog->body->weight) or $userBodyLog->body->weight == "0") {
-                    nxr('  Weight unrecorded, reverting to previous record');
+                    nxr(0, '  Weight unrecorded, reverting to previous record');
                     $weight   = $this->getDBCurrentBody($this->getActiveUser(), "weight");
                     $fallback = true;
                 } else {
@@ -942,7 +942,7 @@
                 }
 
                 if (!isset($userBodyLog->body->fat) or $userBodyLog->body->fat == "0") {
-                    nxr('  Body Fat unrecorded, reverting to previous record');
+                    nxr(0, '  Body Fat unrecorded, reverting to previous record');
                     $fat      = $this->getDBCurrentBody($this->getActiveUser(), "fat");
                     $fallback = true;
                 } else {
@@ -952,14 +952,14 @@
 
                 if ($insertToDB) {
                     if (!isset($userBodyLog->goals->weight) or $userBodyLog->goals->weight == "0") {
-                        nxr('  Weight Goal unset, reverting to previous record');
+                        nxr(0, '  Weight Goal unset, reverting to previous record');
                         $goalsweight = $this->getDBCurrentBody($this->getActiveUser(), "weightGoal");
                     } else {
                         $goalsweight = (float)$userBodyLog->goals->weight;
                     }
 
                     if (!isset($userBodyLog->goals->fat) or $userBodyLog->goals->fat == "0") {
-                        nxr('  Body Fat Goal unset, reverting to previous record');
+                        nxr(0, '  Body Fat Goal unset, reverting to previous record');
                         $goalsfat = $this->getDBCurrentBody($this->getActiveUser(), "fatGoal");
                     } else {
                         $goalsfat = (float)$userBodyLog->goals->fat;
@@ -1039,7 +1039,7 @@
                 } else {
                     $currentDate      = new DateTime();
                     $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
-                    nxr("   No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
+                    nxr(3, "No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
                     if ($daysSinceReading > 7) {
                         $this->setLastCleanRun("body", new DateTime ($targetDate));
                     }
@@ -1130,7 +1130,7 @@
 
                     $this->setLastCleanRun("sleep", new DateTime ($targetDate));
 
-                    nxr("  Sleeplog " . $loggedSleep->logId . " recorded");
+                    nxr(0, "  Sleeplog " . $loggedSleep->logId . " recorded");
                 }
             } else {
                 $this->setLastCleanRun("sleep", new DateTime ($targetDate), 7);
@@ -1243,13 +1243,13 @@
                                     );
                                     foreach ($activity->value->heartRateZones as $heartRateZone) {
                                         if (array_key_exists("minutes", $heartRateZone)) {
-                                            nxr("  " . $activity->dateTime . " you spent " . $heartRateZone->minutes . " in " . $heartRateZone->name . " zone");
+                                            nxr(2, $activity->dateTime . " you spent " . $heartRateZone->minutes . " in " . $heartRateZone->name . " zone");
                                             $key                           = str_replace(" ", "",
                                                 strtolower($heartRateZone->name));
                                             $databaseArray[$key]           = (String)$heartRateZone->minutes;
                                             $databaseArray[$key . '_cals'] = (String)$heartRateZone->caloriesOut;
                                         } else {
-                                            nxr("  " . $activity->dateTime . " does have time spent in '" . $heartRateZone->name . "' zone");
+                                            nxr(2, $activity->dateTime . " does have time spent in '" . $heartRateZone->name . "' zone");
                                         }
 
                                     }
@@ -1286,7 +1286,7 @@
                                             ));
                                     }
                                 } else {
-                                    nxr("  " . $activity->dateTime . " does have a resting heart rate");
+                                    nxr(2, $activity->dateTime . " does have a resting heart rate");
                                 }
                             }
                         }
@@ -1342,10 +1342,10 @@
                 $response = $this->getLibrary()->getResponse($request);
                 $response = json_decode(json_encode($response), false);
 
-                //nxr(print_r($request->getUri(), true));
-                //nxr(print_r($request->getHeaders(), true));
-                //nxr(print_r($request->getBody()->getContents(), true));
-                //nxr(print_r($response, true));
+                //nxr(0, print_r($request->getUri(), true));
+                //nxr(0, print_r($request->getHeaders(), true));
+                //nxr(0, print_r($request->getBody()->getContents(), true));
+                //nxr(0, print_r($response, true));
                 return $response;
             } catch (IdentityProviderException $e) {
                 // Failed to get the access token or user details.
@@ -1355,7 +1355,7 @@
                         'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
                     ),
                 ));
-                nxr($e->getMessage());
+                nxr(0, $e->getMessage());
                 die();
             }
         }
@@ -1395,11 +1395,11 @@
                     $response = json_decode(json_encode($response), false);
                 }
 
-                //nxr(print_r("pushObject: " . $pushObject, true));
-                //nxr(print_r($request->getUri(), true));
-                //nxr(print_r($request->getHeaders(), true));
-                //nxr(print_r($request->getBody()->getContents(), true));
-                //nxr(print_r($response, true));
+                //nxr(0, print_r("pushObject: " . $pushObject, true));
+                //nxr(0, print_r($request->getUri(), true));
+                //nxr(0, print_r($request->getHeaders(), true));
+                //nxr(0, print_r($request->getBody()->getContents(), true));
+                //nxr(0, print_r($response, true));
                 return $response;
             } catch (IdentityProviderException $e) {
                 // Failed to get the access token or user details.
@@ -1409,7 +1409,7 @@
                         'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
                     ),
                 ));
-                nxr($e->getMessage());
+                nxr(0, $e->getMessage());
                 die();
             }
         }
@@ -1464,13 +1464,13 @@
 
                     $subscriptions = $this->pullBabel('user/-/apiSubscriptions.json', true);
                     if (count($subscriptions->apiSubscriptions) == 0) {
-                        nxr(" " . $this->getActiveUser() . " is not subscribed to the site");
+                        nxr(1, $this->getActiveUser() . " is not subscribed to the site");
                         $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
                                 null, false) . "users", 'uid', array("fuid" => $this->getActiveUser()));
                         $this->pushBabelSubscription($user_db_id);
-                        nxr(" " . $this->getActiveUser() . " subscription confirmed with ID: $user_db_id");
+                        nxr(1, $this->getActiveUser() . " subscription confirmed with ID: $user_db_id");
                     } else {
-                        nxr(" " . $this->getActiveUser() . " subscription is still valid");
+                        nxr(1, $this->getActiveUser() . " subscription is still valid");
                     }
 
                     return $userProfile;
@@ -1599,7 +1599,7 @@
                                                 true)
                                         )
                                     ));
-                                nxr(" No device image for " . $device->type . " " . $device->deviceVersion);
+                                nxr(0, " No device image for " . $device->type . " " . $device->deviceVersion);
                             }
 
                             if ($device->type == "TRACKER") {
@@ -1613,7 +1613,7 @@
                         $supportedHeart  = false;
                         $supportedFloors = false;
 
-                        //nxr( " Using ".count($trackers)." Trackers");
+                        //nxr(0,  " Using ".count($trackers)." Trackers");
                         if (
                             in_array("Surge", $trackers) ||
                             in_array("Blaze", $trackers) ||
@@ -1633,14 +1633,14 @@
                         if ($supportedHeart && $this->getAppClass()->getSetting("ownerFuid", null,
                                 false) == $this->getActiveUser()
                         ) {
-                            //nxr( "  Heartrate Supported " );
+                            //nxr(0,  "  Heartrate Supported " );
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_heart", "1");
                         } else {
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_heart", "0");
                         }
 
                         if ($supportedFloors) {
-                            //nxr( "  Floors Supported " );
+                            //nxr(0,  "  Floors Supported " );
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_floors", "1");
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_elevation", "1");
                         } else {
@@ -1651,7 +1651,7 @@
                         if (!is_null($this->getAppClass()->getSetting("nomie_key_" . $this->getActiveUser(), null,
                             false))
                         ) {
-                            //nxr( "  Nomie Supported " );
+                            //nxr(0,  "  Nomie Supported " );
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_nomie_trackers", "1");
                         } else {
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_nomie_trackers", "0");
@@ -1739,7 +1739,7 @@
                                         )
                                     ))
                                     ) {
-                                        nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->name . " again");
+                                        nxr(0, " User " . $this->getActiveUser() . " has been awarded the " . $badge->name . " again");
                                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix",
                                                 null, false) . "bages_user", array(
                                             'dateTime'      => (String)$badge->dateTime,
@@ -1756,7 +1756,7 @@
                                                 "LINE"   => __LINE__
                                             ));
                                     } else {
-                                        nxr(" User " . $this->getActiveUser() . " has been awarded the " . $badge->name . ", " . $badge->timesAchieved . " times.");
+                                        nxr(0, " User " . $this->getActiveUser() . " has been awarded the " . $badge->name . ", " . $badge->timesAchieved . " times.");
                                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix",
                                                 null, false) . "bages_user", array(
                                             "badgeid"       => (String)$badge->encodedId,
@@ -1820,7 +1820,7 @@
 
                         return $userBadges;
                     } else {
-                        nxr("Missing: $badgeFolder");
+                        nxr(0, "Missing: $badgeFolder");
 
                         if (!file_exists($badgeFolder)) {
                             $this->getAppClass()->getErrorRecording()->captureMessage("Missing badge folder",
@@ -1910,7 +1910,7 @@
                                     $lastSteps   = $steps;
                                 }
 
-                                nxr("  " . $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
+                                nxr(2, $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
 
                                 $friendId                     = $friend->user->encodedId;
                                 $storedLeaderboard[$friendId] = array();
@@ -1956,7 +1956,7 @@
                                 $this->getAppClass()->setSetting("owners_friends", $allOwnersFriends);
                             }
 
-                            nxr("  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
+                            nxr(0, "  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
 
                             $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix",
                                     null, false) . "users", array(
@@ -2177,7 +2177,7 @@
                                     strlen($this->getActiveUser()) + strlen($cacheName) + 2) === "_" . $this->getActiveUser() . "_" . $cacheName
                             ) {
                                 if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file)) {
-                                    nxr("  $file cache file was deleted");
+                                    nxr(0, "  $file cache file was deleted");
                                     unlink($cache_dir . $file);
                                 }
                             }
@@ -2240,7 +2240,7 @@
                     ]);
 
                     if ($accessToken->hasExpired()) {
-                        nxr("This token as expired and needs refreshed");
+                        nxr(0, "This token as expired and needs refreshed");
 
                         $newAccessToken = $this->getLibrary()->getAccessToken('refresh_token', [
                             'refresh_token' => $accessToken->getRefreshToken()
@@ -2251,11 +2251,11 @@
                         // Purge old access token and store new access token to your data store.
                         return $newAccessToken;
                     } else {
-                        //nxr("This token still valid");
+                        //nxr(0, "This token still valid");
                         return $accessToken;
                     }
                 } else {
-                    nxr('User ' . $user . ' does not exist, unable to continue.');
+                    nxr(0, 'User ' . $user . ' does not exist, unable to continue.');
                     exit;
                 }
             } else {
@@ -2312,7 +2312,7 @@
         {
             if (is_null($date)) {
                 $date = new DateTime("now");
-                nxr("Last run " . $date->format("Y-m-d H:i:s"));
+                nxr(0, "Last run " . $date->format("Y-m-d H:i:s"));
             }
             if ($delay > 0) {
                 $date->modify('-' . $delay . ' day');
@@ -2379,7 +2379,7 @@
 
                 $today = strtotime(date("Y-m-d"));
                 if ($today >= strtotime($userPushStartDate) && $today <= strtotime($userPushEndDate)) {
-                    nxr("Push is running");
+                    nxr(0, "Push is running");
 
                     return $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_steps", '10000');
                 } else {
@@ -2421,7 +2421,7 @@
                             $LastWeeksSteps   = round($totalSteps / count($dbSteps), 0);
                             $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
 
-                            nxr("  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
+                            nxr(0, "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
 
                             if ($ProposedNextWeek >= $maxTargetSteps) {
                                 $plusTargetSteps = $maxTargetSteps;
@@ -2475,7 +2475,7 @@
                         $LastWeeksSteps   = round($totalSteps / count($dbSteps), 0);
                         $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
 
-                        nxr("  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
+                        nxr(0, "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
 
                         if ($LastWeeksSteps >= $maxTargetSteps) {
                             $plusTargetSteps = $maxTargetSteps;
@@ -2501,7 +2501,7 @@
 
                 $today = strtotime(date("Y-m-d"));
                 if ($today >= strtotime($userPushStartDate) && $today <= strtotime($userPushEndDate)) {
-                    nxr("Push is running");
+                    nxr(0, "Push is running");
 
                     return $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_activity", '30');
                 } else {
@@ -2546,7 +2546,7 @@
                             $LastWeeksActive  = round($totalMinutes / count($dbActiveMinutes), 0);
                             $ProposedNextWeek = $LastWeeksActive + round($LastWeeksActive * ($improvment / 100), 0);
 
-                            nxr("    * Min: " . $minTargetActive . " Max: " . $maxTargetActive . " LastWeeksSteps: " . $LastWeeksActive . " ProposedNextWeek: " . $ProposedNextWeek);
+                            nxr(4, "* Min: " . $minTargetActive . " Max: " . $maxTargetActive . " LastWeeksSteps: " . $LastWeeksActive . " ProposedNextWeek: " . $ProposedNextWeek);
 
                             if ($ProposedNextWeek >= $maxTargetActive) {
                                 $plusTargetSteps = $maxTargetActive;
@@ -2573,16 +2573,16 @@
          */
         private function pullBabelTCX($tcxLink)
         {
-            nxr("   Downloading TCX File");
+            nxr(3, "Downloading TCX File");
             if (!file_exists(dirname(__FILE__) . "/../tcx/" . basename($tcxLink))) {
                 if (file_exists(dirname(__FILE__) . "/../tcx/") AND is_writable(dirname(__FILE__) . "/../tcx/")) {
                     file_put_contents(dirname(__FILE__) . "/../tcx/" . basename($tcxLink), $this->pullBabel($tcxLink));
-                    nxr("    TCX files created: " . dirname(__FILE__) . "/../tcx/" . basename($tcxLink));
+                    nxr(4, "TCX files created: " . dirname(__FILE__) . "/../tcx/" . basename($tcxLink));
                 } else {
-                    nxr("    Unable to write TCX files created");
+                    nxr(4, "Unable to write TCX files created");
                 }
             } else {
-                nxr("    TCX file present");
+                nxr(4, "TCX file present");
             }
         }
 
@@ -2601,7 +2601,7 @@
                     $endTime    = $endTimeRaw->format("H:i");
 
                     if ($startDate == $endDate) {
-                        nxr("   Activity Heart Rate on " . $startDate . " for " . $startTime . " till " . $endTime);
+                        nxr(3, "Activity Heart Rate on " . $startDate . " for " . $startTime . " till " . $endTime);
 
                         $hrUrl           = "https://api.fitbit.com/1/user/-/activities/heart/date/" . $startDate . "/1d/1sec/time/" . $startTime . "/" . $endTime . ".json";
                         $heartRateValues = $this->pullBabel($hrUrl);
@@ -2633,7 +2633,7 @@
                                         "METHOD" => __METHOD__,
                                         "LINE"   => __LINE__
                                     ));
-                                nxr("   Summary Information Added to Activity Log");
+                                nxr(3, "Summary Information Added to Activity Log");
                             }
                         }
 
@@ -2678,7 +2678,7 @@
                             }
                         }
                     } else {
-                        nxr("   Activity Heart Rate Skipped. Unable to process across dates. Activity started on " . $startDate . " and ended on " . $endDate);
+                        nxr(3, "Activity Heart Rate Skipped. Unable to process across dates. Activity started on " . $startDate . " and ended on " . $endDate);
                     }
                 }
             }
@@ -2692,7 +2692,7 @@
                 if ($this->isTriggerCooled("nomie_trackers")) {
                     $nomie_user_key = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", 'nomie');
 
-                    nxr(" Connecting to CouchDB");
+                    nxr(0, " Connecting to CouchDB");
 
                     $path = dirname(__FILE__) . "/../library/couchdb/";
 
@@ -2703,7 +2703,7 @@
                     $nomie_port     = $this->getAppClass()->getSetting("db_nomie_port", '5984', false);
 
                     if (is_null($nomie_username)) {
-                        nxr("  Nomie credentials missing");
+                        nxr(0, "  Nomie credentials missing");
 
                         return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
                     }
@@ -2756,7 +2756,7 @@
                     }
 
                     if (!$couchClient->databaseExists()) {
-                        nxr("  Nomie Meta table missing");
+                        nxr(0, "  Nomie Meta table missing");
 
                         return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
                     }
@@ -2778,26 +2778,26 @@
                         if (is_array($trackerGroups) && array_key_exists("NxTracked",
                                 $trackerGroups) && count($trackerGroups['NxTracked']) > 0
                         ) {
-                            nxr("  Downloadnig NxTracked Group Trackers");
+                            nxr(0, "  Downloadnig NxTracked Group Trackers");
                             $trackerGroups = $trackerGroups['NxTracked'];
                         } else if (is_array($trackerGroups) && array_key_exists("NxCore",
                                 $trackerGroups) && count($trackerGroups['NxCore']) > 0
                         ) {
-                            nxr("  Downloadnig NxCore Group Trackers");
+                            nxr(0, "  Downloadnig NxCore Group Trackers");
                             $trackerGroups = $trackerGroups['NxCore'];
                         } else if (is_array($trackerGroups) && array_key_exists("Main",
                                 $trackerGroups) && count($trackerGroups['Main']) > 0
                         ) {
-                            nxr("  Downloadnig Main Group Trackers");
+                            nxr(0, "  Downloadnig Main Group Trackers");
                             $trackerGroups = $trackerGroups['Main'];
                         } else {
-                            nxr("  Downloading All Trackers");
+                            nxr(0, "  Downloading All Trackers");
                             $trackerGroups = $trackerGroups['All'];
                         }
 
                         $couchClient->useDatabase($nomie_user_key . '_trackers');
                         if (!$couchClient->databaseExists()) {
-                            nxr("  Nomie Tracker table missing");
+                            nxr(0, "  Nomie Tracker table missing");
 
                             return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
                         }
@@ -2847,7 +2847,7 @@
                                     )
                                 ))
                                 ) {
-                                    nxr("   Storing " . print_r($doc->label, true));
+                                    nxr(3, "Storing " . print_r($doc->label, true));
 
                                     $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers",
                                         $dbStorage);
@@ -2857,7 +2857,7 @@
                                             "LINE"   => __LINE__
                                         ));
                                 } else {
-                                    //nxr( "   Updating " . print_r( $doc->label, TRUE ) );
+                                    //nxr(0,  "   Updating " . print_r( $doc->label, TRUE ) );
 
                                     $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers",
                                         $dbStorage, array(
@@ -2877,7 +2877,7 @@
 
                         $couchClient->useDatabase($nomie_user_key . '_events');
                         if (!$couchClient->databaseExists()) {
-                            nxr("  Nomie Tracker table missing");
+                            nxr(0, "  Nomie Tracker table missing");
 
                             return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
                         }
@@ -2931,8 +2931,8 @@
                                             "METHOD" => __METHOD__,
                                             "LINE"   => __LINE__
                                         ));
-                                    nxr("   Stored event : " . $event[2] . " from " . $event[3]);
-                                    //nxr( print_r($this->getAppClass()->getDatabase()->log(), true) );
+                                    nxr(3, "Stored event : " . $event[2] . " from " . $event[3]);
+                                    //nxr(0,  print_r($this->getAppClass()->getDatabase()->log(), true) );
                                     //return true;
                                 }
 
@@ -2943,7 +2943,7 @@
                                     }
                                 }
                             } else {
-                                //nxr( "   Already Recorded : " . $event[2] . " from " . $event[3] );
+                                //nxr(0,  "   Already Recorded : " . $event[2] . " from " . $event[3] );
                             }
                         }
                     }
@@ -3040,20 +3040,20 @@
 
             // Check we have a valid user
             if ($this->getAppClass()->isUser($user)) {
-                nxr(" Checking $user for minecraft reward support");
+                nxr(0, " Checking $user for minecraft reward support");
                 $minecraftUsername = $this->getAppClass()->getUserSetting($user, "minecraft_username");
                 if (is_null($minecraftUsername)) {
-                    nxr("  Users is not a Minecraft player");
+                    nxr(0, "  Users is not a Minecraft player");
                     $this->RewardsSystem = null;
                 } else {
                     require_once(dirname(__FILE__) . "/RewardsMinecraft.php");
                     $this->RewardsSystem = new RewardsMinecraft($user);
-                    nxr("  Reward system ready");
+                    nxr(0, "  Reward system ready");
                 }
 
                 $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
                 if (strtotime($userCoolDownTime) >= date("U")) {
-                    nxr("User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
+                    nxr(0, "User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
                     die();
                 }
 
@@ -3061,7 +3061,7 @@
                 if ($trigger == "all" || $trigger == "nomie_trackers") {
                     $pull = $this->pullNomieTrackers();
                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                        nxr(0, "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
@@ -3077,7 +3077,7 @@
                     if ($trigger == "all" || $trigger == "profile") {
                         $pull = $this->pullBabelProfile();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                            nxr(0, "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
                     }
 
@@ -3085,7 +3085,7 @@
                     if ($trigger == "all" || $trigger == "devices") {
                         $pull = $this->pullBabelDevices();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
+                            nxr(0, "  Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
                     }
 
@@ -3093,36 +3093,36 @@
                     if ($trigger == "all" || $trigger == "badges") {
                         $pull = $this->pullBabelBadges();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
+                            nxr(0, "  Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
                     }
 
                     if ($trigger == "all" || $trigger == "leaderboard") {
                         $pull = $this->pullBabelLeaderboard();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
+                            nxr(0, "  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
                     }
 
                     if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
                         $pull = $this->pullBabelCaloriesGoals();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error goals_calories: " . $this->getAppClass()->lookupErrorCode($pull));
+                            nxr(0, "  Error goals_calories: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
                     }
 
                     if ($trigger == "all" || $trigger == "activity_log") {
                         $pull = $this->pullBabelActivityLogs();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error activity_log: " . $this->getAppClass()->lookupErrorCode($pull));
+                            nxr(0, "  Error activity_log: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
                     }
 
                     if ($trigger == "all" || $trigger == "goals") {
-                        nxr(' Downloading Goals');
+                        nxr(0, ' Downloading Goals');
                         $pull = $this->pullBabelUserGoals();
                         if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                            nxr("  Error goals: " . $this->getAppClass()->lookupErrorCode($pull));
+                            nxr(0, "  Error goals: " . $this->getAppClass()->lookupErrorCode($pull));
                         }
                     }
 
@@ -3138,15 +3138,15 @@
                                 $period = new DatePeriod ($this->getLastCleanRun("heart"), $interval, $currentDate);
                                 /** @var DateTime $dt */
                                 foreach ($period as $dt) {
-                                    nxr(' Downloading Heart Logs for ' . $dt->format("l jS M Y"));
+                                    nxr(0, ' Downloading Heart Logs for ' . $dt->format("l jS M Y"));
                                     $pull = $this->pullBabelHeartRateSeries($dt->format("Y-m-d"));
                                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                        nxr("  Error Heart: " . $this->getAppClass()->lookupErrorCode($pull));
+                                        nxr(0, "  Error Heart: " . $this->getAppClass()->lookupErrorCode($pull));
                                     }
                                 }
                             } else {
                                 if (!IS_CRON_RUN) {
-                                    nxr("  Error Heart: " . $this->getAppClass()->lookupErrorCode(-143));
+                                    nxr(0, "  Error Heart: " . $this->getAppClass()->lookupErrorCode(-143));
                                 }
                             }
                         }
@@ -3162,15 +3162,15 @@
                                  * @var DateTime $dt
                                  */
                                 foreach ($period as $dt) {
-                                    nxr(' Downloading Water Logs for ' . $dt->format("l jS M Y"));
+                                    nxr(0, ' Downloading Water Logs for ' . $dt->format("l jS M Y"));
                                     $pull = $this->pullBabelWater($dt->format("Y-m-d"));
                                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                        nxr("  Error water: " . $this->getAppClass()->lookupErrorCode($pull));
+                                        nxr(0, "  Error water: " . $this->getAppClass()->lookupErrorCode($pull));
                                     }
                                 }
                             } else {
                                 if (!IS_CRON_RUN) {
-                                    nxr("  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
+                                    nxr(0, "  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
                                 }
                             }
                         }
@@ -3185,15 +3185,15 @@
                                  * @var DateTime $dt
                                  */
                                 foreach ($period as $dt) {
-                                    nxr(' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
+                                    nxr(0, ' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
                                     $pull = $this->pullBabelSleep($dt->format("Y-m-d"));
                                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                        nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode($pull));
+                                        nxr(0, "  Error sleep: " . $this->getAppClass()->lookupErrorCode($pull));
                                     }
                                 }
                             } else {
                                 if (!IS_CRON_RUN) {
-                                    nxr("  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
+                                    nxr(0, "  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                                 }
                             }
                         }
@@ -3208,15 +3208,15 @@
                                  * @var DateTime $dt
                                  */
                                 foreach ($period as $dt) {
-                                    nxr(' Downloading Body Logs for ' . $dt->format("l jS M Y"));
+                                    nxr(0, ' Downloading Body Logs for ' . $dt->format("l jS M Y"));
                                     $pull = $this->pullBabelBody($dt->format("Y-m-d"));
                                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                        nxr("  Error body: " . $this->getAppClass()->lookupErrorCode($pull));
+                                        nxr(0, "  Error body: " . $this->getAppClass()->lookupErrorCode($pull));
                                     }
                                 }
                             } else {
                                 if (!IS_CRON_RUN) {
-                                    nxr("  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
+                                    nxr(0, "  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
                                 }
                             }
                         }
@@ -3231,15 +3231,15 @@
                                  * @var DateTime $dt
                                  */
                                 foreach ($period as $dt) {
-                                    nxr(' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
+                                    nxr(0, ' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
                                     $pull = $this->pullBabelMeals($dt->format("Y-m-d"));
                                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                        nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode($pull));
+                                        nxr(0, "  Error foods: " . $this->getAppClass()->lookupErrorCode($pull));
                                     }
                                 }
                             } else {
                                 if (!IS_CRON_RUN) {
-                                    nxr("  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
+                                    nxr(0, "  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
                                 }
                             }
                         }
@@ -3260,7 +3260,7 @@
                         $isAllowed = $this->isAllowed("activities");
                         if (!is_numeric($isAllowed)) {
                             if ($this->isTriggerCooled("activities")) {
-                                nxr(" Downloading Series Info");
+                                nxr(0, " Downloading Series Info");
                                 foreach ($timeSeries as $activity => $timeout) {
                                     $this->pullBabelTimeSeries($activity, true);
                                 }
@@ -3292,7 +3292,7 @@
                     //if (!is_null($this->RewardsSystem)) $this->RewardsSystem->check_rewards($user);
 
                 } else {
-                    nxr("User has not yet authenticated with Fitbit");
+                    nxr(0, "User has not yet authenticated with Fitbit");
                 }
 
             }
@@ -3465,7 +3465,7 @@
             $usrConfig = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'scope_' . $trigger, true);
             if (!is_null($usrConfig) AND $usrConfig != 1) {
                 if (!$quiet) {
-                    nxr(" Aborted $trigger disabled in user config");
+                    nxr(0, " Aborted $trigger disabled in user config");
                 }
 
                 return "-145";
@@ -3474,7 +3474,7 @@
             $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, true);
             if ($sysConfig != 1) {
                 if (!$quiet) {
-                    nxr(" Aborted $trigger disabled in system config");
+                    nxr(0, " Aborted $trigger disabled in system config");
                 }
 
                 return "-146";
@@ -3497,14 +3497,9 @@
                 $currentDate  = new DateTime ('now');
                 $coolDownTill = $this->getCoolDown($trigger, $reset);
 
-                //            nxr("coolDownTill " . $coolDownTill->format("Y-m-d H:i:s"));
-                //            nxr("currentDate " . $currentDate->format("Y-m-d H:i:s"));
-
                 if ($coolDownTill->format("U") < $currentDate->format("U")) {
-                    //                nxr(" Is cool");
                     return true;
                 } else {
-                    //                nxr(" Stil hot");
                     return false;
                 }
             }
@@ -3544,7 +3539,7 @@
                 if ($request->getId() == $_nx_fb_usr) {
                     return true;
                 } else {
-                    nxr(" User miss match " . $request->getId() . " should equal " . $_nx_fb_usr);
+                    nxr(0, " User miss match " . $request->getId() . " should equal " . $_nx_fb_usr);
 
                     return false;
                 }
@@ -3557,7 +3552,7 @@
                         'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
                     ),
                 ));
-                nxr(" User validation test failed: " . print_r($e->getMessage(), true));
+                nxr(0, " User validation test failed: " . print_r($e->getMessage(), true));
                 if ($e->getCode() == 400) {
                     $this->getAppClass()->delUserOAuthTokens($_nx_fb_usr);
                 }
@@ -3593,9 +3588,9 @@
                     'stride_walking' => $newUserProfile->strideLengthWalking,
                     'country' => $newUserProfile->country,
              */
-            //nxr(print_r($newUserProfile, TRUE));
+            //nxr(0, print_r($newUserProfile, TRUE));
             if ($this->getAppClass()->isUser($newUserProfile->encodedId)) {
-                nxr("User already present");
+                nxr(0, "User already present");
 
                 return false;
             } else {
@@ -3644,7 +3639,7 @@
             //$getRateRemaining = $this->getLibrary()->getRateRemaining();
             //if (is_numeric($getRateRemaining) && $getRateRemaining <= 2) {
             //    $restMinutes = round($this->getLibrary()->getRateReset() / 60, 0);
-            //    nxr(" *** Rate limit reached. Please try again in about " . $restMinutes . " minutes ***");
+            //    nxr(1, "*** Rate limit reached. Please try again in about " . $restMinutes . " minutes ***");
             //
             //    $currentDate = new DateTime();
             //    $currentDate = $currentDate->modify("+" . ($restMinutes + 5) . " minutes");
@@ -3652,7 +3647,7 @@
             //
             //    die();
             //} else if (is_numeric($getRateRemaining) && $getRateRemaining < 50) {
-            //    nxr(" *** Down to your last " . $getRateRemaining . " calls ***");
+            //    nxr(1, "*** Down to your last " . $getRateRemaining . " calls ***");
             //}
 
             try {
@@ -3671,8 +3666,8 @@
                 }
 
                 if ($debugOutput) {
-                    nxr(print_r($request, true));
-                    nxr(print_r($response, true));
+                    nxr(0, print_r($request, true));
+                    nxr(0, print_r($response, true));
                 }
 
                 return $response;
@@ -3680,7 +3675,7 @@
                 // Failed to get the access token or user details.
 
                 if ($e->getCode() == 429) {
-                    nxr(" Rate limit reached. Please try again later");
+                    nxr(0, " Rate limit reached. Please try again later");
 
                     $currentDate = new DateTime();
                     $currentDate = $currentDate->modify("+1 hours");
@@ -3697,9 +3692,9 @@
 							'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
 						),
 					) );*/
-                    nxr("Error " . $e->getCode() . ": " . $e->getMessage());
-                    nxr($e->getFile() . " @" . $e->getLine());
-                    nxr($e->getTraceAsString());
+                    nxr(0, "Error " . $e->getCode() . ": " . $e->getMessage());
+                    nxr(0, $e->getFile() . " @" . $e->getLine());
+                    nxr(0, $e->getTraceAsString());
                     if ($supportFailures) {
                         return $e->getCode();
                     } else {

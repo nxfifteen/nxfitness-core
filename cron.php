@@ -25,7 +25,7 @@
     $repopulate_queue = run_through_queue();
 
     if ($repopulate_queue) {
-        nxr("Ready to repopulate the queue");
+        nxr(0, "Ready to repopulate the queue");
 
         $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
         SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", null, false) . "users where
@@ -42,10 +42,10 @@
         ) {
             foreach ($unfinishedUsers as $user) {
                 if (!$fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], false))) {
-                    nxr($user['name'] . " has not completed the OAuth configuration");
+                    nxr(0, $user['name'] . " has not completed the OAuth configuration");
                 } else {
                     if (time() < $end) {
-                        nxr("Adding all to Q for " . $user['name']);
+                        nxr(0, "Adding all to Q for " . $user['name']);
                         $fitbitApp->addCronJob($user['fuid'], 'all');
                     }
                 }
@@ -62,7 +62,7 @@
         }
 
         if (count($allowed_triggers) == 0) {
-            nxr("I am not allowed to re-queue anything so will re-queue with empty records");
+            nxr(0, "I am not allowed to re-queue anything so will re-queue with empty records");
         } else {
             $unfinishedUsers = $fitbitApp->getDatabase()->query("-- noinspection SqlDialectInspection
             SELECT fuid, name from " . $fitbitApp->getSetting("db_prefix", null,
@@ -75,25 +75,25 @@
             if (!empty($unfinishedUsers) and count($unfinishedUsers) > 0) {
                 foreach ($unfinishedUsers as $user) {
                     if (!$fitbitApp->valdidateOAuth($fitbitApp->getUserOAuthTokens($user['fuid'], false))) {
-                        nxr($user['name'] . " has not completed the OAuth configuration");
+                        nxr(0, $user['name'] . " has not completed the OAuth configuration");
                     } else {
-                        nxr(" Repopulating for " . $user['name']);
+                        nxr(1, " Repopulating for " . $user['name']);
 
                         $fitbitApp->getFitbitAPI($user['fuid'])->setActiveUser($user['fuid']);
                         foreach ($allowed_triggers as $allowed_trigger) {
                             if (!is_numeric($fitbitApp->getFitbitAPI()->isAllowed($allowed_trigger, true))) {
                                 if ($fitbitApp->getFitbitAPI($user['fuid'])->isTriggerCooled($allowed_trigger)) {
-                                    nxr("  + $allowed_trigger added to queue");
+                                    nxr(1, "  + $allowed_trigger added to queue");
                                     $fitbitApp->addCronJob($user['fuid'], $allowed_trigger);
                                 } else {
-                                    nxr("  - $allowed_trigger still too hot");
+                                    nxr(1, "  - $allowed_trigger still too hot");
                                 }
                             }
                         }
                     }
                 }
             } else {
-                nxr("There is nothing to queue");
+                nxr(0, "There is nothing to queue");
             }
         }
 
@@ -118,7 +118,7 @@
                         $cooldown = $fitbitApp->getUserCooldown($job['user']);
                         if ($fitbitApp->getSetting('scope_' . $job['trigger'], true)) { //TODO: Set top false by default
                             if (strtotime($cooldown) < strtotime(date("Y-m-d H:i:s"))) {
-                                nxr("Processing queue item " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
+                                nxr(0, "Processing queue item " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
                                 $jobRun = $fitbitApp->getFitbitAPI($job['user'], true)->pull($job['user'],
                                     $job['trigger']);
                                 if ($fitbitApp->getFitbitAPI($job['user'])->isApiError($jobRun)) {
@@ -131,7 +131,7 @@
                                                 'core_version' => $fitbitApp->getSetting("version", "0.0.0.1", true)
                                             )
                                         ));
-                                    nxr("* Cron Error: " . $fitbitApp->lookupErrorCode($jobRun));
+                                    nxr(0, "* Cron Error: " . $fitbitApp->lookupErrorCode($jobRun));
                                 } else {
                                     $fitbitApp->delCronJob($job['user'], $job['trigger']);
                                 }
@@ -147,11 +147,11 @@
                                             'core_version' => $fitbitApp->getSetting("version", "0.0.0.1", true)
                                         )
                                     ));
-                                nxr("Can not process " . $fitbitApp->supportedApi($job['trigger']) . ". API limit reached for " . $job['user'] . ". Cooldown period ends " . $cooldown);
+                                nxr(0, "Can not process " . $fitbitApp->supportedApi($job['trigger']) . ". API limit reached for " . $job['user'] . ". Cooldown period ends " . $cooldown);
                                 $fitbitApp->delCronJob($job['user'], $job['trigger']);
                             }
                         } else {
-                            nxr(" " . $fitbitApp->supportedApi($job['trigger']) . " has been disabled");
+                            nxr(1, $fitbitApp->supportedApi($job['trigger']) . " has been disabled");
                             $fitbitApp->delCronJob($job['user'], $job['trigger']);
                         }
 
@@ -173,11 +173,11 @@
                                 'core_version' => $fitbitApp->getSetting("version", "0.0.0.1", true)
                             )
                         ));
-                        nxr("  Can not process " . $fitbitApp->supportedApi($job['trigger']) . " since " . $job['user'] . " is no longer a user.");
+                        nxr(2, "Can not process " . $fitbitApp->supportedApi($job['trigger']) . " since " . $job['user'] . " is no longer a user.");
                         $fitbitApp->delCronJob($job['user'], $job['trigger']);
                     }
                 } else {
-                    nxr("Timeout reached skipping " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
+                    nxr(0, "Timeout reached skipping " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
                     $repopulate_queue = false;
                 }
             }

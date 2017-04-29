@@ -6,7 +6,7 @@
     ) {
         $HeaderNotificationBar = $_SESSION['HeaderNotificationBar'];
 
-        nxr(" * HeaderNotificationBar taken from session");
+        nxr(1, "* HeaderNotificationBar taken from session");
     } else {
 
         $HeaderNotificationBar = array();

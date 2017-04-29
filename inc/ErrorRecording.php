@@ -103,7 +103,7 @@
         {
             if (defined('SENTRY_DSN')) {
                 $this->getSentryClient()->captureException($exception, $data, $logger, $vars);
-                nxr("### Exception Recorded ###");
+                nxr(0, "### Exception Recorded ###");
             }
         }
 
@@ -118,10 +118,10 @@
          */
         public function captureMessage($message, $params = array(), $data = array(), $stack = false, $vars = null)
         {
-            nxr("[ERROR] $message");
+            nxr(0, "[ERROR] $message");
             if (defined('SENTRY_DSN')) {
                 $this->getSentryClient()->captureMessage($message, $params, $data, $stack, $vars);
-                nxr("### Message Recorded ###");
+                nxr(0, "### Message Recorded ###");
             }
         }
 
