@@ -45,6 +45,7 @@ deploy_review:
     - /home/nxad/gits/deploy_review "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: review/$CI_COMMIT_REF_NAME
+    url: http://docs.core.itsabeta.nx/
   only:
     - branches
   except:
