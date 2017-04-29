@@ -1,4 +1,6 @@
 <?php
+    use UX\NxFitAdmin;
+
     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
     header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -144,6 +146,7 @@
             <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a></span>
         </footer>
 
+        <!--suppress JSUnusedLocalSymbols -->
         <script type="application/javascript">
             var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
         </script>

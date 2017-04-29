@@ -7,10 +7,10 @@
     use DateInterval;
     use DatePeriod;
     use DateTime;
-    use djchen\OAuth2\Client\Provider\Fitbit as Fitbit;
+    use djchen\OAuth2\Client\Provider\Fitbit;
     use Exception;
-    use League\OAuth2\Client\Provider\Exception\IdentityProviderException as IdentityProviderException;
-    use League\OAuth2\Client\Token\AccessToken as AccessToken;
+    use \League\OAuth2\Client\Provider\Exception\IdentityProviderException as IdentityProviderException;
+    use \League\OAuth2\Client\Token\AccessToken as AccessToken;
     use SimpleXMLElement;
 
     define("FITBIT_COM", "https://api.fitbit.com");
@@ -3334,34 +3334,34 @@
                     break;
 
                 case 'caloriesOut':
-                    $path = '/activities/log/calories';
+                    $path = '/activities/calories';
                     break;
                 case 'steps':
-                    $path = '/activities/log/steps';
+                    $path = '/activities/steps';
                     break;
                 case 'distance':
-                    $path = '/activities/log/distance';
+                    $path = '/activities/distance';
                     break;
                 case 'floors':
-                    $path = '/activities/log/floors';
+                    $path = '/activities/floors';
                     break;
                 case 'elevation':
-                    $path = '/activities/log/elevation';
+                    $path = '/activities/elevation';
                     break;
                 case 'minutesSedentary':
-                    $path = '/activities/log/minutesSedentary';
+                    $path = '/activities/minutesSedentary';
                     break;
                 case 'minutesLightlyActive':
-                    $path = '/activities/log/minutesLightlyActive';
+                    $path = '/activities/minutesLightlyActive';
                     break;
                 case 'minutesFairlyActive':
-                    $path = '/activities/log/minutesFairlyActive';
+                    $path = '/activities/minutesFairlyActive';
                     break;
                 case 'minutesVeryActive':
-                    $path = '/activities/log/minutesVeryActive';
+                    $path = '/activities/minutesVeryActive';
                     break;
                 case 'activityCalories':
-                    $path = '/activities/log/activityCalories';
+                    $path = '/activities/activityCalories';
                     break;
 
                 case 'tracker_caloriesOut':
@@ -3424,10 +3424,10 @@
 
             switch ($type) {
                 case 'caloriesOut':
-                    $objectKey = "activities-log-calories";
+                    $objectKey = "activities-calories";
                     break;
                 default:
-                    $objectKey = "activities-log-" . $type;
+                    $objectKey = "activities-" . $type;
                     break;
             }
 
@@ -3582,7 +3582,6 @@
         public function createNewUser($newUserProfile)
         {
             /*
-
                     'api' => $newUserProfile->encodedId,
                     'name' => $newUserProfile->fullName,
                     'dob' => $newUserProfile->dateOfBirth,
@@ -3642,19 +3641,19 @@
          */
         public function pullBabel($path, $returnObject = false, $debugOutput = false, $supportFailures = false)
         {
-            $getRateRemaining = $this->getLibrary()->getRateRemaining();
-            if (is_numeric($getRateRemaining) && $getRateRemaining <= 2) {
-                $restMinutes = round($this->getLibrary()->getRateReset() / 60, 0);
-                nxr(" *** Rate limit reached. Please try again in about " . $restMinutes . " minutes ***");
-
-                $currentDate = new DateTime();
-                $currentDate = $currentDate->modify("+" . ($restMinutes + 5) . " minutes");
-                $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate);
-
-                die();
-            } else if (is_numeric($getRateRemaining) && $getRateRemaining < 50) {
-                nxr(" *** Down to your last " . $getRateRemaining . " calls ***");
-            }
+            //$getRateRemaining = $this->getLibrary()->getRateRemaining();
+            //if (is_numeric($getRateRemaining) && $getRateRemaining <= 2) {
+            //    $restMinutes = round($this->getLibrary()->getRateReset() / 60, 0);
+            //    nxr(" *** Rate limit reached. Please try again in about " . $restMinutes . " minutes ***");
+            //
+            //    $currentDate = new DateTime();
+            //    $currentDate = $currentDate->modify("+" . ($restMinutes + 5) . " minutes");
+            //    $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate);
+            //
+            //    die();
+            //} else if (is_numeric($getRateRemaining) && $getRateRemaining < 50) {
+            //    nxr(" *** Down to your last " . $getRateRemaining . " calls ***");
+            //}
 
             try {
                 // Try to get an access token using the authorization code grant.
@@ -3665,13 +3664,14 @@
                 $request = $this->getLibrary()->getAuthenticatedRequest('GET', FITBIT_COM . "/1/" . $path,
                     $accessToken);
                 // Make the authenticated API request and get the response.
-                $response = $this->getLibrary()->getResponse($request);
+                $response = $this->getLibrary()->getParsedResponse($request);
 
                 if ($returnObject) {
                     $response = json_decode(json_encode($response), false);
                 }
 
                 if ($debugOutput) {
+                    nxr(print_r($request, true));
                     nxr(print_r($response, true));
                 }
 
