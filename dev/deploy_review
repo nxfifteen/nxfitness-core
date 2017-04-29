@@ -5,7 +5,6 @@ CI_ENVIRONMENT_SLUG="$3"
 
 eval $(ssh-agent -s)
 ssh-add /home/nxad/.ssh/id_rsa_pss
-ssh-add /home/nxad/.ssh/id_rsa_wiki
 
 if [ ! -d "$ROOTPATH" ]; then
     mkdir "$ROOTPATH"
@@ -35,4 +34,3 @@ echo "running composer install dev"
 php "$ROOTPATH/binaries/composer.phar" install --dev >/dev/null 2>&1
 
 bash "$ROOTPATH/dev/genPHPDocs" "$ROOTPATH"
-#bash "$ROOTPATH/dev/genDocs" "$ROOTPATH"
