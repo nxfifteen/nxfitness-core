@@ -42,7 +42,7 @@ deploy_review:
   stage: review
   script:
     - echo "Deploy a review app"
-    - /home/nxad/gits/deploy_review "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    - /home/nxad/gits/deploy_review "$REVIEW_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: http://docs.core.itsabeta.nx/
@@ -55,10 +55,10 @@ deploy_staging:
   stage: stage
   script:
     - echo "Deploy to staging server"
-    - /home/nxad/gits/deploy_staging "$STAGING_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    - /home/nxad/gits/deploy_staging "$STAGING_PATH/$CI_ENVIRONMENT_SLUG" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: staging
-    url: http://fit.itsabeta.nx/api/$CI_ENVIRONMENT_SLUG/ux/
+    url: http://core.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
   only:
   - master
 
