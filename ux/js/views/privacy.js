@@ -15,8 +15,10 @@ $(function () {
         $.each(data, function (index, locationPoint) {
             html += '  <div class="col-sm-6 col-lg-3">';
             html += '    <div class="card card-inverse card-primary">';
+            /** @namespace locationPoint.display_name */
             html += '      <div class="card-header" id="header">' + locationPoint.display_name + '</div>';
             html += '      <div class="card-block" id="location-map-' + index + '">';
+            /** @namespace locationPoint.lon */
             html += '        <img class="img-fluid" src="inc/StaticMapLite.php?center=' + locationPoint.lat + ',' + locationPoint.lon + '&zoom=14&size=380x150&maptype=mapnik&markers=' + locationPoint.lat + ',' + locationPoint.lon + ',ol-marker" width="380" height="150" />';
             html += '      </div>';
             html += '      <div class="card-footer">';

@@ -1,14 +1,10 @@
 <?php
-    // JSon request format is :
-    //[{"collectionType":"activities","date":"2015-03-06","ownerId":"269VLG","ownerType":"user","subscriptionId":"1"}]
+
+    require_once(dirname(__FILE__) . "/lib/autoloader.php");
 
     use Core\Core;
 
     date_default_timezone_set('Europe/London');
-
-    if (!function_exists("nxr")) {
-        require_once(dirname(__FILE__) . "/inc/functions.php");
-    }
 
     header('Cache-Control: no-cache, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -17,7 +13,7 @@
     // read JSon input
     $data = json_decode(file_get_contents('php://input'));
 
-    //    nxr(print_r($data, true));
+    //    nxr(0, print_r($data, true));
 
     $logMsg = '';
 
@@ -41,7 +37,6 @@
                         $upLoadedRequest->collectionType = "nomie_trackers";
                     }
 
-                    require_once(dirname(__FILE__) . "/inc/Core.php");
                     $fitbitApp = new Core();
                     if ($fitbitApp->isUser($upLoadedRequest->ownerId)) {
                         $cooldown = $fitbitApp->getUserCooldown($upLoadedRequest->ownerId);
@@ -135,17 +130,16 @@
                 }
             }
         } else if (isset($data) and is_object($data)) {
-            require_once(dirname(__FILE__) . "/inc/Core.php");
             $fitbitApp = new Core();
             if ($fitbitApp->isUser($data->ownerId)) {
-                nxr($data->ownerId . " is a valid user");
+                nxr(0, $data->ownerId . " is a valid user");
                 $api = $fitbitApp->getDatabase()->get($fitbitApp->getSetting("db_prefix", null, false) . "users", "api",
                     array("fuid" => $data->ownerId));
                 if (isset($api)) {
                     if (hash('sha256', $api . date("Y-m-d H:i")) == $data->auth) {
-                        nxr(" Valid API Access Key");
+                        nxr(1, "Valid API Access Key");
                         foreach ($data->unit as $unit) {
-                            nxr("  Recording " . $unit->key . " as " . $unit->value);
+                            nxr(2, "Recording " . $unit->key . " as " . $unit->value);
                             $fitbitApp->getDatabase()->insert($fitbitApp->getSetting("db_prefix", null,
                                     false) . "units", array(
                                 "user"  => $data->ownerId,
@@ -158,17 +152,17 @@
                             ));
                         }
                     } else {
-                        nxr(" Invalid API");
-                        nxr("  Expected: "
+                        nxr(1, "Invalid API");
+                        nxr(2, "Expected: "
                             . substr(hash('sha256', $api . date("Y-m-d H:i")), 0, 5)
                             . "......................................................"
                             . substr(hash('sha256', $api . date("Y-m-d H:i")), -5));
-                        nxr("  Received: " . $data->auth);
+                        nxr(2, "Received: " . $data->auth);
                         echo date("Y-m-d H:i:s") . ":: Invalid API";
                         die();
                     }
                 } else {
-                    nxr(" No API Access");
+                    nxr(1, "No API Access");
                     echo date("Y-m-d H:i:s") . ":: No API Access";
                     die();
                 }
@@ -179,7 +173,7 @@
     }
 
     if (isset($logMsg) && $logMsg != "") {
-        nxr("New API request: " . $logMsg);
+        nxr(0, "New API request: " . $logMsg);
     }
 
     header('HTTP/1.0 204 No Content');

@@ -8,15 +8,23 @@ $(function () {
 
         $.each(devices, function (i, device) {
             html += '<tr>';
+            /** @namespace device.deviceVersion */
+            /** @namespace device.imageSmall */
             html += '    <td><img class="hidden-sm-down" src="../' + device.imageSmall + '" style="width: 35%;height: 35%;"><span class="hidden-md-up">' + device.deviceVersion + '<br />' + device.type + '</span></td>';
+            /** @namespace device.alertTime */
+            //noinspection JSValidateTypes
             if (device.alertTime === 1) {
+                /** @namespace device.lastSyncTime */
                 html += '    <td class="badge-warning">' + device.lastSyncTime + '</td>';
             } else {
                 html += '    <td>' + device.lastSyncTime + '</td>';
             }
+            /** @namespace device.battery */
+            /** @namespace device.charges */
             html += '    <td>' + device.battery + ' <br /> Charged ' + device.charges + ' times.</td>';
             html += '</tr>';
 
+            /** @namespace device.precentage */
             if (device.precentage < 50) {
                 html += '<tr class="badge-danger">';
             } else {

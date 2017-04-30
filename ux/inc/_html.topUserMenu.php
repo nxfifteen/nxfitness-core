@@ -1,4 +1,5 @@
 <?php
+    /** @noinspection PhpUndefinedMethodInspection */
     $userProfile = $App->getUserProfile();
 
     if (array_key_exists("HeaderNotificationBar",
@@ -6,11 +7,13 @@
     ) {
         $HeaderNotificationBar = $_SESSION['HeaderNotificationBar'];
 
-        nxr(" * HeaderNotificationBar taken from session");
+        nxr(1, "* HeaderNotificationBar taken from session");
     } else {
 
         $HeaderNotificationBar = array();
+        /** @noinspection PhpUndefinedMethodInspection */
         if (!$App->getNxFit()->isUserOAuthAuthorised($_COOKIE['_nx_fb_usr'])) {
+            /** @noinspection PhpUndefinedMethodInspection, HtmlUnknownTarget */
             array_push($HeaderNotificationBar, $App->getThemeWidgets("HeaderNotificationBar", array(
                 "msg"     => "<a href=\"../authorise\">Fitbit OAuth Setup Required</a>",
                 "urgency" => "danger",
@@ -18,6 +21,7 @@
             )));
         } else {
             if (isset($userProfile['cooldown']) && strtotime($userProfile['cooldown']) > strtotime(date("Y-m-d H:i:s"))) {
+                /** @noinspection PhpUndefinedMethodInspection */
                 array_push($HeaderNotificationBar, $App->getThemeWidgets("HeaderNotificationBar", array(
                     "msg"     => "Sync Status - Fitbit API limit reached. ",
                     "urgency" => "danger",
@@ -32,6 +36,7 @@
     }
 ?>
 
+<!--suppress HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget -->
 <ul class="nav navbar-nav ml-auto">
 
     <li class="nav-item d-md-down-none">

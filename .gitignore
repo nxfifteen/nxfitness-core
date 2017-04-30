@@ -26,3 +26,7 @@ vendor
 /dev/git-bump-version/
 /dev/phpunit.phar
 /dev/composer.phar
+/dev/.lastChangeLog
+/binaries/
+/nxfitbit.iml
+/ux/sites.json

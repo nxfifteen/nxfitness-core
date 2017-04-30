@@ -24,6 +24,8 @@ $(function () {
 
             var valueKilocalories = $('#valueKilocalories').find('.value');
             if (valueKilocalories.length > 0) {
+                /** @namespace data.results.food.summary.calories */
+                /** @namespace data.results.food */
                 valueKilocalories.html(data.results.food.summary.calories);
             }
 
@@ -34,21 +36,25 @@ $(function () {
 
             var valueFiber = $('#valueFiber').find('.value');
             if (valueFiber.length > 0) {
+                /** @namespace data.results.food.summary.fiber */
                 valueFiber.html(data.results.food.summary.fiber);
             }
 
             var valueCarbs = $('#valueCarbs').find('.value');
             if (valueCarbs.length > 0) {
+                /** @namespace data.results.food.summary.carbs */
                 valueCarbs.html(data.results.food.summary.carbs);
             }
 
             var valueSodium = $('#valueSodium').find('.value');
             if (valueSodium.length > 0) {
+                /** @namespace data.results.food.summary.sodium */
                 valueSodium.html(data.results.food.summary.sodium);
             }
 
             var valueProtein = $('#valueProtein').find('.value');
             if (valueProtein.length > 0) {
+                /** @namespace data.results.food.summary.protein */
                 valueProtein.html(data.results.food.summary.protein);
             }
 
@@ -160,6 +166,7 @@ $(function () {
             var mealPieChart = $('#mealPieChart');
             if (mealPieChart.length > 0) {
                 var PieChartData = [];
+                /** @namespace data.results.food.meals */
                 $.each(data.results.food.meals, function (meal, breakdown) {
                     PieChartData[PieChartData.length] = {
                         label: meal,
@@ -240,6 +247,9 @@ $(function () {
 
             var consumptionLevel = $('.consLevel');
             if (consumptionLevel.length > 0) {
+                /** @namespace data.results.water.liquid */
+                /** @namespace data.results.water.goal */
+                /** @namespace data.results.water */
                 consumptionLevel.html(data.results.water.liquid + '/' + data.results.water.goal);
                 var prec = (data.results.water.liquid / data.results.water.goal) * 100;
                 consumptionLevel.css({"height": prec + "%"});

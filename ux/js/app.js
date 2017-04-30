@@ -160,6 +160,7 @@ function setUpUrl(url) {
 
 function loadPage(url) {
 
+    //noinspection JSUnusedGlobalSymbols
     $.ajax({
         type: 'GET',
         url: $.subPagesDirectory + url,
@@ -245,6 +246,7 @@ $(document).ready(function ($) {
             if (timesRun === 5) {
                 clearInterval(interval);
             }
+            //noinspection JSUnresolvedFunction
             window.dispatchEvent(new Event('resize'));
         }, 62.5);
     }

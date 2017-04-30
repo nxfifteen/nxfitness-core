@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--suppress XmlUnboundNsPrefix, XmlUnboundNsPrefix -->
 <phpunit verbose="true">
     <testsuites>
         <testsuite name="Core Test Suite">
-            <directory>tests</directory>
+            <directory>inc/Core/Tests</directory>
         </testsuite>
     </testsuites>
     <logging>

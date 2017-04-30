@@ -1,0 +1,18 @@
+#!/bin/bash
+CI_COMMIT_REF_NAME="$1"
+CI_ENVIRONMENT_SLUG="$2"
+
+eval $(ssh-agent -s)
+ssh-add /home/nxad/.ssh/id_rsa_deploy
+
+if [ -d "/home/nxad/public_html/api/fitbit" ]; then
+    cd "/home/nxad/public_html/api/fitbit"
+    git checkout .
+    git checkout master
+    git pull
+
+    /home/nxad/bin/composer update --no-dev
+
+    php5 ./get.php --user=269VLG --get=nomie_trackers
+fi
+

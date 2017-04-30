@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--suppress XmlUnboundNsPrefix, XmlUnboundNsPrefix -->
 <phpdoc>
     <title>NxFITNESS Core Documentation</title>
     <parser>
@@ -12,6 +13,7 @@
         <target>docs/development</target>
     </transformer>
     <transformations>
+        <template name="xml" />
         <template name="responsive-twig"/>
     </transformations>
     <files>
@@ -19,5 +21,6 @@
         <ignore>admin/*</ignore>
         <ignore>library/*</ignore>
         <ignore>vendor/*</ignore>
+        <ignore>binaries/*</ignore>
     </files>
 </phpdoc>

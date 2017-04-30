@@ -1,4 +1,7 @@
 <?php
+
+    require_once(dirname(__FILE__) . "/lib/autoloader.php");
+
     use Core\Core;
 
     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
@@ -11,31 +14,6 @@
     if ($_SERVER['SERVER_ADDR'] != "10.1.1.1" && $_SERVER["HTTPS"] != "on") {
         header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
         exit();
-    }
-
-    if (!function_exists("nxr_destroy_session")) {
-        function nxr_destroy_session()
-        {
-            // Unset all of the session variables.
-            $_SESSION = array();
-
-            // If it's desired to kill the session, also delete the session cookie.
-            // Note: This will destroy the session, and not just the session data!
-            if (ini_get("session.use_cookies")) {
-                $params = session_get_cookie_params();
-                setcookie(session_name(), '', time() - 42000,
-                    $params["path"], $params["domain"],
-                    $params["secure"], $params["httponly"]
-                );
-            }
-
-            // Finally, destroy the session.
-            session_destroy();
-        }
-    }
-
-    if (!function_exists("nxr")) {
-        require_once(dirname(__FILE__) . "/inc/functions.php");
     }
 
     if (!defined('DEBUG_MY_PROJECT')) {
@@ -68,9 +46,9 @@
     }
     $sysPath = str_ireplace($_SESSION['core_config']['url'], "", $_SESSION['core_config']['http/']);
 
-    nxr("inputURL: " . $inputURL);
-    nxr("sysPath: " . $sysPath);
-    //nxr("sysPath: " . $_SERVER['']);
+    nxr(0, "inputURL: " . $inputURL);
+    nxr(0, "sysPath: " . $sysPath);
+    //nxr(0, "sysPath: " . $_SERVER['']);
 
     if ($sysPath != "/") {
         $inputURL = str_replace($sysPath, "", $inputURL);
@@ -82,14 +60,13 @@
     $inputURL      = explode("/", $inputURL);
     $url_namespace = $inputURL[0];
 
-    nxr("Namespace Called: " . $url_namespace);
+    nxr(0, "Namespace Called: " . $url_namespace);
 
     if ($url_namespace == "register" && !array_key_exists("_nx_fb_usr", $_COOKIE)) {
         // Authorise a user against Fitbit's OAuth AIP
-        nxr("New user registration started");
+        nxr(0, "New user registration started");
 
         // Setup the App
-        require_once(dirname(__FILE__) . "/inc/Core.php");
         $NxFitbit = new Core();
 
         // Sent the user off too Fitbit to authenticate
@@ -132,7 +109,6 @@
         }
 
         // Setup the App
-        require_once(dirname(__FILE__) . "/inc/Core.php");
         $NxFitbit = new Core();
 
         // We're even talking about a valid user right?
@@ -202,7 +178,6 @@
         } else {
             try {
                 // Setup the App
-                require_once(dirname(__FILE__) . "/inc/Core.php");
                 $NxFitbit = new Core();
 
                 // Sent the user off too Fitbit to authenticate
@@ -228,7 +203,7 @@
 
                 // Check again that this really is one of our users
                 if ($NxFitbit->isUser($resourceOwner->getId())) {
-                    nxr("User OAuth credentials installed");
+                    nxr(0, "User OAuth credentials installed");
 
                     // Update the users new keys
                     $NxFitbit->setUserOAuthTokens($resourceOwner->getId(), $accessToken);
@@ -238,7 +213,7 @@
                     exit();
 
                 } else {
-                    nxr(" OAuth return for new user: " . $resourceOwner->getId());
+                    nxr(1, "OAuth return for new user: " . $resourceOwner->getId());
 
                     $pre_auth = $NxFitbit->getSetting("owners_friends");
                     $pre_auth = explode(",", $pre_auth);
@@ -250,11 +225,11 @@
                         $newUserProfile = $NxFitbit->getFitbitAPI($newUserName)->pullBabel('user/-/profile.json', true);
 
                         if ($NxFitbit->getFitbitAPI($newUserName)->createNewUser($newUserProfile->user)) {
-                            nxr("  User sent to new password screen");
+                            nxr(2, "User sent to new password screen");
                             header("Location: " . $_SESSION['core_config']['http/admin'] . "/views/pages/register.php?usr=" . $newUserName);
                         }
                     } else {
-                        nxr("  Non Friend registration: " . $resourceOwner->getId());
+                        nxr(2, "Non Friend registration: " . $resourceOwner->getId());
                         header("Location: " . $_SESSION['core_config']['http/admin'] . "/?err=500");
                     }
 
@@ -275,7 +250,7 @@
         }
 
     } else if ($url_namespace == "webhook" || $url_namespace == "service") {
-        nxr("Namespace Called: " . $url_namespace);
+        nxr(0, "Namespace Called: " . $url_namespace);
 
         if (is_array($_GET) && array_key_exists("verify", $_GET)) {
             $config = array();
@@ -288,14 +263,14 @@
                 header('Content-type: text/plain');
                 header('HTTP/1.0 204 No Content');
 
-                nxr("Valid subscriber request - " . $url_namespace);
+                nxr(0, "Valid subscriber request - " . $url_namespace);
             } else {
                 header('Cache-Control: no-cache, must-revalidate');
                 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
                 header('HTTP/1.0 404 Not Found');
 
-                nxr("Invalid subscriber request - '" . $_GET['verify'] . "' - " . $url_namespace);
-                nxr(print_r($config['api_subValidity'], true));
+                nxr(0, "Invalid subscriber request - '" . $_GET['verify'] . "' - " . $url_namespace);
+                nxr(0, print_r($config['api_subValidity'], true));
             }
 
         } else {
@@ -309,7 +284,7 @@
         header('HTTP/1.0 404 Not Found');
 
         // If we're debugging things print out the unknown namespace
-        nxr("Namespace Called: " . $url_namespace);
+        nxr(0, "Namespace Called: " . $url_namespace);
 
     } else {
         // When we don't know what to do put the user over to the user interface screens

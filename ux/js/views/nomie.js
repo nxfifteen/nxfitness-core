@@ -3,11 +3,15 @@ $(function () {
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieDashboard", function (data) {
 
+        /** @namespace data.results.trackers */
         $('#trackerCount').html(data.results.trackers);
         $('#eventCount').html(data.results.events);
 
+        /** @namespace data.results.spread.events.positive */
+        /** @namespace data.results.spread */
         $('#positiveEvents').html(data.results.spread.events.positive);
         $('#negativeEvents').html(data.results.spread.events.negative);
+        /** @namespace data.results.spread.events.netural */
         $('#neutralEvents').html(data.results.spread.events.netural);
 
         var splitPieChart = $('#splitPieChart');
@@ -59,19 +63,21 @@ $(function () {
     });
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieScoreGraph&period=last92", function (data) {
-        var i, dataSet1, dataSet2, dataSet3, dataSet4, dataTimeScale, aniDuration, pointRadius, weight_units;
+        var dataSet2, dataSet3, dataSet4, aniDuration;
 
         var scoreGraph = $('#scoreGraph');
         if (scoreGraph.length > 0) {
             var $progress = $('#animationScoreProgress');
-            var timeFormat = 'MM/DD/YYYY';
+
 
             $progress.show();
 
             aniDuration = 3000;
 
             dataSet2 = data.results.graph.positive;
+            /** @namespace data.results.graph */
             dataSet3 = data.results.graph.negative;
+            /** @namespace data.results.graph.neutral */
             dataSet4 = data.results.graph.neutral;
 
             var configWeight = {
@@ -105,6 +111,7 @@ $(function () {
             };
 
             var ctx = document.getElementById("scoreGraph");
+            //noinspection JSUnusedLocalSymbols,JSUnusedLocalSymbols
             var weightChart = new Chart(ctx, {
                 type: 'line',
                 data: configWeight,
@@ -125,7 +132,7 @@ $(function () {
                         duration: aniDuration,
                         onProgress: function (animation) {
                             $progress.attr({
-                                value: animation.animationObject.currentStep / animation.animationObject.numSteps,
+                                value: animation.animationObject.currentStep / animation.animationObject.numSteps
                             });
                         },
                         onComplete: function (animation) {

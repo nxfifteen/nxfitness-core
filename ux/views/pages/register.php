@@ -15,6 +15,7 @@
     }
 ?>
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget, HtmlUnknownTarget -->
 <html lang="en">
 
 <head>
@@ -75,7 +76,7 @@
                                 echo " value=\"" . $_GET['usr'] . "\"";
                             } else {
                                 echo " placeholder=\"User Name\"";
-                            } ?>>
+                            } ?> title="User Name">
                         </div>
 
                         <div class="input-group mb-3">
@@ -84,7 +85,7 @@
                                 echo " value=\"" . $_GET['eml'] . "\"";
                             } else {
                                 echo " placeholder=\"Email\"";
-                            } ?> name="email" autofocus>
+                            } ?> name="email" title="Email Address" autofocus>
                         </div>
 
                         <div class="input-group mb-3">
