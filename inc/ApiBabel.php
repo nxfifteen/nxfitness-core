@@ -3000,25 +3000,6 @@
         }
 
         /**
-         * @deprecated Use getLibrary() instead
-         * @return Fitbit
-         */
-        public function getFitbitLibrary()
-        {
-            return $this->getLibrary();
-        }
-
-        /**
-         * @deprecated Use setLibrary() instead
-         *
-         * @param Fitbit $fitbitapi
-         */
-        public function setFitbitapi($fitbitapi)
-        {
-            $this->setLibrary($fitbitapi);
-        }
-
-        /**
          * @return Fitbit
          */
         public function getLibrary()
