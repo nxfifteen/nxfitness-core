@@ -1,14 +1,10 @@
 <?php
-    // JSon request format is :
-    //[{"collectionType":"activities","date":"2015-03-06","ownerId":"269VLG","ownerType":"user","subscriptionId":"1"}]
+
+    require_once(dirname(__FILE__) . "/lib/autoloader.php");
 
     use Core\Core;
 
     date_default_timezone_set('Europe/London');
-
-    if (!function_exists("nxr")) {
-        require_once(dirname(__FILE__) . "/inc/functions.php");
-    }
 
     header('Cache-Control: no-cache, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -41,7 +37,6 @@
                         $upLoadedRequest->collectionType = "nomie_trackers";
                     }
 
-                    require_once(dirname(__FILE__) . "/inc/Core.php");
                     $fitbitApp = new Core();
                     if ($fitbitApp->isUser($upLoadedRequest->ownerId)) {
                         $cooldown = $fitbitApp->getUserCooldown($upLoadedRequest->ownerId);
@@ -135,7 +130,6 @@
                 }
             }
         } else if (isset($data) and is_object($data)) {
-            require_once(dirname(__FILE__) . "/inc/Core.php");
             $fitbitApp = new Core();
             if ($fitbitApp->isUser($data->ownerId)) {
                 nxr(0, $data->ownerId . " is a valid user");

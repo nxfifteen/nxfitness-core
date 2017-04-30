@@ -2,6 +2,9 @@
 
     namespace Core;
 
+    require_once(dirname(__FILE__) . "/../autoloader.php");
+
+    use Core\Analytics\UserAnalytics;
     use DateInterval;
     use DatePeriod;
     use DateTime;
@@ -49,13 +52,11 @@
          */
         public function __construct($userFid)
         {
-            require_once(dirname(__FILE__) . "/Core.php");
             $this->setAppClass(new Core());
             $this->setUserID($userFid);
             $this->setForCache(true);
 
             if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
-                require_once(dirname(__FILE__) . "/UserAnalytics.php");
                 $this->setTracking(new UserAnalytics($this->getAppClass()->getSetting("trackingId"),
                     $this->getAppClass()->getSetting("trackingPath")));
             }

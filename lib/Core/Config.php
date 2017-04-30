@@ -2,6 +2,8 @@
 
     namespace Core;
 
+    require_once(dirname(__FILE__) . "/../autoloader.php");
+
     use Medoo\Medoo;
 
     /**
@@ -42,7 +44,7 @@
             ) {
                 $this->settings = $_SESSION['core_config'];
             } else {
-                require_once(dirname(__FILE__) . "/../config.dist.php");
+                require_once(dirname(__FILE__) . "/../../config.dist.php");
                 if (isset($config)) {
                     $_SESSION['core_config'] = $config;
                     $this->settings          = $_SESSION['core_config'];

@@ -1,6 +1,9 @@
 <?php
+
+    require_once(dirname(__FILE__) . "/lib/autoloader.php");
+
     use Core\DataReturn;
-    use Core\RewardsMinecraft;
+    use Core\Rewards\RewardsMinecraft;
 
     header('Access-Control-Allow-Origin: https://wp.dev.psi.nxfifteen.me.uk');
     header('Cache-Control: no-cache, must-revalidate');
@@ -102,7 +105,6 @@
     } else if (array_key_exists("wmc_key", $_GET)) {
         $start = microtime(true);
 
-        require_once(dirname(__FILE__) . "/inc/RewardsMinecraft.php");
         $RewardsMinecraft = new RewardsMinecraft();
 
         $json = $RewardsMinecraft->queryRewards();
@@ -127,7 +129,6 @@
      */
     function query_api()
     {
-        require_once(dirname(__FILE__) . "/inc/DataReturn.php");
         $dataReturnClass = new DataReturn($_GET['user']);
         if ($dataReturnClass->isUser()) {
             $json = $dataReturnClass->returnUserRecords($_GET);

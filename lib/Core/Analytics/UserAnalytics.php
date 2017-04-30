@@ -1,6 +1,8 @@
 <?php
 
-    namespace Core;
+    namespace Core\Analytics;
+
+    require_once(dirname(__FILE__) . "/../../autoloader.php");
 
     /**
      * tracking

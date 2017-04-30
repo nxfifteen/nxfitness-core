@@ -8,7 +8,6 @@
     define("CORE_UX", $_SESSION['CORE_UX']);
     define("CORE_ROOT", $_SESSION['CORE_ROOT']);
 
-    require_once(dirname(__FILE__) . "/../../_class/NxFitAdmin.php");
     $App = new NxFitAdmin($_COOKIE['_nx_fb_usr']);
 
     echo "var localWeatherImage = '" . $App->getLocalWeatherImage() . "';";

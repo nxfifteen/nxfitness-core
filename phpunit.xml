@@ -3,7 +3,7 @@
 <phpunit verbose="true">
     <testsuites>
         <testsuite name="Core Test Suite">
-            <directory>tests</directory>
+            <directory>inc/Core/Tests</directory>
         </testsuite>
     </testsuites>
     <logging>

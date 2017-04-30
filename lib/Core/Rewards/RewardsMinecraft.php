@@ -1,12 +1,11 @@
 <?php
 
-    namespace Core;
+    namespace Core\Rewards;
 
+    require_once(dirname(__FILE__) . "/../../autoloader.php");
+
+    use Core\Core;
     use DateTime;
-
-    if (!function_exists("nxr")) {
-        require_once(dirname(__FILE__) . "/functions.php");
-    }
 
     /**
      * RewardsMinecraft
@@ -54,7 +53,6 @@
          */
         public function __construct($user = null)
         {
-            require_once(dirname(__FILE__) . "/Core.php");
             $this->setAppClass(new Core());
             $this->AwardsGiven   = array();
             $this->createRewards = true;

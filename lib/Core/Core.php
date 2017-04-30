@@ -1,25 +1,20 @@
 <?php
 
     namespace Core;
-    
+
+    require_once(dirname(__FILE__) . "/../autoloader.php");
+    require_once(dirname(__FILE__) . "/../../vendor/autoload.php");
+    require_once(dirname(__FILE__) . "/../../config.def.dist.php");
+
+    use Core\Analytics\ErrorRecording;
+    use Core\Babel\ApiBabel;
+    use Core\Deploy\Upgrade;
     use DateTime;
     use League\OAuth2\Client\Token\AccessToken as AccessToken;
     use Medoo\Medoo;
 
     date_default_timezone_set('Europe/London');
     error_reporting(E_ALL);
-
-    /**
-     * @param $msg
-     */
-    if (!function_exists("nxr")) {
-        require_once(dirname(__FILE__) . "/functions.php");
-    }
-
-    // composer require djchen/oauth2-fitbit
-    require_once(dirname(__FILE__) . "/../config.def.dist.php");
-    require_once(dirname(__FILE__) . "/../vendor/autoload.php");
-    require_once(dirname(__FILE__) . "/ErrorRecording.php");
 
     /**
      * Main app class
@@ -58,7 +53,6 @@
          */
         public function __construct()
         {
-            require_once(dirname(__FILE__) . "/Config.php");
             $this->setSettings(new Config());
 
             /** @noinspection PhpUndefinedClassInspection */
@@ -76,7 +70,6 @@
             $installedVersion = $this->getSetting("version", "0.0.0.1", true);
             if ($installedVersion != APP_VERSION) {
                 nxr(0, "Installed version $installedVersion and should be " . APP_VERSION);
-                require_once(dirname(__FILE__) . "/upgrade.php");
                 $dataReturnClass = new Upgrade($this);
 
                 echo "Upgrading from " . $dataReturnClass->getInstallVersion() . " to " . $dataReturnClass->getInstallingVersion() . ". ";
@@ -269,7 +262,6 @@
         public function getFitbitAPI($userFitbitId = "", $reset = false)
         {
             if (is_null($this->fitbitapi) || $reset) {
-                require_once(dirname(__FILE__) . "/ApiBabel.php");
                 if ($userFitbitId == $this->getSetting("ownerFuid", null, false)) {
                     $this->fitbitapi = new ApiBabel($this, true);
                 } else {

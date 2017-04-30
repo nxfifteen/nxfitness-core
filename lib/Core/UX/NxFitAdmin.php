@@ -1,15 +1,13 @@
 <?php
 
-    namespace UX;
+    namespace Core\UX;
+
+    require_once(dirname(__FILE__) . "/../../autoloader.php");
 
     use Core\Config;
     use Core\Core;
     use DateTime;
     use Medoo\Medoo;
-
-    if (!function_exists("nxr")) {
-        require_once(dirname(__FILE__) . "/../../inc/functions.php");
-    }
 
     /**
      * Class NxFitAdmin
@@ -57,16 +55,12 @@
             ) {
                 $this->setConfig($_SESSION['admin_config']);
             } else {
-                /** @noinspection PhpIncludeInspection */
-                require_once(CORE_UX . "/config.inc.php");
                 if (isset($config)) {
                     $_SESSION['admin_config'] = $config;
                     $this->setConfig($_SESSION['admin_config']);
                 }
             }
 
-            /** @noinspection PhpIncludeInspection */
-            require_once(CORE_ROOT . "/inc/Core.php");
             $this->nxFit = new Core();
 
             /** @noinspection PhpUndefinedClassInspection */

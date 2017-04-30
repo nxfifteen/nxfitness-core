@@ -1,7 +1,10 @@
 <?php
 
-    namespace Core;
+    namespace Core\Analytics;
 
+    require_once(dirname(__FILE__) . "/../../autoloader.php");
+
+    use Core\Core;
     use Exception;
     use Medoo\Medoo;
     use Raven_Autoloader;

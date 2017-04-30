@@ -1,7 +1,11 @@
 <?php
 
-    namespace Core;
+    namespace Core\Babel;
 
+    require_once(dirname(__FILE__) . "/../../autoloader.php");
+
+    use Core\Core;
+    use Core\Rewards\RewardsMinecraft;
     use couchClient;
     use couchNotFoundException;
     use DateInterval;
@@ -9,8 +13,8 @@
     use DateTime;
     use djchen\OAuth2\Client\Provider\Fitbit;
     use Exception;
-    use \League\OAuth2\Client\Provider\Exception\IdentityProviderException as IdentityProviderException;
-    use \League\OAuth2\Client\Token\AccessToken as AccessToken;
+    use League\OAuth2\Client\Provider\Exception\IdentityProviderException as IdentityProviderException;
+    use League\OAuth2\Client\Token\AccessToken as AccessToken;
     use SimpleXMLElement;
 
     define("FITBIT_COM", "https://api.fitbit.com");
@@ -1455,8 +1459,8 @@
                             "LINE"   => __LINE__
                         ));
 
-                    if (!file_exists(dirname(__FILE__) . "/../images/avatars/" . $this->getActiveUser() . ".jpg")) {
-                        file_put_contents(dirname(__FILE__) . "/../images/avatars/" . $this->getActiveUser() . ".jpg",
+                    if (!file_exists(dirname(__FILE__) . "/../../../images/avatars/" . $this->getActiveUser() . ".jpg")) {
+                        file_put_contents(dirname(__FILE__) . "/../../../images/avatars/" . $this->getActiveUser() . ".jpg",
                             fopen((String)$userProfile['avatar150'], 'r'));
                     }
 
@@ -1584,7 +1588,7 @@
                                     ));
                             }
 
-                            if (!file_exists(dirname(__FILE__) . "/../images/devices/" . str_ireplace(" ", "",
+                            if (!file_exists(dirname(__FILE__) . "/../../../images/devices/" . str_ireplace(" ", "",
                                     $device->deviceVersion) . ".png")
                             ) {
                                 $this->getAppClass()->getErrorRecording()->captureMessage("Missing Device Image",
@@ -1680,7 +1684,7 @@
             $isAllowed = $this->isAllowed("badges");
             if (!is_numeric($isAllowed)) {
                 if ($this->isTriggerCooled("badges")) {
-                    $badgeFolder = dirname(__FILE__) . "/../images/badges/";
+                    $badgeFolder = dirname(__FILE__) . "/../../../images/badges/";
                     if (file_exists($badgeFolder) AND is_writable($badgeFolder)) {
 
                         $userBadges = $this->pullBabel('user/' . $this->getActiveUser() . '/badges.json', true);
@@ -1820,9 +1824,8 @@
 
                         return $userBadges;
                     } else {
-                        nxr(0, "Missing: $badgeFolder");
-
                         if (!file_exists($badgeFolder)) {
+                            nxr(0, "Missing: $badgeFolder");
                             $this->getAppClass()->getErrorRecording()->captureMessage("Missing badge folder",
                                 array('file_system'), array(
                                     'level' => 'info',
@@ -1833,6 +1836,7 @@
                                     )
                                 ));
                         } else if (!is_writable($badgeFolder)) {
+                            nxr(0, "Unwritable: $badgeFolder");
                             if (get_current_user() == posix_getpwuid(fileowner($badgeFolder))['name']) {
                                 $this->getAppClass()->getErrorRecording()->captureMessage("Unable to write too badge folder",
                                     array('file_system'), array(
@@ -2164,7 +2168,7 @@
                 ));
             }
 
-            $cache_dir   = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+            $cache_dir   = dirname(__FILE__) . '/../../../' . 'cache' . DIRECTORY_SEPARATOR;
             $cache_files = scandir($cache_dir);
             foreach ($cache_files as $file) {
                 if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file) && substr($file, 0,
@@ -3027,7 +3031,6 @@
                     nxr(0, "  Users is not a Minecraft player");
                     $this->RewardsSystem = null;
                 } else {
-                    require_once(dirname(__FILE__) . "/RewardsMinecraft.php");
                     $this->RewardsSystem = new RewardsMinecraft($user);
                     nxr(0, "  Reward system ready");
                 }

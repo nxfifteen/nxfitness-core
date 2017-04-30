@@ -1,12 +1,17 @@
 <?php
 
-    namespace Core;
+    namespace Core\Deploy;
 
+    require_once(dirname(__FILE__) . "/../../autoloader.php");
+
+    use Core\Analytics\ErrorRecording;
+    use Core\Babel\ApiBabel;
+    use Core\Config;
+    use Core\Core;
     use DateTime;
     use Medoo\Medoo;
 
-    require_once(dirname(__FILE__) . "/../config.def.dist.php");
-    require_once(dirname(__FILE__) . "/Core.php");
+    require_once(dirname(__FILE__) . "/../../../config.def.dist.php");
 
     /**
      * Upgrade
@@ -75,7 +80,6 @@
          */
         public function __construct($appClass = null)
         {
-            require_once(dirname(__FILE__) . "/Config.php");
             $this->setSettings(new Config());
 
             if (is_null($appClass)) {

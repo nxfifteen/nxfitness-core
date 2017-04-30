@@ -1,4 +1,7 @@
 <?php
+
+    require_once(dirname(__FILE__) . "/../../lib/autoloader.php");
+
     use Core\Core;
 
     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
@@ -7,7 +10,6 @@
     header('Cache-Control: post-check=0, pre-check=0', false);
     header('Pragma: no-cache');
 
-    require_once(dirname(__FILE__) . "/../../inc/Core.php");
     $fitbitApp = new Core();
 
     if (array_key_exists("fuid", $_POST)) {

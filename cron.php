@@ -1,5 +1,7 @@
 <?php
 
+    require_once(dirname(__FILE__) . "/lib/autoloader.php");
+
     use Core\Core;
 
     define('IS_CRON_RUN', true);
@@ -14,11 +16,6 @@
      * @license   http://stuart.nx15.at/mit/2015 MIT
      */
 
-    if (!function_exists("nxr")) {
-        require_once(dirname(__FILE__) . "/inc/functions.php");
-    }
-
-    require_once(dirname(__FILE__) . "/inc/Core.php");
     $fitbitApp = new Core();
 
     $end              = time() + 20;

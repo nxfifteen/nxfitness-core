@@ -1,5 +1,8 @@
 <?php
-    use UX\NxFitAdmin;
+
+    require_once(dirname(__FILE__) . "/../lib/autoloader.php");
+
+    use Core\UX\NxFitAdmin;
 
     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
@@ -8,7 +11,7 @@
     header('Pragma: no-cache');
 
     if (!function_exists("nxr") || !function_exists("nxr_destroy_session")) {
-        require_once(dirname(__FILE__) . "/../inc/functions.php");
+        require_once(dirname(__FILE__) . "/../lib/functions.php");
     }
 
     define("CORE_UX", dirname(__FILE__) . "/");
@@ -92,7 +95,6 @@
         $_SESSION['CORE_UX']   = CORE_UX;
         $_SESSION['CORE_ROOT']    = CORE_ROOT;
 
-        require_once(dirname(__FILE__) . "/_class/NxFitAdmin.php");
         $App = new NxFitAdmin($_COOKIE['_nx_fb_usr']);
         ?>
         <!DOCTYPE html>

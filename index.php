@@ -1,4 +1,7 @@
 <?php
+
+    require_once(dirname(__FILE__) . "/lib/autoloader.php");
+
     use Core\Core;
 
     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
@@ -11,31 +14,6 @@
     if ($_SERVER['SERVER_ADDR'] != "10.1.1.1" && $_SERVER["HTTPS"] != "on") {
         header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
         exit();
-    }
-
-    if (!function_exists("nxr_destroy_session")) {
-        function nxr_destroy_session()
-        {
-            // Unset all of the session variables.
-            $_SESSION = array();
-
-            // If it's desired to kill the session, also delete the session cookie.
-            // Note: This will destroy the session, and not just the session data!
-            if (ini_get("session.use_cookies")) {
-                $params = session_get_cookie_params();
-                setcookie(session_name(), '', time() - 42000,
-                    $params["path"], $params["domain"],
-                    $params["secure"], $params["httponly"]
-                );
-            }
-
-            // Finally, destroy the session.
-            session_destroy();
-        }
-    }
-
-    if (!function_exists("nxr")) {
-        require_once(dirname(__FILE__) . "/inc/functions.php");
     }
 
     if (!defined('DEBUG_MY_PROJECT')) {
@@ -89,7 +67,6 @@
         nxr(0, "New user registration started");
 
         // Setup the App
-        require_once(dirname(__FILE__) . "/inc/Core.php");
         $NxFitbit = new Core();
 
         // Sent the user off too Fitbit to authenticate
@@ -132,7 +109,6 @@
         }
 
         // Setup the App
-        require_once(dirname(__FILE__) . "/inc/Core.php");
         $NxFitbit = new Core();
 
         // We're even talking about a valid user right?
@@ -202,7 +178,6 @@
         } else {
             try {
                 // Setup the App
-                require_once(dirname(__FILE__) . "/inc/Core.php");
                 $NxFitbit = new Core();
 
                 // Sent the user off too Fitbit to authenticate

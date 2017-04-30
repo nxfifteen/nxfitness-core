@@ -1,5 +1,7 @@
 <?php
 
+    require_once(dirname(__FILE__) . "/lib/autoloader.php");
+
     /**
      * Core - Cron commandline tool
      *
@@ -18,7 +20,6 @@
         $_GET[$key] = $value;
     }
 
-    require_once(dirname(__FILE__) . "/inc/Core.php");
     $fitbitApp = new Core();
 
     if ($fitbitApp->isUser($_GET['user'])) {

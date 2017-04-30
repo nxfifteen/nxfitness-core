@@ -1,5 +1,8 @@
 <?php
-    use Core\Upgrade;
+
+    require_once(dirname(__FILE__) . "/lib/autoloader.php");
+
+    use Core\Deploy\Upgrade;
 
     parse_str(implode('&', array_slice($argv, 1)), $argv);
     foreach ($argv as $key => $value) {
@@ -7,7 +10,6 @@
         $_GET[$key] = $value;
     }
 
-    require_once(dirname(__FILE__) . "/inc/upgrade.php");
     $dataReturnClass = new Upgrade();
 
     echo "Upgrading from " . $dataReturnClass->getInstallVersion() . " to " . $dataReturnClass->getInstallingVersion() . ". ";
