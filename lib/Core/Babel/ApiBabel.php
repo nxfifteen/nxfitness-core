@@ -2590,6 +2590,9 @@
             }
         }
 
+        /**
+         * @param $activity
+         */
         private function pullBabelHeartIntraday($activity)
         {
             $isAllowed = $this->isAllowed("heart");
