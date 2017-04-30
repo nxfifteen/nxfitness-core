@@ -112,8 +112,13 @@
 
                     if($conf['verbose'])
                     {
-                        echo '<div>' . __METHOD__ . ': failed to autoload class "' . $path
-                             . $class_path . $ext . '"</div>';
+                        if (!empty($ext)) {
+                            echo '<div>' . __METHOD__ . ': failed to autoload class "' . $path
+                                 . $class_path . $ext . '"</div>';
+                        } else {
+                            echo '<div>' . __METHOD__ . ': failed to autoload class "' . $path
+                                 . $class_path . ' (no ext defined)"</div>';
+                        }
                     }
                 }
             }
