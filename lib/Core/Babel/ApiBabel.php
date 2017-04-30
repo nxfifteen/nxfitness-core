@@ -2397,7 +2397,7 @@
                                     "date[>=]" => $oneWeek,
                                     "date[<=]" => $lastMonday
                                 ),
-                                "ORDER" => "date DESC",
+                                "ORDER" => array("date" => "DESC"),
                                 "LIMIT" => 7
                             ));
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
@@ -2451,7 +2451,7 @@
                                 "date[>=]" => $oneWeek,
                                 "date[<=]" => $lastMonday
                             ),
-                            "ORDER" => "date DESC",
+                            "ORDER" => array("date" => "DESC"),
                             "LIMIT" => 7
                         ));
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
@@ -2522,7 +2522,7 @@
                                     "date[>=]" => $oneWeek,
                                     "date[<=]" => $lastMonday
                                 ),
-                                "ORDER" => "date DESC",
+                                "ORDER" => array("date" => "DESC"),
                                 "LIMIT" => 7
                             ));
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
@@ -2993,7 +2993,7 @@
             $return = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
                     false) . "body", $string, array(
                 "user"  => $user,
-                "ORDER" => "date DESC"
+                "ORDER" => array("date" => "DESC")
             ));
 
             if (!is_numeric($return)) {

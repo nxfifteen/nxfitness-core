@@ -311,7 +311,7 @@
                     return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
                             null, false) . "runlog", "lastrun", array(
                         "user"  => $this->getUserID(),
-                        "ORDER" => "lastrun ASC",
+                        "ORDER" => array("lastrun" => "ASC"),
                         "LIMIT" => 1
                     )));
                 }
@@ -330,7 +330,7 @@
                             "user"     => $this->getUserID(),
                             "activity" => $scope
                         ),
-                        "ORDER" => "lastrun ASC",
+                        "ORDER" => array("lastrun" => "ASC"),
                         "LIMIT" => 1
                     )));
 
@@ -374,7 +374,7 @@
                         $tableName . "date[<=]" => $this->getParamDate(),
                         $tableName . "date[>=]" => $then
                     ),
-                    "ORDER" => $tableName . "date DESC",
+                    "ORDER" => array($tableName . "date" => "DESC"),
                     "LIMIT" => $days
                 );
             } else {
@@ -571,7 +571,7 @@
                         "date[>=]" => $oneWeek,
                         "date[<=]" => $lastMonday
                     ),
-                    "ORDER" => "date DESC",
+                    "ORDER" => array("date" => "DESC"),
                     "LIMIT" => 7
                 ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -1400,7 +1400,7 @@
                     $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                             null, false) . "steps_goals",
                         array('distance', 'floors', 'steps'),
-                        array("user" => $this->getUserID(), "ORDER" => "date DESC"));
+                        array("user" => $this->getUserID(), "ORDER" => array("date" => "DESC")));
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
                         array(
                             "METHOD" => __METHOD__,
@@ -1420,7 +1420,7 @@
                             "user" => $this->getUserID(),
                             "date" => date("Y-m-d")
                         ),
-                        "ORDER" => "date ASC"
+                        "ORDER" => array("date" => "ASC")
                     ));
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
                     "METHOD" => __METHOD__,
@@ -1683,7 +1683,7 @@
                         "date[>=]" => $oneWeek,
                         "date[<=]" => $lastMonday
                     ),
-                    "ORDER" => "date DESC",
+                    "ORDER" => array("date" => "DESC"),
                     "LIMIT" => 7
                 ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -2097,8 +2097,7 @@
                                         false) . "journeys_narrative.miles[<=]" => $user_miles_travelled
                                 ),
                                 "LIMIT" => 1,
-                                "ORDER" => $this->getAppClass()->getSetting("db_prefix", null,
-                                        false) . "journeys_narrative.miles DESC"
+                                "ORDER" => array($this->getAppClass()->getSetting("db_prefix", null, false) . "journeys_narrative.miles" => "DESC")
                             ));
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
                             array(
@@ -2147,8 +2146,7 @@
                                         false) . "journeys_narrative.miles[>=]" => $user_miles_travelled
                                 ),
                                 "LIMIT" => 1,
-                                "ORDER" => $this->getAppClass()->getSetting("db_prefix", null,
-                                        false) . "journeys_narrative.miles ASC"
+                                "ORDER" => array($this->getAppClass()->getSetting("db_prefix", null, false) . "journeys_narrative.miles" => "ASC")
                             ));
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
                             array(
@@ -2374,7 +2372,7 @@
                     false) . "steps", array(
                 'steps',
                 'date'
-            ), array("user" => $this->getUserID(), "ORDER" => "steps DESC"));
+            ), array("user" => $this->getUserID(), "ORDER" => array("steps" => "DESC")));
             array_push($returnStats["max"],
                 $his . " highest step count, totalling " . number_format($dbMaxSteps['steps'],
                     0) . ", for a day was on " . date("jS F, Y", strtotime($dbMaxSteps['date'])) . ".");
@@ -2383,7 +2381,7 @@
                     null, false) . "steps", array(
                 'distance',
                 'date'
-            ), array("user" => $this->getUserID(), "ORDER" => "distance DESC"));
+            ), array("user" => $this->getUserID(), "ORDER" => array("distance" => "DESC")));
             if ($dbMaxDistance['date'] == $dbMaxSteps['date']) {
                 $returnStats["max"][(count($returnStats["max"]) - 1)] .= " That's an impressive " . number_format($dbMaxDistance['distance'],
                         0) . " miles.";
@@ -2397,7 +2395,7 @@
                     false) . "steps", array(
                 'floors',
                 'date'
-            ), array("user" => $this->getUserID(), "ORDER" => "floors DESC"));
+            ), array("user" => $this->getUserID(), "ORDER" => array("floors" => "DESC")));
             array_push($returnStats["max"],
                 $he . " walked up, " . number_format($dbMaxFloors['floors'], 0) . " floors, on " . date("jS F, Y",
                     strtotime($dbMaxFloors['date'])) . ".");
@@ -2406,7 +2404,7 @@
                     null, false) . "steps", array(
                 'elevation',
                 'date'
-            ), array("user" => $this->getUserID(), "ORDER" => "elevation DESC"));
+            ), array("user" => $this->getUserID(), "ORDER" => array("elevation" => "DESC")));
             if ($dbMaxFloors['date'] == $dbMaxElevation['date']) {
                 $returnStats["max"][(count($returnStats["max"]) - 1)] .= " That's a total of " . number_format($dbMaxElevation['elevation'],
                         2) . " meters.";
@@ -2500,7 +2498,7 @@
                         "date[>=]" => $oneWeek,
                         "date[<=]" => $lastMonday
                     ),
-                    "ORDER" => "date DESC",
+                    "ORDER" => array("date" => "DESC"),
                     "LIMIT" => 7
                 ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -2558,7 +2556,7 @@
                     $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                             null, false) . "steps_goals",
                         array('distance', 'floors', 'steps'),
-                        array("user" => $this->getUserID(), "ORDER" => "date DESC"));
+                        array("user" => $this->getUserID(), "ORDER" => array("date" => "DESC")));
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
                         array(
                             "METHOD" => __METHOD__,
@@ -3035,7 +3033,7 @@
                     array(
                         "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null),
                         "LIMIT" => 1,
-                        "ORDER" => "length DESC"
+                        "ORDER" => array("length" => "DESC")
                     ));
 
                 $taskerDataArray['max']['start'] = $databaseResults['start_date'];
@@ -3069,7 +3067,7 @@
                     array(
                         "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null),
                         "LIMIT" => 1,
-                        "ORDER" => "start_date DESC"
+                        "ORDER" => array("start_date" => "DESC")
                     ));
 
                 $taskerDataArray['last']['start'] = $databaseResults['start_date'];
@@ -3208,7 +3206,7 @@
                         "date[>=]" => $then,
                         "date[<=]" => $this->getParamDate()
                     ),
-                    "ORDER" => "date DESC"
+                    "ORDER" => array("date" => "DESC")
                 ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
                 "METHOD" => __METHOD__,
@@ -3287,7 +3285,7 @@
                 'weightGoal',
                 'fat',
                 'fatGoal'
-            ), array("user" => $this->getUserID(), "ORDER" => "date  ASC"));
+            ), array("user" => $this->getUserID(), "ORDER" => array("date" => "ASC")));
             $trendArray['weeksWeightTracked'] = round(abs(strtotime($this->getParamDate()) - strtotime($dbBody['date'])) / 604800,
                 0);
 
@@ -3307,7 +3305,7 @@
             $dbGoalsCalories              = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
                     null, false) . "food_goals", array('estimatedDate'), array(
                 "user"  => $this->getUserID(),
-                "ORDER" => "date DESC"
+                "ORDER" => array("date" => "DESC")
             ));
             $trendArray['estimatedDate']  = date("l",
                     strtotime($dbGoalsCalories['estimatedDate'])) . " the " . date("jS \of F Y",
@@ -3332,7 +3330,7 @@
             $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
                     false) . "steps", array('caloriesOut'), array(
                 "user"  => $this->getUserID(),
-                "ORDER" => "date DESC"
+                "ORDER" => array("date" => "DESC")
             ));
             $dbfood  = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null,
                     false) . "food", array('calories'), array(
@@ -3340,7 +3338,7 @@
                     "user" => $this->getUserID(),
                     "date" => $this->getParamDate()
                 ),
-                "ORDER" => "date DESC"
+                "ORDER" => array("date" => "DESC")
             ));
 
             $trendArray['caldef'] = (String)($dbSteps['caloriesOut'] - $dbfood);
@@ -3484,7 +3482,7 @@
                         "date[>=]" => date('Y-m-d',
                             strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day"))
                     ),
-                    "ORDER" => "date DESC",
+                    "ORDER" => array("date" => "DESC"),
                     "LIMIT" => ($days + 10)
                 ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -3588,7 +3586,7 @@
                                             "date[<=]" => date('Y-m-d',
                                                 strtotime($this->getParamDate() . " -" . (($days + 10) - 1) . " day"))
                                         ),
-                                        "ORDER" => "date DESC"
+                                        "ORDER" => array("date" => "DESC")
                                     ));
                             }
 
@@ -3898,7 +3896,7 @@
                 array('id', 'label', 'icon', 'color', 'charge', 'sort'),
                 array(
                     "AND"   => array("fuid" => $this->getUserID(), "sort[>]" => -1),
-                    "ORDER" => "sort ASC"
+                    "ORDER" => array("sort" => "ASC")
                 ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
                 "METHOD" => __METHOD__,
@@ -3925,7 +3923,7 @@
                             null, false) . "nomie_events",
                         'datestamp', array(
                             "AND"   => array("fuid" => $this->getUserID(), "id" => $tracker['id']),
-                            "ORDER" => "datestamp ASC",
+                            "ORDER" => array("datestamp" => "ASC"),
                             "LIMIT" => 1
                         ));
 
@@ -3938,7 +3936,7 @@
                                 null, false) . "nomie_events",
                             'datestamp', array(
                                 "AND"   => array("fuid" => $this->getUserID(), "id" => $tracker['id']),
-                                "ORDER" => "datestamp DESC",
+                                "ORDER" => array("datestamp" => "DESC"),
                                 "LIMIT" => 1
                             ));
 
@@ -4041,7 +4039,7 @@
                     $db_prefix . "nomie_events.geo_lat[!]" => "",
                     $db_prefix . "nomie_events.geo_lon[!]" => ""
                 ),
-                "ORDER" => "datestamp DESC",
+                "ORDER" => array("datestamp" => "DESC"),
                 "LIMIT" => $eventLimit
             ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -4057,7 +4055,7 @@
                         $db_prefix . "nomie_events.geo_lat[!]" => "",
                         $db_prefix . "nomie_events.geo_lon[!]" => ""
                     ),
-                    "ORDER" => "datestamp DESC",
+                    "ORDER" => array("datestamp" => "DESC"),
                     "LIMIT" => $eventLimit
                 ));
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -4072,7 +4070,7 @@
                         $db_prefix . "nomie_events.geo_lat[!]" => "",
                         $db_prefix . "nomie_events.geo_lon[!]" => ""
                     ),
-                    "ORDER" => "datestamp DESC",
+                    "ORDER" => array("datestamp" => "DESC"),
                     "LIMIT" => $eventLimit
                 ));
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -4109,7 +4107,7 @@
                     "geo_lat[!]" => "",
                     "geo_lon[!]" => ""
                 ),
-                "ORDER" => "datestamp DESC",
+                "ORDER" => array("datestamp" => "DESC"),
                 "LIMIT" => $eventLimit
             ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -4124,7 +4122,7 @@
                     "geo_lat[!]" => "",
                     "geo_lon[!]" => ""
                 ),
-                "ORDER" => "datestamp DESC",
+                "ORDER" => array("datestamp" => "DESC"),
                 "LIMIT" => $eventLimit
             ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
@@ -4169,7 +4167,7 @@
                         "datestamp[>=]" => date('Y-m-d',
                                 strtotime($this->getParamDate() . " -" . ($days - 1) . " day")) . " 00:00:00"
                     ),
-                    "ORDER" => "datestamp ASC"
+                    "ORDER" => array("datestamp" => "ASC")
                 ));
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), array(
                 "METHOD" => __METHOD__,

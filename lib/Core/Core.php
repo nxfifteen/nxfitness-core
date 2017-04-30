@@ -250,7 +250,7 @@
         public function getCronJobs()
         {
             return $this->getDatabase()->select($this->getSetting("db_prefix", null, false) . "queue", "*",
-                array("ORDER" => "date ASC"));
+                array("ORDER" => array("date" => "ASC")));
         }
 
         /**
