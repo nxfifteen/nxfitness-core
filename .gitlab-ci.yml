@@ -36,7 +36,7 @@ test:phploc:
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
-  - ./binaries/php-docblock-checker-1.3.4/vendor/bin/phploc inc
+  - ./binaries/php-docblock-checker-1.3.4/vendor/bin/phploc lib
 
 deploy_review:
   stage: review
