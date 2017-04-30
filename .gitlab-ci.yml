@@ -58,7 +58,7 @@ deploy_staging:
     - /home/nxad/gits/deploy_staging "$STAGING_PATH/$CI_ENVIRONMENT_SLUG" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
   environment:
     name: staging
-    url: http://fit.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
+    url: http://core.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
   when: manual
   only:
     - branches
