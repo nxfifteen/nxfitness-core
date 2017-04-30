@@ -1,5 +1,8 @@
 <?php
-    use UX\NxFitAdmin;
+
+    require_once(dirname(__FILE__) . "/../../../lib/autoloader.php");
+
+    use Core\UX\NxFitAdmin;
 
     session_start();
     header('Content-type: text/javascript');
