@@ -141,7 +141,9 @@ $(function () {
             loadWeather($, position.coords.latitude + ',' + position.coords.longitude, '');
 
             var weatherPanelImage = $('#weatherPanelImage');
+            //noinspection JSUnresolvedVariable
             if (localWeatherImage && weatherPanelImage.length > 0) {
+                //noinspection JSUnresolvedVariable
                 weatherPanelImage.attr('src', localWeatherImage)
             }
         });
@@ -195,6 +197,7 @@ $(function () {
     }
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=dashboard&date=" + returnDateString(new Date()), function (data) {
+        /** @namespace data.results.syncd */
         if (data.results.syncd === null && typeof data.results.syncd === "object") {
             $('#gaugeStepsPanel').remove();
             $('#gaugeFloorsPanel').remove();
@@ -202,18 +205,22 @@ $(function () {
         } else {
             var gaugeStepsPanel = $('#gaugeStepsPanel');
             if (gaugeStepsPanel.length > 0) {
+                /** @namespace data.results.progsteps */
                 $('#gaugeStepsText').html(data.results.steps + ' Steps, ' + data.results.progsteps + '%');
                 $('#gaugeStepsProgress').attr('aria-valuenow', data.results.progsteps).css('width', data.results.progsteps + '%');
             }
 
             var gaugeFloorsPanel = $('#gaugeFloorsPanel');
             if (gaugeFloorsPanel.length > 0) {
+                /** @namespace data.results.floors */
+                /** @namespace data.results.progfloors */
                 $('#gaugeFloorsText').html(data.results.floors + ' Floors, ' + data.results.progfloors + '%');
                 $('#gaugeFloorsProgress').attr('aria-valuenow', data.results.progfloors).css('width', data.results.progfloors + '%');
             }
 
             var gaugeDistancePanel = $('#gaugeDistancePanel');
             if (gaugeDistancePanel.length > 0) {
+                /** @namespace data.results.progdistance */
                 $('#gaugeDistanceText').html(data.results.distance + ' Miles, ' + data.results.progdistance + '%');
                 $('#gaugeDistanceProgress').attr('aria-valuenow', data.results.progdistance).css('width', data.results.progdistance + '%');
             }

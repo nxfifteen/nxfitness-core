@@ -1,6 +1,12 @@
 $(function () {
     'use strict';
 
+    /** @namespace data.results.badges */
+    /** @namespace badgeTypeValue.timesAchieved */
+    /** @namespace badgeTypeValue.badgeGradientStartColor */
+    /** @namespace badgeTypeValue.marketingdescription */
+    /** @namespace badgeTypeValue.badgeGradientEndColor */
+
     var marginTop;
     var myBadges = $('#myBadges');
     if (myBadges.length > 0) {

@@ -1,6 +1,17 @@
 $(function () {
     'use strict';
 
+    /** @namespace data.results.loss_rate_fat */
+    /** @namespace trendData.results.fatToLose */
+    /** @namespace trendData.results.fatGoal */
+    /** @namespace trendData.results.fat */
+    /** @namespace data.results.returnDate */
+    /** @namespace data.results.graph_fat */
+    /** @namespace data.results.graph_fatAvg */
+    /** @namespace data.results.graph_fatTrend */
+    /** @namespace data.results.graph_fatGoal */
+    /** @namespace animation.animationObject.currentStep */
+
     var configFat, fatChart, fatTrends = '';
 
     var timeFormat = 'MM/DD/YYYY HH:mm';
@@ -106,7 +117,6 @@ $(function () {
                 dataTimeScale.push(st - i * 86400000);
             }
 
-            //noinspection JSUnusedLocalSymbols
             configFat = {
                 type: 'line',
                 options: {
@@ -133,7 +143,7 @@ $(function () {
                                 value: animation.animationObject.currentStep / animation.animationObject.numSteps
                             });
                         },
-                        onComplete: function (animation) {
+                        onComplete: function () {
                             window.setTimeout(function () {
                                 $progressFat.hide();
                             }, (aniDuration * 0.5));

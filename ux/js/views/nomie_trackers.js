@@ -13,38 +13,40 @@ $(function () {
             html += '        <div class="card-block p-3 clearfix" style="background-color: ' + dbTracker.color + ' !important; ">';
             html += '            <div class="row">';
             html += '                <div class="hidden-sm-down col-md-3">';
-            html += '                    <i class="' + dbTracker.icon + ' p-3 mr-3 float-left" style="color: #ffffff !important; font-size: 50px;line-height: 50px;"></i>';
+            html += '                    <i class="' + dbTracker.icon + ' p-3 mr-3 float-left" style="color: #FFFFFF !important; font-size: 50px;line-height: 50px;"></i>';
             html += '                </div>';
             html += '                <div class="col-12 col-md-9">';
             html += '                    <div class="row">';
             html += '                        <div class="col-12 col-md-12">';
-            html += '                            <div class="h5 mb-0 mt-2" style="color: #ffffff;">' + dbTracker.label + '</div>';
+            html += '                            <div class="h5 mb-0 mt-2" style="color: #FFFFFF;">' + dbTracker.label + '</div>';
             html += '                        </div>';
             html += '                    </div>';
             html += '                    <div class="row">';
             html += '                        <div class="col-6 col-md-6">';
-            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">' + dbTracker.stats.events + ' Events</div>';
+            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #FFFFFF !important;">' + dbTracker.stats.events + ' Events</div>';
             html += '                        </div>';
             html += '                        <div class="col-6 col-md-6">';
 
             if (dbTracker.charge < -1) {
-                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">' + dbTracker.charge + ' points lost</div>';
+                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #FFFFFF !important;">' + dbTracker.charge + ' points lost</div>';
             } else if (dbTracker.charge < 0) {
-                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">' + dbTracker.charge + ' point lost</div>';
+                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #FFFFFF !important;">' + dbTracker.charge + ' point lost</div>';
             } else if (dbTracker.charge > 1) {
-                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">' + dbTracker.charge + ' points awarded</div>';
+                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #FFFFFF !important;">' + dbTracker.charge + ' points awarded</div>';
             } else if (dbTracker.charge > 0) {
-                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">' + dbTracker.charge + ' point awarded</div>';
+                html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #FFFFFF !important;">' + dbTracker.charge + ' point awarded</div>';
             }
 
             html += '                        </div>';
             html += '                    </div>';
             html += '                    <div class="row">';
             html += '                        <div class="col-6 col-md-6">';
-            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">Daily Avg : ' + dbTracker.stats.dayAvg + '<br />Monthly Avg : ' + dbTracker.stats.monthAvg + '</div>';
+            /** @namespace dbTracker.stats.monthAvg */
+            /** @namespace dbTracker.stats.dayAvg */
+            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #FFFFFF !important;">Daily Avg : ' + dbTracker.stats.dayAvg + '<br />Monthly Avg : ' + dbTracker.stats.monthAvg + '</div>';
             html += '                        </div>';
             html += '                        <div class="col-6 col-md-6">';
-            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #ffffff !important;">First : ' + dbTracker.stats.first + '<br />Last : ' + dbTracker.stats.last + '</div>';
+            html += '                            <div class="text-muted text-uppercase font-weight-bold font-xs" style="color: #FFFFFF !important;">First : ' + dbTracker.stats.first + '<br />Last : ' + dbTracker.stats.last + '</div>';
             html += '                        </div>';
             html += '                    </div>';
             html += '                </div>';
@@ -97,11 +99,12 @@ function display_map(elt, trackerId, label, icon, color) {
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieGPS&tracker=" + trackerId, function (data) {
 
         $('#modal-title').html(
-            '<i class="' + icon + ' p-3 mr-3 float-left" style="color: #ffffff !important; font-size: 50px;line-height: 50px;"></i> '
-            + '<span style="color: #ffffff !important;"> ' + label + '</span>'
+            '<i class="' + icon + ' p-3 mr-3 float-left" style="color: #FFFFFF !important; font-size: 50px;line-height: 50px;"></i> '
+            + '<span style="color: #FFFFFF !important;"> ' + label + '</span>'
         );
 
         var modalFoot = $('#modal-foot');
+        /** @namespace data.results.till */
         modalFoot.html(data.results.count + ' event(s), from <strong>' + data.results.from + '</strong> till <strong>' + data.results.till + '</strong> ');
 
         if (data.results.avg !== 0) {
@@ -118,6 +121,8 @@ function display_map(elt, trackerId, label, icon, color) {
             var value = '';
 
             if (mapPoint.type === "numeric") {
+                /** @namespace mapPoint.uom */
+                //noinspection JSValidateTypes
                 if (mapPoint.uom === "min") {
                     if (mapPoint.value > 60) {
                         var hours = Math.floor(mapPoint.value / 60);
@@ -137,6 +142,7 @@ function display_map(elt, trackerId, label, icon, color) {
             }
 
             var title = value + '<br />';
+            /** @namespace mapPoint.datestamp */
             title += 'Logged: ' + mapPoint.datestamp + '<br />';
             var badgeInfo = '';
             if (mapPoint.score === '-2') {
@@ -151,11 +157,14 @@ function display_map(elt, trackerId, label, icon, color) {
                 badgeInfo = 'badge-info';
             }
             title += 'Awarded: <span class="badge ' + badgeInfo + '">' + mapPoint.score + ' points</span>';
+            /** @namespace mapPoint.geo_lon */
+            /** @namespace mapPoint.geo_lat */
             var marker = L.marker([mapPoint.geo_lat, mapPoint.geo_lon]).bindPopup(title);
             markerList.push(marker);
         });
 
 
+        /** @namespace data.results.long */
         map = L.map(mapID, {
             center: [data.results.lat, data.results.long],
             zoom: 7,
@@ -163,12 +172,14 @@ function display_map(elt, trackerId, label, icon, color) {
         });
 
         markers.addLayers(markerList);
+        //noinspection JSUnresolvedFunction
         map.addLayer(markers);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: 'Track data from <a href="https://nomie.io" target="_blank">Nomie</a> and Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
         }).addTo(map);
 
+        //noinspection JSUnresolvedFunction
         map.setView([data.results.lat, data.results.long], '7');
 
         debug_add_gen_time("Map " + label, data.time);

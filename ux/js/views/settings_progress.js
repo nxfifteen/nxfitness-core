@@ -6,6 +6,7 @@ $(function () {
         var colour;
         var html = '';
 
+        /** @namespace data.results.SyncProgress */
         if (data.results.SyncProgress >= 98) {
             colour = 'success';
         } else if (data.results.SyncProgress >= 75) {
@@ -33,6 +34,7 @@ $(function () {
 
         html = '';
         var syncProgress = $('#syncProgress');
+        /** @namespace data.results.SyncProgressScopes */
         $.each(data.results.SyncProgressScopes, function (index, scope) {
 
             if (scope.precentage >= 98) {

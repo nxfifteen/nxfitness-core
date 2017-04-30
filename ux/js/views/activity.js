@@ -1,9 +1,18 @@
 $(function () {
     'use strict';
 
-
-
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=TrackerHistoryChart&period=last7", function (data) {
+        /** @namespace data.results.stepsGoal */
+        /** @namespace data.results.human */
+        /** @namespace data.results.precentages */
+        /** @namespace data.results.analysis */
+        /** @namespace data.results.analysis.steps7Day */
+        /** @namespace data.results.analysis.floors7Day */
+        /** @namespace data.results.analysis.distance7Day */
+        /** @namespace data.results.analysis.stepsYesterday */
+        /** @namespace data.results.analysis.stepsYesterdayRaw */
+        /** @namespace data.results.analysis.floorsYesterday */
+        /** @namespace data.results.analysis.distanceYesterday */
         var barChartData = {
             labels: data.results.date,
             datasets: [

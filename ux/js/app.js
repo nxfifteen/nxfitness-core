@@ -246,6 +246,7 @@ $(document).ready(function ($) {
             if (timesRun === 5) {
                 clearInterval(interval);
             }
+            //noinspection JSUnresolvedFunction
             window.dispatchEvent(new Event('resize'));
         }, 62.5);
     }

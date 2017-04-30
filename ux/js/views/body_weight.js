@@ -52,9 +52,13 @@ $(function () {
             var returnDate = data.results.returnDate;
             var reportDate = new Date(returnDate[0], returnDate[1] - 1, returnDate[2]);
 
+            /** @namespace data.results.graph_weight */
             configWeight.data.datasets[0].data = data.results.graph_weight;
+            /** @namespace data.results.graph_weightAvg */
             configWeight.data.datasets[1].data = data.results.graph_weightAvg;
+            /** @namespace data.results.graph_weightTrend */
             configWeight.data.datasets[2].data = data.results.graph_weightTrend;
+            /** @namespace data.results.graph_weightGoal */
             configWeight.data.datasets[3].data = data.results.graph_weightGoal;
 
             var pointRadius = 3;
@@ -96,12 +100,16 @@ $(function () {
             dataSet3 = data.results.graph_weightAvg;
             dataSet4 = data.results.graph_weightGoal;
 
+            /** @namespace data.results.weight_units */
+            //noinspection JSValidateTypes
             if (data.results.weight_units === "kg") {
                 weight_units = "Kilograms";
-            } else if (data.results.weight_units === "lb") {
-                weight_units = "Pounds";
-            } else {
-                weight_units = data.results.weight_units;
+            } else { //noinspection JSValidateTypes
+                if (data.results.weight_units === "lb") {
+                    weight_units = "Pounds";
+                } else {
+                    weight_units = data.results.weight_units;
+                }
             }
 
             if (dataSet1.length > 29) {
@@ -223,12 +231,14 @@ $(function () {
         if (WeightTrend.length > 0) {
             var classTable = "", htmlString = "";
 
+            /** @namespace data.results.loss_rate_weight */
             if (data.results.loss_rate_weight.length !== 0) {
                 htmlString += "<p>The table bellow shows your month on month weight changes</p>";
                 htmlString += "<table class=\"table\">";
                 htmlString += "<tr><th>Date</th><th>Monthly Trend</th></tr>";
 
                 for (var key in data.results.WeighInArray) {
+                    /** @namespace data.results.WeighInArray */
                     //noinspection JSUnfilteredForInLoop
                     if (data.results.WeighInArray[key] <= data.results.WeighInArray[key - 1]) {
                         classTable = ' class="badge-success"';
@@ -256,6 +266,11 @@ $(function () {
 
             if (weightTrends === '') {
                 $.getJSON("../json.php?user=" + fitbitUserId + "&data=trend", function (trendData) {
+                    /** @namespace trendData.results.weightGoal */
+                    /** @namespace trendData.results.caldef */
+                    /** @namespace trendData.results.estimatedDate */
+                    /** @namespace trendData.results.estimatedWeeks */
+                    /** @namespace trendData.results.weightToLose */
                     weightTrends = '<p>Your last recorded weight was <strong>' + trendData.results.weight + '</strong>, so still has another' +
                         ' <strong>' + trendData.results.weightToLose + '</strong> to lose to reach your ' +
                         ' <strong>' + trendData.results.weightGoal + '</strong> goal.</p>' +

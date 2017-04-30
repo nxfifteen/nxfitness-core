@@ -1,7 +1,9 @@
 $(function () {
     'use strict';
 
+    //noinspection JSUnresolvedVariable
     $('#userProfileAvatar').attr('src', userProfileAvatar);
+    //noinspection JSUnresolvedVariable
     $('#userProfileName').html(userProfileName);
 
     $('#gpx').hide();
@@ -25,7 +27,7 @@ $(function () {
                     indexMenu += '<a href="#' + index.split(",").join("").split(" ").join("") + '">' + index + '</a><br />';
                     html += '<article class="timeline-item alt" id="' + index.split(",").join("").split(" ").join("") + '"><div class="text-right"><div class="time-show first"><a href="#" class="btn btn-primary">' + index + '</a></div></div></article>';
                     $.each(month, function (index, event) {
-                        //noinspection JSUnresolvedVariable
+                        /** @namespace event.logId */
                         html += '<article id="evt-' + event.logId + '" class="timeline-item';
                         if (isEven(events)) {
                             html += ' alt';
@@ -33,34 +35,28 @@ $(function () {
                         html += '">';
                         html += '<div class="timeline-desk">';
                         html += '<div class="card">';
-                        //noinspection JSUnresolvedVariable
+                        /** @namespace event.colour */
                         html += '<div class="card-block ' + event.colour + '">';
                         html += '<span class="arrow';
                         if (isEven(events)) {
                             html += '-alt';
                         }
                         html += '"></span>';
-                        //noinspection JSUnresolvedVariable
                         html += '<span class="timeline-icon ' + event.colour + '"><i class="fa fa-check"></i></span>';
-                        //noinspection JSUnresolvedVariable
                         html += '<span class="timeline-date">' + event.startTime + '</span>';
-                        //noinspection JSUnresolvedVariable
                         html += '<h1 class="' + event.colour + '">' + event.name + '</h1>';
                         html += '<div class="row">';
                         html += '<div class="col-md-6">';
-                        //noinspection JSUnresolvedVariable
                         html += '<div class="eventDay">' + event.startTime + '</div>';
-                        //noinspection JSUnresolvedVariable
+                        /** @namespace event.calPerMinute */
                         html += '<div class="eventEffect"><i class="fa fa-bolt"></i> ' + event.calPerMinute + ' kcals/min</div>';
                         html += '</div>';
                         html += '<div class="col-md-6">';
                         if (event.steps !== "0") {
-                            //noinspection JSUnresolvedVariable
                             html += '<div class="eventEffect"><i class="fa fa-trophy"></i> +' + event.steps + ' of ' + event.stats.steps + ' Steps</div>';
                         }
-                        //noinspection JSUnresolvedVariable
+                        /** @namespace event.stats.caloriesOut */
                         html += '<div class="eventEffect"><i class="fa fa-fire"></i> +' + event.calories + ' of ' + event.stats.caloriesOut + ' Calories </div>';
-                        //noinspection JSUnresolvedVariable
                         html += '<div class="eventEffect"><i class="fa fa-clock-o"></i> +' + event.duration + ' of ' + event.stats.active + ' Active Minutes</div>';
                         html += '</div>';
                         html += '</div>';
@@ -69,7 +65,9 @@ $(function () {
                         html += '<div class="col-md-12">';
                         var json = JSON.stringify(event);
                         json = json.split("\"").join("\\\'");
+                        /** @namespace event.gpx */
                         html += '<div class="eventEffect"><i class="fa fa-clock-o"></i> <a href="javascript:;" onclick="display_gpx(document.getElementById(\'gpx\'), \'' + event.gpx + '\', \'' + json + '\');">View on Map <i class="fa fa-map-marker"></i></a>';
+                        //noinspection JSValidateTypes
                         if (event.gpx !== "none") {
                             html += ' | <a href="' + event.gpx + '">Download GPX <i class="fa fa-download"></i></a>';
                         }

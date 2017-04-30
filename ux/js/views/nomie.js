@@ -3,11 +3,15 @@ $(function () {
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieDashboard", function (data) {
 
+        /** @namespace data.results.trackers */
         $('#trackerCount').html(data.results.trackers);
         $('#eventCount').html(data.results.events);
 
+        /** @namespace data.results.spread.events.positive */
+        /** @namespace data.results.spread */
         $('#positiveEvents').html(data.results.spread.events.positive);
         $('#negativeEvents').html(data.results.spread.events.negative);
+        /** @namespace data.results.spread.events.netural */
         $('#neutralEvents').html(data.results.spread.events.netural);
 
         var splitPieChart = $('#splitPieChart');
@@ -71,7 +75,9 @@ $(function () {
             aniDuration = 3000;
 
             dataSet2 = data.results.graph.positive;
+            /** @namespace data.results.graph */
             dataSet3 = data.results.graph.negative;
+            /** @namespace data.results.graph.neutral */
             dataSet4 = data.results.graph.neutral;
 
             var configWeight = {
