@@ -1,6 +1,6 @@
 <?php
 
-    namespace TestNamespace;
+    namespace TestCore;
 
     require_once (dirname(__FILE__) . '/../inc/Config.php');
 
