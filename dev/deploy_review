@@ -37,5 +37,7 @@ else
     php "$ROOTPATH/binaries/composer.phar" update --dev >/dev/null 2>&1
 fi
 
+php "$ROOTPATH/vendor/phpdocumentor/phpdocumentor/bin/phpdoc"  >/dev/null 2>&1
+cd "$ROOTPATH/docs/wiki.core"
+rsync -vhru --delete-after ./docs/development/* /var/www/dev/development/
 
-bash "$ROOTPATH/dev/genPHPDocs" "$ROOTPATH"

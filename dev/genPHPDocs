@@ -5,6 +5,7 @@ eval $(ssh-agent -s)
 ssh-add /home/nxad/.ssh/id_rsa_pss
 
 php "$ROOTPATH/vendor/phpdocumentor/phpdocumentor/bin/phpdoc"  >/dev/null 2>&1
+cd "$ROOTPATH/docs/wiki.core"
 rsync -vhru --delete-after ./ /var/www/dev/development/
 
 #FROMTAG=""
