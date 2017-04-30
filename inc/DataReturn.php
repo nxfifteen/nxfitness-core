@@ -1717,8 +1717,6 @@
          */
         public function returnUserRecordFood()
         {
-            //TODO Added support for multi record returned
-
             $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                     false) . "food",
                 array('meal', 'calories'),
@@ -3552,7 +3550,6 @@
                 $interval     = DateInterval::createFromDateString('1 day');
                 $period       = new DatePeriod ($sevenDaysAgo, $interval, $currentDate);
 
-                $recordsLoopedThru  = 0; // TODO; do we need this
                 $lastRecord         = null;
                 $foundMissingRecord = false;
                 $arrayOfMissingDays = array();
@@ -3606,7 +3603,6 @@
                         // update last record with this one
                         $lastRecord = $returnWeight[$dt->format("Y-m-d")];
                     }
-                    $recordsLoopedThru = $recordsLoopedThru + 1; // TODO; do we need this
                 }
                 if ($foundMissingRecord) {
                     print "There are still missing dates\n";
