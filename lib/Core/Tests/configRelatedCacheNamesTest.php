@@ -2,7 +2,7 @@
 
     namespace Core\Tests;
 
-    require_once(dirname(__FILE__) . '/../inc/Config.php');
+    require_once(dirname(__FILE__) . '/../../autoloader.php');
 
     use Core\Config as Config;
     use \PHPUnit\Framework\TestCase;
