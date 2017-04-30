@@ -1,9 +1,7 @@
 $(function () {
     'use strict';
 
-    var randomScalingFactor = function () {
-        return Math.round(Math.random() * 100)
-    };
+
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=TrackerHistoryChart&period=last7", function (data) {
         var barChartData = {
@@ -44,6 +42,7 @@ $(function () {
             }
         };
         var ctx = document.getElementById('canvas-2');
+        //noinspection JSUnusedLocalSymbols
         var chart = new Chart(ctx, {
             type: 'bar',
             data: barChartData,

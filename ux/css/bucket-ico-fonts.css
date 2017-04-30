@@ -6,6 +6,7 @@
     font-style  : normal;
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="ico-"], [class*=" ico-"] {
     font-family             : 'bucket-ico-font';
     speak                   : none;

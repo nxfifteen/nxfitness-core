@@ -160,6 +160,7 @@ function setUpUrl(url) {
 
 function loadPage(url) {
 
+    //noinspection JSUnusedGlobalSymbols
     $.ajax({
         type: 'GET',
         url: $.subPagesDirectory + url,

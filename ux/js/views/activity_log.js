@@ -217,6 +217,7 @@ function display_gpx(elt, gpx_source, activityJson) {
 }
 
 function buildDonutImpactLevel(idName, barColour) {
+    //noinspection JSUnusedGlobalSymbols
     idName.easyPieChart({
         onStep: function (from, to, percent) {
             $(this.el).find('.impact').text(Math.round(percent));

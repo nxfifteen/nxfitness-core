@@ -1,10 +1,12 @@
 <?php
     if (is_array($_SERVER) && array_key_exists("REDIRECT_URL", $_SERVER)) {
+        /** @noinspection PhpUndefinedMethodInspection */
         $url = str_replace($App->getConfig("/admin"), "", $_SERVER['REDIRECT_URL']);
     } else {
         $url = "";
     }
 
+    /** @noinspection PhpUndefinedMethodInspection */
     if ($_COOKIE['_nx_fb_usr'] == $App->getNxFit()->getSetting('ownerFuid', null, false)) {
         $isDeveloper = true;
     } else {
@@ -12,6 +14,7 @@
     }
 ?>
 <!-- Left Sidebar -->
+<!--suppress HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget -->
 <ul class="nav">
     <li class="nav-item">
         <a class="nav-link" href="main.html"><i class="fa fa-dashboard"></i> Dashboard</a>

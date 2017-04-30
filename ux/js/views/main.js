@@ -34,101 +34,101 @@ $(function () {
 
     function weatherCodeToIcon(weatherCode) {
         //https://developer.yahoo.com/weather/documentation.html#codes
-        if (weatherCode == 0) {
+        if (weatherCode === 0) {
             return "ico-windy5";
-        } else if (weatherCode == 1) {
+        } else if (weatherCode === 1) {
             return "ico-lightning5";
-        } else if (weatherCode == 2) {
+        } else if (weatherCode === 2) {
             return "ico-windy5";
-        } else if (weatherCode == 3) {
+        } else if (weatherCode === 3) {
             return "ico-lightning5";
-        } else if (weatherCode == 4) {
+        } else if (weatherCode === 4) {
             return "ico-lightning3";
-        } else if (weatherCode == 5) {
+        } else if (weatherCode === 5) {
             return "ico-snowy2";
-        } else if (weatherCode == 6) {
+        } else if (weatherCode === 6) {
             return "ico-rainy4";
-        } else if (weatherCode == 7) {
+        } else if (weatherCode === 7) {
             return "ico-snowy2";
-        } else if (weatherCode == 8) {
+        } else if (weatherCode === 8) {
             return "ico-snowy";
-        } else if (weatherCode == 9) {
+        } else if (weatherCode === 9) {
             return "ico-rainy";
-        } else if (weatherCode == 10) {
+        } else if (weatherCode === 10) {
             return "ico-snowy3";
-        } else if (weatherCode == 11) {
+        } else if (weatherCode === 11) {
             return "ico-rainy2";
-        } else if (weatherCode == 12) {
+        } else if (weatherCode === 12) {
             return "ico-rainy2";
-        } else if (weatherCode == 13) {
+        } else if (weatherCode === 13) {
             return "ico-snowy2";
-        } else if (weatherCode == 14) {
+        } else if (weatherCode === 14) {
             return "ico-snowy3";
-        } else if (weatherCode == 15) {
+        } else if (weatherCode === 15) {
             return "ico-snowy5";
-        } else if (weatherCode == 16) {
+        } else if (weatherCode === 16) {
             return "ico-snowflake";
-        } else if (weatherCode == 17) {
+        } else if (weatherCode === 17) {
             return "ico-snowy4";
-        } else if (weatherCode == 18) {
+        } else if (weatherCode === 18) {
             return "ico-snowy";
-        } else if (weatherCode == 19) {
+        } else if (weatherCode === 19) {
             return "ico-weather3";
-        } else if (weatherCode == 20) {
+        } else if (weatherCode === 20) {
             return "ico-weather3";
-        } else if (weatherCode == 21) {
+        } else if (weatherCode === 21) {
             return "ico-weather3";
-        } else if (weatherCode == 22) {
+        } else if (weatherCode === 22) {
             return "ico-lines";
-        } else if (weatherCode == 23) {
+        } else if (weatherCode === 23) {
             return "ico-wind";
-        } else if (weatherCode == 24) {
+        } else if (weatherCode === 24) {
             return "ico-windy";
-        } else if (weatherCode == 25) {
+        } else if (weatherCode === 25) {
             return "ico-snowflake";
-        } else if (weatherCode == 26) {
+        } else if (weatherCode === 26) {
             return "ico-cloud2";
-        } else if (weatherCode == 27) {
+        } else if (weatherCode === 27) {
             return "ico-cloud4";
-        } else if (weatherCode == 28) {
+        } else if (weatherCode === 28) {
             return "ico-cloudy3";
-        } else if (weatherCode == 29) {
+        } else if (weatherCode === 29) {
             return "ico-cloud";
-        } else if (weatherCode == 30) {
+        } else if (weatherCode === 30) {
             return "ico-cloudy";
-        } else if (weatherCode == 31) {
+        } else if (weatherCode === 31) {
             return "ico-moon";
-        } else if (weatherCode == 32) {
+        } else if (weatherCode === 32) {
             return "ico-sun";
-        } else if (weatherCode == 33) {
+        } else if (weatherCode === 33) {
             return "ico-moon2";
-        } else if (weatherCode == 34) {
+        } else if (weatherCode === 34) {
             return "ico-sun2";
-        } else if (weatherCode == 35) {
+        } else if (weatherCode === 35) {
             return "ico-rainy4";
-        } else if (weatherCode == 36) {
+        } else if (weatherCode === 36) {
             return "ico-sun3";
-        } else if (weatherCode == 37) {
+        } else if (weatherCode === 37) {
             return "ico-lightning";
-        } else if (weatherCode == 38) {
+        } else if (weatherCode === 38) {
             return "ico-lightning2";
-        } else if (weatherCode == 39) {
+        } else if (weatherCode === 39) {
             return "ico-lightning2";
-        } else if (weatherCode == 40) {
+        } else if (weatherCode === 40) {
             return "ico-rainy2";
-        } else if (weatherCode == 41) {
+        } else if (weatherCode === 41) {
             return "ico-snowy5";
-        } else if (weatherCode == 42) {
+        } else if (weatherCode === 42) {
             return "ico-snowy";
-        } else if (weatherCode == 43) {
+        } else if (weatherCode === 43) {
             return "ico-snowy5";
-        } else if (weatherCode == 44) {
+        } else if (weatherCode === 44) {
             return "ico-cloud2";
-        } else if (weatherCode == 45) {
+        } else if (weatherCode === 45) {
             return "ico-lightning3";
-        } else if (weatherCode == 46) {
+        } else if (weatherCode === 46) {
             return "ico-snowy2";
-        } else if (weatherCode == 47) {
+        } else if (weatherCode === 47) {
             return "ico-lightning2";
         } else {
             return weatherCode;
@@ -195,8 +195,6 @@ $(function () {
     }
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=dashboard&date=" + returnDateString(new Date()), function (data) {
-        var returnDate = data.results.returnDate;
-        var reportDate = new Date(returnDate[0], returnDate[1] - 1, returnDate[2]);
         if (data.results.syncd === null && typeof data.results.syncd === "object") {
             $('#gaugeStepsPanel').remove();
             $('#gaugeFloorsPanel').remove();

@@ -1,4 +1,6 @@
 <?php
+    use UX\NxFitAdmin;
+
     session_start();
     header('Content-type: text/javascript');
 

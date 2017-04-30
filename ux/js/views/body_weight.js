@@ -1,7 +1,7 @@
 $(function () {
     'use strict';
 
-    var configWeight, configFat, weightChart, fatChart, weightTrends = '', fatTrends = '';
+    var configWeight, weightChart, weightTrends = '';
 
     var timeFormat = 'MM/DD/YYYY HH:mm';
 
@@ -96,9 +96,9 @@ $(function () {
             dataSet3 = data.results.graph_weightAvg;
             dataSet4 = data.results.graph_weightGoal;
 
-            if (data.results.weight_units == "kg") {
+            if (data.results.weight_units === "kg") {
                 weight_units = "Kilograms";
-            } else if (data.results.weight_units == "lb") {
+            } else if (data.results.weight_units === "lb") {
                 weight_units = "Pounds";
             } else {
                 weight_units = data.results.weight_units;
@@ -115,6 +115,7 @@ $(function () {
                 dataTimeScale.push(st - i * 86400000);
             }
 
+            //noinspection JSUnusedLocalSymbols
             configWeight = {
                 type: 'line',
                 options: {
@@ -138,7 +139,7 @@ $(function () {
                         duration: aniDuration,
                         onProgress: function (animation) {
                             $progress.attr({
-                                value: animation.animationObject.currentStep / animation.animationObject.numSteps,
+                                value: animation.animationObject.currentStep / animation.animationObject.numSteps
                             });
                         },
                         onComplete: function (animation) {

@@ -59,12 +59,12 @@ $(function () {
     });
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=NomieScoreGraph&period=last92", function (data) {
-        var i, dataSet1, dataSet2, dataSet3, dataSet4, dataTimeScale, aniDuration, pointRadius, weight_units;
+        var dataSet2, dataSet3, dataSet4, aniDuration;
 
         var scoreGraph = $('#scoreGraph');
         if (scoreGraph.length > 0) {
             var $progress = $('#animationScoreProgress');
-            var timeFormat = 'MM/DD/YYYY';
+
 
             $progress.show();
 
@@ -105,6 +105,7 @@ $(function () {
             };
 
             var ctx = document.getElementById("scoreGraph");
+            //noinspection JSUnusedLocalSymbols,JSUnusedLocalSymbols
             var weightChart = new Chart(ctx, {
                 type: 'line',
                 data: configWeight,
@@ -125,7 +126,7 @@ $(function () {
                         duration: aniDuration,
                         onProgress: function (animation) {
                             $progress.attr({
-                                value: animation.animationObject.currentStep / animation.animationObject.numSteps,
+                                value: animation.animationObject.currentStep / animation.animationObject.numSteps
                             });
                         },
                         onComplete: function (animation) {

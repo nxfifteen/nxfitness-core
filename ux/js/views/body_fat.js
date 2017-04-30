@@ -106,6 +106,7 @@ $(function () {
                 dataTimeScale.push(st - i * 86400000);
             }
 
+            //noinspection JSUnusedLocalSymbols
             configFat = {
                 type: 'line',
                 options: {
@@ -129,7 +130,7 @@ $(function () {
                         duration: aniDuration,
                         onProgress: function (animation) {
                             $progressFat.attr({
-                                value: animation.animationObject.currentStep / animation.animationObject.numSteps,
+                                value: animation.animationObject.currentStep / animation.animationObject.numSteps
                             });
                         },
                         onComplete: function (animation) {
@@ -204,31 +205,35 @@ $(function () {
         }
     }
 
-    function trendFat($, data, st) {
+    function trendFat($, data) {
         var FatTrend = $('#FatTrend');
         if (FatTrend.length > 0) {
             var classTable = "", htmlString = "";
 
-            if (data.results.loss_rate_fat.length != 0) {
+            if (data.results.loss_rate_fat.length !== 0) {
                 htmlString += "<p>The table bellow shows your month on month body fat changes</p>";
                 htmlString += "<table class=\"table table-striped\">";
                 htmlString += "<tr><th>Date</th><th>Monthly Trend</th></tr>";
 
                 for (var key in data.results.loss_rate_fat) {
+                    //noinspection JSUnfilteredForInLoop
                     if (data.results.loss_rate_fat[key] <= 0) {
                         classTable = ' class="success"';
-                    } else if (data.results.loss_rate_fat[key] >= 0.1) {
-                        classTable = ' class="danger"';
-                    } else {
-                        classTable = "";
+                    } else { //noinspection JSUnfilteredForInLoop
+                        if (data.results.loss_rate_fat[key] >= 0.1) {
+                                                classTable = ' class="danger"';
+                                            } else {
+                                                classTable = "";
+                                            }
                     }
+                    //noinspection JSUnfilteredForInLoop
                     htmlString += "<tr" + classTable + "><td>" + key + "</td><td>" + data.results.loss_rate_fat[key] + "%</td></tr>";
                 }
 
                 htmlString += "</table>";
             }
 
-            if (fatTrends == '') {
+            if (fatTrends === '') {
                 $.getJSON("../json.php?user=" + fitbitUserId + "&data=trend", function (trendData) {
                     fatTrends = '<p>You last recorded <strong>' + trendData.results.fat + '%</strong> body fat, so still has another' +
                         ' <strong>' + trendData.results.fatToLose + '%</strong> still to lose to reach your <strong>' + trendData.results.fatGoal + '%</strong> goal.</p>';

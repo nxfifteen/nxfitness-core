@@ -30,6 +30,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="haircare-"]:before, [class*=" haircare-"]:before,
 [class^="haircare-"]:after, [class*=" haircare-"]:after {
     font-family : haircare;
@@ -148,6 +149,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="realestate-"]:before, [class*=" realestate-"]:before,
 [class^="realestate-"]:after, [class*=" realestate-"]:after {
     font-family : realestate;
@@ -296,6 +298,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="birthdayIcons-"]:before, [class*=" birthdayIcons-"]:before,
 [class^="birthdayIcons-"]:after, [class*=" birthdayIcons-"]:after {
     font-family : birthdayIcons;
@@ -474,6 +477,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="body-"]:before, [class*=" body-"]:before,
 [class^="body-"]:after, [class*=" body-"]:after {
     font-family : body;
@@ -622,6 +626,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="transport-"]:before, [class*=" transport-"]:before,
 [class^="transport-"]:after, [class*=" transport-"]:after {
     font-family : transport;
@@ -779,6 +784,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="music-"]:before, [class*=" music-"]:before,
 [class^="music-"]:after, [class*=" music-"]:after {
     font-family : music;
@@ -954,6 +960,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="weather-"]:before, [class*=" weather-"]:before,
 [class^="weather-"]:after, [class*=" weather-"]:after {
     font-family : weather;
@@ -1072,6 +1079,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="travel-"]:before, [class*=" travel-"]:before,
 [class^="travel-"]:after, [class*=" travel-"]:after {
     font-family : travel;
@@ -1250,6 +1258,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="petIcons-"]:before, [class*=" petIcons-"]:before,
 [class^="petIcons-"]:after, [class*=" petIcons-"]:after {
     font-family : petIcons;
@@ -1473,6 +1482,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="house-"]:before, [class*=" house-"]:before,
 [class^="house-"]:after, [class*=" house-"]:after {
     font-family : house;
@@ -1651,6 +1661,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="peopleIcons-"]:before, [class*=" peopleIcons-"]:before,
 [class^="peopleIcons-"]:after, [class*=" peopleIcons-"]:after {
     font-family : peopleIcons;
@@ -2077,6 +2088,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="adventureIcons-"]:before, [class*=" adventureIcons-"]:before,
 [class^="adventureIcons-"]:after, [class*=" adventureIcons-"]:after {
     font-family : adventureIcons;
@@ -2219,6 +2231,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="cookingIcons-"]:before, [class*=" cookingIcons-"]:before,
 [class^="cookingIcons-"]:after, [class*=" cookingIcons-"]:after {
     font-family : cookingIcons;
@@ -2367,6 +2380,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="drinkIcons-"]:before, [class*=" drinkIcons-"]:before,
 [class^="drinkIcons-"]:after, [class*=" drinkIcons-"]:after {
     font-family : drinkIcons;
@@ -2503,6 +2517,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="emotionIcons-"]:before, [class*=" emotionIcons-"]:before,
 [class^="emotionIcons-"]:after, [class*=" emotionIcons-"]:after {
     font-family : emotionIcons;
@@ -2831,6 +2846,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="familyIcons-"]:before, [class*=" familyIcons-"]:before,
 [class^="familyIcons-"]:after, [class*=" familyIcons-"]:after {
     font-family : familyIcons;
@@ -2979,6 +2995,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="fitnessIcons-"]:before, [class*=" fitnessIcons-"]:before,
 [class^="fitnessIcons-"]:after, [class*=" fitnessIcons-"]:after {
     font-family : fitnessIcons;
@@ -3251,6 +3268,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="food-"]:before, [class*=" food-"]:before,
 [class^="food-"]:after, [class*=" food-"]:after {
     font-family : food;
@@ -3571,6 +3589,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="foodIcons-"]:before, [class*=" foodIcons-"]:before,
 [class^="foodIcons-"]:after, [class*=" foodIcons-"]:after {
     font-family : foodIcons;
@@ -3743,6 +3762,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="medicalIcons-"]:before, [class*=" medicalIcons-"]:before,
 [class^="medicalIcons-"]:after, [class*=" medicalIcons-"]:after {
     font-family : medicalIcons;
@@ -4071,6 +4091,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="personal-"]:before, [class*=" personal-"]:before,
 [class^="personal-"]:after, [class*=" personal-"]:after {
     font-family : personal;
@@ -4345,6 +4366,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="sweetIcons-"]:before, [class*=" sweetIcons-"]:before,
 [class^="sweetIcons-"]:after, [class*=" sweetIcons-"]:after {
     font-family : sweetIcons;
@@ -4493,6 +4515,7 @@
     }
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="workIcons-"]:before, [class*=" workIcons-"]:before,
 [class^="workIcons-"]:after, [class*=" workIcons-"]:after {
     font-family : workIcons;
@@ -4706,6 +4729,7 @@
 }
 */
 
+/*noinspection CssNoGenericFontName*/
 [class^="icon-"]:before, [class*=" icon-"]:before {
     font-family     : "fontello";
     font-style      : normal;
@@ -5072,6 +5096,7 @@
     font-style  : normal;
 }
 
+/*noinspection CssNoGenericFontName*/
 [class^="flaticon-"]:before, [class*=" flaticon-"]:before,
 [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
     font-family : Flaticon;

@@ -15,6 +15,7 @@
     }
 ?>
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget, HtmlUnknownTarget -->
 <html lang="en">
 
 <head>
@@ -82,7 +83,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <input type="checkbox" name="remember" value="remember-me"> Remember me
+                                    <input type="checkbox" name="remember" value="remember-me" title="remember me"> Remember me
                                 </div>
                                 <div class="col-6 text-right">
                                     <button class="btn btn-primary px-4" type="submit">Login</button>
