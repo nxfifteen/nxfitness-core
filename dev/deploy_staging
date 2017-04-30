@@ -7,7 +7,7 @@ eval $(ssh-agent -s)
 ssh-add /home/nxad/.ssh/id_rsa_pss
 
 if [ ! -d "$ROOTPATH" ]; then
-    mkdir "$ROOTPATH"
+    mkdir -p "$ROOTPATH"
     cd "$ROOTPATH"
     git clone git@nxfifteen.me.uk:nx-fitness/nxfitness-core.git ./
 else
