@@ -32,7 +32,6 @@
         public function __construct($trackingId, $api_url)
         {
             $this->setSiteId($trackingId);
-            require_once(dirname(__FILE__) . "/../library/PiwikTracker.php");
 
             $this->PiwikTracker = new \PiwikTracker($this->getSiteId(), $api_url);
 

@@ -3,8 +3,8 @@
     namespace Core;
     
     use DateTime;
-    use medoo;
-    use League\OAuth2\Client\Token\AccessToken as AccessToken; 
+    use League\OAuth2\Client\Token\AccessToken as AccessToken;
+    use Medoo\Medoo;
 
     date_default_timezone_set('Europe/London');
     error_reporting(E_ALL);
@@ -37,7 +37,7 @@
 
         /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @var medoo
+         * @var Medoo
          */
         protected $database;
         /**
@@ -61,7 +61,6 @@
             require_once(dirname(__FILE__) . "/Config.php");
             $this->setSettings(new Config());
 
-            require_once(dirname(__FILE__) . "/../library/medoo.php");
             /** @noinspection PhpUndefinedClassInspection */
             $this->setDatabase(new medoo(array(
                 'database_type' => 'mysql',
@@ -104,9 +103,8 @@
             $this->settings = $settings;
         }
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @param medoo $database
+         * @param Medoo $database
          */
         private function setDatabase($database)
         {
@@ -166,9 +164,8 @@
          * Users
          */
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @return \medoo
+         * @return Medoo
          */
         public function getDatabase()
         {

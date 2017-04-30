@@ -2,6 +2,8 @@
 
     namespace Core;
 
+    use Medoo\Medoo;
+
     /**
      * Config helper class. Reads configuration details from config.inc.php file and the MySQL database
      *
@@ -16,11 +18,10 @@
     class Config
     {
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
          * Medoo class holding database connection
          *
-         * @var \medoo
+         * @var Medoo
          */
         private $database;
 
@@ -318,12 +319,11 @@
             }
         }
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
          * Set class database store
          * Takes medoo paramater and stores for access within the class
          *
-         * @param \medoo $database Application database connection
+         * @param Medoo $database Application database connection
          */
         public function setDatabase($database)
         {

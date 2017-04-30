@@ -2694,8 +2694,6 @@
 
                     nxr(0, " Connecting to CouchDB");
 
-                    $path = dirname(__FILE__) . "/../library/couchdb/";
-
                     $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", null, false);
                     $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", null, false);
                     $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', false);
@@ -2708,10 +2706,6 @@
                         return array("error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly");
                     }
 
-                    require_once $path . 'couch.php';
-                    require_once $path . 'couchClient.php';
-                    require_once $path . 'couchDocument.php';
-
                     $nomie_url = $nomie_protocol . '://' . $nomie_username . ':' . $nomie_password . '@' . $nomie_host . ':' . $nomie_port;
 
                     try {
@@ -2719,6 +2713,12 @@
                             "cookie_auth" => "true"
                         ));
                     } catch (Exception $e) {
+                        nxr(4, $nomie_url);
+                        $parts = parse_url($nomie_url);
+                        nxr(0, print_r($parts, true));
+                        $parts = parse_url("https://nomie:wyFLED924y@nxfifteen.me.uk:5223");
+                        nxr(0, print_r($parts, true));
+
                         if (!isset($nomie_username)) {
                             $was_username_set = "false";
                         } else {

@@ -2,13 +2,10 @@
 
     namespace UX;
 
-    /**
-     * @param $msg
-     */
     use Core\Config;
     use Core\Core;
     use DateTime;
-    use medoo;
+    use Medoo\Medoo;
 
     if (!function_exists("nxr")) {
         /**
@@ -47,9 +44,8 @@
     class NxFitAdmin
     {
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @var medoo
+         * @var Medoo
          */
         protected $database;
 
@@ -100,8 +96,6 @@
             require_once(CORE_ROOT . "/inc/Core.php");
             $this->nxFit = new Core();
 
-            /** @noinspection PhpIncludeInspection */
-            require_once(CORE_ROOT . "/library/medoo.php");
             /** @noinspection PhpUndefinedClassInspection */
             $this->setDatabase(new medoo(array(
                 'database_type' => 'mysql',

@@ -3,6 +3,7 @@
     namespace Core;
 
     use Exception;
+    use Medoo\Medoo;
     use Raven_Autoloader;
     use Raven_Client;
     use Raven_ErrorHandler;
@@ -37,7 +38,6 @@
         public function __construct($appClass)
         {
             if (defined('SENTRY_DSN')) {
-                require_once(dirname(__FILE__) . "/../library/sentry/lib/Raven/Autoloader.php");
                 Raven_Autoloader::register();
 
                 $this->appClass = $appClass;
@@ -125,9 +125,8 @@
             }
         }
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @param \medoo $medoo
+         * @param Medoo $medoo
          * @param       $parameters
          */
         public function postDatabaseQuery($medoo, $parameters)
@@ -146,7 +145,7 @@
                             'sql_driver'     => $medoo_info['driver'],
                             'sql_version'    => $medoo_info['version'],
                             'sql_connection' => $medoo_info['connection'],
-                            'sql_last_query' => $medoo->last_query(),
+                            'sql_last_query' => $medoo->last(),
                             'php_version'    => phpversion(),
                             'core_version'   => $this->appClass->getSetting("version", "0.0.0.1", true)
                         )

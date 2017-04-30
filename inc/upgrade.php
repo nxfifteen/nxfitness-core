@@ -3,7 +3,7 @@
     namespace Core;
 
     use DateTime;
-    use medoo;
+    use Medoo\Medoo;
 
     require_once(dirname(__FILE__) . "/../config.def.dist.php");
     require_once(dirname(__FILE__) . "/Core.php");
@@ -47,9 +47,8 @@
          */
         protected $VersionCurrentArray;
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @var \medoo
+         * @var Medoo
          */
         protected $database;
 
@@ -100,9 +99,8 @@
             $this->settings = $settings;
         }
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
-         * @param medoo $database
+         * @param Medoo $database
          */
         private function setDatabase($database)
         {
@@ -666,9 +664,9 @@
             return $this->settings;
         }
 
-        /** @noinspection PhpUndefinedClassInspection */
+        
         /**
-         * @return \medoo
+         * @return Medoo
          */
         public function getDatabase()
         {
