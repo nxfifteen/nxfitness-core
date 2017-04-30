@@ -98,6 +98,7 @@
                                 $paths['loaded'][] = $path . $class_path . $ext;
                             }
 
+                            /** @noinspection PhpIncludeInspection */
                             require $path . $class_path . $ext;
 
                             if($conf['verbose'])
