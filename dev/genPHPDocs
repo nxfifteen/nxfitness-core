@@ -4,60 +4,59 @@ ROOTPATH="$1"
 eval $(ssh-agent -s)
 ssh-add /home/nxad/.ssh/id_rsa_pss
 
-FROMTAG=""
-CURRENTCOMIT=`git rev-parse --verify HEAD`
-if [ -f "$ROOTPATH/dev/.lastChangeLog" ]; then
-    LASTCOMMIT=`cat "$ROOTPATH/dev/.lastChangeLog"`
-
-    if [ "$LASTCOMMIT" != "$CURRENTCOMIT" ]; then
-        FROMTAG="--tag $LASTCOMMIT"
-    fi
-fi
-
 php "$ROOTPATH/vendor/phpdocumentor/phpdocumentor/bin/phpdoc"  >/dev/null 2>&1
-
-if [ ! -d "$ROOTPATH/binaries/phpdoc-md" ]; then
-    echo "cloning phpdoc-md"
-    cd "$ROOTPATH/binaries"
-    git clone git@nxfifteen.me.uk:nx-style/phpdoc-md.git >/dev/null 2>&1
-    cd "$ROOTPATH/binaries/phpdoc-md"
-    php "$ROOTPATH/binaries/composer.phar" install >/dev/null 2>&1
-    cd "$ROOTPATH"
-else
-    echo "updating phpdoc-md"
-    cd "$ROOTPATH/binaries/phpdoc-md"
-    git pull >/dev/null 2>&1
-    cd "$ROOTPATH"
-fi
-
-if [ ! -d "$ROOTPATH/docs/wiki.core" ]; then
-    echo "creating markdown"
-    cd "$ROOTPATH/docs/"
-    git clone git@nxfifteen.me.uk:nx-fitness/nxfitness-core.wiki.git ./wiki.core >/dev/null 2>&1
-    cd "$ROOTPATH"
-else
-    echo "updating markdown"
-    cd "$ROOTPATH/docs/wiki.core"
-    pwd
-    git pull >/dev/null 2>&1
-    cd "$ROOTPATH"
-fi
-
-php "$ROOTPATH/binaries/phpdoc-md/bin/phpdocmd" "$ROOTPATH/docs/development/structure.xml" "$ROOTPATH/docs/wiki.core/phpdoc/class"
-
-cd "$ROOTPATH/docs/wiki.core"
 rsync -vhru --delete-after ./ /var/www/dev/development/
 
-
-/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/change-log.md" $FROMTAG;
-/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/extended-change-log.md" --extended;
-git add change-log.md extended-change-log.md
-git commit -m "chore(changelog): Updated changelog files"
-
-git add .
-git commit -m "chore(wiki): Updated phpdoc"
-
-ssh-add -D
-ssh-add /home/nxad/.ssh/id_rsa_wiki
-
-git push
+#FROMTAG=""
+#CURRENTCOMIT=`git rev-parse --verify HEAD`
+#if [ -f "$ROOTPATH/dev/.lastChangeLog" ]; then
+#    LASTCOMMIT=`cat "$ROOTPATH/dev/.lastChangeLog"`
+#
+#    if [ "$LASTCOMMIT" != "$CURRENTCOMIT" ]; then
+#        FROMTAG="--tag $LASTCOMMIT"
+#    fi
+#fi
+#if [ ! -d "$ROOTPATH/binaries/phpdoc-md" ]; then
+#    echo "cloning phpdoc-md"
+#    cd "$ROOTPATH/binaries"
+#    git clone git@nxfifteen.me.uk:nx-style/phpdoc-md.git >/dev/null 2>&1
+#    cd "$ROOTPATH/binaries/phpdoc-md"
+#    php "$ROOTPATH/binaries/composer.phar" install >/dev/null 2>&1
+#    cd "$ROOTPATH"
+#else
+#    echo "updating phpdoc-md"
+#    cd "$ROOTPATH/binaries/phpdoc-md"
+#    git pull >/dev/null 2>&1
+#    cd "$ROOTPATH"
+#fi
+#
+#if [ ! -d "$ROOTPATH/docs/wiki.core" ]; then
+#    echo "creating markdown"
+#    cd "$ROOTPATH/docs/"
+#    git clone git@nxfifteen.me.uk:nx-fitness/nxfitness-core.wiki.git ./wiki.core >/dev/null 2>&1
+#    cd "$ROOTPATH"
+#else
+#    echo "updating markdown"
+#    cd "$ROOTPATH/docs/wiki.core"
+#    pwd
+#    git pull >/dev/null 2>&1
+#    cd "$ROOTPATH"
+#fi
+#
+#php "$ROOTPATH/binaries/phpdoc-md/bin/phpdocmd" "$ROOTPATH/docs/development/structure.xml" "$ROOTPATH/docs/wiki.core/phpdoc/class"
+#
+#cd "$ROOTPATH/docs/wiki.core"
+#
+#
+#/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/change-log.md" $FROMTAG;
+#/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/extended-change-log.md" --extended;
+#git add change-log.md extended-change-log.md
+#git commit -m "chore(changelog): Updated changelog files"
+#
+#git add .
+#git commit -m "chore(wiki): Updated phpdoc"
+#
+#ssh-add -D
+#ssh-add /home/nxad/.ssh/id_rsa_wiki
+#
+#git push
