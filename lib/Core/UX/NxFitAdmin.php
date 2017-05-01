@@ -355,8 +355,7 @@
                     return new DateTime ($this->getDatabase()->get($this->getApiSetting("db_prefix", null,
                             false) . "runlog", "lastrun", array(
                         "user"  => $this->getActiveUser(),
-                        "ORDER" => array("lastrun" => "ASC"),
-                        "LIMIT" => 1
+                        "ORDER" => array("lastrun" => "ASC")
                     )));
                 }
             } else {
@@ -373,8 +372,7 @@
                             "user"     => $this->getActiveUser(),
                             "activity" => $scope
                         ),
-                        "ORDER" => array("lastrun" => "ASC"),
-                        "LIMIT" => 1
+                        "ORDER" => array("lastrun" => "ASC")
                     )));
 
                     return $returnTime;
