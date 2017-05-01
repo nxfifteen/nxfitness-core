@@ -173,6 +173,8 @@
                         nxr(2, "Can not process " . $fitbitApp->supportedApi($job['trigger']) . " since " . $job['user'] . " is no longer a user.");
                         $fitbitApp->delCronJob($job['user'], $job['trigger']);
                     }
+
+                    nxr(0, "Cron " . $fitbitApp->supportedApi($job['trigger']) . " completed for " . $job['user']);
                 } else {
                     nxr(0, "Timeout reached skipping " . $fitbitApp->supportedApi($job['trigger']) . " for " . $job['user']);
                     $repopulate_queue = false;
