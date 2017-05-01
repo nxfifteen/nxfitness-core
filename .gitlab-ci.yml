@@ -59,7 +59,6 @@ deploy_staging:
   environment:
     name: staging
     url: http://core.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
-  when: manual
   only:
     - branches
   except:
@@ -72,10 +71,10 @@ deploy_prod:
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
     - scp ./dev/deploy_prod nxad@nxfifteen.me.uk:/home/nxad/homes/gitrepos/deploy_prod
+    - ssh nxad@nxfifteen.me.uk chmod 755 /home/nxad/homes/gitrepos/deploy_prod
     - ssh nxad@nxfifteen.me.uk /home/nxad/homes/gitrepos/deploy_prod
   environment:
     name: production
     url: https://nxfifteen.me.uk/api/fitbit/
-  when: manual
   only:
   - master
