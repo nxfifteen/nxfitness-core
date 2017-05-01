@@ -41,7 +41,7 @@
                     'user'         => $_GET['user'],
                     'cooldown'     => $cooldown,
                     'php_version'  => phpversion(),
-                    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
+                    'core_version' => $fitbitApp->getSetting("version", "0.0.0.1", true)
                 )
             ));
             nxr(0, "Can not process " . $fitbitApp->supportedApi($_GET['get']) . ". API limit reached for " . $_GET['user'] . ". Cooldown period ends " . $cooldown);
@@ -53,7 +53,7 @@
                 'api_req'      => $_GET['get'],
                 'user'         => $_GET['user'],
                 'php_version'  => phpversion(),
-                'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
+                'core_version' => $fitbitApp->getSetting("version", "0.0.0.1", true)
             )
         ));
         nxr(0, "Can not process " . $fitbitApp->supportedApi($_GET['get']) . " since " . $_GET['user'] . " is no longer a user.");
