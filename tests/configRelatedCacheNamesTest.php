@@ -2,10 +2,10 @@
 
     namespace Core\Tests;
 
-    require_once(dirname(__FILE__) . '/../../autoloader.php');
+    require_once(dirname(__FILE__) . '/../lib/autoloader.php');
 
     use Core\Config as Config;
-    use \PHPUnit\Framework\TestCase;
+    use PHPUnit\Framework\TestCase;
 
     class ConfigCacheNamesTest extends TestCase
     {
