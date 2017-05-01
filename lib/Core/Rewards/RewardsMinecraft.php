@@ -30,6 +30,9 @@
          * @var String
          */
         protected $UserID;
+        /**
+         * @var
+         */
         protected $UserMinecraftID;
 
         /**
@@ -62,6 +65,8 @@
 
         /**
          * @param Core $paramClass
+         *
+         * @todo Consider test case
          */
         private function setAppClass($paramClass)
         {
@@ -69,6 +74,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Core
          */
         private function getAppClass()
@@ -76,6 +84,15 @@
             return $this->AppClass;
         }
 
+        /**
+         * @todo Consider test case
+         *
+         * @param $cat
+         * @param $event
+         * @param $score
+         *
+         * @return array|bool
+         */
         private function checkForAward($cat, $event, $score)
         {
             $reward    = array();
@@ -219,6 +236,15 @@
 
         }
 
+        /**
+         * @param     $goal
+         * @param     $value
+         * @param int $multiplyer
+         *
+         * @todo Consider test case
+         *
+         * @return bool
+         */
         private function reachedGoal($goal, $value, $multiplyer = 1)
         {
             $currentDate = new DateTime ('now');
@@ -248,11 +274,30 @@
             return false;
         }
 
+        /**
+         * @param $goal
+         * @param $value
+         *
+         * @todo Consider test case
+         *
+         * @return bool
+         */
         private function smashedGoal($goal, $value) { return $this->reachedGoal($goal, $value, 1.5); }
 
+        /**
+         * @param $goal
+         * @param $value
+         *
+         * @todo Consider test case
+         *
+         * @return bool
+         */
         private function crushedGoal($goal, $value) { return $this->reachedGoal($goal, $value, 2); }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return String
          */
         public function getUserID()
@@ -261,6 +306,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @param String $UserID
          */
         public function setUserID($UserID)
@@ -269,6 +317,8 @@
         }
 
         /**
+         * @todo Consider test case
+         *
          * @return String
          */
         public function getUserMinecraftID()
@@ -279,6 +329,8 @@
         /**
          * @param $UserMinecraftID
          *
+         * @todo     Consider test case
+         *
          * @internal param String $UserID
          */
         public function setUserMinecraftID($UserMinecraftID)
@@ -286,6 +338,12 @@
             $this->UserMinecraftID = $UserMinecraftID;
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return array
+         */
         public function queryRewards()
         {
             $wmc_key_provided = $_GET['wmc_key'];
@@ -361,6 +419,12 @@
 
         }
 
+        /**
+         * @param $activity
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerActivity($activity)
         {
             $currentDate   = new DateTime ('now');
@@ -434,6 +498,12 @@
 
         }
 
+        /**
+         * @param $badge
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerBadgeAwarded($badge)
         {
             nxr(1, "** API Event Trigger Badge");
@@ -455,6 +525,14 @@
             //}
         }
 
+        /**
+         * @param $current
+         * @param $goal
+         * @param $last
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerWeightChange($current, $goal, $last)
         {
             if ($current <= $goal) {
@@ -466,6 +544,14 @@
             }
         }
 
+        /**
+         * @param $current
+         * @param $goal
+         * @param $last
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerFatChange($current, $goal, $last)
         {
             if ($current <= $goal) {
@@ -477,12 +563,24 @@
             }
         }
 
+        /**
+         * @param $meal
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerNewMeal($meal)
         {
             nxr(1, "** API Event Meal Logged");
             nxr(6, $meal->loggedFood->name . " recorded");
         }
 
+        /**
+         * @param $veryActive
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerVeryActive($veryActive)
         {
             $currentDate = new DateTime ('now');
@@ -508,6 +606,14 @@
             }
         }
 
+        /**
+         * @param $date
+         * @param $trigger
+         * @param $value
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerTracker($date, $trigger, $value)
         {
             $goalsToCheck = array("steps", "floors", "distance");
@@ -544,6 +650,12 @@
             }
         }
 
+        /**
+         * @param $inputArray
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerNomie($inputArray)
         {
             $event = $inputArray[2];
@@ -557,6 +669,13 @@
             }
         }
 
+        /**
+         * @param $goal
+         * @param $length
+         *
+         * @todo Consider test case
+         *
+         */
         public function eventTriggerStreak($goal, $length)
         {
             $this->checkForAward("streak", $goal, $length);

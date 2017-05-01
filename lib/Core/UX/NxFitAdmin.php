@@ -63,7 +63,6 @@
 
             $this->nxFit = new Core();
 
-            /** @noinspection PhpUndefinedClassInspection */
             $this->setDatabase(new medoo(array(
                 'database_type' => 'mysql',
                 'database_name' => $this->getApiSetting("db_name"),
@@ -87,6 +86,9 @@
 
         }
 
+        /**
+         * @return float
+         */
         public function getSyncStatus()
         {
             if (!array_key_exists("SyncProgress",
@@ -131,14 +133,14 @@
             return $_SESSION['SyncProgress'];
         }
 
-        /** @noinspection PhpUndefinedClassInspection *
-         * /**
+        /**
+         * @todo Consider test case
          * @return medoo
          */
         public function getDatabase()
         {
             return $this->database;
-        }/** @noinspection PhpUndefinedClassInspection */
+        }
 
         /**
          * @param medoo $database
@@ -149,6 +151,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Config
          */
         public function getApiSettingClass()
@@ -161,6 +166,8 @@
          * @param null   $default
          * @param bool   $query_db
          *
+         * @todo Consider test case
+         *
          * @return string
          */
         public function getApiSetting($key = "", $default = null, $query_db = true)
@@ -170,6 +177,8 @@
 
         /**
          * @param string $key
+         *
+         * @todo Consider test case
          *
          * @return array
          */
@@ -184,6 +193,9 @@
 
         /**
          * @param array $config
+         *
+         * @todo Consider test case
+         *
          */
         public function setConfig($config)
         {
@@ -191,6 +203,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Core
          */
         public function getNxFit()
@@ -199,6 +214,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return string
          */
         public function getActiveUser()
@@ -208,6 +226,9 @@
 
         /**
          * @param string $activeUser
+         *
+         * @todo Consider test case
+         *
          */
         public function setActiveUser($activeUser)
         {
@@ -215,6 +236,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Config
          */
         public function getUserProfile()
@@ -244,6 +268,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return string
          */
         public function getLocalWeatherImage()
@@ -289,6 +316,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return string
          */
         public function getLocalWeatherCode()
@@ -305,6 +335,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return string|array
          */
         public function getUserTheme()
@@ -317,6 +350,8 @@
 
         /**
          * @param $trigger
+         *
+         * @todo Consider test case
          *
          * @return DateTime
          */
@@ -343,6 +378,8 @@
 
         /**
          * @param null $scope
+         *
+         * @todo Consider test case
          *
          * @return DateTime
          */
@@ -382,5 +419,19 @@
             return new DateTime ("1970-01-01");
         }
 
-        public function getThemeWidgets($string, $array) { return ""; }
+        /**
+         * @param $string
+         * @param $array
+         *
+         * @todo Consider test case
+         *
+         * @return string
+         */
+        public function getThemeWidgets($string, $array)
+        {
+            unset($string);
+            unset($array);
+
+            return "";
+        }
     }

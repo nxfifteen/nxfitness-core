@@ -76,6 +76,7 @@
          *
          * @param Core $appClass
          *
+         * @todo     Consider test case
          * @internal param $userFid
          */
         public function __construct($appClass = null)
@@ -97,6 +98,9 @@
 
         /**
          * @param Config $settings
+         *
+         * @todo Consider test case
+         *
          */
         private function setSettings($settings)
         {
@@ -105,12 +109,22 @@
 
         /**
          * @param Medoo $database
+         *
+         * @todo Consider test case
+         *
          */
         private function setDatabase($database)
         {
             $this->database = $database;
         }
 
+        /**
+         * @param $error
+         *
+         * @todo Consider test case
+         *
+         * @return bool
+         */
         private function wasMySQLError($error)
         {
             $this->errorRecording->postDatabaseQuery($this->getDatabase(), array(
@@ -127,11 +141,23 @@
             }
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return array
+         */
         private function getInstallingVersionBrakeDown()
         {
             return explode(".", $this->VersionInstalling);
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return array
+         */
         private function getInstallVersionBrakeDown()
         {
             if (is_null($this->VersionCurrent)) {
@@ -661,6 +687,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Config
          */
         public function getSettings()
@@ -670,6 +699,9 @@
 
         
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Medoo
          */
         public function getDatabase()
@@ -683,6 +715,8 @@
          * @param                $key
          * @param null           $default
          * @param bool           $query_db
+         *
+         * @todo Consider test case
          *
          * @return string
          */
@@ -698,6 +732,8 @@
          * @param           $value
          * @param bool      $query_db
          *
+         * @todo Consider test case
+         *
          * @return bool
          */
         public function setSetting($key, $value, $query_db = true)
@@ -705,11 +741,23 @@
             return $this->getSettings()->set($key, $value, $query_db);
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return String
+         */
         public function getInstallingVersion()
         {
             return $this->VersionInstalling;
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return String
+         */
         public function getInstallVersion()
         {
             if (is_null($this->VersionCurrent)) {
@@ -721,6 +769,12 @@
             return $this->VersionCurrent;
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return array
+         */
         public function getUpdatesRequired()
         {
             $currentVersion = $this->getInstallVersionBrakeDown();
@@ -750,6 +804,12 @@
             return $updateFunctions;
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return int
+         */
         public function getNumUpdates()
         {
             if (is_null($this->NumUpdates)) {
@@ -759,6 +819,12 @@
             return $this->NumUpdates;
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return array
+         */
         public function getUpdates()
         {
             if (is_null($this->UpdateFunctions)) {
@@ -768,6 +834,12 @@
             return $this->UpdateFunctions;
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return array
+         */
         public function getUpdateFunctions()
         {
             if (is_null($this->UpdateFunctions)) {
@@ -777,6 +849,12 @@
             return $this->UpdateFunctions;
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return bool
+         */
         public function runUpdates()
         {
             if (is_null($this->UpdateFunctions)) {

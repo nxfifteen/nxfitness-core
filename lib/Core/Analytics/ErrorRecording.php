@@ -38,6 +38,11 @@
          */
         protected $appClass;
 
+        /**
+         * ErrorRecording constructor.
+         *
+         * @param $appClass
+         */
         public function __construct($appClass)
         {
             if (defined('SENTRY_DSN')) {
@@ -48,6 +53,7 @@
         }
 
         /**
+         * @todo Consider test case
          * @return Raven_Client
          */
         public function getSentryClient()
@@ -76,6 +82,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Raven_ErrorHandler
          */
         public function getSentryErrorHandler()
@@ -101,6 +110,9 @@
          * @param array     $data      Additional attributes to pass with this event (see Sentry docs).
          * @param null      $logger
          * @param null      $vars
+         *
+         * @todo Consider test case
+         *
          */
         public function captureException($exception, $data = null, $logger = null, $vars = null)
         {
@@ -118,6 +130,9 @@
          * @param array  $data    Additional attributes to pass with this event (see Sentry docs).
          * @param bool   $stack
          * @param null   $vars
+         *
+         * @todo Consider test case
+         *
          */
         public function captureMessage($message, $params = array(), $data = array(), $stack = false, $vars = null)
         {
@@ -131,6 +146,9 @@
         /**
          * @param Medoo $medoo
          * @param       $parameters
+         *
+         * @todo Consider test case
+         *
          */
         public function postDatabaseQuery($medoo, $parameters)
         {

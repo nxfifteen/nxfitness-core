@@ -1,8 +1,5 @@
 stages:
   - test
-  - syntax
-  - info
-  - review
   - stage
   - deploy
 
@@ -13,33 +10,76 @@ cache:
   - binaries/
 
 # Run our tests
-test:php:
+test:phpunit:
+  stage: test
+  before_script:
+  - bash ./dev/build_dev_env.sh
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  script:
+  - php ./binaries/phpunit.phar -c phpunit.xml
+
+# Run our tests
+test:docblock:
   stage: test
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
-  - php ./binaries/phpunit.phar -c phpunit.xml
+  - ./binaries/php-docblock-checker-1.3.4/phpdoccheck -d ./lib --no-interaction
+  only:
+  - branches
+  except:
+  - master
+
+# Run our tests
+test:lint:
+  stage: test
+  before_script:
+  - bash ./dev/build_dev_env.sh
+  script:
   - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude binaries/php-docblock-checker-1.3.4 --exclude binaries/phpspec --blame -e php .
+  only:
+  - branches
+  except:
+  - master
+
+# Run our tests
+test:phpspec:
+  stage: test
+  before_script:
+  - bash ./dev/build_dev_env.sh
+  script:
   - ./vendor/phpspec/phpspec/bin/phpspec run
+  only:
+  - branches
+  except:
+  - master
 
 # Run our tests
 test:phpcs:
-  stage: syntax
+  stage: test
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
   - bash ./dev/phpcs_cbf.sh
+  only:
+  - branches
+  except:
+  - master
 
 # Run our tests
 test:phploc:
-  stage: info
+  stage: test
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
   - ./binaries/php-docblock-checker-1.3.4/vendor/bin/phploc lib
+  only:
+  - branches
+  except:
+  - master
 
 deploy_review:
-  stage: review
+  stage: stage
   script:
     - echo "Deploy a review app"
     - /home/nxad/gits/deploy_review "$REVIEW_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG

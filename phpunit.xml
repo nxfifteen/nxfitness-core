@@ -3,7 +3,7 @@
 <phpunit verbose="true">
     <testsuites>
         <testsuite name="Core Test Suite">
-            <directory>inc/Core/Tests</directory>
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
     <logging>
@@ -12,7 +12,8 @@
     </logging>
     <filter>
         <whitelist>
-            <directory suffix=".php">inc/</directory>
+            <directory suffix=".php">lib/</directory>
+            <directory suffix=".php">ux/</directory>
         </whitelist>
     </filter>
 </phpunit>

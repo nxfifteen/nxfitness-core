@@ -49,6 +49,8 @@
 
         /**
          * @param $userFid
+         *
+         * @todo Consider test case
          */
         public function __construct($userFid)
         {
@@ -66,6 +68,9 @@
          * @param          $userPushStartDate
          * @param          $userPushEndDate
          * @param DateTime $range_start
+         *
+         * @todo Consider test case
+         *
          *
          * @return array
          */
@@ -194,6 +199,9 @@
          * @param array|NULL $lastRecord
          * @param array      $nextRecord
          *
+         * @todo Consider test case
+         *
+         *
          * @return array
          */
         private function fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $nextRecord)
@@ -239,6 +247,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Core
          */
         private function getAppClass()
@@ -248,6 +259,9 @@
 
         /**
          * @param $input_num
+         *
+         * @todo Consider test case
+         *
          *
          * @return string
          */
@@ -270,12 +284,24 @@
 
         /**
          * @param Core $paramClass
+         *
+         * @todo Consider test case
+         *
          */
         private function setAppClass($paramClass)
         {
             $this->AppClass = $paramClass;
         }
 
+        /**
+         * @param $inputWeight
+         * @param $convertUnits
+         *
+         * @todo Consider test case
+         *
+         *
+         * @return array|float
+         */
         private function convertWeight($inputWeight, $convertUnits)
         {
             $conversationUnit = 1;
@@ -299,6 +325,9 @@
 
         /**
          * @param null $scope
+         *
+         * @todo Consider test case
+         *
          *
          * @return DateTime
          */
@@ -349,6 +378,9 @@
          * @param $lon2
          * @param $unit
          *
+         * @todo     Consider test case
+         *
+         *
          * @return float Distance between points in [m] (same as earthRadius)
          * @internal param float $latitudeFrom Latitude of start point in [deg decimal]
          * @internal param float $longitudeFrom Longitude of start point in [deg decimal]
@@ -377,6 +409,8 @@
         /**
          * @param int    $limit
          * @param string $tableName
+         *
+         * @todo Consider test case
          *
          * @return array
          */
@@ -420,6 +454,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return int
          */
         public function getForCache()
@@ -433,6 +470,9 @@
 
         /**
          * @param bool $forCache
+         *
+         * @todo Consider test case
+         *
          */
         public function setForCache($forCache)
         {
@@ -440,6 +480,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return String
          */
         public function getParamDate()
@@ -452,6 +495,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @param String $paramDate
          */
         public function setParamDate($paramDate)
@@ -460,6 +506,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return String
          */
         public function getParamPeriod()
@@ -479,6 +528,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @param String $paramPeriod
          */
         public function setParamPeriod($paramPeriod)
@@ -487,6 +539,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return UserAnalytics
          */
         public function getTracking()
@@ -496,6 +551,9 @@
 
         /**
          * @param UserAnalytics $tracking
+         *
+         * @todo Consider test case
+         *
          */
         public function setTracking($tracking)
         {
@@ -503,6 +561,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return String
          */
         public function getUserID()
@@ -512,6 +573,9 @@
 
         /**
          * @param String $UserID
+         *
+         * @todo Consider test case
+         *
          */
         public function setUserID($UserID)
         {
@@ -520,6 +584,9 @@
 
         /**
          * @param $start_date
+         *
+         * @todo Consider test case
+         *
          *
          * @return bool|int
          */
@@ -534,6 +601,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return bool
          */
         public function isUser()
@@ -542,6 +612,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordAboutMe()
@@ -586,6 +659,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordActiveGoal()
@@ -635,6 +711,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return bool
          */
         public function returnUserRecordActivity()
@@ -650,6 +729,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordActivityHistory()
@@ -831,6 +913,9 @@
          * @param null $tcxFileName
          * @param null $tcxTrackName
          *
+         * @todo Consider test case
+         *
+         *
          * @return array
          */
         public function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null)
@@ -870,7 +955,7 @@
                                 );
                             }
                         }
-                    } else /** @noinspection PhpUndefinedFieldInspection */
+                    } else
                         if (!isset($items->Activities->Activity->Lap)) {
                             return array(
                                 "error"  => "TCX Files contains no GPS Points",
@@ -900,7 +985,6 @@
                         $gpx .= "\n <metadata>";
                         $gpx .= "\n  <name>" . $tcxTrackName . "</name>";
                         $gpx .= "\n  <link href=\"http://nxfifteen.me.uk/\"><text>" . $tcxFileName . " Fitbit Track</text></link>";
-                        /** @noinspection PhpUndefinedFieldInspection */
                         $gpx .= "\n  <time>" . $items->Activities->Activity->Id . "</time>";
                         $gpx .= "\n </metadata>";
                         $gpx .= "\n <trk>";
@@ -917,7 +1001,6 @@
                         $endLatitude        = 0;
                         $endLongitude       = 0;
 
-                        /** @noinspection PhpUndefinedFieldInspection */
                         foreach ($items->Activities->Activity->Lap as $Laps) {
                             $trackCount     = 0;
                             $totalHeartRate = 0;
@@ -958,8 +1041,9 @@
                                 $endLongitude = (Float)$trkpt->Position->LongitudeDegrees;
                             }
 
-                            /** @noinspection PhpUndefinedMethodInspection */
+                            /** @var \SimpleXMLElement $Laps */
                             $attributes        = json_decode(json_encode($Laps->attributes()), true);
+                            /** @noinspection PhpUndefinedFieldInspection */
                             $gpxMeta['laps'][] = array(
                                 "startTime"           => $attributes['@attributes']['StartTime'],
                                 "elapsedTime"         => (Float)$Laps->TotalTimeSeconds,
@@ -1006,10 +1090,8 @@
                         }
                     }
 
-                    /** @noinspection PhpUndefinedFieldInspection */
                     $trackPoint = $items->Activities->Activity->Lap->Track->Trackpoint;
 
-                    /** @noinspection PhpUndefinedFieldInspection */
                     return array(
                         "error"  => "",
                         "return" => array(
@@ -1056,6 +1138,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordBadges()
@@ -1103,6 +1188,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array|bool
          */
         public function returnUserRecordBody()
@@ -1134,12 +1222,21 @@
             return $return;
         }
 
+        /**
+         *
+         * @todo Consider test case
+         *
+         * @return array
+         */
         public function returnUserRecordChallenger()
         {
             return $this->returnUserRecordPush();
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordPush()
@@ -1302,6 +1399,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordPushCalendar()
@@ -1371,6 +1471,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordConky()
@@ -1496,6 +1599,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordDashboard()
@@ -1560,6 +1666,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordLeaderboard()
@@ -1600,6 +1709,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordDevices()
@@ -1666,6 +1778,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordFloorGoal()
@@ -1712,6 +1827,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordFood()
@@ -1752,6 +1870,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordFoodDiary()
@@ -1890,6 +2011,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordJourneys()
@@ -2018,6 +2142,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordJourneysState()
@@ -2189,6 +2316,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordKeyPoints()
@@ -2416,6 +2546,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordSleep()
@@ -2481,6 +2614,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordStepGoal()
@@ -2527,6 +2663,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordSteps()
@@ -2602,6 +2741,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array|bool
          */
         public function returnUserRecordStepsGoal()
@@ -2625,6 +2767,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array|bool
          */
         public function returnUserRecordTrackerHistoryChart()
@@ -2693,6 +2838,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array|bool
          */
         public function returnUserRecordTrackerHistory()
@@ -2739,6 +2887,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordTasker()
@@ -2978,6 +3129,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordGoalStreak()
@@ -3086,6 +3240,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordTopBadges()
@@ -3134,6 +3291,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordTracked()
@@ -3268,6 +3428,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordTrend()
@@ -3351,6 +3514,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array|bool
          */
         public function returnUserRecordWater()
@@ -3390,6 +3556,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array|bool
          */
         public function returnUserRecordWeekPedometer()
@@ -3412,6 +3581,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordSyncState()
@@ -3456,6 +3628,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordWeight()
@@ -3738,6 +3913,8 @@
         /**
          * @param $get
          *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecords($get)
@@ -3798,6 +3975,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordNomie()
@@ -3810,6 +3990,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordNomieDashboard()
@@ -3883,6 +4066,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordNomieTrackers()
@@ -4002,6 +4188,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordNomieGPS()
@@ -4137,6 +4326,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function returnUserRecordNomieScoreGraph()

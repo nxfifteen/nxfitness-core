@@ -3,7 +3,7 @@
     "logo": "https://nxfifteen.me.uk/wp-content/uploads/2016/01/logo.png",
     "intro": "Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time",
     "repo_url": "https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core",
-    "version_name" : "v0.0.1.4",
+    "version_name" : "v0.0.1.6",
     "template": "docs/ChangeLogTemplate.md",
     "sections": [
         {
