@@ -137,8 +137,8 @@
                                     array('remote_api'), array(
                                         'level' => 'info',
                                         'extra' => array(
-                                            'api_req'      => $_GET['get'],
-                                            'user'         => $_GET['user'],
+                                            'api_req'      => $job['trigger'],
+                                            'user'         => $job['user'],
                                             'cooldown'     => $cooldown,
                                             'php_version'  => phpversion(),
                                             'core_version' => $fitbitApp->getSetting("version", "0.0.0.1", true)
