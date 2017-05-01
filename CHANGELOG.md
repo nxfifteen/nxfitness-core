@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.1.5 _Since Last Master_ ( Mon May 01 2017 22:12:09 GMT+0100 (GMT Summer Time) )
+## v0.0.1.6 _Since Last Master_ ( Mon May 01 2017 22:18:45 GMT+0100 (GMT Summer Time) )
 
 
 
@@ -322,6 +322,7 @@ _Use the Fitbit API to cache user stats and allow queries returned over JSON. An
     - Reverted version numbers ([8dae8c52](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/8dae8c520c0e5134677d570c48eefb9a77d1913c)) 
 
   - **version_number**
+    - Bumped 0.0.1.5 to 0.0.1.6 ([cf3b9b2d](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/cf3b9b2d99b66e0ff579db3c9c4a9d2bfe147210)) 
     - Bumped 0.0.1.4 to 0.0.1.5 ([356db011](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/356db011d70e39d239ddd1459ffeb6dcf275fb9b)) 
     - Bumped 0.0.1.3 to 0.0.1.4 ([c136d2a7](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/c136d2a7d347a9ee5841c40a5ea596e151e52340)) 
     - Bumped 0.0.1.2 to 0.0.1.3 ([ce577f90](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commit/ce577f90ad47d98a2e59e47cfd011423df3e331e)) 
