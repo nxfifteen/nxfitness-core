@@ -19,13 +19,40 @@ test:phpunit:
   - php ./binaries/phpunit.phar -c phpunit.xml
 
 # Run our tests
-test:php:
+test:docblock:
+  stage: test
+  before_script:
+  - bash ./dev/build_dev_env.sh
+  script:
+  - ./binaries/php-docblock-checker-1.3.4/phpdoccheck -d ./lib --no-interaction
+  only:
+  - branches
+  except:
+  - master
+
+# Run our tests
+test:lint:
   stage: test
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
   - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude binaries/php-docblock-checker-1.3.4 --exclude binaries/phpspec --blame -e php .
+  only:
+  - branches
+  except:
+  - master
+
+# Run our tests
+test:phpspec:
+  stage: test
+  before_script:
+  - bash ./dev/build_dev_env.sh
+  script:
   - ./vendor/phpspec/phpspec/bin/phpspec run
+  only:
+  - branches
+  except:
+  - master
 
 # Run our tests
 test:phpcs:
