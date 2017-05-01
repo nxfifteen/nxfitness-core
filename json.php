@@ -8,7 +8,12 @@
     header('Access-Control-Allow-Origin: https://wp.dev.psi.nxfifteen.me.uk');
     header('Cache-Control: no-cache, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-    header('Content-type: application/json');
+    if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
+        header('Content-type: text/plain');
+    } else {
+        header('Content-type: application/json');
+    }
+
 
     if (array_key_exists("user", $_GET) && array_key_exists("data", $_GET)) {
         $start = microtime(true);

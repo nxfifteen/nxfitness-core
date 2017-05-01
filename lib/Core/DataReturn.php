@@ -311,8 +311,7 @@
                     return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
                             null, false) . "runlog", "lastrun", array(
                         "user"  => $this->getUserID(),
-                        "ORDER" => array("lastrun" => "ASC"),
-                        "LIMIT" => 1
+                        "ORDER" => array("lastrun" => "ASC")
                     )));
                 }
             } else {
@@ -330,8 +329,7 @@
                             "user"     => $this->getUserID(),
                             "activity" => $scope
                         ),
-                        "ORDER" => array("lastrun" => "ASC"),
-                        "LIMIT" => 1
+                        "ORDER" => array("lastrun" => "ASC")
                     )));
 
                     return $returnTime;
@@ -339,6 +337,41 @@
             }
 
             return new DateTime ("1970-01-01");
+        }
+
+        /**
+         * Calculates the great-circle distance between two points, with
+         * the Haversine formula.
+         *
+         * @param $lat1
+         * @param $lon1
+         * @param $lat2
+         * @param $lon2
+         * @param $unit
+         *
+         * @return float Distance between points in [m] (same as earthRadius)
+         * @internal param float $latitudeFrom Latitude of start point in [deg decimal]
+         * @internal param float $longitudeFrom Longitude of start point in [deg decimal]
+         * @internal param float $latitudeTo Latitude of target point in [deg decimal]
+         * @internal param float $longitudeTo Longitude of target point in [deg decimal]
+         * @internal param float $earthRadius Mean earth radius in [m]
+         */
+        private function haversineGreatCircleDistance($lat1, $lon1, $lat2, $lon2, $unit)
+        {
+            $theta = $lon1 - $lon2;
+            $dist  = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+            $dist  = acos($dist);
+            $dist  = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $unit  = strtoupper($unit);
+
+            if ($unit == "K") {
+                return ($miles * 1.609344);
+            } else if ($unit == "N") {
+                return ($miles * 0.8684);
+            } else {
+                return $miles;
+            }
         }
 
         /**
@@ -792,41 +825,6 @@
             }
 
             return $returnArray;
-        }
-
-        /**
-         * Calculates the great-circle distance between two points, with
-         * the Haversine formula.
-         *
-         * @param $lat1
-         * @param $lon1
-         * @param $lat2
-         * @param $lon2
-         * @param $unit
-         *
-         * @return float Distance between points in [m] (same as earthRadius)
-         * @internal param float $latitudeFrom Latitude of start point in [deg decimal]
-         * @internal param float $longitudeFrom Longitude of start point in [deg decimal]
-         * @internal param float $latitudeTo Latitude of target point in [deg decimal]
-         * @internal param float $longitudeTo Longitude of target point in [deg decimal]
-         * @internal param float $earthRadius Mean earth radius in [m]
-         */
-        private function haversineGreatCircleDistance($lat1, $lon1, $lat2, $lon2, $unit)
-        {
-            $theta = $lon1 - $lon2;
-            $dist  = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-            $dist  = acos($dist);
-            $dist  = rad2deg($dist);
-            $miles = $dist * 60 * 1.1515;
-            $unit  = strtoupper($unit);
-
-            if ($unit == "K") {
-                return ($miles * 1.609344);
-            } else if ($unit == "N") {
-                return ($miles * 0.8684);
-            } else {
-                return $miles;
-            }
         }
 
         /**
@@ -3031,8 +3029,7 @@
                     "length"
                 ),
                     array(
-                        "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null),
-                        "LIMIT" => 1,
+                        "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null),
                         "ORDER" => array("length" => "DESC")
                     ));
 
@@ -3065,8 +3062,7 @@
                     "length"
                 ),
                     array(
-                        "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => !null),
-                        "LIMIT" => 1,
+                        "AND"   => array("fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null),
                         "ORDER" => array("start_date" => "DESC")
                     ));
 
@@ -3923,8 +3919,7 @@
                             null, false) . "nomie_events",
                         'datestamp', array(
                             "AND"   => array("fuid" => $this->getUserID(), "id" => $tracker['id']),
-                            "ORDER" => array("datestamp" => "ASC"),
-                            "LIMIT" => 1
+                            "ORDER" => array("datestamp" => "ASC")
                         ));
 
                     if (empty($dbEventFirst)) {
@@ -3936,8 +3931,7 @@
                                 null, false) . "nomie_events",
                             'datestamp', array(
                                 "AND"   => array("fuid" => $this->getUserID(), "id" => $tracker['id']),
-                                "ORDER" => array("datestamp" => "DESC"),
-                                "LIMIT" => 1
+                                "ORDER" => array("datestamp" => "DESC")
                             ));
 
                         if (empty($dbEventLast)) {
