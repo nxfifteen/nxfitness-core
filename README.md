@@ -1,7 +1,7 @@
 NxFitness Core - A PHP Fitbit API Project
 =========================================
 
-###### Version: 0.0.1.1
+###### Version: 0.0.1.2
 
 [![build status](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/badges/master/build.svg)](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commits/master)
 [![coverage report](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/badges/master/coverage.svg)](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/commits/master)
