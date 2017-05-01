@@ -1,8 +1,5 @@
 stages:
   - test
-  - syntax
-  - info
-  - review
   - stage
   - deploy
 
@@ -32,7 +29,7 @@ test:php:
 
 # Run our tests
 test:phpcs:
-  stage: syntax
+  stage: test
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
@@ -44,7 +41,7 @@ test:phpcs:
 
 # Run our tests
 test:phploc:
-  stage: info
+  stage: test
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
@@ -55,7 +52,7 @@ test:phploc:
   - master
 
 deploy_review:
-  stage: review
+  stage: stage
   script:
     - echo "Deploy a review app"
     - /home/nxad/gits/deploy_review "$REVIEW_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
