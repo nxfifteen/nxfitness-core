@@ -85,11 +85,11 @@
         }
 
         /**
+         * @todo Consider test case
+         *
          * @param $cat
          * @param $event
          * @param $score
-         *
-         * @todo Consider test case
          *
          * @return array|bool
          */
