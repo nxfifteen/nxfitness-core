@@ -728,8 +728,8 @@
 
             $updateFunctions = array();
 
-            $currentNumber = ($currentVersion[0] . $currentVersion[1] . $currentVersion[2] . $currentVersion[3]) * 1;
-            $installNumber = ($installVersion[0] . $installVersion[1] . $installVersion[2] . $installVersion[3]) * 1;
+            $currentNumber = (($currentVersion[0] * 1000) . ($currentVersion[1] * 100) . ($currentVersion[2] * 10) . $currentVersion[3]) * 1;
+            $installNumber = (($installVersion[0] * 1000) . ($installVersion[1] * 100) . ($installVersion[2] * 10) . $installVersion[3]) * 1;
 
             for ($x = ((int)$currentNumber + 1); $x <= $installNumber; $x++) {
                 if (method_exists($this, "updateRun" . $x)) {
