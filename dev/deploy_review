@@ -39,5 +39,5 @@ fi
 
 cd "$ROOTPATH"
 php "$ROOTPATH/vendor/phpdocumentor/phpdocumentor/bin/phpdoc"  >/dev/null 2>&1
-rsync -vhru --delete-after ./docs/development/* /var/www/dev/development/
+rsync -vhru --delete-after ./docs/development/* /var/www/dev/docs/
 
