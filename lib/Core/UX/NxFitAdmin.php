@@ -381,4 +381,6 @@
 
             return new DateTime ("1970-01-01");
         }
+
+        public function getThemeWidgets($string, $array) { return ""; }
     }
