@@ -59,6 +59,8 @@
 
         /**
          * @param mixed $siteId
+         *
+         * @todo Consider test case
          */
         private function setSiteId($siteId)
         {
@@ -66,6 +68,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return mixed
          */
         private function getSiteId()
@@ -75,6 +80,9 @@
 
         /**
          * @param string $documentTitle Page title as it will appear in the Actions > Page titles report
+         *
+         * @todo Consider test case
+         *
          */
         public function endEvent($documentTitle)
         {
@@ -88,6 +96,9 @@
          * @param string|bool $name     (optional) The Event's object Name (a particular Movie name, or Song name, or
          *                              File name...)
          * @param float|bool  $value    (optional) The Event's value
+         *
+         * @todo Consider test case
+         *
          */
         public function track($category, $action, $name = false, $value = false)
         {

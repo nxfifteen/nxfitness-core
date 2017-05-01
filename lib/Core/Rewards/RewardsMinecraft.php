@@ -65,6 +65,8 @@
 
         /**
          * @param Core $paramClass
+         *
+         * @todo Consider test case
          */
         private function setAppClass($paramClass)
         {
@@ -72,6 +74,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Core
          */
         private function getAppClass()
@@ -83,6 +88,8 @@
          * @param $cat
          * @param $event
          * @param $score
+         *
+         * @todo Consider test case
          *
          * @return array|bool
          */
@@ -234,6 +241,8 @@
          * @param     $value
          * @param int $multiplyer
          *
+         * @todo Consider test case
+         *
          * @return bool
          */
         private function reachedGoal($goal, $value, $multiplyer = 1)
@@ -269,6 +278,8 @@
          * @param $goal
          * @param $value
          *
+         * @todo Consider test case
+         *
          * @return bool
          */
         private function smashedGoal($goal, $value) { return $this->reachedGoal($goal, $value, 1.5); }
@@ -277,11 +288,16 @@
          * @param $goal
          * @param $value
          *
+         * @todo Consider test case
+         *
          * @return bool
          */
         private function crushedGoal($goal, $value) { return $this->reachedGoal($goal, $value, 2); }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return String
          */
         public function getUserID()
@@ -290,6 +306,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @param String $UserID
          */
         public function setUserID($UserID)
@@ -298,6 +317,8 @@
         }
 
         /**
+         * @todo Consider test case
+         *
          * @return String
          */
         public function getUserMinecraftID()
@@ -308,6 +329,8 @@
         /**
          * @param $UserMinecraftID
          *
+         * @todo     Consider test case
+         *
          * @internal param String $UserID
          */
         public function setUserMinecraftID($UserMinecraftID)
@@ -316,6 +339,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return array
          */
         public function queryRewards()
@@ -395,6 +421,9 @@
 
         /**
          * @param $activity
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerActivity($activity)
         {
@@ -471,6 +500,9 @@
 
         /**
          * @param $badge
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerBadgeAwarded($badge)
         {
@@ -497,6 +529,9 @@
          * @param $current
          * @param $goal
          * @param $last
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerWeightChange($current, $goal, $last)
         {
@@ -513,6 +548,9 @@
          * @param $current
          * @param $goal
          * @param $last
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerFatChange($current, $goal, $last)
         {
@@ -527,6 +565,9 @@
 
         /**
          * @param $meal
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerNewMeal($meal)
         {
@@ -536,6 +577,9 @@
 
         /**
          * @param $veryActive
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerVeryActive($veryActive)
         {
@@ -566,6 +610,9 @@
          * @param $date
          * @param $trigger
          * @param $value
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerTracker($date, $trigger, $value)
         {
@@ -605,6 +652,9 @@
 
         /**
          * @param $inputArray
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerNomie($inputArray)
         {
@@ -622,6 +672,9 @@
         /**
          * @param $goal
          * @param $length
+         *
+         * @todo Consider test case
+         *
          */
         public function eventTriggerStreak($goal, $length)
         {

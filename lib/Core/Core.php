@@ -49,7 +49,7 @@
         protected $errorRecording;
 
         /**
-         *
+         * @todo Consider test case
          */
         public function __construct()
         {
@@ -90,6 +90,9 @@
 
         /**
          * @param Config $settings
+         *
+         * @todo Consider test case
+         *
          */
         private function setSettings($settings)
         {
@@ -98,6 +101,9 @@
 
         /**
          * @param Medoo $database
+         *
+         * @todo Consider test case
+         *
          */
         private function setDatabase($database)
         {
@@ -109,6 +115,9 @@
          */
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return ErrorRecording
          */
         public function getErrorRecording()
@@ -122,6 +131,8 @@
          * @param                $key
          * @param null           $default
          * @param bool           $query_db
+         *
+         * @todo Consider test case
          *
          * @return string
          */
@@ -138,6 +149,8 @@
          * @param null   $default
          * @param bool   $query_db
          *
+         * @todo Consider test case
+         *
          * @return string
          */
         public function getUserSetting($fuid, $key, $default = null, $query_db = true)
@@ -146,6 +159,9 @@
         }
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Config
          */
         public function getSettings()
@@ -158,6 +174,9 @@
          */
 
         /**
+         *
+         * @todo Consider test case
+         *
          * @return Medoo
          */
         public function getDatabase()
@@ -171,6 +190,9 @@
          * @param string $user_fitbit_id
          * @param string $trigger
          * @param bool   $force
+         *
+         * @todo Consider test case
+         *
          */
         public function addCronJob($user_fitbit_id, $trigger, $force = false)
         {
@@ -208,6 +230,9 @@
          *
          * @param $user_fitbit_id
          * @param $trigger
+         *
+         * @todo Consider test case
+         *
          */
         public function delCronJob($user_fitbit_id, $trigger)
         {
@@ -245,6 +270,8 @@
         /**
          * Get list of pending cron jobs from database
          *
+         * @todo Consider test case
+         *
          * @return array|bool
          */
         public function getCronJobs()
@@ -256,6 +283,8 @@
         /**
          * @param bool   $reset
          * @param string $userFitbitId
+         *
+         * @todo Consider test case
          *
          * @return ApiBabel
          */
@@ -274,6 +303,9 @@
 
         /**
          * @param ApiBabel $fitbitapi
+         *
+         * @todo Consider test case
+         *
          */
         public function setFitbitapi($fitbitapi)
         {
@@ -287,6 +319,8 @@
         /**
          * @param $user_fitbit_id
          * @param $datetime
+         *
+         * @todo Consider test case
          *
          * @return array|int
          */
@@ -308,6 +342,8 @@
         /**
          * @param $user_fitbit_id
          *
+         * @todo Consider test case
+         *
          * @return int|array
          */
         public function getUserCooldown($user_fitbit_id)
@@ -322,6 +358,8 @@
 
         /**
          * @param string $user_fitbit_id
+         *
+         * @todo Consider test case
          *
          * @return bool
          */
@@ -339,6 +377,9 @@
         /**
          * @param string                                 $user_fitbit_id
          * @param AccessToken $accessToken
+         *
+         * @todo Consider test case
+         *
          */
         public function setUserOAuthTokens($user_fitbit_id, $accessToken)
         {
@@ -353,6 +394,9 @@
 
         /**
          * @param $user_fitbit_id
+         *
+         * @todo Consider test case
+         *
          */
         public function delUserOAuthTokens($user_fitbit_id)
         {
@@ -367,6 +411,8 @@
         /**
          * @param      $user_fitbit_id
          * @param bool $validate
+         *
+         * @todo Consider test case
          *
          * @return bool
          */
@@ -391,6 +437,8 @@
         /**
          * @param $userArray
          *
+         * @todo Consider test case
+         *
          * @return bool
          */
         public function valdidateOAuth($userArray)
@@ -406,6 +454,8 @@
         /**
          * @param string $user_fitbit_id
          * @param string $user_fitbit_password
+         *
+         * @todo Consider test case
          *
          * @return bool
          */
@@ -449,6 +499,8 @@
         /**
          * @param string $user_fitbit_id
          *
+         * @todo Consider test case
+         *
          * @return bool
          */
         public function isUserValidEml($user_fitbit_id)
@@ -468,6 +520,8 @@
         /**
          * @param      $errCode
          * @param null $user
+         *
+         * @todo Consider test case
          *
          * @return string
          */
@@ -505,6 +559,8 @@
          * @param           $value
          * @param bool      $query_db
          *
+         * @todo Consider test case
+         *
          * @return bool
          */
         public function setSetting($key, $value, $query_db = true)
@@ -519,6 +575,8 @@
          * @param string $key
          * @param string $value
          *
+         * @todo Consider test case
+         *
          * @return string
          */
         public function setUserSetting($fuid, $key, $value)
@@ -530,6 +588,8 @@
          * Helper function to check for supported API calls
          *
          * @param null $key
+         *
+         * @todo Consider test case
          *
          * @return array|null|string
          */
@@ -574,6 +634,13 @@
             }
         }
 
+        /**
+         * @param $_nx_fb_usr
+         *
+         * @todo Consider test case
+         *
+         * @return bool
+         */
         public function isUserOAuthAuthorised($_nx_fb_usr)
         {
             if (array_key_exists("userIsOAuth_" . $_nx_fb_usr,
