@@ -30,7 +30,6 @@
     class Core
     {
 
-        /** @noinspection PhpUndefinedClassInspection */
         /**
          * @var Medoo
          */
@@ -55,7 +54,6 @@
         {
             $this->setSettings(new Config());
 
-            /** @noinspection PhpUndefinedClassInspection */
             $this->setDatabase(new medoo(array(
                 'database_type' => 'mysql',
                 'database_name' => $this->getSetting("db_name"),

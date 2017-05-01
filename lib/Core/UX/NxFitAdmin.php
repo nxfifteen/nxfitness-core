@@ -63,7 +63,6 @@
 
             $this->nxFit = new Core();
 
-            /** @noinspection PhpUndefinedClassInspection */
             $this->setDatabase(new medoo(array(
                 'database_type' => 'mysql',
                 'database_name' => $this->getApiSetting("db_name"),
@@ -134,15 +133,14 @@
             return $_SESSION['SyncProgress'];
         }
 
-        /** @noinspection PhpUndefinedClassInspection *
-         * /**
+        /**
          * @todo Consider test case
          * @return medoo
          */
         public function getDatabase()
         {
             return $this->database;
-        }/** @noinspection PhpUndefinedClassInspection */
+        }
 
         /**
          * @param medoo $database
@@ -429,5 +427,11 @@
          *
          * @return string
          */
-        public function getThemeWidgets($string, $array) { return ""; }
+        public function getThemeWidgets($string, $array)
+        {
+            unset($string);
+            unset($array);
+
+            return "";
+        }
     }

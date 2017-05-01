@@ -2683,8 +2683,9 @@
 
                     $endTimeRaw = new DateTime ((String)$activity->startTime);
                     $endTimeRaw = $endTimeRaw->modify("+" . round($activity->activeDuration / 1000, 0) . " seconds");
-                    $endDate    = $endTimeRaw->format("Y-m-d");
-                    $endTime    = $endTimeRaw->format("H:i");
+                    /** @var \DateTime $endTimeRaw */
+                    $endDate = $endTimeRaw->format("Y-m-d");
+                    $endTime = $endTimeRaw->format("H:i");
 
                     if ($startDate == $endDate) {
                         nxr(3, "Activity Heart Rate on " . $startDate . " for " . $startTime . " till " . $endTime);

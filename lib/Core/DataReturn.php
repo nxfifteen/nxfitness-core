@@ -955,7 +955,7 @@
                                 );
                             }
                         }
-                    } else /** @noinspection PhpUndefinedFieldInspection */
+                    } else
                         if (!isset($items->Activities->Activity->Lap)) {
                             return array(
                                 "error"  => "TCX Files contains no GPS Points",
@@ -985,7 +985,6 @@
                         $gpx .= "\n <metadata>";
                         $gpx .= "\n  <name>" . $tcxTrackName . "</name>";
                         $gpx .= "\n  <link href=\"http://nxfifteen.me.uk/\"><text>" . $tcxFileName . " Fitbit Track</text></link>";
-                        /** @noinspection PhpUndefinedFieldInspection */
                         $gpx .= "\n  <time>" . $items->Activities->Activity->Id . "</time>";
                         $gpx .= "\n </metadata>";
                         $gpx .= "\n <trk>";
@@ -1002,7 +1001,6 @@
                         $endLatitude        = 0;
                         $endLongitude       = 0;
 
-                        /** @noinspection PhpUndefinedFieldInspection */
                         foreach ($items->Activities->Activity->Lap as $Laps) {
                             $trackCount     = 0;
                             $totalHeartRate = 0;
@@ -1043,8 +1041,9 @@
                                 $endLongitude = (Float)$trkpt->Position->LongitudeDegrees;
                             }
 
-                            /** @noinspection PhpUndefinedMethodInspection */
+                            /** @var \SimpleXMLElement $Laps */
                             $attributes        = json_decode(json_encode($Laps->attributes()), true);
+                            /** @noinspection PhpUndefinedFieldInspection */
                             $gpxMeta['laps'][] = array(
                                 "startTime"           => $attributes['@attributes']['StartTime'],
                                 "elapsedTime"         => (Float)$Laps->TotalTimeSeconds,
@@ -1091,10 +1090,8 @@
                         }
                     }
 
-                    /** @noinspection PhpUndefinedFieldInspection */
                     $trackPoint = $items->Activities->Activity->Lap->Track->Trackpoint;
 
-                    /** @noinspection PhpUndefinedFieldInspection */
                     return array(
                         "error"  => "",
                         "return" => array(
