@@ -1,0 +1,9 @@
+{
+  "require": {
+    "djchen/oauth2-fitbit": "^1.0",
+    "catfan/Medoo": "^1.2",
+    "piwik/piwik-php-tracker": "^1.2",
+    "sentry/sentry": "^1.6",
+    "dready92/php-on-couch": "^1.0"
+  }
+}

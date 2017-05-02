@@ -99,8 +99,7 @@
 
         if (is_dir(dirname(__FILE__) . "/bower_components")) {
             $bowerPath = 'bower_components';
-        }
-        if (is_dir(dirname(__FILE__) . "/../bundle/bowser")) {
+        } else if (is_dir(dirname(__FILE__) . "/../bundle/bowser")) {
             $bowerPath = '../bundle/bowser';
         }
         ?>
@@ -162,11 +161,11 @@
         </script>
 
         <!-- Bootstrap and necessary plugins -->
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="bower_components/tether/dist/js/tether.min.js"></script>
-        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="bower_components/pace/pace.min.js"></script>
-        <script src="bower_components/raven-js/dist/raven.min.js"></script>
+        <script src="<?php echo $bowerPath; ?>/jquery/dist/jquery.min.js"></script>
+        <script src="<?php echo $bowerPath; ?>/tether/dist/js/tether.min.js"></script>
+        <script src="<?php echo $bowerPath; ?>/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="<?php echo $bowerPath; ?>/pace/pace.min.js"></script>
+        <script src="<?php echo $bowerPath; ?>/raven-js/dist/raven.min.js"></script>
 
         <!-- GenesisUI main scripts -->
         <script>Raven.config('https://80a480ea986d4ee993ac89a54a0d1f0e@sentry.io/156527').install();</script>

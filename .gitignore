@@ -20,7 +20,7 @@
 /ux/bower_components/
 config.def.php
 config.inc.php
-vendor
+/vendor
 *.css.map
 /dev/index.php
 /dev/git-bump-version/
