@@ -96,6 +96,13 @@
         $_SESSION['CORE_ROOT']    = CORE_ROOT;
 
         $App = new NxFitAdmin($_COOKIE['_nx_fb_usr']);
+
+        if (is_dir(dirname(__FILE__) . "/bower_components")) {
+            $bowerPath = 'bower_components';
+        }
+        if (is_dir(dirname(__FILE__) . "/../bundle/bowser")) {
+            $bowerPath = '../bundle/bowser';
+        }
         ?>
         <!DOCTYPE html>
         <html lang="en">
@@ -151,6 +158,7 @@
         <!--suppress JSUnusedLocalSymbols -->
         <script type="application/javascript">
             var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
+            <?php echo "var bowerPath = '" . $bowerPath . "';\n"; ?>
         </script>
 
         <!-- Bootstrap and necessary plugins -->
