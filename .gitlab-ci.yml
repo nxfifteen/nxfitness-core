@@ -78,6 +78,18 @@ test:phploc:
   except:
   - master
 
+# Run our tests
+test:dependancies:
+  stage: test
+  before_script:
+  - bash ./dev/build_dev_env.sh
+  script:
+  - php ./dev/dependCheck.php
+  only:
+  - branches
+  except:
+  - master
+
 deploy_review:
   stage: stage
   script:
