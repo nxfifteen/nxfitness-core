@@ -1,3 +1,10 @@
+<?php
+    if (is_dir(dirname(__FILE__) . "/../../bower_components")) {
+        $bowerPath = 'bower_components';
+    } else if (is_dir(dirname(__FILE__) . "/../../../bundle/bowser")) {
+        $bowerPath = '../bundle/bowser';
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,10 +42,16 @@
     </div>
 </div>
 
+<!--suppress JSUnusedLocalSymbols -->
+<script type="application/javascript">
+    var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
+    <?php echo "var bowerPath = '" . $bowerPath . "';\n"; ?>
+</script>
+
 <!-- Bootstrap and necessary plugins -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-<script src="../../bower_components/tether/dist/js/tether.min.js"></script>
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../<?php echo $bowerPath; ?>/jquery/dist/jquery.min.js"></script>
+<script src="../../<?php echo $bowerPath; ?>/tether/dist/js/tether.min.js"></script>
+<script src="../../<?php echo $bowerPath; ?>/bootstrap/dist/js/bootstrap.min.js"></script>
 
 </body>
 
