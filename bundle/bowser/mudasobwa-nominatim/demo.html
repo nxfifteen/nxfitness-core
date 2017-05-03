@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>mudasobwa-nominatim Demo</title>
+
+  <script src="../webcomponentsjs/webcomponents.js"></script>
+  <link rel="import" href="mudasobwa-nominatim.html">
+
+</head>
+<body unresolved>
+
+  <h2>mudasobwa-nominatim</h2>
+
+  <code><pre>
+    &lt;mudasobwa-nominatim id="nominatim"
+        latitude="41.4034" longitude="2.1591" language="es" auto>
+    &lt;/mudasobwa-nominatim>
+
+    &lt;mudasobwa-nominatim id="nominatim2"
+        latitude="41.4034" longitude="2.1591">
+    &lt;/mudasobwa-nominatim>
+    &lt;button onClick="document.querySelector('#nominatim2').setAttribute('auto', true);">
+      Retrieve address explicitly
+    &lt;/button>
+
+    ...
+
+    document.addEventListener('polymer-ready', function() {
+      var nominatim = document.querySelector("#nominatim");
+      nominatim.addEventListener("mudasobwa-nominatim-response", function(e) {
+        console.log(e.detail);
+      });
+      var nominatim2 = document.querySelector("#nominatim2");
+      nominatim2.addEventListener("mudasobwa-nominatim-response", function(e) {
+        alert("Address got explicitly for [latitude: 41.4034, longitude: 2.1591]:\n\n" + e.detail.address);
+      });
+    });
+  </pre></code>
+
+  <mudasobwa-nominatim id="nominatim" latitude="41.4034" longitude="2.1591" language="es" auto>
+  </mudasobwa-nominatim>
+
+  <mudasobwa-nominatim id="nominatim2" latitude="41.4034" longitude="2.1591">
+  </mudasobwa-nominatim>
+  <button onClick="document.querySelector('#nominatim2').setAttribute('auto', true);">Retrieve address explicitly</button>
+
+  <script>
+    document.addEventListener('polymer-ready', function() {
+      var nominatim = document.querySelector("#nominatim");
+      nominatim.addEventListener("mudasobwa-nominatim-response", function(e) {
+        console.log(e.detail);
+      });
+      var nominatim2 = document.querySelector("#nominatim2");
+      nominatim2.addEventListener("mudasobwa-nominatim-response", function(e) {
+        alert("Address got explicitly for [latitude: 41.4034, longitude: 2.1591]:\n\n" + e.detail.address);
+      });
+    });
+  </script>
+
+</body>
+</html>
