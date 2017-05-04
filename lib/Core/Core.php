@@ -228,15 +228,13 @@
                 )
             ))
             ) {
-                if ($this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", array(
+                if (!$this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", array(
                     "AND" => array(
                         "user"    => $user_fitbit_id,
                         "trigger" => $trigger
                     )
                 ))
                 ) {
-                    //nxr(0, "Cron job $trigger deleted");
-                } else {
                     $this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), array(
                         "METHOD" => __METHOD__,
                         "LINE"   => __LINE__
@@ -419,7 +417,6 @@
         public function valdidateOAuth($userArray)
         {
             if ($userArray['tkn_access'] == "" || $userArray['tkn_refresh'] == "" || $userArray['tkn_expires'] == "") {
-                //nxr(0, "OAuth is not fully setup for this user");
                 return false;
             } else {
                 return true;
@@ -436,12 +433,10 @@
         public function isUserValid($user_fitbit_id, $user_fitbit_password)
         {
             if (strpos($user_fitbit_id, '@') !== false) {
-                //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                 $user_fitbit_id = $this->isUserValidEml($user_fitbit_id);
             }
 
             if ($this->isUser($user_fitbit_id)) {
-                //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                 if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array(
                     "AND" => array(
                         "fuid"     => $user_fitbit_id,
@@ -449,7 +444,6 @@
                     )
                 ))
                 ) {
-                    //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                     return $user_fitbit_id;
                 } else if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", array(
                     "AND" => array(
@@ -458,14 +452,11 @@
                     )
                 ))
                 ) {
-                    //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                     return -1;
                 } else {
-                    //nxr(0, "v::" . __LINE__ . "($user_fitbit_id)", TRUE, TRUE, FALSE);
                     return false;
                 }
             } else {
-                //nxr(0, "v::" . __LINE__, TRUE, TRUE, FALSE);
                 return false;
             }
         }

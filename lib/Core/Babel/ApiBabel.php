@@ -326,7 +326,6 @@
             }
 
             if ($value) {
-                //nxr(4, "Beat your target for " . $dateTime->format("Y-m-d"));
                 if ($streak) {
                     nxr(5, "Streak continuing from " . $streak_start);
 
@@ -408,8 +407,6 @@
                 if (!is_null($this->RewardsSystem)) {
                     $this->RewardsSystem->eventTriggerStreak($goal, $days_between);
                 }
-                //nxr(0, print_r($this->getAppClass()->getDatabase()->error(), true));
-                //nxr(0, end($this->getAppClass()->getDatabase()->log()));
             }
         }
 
@@ -1384,10 +1381,6 @@
                 $response = $this->getLibrary()->getResponse($request);
                 $response = json_decode(json_encode($response), false);
 
-                //nxr(0, print_r($request->getUri(), true));
-                //nxr(0, print_r($request->getHeaders(), true));
-                //nxr(0, print_r($request->getBody()->getContents(), true));
-                //nxr(0, print_r($response, true));
                 return $response;
             } catch (IdentityProviderException $e) {
                 // Failed to get the access token or user details.
@@ -1438,11 +1431,6 @@
                     $response = json_decode(json_encode($response), false);
                 }
 
-                //nxr(0, print_r("pushObject: " . $pushObject, true));
-                //nxr(0, print_r($request->getUri(), true));
-                //nxr(0, print_r($request->getHeaders(), true));
-                //nxr(0, print_r($request->getBody()->getContents(), true));
-                //nxr(0, print_r($response, true));
                 return $response;
             } catch (IdentityProviderException $e) {
                 // Failed to get the access token or user details.
@@ -1658,7 +1646,6 @@
                         $supportedHeart  = false;
                         $supportedFloors = false;
 
-                        //nxr(0,  " Using ".count($trackers)." Trackers");
                         if (
                             in_array("Surge", $trackers) ||
                             in_array("Blaze", $trackers) ||
@@ -1678,14 +1665,12 @@
                         if ($supportedHeart && $this->getAppClass()->getSetting("ownerFuid", null,
                                 false) == $this->getActiveUser()
                         ) {
-                            //nxr(0,  "  Heartrate Supported " );
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_heart", "1");
                         } else {
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_heart", "0");
                         }
 
                         if ($supportedFloors) {
-                            //nxr(0,  "  Floors Supported " );
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_floors", "1");
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_elevation", "1");
                         } else {
@@ -1696,7 +1681,6 @@
                         if (!is_null($this->getAppClass()->getSetting("nomie_key_" . $this->getActiveUser(), null,
                             false))
                         ) {
-                            //nxr(0,  "  Nomie Supported " );
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_nomie_trackers", "1");
                         } else {
                             $this->getAppClass()->setUserSetting($this->getActiveUser(), "scope_nomie_trackers", "0");
@@ -2307,7 +2291,6 @@
                         // Purge old access token and store new access token to your data store.
                         return $newAccessToken;
                     } else {
-                        //nxr(0, "This token still valid");
                         return $accessToken;
                     }
                 } else {
@@ -2932,8 +2915,6 @@
                                             "LINE"   => __LINE__
                                         ));
                                 } else {
-                                    //nxr(0,  "   Updating " . print_r( $doc->label, TRUE ) );
-
                                     $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers",
                                         $dbStorage, array(
                                             "AND" => array(
@@ -3007,8 +2988,6 @@
                                             "LINE"   => __LINE__
                                         ));
                                     nxr(3, "Stored event : " . $event[2] . " from " . $event[3]);
-                                    //nxr(0,  print_r($this->getAppClass()->getDatabase()->log(), true) );
-                                    //return true;
                                 }
 
                                 if (!is_null($this->RewardsSystem)) {
@@ -3017,8 +2996,6 @@
                                         $this->RewardsSystem->eventTriggerNomie($event);
                                     }
                                 }
-                            } else {
-                                //nxr(0,  "   Already Recorded : " . $event[2] . " from " . $event[3] );
                             }
                         }
                     }
@@ -3650,7 +3627,6 @@
          */
         public function createNewUser($newUserProfile)
         {
-            //nxr(0, print_r($newUserProfile, TRUE));
             if ($this->getAppClass()->isUser($newUserProfile->encodedId)) {
                 nxr(0, "User already present");
 

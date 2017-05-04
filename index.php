@@ -46,10 +46,6 @@
     }
     $sysPath = str_ireplace($_SESSION['core_config']['url'], "", $_SESSION['core_config']['http/']);
 
-    nxr(0, "inputURL: " . $inputURL);
-    nxr(0, "sysPath: " . $sysPath);
-    //nxr(0, "sysPath: " . $_SERVER['']);
-
     if ($sysPath != "/") {
         $inputURL = str_replace($sysPath, "", $inputURL);
     }
