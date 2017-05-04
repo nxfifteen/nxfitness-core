@@ -121,9 +121,9 @@
         /**
          * Get settings from config class
          *
-         * @param                $key
-         * @param null           $default
-         * @param bool           $query_db
+         * @param string $key
+         * @param null   $default
+         * @param bool   $query_db
          *
          * @todo Consider test case
          * @return string
