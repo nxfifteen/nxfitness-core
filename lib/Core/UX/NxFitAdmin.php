@@ -151,9 +151,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Config
          */
         public function getApiSettingClass()
@@ -167,7 +165,6 @@
          * @param bool   $query_db
          *
          * @todo Consider test case
-         *
          * @return string
          */
         public function getApiSetting($key = "", $default = null, $query_db = true)
@@ -179,7 +176,6 @@
          * @param string $key
          *
          * @todo Consider test case
-         *
          * @return array
          */
         public function getConfig($key = "")
@@ -195,7 +191,6 @@
          * @param array $config
          *
          * @todo Consider test case
-         *
          */
         public function setConfig($config)
         {
@@ -203,9 +198,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Core
          */
         public function getNxFit()
@@ -214,9 +207,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return string
          */
         public function getActiveUser()
@@ -228,7 +219,6 @@
          * @param string $activeUser
          *
          * @todo Consider test case
-         *
          */
         public function setActiveUser($activeUser)
         {
@@ -236,9 +226,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Config
          */
         public function getUserProfile()
@@ -268,9 +256,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return string
          */
         public function getLocalWeatherImage()
@@ -298,7 +284,8 @@
 
             if (isset($usrCity) && file_exists($imagePath . strtolower($usrCity) . ".jpg")) {
                 if (isset($usrCountry)) {
-                    nxr(1, "+** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
+                    nxr(1,
+                        "+** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
                 }
 
                 return "img/local/" . strtolower($usrCity) . ".jpg";
@@ -306,7 +293,8 @@
 
             if (isset($usrCountry) && file_exists($imagePath . strtolower($usrCountry) . ".jpg")) {
                 if (isset($usrCity)) {
-                    nxr(1, "+** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
+                    nxr(1,
+                        "+** No Location Image for " . strtolower($usrCountry) . "/" . strtolower($usrCity) . ".jpg");
                 }
 
                 return "img/local/" . strtolower($usrCountry) . ".jpg";
@@ -316,9 +304,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return string
          */
         public function getLocalWeatherCode()
@@ -335,9 +321,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return string|array
          */
         public function getUserTheme()
@@ -349,10 +333,9 @@
         }
 
         /**
-         * @param $trigger
+         * @param string $trigger
          *
          * @todo Consider test case
-         *
          * @return DateTime
          */
         public function getScopeCoolDown($trigger)
@@ -380,7 +363,6 @@
          * @param null $scope
          *
          * @todo Consider test case
-         *
          * @return DateTime
          */
         public function getOldestScope($scope = null)
@@ -420,11 +402,10 @@
         }
 
         /**
-         * @param $string
-         * @param $array
+         * @param string $string
+         * @param array  $array
          *
          * @todo Consider test case
-         *
          * @return string
          */
         public function getThemeWidgets($string, $array)
