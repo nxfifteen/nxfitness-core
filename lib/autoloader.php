@@ -14,11 +14,7 @@
         require_once(dirname(__FILE__) . "/functions.php");
     }
 
-    if (is_dir(dirname(__FILE__) . "/../vendor")) {
-        require_once(dirname(__FILE__) . "/../vendor/autoload.php");
-    } else if (is_dir(dirname(__FILE__) . "/../bundle/vendor")) {
-        require_once(dirname(__FILE__) . "/../bundle/vendor/autoload.php");
-    }
+    require_once(dirname(__FILE__) . "/../bundle/vendor/autoload.php");
 
     /**
      * Autoloader
@@ -110,8 +106,7 @@
 
                             if($conf['verbose'])
                             {
-                                echo '<div>' . __METHOD__ . ': autoloaded class "' . $path
-                                     . $class_path . $ext . '"</div>';
+                                nxr(0,__METHOD__ . ': autoloaded class "' . $path . $class_path . $ext . '"');
                             }
 
                             return true;
@@ -121,11 +116,9 @@
                     if($conf['verbose'])
                     {
                         if (!empty($ext)) {
-                            echo '<div>' . __METHOD__ . ': failed to autoload class "' . $path
-                                 . $class_path . $ext . '"</div>';
+                            nxr(0,__METHOD__ . ': failed to autoloaded class "' . $path . $class_path . $ext . '"');
                         } else {
-                            echo '<div>' . __METHOD__ . ': failed to autoload class "' . $path
-                                 . $class_path . ' (no ext defined)"</div>';
+                            nxr(0,__METHOD__ . ': failed to autoloaded class "' . $path . $class_path . '"');
                         }
                     }
                 }
