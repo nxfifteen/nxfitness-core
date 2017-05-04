@@ -1,5 +1,5 @@
 <?php
-    $composerInstalledFiles = file_get_contents(dirname(__FILE__) . '/../composer.lock');
+    $composerInstalledFiles = file_get_contents(dirname(__FILE__) . '/../bundle/vendor/composer.lock');
     $composerInstalledFiles = json_decode($composerInstalledFiles, true);
 
     foreach ($composerInstalledFiles['packages'] as $package) {

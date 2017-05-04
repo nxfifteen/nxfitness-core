@@ -123,3 +123,4 @@ config.inc.php
 /bundle/bower/bootstrap/js/.eslintrc.json
 /bundle/bower/bootstrap/scss/
 *.bat
+/composer.json
