@@ -89,7 +89,6 @@
          * @param Config $settings
          *
          * @todo Consider test case
-         *
          */
         private function setSettings($settings)
         {
@@ -100,7 +99,6 @@
          * @param Medoo $database
          *
          * @todo Consider test case
-         *
          */
         private function setDatabase($database)
         {
@@ -112,9 +110,7 @@
          */
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return ErrorRecording
          */
         public function getErrorRecording()
@@ -125,12 +121,11 @@
         /**
          * Get settings from config class
          *
-         * @param                $key
-         * @param null           $default
-         * @param bool           $query_db
+         * @param string $key
+         * @param null   $default
+         * @param bool   $query_db
          *
          * @todo Consider test case
-         *
          * @return string
          */
         public function getSetting($key, $default = null, $query_db = true)
@@ -147,7 +142,6 @@
          * @param bool   $query_db
          *
          * @todo Consider test case
-         *
          * @return string
          */
         public function getUserSetting($fuid, $key, $default = null, $query_db = true)
@@ -156,9 +150,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Config
          */
         public function getSettings()
@@ -171,9 +163,7 @@
          */
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Medoo
          */
         public function getDatabase()
@@ -189,7 +179,6 @@
          * @param bool   $force
          *
          * @todo Consider test case
-         *
          */
         public function addCronJob($user_fitbit_id, $trigger, $force = false)
         {
@@ -225,11 +214,10 @@
         /**
          * Delete cron jobs from queue
          *
-         * @param $user_fitbit_id
-         * @param $trigger
+         * @param string $user_fitbit_id
+         * @param string $trigger
          *
          * @todo Consider test case
-         *
          */
         public function delCronJob($user_fitbit_id, $trigger)
         {
@@ -268,7 +256,6 @@
          * Get list of pending cron jobs from database
          *
          * @todo Consider test case
-         *
          * @return array|bool
          */
         public function getCronJobs()
@@ -282,7 +269,6 @@
          * @param string $userFitbitId
          *
          * @todo Consider test case
-         *
          * @return ApiBabel
          */
         public function getFitbitAPI($userFitbitId = "", $reset = false)
@@ -302,7 +288,6 @@
          * @param ApiBabel $fitbitapi
          *
          * @todo Consider test case
-         *
          */
         public function setFitbitapi($fitbitapi)
         {
@@ -314,11 +299,10 @@
          */
 
         /**
-         * @param $user_fitbit_id
-         * @param $datetime
+         * @param string          $user_fitbit_id
+         * @param string|DateTime $datetime
          *
          * @todo Consider test case
-         *
          * @return array|int
          */
         public function setUserCooldown($user_fitbit_id, $datetime)
@@ -337,10 +321,9 @@
         }
 
         /**
-         * @param $user_fitbit_id
+         * @param string $user_fitbit_id
          *
          * @todo Consider test case
-         *
          * @return int|array
          */
         public function getUserCooldown($user_fitbit_id)
@@ -357,7 +340,6 @@
          * @param string $user_fitbit_id
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function isUser($user_fitbit_id)
@@ -372,11 +354,10 @@
         }
 
         /**
-         * @param string                                 $user_fitbit_id
+         * @param string      $user_fitbit_id
          * @param AccessToken $accessToken
          *
          * @todo Consider test case
-         *
          */
         public function setUserOAuthTokens($user_fitbit_id, $accessToken)
         {
@@ -390,10 +371,9 @@
         }
 
         /**
-         * @param $user_fitbit_id
+         * @param string $user_fitbit_id
          *
          * @todo Consider test case
-         *
          */
         public function delUserOAuthTokens($user_fitbit_id)
         {
@@ -406,11 +386,10 @@
         }
 
         /**
-         * @param      $user_fitbit_id
-         * @param bool $validate
+         * @param string $user_fitbit_id
+         * @param bool   $validate
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function getUserOAuthTokens($user_fitbit_id, $validate = true)
@@ -432,10 +411,9 @@
         }
 
         /**
-         * @param $userArray
+         * @param array $userArray
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function valdidateOAuth($userArray)
@@ -453,7 +431,6 @@
          * @param string $user_fitbit_password
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function isUserValid($user_fitbit_id, $user_fitbit_password)
@@ -497,7 +474,6 @@
          * @param string $user_fitbit_id
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function isUserValidEml($user_fitbit_id)
@@ -515,11 +491,10 @@
         }
 
         /**
-         * @param      $errCode
-         * @param null $user
+         * @param string|int $errCode
+         * @param null       $user
          *
          * @todo Consider test case
-         *
          * @return string
          */
         public function lookupErrorCode($errCode, $user = null)
@@ -552,12 +527,11 @@
         /**
          * Set value in database/config class
          *
-         * @param           $key
-         * @param           $value
-         * @param bool      $query_db
+         * @param string $key
+         * @param string $value
+         * @param bool   $query_db
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function setSetting($key, $value, $query_db = true)
@@ -573,7 +547,6 @@
          * @param string $value
          *
          * @todo Consider test case
-         *
          * @return string
          */
         public function setUserSetting($fuid, $key, $value)
@@ -587,7 +560,6 @@
          * @param null $key
          *
          * @todo Consider test case
-         *
          * @return array|null|string
          */
         public function supportedApi($key = null)
@@ -632,10 +604,9 @@
         }
 
         /**
-         * @param $_nx_fb_usr
+         * @param string $_nx_fb_usr
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function isUserOAuthAuthorised($_nx_fb_usr)

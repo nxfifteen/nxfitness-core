@@ -41,7 +41,7 @@
         /**
          * ErrorRecording constructor.
          *
-         * @param $appClass
+         * @param Core $appClass
          */
         public function __construct($appClass)
         {
@@ -82,9 +82,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Raven_ErrorHandler
          */
         public function getSentryErrorHandler()
@@ -112,7 +110,6 @@
          * @param null      $vars
          *
          * @todo Consider test case
-         *
          */
         public function captureException($exception, $data = null, $logger = null, $vars = null)
         {
@@ -132,7 +129,6 @@
          * @param null   $vars
          *
          * @todo Consider test case
-         *
          */
         public function captureMessage($message, $params = array(), $data = array(), $stack = false, $vars = null)
         {
@@ -145,10 +141,9 @@
 
         /**
          * @param Medoo $medoo
-         * @param       $parameters
+         * @param array $parameters
          *
          * @todo Consider test case
-         *
          */
         public function postDatabaseQuery($medoo, $parameters)
         {
