@@ -100,7 +100,6 @@
          * @param Config $settings
          *
          * @todo Consider test case
-         *
          */
         private function setSettings($settings)
         {
@@ -111,7 +110,6 @@
          * @param Medoo $database
          *
          * @todo Consider test case
-         *
          */
         private function setDatabase($database)
         {
@@ -119,10 +117,9 @@
         }
 
         /**
-         * @param $error
+         * @param array $error
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         private function wasMySQLError($error)
@@ -142,9 +139,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         private function getInstallingVersionBrakeDown()
@@ -153,9 +148,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         private function getInstallVersionBrakeDown()
@@ -172,7 +165,7 @@
         {
             $db_prefix = $this->getSetting("db_prefix", false);
 
-            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "streak_goal` (  `uid` int(6) NOT NULL,  `fuid` varchar(8) NOT NULL,  `goal` varchar(255) NOT NULL,  `start_date` date NOT NULL,  `end_date` date NOT NULL,  `length` int(3) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "streak_goal` (  `uid` INT(6) NOT NULL,  `fuid` VARCHAR(8) NOT NULL,  `goal` VARCHAR(255) NOT NULL,  `start_date` DATE NOT NULL,  `end_date` DATE NOT NULL,  `length` INT(3) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
@@ -182,7 +175,7 @@
                 return false;
             }
 
-            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "streak_goal` MODIFY `uid` int(6) NOT NULL AUTO_INCREMENT;");
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "streak_goal` MODIFY `uid` INT(6) NOT NULL AUTO_INCREMENT;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
@@ -316,22 +309,22 @@
         {
             $db_prefix = $this->getSetting("db_prefix", false);
 
-            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "rewards` ( `rid` int(8) NOT NULL, `system` varchar(50) NOT NULL, `reward` longtext NOT NULL, `description` longtext) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "rewards` ( `rid` INT(8) NOT NULL, `system` VARCHAR(50) NOT NULL, `reward` LONGTEXT NOT NULL, `description` LONGTEXT) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
 
-            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "reward_map` ( `rmid` int(6) NOT NULL, `cat` varchar(255) NOT NULL, `event` varchar(255) NOT NULL, `rule` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `reward` int(6) DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "reward_map` ( `rmid` INT(6) NOT NULL, `cat` VARCHAR(255) NOT NULL, `event` VARCHAR(255) NOT NULL, `rule` VARCHAR(255) NOT NULL, `name` VARCHAR(255) NOT NULL, `reward` INT(6) DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
 
-            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "reward_nuke` ( `rid` int(6) NOT NULL, `nukeid` int(6) NOT NULL, `directional` set('true','false') NOT NULL DEFAULT 'false') ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "reward_nuke` ( `rid` INT(6) NOT NULL, `nukeid` INT(6) NOT NULL, `directional` SET('true','false') NOT NULL DEFAULT 'false') ENGINE=InnoDB DEFAULT CHARSET=latin1;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
 
-            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "reward_queue` ( `rqid` int(6) NOT NULL, `fuid` varchar(8) CHARACTER SET utf8 NOT NULL, `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, `state` varchar(15) NOT NULL, `rmid` int(6) NOT NULL, `reward` int(6) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "reward_queue` ( `rqid` INT(6) NOT NULL, `fuid` VARCHAR(8) CHARACTER SET utf8 NOT NULL, `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, `state` VARCHAR(15) NOT NULL, `rmid` INT(6) NOT NULL, `reward` INT(6) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
@@ -356,17 +349,17 @@
                 return false;
             }
 
-            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "rewards` MODIFY `rid` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;");
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "rewards` MODIFY `rid` INT(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
 
-            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_map` MODIFY `rmid` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=468;");
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_map` MODIFY `rmid` INT(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=468;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
 
-            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_queue` MODIFY `rqid` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1492;");
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_queue` MODIFY `rqid` INT(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1492;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
@@ -533,12 +526,12 @@
                 return false;
             }
 
-            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "bages` ( `encodedId` varchar(12) NOT NULL, `badgeType` varchar(120) NOT NULL, `value` int(11) NOT NULL, `category` varchar(150) NOT NULL, `description` varchar(255) NOT NULL, `image` varchar(255) NOT NULL, `badgeGradientEndColor` varchar(6) NOT NULL, `badgeGradientStartColor` varchar(6) NOT NULL, `earnedMessage` longtext NOT NULL, `marketingDescription` longtext NOT NULL, `name` varchar(255) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "bages` ( `encodedId` VARCHAR(12) NOT NULL, `badgeType` VARCHAR(120) NOT NULL, `value` INT(11) NOT NULL, `category` VARCHAR(150) NOT NULL, `description` VARCHAR(255) NOT NULL, `image` VARCHAR(255) NOT NULL, `badgeGradientEndColor` VARCHAR(6) NOT NULL, `badgeGradientStartColor` VARCHAR(6) NOT NULL, `earnedMessage` LONGTEXT NOT NULL, `marketingDescription` LONGTEXT NOT NULL, `name` VARCHAR(255) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
 
-            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "bages_user` ( `badgeid` varchar(8) NOT NULL, `fuid` varchar(8) NOT NULL, `dateTime` varchar(20) NOT NULL, `timesAchieved` int(11) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "bages_user` ( `badgeid` VARCHAR(8) NOT NULL, `fuid` VARCHAR(8) NOT NULL, `dateTime` VARCHAR(20) NOT NULL, `timesAchieved` INT(11) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
@@ -648,7 +641,7 @@
         {
             $db_prefix = $this->getSetting("db_prefix", false);
 
-            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "users_xp` ( `xpid` int(8) NOT NULL, `fuid` varchar(8) NOT NULL, `xp` int(4) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "users_xp` ( `xpid` INT(8) NOT NULL, `fuid` VARCHAR(8) NOT NULL, `xp` INT(4) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
@@ -658,7 +651,7 @@
                 return false;
             }
 
-            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` MODIFY `xpid` int(8) NOT NULL AUTO_INCREMENT;");
+            $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` MODIFY `xpid` INT(8) NOT NULL AUTO_INCREMENT;");
             if ($this->wasMySQLError($this->getDatabase()->error())) {
                 return false;
             }
@@ -687,9 +680,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Config
          */
         public function getSettings()
@@ -697,11 +688,8 @@
             return $this->settings;
         }
 
-        
         /**
-         *
          * @todo Consider test case
-         *
          * @return Medoo
          */
         public function getDatabase()
@@ -712,12 +700,11 @@
         /**
          * Get settings from config class
          *
-         * @param                $key
-         * @param null           $default
-         * @param bool           $query_db
+         * @param string $key
+         * @param null   $default
+         * @param bool   $query_db
          *
          * @todo Consider test case
-         *
          * @return string
          */
         public function getSetting($key, $default = null, $query_db = true)
@@ -728,12 +715,11 @@
         /**
          * Set value in database/config class
          *
-         * @param           $key
-         * @param           $value
-         * @param bool      $query_db
+         * @param string $key
+         * @param string $value
+         * @param bool   $query_db
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function setSetting($key, $value, $query_db = true)
@@ -742,9 +728,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return String
          */
         public function getInstallingVersion()
@@ -753,9 +737,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return String
          */
         public function getInstallVersion()
@@ -770,9 +752,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function getUpdatesRequired()
@@ -805,9 +785,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return int
          */
         public function getNumUpdates()
@@ -820,9 +798,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function getUpdates()
@@ -835,9 +811,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function getUpdateFunctions()
@@ -850,9 +824,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function runUpdates()

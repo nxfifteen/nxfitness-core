@@ -48,7 +48,7 @@
         protected $tracking;
 
         /**
-         * @param $userFid
+         * @param string $userFid
          *
          * @todo Consider test case
          */
@@ -65,13 +65,11 @@
         }
 
         /**
-         * @param          $userPushStartDate
-         * @param          $userPushEndDate
+         * @param string   $userPushStartDate
+         * @param string   $userPushEndDate
          * @param DateTime $range_start
          *
          * @todo Consider test case
-         *
-         *
          * @return array
          */
         private function calculatePushDays($userPushStartDate, $userPushEndDate, $range_start)
@@ -200,8 +198,6 @@
          * @param array      $nextRecord
          *
          * @todo Consider test case
-         *
-         *
          * @return array
          */
         private function fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $nextRecord)
@@ -247,9 +243,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Core
          */
         private function getAppClass()
@@ -258,11 +252,9 @@
         }
 
         /**
-         * @param $input_num
+         * @param int $input_num
          *
          * @todo Consider test case
-         *
-         *
          * @return string
          */
         private function ordinalSuffix($input_num)
@@ -286,7 +278,6 @@
          * @param Core $paramClass
          *
          * @todo Consider test case
-         *
          */
         private function setAppClass($paramClass)
         {
@@ -294,12 +285,10 @@
         }
 
         /**
-         * @param $inputWeight
-         * @param $convertUnits
+         * @param double|array $inputWeight
+         * @param string       $convertUnits
          *
          * @todo Consider test case
-         *
-         *
          * @return array|float
          */
         private function convertWeight($inputWeight, $convertUnits)
@@ -327,8 +316,6 @@
          * @param null $scope
          *
          * @todo Consider test case
-         *
-         *
          * @return DateTime
          */
         private function getOldestScope($scope = null)
@@ -372,15 +359,13 @@
          * Calculates the great-circle distance between two points, with
          * the Haversine formula.
          *
-         * @param $lat1
-         * @param $lon1
-         * @param $lat2
-         * @param $lon2
-         * @param $unit
+         * @param double $lat1
+         * @param double $lon1
+         * @param double $lat2
+         * @param double $lon2
+         * @param string $unit
          *
          * @todo     Consider test case
-         *
-         *
          * @return float Distance between points in [m] (same as earthRadius)
          * @internal param float $latitudeFrom Latitude of start point in [deg decimal]
          * @internal param float $longitudeFrom Longitude of start point in [deg decimal]
@@ -411,7 +396,6 @@
          * @param string $tableName
          *
          * @todo Consider test case
-         *
          * @return array
          */
         public function dbWhere($limit = 1, $tableName = '')
@@ -454,9 +438,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return int
          */
         public function getForCache()
@@ -472,7 +454,6 @@
          * @param bool $forCache
          *
          * @todo Consider test case
-         *
          */
         public function setForCache($forCache)
         {
@@ -480,9 +461,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return String
          */
         public function getParamDate()
@@ -495,7 +474,6 @@
         }
 
         /**
-         *
          * @todo Consider test case
          *
          * @param String $paramDate
@@ -506,9 +484,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return String
          */
         public function getParamPeriod()
@@ -528,7 +504,6 @@
         }
 
         /**
-         *
          * @todo Consider test case
          *
          * @param String $paramPeriod
@@ -539,9 +514,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return UserAnalytics
          */
         public function getTracking()
@@ -553,7 +526,6 @@
          * @param UserAnalytics $tracking
          *
          * @todo Consider test case
-         *
          */
         public function setTracking($tracking)
         {
@@ -561,9 +533,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return String
          */
         public function getUserID()
@@ -575,7 +545,6 @@
          * @param String $UserID
          *
          * @todo Consider test case
-         *
          */
         public function setUserID($UserID)
         {
@@ -583,11 +552,9 @@
         }
 
         /**
-         * @param $start_date
+         * @param string $start_date
          *
          * @todo Consider test case
-         *
-         *
          * @return bool|int
          */
         public function getUserMilesSince($start_date)
@@ -601,9 +568,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function isUser()
@@ -612,9 +577,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordAboutMe()
@@ -659,9 +622,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordActiveGoal()
@@ -711,9 +672,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function returnUserRecordActivity()
@@ -729,9 +688,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordActivityHistory()
@@ -914,8 +871,6 @@
          * @param null $tcxTrackName
          *
          * @todo Consider test case
-         *
-         *
          * @return array
          */
         public function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null)
@@ -955,22 +910,21 @@
                                 );
                             }
                         }
-                    } else
-                        if (!isset($items->Activities->Activity->Lap)) {
-                            return array(
-                                "error"  => "TCX Files contains no GPS Points",
-                                "return" => array(
-                                    "Id"               => "No GPS in TCX file",
-                                    "TotalTimeSeconds" => 0,
-                                    "DistanceMeters"   => 0,
-                                    "Calories"         => 0,
-                                    "Intensity"        => 0,
-                                    "LatitudeDegrees"  => "56.462018",
-                                    "LongitudeDegrees" => "-2.970721",
-                                    "gpx"              => "none"
-                                )
-                            );
-                        }
+                    } else if (!isset($items->Activities->Activity->Lap)) {
+                        return array(
+                            "error"  => "TCX Files contains no GPS Points",
+                            "return" => array(
+                                "Id"               => "No GPS in TCX file",
+                                "TotalTimeSeconds" => 0,
+                                "DistanceMeters"   => 0,
+                                "Calories"         => 0,
+                                "Intensity"        => 0,
+                                "LatitudeDegrees"  => "56.462018",
+                                "LongitudeDegrees" => "-2.970721",
+                                "gpx"              => "none"
+                            )
+                        );
+                    }
 
                     if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx')) {
                         $gpxFileName = DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
@@ -1042,7 +996,7 @@
                             }
 
                             /** @var \SimpleXMLElement $Laps */
-                            $attributes        = json_decode(json_encode($Laps->attributes()), true);
+                            $attributes = json_decode(json_encode($Laps->attributes()), true);
                             /** @noinspection PhpUndefinedFieldInspection */
                             $gpxMeta['laps'][] = array(
                                 "startTime"           => $attributes['@attributes']['StartTime'],
@@ -1138,9 +1092,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordBadges()
@@ -1188,9 +1140,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array|bool
          */
         public function returnUserRecordBody()
@@ -1223,9 +1173,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordChallenger()
@@ -1234,9 +1182,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordPush()
@@ -1399,9 +1345,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordPushCalendar()
@@ -1471,9 +1415,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordConky()
@@ -1599,9 +1541,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordDashboard()
@@ -1666,9 +1606,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordLeaderboard()
@@ -1709,9 +1647,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordDevices()
@@ -1778,9 +1714,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordFloorGoal()
@@ -1827,9 +1761,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordFood()
@@ -1870,9 +1802,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordFoodDiary()
@@ -2011,9 +1941,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordJourneys()
@@ -2142,9 +2070,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordJourneysState()
@@ -2222,7 +2148,10 @@
                                         false) . "journeys_narrative.miles[<=]" => $user_miles_travelled
                                 ),
                                 "LIMIT" => 1,
-                                "ORDER" => array($this->getAppClass()->getSetting("db_prefix", null, false) . "journeys_narrative.miles" => "DESC")
+                                "ORDER" => array(
+                                    $this->getAppClass()->getSetting("db_prefix", null,
+                                        false) . "journeys_narrative.miles" => "DESC"
+                                )
                             ));
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
                             array(
@@ -2271,7 +2200,10 @@
                                         false) . "journeys_narrative.miles[>=]" => $user_miles_travelled
                                 ),
                                 "LIMIT" => 1,
-                                "ORDER" => array($this->getAppClass()->getSetting("db_prefix", null, false) . "journeys_narrative.miles" => "ASC")
+                                "ORDER" => array(
+                                    $this->getAppClass()->getSetting("db_prefix", null,
+                                        false) . "journeys_narrative.miles" => "ASC"
+                                )
                             ));
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
                             array(
@@ -2316,9 +2248,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordKeyPoints()
@@ -2546,9 +2476,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordSleep()
@@ -2614,9 +2542,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordStepGoal()
@@ -2663,9 +2589,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordSteps()
@@ -2741,9 +2665,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array|bool
          */
         public function returnUserRecordStepsGoal()
@@ -2767,9 +2689,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array|bool
          */
         public function returnUserRecordTrackerHistoryChart()
@@ -2838,9 +2758,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array|bool
          */
         public function returnUserRecordTrackerHistory()
@@ -2887,9 +2805,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordTasker()
@@ -3129,9 +3045,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordGoalStreak()
@@ -3240,9 +3154,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordTopBadges()
@@ -3291,9 +3203,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordTracked()
@@ -3428,9 +3338,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordTrend()
@@ -3514,9 +3422,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array|bool
          */
         public function returnUserRecordWater()
@@ -3556,9 +3462,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array|bool
          */
         public function returnUserRecordWeekPedometer()
@@ -3581,9 +3485,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordSyncState()
@@ -3628,9 +3530,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordWeight()
@@ -3911,10 +3811,9 @@
         }
 
         /**
-         * @param $get
+         * @param array $get
          *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecords($get)
@@ -3975,9 +3874,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordNomie()
@@ -3990,9 +3887,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordNomieDashboard()
@@ -4066,9 +3961,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordNomieTrackers()
@@ -4188,9 +4081,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordNomieGPS()
@@ -4326,9 +4217,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return array
          */
         public function returnUserRecordNomieScoreGraph()
