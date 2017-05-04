@@ -33,6 +33,7 @@
     <exclude-pattern>*/library/*</exclude-pattern>
     <exclude-pattern>*/php-docblock-checker-1.3.4/*</exclude-pattern>
     <exclude-pattern>*/phpspec/*</exclude-pattern>
+    <exclude-pattern>*/bundle/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
 
     <!--

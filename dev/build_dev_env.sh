@@ -12,6 +12,7 @@ if [ ! -f "composer.phar" ]; then
     cd ../
 fi
 
+cp composer_dev.json composer.json
 php binaries/composer.phar install --dev >/dev/null 2>&1
 
 if [ ! -d "php-docblock-checker-1.3.4" ]; then

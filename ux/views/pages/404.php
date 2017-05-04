@@ -35,10 +35,15 @@
     </div>
 </div>
 
+<!--suppress JSUnusedLocalSymbols -->
+<script type="application/javascript">
+    var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
+</script>
+
 <!-- Bootstrap and necessary plugins -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-<script src="../../bower_components/tether/dist/js/tether.min.js"></script>
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../../bundle/bower/jquery/dist/jquery.min.js"></script>
+<script src="../../../bundle/bower/tether/dist/js/tether.min.js"></script>
+<script src="../../../bundle/bower/bootstrap/dist/js/bootstrap.min.js"></script>
 
 </body>
 

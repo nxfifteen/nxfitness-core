@@ -1,4 +1,5 @@
 <?php
+
     // set config settings
     autoloader(array(array(
         'debug' => true, // turn on debug mode (by default debug mode is off)
@@ -9,9 +10,8 @@
     // now we can set class autoload paths
     autoloader(array( './' ));
 
-    if (!function_exists("nxr") || !function_exists("nxr_destroy_session")) {
-        require_once(dirname(__FILE__) . "/functions.php");
-    }
+    require_once(dirname(__FILE__) . "/functions.php");
+    require_once(dirname(__FILE__) . "/../bundle/vendor/autoload.php");
 
     /**
      * Autoloader
@@ -38,7 +38,7 @@
             'debug' => false,
             'extensions' => ['.php'], // multiple extensions ex: ['.php', '.class.php']
             'namespace' => '',
-            'verbose' => false
+            'verbose' => true
         ];
 
         static $paths = [];
@@ -103,8 +103,7 @@
 
                             if($conf['verbose'])
                             {
-                                echo '<div>' . __METHOD__ . ': autoloaded class "' . $path
-                                     . $class_path . $ext . '"</div>';
+                                nxr(0,'autoloaded class "' . $path . $class_path . $ext . '"');
                             }
 
                             return true;
@@ -114,11 +113,9 @@
                     if($conf['verbose'])
                     {
                         if (!empty($ext)) {
-                            echo '<div>' . __METHOD__ . ': failed to autoload class "' . $path
-                                 . $class_path . $ext . '"</div>';
+                            nxr(0,'failed to load class "' . $path . $class_path . $ext . '"');
                         } else {
-                            echo '<div>' . __METHOD__ . ': failed to autoload class "' . $path
-                                 . $class_path . ' (no ext defined)"</div>';
+                            nxr(0,'failed to load class "' . $path . $class_path . '"');
                         }
                     }
                 }
@@ -144,7 +141,7 @@
 
                         if($conf['verbose'])
                         {
-                            echo '<div>' . __METHOD__ . ': registered path "' . $tmp_path . '"</div>';
+                            if (function_exists("nxr")) { nxr(0, __METHOD__ . ': registered path "' . $tmp_path . '"'); }
                         }
                     }
                 }
@@ -154,14 +151,14 @@
                 {
                     if($conf['verbose'])
                     {
-                        echo '<div>' . __METHOD__ . ': autoload registered</div>';
+                        if (function_exists("nxr")) { nxr(0,__METHOD__ . ': autoload registered');}
                     }
 
                     $is_unregistered = false; // flag unable to register
                 }
                 else if($conf['verbose'])
                 {
-                    echo '<div>' . __METHOD__ . ': autoload register failed</div>';
+                    if (function_exists("nxr")) { nxr(0, __METHOD__ . ': autoload register failed');}
                 }
             }
 

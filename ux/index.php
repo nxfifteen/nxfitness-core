@@ -154,11 +154,11 @@
         </script>
 
         <!-- Bootstrap and necessary plugins -->
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="bower_components/tether/dist/js/tether.min.js"></script>
-        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="bower_components/pace/pace.min.js"></script>
-        <script src="bower_components/raven-js/dist/raven.min.js"></script>
+        <script src="../bundle/bower/jquery/dist/jquery.min.js"></script>
+        <script src="../bundle/bower/tether/dist/js/tether.min.js"></script>
+        <script src="../bundle/bower/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="../bundle/bower/pace/pace.min.js"></script>
+        <script src="../bundle/bower/raven-js/dist/raven.min.js"></script>
 
         <!-- GenesisUI main scripts -->
         <script>Raven.config('https://80a480ea986d4ee993ac89a54a0d1f0e@sentry.io/156527').install();</script>

@@ -1,4 +1,5 @@
 <?php
+    header('Content-Type: application/javascript');
 
     require_once(dirname(__FILE__) . "/../../../lib/autoloader.php");
 

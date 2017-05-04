@@ -20,6 +20,7 @@
         <directory>.</directory>
         <ignore>admin/*</ignore>
         <ignore>library/*</ignore>
+        <ignore>bundle/*</ignore>
         <ignore>vendor/*</ignore>
         <ignore>binaries/*</ignore>
     </files>
