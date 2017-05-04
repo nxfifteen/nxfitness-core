@@ -1,4 +1,5 @@
 <?php
+
     // set config settings
     autoloader(array(array(
         'debug' => true, // turn on debug mode (by default debug mode is off)
@@ -11,6 +12,12 @@
 
     if (!function_exists("nxr") || !function_exists("nxr_destroy_session")) {
         require_once(dirname(__FILE__) . "/functions.php");
+    }
+
+    if (is_dir(dirname(__FILE__) . "/../vendor")) {
+        require_once(dirname(__FILE__) . "/../vendor/autoload.php");
+    } else if (is_dir(dirname(__FILE__) . "/../bundle/vendor")) {
+        require_once(dirname(__FILE__) . "/../bundle/vendor/autoload.php");
     }
 
     /**
@@ -35,10 +42,10 @@
 
         static $conf = [
             'basepath' => '',
-            'debug' => false,
+            'debug' => true,
             'extensions' => ['.php'], // multiple extensions ex: ['.php', '.class.php']
             'namespace' => '',
-            'verbose' => false
+            'verbose' => true
         ];
 
         static $paths = [];

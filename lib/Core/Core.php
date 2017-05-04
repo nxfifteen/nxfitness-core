@@ -3,11 +3,6 @@
     namespace Core;
 
     require_once(dirname(__FILE__) . "/../autoloader.php");
-    if (is_dir(dirname(__FILE__) . "/../../vendor")) {
-        require_once(dirname(__FILE__) . "/../../vendor/autoload.php");
-    } else if (is_dir(dirname(__FILE__) . "/../../bundle/vendor")) {
-        require_once(dirname(__FILE__) . "/../../bundle/vendor/autoload.php");
-    }
     require_once(dirname(__FILE__) . "/../../config.def.dist.php");
 
     use Core\Analytics\ErrorRecording;

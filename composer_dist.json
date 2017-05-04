@@ -1,4 +1,7 @@
 {
+  "config": {
+    "vendor-dir": "bundle/vendor"
+  },
   "require": {
     "djchen/oauth2-fitbit": "^1.0",
     "catfan/Medoo": "^1.2",

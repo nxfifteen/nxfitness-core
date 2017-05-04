@@ -1,5 +1,112 @@
 [
     {
+        "name": "catfan/medoo",
+        "version": "v1.2.1",
+        "version_normalized": "1.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/catfan/Medoo.git",
+            "reference": "b5a788c90c44db0f978512c890cb6962af4685e8"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/catfan/Medoo/zipball/b5a788c90c44db0f978512c890cb6962af4685e8",
+            "reference": "b5a788c90c44db0f978512c890cb6962af4685e8",
+            "shasum": ""
+        },
+        "require": {
+            "ext-pdo": "*",
+            "php": ">=5.4"
+        },
+        "suggest": {
+            "ext-pdo_dblib": "For MSSQL or Sybase databases on Linux/UNIX platform",
+            "ext-pdo_mysql": "For MySQL or MariaDB databases",
+            "ext-pdo_oci": "For Oracle databases",
+            "ext-pdo_pqsql": "For PostgreSQL databases",
+            "ext-pdo_sqlite": "For SQLite databases",
+            "ext-pdo_sqlsrv": "For MSSQL databases on Windows platform"
+        },
+        "time": "2017-02-17T16:05:35+00:00",
+        "type": "framework",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Medoo\\": "/src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Angel Lai",
+                "email": "angel@catfan.me"
+            }
+        ],
+        "description": "The Lightest PHP database framework to accelerate development",
+        "homepage": "http://medoo.in",
+        "keywords": [
+            "database",
+            "lightweight",
+            "mssql",
+            "mysql",
+            "php framework",
+            "sql",
+            "sqlite"
+        ]
+    },
+    {
+        "name": "paragonie/random_compat",
+        "version": "v2.0.10",
+        "version_normalized": "2.0.10.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/paragonie/random_compat.git",
+            "reference": "634bae8e911eefa89c1abfbf1b66da679ac8f54d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/634bae8e911eefa89c1abfbf1b66da679ac8f54d",
+            "reference": "634bae8e911eefa89c1abfbf1b66da679ac8f54d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.*|5.*"
+        },
+        "suggest": {
+            "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+        },
+        "time": "2017-03-13T16:27:32+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "lib/random.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Paragon Initiative Enterprises",
+                "email": "security@paragonie.com",
+                "homepage": "https://paragonie.com"
+            }
+        ],
+        "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+        "keywords": [
+            "csprng",
+            "pseudorandom",
+            "random"
+        ]
+    },
+    {
         "name": "psr/http-message",
         "version": "1.0.1",
         "version_normalized": "1.0.1.0",
@@ -236,56 +343,6 @@
         ]
     },
     {
-        "name": "paragonie/random_compat",
-        "version": "v2.0.10",
-        "version_normalized": "2.0.10.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/paragonie/random_compat.git",
-            "reference": "634bae8e911eefa89c1abfbf1b66da679ac8f54d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/634bae8e911eefa89c1abfbf1b66da679ac8f54d",
-            "reference": "634bae8e911eefa89c1abfbf1b66da679ac8f54d",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "4.*|5.*"
-        },
-        "suggest": {
-            "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
-        },
-        "time": "2017-03-13T16:27:32+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "lib/random.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Paragon Initiative Enterprises",
-                "email": "security@paragonie.com",
-                "homepage": "https://paragonie.com"
-            }
-        ],
-        "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
-        "keywords": [
-            "csprng",
-            "pseudorandom",
-            "random"
-        ]
-    },
-    {
         "name": "league/oauth2-client",
         "version": "2.2.1",
         "version_normalized": "2.2.1.0",
@@ -410,6 +467,55 @@
         ]
     },
     {
+        "name": "dready92/php-on-couch",
+        "version": "1.0.1-p2",
+        "version_normalized": "1.0.1.0-patch2",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/dready92/PHP-on-Couch.git",
+            "reference": "d4bfad858d35a5886dcfb7c8145caeb0cdeeeba0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/dready92/PHP-on-Couch/zipball/d4bfad858d35a5886dcfb7c8145caeb0cdeeeba0",
+            "reference": "d4bfad858d35a5886dcfb7c8145caeb0cdeeeba0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "time": "2013-04-03T09:46:52+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "lib/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPLv3"
+        ],
+        "authors": [
+            {
+                "name": "Michael Bailly",
+                "email": "mickael.bailly@free.fr",
+                "homepage": "https://github.com/dready92/",
+                "role": "Developer"
+            }
+        ],
+        "description": "CouchDB NoSQL database access in PHP",
+        "homepage": "https://github.com/dready92/PHP-on-Couch",
+        "keywords": [
+            "apache",
+            "couch",
+            "couchdb",
+            "db",
+            "driver",
+            "nosql"
+        ]
+    },
+    {
         "name": "piwik/piwik-php-tracker",
         "version": "1.2.0",
         "version_normalized": "1.2.0.0",
@@ -449,63 +555,6 @@
             "analytics",
             "piwik",
             "tracker"
-        ]
-    },
-    {
-        "name": "catfan/medoo",
-        "version": "v1.2.1",
-        "version_normalized": "1.2.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/catfan/Medoo.git",
-            "reference": "b5a788c90c44db0f978512c890cb6962af4685e8"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/catfan/Medoo/zipball/b5a788c90c44db0f978512c890cb6962af4685e8",
-            "reference": "b5a788c90c44db0f978512c890cb6962af4685e8",
-            "shasum": ""
-        },
-        "require": {
-            "ext-pdo": "*",
-            "php": ">=5.4"
-        },
-        "suggest": {
-            "ext-pdo_dblib": "For MSSQL or Sybase databases on Linux/UNIX platform",
-            "ext-pdo_mysql": "For MySQL or MariaDB databases",
-            "ext-pdo_oci": "For Oracle databases",
-            "ext-pdo_pqsql": "For PostgreSQL databases",
-            "ext-pdo_sqlite": "For SQLite databases",
-            "ext-pdo_sqlsrv": "For MSSQL databases on Windows platform"
-        },
-        "time": "2017-02-17T16:05:35+00:00",
-        "type": "framework",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Medoo\\": "/src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Angel Lai",
-                "email": "angel@catfan.me"
-            }
-        ],
-        "description": "The Lightest PHP database framework to accelerate development",
-        "homepage": "http://medoo.in",
-        "keywords": [
-            "database",
-            "lightweight",
-            "mssql",
-            "mysql",
-            "php framework",
-            "sql",
-            "sqlite"
         ]
     },
     {
@@ -569,55 +618,6 @@
         "keywords": [
             "log",
             "logging"
-        ]
-    },
-    {
-        "name": "dready92/php-on-couch",
-        "version": "1.0.1-p2",
-        "version_normalized": "1.0.1.0-patch2",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/dready92/PHP-on-Couch.git",
-            "reference": "d4bfad858d35a5886dcfb7c8145caeb0cdeeeba0"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/dready92/PHP-on-Couch/zipball/d4bfad858d35a5886dcfb7c8145caeb0cdeeeba0",
-            "reference": "d4bfad858d35a5886dcfb7c8145caeb0cdeeeba0",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2.0"
-        },
-        "time": "2013-04-03T09:46:52+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "lib/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPLv3"
-        ],
-        "authors": [
-            {
-                "name": "Michael Bailly",
-                "email": "mickael.bailly@free.fr",
-                "homepage": "https://github.com/dready92/",
-                "role": "Developer"
-            }
-        ],
-        "description": "CouchDB NoSQL database access in PHP",
-        "homepage": "https://github.com/dready92/PHP-on-Couch",
-        "keywords": [
-            "apache",
-            "couch",
-            "couchdb",
-            "db",
-            "driver",
-            "nosql"
         ]
     }
 ]
