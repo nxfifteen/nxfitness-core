@@ -41,10 +41,6 @@ function loadJS(jsFiles, pageScript) {
     var body;
     var script;
     for (i = 0; i < jsFiles.length; i++) {
-
-        //noinspection JSUnresolvedVariable
-        jsFiles[i] = jsFiles[i].replace('bower_components', bowerPath);
-
         body = document.getElementsByTagName('body')[0];
         script = document.createElement('script');
         script.type = 'text/javascript';
@@ -54,10 +50,6 @@ function loadJS(jsFiles, pageScript) {
     }
 
     if (pageScript) {
-
-        //noinspection JSUnresolvedVariable
-        pageScript = pageScript.replace('bower_components', bowerPath);
-
         body = document.getElementsByTagName('body')[0];
         script = document.createElement('script');
         script.type = 'text/javascript';
@@ -79,10 +71,6 @@ function loadCSS(cssFile, end, callback) {
         cssArray[cssFile] = true;
 
         if (end === 1) {
-
-            //noinspection JSUnresolvedVariable
-            cssFile = cssFile.replace('bower_components', bowerPath);
-
             head = document.getElementsByTagName('head')[0];
             s = document.createElement('link');
             s.setAttribute('rel', 'stylesheet');
@@ -93,10 +81,6 @@ function loadCSS(cssFile, end, callback) {
             head.appendChild(s);
 
         } else {
-
-            //noinspection JSUnresolvedVariable
-            cssFile = cssFile.replace('bower_components', bowerPath);
-
             head = document.getElementsByTagName('head')[0];
             var style = document.getElementById('main-style');
 

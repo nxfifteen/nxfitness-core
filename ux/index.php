@@ -96,12 +96,6 @@
         $_SESSION['CORE_ROOT']    = CORE_ROOT;
 
         $App = new NxFitAdmin($_COOKIE['_nx_fb_usr']);
-
-        if (is_dir(dirname(__FILE__) . "/bower_components")) {
-            $bowerPath = 'bower_components';
-        } else if (is_dir(dirname(__FILE__) . "/../bundle/bowser")) {
-            $bowerPath = '../bundle/bowser';
-        }
         ?>
         <!DOCTYPE html>
         <html lang="en">
@@ -157,15 +151,14 @@
         <!--suppress JSUnusedLocalSymbols -->
         <script type="application/javascript">
             var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
-            <?php echo "var bowerPath = '" . $bowerPath . "';\n"; ?>
         </script>
 
         <!-- Bootstrap and necessary plugins -->
-        <script src="<?php echo $bowerPath; ?>/jquery/dist/jquery.min.js"></script>
-        <script src="<?php echo $bowerPath; ?>/tether/dist/js/tether.min.js"></script>
-        <script src="<?php echo $bowerPath; ?>/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="<?php echo $bowerPath; ?>/pace/pace.min.js"></script>
-        <script src="<?php echo $bowerPath; ?>/raven-js/dist/raven.min.js"></script>
+        <script src="../bundle/bowser/jquery/dist/jquery.min.js"></script>
+        <script src="../bundle/bowser/tether/dist/js/tether.min.js"></script>
+        <script src="../bundle/bowser/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="../bundle/bowser/pace/pace.min.js"></script>
+        <script src="../bundle/bowser/raven-js/dist/raven.min.js"></script>
 
         <!-- GenesisUI main scripts -->
         <script>Raven.config('https://80a480ea986d4ee993ac89a54a0d1f0e@sentry.io/156527').install();</script>
