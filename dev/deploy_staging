@@ -15,5 +15,6 @@ else
 fi
 
 cd "$ROOTPATH"
+git checkout .
 git checkout $CI_COMMIT_REF_NAME
 git pull
