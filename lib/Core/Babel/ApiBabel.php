@@ -92,8 +92,8 @@
         }
 
         /**
-         * @param      $trigger
-         * @param bool $force
+         * @param string $trigger
+         * @param bool   $force
          *
          * @todo Consider test case
          * @return string|bool
@@ -143,12 +143,11 @@
         }
 
         /**
-         * @param               $trigger
-         * @param               $daysSince
+         * @param string        $trigger
+         * @param string        $daysSince
          * @param DateTime|null $lastrun
          *
          * @todo Consider test case
-         *
          * @return string|bool
          */
         private function pullBabelTimeSeriesByTrigger($trigger, $daysSince, $lastrun = null)
@@ -173,12 +172,11 @@
         }
 
         /**
-         * @param               $trigger
-         * @param               $daysSince
+         * @param string        $trigger
+         * @param string        $daysSince
          * @param DateTime|null $lastrun
          *
          * @todo Consider test case
-         *
          * @return string|bool
          */
         private function pullBabelTimeSeriesForSteps($trigger, $daysSince, $lastrun = null)
@@ -189,7 +187,8 @@
                 $currentDate = new DateTime ('now');
             }
 
-            nxr(0, '   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records from ' . $currentDate->format("Y-m-d"));
+            nxr(0,
+                '   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records from ' . $currentDate->format("Y-m-d"));
             $userTimeSeries = $this->getTimeSeries($trigger, $currentDate, $daysSince);
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
@@ -205,7 +204,8 @@
                                 $this->setLastCleanRun($trigger, new DateTime ($steps->dateTime));
                             }
                         } else {
-                            nxr(3, $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
+                            nxr(3,
+                                $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
                         }
 
                         if ($steps->value > 0) {
@@ -290,12 +290,11 @@
         }
 
         /**
-         * @param $dateTime
-         * @param $goal
-         * @param $value
+         * @param string  $dateTime
+         * @param string  $goal
+         * @param boolean $value
          *
          * @todo Consider test case
-         *
          */
         private function checkGoalStreak($dateTime, $goal, $value)
         {
@@ -415,12 +414,11 @@
         }
 
         /**
-         * @param               $trigger
-         * @param               $daysSince
+         * @param string        $trigger
+         * @param string        $daysSince
          * @param DateTime|null $lastrun
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         private function pullBabelTimeSeriesForActivity($trigger, $daysSince, $lastrun = null)
@@ -449,7 +447,8 @@
                 $currentDate = new DateTime ('now');
             }
 
-            nxr(0, '   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records ' . $currentDate->format("Y-m-d"));
+            nxr(0,
+                '   Get ' . $this->getAppClass()->supportedApi($trigger) . ' records ' . $currentDate->format("Y-m-d"));
             $userTimeSeries = $this->getTimeSeries($trigger, $currentDate, $daysSince);
 
             if (isset($userTimeSeries) and is_array($userTimeSeries)) {
@@ -467,10 +466,12 @@
                         $newGoal = $this->thisWeeksGoal("activeMinutes",
                             $this->holdingVar["data"]->goals->activeMinutes);
                         if ($newGoal > 0 && $this->holdingVar["data"]->goals->activeMinutes != $newGoal) {
-                            nxr(4, "Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
+                            nxr(4,
+                                "Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " but I think it should be " . $newGoal);
                             $this->pushBabel('user/-/activities/goals/daily.json', array('activeMinutes' => $newGoal));
                         } else if ($newGoal > 0) {
-                            nxr(4, "Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " which is right for this week goal of " . $newGoal);
+                            nxr(4,
+                                "Returned activity target was " . $this->holdingVar["data"]->goals->activeMinutes . " which is right for this week goal of " . $newGoal);
                         }
                     }
                 }
@@ -479,7 +480,8 @@
                 $todaysDate = new DateTime ('now');
                 foreach ($userTimeSeries as $series) {
                     if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
-                        nxr(4, $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
+                        nxr(4,
+                            $this->getAppClass()->supportedApi($trigger) . " " . $series->dateTime . " is " . $series->value);
 
                         if ($series->value > 0) {
                             $this->setLastCleanRun($trigger, new DateTime ($series->dateTime));
@@ -547,9 +549,7 @@
         }
 
         /**
-         *
          * @todo     Consider test case
-         *
          * @return bool
          * @internal param $targetDate
          */
@@ -641,7 +641,8 @@
                                                 "METHOD" => __METHOD__,
                                                 "LINE"   => __LINE__
                                             ));
-                                        nxr(2, "Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") add to the database.");
+                                        nxr(2,
+                                            "Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") add to the database.");
                                     } else {
                                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix",
                                                 null, false) . "activity_log", $dbStorage, array(
@@ -655,7 +656,8 @@
                                                 "METHOD" => __METHOD__,
                                                 "LINE"   => __LINE__
                                             ));
-                                        nxr(2, "Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") updated in the database.");
+                                        nxr(2,
+                                            "Activity " . (String)$activity->activityName . " on " . $startDate . " (" . (String)$activity->logId . ") updated in the database.");
                                     }
 
                                     if (isset($activity->tcxLink)) {
@@ -712,9 +714,7 @@
         }
 
         /**
-         *
          * @todo     Consider test case
-         *
          * @return mixed
          * @internal param $targetDate
          */
@@ -760,10 +760,12 @@
                             if ($usr_goals->steps > 1) {
                                 $newGoal = $this->thisWeeksGoal("steps", $usr_goals->steps);
                                 if ($newGoal > 0 && $usr_goals->steps != $newGoal) {
-                                    nxr(0, "  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
+                                    nxr(0,
+                                        "  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal);
                                     $this->pushBabel('user/-/activities/goals/daily.json', array('steps' => $newGoal));
                                 } else if ($newGoal > 0) {
-                                    nxr(0, "  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
+                                    nxr(0,
+                                        "  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal);
                                 }
 
                                 $this->getAppClass()->getUserSetting($this->getActiveUser(), "goal_steps", $newGoal);
@@ -772,10 +774,12 @@
                             if ($usr_goals->floors > 1) {
                                 $newGoal = $this->thisWeeksGoal("floors", $usr_goals->floors);
                                 if ($newGoal > 0 && $usr_goals->floors != $newGoal) {
-                                    nxr(0, "  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
+                                    nxr(0,
+                                        "  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal);
                                     $this->pushBabel('user/-/activities/goals/daily.json', array('floors' => $newGoal));
                                 } else if ($newGoal > 0) {
-                                    nxr(0, "  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal);
+                                    nxr(0,
+                                        "  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal);
                                 }
                             }
 
@@ -851,10 +855,9 @@
         }
 
         /**
-         * @param $targetDate
+         * @param string $targetDate
          *
          * @todo Consider test case
-         *
          * @return mixed
          */
         private function pullBabelMeals($targetDate)
@@ -926,7 +929,8 @@
                 } else {
                     $currentDate      = new DateTime();
                     $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
-                    nxr(3, "No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
+                    nxr(3,
+                        "No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
                     if ($daysSinceReading > 7) {
                         $this->setLastCleanRun("foods", $targetDateTime);
                     }
@@ -937,10 +941,9 @@
         }
 
         /**
-         * @param $targetDate
+         * @param string $targetDate
          *
          * @todo Consider test case
-         *
          * @return mixed
          */
         private function pullBabelBody($targetDate)
@@ -1068,7 +1071,8 @@
                 } else {
                     $currentDate      = new DateTime();
                     $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($targetDateTime->format('Y-m-d'))) / (60 * 60 * 24);
-                    nxr(3, "No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
+                    nxr(3,
+                        "No recorded data for " . $targetDateTime->format('Y-m-d') . " " . $daysSinceReading . " days ago");
                     if ($daysSinceReading > 7) {
                         $this->setLastCleanRun("body", new DateTime ($targetDate));
                     }
@@ -1080,10 +1084,9 @@
         }
 
         /**
-         * @param $targetDate
+         * @param string $targetDate
          *
          * @todo Consider test case
-         *
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelSleep($targetDate)
@@ -1173,10 +1176,9 @@
         }
 
         /**
-         * @param $targetDate
+         * @param string $targetDate
          *
          * @todo Consider test case
-         *
          * @return mixed
          */
         private function pullBabelWater($targetDate)
@@ -1229,10 +1231,9 @@
         }
 
         /**
-         * @param $AppClass
+         * @param Core $AppClass
          *
          * @todo Consider test case
-         *
          */
         private function setAppClass($AppClass)
         {
@@ -1240,9 +1241,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Core
          */
         private function getAppClass()
@@ -1251,10 +1250,9 @@
         }
 
         /**
-         * @param $lastCleanRun
+         * @param string $lastCleanRun
          *
          * @todo Consider test case
-         *
          * @return bool|mixed|string
          */
         private function pullBabelHeartRateSeries($lastCleanRun)
@@ -1284,13 +1282,15 @@
                                     );
                                     foreach ($activity->value->heartRateZones as $heartRateZone) {
                                         if (array_key_exists("minutes", $heartRateZone)) {
-                                            nxr(2, $activity->dateTime . " you spent " . $heartRateZone->minutes . " in " . $heartRateZone->name . " zone");
+                                            nxr(2,
+                                                $activity->dateTime . " you spent " . $heartRateZone->minutes . " in " . $heartRateZone->name . " zone");
                                             $key                           = str_replace(" ", "",
                                                 strtolower($heartRateZone->name));
                                             $databaseArray[$key]           = (String)$heartRateZone->minutes;
                                             $databaseArray[$key . '_cals'] = (String)$heartRateZone->caloriesOut;
                                         } else {
-                                            nxr(2, $activity->dateTime . " does have time spent in '" . $heartRateZone->name . "' zone");
+                                            nxr(2,
+                                                $activity->dateTime . " does have time spent in '" . $heartRateZone->name . "' zone");
                                         }
 
                                     }
@@ -1354,7 +1354,6 @@
          * @param string $subscriberId
          *
          * @todo Consider test case
-         *
          * @return mixed
          */
         private function pushBabelSubscription($id, $path = null, $subscriberId = null)
@@ -1404,12 +1403,11 @@
         }
 
         /**
-         * @param      $path
-         * @param      $pushObject
-         * @param bool $returnObject
+         * @param string       $path
+         * @param string|array $pushObject
+         * @param bool         $returnObject
          *
          * @todo Consider test case
-         *
          * @return mixed
          */
         private function pushBabel($path, $pushObject, $returnObject = false)
@@ -1460,9 +1458,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelProfile()
@@ -1534,7 +1530,6 @@
          * Download information about devices associated with the users account. This is then stored in the database
          *
          * @todo Consider test case
-         *
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelDevices()
@@ -1723,7 +1718,6 @@
          * Download information of badges the user has aquired
          *
          * @todo     Consider test case
-         *
          * @return mixed|null|SimpleXMLElement|string
          * @internal param $user
          */
@@ -1791,7 +1785,8 @@
                                         )
                                     ))
                                     ) {
-                                        nxr(0, " User " . $this->getActiveUser() . " has been awarded the " . $badge->name . " again");
+                                        nxr(0,
+                                            " User " . $this->getActiveUser() . " has been awarded the " . $badge->name . " again");
                                         $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix",
                                                 null, false) . "bages_user", array(
                                             'dateTime'      => (String)$badge->dateTime,
@@ -1808,7 +1803,8 @@
                                                 "LINE"   => __LINE__
                                             ));
                                     } else {
-                                        nxr(0, " User " . $this->getActiveUser() . " has been awarded the " . $badge->name . ", " . $badge->timesAchieved . " times.");
+                                        nxr(0,
+                                            " User " . $this->getActiveUser() . " has been awarded the " . $badge->name . ", " . $badge->timesAchieved . " times.");
                                         $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix",
                                                 null, false) . "bages_user", array(
                                             "badgeid"       => (String)$badge->encodedId,
@@ -1914,9 +1910,7 @@
         }
 
         /**
-         *
          * @todo     Consider test case
-         *
          * @return mixed|null|SimpleXMLElement|string
          * @internal param $user
          */
@@ -1965,7 +1959,8 @@
                                     $lastSteps   = $steps;
                                 }
 
-                                nxr(2, $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
+                                nxr(2,
+                                    $displayName . " ranked " . $friend->rank->steps . " with " . number_format($steps) . " and " . number_format($lifetime) . " lifetime steps");
 
                                 $friendId                     = $friend->user->encodedId;
                                 $storedLeaderboard[$friendId] = array();
@@ -2011,7 +2006,8 @@
                                 $this->getAppClass()->setSetting("owners_friends", $allOwnersFriends);
                             }
 
-                            nxr(0, "  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
+                            nxr(0,
+                                "  * You are " . number_format($youDistance) . " steps away from the next rank and have " . count($userFriends) . " friends");
 
                             $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix",
                                     null, false) . "users", array(
@@ -2046,9 +2042,7 @@
         }
 
         /**
-         *
          * @todo     Consider test case
-         *
          * @return mixed|null|SimpleXMLElement|string
          * @internal param $user
          */
@@ -2155,9 +2149,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return mixed
          */
         private function getActiveUser()
@@ -2166,12 +2158,11 @@
         }
 
         /**
-         * @param      $activity
-         * @param null $cron_delay
-         * @param bool $clean
+         * @param string $activity
+         * @param null   $cron_delay
+         * @param bool   $clean
          *
          * @todo     Consider test case
-         *
          * @internal param $username
          */
         private function setLastrun($activity, $cron_delay = null, $clean = false)
@@ -2251,11 +2242,10 @@
         }
 
         /**
-         * @param      $activity
-         * @param bool $reset
+         * @param string $activity
+         * @param bool   $reset
          *
          * @todo     Consider test case
-         *
          * @return DateTime
          * @internal param $username
          */
@@ -2289,9 +2279,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return AccessToken
          */
         private function getAccessToken()
@@ -2332,10 +2320,9 @@
         }
 
         /**
-         * @param $activity
+         * @param string $activity
          *
          * @todo     Consider test case
-         *
          * @return DateTime
          * @internal param $user
          */
@@ -2362,9 +2349,7 @@
         }
 
         /**
-         *
          * @todo     Consider test case
-         *
          * @return DateTime
          * @internal param $user
          */
@@ -2375,12 +2360,11 @@
         }
 
         /**
-         * @param      $activity
-         * @param null $date
-         * @param int  $delay
+         * @param string $activity
+         * @param null   $date
+         * @param int    $delay
          *
          * @todo     Consider test case
-         *
          * @internal param $user
          */
         private function setLastCleanRun($activity, $date = null, $delay = 0)
@@ -2430,11 +2414,10 @@
         }
 
         /**
-         * @param     $string
-         * @param int $current_goal
+         * @param string $string
+         * @param int    $current_goal
          *
          * @todo     Consider test case
-         *
          * @return float|int|string
          * @internal param $user
          */
@@ -2498,7 +2481,8 @@
                             $LastWeeksSteps   = round($totalSteps / count($dbSteps), 0);
                             $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
 
-                            nxr(0, "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
+                            nxr(0,
+                                "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
 
                             if ($ProposedNextWeek >= $maxTargetSteps) {
                                 $plusTargetSteps = $maxTargetSteps;
@@ -2552,7 +2536,8 @@
                         $LastWeeksSteps   = round($totalSteps / count($dbSteps), 0);
                         $ProposedNextWeek = $LastWeeksSteps + round($LastWeeksSteps * ($improvment / 100), 0);
 
-                        nxr(0, "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
+                        nxr(0,
+                            "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek);
 
                         if ($LastWeeksSteps >= $maxTargetSteps) {
                             $plusTargetSteps = $maxTargetSteps;
@@ -2623,7 +2608,8 @@
                             $LastWeeksActive  = round($totalMinutes / count($dbActiveMinutes), 0);
                             $ProposedNextWeek = $LastWeeksActive + round($LastWeeksActive * ($improvment / 100), 0);
 
-                            nxr(4, "* Min: " . $minTargetActive . " Max: " . $maxTargetActive . " LastWeeksSteps: " . $LastWeeksActive . " ProposedNextWeek: " . $ProposedNextWeek);
+                            nxr(4,
+                                "* Min: " . $minTargetActive . " Max: " . $maxTargetActive . " LastWeeksSteps: " . $LastWeeksActive . " ProposedNextWeek: " . $ProposedNextWeek);
 
                             if ($ProposedNextWeek >= $maxTargetActive) {
                                 $plusTargetSteps = $maxTargetActive;
@@ -2646,10 +2632,9 @@
         }
 
         /**
-         * @param $tcxLink
+         * @param string $tcxLink
          *
          * @todo Consider test case
-         *
          */
         private function pullBabelTCX($tcxLink)
         {
@@ -2667,10 +2652,9 @@
         }
 
         /**
-         * @param $activity
+         * @param string $activity
          *
          * @todo Consider test case
-         *
          */
         private function pullBabelHeartIntraday($activity)
         {
@@ -2765,7 +2749,8 @@
                             }
                         }
                     } else {
-                        nxr(3, "Activity Heart Rate Skipped. Unable to process across dates. Activity started on " . $startDate . " and ended on " . $endDate);
+                        nxr(3,
+                            "Activity Heart Rate Skipped. Unable to process across dates. Activity started on " . $startDate . " and ended on " . $endDate);
                     }
                 }
             }
@@ -2773,9 +2758,7 @@
 
         /**
          * @return bool|string
-         *
          * @todo Consider test case
-         *
          */
         private function pullNomieTrackers()
         {
@@ -3054,7 +3037,6 @@
          * @param mixed $userAccessToken
          *
          * @todo Consider test case
-         *
          */
         public function setUserAccessToken($userAccessToken)
         {
@@ -3065,7 +3047,6 @@
          * @param Fitbit $fitbitapi
          *
          * @todo Consider test case
-         *
          */
         public function setLibrary($fitbitapi)
         {
@@ -3073,11 +3054,10 @@
         }
 
         /**
-         * @param $user
-         * @param $string
+         * @param string $user
+         * @param string $string
          *
          * @todo Consider test case
-         *
          * @return bool|int
          */
         public function getDBCurrentBody($user, $string)
@@ -3100,9 +3080,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return Fitbit
          */
         public function getLibrary()
@@ -3111,12 +3089,11 @@
         }
 
         /**
-         * @param      $user
-         * @param      $trigger
-         * @param bool $return
+         * @param string $user
+         * @param string $trigger
+         * @param bool   $return
          *
          * @todo Consider test case
-         *
          * @return mixed|null|SimpleXMLElement|string
          */
         public function pull($user, $trigger, $return = false)
@@ -3138,7 +3115,8 @@
 
                 $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
                 if (strtotime($userCoolDownTime) >= date("U")) {
-                    nxr(0, "User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
+                    nxr(0,
+                        "User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
                     die();
                 }
 
@@ -3402,12 +3380,11 @@
          *            'efficiency'
          *            'weight', 'bmi', 'fat'
          *
-         * @param string $type
-         * @param        $baseDate  DateTime or 'today', to_period
-         * @param        $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
+         * @param string          $type
+         * @param string|DateTime $baseDate  DateTime or 'today', to_period
+         * @param string|DateTime $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
          *
          * @todo Consider test case
-         *
          * @return array|boolean
          */
         public function getTimeSeries($type, $baseDate, $to_period)
@@ -3524,10 +3501,9 @@
         }
 
         /**
-         * @param $xml
+         * @param string|int $xml
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function isApiError($xml)
@@ -3540,11 +3516,10 @@
         }
 
         /**
-         * @param      $trigger
-         * @param bool $quiet
+         * @param string $trigger
+         * @param bool   $quiet
          *
          * @todo Consider test case
-         *
          * @return bool|string
          */
         public function isAllowed($trigger, $quiet = false)
@@ -3575,11 +3550,10 @@
         }
 
         /**
-         * @param      $trigger
-         * @param bool $reset
+         * @param string $trigger
+         * @param bool   $reset
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function isTriggerCooled($trigger, $reset = false)
@@ -3599,9 +3573,7 @@
         }
 
         /**
-         *
          * @todo     Consider test case
-         *
          * @return bool
          * @internal param bool $forceSync
          */
@@ -3614,7 +3586,6 @@
          * @param boolean $forceSync
          *
          * @todo Consider test case
-         *
          */
         public function setForceSync($forceSync)
         {
@@ -3622,10 +3593,9 @@
         }
 
         /**
-         * @param $_nx_fb_usr
+         * @param string $_nx_fb_usr
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function validateOAuth($_nx_fb_usr)
@@ -3666,7 +3636,6 @@
          * @param mixed $activeUser
          *
          * @todo Consider test case
-         *
          */
         public function setActiveUser($activeUser)
         {
@@ -3674,26 +3643,13 @@
         }
 
         /**
-         * @param $newUserProfile
+         * @param mixed $newUserProfile
          *
          * @todo Consider test case
-         *
          * @return bool
          */
         public function createNewUser($newUserProfile)
         {
-            /*
-                    'api' => $newUserProfile->encodedId,
-                    'name' => $newUserProfile->fullName,
-                    'dob' => $newUserProfile->dateOfBirth,
-                    'avatar' => $newUserProfile->avatar150,
-                    'seen' => $newUserProfile->memberSince,
-                    'gender' => $newUserProfile->gender,
-                    'height' => $newUserProfile->height,
-                    'stride_running' => $newUserProfile->strideLengthRunning,
-                    'stride_walking' => $newUserProfile->strideLengthWalking,
-                    'country' => $newUserProfile->country,
-             */
             //nxr(0, print_r($newUserProfile, TRUE));
             if ($this->getAppClass()->isUser($newUserProfile->encodedId)) {
                 nxr(0, "User already present");
@@ -3733,13 +3689,12 @@
         }
 
         /**
-         * @param      $path
-         * @param bool $returnObject
-         * @param bool $debugOutput
-         * @param bool $supportFailures
+         * @param string $path
+         * @param bool   $returnObject
+         * @param bool   $debugOutput
+         * @param bool   $supportFailures
          *
          * @todo Consider test case
-         *
          * @return mixed
          */
         public function pullBabel($path, $returnObject = false, $debugOutput = false, $supportFailures = false)

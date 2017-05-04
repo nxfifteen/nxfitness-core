@@ -28,8 +28,8 @@
         protected $siteId;
 
         /**
-         * @param $trackingId
-         * @param $api_url
+         * @param string $trackingId
+         * @param string $api_url
          */
         public function __construct($trackingId, $api_url)
         {
@@ -68,9 +68,7 @@
         }
 
         /**
-         *
          * @todo Consider test case
-         *
          * @return mixed
          */
         private function getSiteId()
@@ -82,7 +80,6 @@
          * @param string $documentTitle Page title as it will appear in the Actions > Page titles report
          *
          * @todo Consider test case
-         *
          */
         public function endEvent($documentTitle)
         {
@@ -98,7 +95,6 @@
          * @param float|bool  $value    (optional) The Event's value
          *
          * @todo Consider test case
-         *
          */
         public function track($category, $action, $name = false, $value = false)
         {
