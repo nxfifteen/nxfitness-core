@@ -411,7 +411,7 @@
         }
 
         /**
-         * @param array $userArray
+         * @param array|bool $userArray
          *
          * @todo Consider test case
          * @return bool
