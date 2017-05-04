@@ -1,11 +1,11 @@
 <script>
     var requireJS = [
-        "bower_components/fullcalendar/fullcalendar.js",
-        "bower_components/leaflet/dist/leaflet.js",
-        "bower_components/leaflet-gpx/gpx.js",
-        "bower_components/morris.js/morris.js",
-        "bower_components/raphael/raphael.js",
-        "bower_components/bower-jquery-easyPieChart/dist/jquery.easypiechart.js"
+        "../bundle/bower/fullcalendar/fullcalendar.js",
+        "../bundle/bower/leaflet/dist/leaflet.js",
+        "../bundle/bower/leaflet-gpx/gpx.js",
+        "../bundle/bower/morris.js/morris.js",
+        "../bundle/bower/raphael/raphael.js",
+        "../bundle/bower/bower-jquery-easyPieChart/dist/jquery.easypiechart.js"
     ];
     //    var requireJS = [
     //        "../admin/js/fullcalendar/fullcalendar.min.js",
@@ -18,7 +18,7 @@
 
     loadJS([], "js/env/activity_log.js.php");
     loadJS(requireJS, "js/views/activity_log.js");
-    loadCSS("bower_components/leaflet/dist/leaflet.css");
+    loadCSS("../bundle/bower/leaflet/dist/leaflet.css");
     loadCSS("css/activity_log.css");
     setUpBreadcrumb(['Activities', 'Activity'], 'Log');
 </script>

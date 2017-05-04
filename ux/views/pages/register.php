@@ -112,9 +112,9 @@
 </script>
 
 <!-- Bootstrap and necessary plugins -->
-<script src="../../../bundle/bowser/jquery/dist/jquery.min.js"></script>
-<script src="../../../bundle/bowser/tether/dist/js/tether.min.js"></script>
-<script src="../../../bundle/bowser/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../../bundle/bower/jquery/dist/jquery.min.js"></script>
+<script src="../../../bundle/bower/tether/dist/js/tether.min.js"></script>
+<script src="../../../bundle/bower/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>
