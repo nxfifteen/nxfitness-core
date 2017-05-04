@@ -1,20 +1,12 @@
 <script>
     var requireJS = [
-        "../bundle/bower/fullcalendar/fullcalendar.js",
+        "../bundle/bower/fullcalendar/dist/fullcalendar.js",
         "../bundle/bower/leaflet/dist/leaflet.js",
         "../bundle/bower/leaflet-gpx/gpx.js",
         "../bundle/bower/morris.js/morris.js",
         "../bundle/bower/raphael/raphael.js",
         "../bundle/bower/bower-jquery-easyPieChart/dist/jquery.easypiechart.js"
     ];
-    //    var requireJS = [
-    //        "../admin/js/fullcalendar/fullcalendar.min.js",
-    //        "../admin/js/leaflet/leaflet.js",
-    //        "../admin/js/leaflet/GPX.js",
-    //        "../admin/js/morris-chart/morris.js",
-    //        "../admin/js/morris-chart/raphael-min.js",
-    //        "../admin/js/easypiechart/jquery.easypiechart.js"
-    //    ];
 
     loadJS([], "js/env/activity_log.js.php");
     loadJS(requireJS, "js/views/activity_log.js");
