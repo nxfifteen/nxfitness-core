@@ -33,7 +33,6 @@ config.inc.php
 /dev/git-changelog/
 /bundle/vendor/*/*/.gitattributes
 /bundle/vendor/*/*/.gitignore
-/bundle/vendor/*/*/composer.json
 /bundle/vendor/*/*/test*/
 /bundle/vendor/*/*/.gitmodules
 /bundle/vendor/*/*/.php_cs
