@@ -7,6 +7,11 @@
     use Core\Config as Config;
     use PHPUnit\Framework\TestCase;
 
+    /**
+     * Class ConfigCacheNamesTest
+     *
+     * @package Core\Tests
+     */
     class ConfigCacheNamesTest extends TestCase
     {
         /**
