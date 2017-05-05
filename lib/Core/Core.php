@@ -87,8 +87,6 @@
 
         /**
          * @param Config $settings
-         *
-         * @todo Consider test case
          */
         private function setSettings($settings)
         {
@@ -97,8 +95,6 @@
 
         /**
          * @param Medoo $database
-         *
-         * @todo Consider test case
          */
         private function setDatabase($database)
         {

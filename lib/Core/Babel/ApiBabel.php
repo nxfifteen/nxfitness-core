@@ -95,7 +95,6 @@
          * @param string $trigger
          * @param bool   $force
          *
-         * @todo Consider test case
          * @return string|bool
          */
         private function pullBabelTimeSeries($trigger, $force = false)
@@ -147,7 +146,6 @@
          * @param string        $daysSince
          * @param DateTime|null $lastrun
          *
-         * @todo Consider test case
          * @return string|bool
          */
         private function pullBabelTimeSeriesByTrigger($trigger, $daysSince, $lastrun = null)
@@ -176,7 +174,6 @@
          * @param string        $daysSince
          * @param DateTime|null $lastrun
          *
-         * @todo Consider test case
          * @return string|bool
          */
         private function pullBabelTimeSeriesForSteps($trigger, $daysSince, $lastrun = null)
@@ -294,7 +291,6 @@
          * @param string  $goal
          * @param boolean $value
          *
-         * @todo Consider test case
          */
         private function checkGoalStreak($dateTime, $goal, $value)
         {
@@ -415,7 +411,6 @@
          * @param string        $daysSince
          * @param DateTime|null $lastrun
          *
-         * @todo Consider test case
          * @return bool
          */
         private function pullBabelTimeSeriesForActivity($trigger, $daysSince, $lastrun = null)
@@ -546,7 +541,6 @@
         }
 
         /**
-         * @todo     Consider test case
          * @return bool
          * @internal param $targetDate
          */
@@ -711,7 +705,6 @@
         }
 
         /**
-         * @todo     Consider test case
          * @return mixed
          * @internal param $targetDate
          */
@@ -854,7 +847,6 @@
         /**
          * @param string $targetDate
          *
-         * @todo Consider test case
          * @return mixed
          */
         private function pullBabelMeals($targetDate)
@@ -940,7 +932,6 @@
         /**
          * @param string $targetDate
          *
-         * @todo Consider test case
          * @return mixed
          */
         private function pullBabelBody($targetDate)
@@ -1083,7 +1074,6 @@
         /**
          * @param string $targetDate
          *
-         * @todo Consider test case
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelSleep($targetDate)
@@ -1175,7 +1165,6 @@
         /**
          * @param string $targetDate
          *
-         * @todo Consider test case
          * @return mixed
          */
         private function pullBabelWater($targetDate)
@@ -1229,8 +1218,6 @@
 
         /**
          * @param Core $AppClass
-         *
-         * @todo Consider test case
          */
         private function setAppClass($AppClass)
         {
@@ -1238,7 +1225,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return Core
          */
         private function getAppClass()
@@ -1249,7 +1235,6 @@
         /**
          * @param string $lastCleanRun
          *
-         * @todo Consider test case
          * @return bool|mixed|string
          */
         private function pullBabelHeartRateSeries($lastCleanRun)
@@ -1350,7 +1335,6 @@
          * @param string $path Subscription resource path (beginning with slash). Omit to subscribe to all user updates.
          * @param string $subscriberId
          *
-         * @todo Consider test case
          * @return mixed
          */
         private function pushBabelSubscription($id, $path = null, $subscriberId = null)
@@ -1400,7 +1384,6 @@
          * @param string|array $pushObject
          * @param bool         $returnObject
          *
-         * @todo Consider test case
          * @return mixed
          */
         private function pushBabel($path, $pushObject, $returnObject = false)
@@ -1446,7 +1429,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelProfile()
@@ -1517,7 +1499,6 @@
         /**
          * Download information about devices associated with the users account. This is then stored in the database
          *
-         * @todo Consider test case
          * @return mixed|null|SimpleXMLElement|string
          */
         private function pullBabelDevices()
@@ -1701,7 +1682,6 @@
         /**
          * Download information of badges the user has aquired
          *
-         * @todo     Consider test case
          * @return mixed|null|SimpleXMLElement|string
          * @internal param $user
          */
@@ -1894,7 +1874,6 @@
         }
 
         /**
-         * @todo     Consider test case
          * @return mixed|null|SimpleXMLElement|string
          * @internal param $user
          */
@@ -2026,7 +2005,6 @@
         }
 
         /**
-         * @todo     Consider test case
          * @return mixed|null|SimpleXMLElement|string
          * @internal param $user
          */
@@ -2133,7 +2111,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return mixed
          */
         private function getActiveUser()
@@ -2146,7 +2123,6 @@
          * @param null   $cron_delay
          * @param bool   $clean
          *
-         * @todo     Consider test case
          * @internal param $username
          */
         private function setLastrun($activity, $cron_delay = null, $clean = false)
@@ -2229,7 +2205,6 @@
          * @param string $activity
          * @param bool   $reset
          *
-         * @todo     Consider test case
          * @return DateTime
          * @internal param $username
          */
@@ -2263,7 +2238,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return AccessToken
          */
         private function getAccessToken()
@@ -2305,7 +2279,6 @@
         /**
          * @param string $activity
          *
-         * @todo     Consider test case
          * @return DateTime
          * @internal param $user
          */
@@ -2332,7 +2305,6 @@
         }
 
         /**
-         * @todo     Consider test case
          * @return DateTime
          * @internal param $user
          */
@@ -2347,7 +2319,6 @@
          * @param null   $date
          * @param int    $delay
          *
-         * @todo     Consider test case
          * @internal param $user
          */
         private function setLastCleanRun($activity, $date = null, $delay = 0)
@@ -2400,7 +2371,6 @@
          * @param string $string
          * @param int    $current_goal
          *
-         * @todo     Consider test case
          * @return float|int|string
          * @internal param $user
          */
@@ -2616,8 +2586,6 @@
 
         /**
          * @param string $tcxLink
-         *
-         * @todo Consider test case
          */
         private function pullBabelTCX($tcxLink)
         {
@@ -2636,8 +2604,6 @@
 
         /**
          * @param string $activity
-         *
-         * @todo Consider test case
          */
         private function pullBabelHeartIntraday($activity)
         {
@@ -2741,7 +2707,6 @@
 
         /**
          * @return bool|string
-         * @todo Consider test case
          */
         private function pullNomieTrackers()
         {

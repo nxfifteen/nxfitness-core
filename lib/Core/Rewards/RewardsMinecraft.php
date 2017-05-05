@@ -65,8 +65,6 @@
 
         /**
          * @param Core $paramClass
-         *
-         * @todo Consider test case
          */
         private function setAppClass($paramClass)
         {
@@ -74,7 +72,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return Core
          */
         private function getAppClass()
@@ -83,8 +80,6 @@
         }
 
         /**
-         * @todo Consider test case
-         *
          * @param string $cat
          * @param string $event
          * @param string $score
@@ -239,7 +234,6 @@
          * @param int    $value
          * @param int    $multiplyer
          *
-         * @todo Consider test case
          * @return bool
          */
         private function reachedGoal($goal, $value, $multiplyer = 1)
@@ -275,7 +269,6 @@
          * @param string $goal
          * @param string $value
          *
-         * @todo Consider test case
          * @return bool
          */
         private function smashedGoal($goal, $value) { return $this->reachedGoal($goal, $value, 1.5); }
@@ -284,7 +277,6 @@
          * @param string $goal
          * @param string $value
          *
-         * @todo Consider test case
          * @return bool
          */
         private function crushedGoal($goal, $value) { return $this->reachedGoal($goal, $value, 2); }

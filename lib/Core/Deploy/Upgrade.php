@@ -98,8 +98,6 @@
 
         /**
          * @param Config $settings
-         *
-         * @todo Consider test case
          */
         private function setSettings($settings)
         {
@@ -108,8 +106,6 @@
 
         /**
          * @param Medoo $database
-         *
-         * @todo Consider test case
          */
         private function setDatabase($database)
         {
@@ -119,7 +115,6 @@
         /**
          * @param array $error
          *
-         * @todo Consider test case
          * @return bool
          */
         private function wasMySQLError($error)
@@ -139,7 +134,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return array
          */
         private function getInstallingVersionBrakeDown()
@@ -148,7 +142,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return array
          */
         private function getInstallVersionBrakeDown()
