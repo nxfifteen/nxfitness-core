@@ -37,7 +37,7 @@
         }
 
         /**
-         * @covers \Core\Analytics\ErrorRecording::getSentryClient
+         * @covers ErrorRecording::getSentryClient
          */
         public function testSentryClientTest()
         {

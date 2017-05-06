@@ -47,6 +47,8 @@
 
         /**
          * Class constructor
+         *
+         * @codeCoverageIgnore
          */
         public function __construct()
         {

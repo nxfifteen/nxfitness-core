@@ -42,6 +42,8 @@
          * Builds a PiwikTracker object, used to track visits, pages and Goal conversions
          * for a specific website, by using the Piwik Tracking API.
          *
+         * @codeCoverageIgnore
+         *
          * @param int    $trackingId Id site to be tracked
          * @param string $api_url    "http://example.org/piwik/" or "http://piwik.example.org/"
          *                           If set, will overwrite PiwikTracker::$URL
@@ -82,6 +84,7 @@
         }
 
         /**
+         * @codeCoverageIgnore
          * @param string $siteId
          */
         private function setSiteId($siteId)
@@ -90,6 +93,7 @@
         }
 
         /**
+         * @codeCoverageIgnore
          * @return string
          */
         private function getSiteId()
