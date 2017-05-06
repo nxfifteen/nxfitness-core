@@ -1,6 +1,9 @@
 <?php
+/**
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ */
 
-    namespace Core;
+namespace Core;
 
     require_once(dirname(__FILE__) . "/../autoloader.php");
 
@@ -194,7 +197,6 @@
          * @param string $default  Default value to return
          * @param bool   $query_db Boolean to search database or not
          *
-         * @todo Consider test case
          * @return string Setting value, or default as per defined
          */
         public function get($key, $default = null, $query_db = true)
@@ -225,8 +227,6 @@
          * @param string $value    Value to store
          * @param bool   $query_db Boolean to store in database or not
          *
-         * @todo Consider test case
-         *
          * @return bool was data stored correctly
          */
         public function set($key, $value, $query_db = true)
@@ -256,8 +256,6 @@
          * @param string $key      Setting to query
          * @param string $default  Default value to return
          * @param bool   $query_db Boolean to search database or not
-         *
-         * @todo Consider test case
          *
          * @return string Setting value, or default as per defined
          */
@@ -298,8 +296,6 @@
          * @param string $key   Setting to query
          * @param string $value Value to store
          *
-         * @todo Consider test case
-         *
          * @return bool was data stored correctly
          */
         public function setUser($fuid, $key, $value)
@@ -333,8 +329,6 @@
          * Takes medoo paramater and stores for access within the class
          *
          * @param Medoo $database Application database connection
-         *
-         * @todo Consider test case
          *
          */
         public function setDatabase($database)

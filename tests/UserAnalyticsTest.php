@@ -1,6 +1,9 @@
 <?php
+/**
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ */
 
-    namespace Core\Tests;
+namespace Core\Tests;
 
     use Core\Analytics\UserAnalytics;
     use PHPUnit\Framework\TestCase;
@@ -30,8 +33,8 @@
         public function testTrackEvent()
         {
             $classSiteId = $this->analyticsClass->track("Test", "Test Case", "testTrackEvent", 1);
-            echo "testTrackEvent\n";
-            var_dump($classSiteId);
+            //echo "testTrackEvent\n";
+            //var_dump($classSiteId);
             $this->assertTrue(is_string($classSiteId));
         }
 
@@ -41,8 +44,8 @@
         public function testEndEvent()
         {
             $classSiteId = $this->analyticsClass->endEvent("Test Page Tracked");
-            echo "testEndEvent\n";
-            var_dump($classSiteId);
+            //echo "testEndEvent\n";
+            //var_dump($classSiteId);
             $this->assertTrue(is_string($classSiteId));
         }
     }
