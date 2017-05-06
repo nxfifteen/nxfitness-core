@@ -2,8 +2,6 @@
 
     namespace Core\Tests;
 
-    require_once(dirname(__FILE__) . '/../lib/autoloader.php');
-
     use Core\Analytics\UserAnalytics;
     use PHPUnit\Framework\TestCase;
 
@@ -32,15 +30,19 @@
         public function testTrackEvent()
         {
             $classSiteId = $this->analyticsClass->track("Test", "Test Case", "testTrackEvent", 1);
-            print_r($classSiteId);
+            echo "testTrackEvent\n";
+            var_dump($classSiteId);
+            $this->assertTrue(is_string($classSiteId));
         }
 
         /**
          * @covers \Core\Analytics\UserAnalytics::endEvent
          */
-        public function testendEvent()
+        public function testEndEvent()
         {
             $classSiteId = $this->analyticsClass->endEvent("Test Page Tracked");
-            print_r($classSiteId);
+            echo "testEndEvent\n";
+            var_dump($classSiteId);
+            $this->assertTrue(is_string($classSiteId));
         }
     }

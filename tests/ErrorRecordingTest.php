@@ -1,14 +1,6 @@
 <?php
-    /**
-     * Created by IntelliJ IDEA.
-     * User: stuar
-     * Date: 05/05/2017
-     * Time: 22:03
-     */
 
     namespace Core\Tests;
-
-    require_once(dirname(__FILE__) . '/../lib/autoloader.php');
 
     use Core\Analytics\ErrorRecording;
     use Core\Core;
@@ -36,7 +28,8 @@
         /**
          * @covers \Core\Analytics\ErrorRecording::getSentryClient
          */
-        public function getSentryClientTest() {
+        public function testSentryClientTest()
+        {
             if (defined('SENTRY_DSN')) {
                 $this->assertInstanceOf("Raven_Client", $this->testingClass->getSentryClient());
             } else {
@@ -47,7 +40,8 @@
         /**
          * @covers \Core\Analytics\ErrorRecording::getSentryErrorHandler
          */
-        public function getSentryErrorHandlerTest() {
+        public function testSentryErrorHandlerTest()
+        {
             if (defined('SENTRY_DSN')) {
                 $this->assertInstanceOf("Raven_ErrorHandler", $this->testingClass->getSentryErrorHandler());
             } else {
@@ -58,7 +52,8 @@
         /**
          * @covers \Core\Analytics\ErrorRecording::captureException
          */
-        public function captureExceptionTest() {
+        public function testCaptureExceptionTest()
+        {
             if (defined('SENTRY_DSN')) {
                 $this->assertNotNull($this->testingClass->captureException(new Exception()));
             } else {
@@ -69,7 +64,8 @@
         /**
          * @covers \Core\Analytics\ErrorRecording::captureMessage
          */
-        public function captureMessageTest() {
+        public function testCaptureMessageTest()
+        {
             if (defined('SENTRY_DSN')) {
                 $this->assertNotNull($this->testingClass->captureMessage("Test Message"));
             } else {
