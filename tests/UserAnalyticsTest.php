@@ -31,7 +31,7 @@
 
         protected function setUp()
         {
-            $this->analyticsClass = new UserAnalytics(14, 'https://nxfifteen.me.uk/cogent/', "fit.itsabeta.nx",
+            $this->analyticsClass = new UserAnalytics(15, 'https://nxfifteen.me.uk/cogent/', "fit.itsabeta.nx",
                 "http://fit.itsabeta.nx/api/fitbit/ux/");
         }
 
@@ -41,8 +41,6 @@
         public function testTrackEvent()
         {
             $classSiteId = $this->analyticsClass->track("Test", "Test Case", "testTrackEvent", 1);
-            //echo "testTrackEvent\n";
-            //var_dump($classSiteId);
             $this->assertTrue(is_string($classSiteId));
         }
 
@@ -52,8 +50,6 @@
         public function testEndEvent()
         {
             $classSiteId = $this->analyticsClass->endEvent("Test Page Tracked");
-            //echo "testEndEvent\n";
-            //var_dump($classSiteId);
             $this->assertTrue(is_string($classSiteId));
         }
     }
