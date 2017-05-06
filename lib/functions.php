@@ -30,7 +30,7 @@
                 fclose($fh);
             }
 
-            if ($echoLine !== false && (!defined('IS_CRON_RUN') || !IS_CRON_RUN) && php_sapi_name() == "cli") {
+            if ((!defined('TEST_SUITE') || TEST_SUITE == false) && $echoLine !== false && (!defined('IS_CRON_RUN') || !IS_CRON_RUN) && php_sapi_name() == "cli") {
                 echo $msg;
             }
         }
