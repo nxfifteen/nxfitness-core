@@ -1,4 +1,15 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
     namespace Core\Babel;
 
@@ -290,7 +301,6 @@
          * @param string  $dateTime
          * @param string  $goal
          * @param boolean $value
-         *
          */
         private function checkGoalStreak($dateTime, $goal, $value)
         {
@@ -2610,6 +2620,7 @@
             $isAllowed = $this->isAllowed("heart");
             if (!is_numeric($isAllowed)) {
                 if ($this->activeUser == $this->getAppClass()->getSetting("ownerFuid", null, false)) {
+                    /** @var object $activity */
                     $startTimeRaw = new DateTime ((String)$activity->startTime);
                     $startDate    = $startTimeRaw->format("Y-m-d");
                     $startTime    = $startTimeRaw->format("H:i");

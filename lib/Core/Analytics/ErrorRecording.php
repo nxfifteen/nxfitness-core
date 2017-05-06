@@ -1,4 +1,15 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
     namespace Core\Analytics;
 
@@ -113,6 +124,7 @@
         {
             if (defined('SENTRY_DSN')) {
                 nxr(0, "### Exception Recorded ###");
+
                 return $this->getSentryClient()->captureException($exception, $data, $logger, $vars);
             } else {
                 return null;
@@ -135,6 +147,7 @@
             nxr(0, "[ERROR] $message");
             if (defined('SENTRY_DSN')) {
                 nxr(0, "### Message Recorded ###");
+
                 return $this->getSentryClient()->captureMessage($message, $params, $data, $stack, $vars);
             } else {
                 return null;
@@ -153,6 +166,7 @@
                 $medoo_error = $medoo->error();
                 if ($medoo_error[0] != 0000) {
                     $medoo_info = $medoo->info();
+
                     return $this->captureMessage($medoo_error[2], array('database'), array(
                         'level' => 'error',
                         'extra' => array(

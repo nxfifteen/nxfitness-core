@@ -1,4 +1,16 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
     if (is_array($_SERVER) && array_key_exists("REDIRECT_URL", $_SERVER)) {
         /** @noinspection PhpUndefinedMethodInspection */
         $url = str_replace($App->getConfig("/admin"), "", $_SERVER['REDIRECT_URL']);

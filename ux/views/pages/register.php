@@ -1,4 +1,16 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
     header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -14,8 +26,7 @@
         $config = $_SESSION['admin_config'];
     }
 ?>
-<!DOCTYPE html>
-<!--suppress HtmlUnknownTarget, HtmlUnknownTarget -->
+<!DOCTYPE html><!--suppress HtmlUnknownTarget, HtmlUnknownTarget -->
 <html lang="en">
 
 <head>

@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
 $(function () {
     'use strict';
 
@@ -231,10 +243,10 @@ $(function () {
                         classTable = ' class="success"';
                     } else { //noinspection JSUnfilteredForInLoop
                         if (data.results.loss_rate_fat[key] >= 0.1) {
-                                                classTable = ' class="danger"';
-                                            } else {
-                                                classTable = "";
-                                            }
+                            classTable = ' class="danger"';
+                        } else {
+                            classTable = "";
+                        }
                     }
                     //noinspection JSUnfilteredForInLoop
                     htmlString += "<tr" + classTable + "><td>" + key + "</td><td>" + data.results.loss_rate_fat[key] + "%</td></tr>";

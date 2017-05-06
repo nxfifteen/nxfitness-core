@@ -1,4 +1,15 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
     namespace Map;
 
@@ -23,9 +34,17 @@
     error_reporting(0);
     ini_set('display_errors', 'off');
 
+    /**
+     * Class StaticMapLite
+     *
+     * @package Map
+     */
     Class StaticMapLite
     {
 
+        /**
+         * @var int
+         */
         protected $maxWidth = 1024;
         protected $maxHeight = 1024;
 
@@ -97,6 +116,9 @@
         protected $offsetX;
         protected $offsetY;
 
+        /**
+         * StaticMapLite constructor.
+         */
         public function __construct()
         {
             $this->zoom    = 0;
@@ -186,16 +208,31 @@
             }
         }
 
+        /**
+         * @param $long
+         * @param $zoom
+         *
+         * @return float|int
+         */
         public function lonToTile($long, $zoom)
         {
             return (($long + 180) / 360) * pow(2, $zoom);
         }
 
+        /**
+         * @param $lat
+         * @param $zoom
+         *
+         * @return float|int
+         */
         public function latToTile($lat, $zoom)
         {
             return (1 - log(tan($lat * pi() / 180) + 1 / cos($lat * pi() / 180)) / pi()) / 2 * pow(2, $zoom);
         }
 
+        /**
+         *
+         */
         public function initCoords()
         {
             $this->centerX = $this->lonToTile($this->lon, $this->zoom);
@@ -204,6 +241,9 @@
             $this->offsetY = floor((floor($this->centerY) - $this->centerY) * $this->tileSize);
         }
 
+        /**
+         *
+         */
         public function createBaseMap()
         {
             $this->image   = imagecreatetruecolor($this->width, $this->height);
@@ -240,6 +280,9 @@
             }
         }
 
+        /**
+         *
+         */
         public function placeMarkers()
         {
             // loop thru marker array
@@ -329,11 +372,21 @@
             };
         }
 
+        /**
+         * @param $url
+         *
+         * @return string
+         */
         public function tileUrlToFilename($url)
         {
             return $this->tileCacheBaseDir . "/" . str_replace(array('http://'), '', $url);
         }
 
+        /**
+         * @param $url
+         *
+         * @return bool|null|string
+         */
         public function checkTileCache($url)
         {
             $filename = $this->tileUrlToFilename($url);
@@ -344,6 +397,9 @@
             }
         }
 
+        /**
+         * @return bool|null
+         */
         public function checkMapCache()
         {
             $this->mapCacheID = md5($this->serializeParams());
@@ -355,6 +411,9 @@
             }
         }
 
+        /**
+         * @return string
+         */
         public function serializeParams()
         {
             return join("&", array(
@@ -368,6 +427,9 @@
             ));
         }
 
+        /**
+         * @return string
+         */
         public function mapCacheIDToFilename()
         {
             if (!$this->mapCacheFile) {
@@ -378,6 +440,12 @@
             return $this->mapCacheFile . "." . $this->mapCacheExtension;
         }
 
+        /**
+         * @param $pathname
+         * @param $mode
+         *
+         * @return bool
+         */
         public function mkdirRecursive($pathname, $mode)
         {
             is_dir(dirname($pathname)) || $this->mkdirRecursive(dirname($pathname), $mode);
@@ -385,6 +453,10 @@
             return is_dir($pathname) || @mkdir($pathname, $mode);
         }
 
+        /**
+         * @param $url
+         * @param $data
+         */
         public function writeTileToCache($url, $data)
         {
             $filename = $this->tileUrlToFilename($url);
@@ -392,6 +464,11 @@
             file_put_contents($filename, $data);
         }
 
+        /**
+         * @param $url
+         *
+         * @return bool|mixed|null|string
+         */
         public function fetchTile($url)
         {
             if ($this->useTileCache && ($cached = $this->checkTileCache($url))) {
@@ -411,6 +488,9 @@
 
         }
 
+        /**
+         *
+         */
         public function copyrightNotice()
         {
             $logoImg = imagecreatefrompng($this->osmLogo);
@@ -419,6 +499,9 @@
 
         }
 
+        /**
+         *
+         */
         public function sendHeader()
         {
             header('Content-Type: image/png');
@@ -428,6 +511,9 @@
             header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $expires) . ' GMT');
         }
 
+        /**
+         *
+         */
         public function makeMap()
         {
             $this->initCoords();
@@ -440,6 +526,9 @@
             }
         }
 
+        /**
+         * @return bool|string
+         */
         public function showMap()
         {
             $this->parseParams();

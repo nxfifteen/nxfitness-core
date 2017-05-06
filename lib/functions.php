@@ -1,15 +1,27 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
     if (!function_exists("nxr")) {
         /**
          * NXR is a helper function. Past strings are recorded in a text file
          * and when run from a command line output is displayed on screen as
          * well
          *
-         * @param integer       $indentation
-         * @param string $msg         String input to be displayed in logs files
-         * @param bool   $includeDate If true appends datetime stamp
-         * @param bool   $newline     If true adds a new line character
-         * @param bool   $echoLine
+         * @param integer $indentation
+         * @param string  $msg         String input to be displayed in logs files
+         * @param bool    $includeDate If true appends datetime stamp
+         * @param bool    $newline     If true adds a new line character
+         * @param bool    $echoLine
          */
         function nxr($indentation, $msg, $includeDate = true, $newline = true, $echoLine = true)
         {
