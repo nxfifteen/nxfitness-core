@@ -2,6 +2,9 @@
 
 pwd
 
+apt-get update
+apt-get install -y unzip
+
 if [ ! -d "binaries" ]; then
     echo "creating binaries"
     mkdir binaries
