@@ -30,15 +30,6 @@ test:unit_7.0.18:
   script:
   - php ./binaries/phpunit.phar -c phpunit.xml
 
-test:unit_5.6.30:
-  stage: test
-  image: php:5.6.30
-  before_script:
-  - sh ./dev/build_dev_env.sh
-  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
-  script:
-  - php ./binaries/phpunit.phar -c phpunit.xml
-
 # Run our tests
 test:docblock:
   stage: test
