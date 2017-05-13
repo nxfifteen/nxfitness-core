@@ -2,7 +2,7 @@
 
 echo "## Updated System Image"
 apt-get update >/dev/null 2>&1
-apt-get install -y zip unzip wget >/dev/null 2>&1
+apt-get install -y zip unzip wget php-xdebug >/dev/null 2>&1
 
 if [ ! -d "binaries" ]; then
     echo "## Creating Binaries Folder"
