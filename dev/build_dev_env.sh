@@ -1,30 +1,29 @@
 #!/usr/bin/env sh
 
-pwd
-
+echo "## Updated System Image"
 apt-get update
-apt-get install -y unzip
+apt-get install -y zip unzip wget
 
 if [ ! -d "binaries" ]; then
-    echo "creating binaries"
+    echo "## Creating Binaries Folder"
     mkdir binaries
 fi
 
 if [ ! -f "composer.phar" ]; then
-    echo "downloading composer"
+    echo "## Downloading Composer"
     cd binaries
     curl -sS https://getcomposer.org/installer | php >/dev/null 2>&1
     cd ../
 fi
 
+echo "## Installing Composer DEV"
 cp composer_dev.json composer.json
 php binaries/composer.phar install --dev >/dev/null 2>&1
 
 if [ ! -d "php-docblock-checker-1.3.4" ]; then
+    echo "## Downloading php-docblock-checker"
     cd binaries
-    pwd
-    echo "downloading php-docblock-checker"
-    curl -o 1.3.4.zip https://github.com/Block8/php-docblock-checker/archive/1.3.4.zip
+    wget https://github.com/Block8/php-docblock-checker/archive/1.3.4.zip
     unzip 1.3.4.zip
     rm 1.3.4.zip
     cd php-docblock-checker-1.3.4/
@@ -33,7 +32,7 @@ if [ ! -d "php-docblock-checker-1.3.4" ]; then
 fi
 
 if [ ! -f "phpunit.phar" ]; then
-    echo "downloading phpunit"
+    echo "## Downloading phpunit"
     cd binaries
     wget https://phar.phpunit.de/phpunit.phar >/dev/null 2>&1
     cd ../
