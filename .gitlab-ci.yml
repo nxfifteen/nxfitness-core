@@ -1,3 +1,5 @@
+image: php:7.1.4
+
 stages:
   - test
   - stage
@@ -10,10 +12,29 @@ cache:
   - binaries/
 
 # Run our tests
-test:phpunit:
+test:unit_7.1.4:
   stage: test
+  image: php:7.1.4
   before_script:
-  - bash ./dev/build_dev_env.sh
+  - sh ./dev/build_dev_env.sh
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  script:
+  - php ./binaries/phpunit.phar -c phpunit.xml
+
+test:unit_7.0.18:
+  stage: test
+  image: php:7.0.18
+  before_script:
+  - sh ./dev/build_dev_env.sh
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  script:
+  - php ./binaries/phpunit.phar -c phpunit.xml
+
+test:unit_5.6.30:
+  stage: test
+  image: php:5.6.30
+  before_script:
+  - sh ./dev/build_dev_env.sh
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   script:
   - php ./binaries/phpunit.phar -c phpunit.xml
@@ -21,6 +42,7 @@ test:phpunit:
 # Run our tests
 test:docblock:
   stage: test
+  image: php:7.1.4
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
@@ -29,6 +51,7 @@ test:docblock:
 # Run our tests
 test:lint:
   stage: test
+  image: php:7.1.4
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
@@ -39,18 +62,9 @@ test:lint:
   - master
 
 # Run our tests
-#test:phpspec:
-#  stage: test
-#  before_script:
-#  - bash ./dev/build_dev_env.sh
-#  script:
-#  - ./vendor/phpspec/phpspec/bin/phpspec run
-#  only:
-#  - develop
-
-# Run our tests
 test:phpcs:
   stage: test
+  image: php:7.1.4
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
@@ -61,6 +75,7 @@ test:phpcs:
 # Run our tests
 test:phploc:
   stage: test
+  image: php:7.1.4
   before_script:
   - bash ./dev/build_dev_env.sh
   script:
@@ -72,6 +87,7 @@ test:phploc:
 # Run our tests
 test:dependancies:
   stage: test
+  image: php:7.1.4
   before_script:
   - bash ./dev/build_dev_env.sh
   script:

@@ -1,11 +1,8 @@
 <?php
     /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -36,7 +33,7 @@
         }
 
         /**
-         * @covers \Core\Analytics\UserAnalytics::track
+         * @covers UserAnalytics::track
          */
         public function testTrackEvent()
         {
@@ -45,7 +42,7 @@
         }
 
         /**
-         * @covers \Core\Analytics\UserAnalytics::endEvent
+         * @covers UserAnalytics::endEvent
          */
         public function testEndEvent()
         {

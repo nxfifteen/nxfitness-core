@@ -1,11 +1,8 @@
 <?php
     /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -54,22 +51,7 @@
         }
 
         /**
-         * @return Medoo
-         */
-        private function setUpDatabase()
-        {
-            return new medoo(array(
-                'database_type' => 'mysql',
-                'database_name' => $this->configClass->get("db_name"),
-                'server'        => $this->configClass->get("db_server"),
-                'username'      => $this->configClass->get("db_username"),
-                'password'      => $this->configClass->get("db_password"),
-                'charset'       => 'utf8'
-            ));
-        }
-
-        /**
-         * @covers \Core\Config::getRelatedCacheNames
+         * @covers Config::getRelatedCacheNames
          */
         public function testCacheNamesActivities()
         {
@@ -87,7 +69,7 @@
             $this->assertTrue(in_array("challenger", $activities));
             $this->assertTrue(in_array("push", $activities));
             $this->assertTrue(in_array("conky", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('activity_log');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("activityhistory", $activities));
@@ -159,7 +141,7 @@
 
             $activities = $this->configClass->getRelatedCacheNames('leaderboard');
             $this->assertTrue(in_array("trend", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('minutesFairlyActive');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("activity", $activities));
@@ -167,15 +149,15 @@
             $this->assertTrue(in_array("challenger", $activities));
             $this->assertTrue(in_array("push", $activities));
             $this->assertTrue(in_array("conky", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('minutesLightlyActive');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("activity", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('minutesSedentary');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("activity", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('minutesVeryActive');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("activity", $activities));
@@ -183,19 +165,19 @@
             $this->assertTrue(in_array("challenger", $activities));
             $this->assertTrue(in_array("push", $activities));
             $this->assertTrue(in_array("conky", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('nomie_trackers');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("nomie", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('profile');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("trend", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('sleep');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("sleep", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('steps');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("dashboard", $activities));
@@ -206,7 +188,7 @@
             $this->assertTrue(in_array("tracked", $activities));
             $this->assertTrue(in_array("tasker", $activities));
             $this->assertTrue(in_array("conky", $activities));
-
+            
             $activities = $this->configClass->getRelatedCacheNames('water');
             $this->assertContainsOnly('string', $activities);
             $this->assertTrue(in_array("water", $activities));
@@ -214,7 +196,22 @@
         }
 
         /**
-         * @covers \Core\Config::set
+         * @return Medoo
+         */
+        private function setUpDatabase()
+        {
+            return new medoo(array(
+                'database_type' => 'mysql',
+                'database_name' => $this->configClass->get("db_name"),
+                'server'        => $this->configClass->get("db_server"),
+                'username'      => $this->configClass->get("db_username"),
+                'password'      => $this->configClass->get("db_password"),
+                'charset'       => 'utf8'
+            ));
+        }
+
+        /**
+         * @covers Config::set
          */
         public function testSetNoDB()
         {
@@ -223,7 +220,7 @@
         }
 
         /**
-         * @covers \Core\Config::del
+         * @covers Config::del
          */
         public function testDelNoDB()
         {
@@ -236,7 +233,7 @@
         }
 
         /**
-         * @covers \Core\Config::get
+         * @covers Config::get
          */
         public function testGetNoDB()
         {
@@ -247,7 +244,7 @@
         }
 
         /**
-         * @covers \Core\Config::set
+         * @covers Config::set
          */
         public function testSetInDB()
         {
@@ -262,7 +259,7 @@
         }
 
         /**
-         * @covers \Core\Config::get
+         * @covers Config::get
          */
         public function testGetInDB()
         {
@@ -279,7 +276,7 @@
         }
 
         /**
-         * @covers \Core\Config::del
+         * @covers Config::del
          */
         public function testDelInDB()
         {
@@ -294,7 +291,7 @@
         }
 
         /**
-         * @covers \Core\Config::setUser
+         * @covers Config::setUser
          */
         public function testUserSetInDB()
         {
@@ -311,7 +308,7 @@
         }
 
         /**
-         * @covers \Core\Config::del
+         * @covers Config::del
          */
         public function testUserDelNoDB()
         {
@@ -328,7 +325,7 @@
         }
 
         /**
-         * @covers \Core\Config::getUser
+         * @covers Config::getUser
          */
         public function testUserGetInDB()
         {
