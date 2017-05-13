@@ -19,8 +19,9 @@ php binaries/composer.phar install --dev >/dev/null 2>&1
 
 if [ ! -d "php-docblock-checker-1.3.4" ]; then
     cd binaries
+    pwd
     echo "downloading php-docblock-checker"
-    wget https://github.com/Block8/php-docblock-checker/archive/1.3.4.zip >/dev/null 2>&1
+    wget https://github.com/Block8/php-docblock-checker/archive/1.3.4.zip
     unzip 1.3.4.zip >/dev/null 2>&1
     rm 1.3.4.zip
     cd php-docblock-checker-1.3.4/
