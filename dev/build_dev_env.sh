@@ -1,39 +1,43 @@
 #!/usr/bin/env sh
 
+WORKINGDIR=`pwd`
+
+echo "# Working in $WORKINGDIR"
+
 echo "## Updated System Image"
-apt-get update >/dev/null 2>&1
-apt-get install -y zip unzip wget php-xdebug >/dev/null 2>&1
+apt-get update -yqq
+apt-get install -yqq git zip unzip wget php-xdebug
 
 if [ ! -d "binaries" ]; then
     echo "## Creating Binaries Folder"
-    mkdir binaries
+    mkdir "$WORKINGDIR/binaries"
 fi
 
 if [ ! -f "composer.phar" ]; then
     echo "### Downloading Composer"
-    cd binaries
+    cd "$WORKINGDIR/binaries"
     curl -sS https://getcomposer.org/installer | php >/dev/null 2>&1
-    cd ../
+    cd "$WORKINGDIR/"
 fi
 
 echo "#### Installing Composer DEV"
 cp composer_dev.json composer.json
-php binaries/composer.phar install --dev >/dev/null 2>&1
+php "$WORKINGDIR/binaries/composer.phar" install --dev >/dev/null 2>&1
 
 if [ ! -d "php-docblock-checker-1.3.4" ]; then
     echo "### Downloading php-docblock-checker"
-    cd binaries
+    cd "$WORKINGDIR/binaries"
     wget https://github.com/Block8/php-docblock-checker/archive/1.3.4.zip >/dev/null 2>&1
-    unzip 1.3.4.zip >/dev/null 2>&1
-    rm 1.3.4.zip
-    cd php-docblock-checker-1.3.4/
-    php ../composer.phar install #>/dev/null 2>&1
-    cd ../../
+    unzip "$WORKINGDIR/binaries/1.3.4.zip" >/dev/null 2>&1
+    rm "$WORKINGDIR/binaries/1.3.4.zip"
+    cd "$WORKINGDIR/php-docblock-checker-1.3.4"
+    php "$WORKINGDIR/binaries/composer.phar" install #>/dev/null 2>&1
+    cd "$WORKINGDIR/"
 fi
 
-if [ ! -f "phpunit.phar" ]; then
+if [ ! -f "$WORKINGDIR/binaries/phpunit.phar" ]; then
     echo "### Downloading phpunit"
-    cd binaries
+    cd "$WORKINGDIR/binaries"
     wget https://phar.phpunit.de/phpunit.phar >/dev/null 2>&1
-    cd ../
+    cd "$WORKINGDIR/"
 fi
