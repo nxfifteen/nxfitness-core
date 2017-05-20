@@ -46,7 +46,7 @@ test:lint:
   before_script:
     - sh ./dev/build_dev_env.sh
   script:
-  - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude binaries/php-docblock-checker-1.3.4 --exclude binaries/phpspec --blame -e php .
+  - ./bundle/vendor/bin/parallel-lint --exclude library --exclude vendor --exclude binaries/php-docblock-checker-1.3.4 --exclude binaries/phpspec --blame -e php .
   only:
   - branches
   except:
