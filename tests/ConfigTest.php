@@ -10,6 +10,13 @@
 
     namespace Core\Tests;
 
+    if (!function_exists('autoloader')) {
+        require_once(dirname(__FILE__) . "/../lib/autoloader.php");
+        require_once(dirname(__FILE__) . "/../bundle/vendor/autoload.php");
+    }
+
+    require_once(dirname(__FILE__) . "/../lib/functions.php");
+
     use Core\Config;
     use Medoo\Medoo;
     use PHPUnit\Framework\TestCase;
