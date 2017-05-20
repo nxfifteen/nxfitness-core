@@ -1,11 +1,8 @@
 <?php
     /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,7 +11,7 @@
     // set config settings
     autoloader(array(
         array(
-            'debug'      => true, // turn on debug mode (by default debug mode is off)
+            'debug'      => false, // turn on debug mode (by default debug mode is off)
             'basepath'   => dirname(__FILE__), // basepath is used to define where your project is located
             'extensions' => array('.php'), // allowed class file extensions
         )
@@ -53,7 +50,7 @@
             'debug'      => false,
             'extensions' => ['.php'], // multiple extensions ex: ['.php', '.class.php']
             'namespace'  => '',
-            'verbose'    => true
+            'verbose'    => false
         ];
 
         static $paths = [];
