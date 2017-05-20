@@ -6,7 +6,11 @@ echo "# Working in $WORKINGDIR"
 
 echo "## Updated System Image"
 apt-get update -yqq
-apt-get install -yqq git zip unzip wget php-xdebug
+apt-get install -yqq git 
+apt-get install -yqq zip 
+apt-get install -yqq unzip 
+apt-get install -yqq wget 
+apt-get install -yqq php-xdebug
 
 if [ ! -d "binaries" ]; then
     echo "## Creating Binaries Folder"
