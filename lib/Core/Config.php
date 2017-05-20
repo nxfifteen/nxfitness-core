@@ -1,4 +1,15 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
     namespace Core;
 
@@ -36,6 +47,8 @@
 
         /**
          * Class constructor
+         *
+         * @codeCoverageIgnore
          */
         public function __construct()
         {
@@ -194,7 +207,6 @@
          * @param string $default  Default value to return
          * @param bool   $query_db Boolean to search database or not
          *
-         * @todo Consider test case
          * @return string Setting value, or default as per defined
          */
         public function get($key, $default = null, $query_db = true)
@@ -225,8 +237,6 @@
          * @param string $value    Value to store
          * @param bool   $query_db Boolean to store in database or not
          *
-         * @todo Consider test case
-         *
          * @return bool was data stored correctly
          */
         public function set($key, $value, $query_db = true)
@@ -248,6 +258,30 @@
         }
 
         /**
+         * Delete setting value
+         * Function to store/change setting values. Values can be stored in the database or held in memory.
+         *
+         * @param string $key      Setting to query
+         * @param bool   $query_db Boolean to store in database or not
+         *
+         * @return bool was data stored correctly
+         */
+        public function del($key, $query_db = true)
+        {
+            if (array_key_exists($key, $this->settings)) {
+                unset($this->settings[$key]);
+            }
+
+            if ($query_db) {
+                if ($this->database->has($this->get("db_prefix", false) . "settings", array("var" => $key))) {
+                    return $this->database->delete($this->get("db_prefix", false) . "settings", array("var" => $key));
+                }
+            }
+
+            return true;
+        }
+
+        /**
          * Return user setting value
          * Queries user settings for value. Default value can be provided, if not NULL is returned.
          * Values can be queried in the database or limited to config file and 'live' values
@@ -256,8 +290,6 @@
          * @param string $key      Setting to query
          * @param string $default  Default value to return
          * @param bool   $query_db Boolean to search database or not
-         *
-         * @todo Consider test case
          *
          * @return string Setting value, or default as per defined
          */
@@ -298,8 +330,6 @@
          * @param string $key   Setting to query
          * @param string $value Value to store
          *
-         * @todo Consider test case
-         *
          * @return bool was data stored correctly
          */
         public function setUser($fuid, $key, $value)
@@ -329,13 +359,40 @@
         }
 
         /**
+         * Set user setting value
+         * Function to store/change setting values. Values are stored in the database.
+         *
+         * @param string $fuid  User fuid
+         * @param string $key   Setting to query
+         * @param string $value Value to store
+         *
+         * @return bool was data stored correctly
+         */
+        public function delUser($fuid, $key)
+        {
+            if (array_key_exists($key . "_" . $fuid, $this->settings)) {
+                unset($this->settings[$key . "_" . $fuid]);
+            }
+
+            if ($this->database->has($this->get("db_prefix", false) . "settings_users", array(
+                "AND" => array(
+                    "fuid" => $fuid,
+                    "var"  => $key
+                )
+            ))
+            ) {
+                return $this->database->delete($this->get("db_prefix", false) . "settings_users",
+                    array("fuid" => $fuid, "var" => $key));
+            }
+
+            return true;
+        }
+
+        /**
          * Set class database store
          * Takes medoo paramater and stores for access within the class
          *
          * @param Medoo $database Application database connection
-         *
-         * @todo Consider test case
-         *
          */
         public function setDatabase($database)
         {

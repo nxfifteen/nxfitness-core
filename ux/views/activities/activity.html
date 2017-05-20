@@ -1,8 +1,20 @@
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ This file is part of NxFIFTEEN Fitness Core.
+  ~ https://nxfifteen.me.uk
+  ~
+  ~ Copyright (c) 2017, Stuart McCulloch Anderson
+  ~
+  ~ Released under the MIT license
+  ~
+  ~ For the full copyright and license information, please view the LICENSE
+  ~ file that was distributed with this source code.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
 <script>
     var requireJS = ["../bundle/bower/chart.js/dist/Chart.min.js"];
 
     loadJS(requireJS, "js/views/activity.js");
-//    loadCSS("");
+    //    loadCSS("");
     setUpBreadcrumb(['Activities'], 'Activity');
 </script>
 
@@ -14,7 +26,8 @@
                     7-Day Steps
                 </div>
                 <div class="card-block d-sm-down-none">
-                    <div class="chart-wrapper"><iframe class="chartjs-hidden-iframe" style="display: block; overflow: hidden; border: 0 none; margin: 0; top: 0; left: 0; bottom: 0; right: 0; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;" tabindex="-1"></iframe>
+                    <div class="chart-wrapper">
+                        <iframe class="chartjs-hidden-iframe" style="display: block; overflow: hidden; border: 0 none; margin: 0; top: 0; left: 0; bottom: 0; right: 0; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;" tabindex="-1"></iframe>
                         <canvas id="canvas-2" style="display: block; width: 770px; height: 308px;" width="770" height="308"></canvas>
                     </div>
                 </div>
@@ -29,8 +42,8 @@
 
                     <div class="row">
                         <div class="col-md-12 text-right">
-                            Last 7-Day Target is <strong id="weeklyStepsGoal"></strong><br />
-                            You've taken <strong id="weeklyStepsTaken"></strong>
+                            Last 7-Day Target is <strong id="weeklyStepsGoal"></strong><br /> You've taken
+                            <strong id="weeklyStepsTaken"></strong>
                         </div>
                     </div>
                 </div>

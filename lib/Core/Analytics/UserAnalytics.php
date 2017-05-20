@@ -1,4 +1,15 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
     namespace Core\Analytics;
 
@@ -28,11 +39,26 @@
         protected $siteId;
 
         /**
-         * @param string $trackingId
-         * @param string $api_url
+         * Builds a PiwikTracker object, used to track visits, pages and Goal conversions
+         * for a specific website, by using the Piwik Tracking API.
+         *
+         * @codeCoverageIgnore
+         *
+         * @param int    $trackingId Id site to be tracked
+         * @param string $api_url    "http://example.org/piwik/" or "http://piwik.example.org/"
+         *                           If set, will overwrite PiwikTracker::$URL
+         * @param null   $server_name
+         * @param null   $request_uri
          */
-        public function __construct($trackingId, $api_url)
+        public function __construct($trackingId, $api_url, $server_name = null, $request_uri = null)
         {
+            if (is_null($server_name)) {
+                $server_name = $_SERVER['SERVER_NAME'];
+            }
+            if (is_null($request_uri)) {
+                $request_uri = $_SERVER['REQUEST_URI'];
+            }
+
             $this->setSiteId($trackingId);
 
             $this->PiwikTracker = new \PiwikTracker($this->getSiteId(), $api_url);
@@ -42,7 +68,7 @@
             } else {
                 $protocol = "http://";
             }
-            $this->PiwikTracker->setUrl($protocol . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+            $this->PiwikTracker->setUrl($protocol . $server_name . $request_uri);
 
             //Sets the Browser language.
             if (array_key_exists("HTTP_ACCEPT_LANGUAGE", $_SERVER)) {
@@ -58,9 +84,8 @@
         }
 
         /**
-         * @param mixed $siteId
-         *
-         * @todo Consider test case
+         * @codeCoverageIgnore
+         * @param string $siteId
          */
         private function setSiteId($siteId)
         {
@@ -68,8 +93,8 @@
         }
 
         /**
-         * @todo Consider test case
-         * @return mixed
+         * @codeCoverageIgnore
+         * @return string
          */
         private function getSiteId()
         {
@@ -77,16 +102,20 @@
         }
 
         /**
+         * Tracks a page view
+         *
          * @param string $documentTitle Page title as it will appear in the Actions > Page titles report
          *
-         * @todo Consider test case
+         * @return mixed Response string or true if using bulk requests.
          */
         public function endEvent($documentTitle)
         {
-            $this->PiwikTracker->doTrackPageView($documentTitle);
+            return $this->PiwikTracker->doTrackPageView($documentTitle);
         }
 
         /**
+         * Tracks an event
+         *
          * @param string      $category The Event Category (Videos, Music, Games...)
          * @param string      $action   The Event's Action (Play, Pause, Duration, Add Playlist, Downloaded,
          *                              Clicked...)
@@ -94,10 +123,10 @@
          *                              File name...)
          * @param float|bool  $value    (optional) The Event's value
          *
-         * @todo Consider test case
+         * @return mixed Response string or true if using bulk requests.
          */
         public function track($category, $action, $name = false, $value = false)
         {
-            $this->PiwikTracker->doTrackEvent($category, $action, $name, $value);
+            return $this->PiwikTracker->doTrackEvent($category, $action, $name, $value);
         }
     }

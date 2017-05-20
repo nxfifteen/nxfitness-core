@@ -1,4 +1,15 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
     namespace Core\Analytics;
 
@@ -53,7 +64,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return Raven_Client
          */
         public function getSentryClient()
@@ -82,7 +92,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return Raven_ErrorHandler
          */
         public function getSentryErrorHandler()
@@ -109,13 +118,16 @@
          * @param null      $logger
          * @param null      $vars
          *
-         * @todo Consider test case
+         * @return int|null
          */
         public function captureException($exception, $data = null, $logger = null, $vars = null)
         {
             if (defined('SENTRY_DSN')) {
-                $this->getSentryClient()->captureException($exception, $data, $logger, $vars);
                 nxr(0, "### Exception Recorded ###");
+
+                return $this->getSentryClient()->captureException($exception, $data, $logger, $vars);
+            } else {
+                return null;
             }
         }
 
@@ -128,14 +140,17 @@
          * @param bool   $stack
          * @param null   $vars
          *
-         * @todo Consider test case
+         * @return int|null
          */
         public function captureMessage($message, $params = array(), $data = array(), $stack = false, $vars = null)
         {
             nxr(0, "[ERROR] $message");
             if (defined('SENTRY_DSN')) {
-                $this->getSentryClient()->captureMessage($message, $params, $data, $stack, $vars);
                 nxr(0, "### Message Recorded ###");
+
+                return $this->getSentryClient()->captureMessage($message, $params, $data, $stack, $vars);
+            } else {
+                return null;
             }
         }
 
@@ -143,7 +158,7 @@
          * @param Medoo $medoo
          * @param array $parameters
          *
-         * @todo Consider test case
+         * @return int|null
          */
         public function postDatabaseQuery($medoo, $parameters)
         {
@@ -151,7 +166,8 @@
                 $medoo_error = $medoo->error();
                 if ($medoo_error[0] != 0000) {
                     $medoo_info = $medoo->info();
-                    $this->captureMessage($medoo_error[2], array('database'), array(
+
+                    return $this->captureMessage($medoo_error[2], array('database'), array(
                         'level' => 'error',
                         'extra' => array(
                             'method'         => $parameters['METHOD'],
@@ -168,5 +184,7 @@
                     ));
                 }
             }
+
+            return null;
         }
     }

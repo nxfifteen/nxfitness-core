@@ -1,4 +1,15 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
     require_once(dirname(__FILE__) . "/../lib/autoloader.php");
 
@@ -82,8 +93,8 @@
     } else {
 
         $_SESSION['CORE_PROJECT_ROOT'] = CORE_PROJECT_ROOT;
-        $_SESSION['CORE_UX']   = CORE_UX;
-        $_SESSION['CORE_ROOT']    = CORE_ROOT;
+        $_SESSION['CORE_UX']           = CORE_UX;
+        $_SESSION['CORE_ROOT']         = CORE_ROOT;
 
         $App = new NxFitAdmin($_COOKIE['_nx_fb_usr']);
         ?>

@@ -1,4 +1,15 @@
 <?php
+    /*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
     namespace Core;
 
@@ -69,7 +80,6 @@
          * @param string   $userPushEndDate
          * @param DateTime $range_start
          *
-         * @todo Consider test case
          * @return array
          */
         private function calculatePushDays($userPushStartDate, $userPushEndDate, $range_start)
@@ -197,7 +207,6 @@
          * @param array|NULL $lastRecord
          * @param array      $nextRecord
          *
-         * @todo Consider test case
          * @return array
          */
         private function fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $nextRecord)
@@ -243,7 +252,6 @@
         }
 
         /**
-         * @todo Consider test case
          * @return Core
          */
         private function getAppClass()
@@ -254,7 +262,6 @@
         /**
          * @param int $input_num
          *
-         * @todo Consider test case
          * @return string
          */
         private function ordinalSuffix($input_num)
@@ -276,8 +283,6 @@
 
         /**
          * @param Core $paramClass
-         *
-         * @todo Consider test case
          */
         private function setAppClass($paramClass)
         {
@@ -288,7 +293,6 @@
          * @param double|array $inputWeight
          * @param string       $convertUnits
          *
-         * @todo Consider test case
          * @return array|float
          */
         private function convertWeight($inputWeight, $convertUnits)
@@ -315,7 +319,6 @@
         /**
          * @param null $scope
          *
-         * @todo Consider test case
          * @return DateTime
          */
         private function getOldestScope($scope = null)
@@ -365,7 +368,6 @@
          * @param double $lon2
          * @param string $unit
          *
-         * @todo     Consider test case
          * @return float Distance between points in [m] (same as earthRadius)
          * @internal param float $latitudeFrom Latitude of start point in [deg decimal]
          * @internal param float $longitudeFrom Longitude of start point in [deg decimal]

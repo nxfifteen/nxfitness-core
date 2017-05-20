@@ -1,5 +1,17 @@
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ This file is part of NxFIFTEEN Fitness Core.
+  ~ https://nxfifteen.me.uk
+  ~
+  ~ Copyright (c) 2017, Stuart McCulloch Anderson
+  ~
+  ~ Released under the MIT license
+  ~
+  ~ For the full copyright and license information, please view the LICENSE
+  ~ file that was distributed with this source code.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
 <script>
-    var requireJS = ["../bundle/bower/moment/moment.js","../bundle/bower/chart.js/dist/Chart.min.js"];
+    var requireJS = ["../bundle/bower/moment/moment.js", "../bundle/bower/chart.js/dist/Chart.min.js"];
 
     loadJS(requireJS, "js/views/body_weight.js");
     setUpBreadcrumb(['Body'], 'Weight');
@@ -21,52 +33,42 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="radio-inline">
-                                <label>
-                                    <input type="radio" value="last14" name="confWeightTimeRange" class="square-red"><span id="nameWeightlast14" style="display: none">over the last 2 weeks</span>
-                                    2 Weeks
-                                </label>
+                                <label> <input type="radio" value="last14" name="confWeightTimeRange" class="square-red"><span id="nameWeightlast14" style="display: none">over the last 2 weeks</span>
+                                    2 Weeks </label>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="radio-inline">
-                                <label>
-                                    <input type="radio" value="last28" name="confWeightTimeRange" class="square-red"><span id="nameWeightlast28" style="display: none">over the last 4 weeks</span>
-                                    4 Weeks
-                                </label>
+                                <label> <input type="radio" value="last28" name="confWeightTimeRange" class="square-red"><span id="nameWeightlast28" style="display: none">over the last 4 weeks</span>
+                                    4 Weeks </label>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="radio-inline">
                                 <label>
                                     <input type="radio" value="last92" name="confWeightTimeRange" class="square-red" checked="checked"><span id="nameWeightlast92" style="display: none">over the last 3 months</span>
-                                    3 Months
-                                </label>
+                                    3 Months </label>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="radio-inline">
-                                <label>
-                                    <input type="radio" value="last183" name="confWeightTimeRange" class="square-red"><span id="nameWeightlast183" style="display: none">over the last 6 months</span>
-                                    6 Months
-                                </label>
+                                <label> <input type="radio" value="last183" name="confWeightTimeRange" class="square-red"><span id="nameWeightlast183" style="display: none">over the last 6 months</span>
+                                    6 Months </label>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="radio-inline">
-                                <label>
-                                    <input type="radio" value="last365" name="confWeightTimeRange" class="square-red"><span id="nameWeightlast365" style="display: none">over the last year</span>
-                                    1 Year
-                                </label>
+                                <label> <input type="radio" value="last365" name="confWeightTimeRange" class="square-red"><span id="nameWeightlast365" style="display: none">over the last year</span>
+                                    1 Year </label>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="radio-inline">
                                 <label>
                                     <input type="radio" value="all" name="confWeightTimeRange" class="square-red"><span id="nameWeightall" style="display: none"></span>
-                                    All
-                                </label>
+                                    All </label>
                             </div>
                         </div>
                     </div>
@@ -79,7 +81,9 @@
                 <div class="card-block">
                     <span id="WeightTrend">Generating Dataset...</span>
                 </div>
-                <div class="card-footer text-muted"><progress id="animationWeightProgress" max="1" value="0" style="width: 100%"></progress></div>
+                <div class="card-footer text-muted">
+                    <progress id="animationWeightProgress" max="1" value="0" style="width: 100%"></progress>
+                </div>
             </div>
         </div>
     </div>

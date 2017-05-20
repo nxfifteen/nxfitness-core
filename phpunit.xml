@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--suppress XmlUnboundNsPrefix, XmlUnboundNsPrefix -->
-<phpunit verbose="true">
+<!--
+  ~ Copyright (c) 2017. Stuart McCulloch Anderson
+  -->
+
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         verbose="true">
     <testsuites>
         <testsuite name="Core Test Suite">
             <directory>tests</directory>
@@ -8,7 +14,7 @@
     </testsuites>
     <logging>
         <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
-        <log type="json" target="/tmp/phpunit-logfile.json"/>
+        <log type="json" target="phpunit-logfile.json"/>
     </logging>
     <filter>
         <whitelist>

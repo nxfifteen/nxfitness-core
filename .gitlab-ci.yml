@@ -1,3 +1,5 @@
+image: php:7.1.4
+
 stages:
   - test
   - stage
@@ -6,14 +8,25 @@ stages:
 # Select what we should cache between builds
 cache:
   paths:
-  - vendor/
+  - bundle/vendor/
   - binaries/
 
 # Run our tests
-test:phpunit:
+test:unit_7.1.4:
   stage: test
   before_script:
-  - bash ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env_phpunit.sh
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  script:
+  - php ./binaries/phpunit.phar -c phpunit.xml
+
+test:unit_7.0.18:
+  stage: test
+  image: php:7.0.18
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env_phpunit.sh
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   script:
   - php ./binaries/phpunit.phar -c phpunit.xml
@@ -22,7 +35,8 @@ test:phpunit:
 test:docblock:
   stage: test
   before_script:
-  - bash ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env_docblock.sh
   script:
   - ./binaries/php-docblock-checker-1.3.4/phpdoccheck -d ./lib --no-interaction
 
@@ -30,7 +44,7 @@ test:docblock:
 test:lint:
   stage: test
   before_script:
-  - bash ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env.sh
   script:
   - ./vendor/bin/parallel-lint --exclude library --exclude vendor --exclude binaries/php-docblock-checker-1.3.4 --exclude binaries/phpspec --blame -e php .
   only:
@@ -39,20 +53,10 @@ test:lint:
   - master
 
 # Run our tests
-#test:phpspec:
-#  stage: test
-#  before_script:
-#  - bash ./dev/build_dev_env.sh
-#  script:
-#  - ./vendor/phpspec/phpspec/bin/phpspec run
-#  only:
-#  - develop
-
-# Run our tests
 test:phpcs:
   stage: test
   before_script:
-  - bash ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env.sh
   script:
   - bash ./dev/phpcs_cbf.sh
   only:
@@ -62,7 +66,7 @@ test:phpcs:
 test:phploc:
   stage: test
   before_script:
-  - bash ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env.sh
   script:
   - ./binaries/php-docblock-checker-1.3.4/vendor/bin/phploc lib
   only:
@@ -73,7 +77,7 @@ test:phploc:
 test:dependancies:
   stage: test
   before_script:
-  - bash ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env.sh
   script:
   - php ./dev/dependCheck.php
   only:
