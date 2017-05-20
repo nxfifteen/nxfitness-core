@@ -11,9 +11,6 @@ cache:
   - bundle/vendor/
   - binaries/
 
-before_script:
-  - sh ./dev/build_dev_env.sh
-
 codeclimate:
   stage: test
   image: docker:latest
