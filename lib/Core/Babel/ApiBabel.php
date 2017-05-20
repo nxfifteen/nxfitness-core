@@ -1,11 +1,8 @@
 <?php
     /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -207,12 +204,12 @@
                         if ($steps->value == 0) {
                             $currentDate      = new DateTime();
                             $daysSinceReading = (strtotime($currentDate->format("Y-m-d")) - strtotime($steps->dateTime)) / (60 * 60 * 24);
-                            nxr(3, "No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago");
+                            nxr(4, "No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago");
                             if ($daysSinceReading > 180) {
                                 $this->setLastCleanRun($trigger, new DateTime ($steps->dateTime));
                             }
                         } else {
-                            nxr(3,
+                            nxr(4,
                                 $this->getAppClass()->supportedApi($trigger) . " record for " . $steps->dateTime . " is " . $steps->value);
                         }
 
@@ -247,7 +244,7 @@
                                 if ($trigger == "steps") {
                                     $this->checkGoalStreak($steps->dateTime, $trigger, true);
                                 }
-                            } else if ($steps->value >= $steps_goals && strtotime($currentDate->format("Y-m-d")) > strtotime($steps->dateTime)) {
+                            } else if ($steps->value < $steps_goals && strtotime($currentDate->format("Y-m-d")) > strtotime($steps->dateTime)) {
                                 $dbValues[$trigger . '_g'] = 0;
                                 if ($trigger == "steps") {
                                     $this->checkGoalStreak($steps->dateTime, $trigger, false);
@@ -365,18 +362,27 @@
                 } else {
                     nxr(5, "New Streak started");
 
-                    $this->getAppClass()->getDatabase()->insert($db_prefix . "streak_goal", array(
-                        "fuid"       => $this->getActiveUser(),
-                        "goal"       => $goal,
-                        "start_date" => $dateTime->format("Y-m-d"),
-                        "end_date"   => null,
-                        "length"     => 1
-                    ));
-                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
-                        array(
-                            "METHOD" => __METHOD__,
-                            "LINE"   => __LINE__
+                    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "streak_goal", array(
+                        "AND" => array(
+                            "fuid"     => $this->getActiveUser(),
+                            "goal"     => $goal,
+                            "start_date" => $dateTime->format("Y-m-d")
+                        )
+                    ))
+                    ) {
+                        $this->getAppClass()->getDatabase()->insert($db_prefix . "streak_goal", array(
+                            "fuid"       => $this->getActiveUser(),
+                            "goal"       => $goal,
+                            "start_date" => $dateTime->format("Y-m-d"),
+                            "end_date"   => null,
+                            "length"     => 1
                         ));
+                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
+                            array(
+                                "METHOD" => __METHOD__,
+                                "LINE"   => __LINE__
+                            ));
+                    }
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if (!is_null($this->RewardsSystem)) {
