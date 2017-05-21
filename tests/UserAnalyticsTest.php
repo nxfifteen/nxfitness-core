@@ -10,6 +10,8 @@
 
     namespace Core\Tests;
 
+    require_once(dirname(__FILE__) . "/../lib/autoloader.php");
+
     use Core\Analytics\UserAnalytics;
     use PHPUnit\Framework\TestCase;
 

@@ -11,6 +11,8 @@ apt-get install -yqq zip >/dev/null 2>&1
 apt-get install -yqq unzip >/dev/null 2>&1
 apt-get install -yqq wget >/dev/null 2>&1
 apt-get install -yqq php-xdebug >/dev/null 2>&1
+apt-cache search xdebug
+apt-cache search xdebug | grep php
 
 if [ ! -d "binaries" ]; then
     echo "## Creating Binaries Folder"
