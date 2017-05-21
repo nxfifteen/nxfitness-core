@@ -10,7 +10,8 @@
 
     namespace Core\Tests;
 
-    require_once(dirname(__FILE__) . "/../lib/autoloader.php");
+    print dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "autoloader.php\n";
+    require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "autoloader.php");
 
     use Core\Analytics\ErrorRecording;
     use Core\Core;

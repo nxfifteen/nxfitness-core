@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  ******************************************************************************/
 
+    print __FILE__ . " @" . __LINE__ . "\n";
+
     // set config settings
     autoloader(array(
         array(
@@ -18,10 +20,10 @@
     ));
 
     // now we can set class autoload paths
-    autoloader(array('./'));
+    autoloader(array('.' . DIRECTORY_SEPARATOR));
 
-    require_once(dirname(__FILE__) . "/functions.php");
-    require_once(dirname(__FILE__) . "/../bundle/vendor/autoload.php");
+    require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "functions.php");
+    require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "bundle" . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php");
 
     /**
      * Autoloader
