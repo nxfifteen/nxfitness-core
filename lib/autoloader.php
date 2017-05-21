@@ -109,6 +109,7 @@
 
                             if ($conf['verbose']) {
                                 nxr(0, 'autoloaded class "' . $path . $class_path . $ext . '"');
+                                if (defined('TEST_SUITE')) print "autoloaded class '" . $path . $class_path . $ext . "'\n";
                             }
 
                             return true;
@@ -118,8 +119,10 @@
                     if ($conf['verbose']) {
                         if (!empty($ext)) {
                             nxr(0, 'failed to load class "' . $path . $class_path . $ext . '"');
+                            if (defined('TEST_SUITE')) print "failed to load class '" . $path . $class_path . $ext . "'\n";
                         } else {
                             nxr(0, 'failed to load class "' . $path . $class_path . '"');
+                            if (defined('TEST_SUITE')) print "failed to load class '" . $path . $class_path . $ext . "'\n";
                         }
                     }
                 }
@@ -143,6 +146,7 @@
                         if ($conf['verbose']) {
                             if (function_exists("nxr")) {
                                 nxr(0, __METHOD__ . ': registered path "' . $tmp_path . '"');
+                                if (defined('TEST_SUITE')) print __METHOD__ . ": registered path '" . $tmp_path . "'\n";
                             }
                         }
                     }
@@ -153,6 +157,7 @@
                     if ($conf['verbose']) {
                         if (function_exists("nxr")) {
                             nxr(0, __METHOD__ . ': autoload registered');
+                            if (defined('TEST_SUITE')) print __METHOD__ . ": autoload registered\n";
                         }
                     }
 
@@ -160,6 +165,7 @@
                 } else if ($conf['verbose']) {
                     if (function_exists("nxr")) {
                         nxr(0, __METHOD__ . ': autoload register failed');
+                        if (defined('TEST_SUITE')) print __METHOD__ . ": autoload register failed\n";
                     }
                 }
             }
