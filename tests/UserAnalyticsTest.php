@@ -10,9 +10,6 @@
 
     namespace Core\Tests;
 
-    print dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "autoloader.php\n";
-    require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "autoloader.php");
-
     use Core\Analytics\UserAnalytics;
     use PHPUnit\Framework\TestCase;
 
