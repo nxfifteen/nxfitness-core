@@ -122,4 +122,5 @@ config.inc.php
 !/bundle/vendor/autoload.php
 !/bundle/vendor/guzzlehttp/psr7/
 !/bundle/vendor/catfan/medoo/
+!/bundle/vendor/catfan/medoo/src/
 !/bundle/vendor/guzzlehttp/promises/
