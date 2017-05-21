@@ -22,4 +22,7 @@ fi
 
 echo "#### Installing Composer DEV"
 cp composer_dev.json composer.json
-php "$WORKINGDIR/binaries/composer.phar" install >/dev/null 2>&1
+php "$WORKINGDIR/binaries/composer.phar" install >/tmp/composer 2>&1
+if [ $? != 0 ]; then
+    cat /tmp/composer
+fi
