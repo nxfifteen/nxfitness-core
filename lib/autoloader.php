@@ -18,8 +18,6 @@
         if (file_exists($class)) {
             /** @noinspection PhpIncludeInspection */
             require_once($class);
-        } else {
-            print "No file $class \n";
         }
 
     });

@@ -11,7 +11,7 @@
     namespace Core\Tests;
 
     use Core\Analytics\UserAnalytics;
-    use PHPUnit\Framework\TestCase;
+    use PHPUnit\Framework\TestCase as TestCase;
 
     /**
      * Class UserAnalyticsTest

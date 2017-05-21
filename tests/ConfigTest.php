@@ -12,7 +12,7 @@
 
     use Core\Config;
     use Medoo\Medoo;
-    use PHPUnit\Framework\TestCase;
+    use PHPUnit\Framework\TestCase as TestCase;
 
     /**
      * Class ConfigTest

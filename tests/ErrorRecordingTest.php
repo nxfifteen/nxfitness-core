@@ -13,7 +13,7 @@
     use Core\Analytics\ErrorRecording;
     use Core\Core;
     use Exception;
-    use PHPUnit\Framework\TestCase;
+    use PHPUnit\Framework\TestCase as TestCase;
 
     /**
      * Class ErrorRecordingTest
