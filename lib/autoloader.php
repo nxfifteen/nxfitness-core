@@ -11,7 +11,7 @@
     // set config settings
     autoloader(array(
         array(
-            'debug'      => false, // turn on debug mode (by default debug mode is off)
+            'debug'      => true, // turn on debug mode (by default debug mode is off)
             'basepath'   => dirname(__FILE__), // basepath is used to define where your project is located
             'extensions' => array('.php'), // allowed class file extensions
         )
@@ -47,10 +47,10 @@
 
         static $conf = [
             'basepath'   => '',
-            'debug'      => false,
+            'debug'      => true,
             'extensions' => ['.php'], // multiple extensions ex: ['.php', '.class.php']
             'namespace'  => '',
-            'verbose'    => false
+            'verbose'    => true
         ];
 
         static $paths = [];
