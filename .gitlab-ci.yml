@@ -5,12 +5,6 @@ stages:
   - stage
   - deploy
 
-# Select what we should cache between builds
-cache:
-  paths:
-  - bundle/vendor/
-  - binaries/
-
 # Run our tests
 test:unit_7.1.4:
   stage: test
