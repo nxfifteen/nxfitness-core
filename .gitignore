@@ -107,3 +107,16 @@ config.inc.php
 /bundle/bower/bootstrap/scss/
 *.bat
 /composer.json
+/bundle/vendor/*/*/.gitattributes
+/bundle/vendor/*/*/examples/
+/bundle/vendor/*/*/test/
+/bundle/vendor/*/*/tests/
+/bundle/vendor/*/*/.travis.yml
+/bundle/vendor/*/*/CHANGELOG.md
+/bundle/vendor/*/*/UPGRADING.md
+/bundle/vendor/*/*/docs/
+/bundle/vendor/*/*/build/
+/bundle/vendor/*/*/Makefile
+/bundle/vendor/*/*/.gitmodules
+/bundle/vendor/*/*/.php_cs
+/bundle/vendor/*/*/phpunit.xml
