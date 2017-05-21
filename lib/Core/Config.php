@@ -1,11 +1,8 @@
 <?php
     /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -244,13 +241,23 @@
             $this->settings[$key] = $value;
             if ($query_db) {
                 if ($this->database->has($this->get("db_prefix", false) . "settings", array("var" => $key))) {
-                    return $this->database->update($this->get("db_prefix", false) . "settings", array("data" => $value),
+                    $dbAction = $this->database->update($this->get("db_prefix", false) . "settings", array("data" => $value),
                         array("var" => $key));
+                    if ($this->wasMySQLError($dbAction->errorInfo())) {
+                        return false;
+                    } else {
+                        return true;
+                    }
                 } else {
-                    return $this->database->insert($this->get("db_prefix", false) . "settings", array(
+                    $dbAction = $this->database->insert($this->get("db_prefix", false) . "settings", array(
                         "data" => $value,
                         "var"  => $key
                     ));
+                    if ($this->wasMySQLError($dbAction->errorInfo())) {
+                        return false;
+                    } else {
+                        return true;
+                    }
                 }
             } else {
                 return true;
@@ -274,7 +281,12 @@
 
             if ($query_db) {
                 if ($this->database->has($this->get("db_prefix", false) . "settings", array("var" => $key))) {
-                    return $this->database->delete($this->get("db_prefix", false) . "settings", array("var" => $key));
+                    $dbAction = $this->database->delete($this->get("db_prefix", false) . "settings", array("var" => $key));
+                    if ($this->wasMySQLError($dbAction->errorInfo())) {
+                        return false;
+                    } else {
+                        return true;
+                    }
                 }
             }
 
@@ -342,19 +354,29 @@
                 )
             ))
             ) {
-                return $this->database->update($this->get("db_prefix", false) . "settings_users",
+                $dbAction = $this->database->update($this->get("db_prefix", false) . "settings_users",
                     array("data" => $value), array(
                         "AND" => array(
                             "fuid" => $fuid,
                             "var"  => $key
                         )
                     ));
+                if ($this->wasMySQLError($dbAction->errorInfo())) {
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
-                return $this->database->insert($this->get("db_prefix", false) . "settings_users", array(
+                $dbAction = $this->database->insert($this->get("db_prefix", false) . "settings_users", array(
                     "fuid" => $fuid,
                     "data" => $value,
                     "var"  => $key
                 ));
+                if ($this->wasMySQLError($dbAction->errorInfo())) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
         }
 
@@ -381,8 +403,13 @@
                 )
             ))
             ) {
-                return $this->database->delete($this->get("db_prefix", false) . "settings_users",
+                $dbAction = $this->database->delete($this->get("db_prefix", false) . "settings_users",
                     array("fuid" => $fuid, "var" => $key));
+                if ($this->wasMySQLError($dbAction->errorInfo())) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
 
             return true;
@@ -397,5 +424,21 @@
         public function setDatabase($database)
         {
             $this->database = $database;
+        }
+
+        /**
+         * @param array $error
+         *
+         * @return bool
+         */
+        private function wasMySQLError($error)
+        {
+            if (is_null($error[2])) {
+                return false;
+            } else {
+                print_r($error);
+
+                return true;
+            }
         }
     }

@@ -10,13 +10,6 @@
 
     namespace Core\Tests;
 
-    if (!function_exists('autoloader')) {
-        require_once(dirname(__FILE__) . "/../lib/autoloader.php");
-        require_once(dirname(__FILE__) . "/../bundle/vendor/autoload.php");
-    }
-
-    require_once(dirname(__FILE__) . "/../lib/functions.php");
-
     use Core\Config;
     use Medoo\Medoo;
     use PHPUnit\Framework\TestCase;
@@ -223,7 +216,7 @@
         public function testSetNoDB()
         {
             $storeValue = rand(0, 1000);
-            $this->assertTrue($this->configClass->set('test' . __METHOD__ . 'DB' . $storeValue, $storeValue, false));
+            $this->assertTrue($this->configClass->set('test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue, false));
         }
 
         /**
@@ -232,9 +225,9 @@
         public function testDelNoDB()
         {
             $storeValue = rand(0, 1000);
-            $this->configClass->set('test' . __METHOD__ . 'DB' . $storeValue, $storeValue, false);
+            $this->configClass->set('test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue, false);
 
-            $dbAction = $this->convertNumberToBool($this->configClass->del('test' . __METHOD__ . 'DB' . $storeValue,
+            $dbAction = $this->convertNumberToBool($this->configClass->del('test_' . __METHOD__ . '_DB:' . $storeValue,
                 false));
             $this->assertTrue($dbAction);
         }
@@ -245,8 +238,8 @@
         public function testGetNoDB()
         {
             $storeValue = rand(0, 1000);
-            $this->configClass->set('test' . __METHOD__ . 'DB' . $storeValue, $storeValue, false);
-            $settingsValue = $this->configClass->get('test' . __METHOD__ . 'DB' . $storeValue, 'Not Stored', false);
+            $this->configClass->set('test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue, false);
+            $settingsValue = $this->configClass->get('test_' . __METHOD__ . '_DB:' . $storeValue, 'Not Stored', false);
             $this->assertSame($storeValue, $settingsValue);
         }
 
@@ -258,11 +251,9 @@
             $this->configClass->setDatabase($this->setUpDatabase());
 
             $storeValue = rand(0, 1000);
-            $dbAction   = $this->convertNumberToBool($this->configClass->set('test' . __METHOD__ . 'DB' . $storeValue,
-                $storeValue, true));
-            $this->assertTrue($dbAction);
+            $this->assertTrue($this->configClass->set('test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue, true));
 
-            $this->configClass->del('test' . __METHOD__ . 'DB' . $storeValue, true);
+            $this->configClass->del('test_' . __METHOD__ . '_DB:' . $storeValue, true);
         }
 
         /**
@@ -273,13 +264,13 @@
             $this->configClass->setDatabase($this->setUpDatabase());
 
             $storeValue = rand(0, 1000);
-            $this->configClass->set('test' . __METHOD__ . 'DB' . $storeValue, $storeValue, true);
+            $this->configClass->set('test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue, true);
 
-            $settingsValue = $this->configClass->get('test' . __METHOD__ . 'DB' . $storeValue, 'Not Stored', true);
+            $settingsValue = $this->configClass->get('test_' . __METHOD__ . '_DB:' . $storeValue, 'Not Stored', true);
 
             $this->assertSame($storeValue, $settingsValue);
 
-            $this->configClass->del('test' . __METHOD__ . 'DB' . $storeValue, true);
+            $this->configClass->del('test_' . __METHOD__ . '_DB:' . $storeValue, true);
         }
 
         /**
@@ -290,11 +281,9 @@
             $this->configClass->setDatabase($this->setUpDatabase());
 
             $storeValue = rand(0, 1000);
-            $this->configClass->set('test' . __METHOD__ . 'DB' . $storeValue, $storeValue, true);
+            $this->configClass->set('test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue, true);
 
-            $dbAction = $this->convertNumberToBool($this->configClass->del('test' . __METHOD__ . 'DB' . $storeValue,
-                true));
-            $this->assertTrue($dbAction);
+            $this->assertTrue($this->configClass->del('test_' . __METHOD__ . '_DB:' . $storeValue,true));
         }
 
         /**
@@ -307,11 +296,9 @@
             $this->configClass->setDatabase($this->setUpDatabase());
 
             $storeValue = rand(0, 1000);
-            $dbAction   = $this->convertNumberToBool($this->configClass->setUser($ownerFuid,
-                'test' . __METHOD__ . 'DB' . $storeValue, $storeValue));
-            $this->assertTrue($dbAction);
+            $this->assertTrue($this->configClass->setUser($ownerFuid,'test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue));
 
-            $this->configClass->delUser($ownerFuid, 'test' . __METHOD__ . 'DB' . $storeValue);
+            $this->configClass->delUser($ownerFuid, 'test_' . __METHOD__ . '_DB:' . $storeValue);
         }
 
         /**
@@ -324,11 +311,9 @@
             $this->configClass->setDatabase($this->setUpDatabase());
 
             $storeValue = rand(0, 1000);
-            $this->configClass->setUser($ownerFuid, 'test' . __METHOD__ . 'DB' . $storeValue, $storeValue);
+            $this->configClass->setUser($ownerFuid, 'test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue);
 
-            $dbAction = $this->convertNumberToBool($this->configClass->delUser($ownerFuid,
-                'test' . __METHOD__ . 'DB' . $storeValue));
-            $this->assertTrue($dbAction);
+            $this->assertTrue($this->configClass->delUser($ownerFuid,'test_' . __METHOD__ . '_DB:' . $storeValue));
         }
 
         /**
@@ -341,13 +326,13 @@
             $this->configClass->setDatabase($this->setUpDatabase());
 
             $storeValue = rand(0, 1000);
-            $this->configClass->setUser($ownerFuid, 'test' . __METHOD__ . 'DB' . $storeValue, $storeValue);
+            $this->configClass->setUser($ownerFuid, 'test_' . __METHOD__ . '_DB:' . $storeValue, $storeValue);
 
-            $settingsValue = $this->configClass->getUser($ownerFuid, 'test' . __METHOD__ . 'DB' . $storeValue,
+            $settingsValue = $this->configClass->getUser($ownerFuid, 'test_' . __METHOD__ . '_DB:' . $storeValue,
                 'Not Stored');
 
             $this->assertSame($storeValue, $settingsValue);
 
-            $this->configClass->delUser($ownerFuid, 'test' . __METHOD__ . 'DB' . $storeValue);
+            $this->configClass->delUser($ownerFuid, 'test_' . __METHOD__ . '_DB:' . $storeValue);
         }
     }
