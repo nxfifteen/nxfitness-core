@@ -25,6 +25,8 @@
     require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "functions.php");
     require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "bundle" . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php");
 
+    print_r(spl_autoload_functions());
+
     /**
      * Autoloader
      *
