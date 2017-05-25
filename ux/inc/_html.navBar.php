@@ -1,32 +1,28 @@
 <?php
-    /*******************************************************************************
+/*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  ******************************************************************************/
 
-    if (is_array($_SERVER) && array_key_exists("REDIRECT_URL", $_SERVER)) {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $url = str_replace($App->getConfig("/admin"), "", $_SERVER['REDIRECT_URL']);
-    } else {
-        $url = "";
-    }
-
+if ( is_array( $_SERVER ) && array_key_exists( "REDIRECT_URL", $_SERVER ) ) {
     /** @noinspection PhpUndefinedMethodInspection */
-    if ($_COOKIE['_nx_fb_usr'] == $App->getNxFit()->getSetting('ownerFuid', null, false)) {
-        $isDeveloper = true;
-    } else {
-        $isDeveloper = false;
-    }
+    $url = str_replace( $App->getConfig( "/admin" ), "", $_SERVER[ 'REDIRECT_URL' ] );
+} else {
+    $url = "";
+}
+
+/** @noinspection PhpUndefinedMethodInspection */
+if ( $_COOKIE[ '_nx_fb_usr' ] == $App->getNxFit()->getSetting( 'ownerFuid', null, false ) ) {
+    $isDeveloper = true;
+} else {
+    $isDeveloper = false;
+}
 ?>
-<!-- Left Sidebar -->
-<!--suppress HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget -->
+<!-- Left Sidebar --><!--suppress HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget -->
 <ul class="nav">
     <li class="nav-item">
         <a class="nav-link" href="main.html"><i class="fa fa-dashboard"></i> Dashboard</a>
@@ -116,10 +112,9 @@
     <li class="nav-item">
         <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices</a>
     </li>
-    <?php if ($isDeveloper) { ?>
+    <?php if ( $isDeveloper ) { ?>
         <li class="nav-item">
-            <a class="nav-link" href="settings/feeds.html"><i class="fa fa-gear"></i> Feeds
-                <span class="badge badge-danger">WIP</span></a>
+            <a class="nav-link" href="settings/feeds.html"><i class="fa fa-gear"></i> Feeds <span class="badge badge-danger">WIP</span></a>
         </li>
     <?php } ?>
     <li class="nav-item">

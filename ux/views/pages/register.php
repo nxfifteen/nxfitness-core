@@ -1,5 +1,5 @@
 <?php
-    /*******************************************************************************
+/*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
  *
  * Copyright (c) 2017. Stuart McCulloch Anderson
@@ -8,21 +8,21 @@
  * file that was distributed with this source code.
  ******************************************************************************/
 
-    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-    header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-    header('Cache-Control: no-store, no-cache, must-revalidate');
-    header('Cache-Control: post-check=0, pre-check=0', false);
-    header('Pragma: no-cache');
-    header("X-Clacks-Overhead: GNU Terry Pratchett");
+header( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' );
+header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+header( 'Cache-Control: no-store, no-cache, must-revalidate' );
+header( 'Cache-Control: post-check=0, pre-check=0', false );
+header( 'Pragma: no-cache' );
+header( "X-Clacks-Overhead: GNU Terry Pratchett" );
 
-    session_start();
+session_start();
 
-    $config = array();
-    if (!array_key_exists("admin_config", $_SESSION)) {
-        require_once("../../config.inc.php");
-    } else {
-        $config = $_SESSION['admin_config'];
-    }
+$config = [];
+if ( ! array_key_exists( "admin_config", $_SESSION ) ) {
+    require_once( "../../config.inc.php" );
+} else {
+    $config = $_SESSION[ 'admin_config' ];
+}
 ?>
 <!DOCTYPE html><!--suppress HtmlUnknownTarget, HtmlUnknownTarget -->
 <html lang="en">
@@ -76,35 +76,31 @@
         <div class="col-md-6">
             <div class="card mx-4">
                 <div class="card-block p-4">
-                    <form class="form-signin" action="<?php echo $_SESSION['admin_config']['http/admin']; ?>/login/redirect" method="post">
+                    <form class="form-signin" action="<?php echo $_SESSION[ 'admin_config' ][ 'http/admin' ]; ?>/login/redirect" method="post">
                         <h1>Register</h1>
                         <p class="text-muted">Create your account</p>
                         <div class="input-group mb-3">
-                            <span class="input-group-addon"><i class="icon-user"></i></span>
-                            <input type="text" class="form-control" name="fuid" <?php if (isset($_GET['usr'])) {
-                                echo " value=\"" . $_GET['usr'] . "\"";
+                            <span class="input-group-addon"><i class="icon-user"></i></span> <input type="text" class="form-control" name="fuid" <?php if ( isset( $_GET[ 'usr' ] ) ) {
+                                echo " value=\"" . $_GET[ 'usr' ] . "\"";
                             } else {
                                 echo " placeholder=\"User Name\"";
                             } ?> title="User Name">
                         </div>
 
                         <div class="input-group mb-3">
-                            <span class="input-group-addon">@</span>
-                            <input type="text" class="form-control" <?php if (isset($_GET['eml'])) {
-                                echo " value=\"" . $_GET['eml'] . "\"";
+                            <span class="input-group-addon">@</span> <input type="text" class="form-control" <?php if ( isset( $_GET[ 'eml' ] ) ) {
+                                echo " value=\"" . $_GET[ 'eml' ] . "\"";
                             } else {
                                 echo " placeholder=\"Email\"";
                             } ?> name="email" title="Email Address" autofocus>
                         </div>
 
                         <div class="input-group mb-3">
-                            <span class="input-group-addon"><i class="icon-lock"></i></span>
-                            <input type="password" class="form-control" placeholder="Password" name="password">
+                            <span class="input-group-addon"><i class="icon-lock"></i></span> <input type="password" class="form-control" placeholder="Password" name="password">
                         </div>
 
                         <div class="input-group mb-4">
-                            <span class="input-group-addon"><i class="icon-lock"></i></span>
-                            <input type="password" class="form-control" placeholder="Repeat password" name="password2">
+                            <span class="input-group-addon"><i class="icon-lock"></i></span> <input type="password" class="form-control" placeholder="Repeat password" name="password2">
                         </div>
 
                         <button type="submit" class="btn btn-block btn-success">Create Account</button>
@@ -117,7 +113,7 @@
 
 <!--suppress JSUnusedLocalSymbols -->
 <script type="application/javascript">
-    var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
+    var fitbitUserId = '<?php echo $_COOKIE[ '_nx_fb_usr' ]; ?>';
 </script>
 
 <!-- Bootstrap and necessary plugins -->

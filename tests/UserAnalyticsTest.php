@@ -1,5 +1,5 @@
 <?php
-    /*******************************************************************************
+/*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
  *
  * Copyright (c) 2017. Stuart McCulloch Anderson
@@ -8,45 +8,41 @@
  * file that was distributed with this source code.
  ******************************************************************************/
 
-    namespace Core\Tests;
+namespace Core\Tests;
 
-    use Core\Analytics\UserAnalytics;
-    use PHPUnit\Framework\TestCase as TestCase;
+use Core\Analytics\UserAnalytics;
+use PHPUnit\Framework\TestCase as TestCase;
+
+/**
+ * Class UserAnalyticsTest
+ *
+ * @package Core\Tests
+ */
+class UserAnalyticsTest extends TestCase {
 
     /**
-     * Class UserAnalyticsTest
-     *
-     * @package Core\Tests
+     * @var UserAnalytics
      */
-    class UserAnalyticsTest extends TestCase
-    {
+    protected $analyticsClass;
 
-        /**
-         * @var UserAnalytics
-         */
-        protected $analyticsClass;
-
-        protected function setUp()
-        {
-            $this->analyticsClass = new UserAnalytics(15, 'https://nxfifteen.me.uk/cogent/', "fit.itsabeta.nx",
-                "http://fit.itsabeta.nx/api/fitbit/ux/");
-        }
-
-        /**
-         * @covers UserAnalytics::track
-         */
-        public function testTrackEvent()
-        {
-            $classSiteId = $this->analyticsClass->track("Test", "Test Case", "testTrackEvent", 1);
-            $this->assertTrue(is_string($classSiteId));
-        }
-
-        /**
-         * @covers UserAnalytics::endEvent
-         */
-        public function testEndEvent()
-        {
-            $classSiteId = $this->analyticsClass->endEvent("Test Page Tracked");
-            $this->assertTrue(is_string($classSiteId));
-        }
+    protected function setUp() {
+        $this->analyticsClass = new UserAnalytics( 15, 'https://nxfifteen.me.uk/cogent/', "fit.itsabeta.nx",
+            "http://fit.itsabeta.nx/api/fitbit/ux/" );
     }
+
+    /**
+     * @covers UserAnalytics::track
+     */
+    public function testTrackEvent() {
+        $classSiteId = $this->analyticsClass->track( "Test", "Test Case", "testTrackEvent", 1 );
+        $this->assertTrue( is_string( $classSiteId ) );
+    }
+
+    /**
+     * @covers UserAnalytics::endEvent
+     */
+    public function testEndEvent() {
+        $classSiteId = $this->analyticsClass->endEvent( "Test Page Tracked" );
+        $this->assertTrue( is_string( $classSiteId ) );
+    }
+}

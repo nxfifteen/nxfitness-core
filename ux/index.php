@@ -1,5 +1,5 @@
 <?php
-    /*******************************************************************************
+/*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
  *
  * Copyright (c) 2017. Stuart McCulloch Anderson
@@ -8,165 +8,162 @@
  * file that was distributed with this source code.
  ******************************************************************************/
 
+require_once( dirname( __FILE__ ) . "/../lib/autoloader.php" );
 
-    require_once(dirname(__FILE__) . "/../lib/autoloader.php");
+use Core\UX\NxFitAdmin;
 
-    use Core\UX\NxFitAdmin;
+header( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' );
+header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+header( 'Cache-Control: no-store, no-cache, must-revalidate' );
+header( 'Cache-Control: post-check=0, pre-check=0', false );
+header( 'Pragma: no-cache' );
+header( "X-Clacks-Overhead: GNU Terry Pratchett" );
 
-    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-    header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-    header('Cache-Control: no-store, no-cache, must-revalidate');
-    header('Cache-Control: post-check=0, pre-check=0', false);
-    header('Pragma: no-cache');
-    header("X-Clacks-Overhead: GNU Terry Pratchett");
+if ( ! function_exists( "nxr" ) || ! function_exists( "nxr_destroy_session" ) ) {
+    require_once( dirname( __FILE__ ) . "/../lib/functions.php" );
+}
 
-    if (!function_exists("nxr") || !function_exists("nxr_destroy_session")) {
-        require_once(dirname(__FILE__) . "/../lib/functions.php");
+define( "CORE_UX", dirname( __FILE__ ) . "/" );
+define( "CORE_ROOT", dirname( __FILE__ ) . "/../" );
+define( 'CORE_PROJECT_ROOT', dirname( __FILE__ ) );
+
+// start the session
+session_start();
+if ( ! array_key_exists( "timeout", $_SESSION ) || ! is_numeric( $_SESSION[ 'timeout' ] ) ) {
+    $_SESSION[ 'timeout' ] = time() + 60 * 5;
+} else if ( $_SESSION[ 'timeout' ] < time() ) {
+    nxr_destroy_session();
+    header( "Location: ./" );
+}
+
+if ( ! array_key_exists( "admin_config",
+        $_SESSION ) || ! is_array( $_SESSION[ 'admin_config' ] ) || count( $_SESSION[ 'admin_config' ] ) == 0
+) {
+    require_once( CORE_UX . "/config.inc.php" );
+    if ( isset( $config ) ) {
+        $_SESSION[ 'admin_config' ] = $config;
     }
+}
 
-    define("CORE_UX", dirname(__FILE__) . "/");
-    define("CORE_ROOT", dirname(__FILE__) . "/../");
-    define('CORE_PROJECT_ROOT', dirname(__FILE__));
+if ( is_array( $_GET ) && array_key_exists( "err", $_GET ) ) {
 
-    // start the session
-    session_start();
-    if (!array_key_exists("timeout", $_SESSION) || !is_numeric($_SESSION['timeout'])) {
-        $_SESSION['timeout'] = time() + 60 * 5;
-    } else if ($_SESSION['timeout'] < time()) {
-        nxr_destroy_session();
-        header("Location: ./");
+    if ( ! isset( $config ) ) {
+        require_once( CORE_UX . "/config.inc.php" );
     }
+    nxr_destroy_session();
+    header( "Location: ./views/pages/500.html" );
+} else if ( array_key_exists( "REDIRECT_URL",
+        $_SERVER ) && $_SERVER[ 'REDIRECT_URL' ] == $_SESSION[ 'admin_config' ][ '/admin' ] . "/login"
+) {
 
-    if (!array_key_exists("admin_config",
-            $_SESSION) || !is_array($_SESSION['admin_config']) || count($_SESSION['admin_config']) == 0
-    ) {
-        require_once(CORE_UX . "/config.inc.php");
-        if (isset($config)) {
-            $_SESSION['admin_config'] = $config;
-        }
-    }
+    header( "Location: ./views/pages/login.php" );
+} else if ( array_key_exists( "REDIRECT_URL",
+        $_SERVER ) && $_SERVER[ 'REDIRECT_URL' ] == $_SESSION[ 'admin_config' ][ '/admin' ] . "/refresh"
+) {
 
-    if (is_array($_GET) && array_key_exists("err", $_GET)) {
+    nxr_destroy_session();
+    header( "Location: ./" );
+} else if ( array_key_exists( "REDIRECT_URL",
+        $_SERVER ) && $_SERVER[ 'REDIRECT_URL' ] == $_SESSION[ 'admin_config' ][ '/admin' ] . "/login/redirect"
+) {
 
-        if (!isset($config)) {
-            require_once(CORE_UX . "/config.inc.php");
-        }
-        nxr_destroy_session();
-        header("Location: ./views/pages/500.html");
-    } else if (array_key_exists("REDIRECT_URL",
-            $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/login"
-    ) {
+    require_once( "_class/UserLogin.php" );
+} else if ( array_key_exists( "REDIRECT_URL",
+        $_SERVER ) && $_SERVER[ 'REDIRECT_URL' ] == $_SESSION[ 'admin_config' ][ '/admin' ] . "/views/pages/register"
+) {
 
-        header("Location: ./views/pages/login.php");
-    } else if (array_key_exists("REDIRECT_URL",
-            $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/refresh"
-    ) {
+    header( "Location: ./views/pages/register.php" );
+} else if ( array_key_exists( "REDIRECT_URL",
+        $_SERVER ) && $_SERVER[ 'REDIRECT_URL' ] == $_SESSION[ 'admin_config' ][ '/admin' ] . "/views/pages/logout"
+) {
 
-        nxr_destroy_session();
-        header("Location: ./");
-    } else if (array_key_exists("REDIRECT_URL",
-            $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/login/redirect"
-    ) {
+    setcookie( '_nx_fb_key', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER[ 'SERVER_NAME' ] );
+    setcookie( '_nx_fb_usr', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER[ 'SERVER_NAME' ] );
 
-        require_once("_class/UserLogin.php");
-    } else if (array_key_exists("REDIRECT_URL",
-            $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/views/pages/register"
-    ) {
+    $path = $_SESSION[ 'admin_config' ][ 'http/admin' ];
 
-        header("Location: ./views/pages/register.php");
-    } else if (array_key_exists("REDIRECT_URL",
-            $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/views/pages/logout"
-    ) {
+    nxr_destroy_session();
 
-        setcookie('_nx_fb_key', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
-        setcookie('_nx_fb_usr', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
+    header( "Location: " . $path . '/views/pages/login.php' );
+} else if ( ! is_array( $_COOKIE ) || ! array_key_exists( "_nx_fb_usr", $_COOKIE ) ) {
 
-        $path = $_SESSION['admin_config']['http/admin'];
+    header( "Location: ./views/pages/login.php" );
+} else {
 
-        nxr_destroy_session();
+    $_SESSION[ 'CORE_PROJECT_ROOT' ] = CORE_PROJECT_ROOT;
+    $_SESSION[ 'CORE_UX' ]           = CORE_UX;
+    $_SESSION[ 'CORE_ROOT' ]         = CORE_ROOT;
 
-        header("Location: " . $path . '/views/pages/login.php');
-    } else if (!is_array($_COOKIE) || !array_key_exists("_nx_fb_usr", $_COOKIE)) {
+    $App = new NxFitAdmin( $_COOKIE[ '_nx_fb_usr' ] );
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
 
-        header("Location: ./views/pages/login.php");
-    } else {
+    <head>
+        <?php require_once( 'inc/_html.header.php' ); ?>
+    </head>
 
-        $_SESSION['CORE_PROJECT_ROOT'] = CORE_PROJECT_ROOT;
-        $_SESSION['CORE_UX']           = CORE_UX;
-        $_SESSION['CORE_ROOT']         = CORE_ROOT;
+    <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
+    <header class="app-header navbar">
+        <button class="navbar-toggler mobile-sidebar-toggler d-lg-none" type="button">&#9776;</button>
+        <a class="navbar-brand" href="#"></a>
+        <ul class="nav navbar-nav d-md-down-none">
+            <li class="nav-item">
+                <a class="nav-link navbar-toggler sidebar-toggler" href="#">&#9776;</a>
+            </li>
 
-        $App = new NxFitAdmin($_COOKIE['_nx_fb_usr']);
-        ?>
-        <!DOCTYPE html>
-        <html lang="en">
+            <?php require_once( 'inc/_html.topMenu.php' ); ?>
+        </ul>
 
-        <head>
-            <?php require_once('inc/_html.header.php'); ?>
-        </head>
+        <?php require_once( 'inc/_html.topUserMenu.php' ); ?>
+    </header>
 
-        <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
-        <header class="app-header navbar">
-            <button class="navbar-toggler mobile-sidebar-toggler d-lg-none" type="button">&#9776;</button>
-            <a class="navbar-brand" href="#"></a>
-            <ul class="nav navbar-nav d-md-down-none">
-                <li class="nav-item">
-                    <a class="nav-link navbar-toggler sidebar-toggler" href="#">&#9776;</a>
-                </li>
-
-                <?php require_once('inc/_html.topMenu.php'); ?>
-            </ul>
-
-            <?php require_once('inc/_html.topUserMenu.php'); ?>
-        </header>
-
-        <div class="app-body">
-            <div class="sidebar">
-                <nav class="sidebar-nav">
-                    <?php require_once('inc/_html.navBar.php'); ?>
-                </nav>
-            </div>
-
-            <!-- Main content -->
-            <main class="main">
-                <?php require_once('inc/_html.breadcrumb.php'); ?>
-
-                <div class="container-fluid">
-                    <div id="ui-view"></div>
-                </div>
-                <!-- /.conainer-fluid -->
-            </main>
-
-            <aside class="aside-menu">
-                <?php require_once('inc/_html.asideMenu.php'); ?>
-            </aside>
-
+    <div class="app-body">
+        <div class="sidebar">
+            <nav class="sidebar-nav">
+                <?php require_once( 'inc/_html.navBar.php' ); ?>
+            </nav>
         </div>
 
-        <footer class="app-footer">
-            <a href="https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core">NxFITNESS Core</a> &copy; 2017 Stuart
-                                                                                                  McCulloch Anderson.
-            <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a></span>
-        </footer>
+        <!-- Main content -->
+        <main class="main">
+            <?php require_once( 'inc/_html.breadcrumb.php' ); ?>
 
-        <!--suppress JSUnusedLocalSymbols -->
-        <script type="application/javascript">
-            var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
-        </script>
+            <div class="container-fluid">
+                <div id="ui-view"></div>
+            </div>
+            <!-- /.conainer-fluid -->
+        </main>
 
-        <!-- Bootstrap and necessary plugins -->
-        <script src="../bundle/bower/jquery/dist/jquery.min.js"></script>
-        <script src="../bundle/bower/tether/dist/js/tether.min.js"></script>
-        <script src="../bundle/bower/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="../bundle/bower/pace/pace.min.js"></script>
-        <script src="../bundle/bower/raven-js/dist/raven.min.js"></script>
+        <aside class="aside-menu">
+            <?php require_once( 'inc/_html.asideMenu.php' ); ?>
+        </aside>
 
-        <!-- GenesisUI main scripts -->
-        <script>Raven.config('https://80a480ea986d4ee993ac89a54a0d1f0e@sentry.io/156527').install();</script>
-        <script src="js/app.js"></script>
+    </div>
 
-        </body>
+    <footer class="app-footer">
+        <a href="https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core">NxFITNESS Core</a> &copy; 2017 Stuart McCulloch Anderson. <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a></span>
+    </footer>
 
-        </html>
-        <?php
-    }
+    <!--suppress JSUnusedLocalSymbols -->
+    <script type="application/javascript">
+        var fitbitUserId = '<?php echo $_COOKIE[ '_nx_fb_usr' ]; ?>';
+    </script>
+
+    <!-- Bootstrap and necessary plugins -->
+    <script src="../bundle/bower/jquery/dist/jquery.min.js"></script>
+    <script src="../bundle/bower/tether/dist/js/tether.min.js"></script>
+    <script src="../bundle/bower/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../bundle/bower/pace/pace.min.js"></script>
+    <script src="../bundle/bower/raven-js/dist/raven.min.js"></script>
+
+    <!-- GenesisUI main scripts -->
+    <script>Raven.config('https://80a480ea986d4ee993ac89a54a0d1f0e@sentry.io/156527').install();</script>
+    <script src="js/app.js"></script>
+
+    </body>
+
+    </html>
+    <?php
+}
 ?>
