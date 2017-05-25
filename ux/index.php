@@ -1,15 +1,13 @@
 <?php
     /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  ******************************************************************************/
+
 
     require_once(dirname(__FILE__) . "/../lib/autoloader.php");
 
@@ -20,6 +18,7 @@
     header('Cache-Control: no-store, no-cache, must-revalidate');
     header('Cache-Control: post-check=0, pre-check=0', false);
     header('Pragma: no-cache');
+    header("X-Clacks-Overhead: GNU Terry Pratchett");
 
     if (!function_exists("nxr") || !function_exists("nxr_destroy_session")) {
         require_once(dirname(__FILE__) . "/../lib/functions.php");
