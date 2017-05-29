@@ -1,10 +1,7 @@
 /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -22,15 +19,15 @@ $(function () {
         });
     }
 
-    $.getJSON("sites.json", function (data) {
+/*    $.getJSON("sites.json", function (data) {
         var html = '';
         $.each(data, function (index, locationPoint) {
             html += '  <div class="col-sm-6 col-lg-3">';
             html += '    <div class="card card-inverse card-primary">';
-            /** @namespace locationPoint.display_name */
+            /!** @namespace locationPoint.display_name *!/
             html += '      <div class="card-header" id="header">' + locationPoint.display_name + '</div>';
             html += '      <div class="card-block" id="location-map-' + index + '">';
-            /** @namespace locationPoint.lon */
+            /!** @namespace locationPoint.lon *!/
             html += '        <img class="img-fluid" src="inc/StaticMapLite.php?center=' + locationPoint.lat + ',' + locationPoint.lon + '&zoom=14&size=380x150&maptype=mapnik&markers=' + locationPoint.lat + ',' + locationPoint.lon + ',ol-marker" width="380" height="150" />';
             html += '      </div>';
             html += '      <div class="card-footer">';
@@ -40,7 +37,7 @@ $(function () {
             html += '  </div>';
         });
         $("#locations-map").html(html);
-    });
+    });*/
 
     $("#search").click(function () {
         mapQuery();
@@ -85,6 +82,6 @@ $(function () {
     }
 
     function onClick(e) {
-        mapGPS("Map Point", e.latlng.lat, e.latlng.lng);
+        mapGPS("Map Point - " + e.latlng.lat + "," + e.latlng.lng, e.latlng.lat, e.latlng.lng);
     }
 });
