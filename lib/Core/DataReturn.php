@@ -800,12 +800,12 @@ class DataReturn {
 
             ksort( $record );
 
-            $tcxFile = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '.tcx';
+            $tcxFile = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '.tcx';
             if ( ! file_exists( $tcxFile ) ) {
                 $record[ 'gpx' ] = "none";
             } else {
-                if ( ! file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '.gpx' ) ) {
-                    if ( is_writable( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' ) ) {
+                if ( ! file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '.gpx' ) ) {
+                    if ( is_writable( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' ) ) {
                         $record[ 'gpx' ] = $this->returnUserRecordActivityTCX( $record[ 'logId' ],
                             $record[ 'name' ] . ": " . $record[ 'startTime' ] );
                         $record[ 'gpx' ] = $record[ 'gpx' ][ 'return' ][ 'gpx' ];
@@ -816,8 +816,8 @@ class DataReturn {
                     $record[ 'gpx' ] = DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'fitbit' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '.gpx';
                 }
 
-                if ( file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '_laps.json' ) ) {
-                    $str                    = file_get_contents( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '_laps.json' );
+                if ( file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '_laps.json' ) ) {
+                    $str                    = file_get_contents( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $record[ 'logId' ] . '_laps.json' );
                     $jsonMeta               = json_decode( $str, true ); // decode the JSON into an associative array
                     $record[ 'visibility' ] = $jsonMeta[ 'meta' ][ 'visibility' ];
                 } else {
@@ -857,7 +857,7 @@ class DataReturn {
                 $tcxTrackName = $tcxFileName . " Fitbit Track";
             }
 
-            $tcxFile = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $tcxFileName . '.tcx';
+            $tcxFile = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tcx' . DIRECTORY_SEPARATOR . $tcxFileName . '.tcx';
 
             if ( file_exists( $tcxFile ) ) {
                 $items = simplexml_load_file( $tcxFile );
@@ -897,7 +897,7 @@ class DataReturn {
                     ];
                 }
 
-                if ( file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx' ) ) {
+                if ( file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx' ) ) {
                     $gpxFileName = DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
                 } else {
                     /** @lang XML */
@@ -985,30 +985,39 @@ class DataReturn {
                     $gpx .= "\n </trk>";
                     $gpx .= "\n</gpx>";
 
-                    $fh = fopen( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx',
+                    $fh = fopen( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx',
                         'w' );
                     fwrite( $fh, $gpx );
                     fclose( $fh );
 
-                    $geo_home_lat = $this->getAppClass()->getUserSetting( $this->getUserID(), "geo_home_lat", 0.0 );
-                    $geo_home_lon = $this->getAppClass()->getUserSetting( $this->getUserID(), "geo_home_lon", 0.0 );
+                    $gpxMeta[ 'meta' ][ 'visibility' ] = "public";
+                    $geo_private = $this->getAppClass()->getUserSetting( $this->getUserID(), "geo_private", array() );
+                    $geo_private = explode("|", $geo_private);
 
-                    $gpxMeta[ 'meta' ][ 'distance_start' ] = number_format( $this->haversineGreatCircleDistance( $geo_home_lat,
-                        $geo_home_lon, $startLatitudeVery, $startLongitudeVery, "K" ), 2 );
-                    $gpxMeta[ 'meta' ][ 'distance_end' ]   = number_format( $this->haversineGreatCircleDistance( $geo_home_lat,
-                        $geo_home_lon, $endLatitude, $endLongitude, "K" ), 2 );
-                    if ( $gpxMeta[ 'meta' ][ 'distance_start' ] > 1 && $gpxMeta[ 'meta' ][ 'distance_end' ] > 1 ) {
-                        $gpxMeta[ 'meta' ][ 'visibility' ] = "public";
-                    } else {
-                        $gpxMeta[ 'meta' ][ 'visibility' ] = "private";
+                    if (is_array($geo_private) && count($geo_private) > 0) {
+                        foreach ($geo_private as $geoSpot) {
+                            if ($gpxMeta[ 'meta' ][ 'visibility' ] == "public") {
+                                $geoSpot = explode(",", $geoSpot);
+                                $geo_lat = $geoSpot[0];
+                                $geo_lon = $geoSpot[1];
+
+                                $gpxMeta['meta']['distance_start'] = number_format($this->haversineGreatCircleDistance($geo_lat, $geo_lon, $startLatitudeVery, $startLongitudeVery, "K"), 2);
+                                $gpxMeta['meta']['distance_end'] = number_format($this->haversineGreatCircleDistance($geo_lat, $geo_lon, $endLatitude, $endLongitude, "K"), 2);
+                                if ($gpxMeta['meta']['distance_start'] < 1 && $gpxMeta['meta']['distance_end'] < 1) {
+                                    $gpxMeta['meta']['visibility'] = "private";
+                                }
+                            }
+                        }
                     }
 
-                    $fh = fopen( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '_laps.json',
+                    $gpxMeta[ 'meta' ][ 'visibility' ] = "public";
+
+                    $fh = fopen( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '_laps.json',
                         'w' );
                     fwrite( $fh, json_encode( $gpxMeta ) );
                     fclose( $fh );
 
-                    if ( ! file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx' ) ) {
+                    if ( ! file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx' ) ) {
                         $gpxFileName = "none";
                     } else {
                         $gpxFileName = $this->getAppClass()->getSetting( "http/" ) . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '.gpx';
