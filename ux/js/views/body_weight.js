@@ -1,10 +1,7 @@
 /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -245,18 +242,22 @@ $(function () {
 
             /** @namespace data.results.loss_rate_weight */
             if (data.results.loss_rate_weight.length !== 0) {
-                htmlString += "<p>The table bellow shows your month on month weight changes</p>";
+                htmlString += "<p>The table bellow shows your week on week weight changes</p>";
                 htmlString += "<table class=\"table\">";
-                htmlString += "<tr><th>Date</th><th>Monthly Trend</th></tr>";
+                htmlString += "<tr><th>Date</th><th>Weekly Trend</th></tr>";
 
+                var perviousWeight = -1;
                 for (var key in data.results.WeighInArray) {
                     /** @namespace data.results.WeighInArray */
                     //noinspection JSUnfilteredForInLoop
-                    if (data.results.WeighInArray[key] <= data.results.WeighInArray[key - 1]) {
+                    if (perviousWeight <= -1) {
+                        classTable = ' class=""';
+                    } else if (data.results.WeighInArray[key] <= perviousWeight) {
                         classTable = ' class="badge-success"';
                     } else {
                         classTable = ' class="badge-danger"';
                     }
+                    perviousWeight = data.results.WeighInArray[key];
                     //noinspection JSUnfilteredForInLoop
                     htmlString += "<tr" + classTable + "><td>" + key + "</td><td>" + data.results.WeighInArray[key] + " " + data.results.weight_units + "</td></tr>";
                 }
@@ -283,7 +284,7 @@ $(function () {
                     /** @namespace trendData.results.estimatedDate */
                     /** @namespace trendData.results.estimatedWeeks */
                     /** @namespace trendData.results.weightToLose */
-                    weightTrends = '<p>Your last recorded weight was <strong>' + trendData.results.weight + '</strong>, so still has another' +
+                    weightTrends = '<p>Your last recorded weight was <strong>' + trendData.results.weight + '</strong>, and still have another' +
                         ' <strong>' + trendData.results.weightToLose + '</strong> to lose to reach your ' +
                         ' <strong>' + trendData.results.weightGoal + '</strong> goal.</p>' +
                         '<p>Based on your current <strong>' + trendData.results.caldef + '</strong> calorie deficit you should reach your target' +
