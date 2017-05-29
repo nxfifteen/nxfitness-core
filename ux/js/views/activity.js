@@ -1,10 +1,7 @@
 /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -102,7 +99,7 @@ $(function () {
         if (stepsYesterday.length > 0) {
             if (data.results.analysis.stepsYesterdayRaw < 0) {
                 stepsYesterday.css({"color": "#197910"});
-                stepsYesterday.html("<strong>" + data.results.analysis.stepsYesterday + " Steps</strong> over");
+                stepsYesterday.html("<strong>" + data.results.analysis.stepsYesterday.split('-').join('') + " Steps</strong> over");
             } else {
                 stepsYesterday.html("<strong>" + data.results.analysis.stepsYesterday + " Steps</strong> to go");
             }
@@ -112,7 +109,7 @@ $(function () {
         if (floorsYesterday.length > 0) {
             if (data.results.analysis.stepsYesterdayRaw < 0) {
                 floorsYesterday.css({"color": "#197910"});
-                floorsYesterday.html("<strong>" + data.results.analysis.floorsYesterday + " Floors</strong> over");
+                floorsYesterday.html("<strong>" + data.results.analysis.floorsYesterday.split('-').join('') + " Floors</strong> over");
             } else {
                 floorsYesterday.html("<strong>" + data.results.analysis.floorsYesterday + " Floors</strong> to go");
             }
@@ -122,7 +119,7 @@ $(function () {
         if (distanceYesterday.length > 0) {
             if (data.results.analysis.stepsYesterdayRaw < 0) {
                 distanceYesterday.css({"color": "#197910"});
-                distanceYesterday.html("<strong>" + data.results.analysis.distanceYesterday + " Miles</strong> over");
+                distanceYesterday.html("<strong>" + data.results.analysis.distanceYesterday.split('-').join('') + " Miles</strong> over");
             } else {
                 distanceYesterday.html("<strong>" + data.results.analysis.distanceYesterday + " Miles</strong> to go");
             }
