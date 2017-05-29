@@ -2611,10 +2611,10 @@ class ApiBabel
     private function pullBabelTCX($tcxLink)
     {
         nxr(3, "Downloading TCX File");
-        if (!file_exists(dirname(__FILE__) . "/../tcx/" . basename($tcxLink))) {
-            if (file_exists(dirname(__FILE__) . "/../tcx/") AND is_writable(dirname(__FILE__) . "/../tcx/")) {
-                file_put_contents(dirname(__FILE__) . "/../tcx/" . basename($tcxLink), $this->pullBabel($tcxLink));
-                nxr(4, "TCX files created: " . dirname(__FILE__) . "/../tcx/" . basename($tcxLink));
+        if (!file_exists(dirname(__FILE__) . "/../../../tcx/" . basename($tcxLink))) {
+            if (file_exists(dirname(__FILE__) . "/../../../tcx/") AND is_writable(dirname(__FILE__) . "/../../../tcx/")) {
+                file_put_contents(dirname(__FILE__) . "/../../../tcx/" . basename($tcxLink), $this->pullBabel($tcxLink));
+                nxr(4, "TCX files created: " . dirname(__FILE__) . "/../../../tcx/" . basename($tcxLink));
             } else {
                 nxr(4, "Unable to write TCX files created");
             }
