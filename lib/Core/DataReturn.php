@@ -1010,8 +1010,6 @@ class DataReturn {
                         }
                     }
 
-                    $gpxMeta[ 'meta' ][ 'visibility' ] = "public";
-
                     $fh = fopen( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . $tcxFileName . '_laps.json',
                         'w' );
                     fwrite( $fh, json_encode( $gpxMeta ) );
