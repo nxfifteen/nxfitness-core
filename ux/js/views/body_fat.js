@@ -1,10 +1,7 @@
 /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -237,17 +234,17 @@ $(function () {
                 htmlString += "<table class=\"table table-striped\">";
                 htmlString += "<tr><th>Date</th><th>Monthly Trend</th></tr>";
 
+                var perviousFat = -1;
                 for (var key in data.results.loss_rate_fat) {
                     //noinspection JSUnfilteredForInLoop
-                    if (data.results.loss_rate_fat[key] <= 0) {
-                        classTable = ' class="success"';
-                    } else { //noinspection JSUnfilteredForInLoop
-                        if (data.results.loss_rate_fat[key] >= 0.1) {
-                            classTable = ' class="danger"';
-                        } else {
-                            classTable = "";
-                        }
+                    if (perviousFat <= -1) {
+                        classTable = ' class=""';
+                    } else if (data.results.loss_rate_fat[key] <= perviousFat) {
+                        classTable = ' class="badge-success"';
+                    } else {
+                        classTable = ' class="badge-danger"';
                     }
+                    perviousFat = data.results.loss_rate_fat[key];
                     //noinspection JSUnfilteredForInLoop
                     htmlString += "<tr" + classTable + "><td>" + key + "</td><td>" + data.results.loss_rate_fat[key] + "%</td></tr>";
                 }

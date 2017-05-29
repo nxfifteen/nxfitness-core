@@ -1,10 +1,7 @@
 /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -249,14 +246,18 @@ $(function () {
                 htmlString += "<table class=\"table\">";
                 htmlString += "<tr><th>Date</th><th>Monthly Trend</th></tr>";
 
+                var perviousWeight = -1;
                 for (var key in data.results.WeighInArray) {
                     /** @namespace data.results.WeighInArray */
                     //noinspection JSUnfilteredForInLoop
-                    if (data.results.WeighInArray[key] <= data.results.WeighInArray[key - 1]) {
+                    if (perviousWeight <= -1) {
+                        classTable = ' class=""';
+                    } else if (data.results.WeighInArray[key] <= perviousWeight) {
                         classTable = ' class="badge-success"';
                     } else {
                         classTable = ' class="badge-danger"';
                     }
+                    perviousWeight = data.results.WeighInArray[key];
                     //noinspection JSUnfilteredForInLoop
                     htmlString += "<tr" + classTable + "><td>" + key + "</td><td>" + data.results.WeighInArray[key] + " " + data.results.weight_units + "</td></tr>";
                 }
