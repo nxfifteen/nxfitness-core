@@ -164,7 +164,7 @@ $(function () {
             if (parseInt(data.results.current.days) < parseInt(data.results.max.days)) {
                 LongestDays.html("Ran between " + data.results.max.start + " and " + data.results.max.end + ", lasting " + data.results.max.days + " days and your " + (data.results.max.days - data.results.current.days) + " days away from it.");
             } else {
-                LongestDays.html("Is toast! Your betting your longest streak of " + data.results.max.days + " days by " + data.results.current.days + " days.");
+                LongestDays.html("Is toast! Your betting your longest streak of " + data.results.max.days + " days by " + (data.results.current.days - data.results.max.days) + " days.");
             }
             $('#LongestDaysProgress').attr('aria-valuenow', data.results.max.dist).css('width', data.results.max.dist + '%');
         }
