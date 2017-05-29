@@ -14,6 +14,7 @@ test:unit_7.1.4:
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   script:
   - php ./binaries/phpunit.phar -c phpunit.xml
+  allow_failure: true
 
 test:unit_7.0.18:
   stage: test
@@ -24,6 +25,7 @@ test:unit_7.0.18:
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   script:
   - php ./binaries/phpunit.phar -c phpunit.xml
+  allow_failure: true
 
 # Run our tests
 test:docblock:
@@ -33,6 +35,7 @@ test:docblock:
     - sh ./dev/build_dev_env_docblock.sh
   script:
   - ./binaries/php-docblock-checker-1.3.4/phpdoccheck -d ./lib --no-interaction
+  allow_failure: true
 
 # Run our tests
 test:lint:
@@ -45,6 +48,7 @@ test:lint:
   - branches
   except:
   - master
+  allow_failure: true
 
 # Run our tests
 test:phpcs:
@@ -55,6 +59,7 @@ test:phpcs:
   - bash ./dev/phpcs_cbf.sh
   only:
   - develop
+  allow_failure: true
 
 # Run our tests
 test:phploc:
@@ -67,6 +72,7 @@ test:phploc:
   only:
   - develop
   - master
+  allow_failure: true
 
 # Run our tests
 test:dependancies:
@@ -77,6 +83,7 @@ test:dependancies:
   - php ./dev/dependCheck.php
   only:
   - develop
+  allow_failure: true
 
 deploy_review:
   stage: stage
