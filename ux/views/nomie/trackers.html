@@ -1,44 +1,56 @@
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ This file is part of NxFIFTEEN Fitness Core.
+  ~ https://nxfifteen.me.uk
+  ~
+  ~ Copyright (c) 2017, Stuart McCulloch Anderson
+  ~
+  ~ Released under the MIT license
+  ~
+  ~ For the full copyright and license information, please view the LICENSE
+  ~ file that was distributed with this source code.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
 <script>
-    var requireJS = ["bower_components/leaflet/dist/leaflet.js", "bower_components/leaflet.markercluster/dist/leaflet.markercluster.js"];
+    var requireJS = ["../bundle/bower/leaflet/dist/leaflet.js", "../bundle/bower/leaflet.markercluster/dist/leaflet.markercluster.js"];
 
     loadJS(requireJS, "js/views/nomie_trackers.js");
-    loadCSS("bower_components/leaflet/dist/leaflet.css");
-    loadCSS("bower_components/leaflet.markercluster/dist/MarkerCluster.css");
-    loadCSS("bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css");
+    loadCSS("../bundle/bower/leaflet/dist/leaflet.css");
+    loadCSS("../bundle/bower/leaflet.markercluster/dist/MarkerCluster.css");
+    loadCSS("../bundle/bower/leaflet.markercluster/dist/MarkerCluster.Default.css");
     loadCSS("css/nomie.css");
     setUpBreadcrumb(['Tracking', 'Nomie'], 'Trackers');
 </script>
 <style type="text/css">
     .flot-container {
-        box-sizing: border-box;
-        position: relative;
-        height: 450px;
+        box-sizing : border-box;
+        position   : relative;
+        height     : 450px;
     }
 
     .flot-placeholder {
-        height: 100%;
-        font-size: 14px;
-        line-height: 1.2em;
+        height      : 100%;
+        font-size   : 14px;
+        line-height : 1.2em;
     }
 
     .legend table {
-        border-spacing: 5px;
+        border-spacing : 5px;
     }
 
     .flot-small-container {
-        height: 300px;
+        height : 300px;
     }
 
     .flot-mini-container {
-        height: 135px;
+        height : 135px;
     }
 
     .flot-medium-container {
-        height: 360px;
+        height : 360px;
     }
 
     #gpx-map {
-        height: 360px;
+        height : 360px;
     }
 </style>
 <div class="animated fadeIn">

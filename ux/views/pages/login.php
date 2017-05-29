@@ -1,21 +1,30 @@
 <?php
-    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-    header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-    header('Cache-Control: no-store, no-cache, must-revalidate');
-    header('Cache-Control: post-check=0, pre-check=0', false);
-    header('Pragma: no-cache');
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
-    session_start();
+header( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' );
+header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+header( 'Cache-Control: no-store, no-cache, must-revalidate' );
+header( 'Cache-Control: post-check=0, pre-check=0', false );
+header( 'Pragma: no-cache' );
+header( "X-Clacks-Overhead: GNU Terry Pratchett" );
 
-    $config = array();
-    if (!array_key_exists("admin_config", $_SESSION)) {
-        require_once("../../config.inc.php");
-    } else {
-        $config = $_SESSION['admin_config'];
-    }
+session_start();
+
+$config = [];
+if ( ! array_key_exists( "admin_config", $_SESSION ) ) {
+    require_once( "../../config.inc.php" );
+} else {
+    $config = $_SESSION[ 'admin_config' ];
+}
 ?>
-<!DOCTYPE html>
-<!--suppress HtmlUnknownTarget, HtmlUnknownTarget -->
+<!DOCTYPE html><!--suppress HtmlUnknownTarget, HtmlUnknownTarget -->
 <html lang="en">
 
 <head>
@@ -70,16 +79,14 @@
                     <div class="card-block">
                         <h1>Login</h1>
                         <p class="text-muted">Sign In to your account</p>
-                        <form action="<?php echo $config['http/admin']; ?>/login/redirect" method="post">
+                        <form action="<?php echo $config[ 'http/admin' ]; ?>/login/redirect" method="post">
                             <div class="input-group mb-3">
                                     <span class="input-group-addon"><i class="icon-user"></i>
-                                    </span>
-                                <input type="text" class="form-control" placeholder="Username" name="fuid" autofocus>
+                                    </span> <input type="text" class="form-control" placeholder="Username" name="fuid" autofocus>
                             </div>
                             <div class="input-group mb-4">
                                     <span class="input-group-addon"><i class="icon-lock"></i>
-                                    </span>
-                                <input type="password" class="form-control" placeholder="Password" name="password">
+                                    </span> <input type="password" class="form-control" placeholder="Password" name="password">
                             </div>
                             <div class="row">
                                 <div class="col-6">
@@ -97,8 +104,7 @@
                         <div>
                             <h2>Sign up</h2>
                             <p>Sign in to your Fitbit account to start creating a Core profile.</p>
-                            <a href="<?php echo $config['http/']; ?>register" class="btn btn-primary active mt-3">Register
-                                                                                                                  Now!</a>
+                            <a href="<?php echo $config[ 'http/' ]; ?>register" class="btn btn-primary active mt-3">Register Now!</a>
                         </div>
                     </div>
                 </div>
@@ -107,11 +113,8 @@
                         <div>
                             <h2>Beta</h2>
                             <p>
-                                Currently Core is in active Beta, you will have to be on my Fitbit friends list for your
-                                profile to work. You can request access to the beta, first read the FAQ bellow. </p>
-                            <a class="btn btn-info active mt-3" href="https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/beta-access-request" target="_blank">BETA
-                                                                                                                                                                          Access
-                                                                                                                                                                          FAQ</a>
+                                Currently Core is in active Beta, you will have to be on my Fitbit friends list for your profile to work. You can request access to the beta, first read the FAQ bellow. </p>
+                            <a class="btn btn-info active mt-3" href="https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/beta-access-request" target="_blank">BETA Access FAQ</a>
                         </div>
                     </div>
                 </div>
@@ -120,10 +123,15 @@
     </div>
 </div>
 
+<!--suppress JSUnusedLocalSymbols -->
+<script type="application/javascript">
+    var fitbitUserId = '<?php echo $_COOKIE[ '_nx_fb_usr' ]; ?>';
+</script>
+
 <!-- Bootstrap and necessary plugins -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-<script src="../../bower_components/tether/dist/js/tether.min.js"></script>
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../../bundle/bower/jquery/dist/jquery.min.js"></script>
+<script src="../../../bundle/bower/tether/dist/js/tether.min.js"></script>
+<script src="../../../bundle/bower/bootstrap/dist/js/bootstrap.min.js"></script>
 
 </body>
 

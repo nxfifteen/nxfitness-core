@@ -1,13 +1,17 @@
-/**
- * CoreUI - Open Source Bootstrap Admin Template
- * @version v1.0.0-alpha.4
- * @link http://coreui.io
- * Copyright (c) 2017 creativeLabs Łukasz Holeczek
- * @license MIT
- */
+/*!******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ * https://nxfifteen.me.uk
+ *
+ * Copyright (c) 2017, Stuart McCulloch Anderson
+ *
+ * Released under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 @import "bootstrap-variables";
 // Import Bootstrap source files
-@import "../bower_components/bootstrap/scss/bootstrap";
+@import "../../bundle/bower/bootstrap/scss/bootstrap";
 // Import vendors styles
 @import "vendors/vendors";
 // Import core styles

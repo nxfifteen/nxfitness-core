@@ -1,0 +1,159 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+
+<!--
+Element providing reverse geocoding handling (currently against OSM.)
+
+##### Example
+
+    <mudasobwa-nominatim latitude="41.03" longitude="2.10"></mudasobwa-nominatim>
+
+The underlaying ajax request would not DOS Nominatim service.
+
+@element mudasobwa-nominatim
+@blurb Element providing reverse geocoding.
+@status alpha
+@homepage http://polymerlabs.github.io/mudasobwa-nominatim
+-->
+<polymer-element name="mudasobwa-nominatim" attributes="auto latitude longitude language zoom latency" hidden>
+
+  <template>
+    <core-ajax  id="handler"
+                url="http://nominatim.openstreetmap.org/reverse?format=json&accept-language={{ language }}&lat={{ latitude }}&lon={{ longitude }}&zoom={{ zoom }}&addressdetails=1"
+                on-core-response="{{ addressLoaded }}"
+                handleAs="json">
+    </core-ajax>
+</template>
+
+  <script>
+
+    Polymer({
+      /**
+       * The `auto` attribute denotes whether the ajax request
+       *    should be executed on lat/lon changes automatically
+       *
+       * @attribute auto
+       * @type bool
+       * @default false
+       */
+      auto: false,
+
+      /**
+      * `latitude` is a latitude to retrieve reverse geo info for.
+      *
+      * @property latitude
+      * @type float
+      */
+      latitude: null,
+
+      /**
+      * `longitude` is a longitude to retrieve reverse geo info for.
+      *
+      * @property longitude
+      * @type float
+      */
+      longitude: null,
+
+      /**
+      * `latency` is a delay between concurrent requests to noninatim.
+      *
+      * @property latency
+      * @type number
+      * @default 1000
+      */
+      latency: 1000,
+
+      /**
+      * `language` is a language to retrieve reverse geo info for.
+      *
+      * @property language
+      * @type string
+      * @edfault 'en'
+      */
+      language: 'en',
+
+      /**
+      * `zoom` is a zoom factor to retrieve reverse geo info for.
+      *
+      * @property zoom
+      * @type integer
+      * @default 18
+      */
+      zoom: 18,
+
+      // More info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
+      ready: function() {
+      },
+
+      queue: function() {
+        this.job('nominatim-job', function() { this.go(); }, this.latency);
+      },
+
+      /**
+       * The `go` method performs an actual request to geo service.
+       *
+       * @method go
+       */
+      go: function() {
+        if (this.latitude && this.longitude) {
+          this.$.handler.go();
+        }
+      },
+
+      /**
+       * The handler for OSM ajax response.
+       *
+       * @method addressLoaded
+       */
+      addressLoaded: function() {
+        this.fireAddress(this.$.handler.response);
+      },
+
+      attributeChanged: function(attr, old, neu) {
+        switch(attr) {
+          case 'auto':
+            if (neu) { this.go(); }
+            break;
+          case 'latitude':
+          case 'longitude':
+            this.queue();
+            break;
+        }
+      },
+
+      /**
+       * The `mudasobwa-nominatim-response` event is fired whenever the
+       *    call to reverse geocoding succeeded.
+       *
+       * @event mudasobwa-nominatim-response
+       * @param {Object} detail
+       *   @param {string} detail.response the whole response.
+       *   @param {string} detail.address the formatted address (convenience param.)
+       */
+
+      /**
+       * The `fireAddress` method will fire the response event.
+       *
+       * @method fireAddress
+       * @param response as got from nominatim
+       */
+      fireAddress: function(response) {
+        if(!response) {
+          return false;
+        }
+        var address = response.address.country || response.address.address100 || 'World';
+        if (response.address.city || response.address.town) {
+          address += ', ' + (response.address.city || response.address.town);
+        }
+        if (response.address.street || response.address.road || response.address.pedestrian) {
+          address += ', ' + (response.address.street || response.address.road || response.address.pedestrian);
+        }
+        if (response.address.house_number) address += ', ' + response.address.house_number;
+
+        this.fire('mudasobwa-nominatim-response', { response: response, address: address });
+      }
+    });
+
+  </script>
+
+</polymer-element>
