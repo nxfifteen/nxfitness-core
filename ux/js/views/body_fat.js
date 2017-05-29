@@ -254,7 +254,7 @@ $(function () {
 
             if (fatTrends === '') {
                 $.getJSON("../json.php?user=" + fitbitUserId + "&data=trend", function (trendData) {
-                    fatTrends = '<p>You last recorded <strong>' + trendData.results.fat + '%</strong> body fat, so still has another' +
+                    fatTrends = '<p>You last recorded <strong>' + trendData.results.fat + '%</strong> body fat, but still have another' +
                         ' <strong>' + trendData.results.fatToLose + '%</strong> still to lose to reach your <strong>' + trendData.results.fatGoal + '%</strong> goal.</p>';
 
                     htmlString = fatTrends + htmlString;
