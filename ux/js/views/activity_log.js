@@ -1,10 +1,7 @@
 /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -56,7 +53,12 @@ $(function () {
                         html += '"></span>';
                         html += '<span class="timeline-icon ' + event.colour + '"><i class="fa fa-check"></i></span>';
                         html += '<span class="timeline-date">' + event.startTime + '</span>';
-                        html += '<h1 class="' + event.colour + '">' + event.name + '</h1>';
+                        html += '<h1 class="' + event.colour + '">';
+                        //noinspection JSValidateTypes
+                        if (event.visibility === "private") {
+                            html += '<i class="fa fa-lock"></i> ';
+                        }
+                        html += '' + event.name + '</h1>';
                         html += '<div class="row">';
                         html += '<div class="col-md-6">';
                         html += '<div class="eventDay">' + event.startTime + '</div>';
