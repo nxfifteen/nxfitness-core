@@ -621,6 +621,14 @@ class DataReturn
             "stepsLastYear" => round($dbStepsYearLast, 0),
         ];
     }
+    /**
+     * @todo Consider test case
+     * @return array
+     */
+    public function returnUserRecordGeoSecure()
+    {
+        return json_decode($this->getAppClass()->getUserSetting($this->getUserID(), "geo_private", array()), true);
+    }
 
     /**
      * @todo Consider test case
