@@ -627,7 +627,13 @@ class DataReturn
      */
     public function returnUserRecordGeoSecure()
     {
-        return json_decode($this->getAppClass()->getUserSetting($this->getUserID(), "geo_private", array()), true);
+        if (
+            (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != $_GET['user']) || !array_key_exists('_nx_fb_usr', $_COOKIE)
+        ) {
+            return array();
+        } else {
+            return json_decode($this->getAppClass()->getUserSetting($this->getUserID(), "geo_private", array()), true);
+        }
     }
 
     /**
