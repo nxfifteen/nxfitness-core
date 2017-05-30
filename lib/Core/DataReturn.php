@@ -1046,12 +1046,9 @@ class DataReturn
                         if ($gpxMeta['meta']['visibility'] == "public") {
                             $gpxMeta['meta']['distance_start'] = round($this->haversineGreatCircleDistance($geoSpot['lat'], $geoSpot['lon'], $startLatitudeVery, $startLongitudeVery, "M"), 2);
                             $gpxMeta['meta']['distance_end'] = round($this->haversineGreatCircleDistance($geoSpot['lat'], $geoSpot['lon'], $endLatitude, $endLongitude, "M"), 2);
-                            if ($gpxMeta['meta']['distance_start'] < $geoSpot['radious'] && $gpxMeta['meta']['distance_end'] < $geoSpot['radious']) {
+                            if ($gpxMeta['meta']['distance_start'] < $geoSpot['radious'] || $gpxMeta['meta']['distance_end'] < $geoSpot['radious']) {
                                 $gpxMeta['meta']['visibility'] = "private";
                             }
-                            if ($tcxFileName == '7127171880') nxr(0, $geoSpot['radious']);
-                            if ($tcxFileName == '7127171880') nxr(0, $gpxMeta['meta']['distance_end']);
-                            if ($tcxFileName == '7127171880') nxr(0, $gpxMeta['meta']['distance_start']);
                         }
                     }
                 }
