@@ -13,10 +13,12 @@ $(function () {
     var map;
     var mapContainer = $("#map-container");
 
-    if ("geolocation" in navigator) {
+    if (location.protocol === 'https:' && "geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function (position) {
             mapGPS("Your Locaton", position.coords.latitude, position.coords.longitude);
         });
+    } else {
+        mapGPS("Your Locaton", 56.33861769463613, -2.798058986663819);
     }
 
 /*    $.getJSON("sites.json", function (data) {
