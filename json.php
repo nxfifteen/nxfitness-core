@@ -67,8 +67,13 @@ if ( array_key_exists( "user", $_GET ) && array_key_exists( "data", $_GET ) ) {
             $cacheTime = trim( fgets( $fh ) );
 
             // if data was cached recently, return cached data
-            // if ( $cacheTime > strtotime( '-45 minutes' ) ) {
-            if ( $cacheTime > strtotime( '-5 seconds' ) ) {
+            if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
+                $fileTimeOut = strtotime( '-5 minutes' );
+            } else {
+                $fileTimeOut = strtotime( '-45 minutes' );
+            }
+
+            if ( $cacheTime > $fileTimeOut ) {
                 $json = json_decode( fread( $fh, filesize( $cacheFile ) ), true );
 
                 $end = microtime( true );
