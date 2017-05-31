@@ -1194,6 +1194,37 @@ class DataReturn
 
     /**
      * @todo Consider test case
+     * @return array|bool
+     */
+    public function returnUserRecordWeightLossForcast()
+    {
+        $return = array();
+
+        $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps", ['caloriesOut'], ["user" => $this->getUserID(), "ORDER" => ["date" => "DESC"]]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+        $dbfood = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null, false) . "food", ['calories'], ["AND" => ["user" => $this->getUserID(), "date" => $this->getParamDate()], "ORDER" => ["date" => "DESC"]]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+        $dbWeight = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "body", ['date', 'weight', 'weightGoal'], ["AND" => ["user" => $this->getUserID(), "date[<=]" => $this->getParamDate()], "ORDER" => ["date" => "DESC"]]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+        $return['caldef'] = (String)($dbSteps['caloriesOut'] - $dbfood);
+        $return['weight'] = $dbWeight['weight'];
+        $return['weightGoal'] = $dbWeight['weightGoal'];
+
+        $return['DesiredLoss'] = $return['weight'] - $return['weightGoal'];
+        $return['WeightLossWeekly'] = round((7 * $return['caldef']) / 7716, 2);
+        $return['EstWeeks'] = round($return['DesiredLoss'] / $return['WeightLossWeekly'], 0);
+
+        $return['StartDate'] = $dbWeight['date'];
+        $return['EstDate'] = date('Y-m-d', strtotime($dbWeight['date'] . " +" . $return['EstWeeks'] ." week"));
+
+        return $return;
+    }
+
+    /**
+     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordChallenger()
@@ -3365,70 +3396,31 @@ class DataReturn
     {
         $trendArray = [];
 
-        $dbBody = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
-                null, false) . "body", [
-            'date',
-            'weight',
-            'weightGoal',
-            'fat',
-            'fatGoal'
-        ], ["user" => $this->getUserID(), "ORDER" => ["date" => "ASC"]]);
-        $trendArray['weeksWeightTracked'] = round(abs(strtotime($this->getParamDate()) - strtotime($dbBody['date'])) / 604800,
-            0);
+        $estimation = $this->returnUserRecordWeightLossForcast();
 
-        $userWeightUnits = $this->getAppClass()->getUserSetting($this->getUserID(), "unit_weight", "kg");
-
-        $trendArray['weight'] = $this->convertWeight($dbBody['weight'],
-                $userWeightUnits) . " " . $userWeightUnits;
-        $trendArray['weightToLose'] = $this->convertWeight($dbBody['weight'] - $dbBody['weightGoal'],
-                $userWeightUnits) . " " . $userWeightUnits;
-        $trendArray['weightGoal'] = $this->convertWeight($dbBody['weightGoal'],
-                $userWeightUnits) . " " . $userWeightUnits;
+        $dbBody = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "body", ['date', 'fat', 'fatGoal'], ["user" => $this->getUserID(), "ORDER" => ["date" => "ASC"]]);
+        $trendArray['weeksWeightTracked'] = round(abs(strtotime($this->getParamDate()) - strtotime($dbBody['date'])) / 604800, 0);
 
         $trendArray['fat'] = number_format($dbBody['fat']);
         $trendArray['fatToLose'] = number_format($dbBody['fat'] - $dbBody['fatGoal']);
         $trendArray['fatGoal'] = number_format($dbBody['fatGoal']);
 
-        $dbGoalsCalories = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
-                null, false) . "food_goals", ['estimatedDate'], [
-            "user" => $this->getUserID(),
-            "ORDER" => ["date" => "DESC"]
-        ]);
-        $trendArray['estimatedDate'] = date("l",
-                strtotime($dbGoalsCalories['estimatedDate'])) . " the " . date("jS \of F Y",
-                strtotime($dbGoalsCalories['estimatedDate']));
-        $trendArray['estimatedWeeks'] = round(abs(strtotime($dbGoalsCalories['estimatedDate']) - strtotime($this->getParamDate())) / 604800,
-            0);
+        $userWeightUnits = $this->getAppClass()->getUserSetting($this->getUserID(), "unit_weight", "kg");
 
-        $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
-                null, false) . "users", [
-            'name',
-            'rank',
-            'friends',
-            'distance',
-            'gender'
-        ], ["fuid" => $this->getUserID()]);
+        $trendArray['weight'] = $this->convertWeight($estimation['weight'], $userWeightUnits) . " " . $userWeightUnits;
+        $trendArray['weightToLose'] = $this->convertWeight($estimation['DesiredLoss'], $userWeightUnits) . " " . $userWeightUnits;
+        $trendArray['weightGoal'] = $this->convertWeight($estimation['weightGoal'], $userWeightUnits) . " " . $userWeightUnits;
+
+        $trendArray['estimatedDate'] = date("l", strtotime($estimation['EstDate'])) . " the " . date("jS \of F Y", strtotime($estimation['EstDate']));
+        $trendArray['estimatedWeeks'] = round($estimation['EstWeeks'], 0);
+        $trendArray['caldef'] = $estimation['caldef'];
+
+        $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "users", ['name', 'rank', 'friends', 'distance', 'gender'], ["fuid" => $this->getUserID()]);
         $trendArray['rank'] = $dbUsers['rank'];
         $trendArray['friends'] = $dbUsers['friends'];
         $trendArray['nextRank'] = number_format($dbUsers['distance'], 0);
         $trendArray['name'] = explode(" ", $dbUsers['name']);
         $trendArray['name'] = $trendArray['name'][0];
-
-        $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
-                false) . "steps", ['caloriesOut'], [
-            "user" => $this->getUserID(),
-            "ORDER" => ["date" => "DESC"]
-        ]);
-        $dbfood = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null,
-                false) . "food", ['calories'], [
-            "AND" => [
-                "user" => $this->getUserID(),
-                "date" => $this->getParamDate()
-            ],
-            "ORDER" => ["date" => "DESC"]
-        ]);
-
-        $trendArray['caldef'] = (String)($dbSteps['caloriesOut'] - $dbfood);
 
         if ($dbUsers['gender'] == "MALE") {
             $trendArray['he'] = "he";
@@ -3723,7 +3715,12 @@ class DataReturn
             }
         }
 
-        $returnWeight = array_slice($returnWeight, 0, $days);
+        $weightEst = [];
+        $estimation = $this->returnUserRecordWeightLossForcast();
+        for ($interval = 0; $interval < count($returnWeight); $interval++) {
+            $weightEst[] = $estimation['weight'] - (($estimation['WeightLossWeekly'] / 7) * ( $interval + 1) );
+        }
+        $weightEst = array_reverse($weightEst);
 
         $fatMin = 0;
         $fatMax = 0;
@@ -3824,6 +3821,7 @@ class DataReturn
             'graph_weightAvg' => $this->convertWeight($weightAvg, $userWeightUnits),
             'graph_weightGoal' => $this->convertWeight($weightGoal, $userWeightUnits),
             'graph_weightTrend' => $this->convertWeight($weightTrend, $userWeightUnits),
+            'graph_weightEst' => $this->convertWeight($weightEst, $userWeightUnits),
             'loss_rate_fat' => $loss["fat"],
             'loss_rate_weight' => $this->convertWeight($loss["weight"], $userWeightUnits),
             'weight_units' => $userWeightUnits
