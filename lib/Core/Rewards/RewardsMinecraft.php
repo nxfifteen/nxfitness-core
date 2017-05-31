@@ -220,6 +220,7 @@ class RewardsMinecraft {
                             "LINE"   => __LINE__
                         ] );
                     nxr( 4, "Awarding $cat / $event ($score) = " . print_r( $recordReward[ 'description' ], true ) );
+                    nxr( 0, $this->getAppClass()->getDatabase()->last() );
                 } else {
                     nxr( 4, "Already awarded $cat / $event ($score) = " . print_r( $recordReward[ 'description' ],
                             true ) );
@@ -446,12 +447,9 @@ class RewardsMinecraft {
                 "logType[!]"      => 'auto_detected'
             ];
             $minMaxAvg          = [];
-            $minMaxAvg[ 'min' ] = ( $this->getAppClass()->getDatabase()->min( $db_prefix . "activity_log",
-                        "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
-            $minMaxAvg[ 'avg' ] = ( $this->getAppClass()->getDatabase()->avg( $db_prefix . "activity_log",
-                        "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
-            $minMaxAvg[ 'max' ] = ( $this->getAppClass()->getDatabase()->max( $db_prefix . "activity_log",
-                        "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
+            $minMaxAvg[ 'min' ] = ( $this->getAppClass()->getDatabase()->min( $db_prefix . "activity_log", "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
+            $minMaxAvg[ 'avg' ] = ( $this->getAppClass()->getDatabase()->avg( $db_prefix . "activity_log", "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
+            $minMaxAvg[ 'max' ] = ( $this->getAppClass()->getDatabase()->max( $db_prefix . "activity_log", "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
 
             $minMaxAvg[ 'min2avg' ] = ( ( $minMaxAvg[ 'avg' ] - $minMaxAvg[ 'min' ] ) / 2 ) + $minMaxAvg[ 'min' ];
             $minMaxAvg[ 'avg2max' ] = ( ( $minMaxAvg[ 'max' ] - $minMaxAvg[ 'avg' ] ) / 2 ) + $minMaxAvg[ 'avg' ];
@@ -639,5 +637,25 @@ class RewardsMinecraft {
      */
     public function eventTriggerStreak( $goal, $length ) {
         $this->checkForAward( "streak", $goal, $length );
+    }
+
+    public function actionRewards()
+    {
+        $prefix = $this->getAppClass()->getSetting("db_prefix", null,false);
+        $dbRewards = $this->getAppClass()->getDatabase()->select($prefix . "reward_queue",
+            ["[>]" . $prefix . "rewards" => ["reward" => "rid"]],
+            [
+                $prefix . 'reward_queue.date',
+                $prefix . 'reward_queue.state',
+                $prefix . 'rewards.system',
+                $prefix . 'rewards.reward'
+            ],
+            [ "AND" => [ $prefix . "reward_queue.fuid" => $this->getUserID(), $prefix . "rewards.system" => "xp" ] ]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+            "METHOD" => __METHOD__,
+            "LINE" => __LINE__
+        ]);
+
+        nxr( 2, print_r($dbRewards, true) );
     }
 }

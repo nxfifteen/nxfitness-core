@@ -2728,7 +2728,7 @@ class ApiBabel
     }
 
     /**
-     * @return bool|string
+     * @return bool|array
      */
     private function pullNomieTrackers()
     {
@@ -3068,14 +3068,9 @@ class ApiBabel
         // Check we have a valid user
         if ($this->getAppClass()->isUser($user)) {
             nxr(0, " Checking $user for minecraft reward support");
-            $minecraftUsername = $this->getAppClass()->getUserSetting($user, "minecraft_username");
-            if (is_null($minecraftUsername)) {
-                nxr(0, "  Users is not a Minecraft player");
-                $this->RewardsSystem = null;
-            } else {
-                $this->RewardsSystem = new RewardsMinecraft($user);
-                nxr(0, "  Reward system ready");
-            }
+
+            nxr(0, "  Reward system ready");
+            $this->RewardsSystem = new RewardsMinecraft($user);
 
             $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
             if (strtotime($userCoolDownTime) >= date("U")) {
@@ -3316,7 +3311,7 @@ class ApiBabel
                         ]);
                 }
 
-                //if (!is_null($this->RewardsSystem)) $this->RewardsSystem->check_rewards($user);
+                if (!is_null($this->RewardsSystem)) $this->RewardsSystem->actionRewards();
 
             } else {
                 nxr(0, "User has not yet authenticated with Fitbit");
