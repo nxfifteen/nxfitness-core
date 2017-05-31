@@ -1194,6 +1194,37 @@ class DataReturn
 
     /**
      * @todo Consider test case
+     * @return array|bool
+     */
+    public function returnUserRecordWeightLossForcast()
+    {
+        $return = array();
+
+        $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps", ['caloriesOut'], ["user" => $this->getUserID(), "ORDER" => ["date" => "DESC"]]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+        $dbfood = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null, false) . "food", ['calories'], ["AND" => ["user" => $this->getUserID(), "date" => $this->getParamDate()], "ORDER" => ["date" => "DESC"]]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+        $dbWeight = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "body", ['date', 'weight', 'weightGoal'], ["AND" => ["user" => $this->getUserID(), "date[<=]" => $this->getParamDate()], "ORDER" => ["date" => "DESC"]]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+        $return['caldef'] = (String)($dbSteps['caloriesOut'] - $dbfood);
+        $return['weight'] = $dbWeight['weight'];
+        $return['weightGoal'] = $dbWeight['weightGoal'];
+
+        $return['DesiredLoss'] = $return['weight'] - $return['weightGoal'];
+        $return['WeightLossWeekly'] = round((7 * $return['caldef']) / 7716, 2);
+        $return['EstWeeks'] = round($return['DesiredLoss'] / $return['WeightLossWeekly'], 0);
+
+        $return['StartDate'] = $dbWeight['date'];
+        $return['EstDate'] = date('Y-m-d', strtotime($dbWeight['date'] . " +" . $return['EstWeeks'] ." week"));
+
+        return $return;
+    }
+
+    /**
+     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordChallenger()
