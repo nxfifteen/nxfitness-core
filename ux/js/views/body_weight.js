@@ -10,7 +10,7 @@
 $(function () {
     'use strict';
 
-    var configWeight, weightChart, weightTrends = '';
+    var configWeight, configForcastWeight, weightChart, weightForcastChart, weightTrends = '';
 
     var timeFormat = 'MM/DD/YYYY HH:mm';
 
@@ -72,7 +72,7 @@ $(function () {
 
             var pointRadius = 3;
             if (data.results.graph_weight.length > 29) {
-                pointRadius = 0;
+                pointRadius = 1;
             }
 
             configWeight.data.datasets[0].pointRadius = pointRadius;
@@ -85,8 +85,23 @@ $(function () {
                 dataTimeScale.push(reportDate.getTime() - i * 86400000);
             }
             configWeight.data.labels = dataTimeScale;
-
             weightChart.update();
+
+            var updateDataSet6 = [];
+            var dataTimeScaleForcast = [];
+            for (i = data.results.graph_weight.length * -1; i < 0; i++) {
+                dataTimeScaleForcast.push(reportDate.getTime() - i * 86400000);
+                updateDataSet6.push(data.results.graph_weightGoal[0]);
+            }
+            /** @namespace data.results.graph_weightEst */
+            configForcastWeight.data.datasets[0].data = data.results.graph_weightEst;
+            configForcastWeight.data.datasets[1].data = updateDataSet6;
+
+            configForcastWeight.data.datasets[0].pointRadius = pointRadius;
+            configForcastWeight.data.datasets[1].pointRadius = pointRadius;
+            configForcastWeight.data.labels = dataTimeScaleForcast;
+            weightForcastChart.update();
+
             trendWeight($, data);
 
             debug_add_gen_time("weight " + val, data.time);
@@ -94,7 +109,25 @@ $(function () {
     }
 
     function graphWeight($, data, st) {
-        var i, dataSet1, dataSet2, dataSet3, dataSet4, dataTimeScale, aniDuration, pointRadius, weight_units;
+        var i, dataSet1, dataSet2, dataSet3, dataSet4, dataSet5, dataSet6, dataTimeScale, aniDuration, pointRadius, weight_units;
+
+        /** @namespace data.results.weight_units */
+        //noinspection JSValidateTypes
+        if (data.results.weight_units === "kg") {
+            weight_units = "Kilograms";
+        } else { //noinspection JSValidateTypes
+            if (data.results.weight_units === "lb") {
+                weight_units = "Pounds";
+            } else {
+                weight_units = data.results.weight_units;
+            }
+        }
+
+        if (data.results.graph_weight.length > 29) {
+            pointRadius = 0;
+        } else {
+            pointRadius = 1;
+        }
 
         var weightGraph = $('#weightGraph');
         if (weightGraph.length > 0) {
@@ -108,24 +141,6 @@ $(function () {
             dataSet2 = data.results.graph_weightTrend;
             dataSet3 = data.results.graph_weightAvg;
             dataSet4 = data.results.graph_weightGoal;
-
-            /** @namespace data.results.weight_units */
-            //noinspection JSValidateTypes
-            if (data.results.weight_units === "kg") {
-                weight_units = "Kilograms";
-            } else { //noinspection JSValidateTypes
-                if (data.results.weight_units === "lb") {
-                    weight_units = "Pounds";
-                } else {
-                    weight_units = data.results.weight_units;
-                }
-            }
-
-            if (dataSet1.length > 29) {
-                pointRadius = 0;
-            } else {
-                pointRadius = 3;
-            }
 
             dataTimeScale = [];
             for (i = 0; i < dataSet1.length; i++) {
@@ -231,6 +246,95 @@ $(function () {
 
             var ctx = document.getElementById("weightGraph").getContext("2d");
             weightChart = new Chart(ctx, configWeight);
+        }
+
+        var weightForcastGraph = $('#weightForcastGraph');
+        if (weightForcastGraph.length > 0) {
+            aniDuration = 3000;
+
+            //noinspection JSUnresolvedVariable
+            dataSet5 = data.results.graph_weightEst;
+
+            if (dataSet5.length > 29) {
+                pointRadius = 0;
+            } else {
+                pointRadius = 3;
+            }
+
+            dataTimeScale = [];
+            dataSet6 = [];
+            for (i = dataSet1.length * -1; i < 0; i++) {
+                dataTimeScale.push(st - i * 86400000);
+                dataSet6.push(dataSet4[0]);
+            }
+
+            //noinspection JSUnusedLocalSymbols
+            configForcastWeight = {
+                type: 'line',
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Weight Loss Forcast Chart'
+                    },
+                    tooltips: {
+                        mode: 'label',
+                        callbacks: {
+                            beforeBody: function () {
+                                return 'Weights in ' + weight_units;
+                            }
+                        }
+                    },
+                    hover: {
+                        mode: 'dataset'
+                    },
+                    scales: {
+                        xAxes: [{
+                            type: "time",
+                            time: {
+                                format: timeFormat,
+                                round: 'day',
+                                tooltipFormat: 'll'
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Date'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: weight_units
+                            }
+                        }]
+                    }
+                },
+                data: {
+                    labels: dataTimeScale, // Date Objects
+                    datasets: [{
+                        label: "Forcast Weight Loss",
+                        data: dataSet5,
+                        fill: false,
+                        borderDash: [5, 5],
+                        borderColor: "#1FB5AD",
+                        backgroundColor: "#1FB5AD",
+                        pointBackgroundColor: "#1FB5AD",
+                        pointRadius: pointRadius
+                    }, {
+                        label: "Target Weight",
+                        data: dataSet6,
+                        fill: false,
+                        borderColor: "#ac193d",
+                        backgroundColor: "#ac193d",
+                        pointBorderColor: "#ac193d",
+                        pointBackgroundColor: "#ac193d",
+                        pointRadius: pointRadius
+                    }]
+                }
+            };
+
+            var ctxForcast = document.getElementById("weightForcastGraph").getContext("2d");
+            weightForcastChart = new Chart(ctxForcast, configForcastWeight);
         }
     }
 
