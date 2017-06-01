@@ -622,23 +622,44 @@ class RewardsMinecraft {
         $this->checkForAward( "streak", $goal, $length, $goal.$length );
     }
 
+    /**
+     *
+     */
     public function actionRewards()
     {
         $prefix = $this->getAppClass()->getSetting("db_prefix", null,false);
         $dbRewards = $this->getAppClass()->getDatabase()->select($prefix . "reward_queue",
             ["[>]" . $prefix . "rewards" => ["reward" => "rid"]],
             [
+                $prefix . 'reward_queue.rqid',
                 $prefix . 'reward_queue.date',
-                $prefix . 'reward_queue.state',
-                $prefix . 'rewards.system',
                 $prefix . 'rewards.reward'
             ],
-            [ "AND" => [ $prefix . "reward_queue.fuid" => $this->getUserID(), $prefix . "rewards.system" => "xp" ] ]);
+            [ "AND" => [ $prefix . "reward_queue.fuid" => $this->getUserID(), $prefix . "reward_queue.state" => "pending", $prefix . "rewards.system" => "xp" ] ]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
 
-        nxr( 2, print_r($dbRewards, true) );
+        if (count($dbRewards) > 0) {
+            $dbCurrentXp = $this->getAppClass()->getDatabase()->get($prefix . "users_xp", 'xp', ["fuid" => $this->getUserID()]);
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+                "METHOD" => __METHOD__,
+                "LINE" => __LINE__
+            ]);
+
+            if (!isset($dbCurrentXp)) $dbCurrentXp = 0;
+            nxr(1, "current XP: " . $dbCurrentXp);
+
+            foreach ($dbRewards as $dbReward) {
+                $dbCurrentXp = $dbCurrentXp + $dbReward['reward'];
+                $this->getAppClass()->getDatabase()->update($prefix . "reward_queue",
+                    ["state" => "delivered"], ["rqid" => $dbReward['rqid']]);
+            }
+            nxr(1, "new XP: " . $dbCurrentXp);
+
+            $this->getAppClass()->getDatabase()->update($prefix . "users_xp",
+                ["xp" => $dbCurrentXp], ["fuid" => $this->getUserID()]);
+        }
     }
 }
