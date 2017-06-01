@@ -2622,7 +2622,7 @@ class DataReturn
     private function calculateXP($myPoints) {
 
         $calcStart = 0; // Level 1 Start XP
-        $calcEnd = 10;  // Level 1 End XP
+        $calcEnd = 100;  // Level 1 End XP
         $calcInc = 0;   // Increase by extra how many per level?
         $calcLevel = 6; // Multiply by how many per level? (1- easy / 20- hard)
 
