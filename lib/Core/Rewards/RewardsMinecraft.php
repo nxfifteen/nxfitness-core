@@ -641,10 +641,20 @@ class RewardsMinecraft
             }
 
             if ($value >= 1) {
-                $recordedValue = round($value, 3);
+                $yesterday = date('Y-m-d', strtotime('-1 days'));
+
+                $yesterdaySteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps_goals",
+                    $trigger, [
+                        "AND" => [
+                            "user" => $this->getUserID(),
+                            "date" => $yesterday
+                        ]
+                    ]);
+
+                $recordedValue = round($yesterdaySteps, 3);
                 $hundredth = round($recordedValue / $divider, 0);
-                nxr(1, "checking awards for $trigger $hundredth");
-                $this->checkForAward("hundredth", $trigger, $hundredth, date('Y-m-d') . $trigger . $hundredth);
+                nxr(1, "Checking awards for $yesterday on $trigger $hundredth");
+                $this->checkForAward("hundredth", $trigger, $hundredth, $yesterday . $trigger . $hundredth);
             }
         }
     }
