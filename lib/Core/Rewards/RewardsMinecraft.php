@@ -438,15 +438,15 @@ class RewardsMinecraft {
             $activeDuration = $activity->duration / 1000 / 60;
 
             if ( $activeDuration == $minMaxAvg[ 'max' ] ) {
-                $this->checkForAward( "activity", $activity->activityName, "max" );
+                $this->checkForAward( "activity", $activity->activityName, "max", $activity->logId );
             } else if ( $activeDuration >= $minMaxAvg[ 'avg2max' ] ) {
-                $this->checkForAward( "activity", $activity->activityName, "avg2max" );
+                $this->checkForAward( "activity", $activity->activityName, "avg2max", $activity->logId );
             } else if ( $activeDuration >= $minMaxAvg[ 'avg' ] ) {
-                $this->checkForAward( "activity", $activity->activityName, "avg" );
+                $this->checkForAward( "activity", $activity->activityName, "avg", $activity->logId );
             } else if ( $activeDuration >= $minMaxAvg[ 'min2avg' ] ) {
-                $this->checkForAward( "activity", $activity->activityName, "min2avg" );
+                $this->checkForAward( "activity", $activity->activityName, "min2avg", $activity->logId );
             } else {
-                $this->checkForAward( "activity", $activity->activityName, "other" );
+                $this->checkForAward( "activity", $activity->activityName, "other", $activity->logId );
             }
         }
 
@@ -464,15 +464,13 @@ class RewardsMinecraft {
         nxr( 4,
             $badge->shortName . " (" . $badge->category . ") awarded " . $badge->timesAchieved . " on " . $badge->dateTime );
 
-        if ( $this->checkForAward( "badge", $badge->category . " | " . $badge->shortName, "awarded" ) ) {
+        if ( $this->checkForAward( "badge", $badge->category . " | " . $badge->shortName, "awarded", $badge->category.$badge->shortName ) ) {
 
-        } else if ( $this->checkForAward( "badge", $badge->category, "awarded" ) ) {
+        } else if ( $this->checkForAward( "badge", $badge->category, "awarded", $badge->category ) ) {
 
-        } else if ( $this->checkForAward( "badge", $badge->category . " | " . $badge->shortName,
-            $badge->timesAchieved )
-        ) {
+        } else if ( $this->checkForAward( "badge", $badge->category . " | " . $badge->shortName, $badge->timesAchieved, $badge->category.$badge->shortName.$badge->timesAchieved )) {
 
-        } else if ( $this->checkForAward( "badge", $badge->category, $badge->timesAchieved ) ) {
+        } else if ( $this->checkForAward( "badge", $badge->category, $badge->timesAchieved, $badge->category.$badge->timesAchieved ) ) {
 
         }
         //}
@@ -486,12 +484,14 @@ class RewardsMinecraft {
      * @todo Consider test case
      */
     public function eventTriggerWeightChange( $current, $goal, $last ) {
+        $currentDate = new DateTime ('now');
+        $currentDate = $currentDate->format("Y-m-d");
         if ( $current <= $goal ) {
-            $this->checkForAward( "body", "weight", "goal" );
+            $this->checkForAward( "body", "weight", "goal", $currentDate."weightgoal" );
         } else if ( $current < $last ) {
-            $this->checkForAward( "body", "weight", "decreased" );
+            $this->checkForAward( "body", "weight", "decreased", $currentDate."weightdecreased" );
         } else if ( $current > $last ) {
-            $this->checkForAward( "body", "weight", "increased" );
+            $this->checkForAward( "body", "weight", "increased", $currentDate."weightincreased" );
         }
     }
 
@@ -503,12 +503,14 @@ class RewardsMinecraft {
      * @todo Consider test case
      */
     public function eventTriggerFatChange( $current, $goal, $last ) {
+        $currentDate = new DateTime ('now');
+        $currentDate = $currentDate->format("Y-m-d");
         if ( $current <= $goal ) {
-            $this->checkForAward( "body", "fat", "goal" );
+            $this->checkForAward( "body", "fat", "goal", $currentDate."fatgoal" );
         } else if ( $current < $last ) {
-            $this->checkForAward( "body", "fat", "decreased" );
+            $this->checkForAward( "body", "fat", "decreased", $currentDate."fatdecreased" );
         } else if ( $current > $last ) {
-            $this->checkForAward( "body", "fat", "increased" );
+            $this->checkForAward( "body", "fat", "increased", $currentDate."fatincreased" );
         }
     }
 
@@ -520,6 +522,7 @@ class RewardsMinecraft {
     public function eventTriggerNewMeal( $meal ) {
         nxr( 1, "** API Event Meal Logged" );
         nxr( 6, $meal->loggedFood->name . " recorded" );
+        nxr(0, print_r($meal, true));
     }
 
     /**
@@ -546,7 +549,7 @@ class RewardsMinecraft {
             }
 
             if ( $recordedValue >= $recordedTarget ) {
-                $this->checkForAward( "goal", "veryactive", "reached" );
+                $this->checkForAward( "goal", "veryactive", "reached", date( 'Y-m-d' )."veryactive"."reached" );
             }
         }
     }
@@ -568,13 +571,13 @@ class RewardsMinecraft {
                 if ( ! $this->smashedGoal( $trigger, $value ) ) {
                     // Reached Step Goal
                     if ( $this->reachedGoal( $trigger, $value ) ) {
-                        $this->checkForAward( "goal", $trigger, "reached" );
+                        $this->checkForAward( "goal", $trigger, "reached", date( 'Y-m-d' ).$trigger."reached" );
                     }
                 } else {
-                    $this->checkForAward( "goal", $trigger, "smashed" );
+                    $this->checkForAward( "goal", $trigger, "smashed", date( 'Y-m-d' ).$trigger."smashed" );
                 }
             } else {
-                $this->checkForAward( "goal", $trigger, "crushed" );
+                $this->checkForAward( "goal", $trigger, "crushed", date( 'Y-m-d' ).$trigger."crushed" );
             }
 
             if ( $trigger == "steps" ) {
@@ -587,8 +590,7 @@ class RewardsMinecraft {
                 $recordedValue = round( $value, 3 );
                 $hundredth     = round( $recordedValue / $divider, 0 );
                 nxr( 1, "checking awards for $trigger $hundredth" );
-                $this->checkForAward( "hundredth", $trigger, $hundredth );
-
+                $this->checkForAward( "hundredth", $trigger, $hundredth, date( 'Y-m-d' ).$trigger.$hundredth );
             }
         }
     }
@@ -605,8 +607,8 @@ class RewardsMinecraft {
 
         nxr( 2, "** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score );
 
-        if ( ! $this->checkForAward( "nomie", "logged", $event ) ) {
-            $this->checkForAward( "nomie", "score", $score );
+        if ( ! $this->checkForAward( "nomie", "logged", $event, $date.$event ) ) {
+            $this->checkForAward( "nomie", "score", $score, $date.$score );
         }
     }
 
@@ -617,7 +619,7 @@ class RewardsMinecraft {
      * @todo Consider test case
      */
     public function eventTriggerStreak( $goal, $length ) {
-        $this->checkForAward( "streak", $goal, $length );
+        $this->checkForAward( "streak", $goal, $length, $goal.$length );
     }
 
     public function actionRewards()
