@@ -125,7 +125,7 @@ if ( array_key_exists( "user", $_GET ) && array_key_exists( "data", $_GET ) ) {
 
     $RewardsMinecraft = new RewardsMinecraft();
 
-    $json = $RewardsMinecraft->queryRewards();
+    $json = $RewardsMinecraft->queryMinecraftRewards();
 
     $end = microtime( true );
 

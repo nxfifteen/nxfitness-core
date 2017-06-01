@@ -308,7 +308,7 @@ class RewardsMinecraft {
      * @todo Consider test case
      * @return array
      */
-    public function queryRewards() {
+    public function queryMinecraftRewards() {
         $wmc_key_provided = $_GET[ 'wmc_key' ];
         $wmc_key_correct  = $this->getAppClass()->getSetting( "wmc_key", null, true );
         nxr( 0, "Minecraft rewards Check" );
@@ -328,7 +328,7 @@ class RewardsMinecraft {
                 . " `" . $databaseTable . "reward_queue`.`rqid` AS `rqid`"
                 . " FROM `" . $databaseTable . "rewards`"
                 . " JOIN `" . $databaseTable . "reward_queue` ON (`" . $databaseTable . "reward_queue`.`reward` = `" . $databaseTable . "rewards`.`rid`)"
-                . " WHERE `" . $databaseTable . "reward_queue`.`state` = 'pending' LIMIT 50" );
+                . " WHERE `" . $databaseTable . "reward_queue`.`state` = 'pending' AND `" . $databaseTable . "rewards`.`system` = 'minecraft' LIMIT 50" );
 
             $data = [];
             foreach ( $rewards as $dbReward ) {
