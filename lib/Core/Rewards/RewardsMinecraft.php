@@ -64,11 +64,11 @@ class RewardsMinecraft {
     public function __construct( $user = null ) {
         $this->setAppClass( new Core() );
         $this->AwardsGiven   = [];
-        if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
+//        if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
             $this->createRewards = false;
-        } else {
-            $this->createRewards = true;
-        }
+//        } else {
+//            $this->createRewards = true;
+//        }
         $this->setUserID( $user );
         $this->user = $user;
     }
