@@ -632,6 +632,13 @@ class RewardsMinecraft {
     public function actionRewards()
     {
         $prefix = $this->getAppClass()->getSetting("db_prefix", null,false);
+        $this->getAppClass()->getDatabase()->delete($prefix . "reward_queue",
+            [ "AND" => [ "fuid" => $this->getUserID(), "state" => "delivered", "date[<]" => date('Y-m-d', strtotime(' -14 days')) ] ]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+            "METHOD" => __METHOD__,
+            "LINE" => __LINE__
+        ]);
+
         $dbRewards = $this->getAppClass()->getDatabase()->select($prefix . "reward_queue",
             ["[>]" . $prefix . "rewards" => ["reward" => "rid"]],
             [
