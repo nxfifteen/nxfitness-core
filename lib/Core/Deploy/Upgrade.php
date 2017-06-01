@@ -662,6 +662,20 @@ class Upgrade {
         return true;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function updateRun107() {
+
+        $db_prefix = $this->getSetting( "db_prefix", false );
+        $this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "reward_queue` ADD `rkey` VARCHAR(40) NULL DEFAULT NULL AFTER `state`;" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+
+        $this->setSetting( "version", "0.0.1.7", true );
+
+        return true;
+    }
+
     /**
      * @todo Consider test case
      * @return Config
