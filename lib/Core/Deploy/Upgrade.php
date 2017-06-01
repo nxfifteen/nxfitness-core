@@ -670,6 +670,10 @@ class Upgrade {
         if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
             return false;
         }
+        $this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "reward_map` ADD `xp` INT(4) NOT NULL DEFAULT '0' AFTER `reward`;" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
 
         $this->setSetting( "version", "0.0.1.7", true );
 
