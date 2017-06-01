@@ -10,7 +10,7 @@
 
 namespace Core\Rewards;
 
-require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
+require_once(dirname(__FILE__) . "/../../autoloader.php");
 
 use Core\Core;
 use DateTime;
@@ -26,7 +26,8 @@ use DateTime;
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  */
-class RewardsMinecraft {
+class RewardsMinecraft
+{
 
     /**
      * @var Core
@@ -61,29 +62,32 @@ class RewardsMinecraft {
      *
      * @internal param $userFid
      */
-    public function __construct( $user = null ) {
-        $this->setAppClass( new Core() );
-        $this->AwardsGiven   = [];
+    public function __construct($user = null)
+    {
+        $this->setAppClass(new Core());
+        $this->AwardsGiven = [];
 //        if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
-            $this->createRewards = false;
+        $this->createRewards = false;
 //        } else {
 //            $this->createRewards = true;
 //        }
-        $this->setUserID( $user );
+        $this->setUserID($user);
         $this->user = $user;
     }
 
     /**
      * @param Core $paramClass
      */
-    private function setAppClass( $paramClass ) {
+    private function setAppClass($paramClass)
+    {
         $this->AppClass = $paramClass;
     }
 
     /**
      * @return Core
      */
-    private function getAppClass() {
+    private function getAppClass()
+    {
         return $this->AppClass;
     }
 
@@ -95,9 +99,10 @@ class RewardsMinecraft {
      *
      * @return array|bool
      */
-    private function checkForAward( $cat, $event, $score, $rewardKey = null ) {
-        $reward    = [];
-        $db_prefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+    private function checkForAward($cat, $event, $score, $rewardKey = null)
+    {
+        $reward = [];
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (is_null($rewardKey)) {
             $currentDate = new DateTime ('now');
@@ -106,56 +111,56 @@ class RewardsMinecraft {
             $rewardKey = sha1($rewardKey);
         }
 
-        if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_map", [
+        if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_map", [
             "AND" => [
-                'cat'   => $cat,
+                'cat' => $cat,
                 'event' => $event,
-                'rule'  => $score
+                'rule' => $score
             ]
-        ] )
+        ])
         ) {
             $rewards = $this->getAppClass()->getDatabase()->query(
                 "SELECT `" . $db_prefix . "reward_map`.`rmid` AS `rmid`,`" . $db_prefix . "reward_map`.`xp` AS `xp`,`" . $db_prefix . "reward_map`.`reward` AS `rid`"
                 . " FROM `" . $db_prefix . "reward_map`"
-                . " WHERE `" . $db_prefix . "reward_map`.`cat` = '" . $cat . "' AND `" . $db_prefix . "reward_map`.`event` = '" . $event . "' AND `" . $db_prefix . "reward_map`.`rule` = '" . $score . "' " );
-            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
+                . " WHERE `" . $db_prefix . "reward_map`.`cat` = '" . $cat . "' AND `" . $db_prefix . "reward_map`.`event` = '" . $event . "' AND `" . $db_prefix . "reward_map`.`rule` = '" . $score . "' ");
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
                 "METHOD" => __METHOD__,
-                "LINE"   => __LINE__
-            ] );
-            foreach ( $rewards as $dbReward ) {
-                array_push( $reward, [
-                    "rmid"         => $dbReward[ 'rmid' ],
-                    "rid"         => $dbReward[ 'rid' ],
-                    "xp"          => $dbReward[ 'xp' ]
-                ] );
+                "LINE" => __LINE__
+            ]);
+            foreach ($rewards as $dbReward) {
+                array_push($reward, [
+                    "rmid" => $dbReward['rmid'],
+                    "rid" => $dbReward['rid'],
+                    "xp" => $dbReward['xp']
+                ]);
             }
-        } else if ( $this->createRewards ) {
-            $this->getAppClass()->getDatabase()->insert( $db_prefix . "reward_map", [
-                "cat"   => $cat,
+        } else if ($this->createRewards) {
+            $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_map", [
+                "cat" => $cat,
                 "event" => $event,
-                "rule"  => $score
-            ] );
-            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
+                "rule" => $score
+            ]);
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
                 "METHOD" => __METHOD__,
-                "LINE"   => __LINE__
-            ] );
+                "LINE" => __LINE__
+            ]);
         }
 
-        if ( count( $reward ) == 0 ) {
+        if (count($reward) == 0) {
             return false;
         } else {
-            foreach ( $reward as $recordReward ) {
+            foreach ($reward as $recordReward) {
                 if ($recordReward['rid'] != "" || $recordReward['xp'] > 0) {
-                    if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", [
+                    if (!$this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", [
                         "AND" => [
-                            'fuid'    => $this->getUserID(),
+                            'fuid' => $this->getUserID(),
                             'rkey[~]' => $rewardKey,
-                            'rmid'    => $recordReward[ 'rmid' ]
+                            'rmid' => $recordReward['rmid']
                         ]
-                    ] )
+                    ])
                     ) {
                         if ($recordReward['xp'] > 0) {
-                            if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "users_xp", ['fuid'    => $this->getUserID()] ) ) {
+                            if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
                                 $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["xp" => 0, "fuid" => $this->getUserID()]);
                                 $dbCurrentXp = 0;
                             } else {
@@ -166,7 +171,7 @@ class RewardsMinecraft {
 
                             $this->getAppClass()->getDatabase()->update($db_prefix . "users_xp", ["xp" => $dbCurrentXp + $recordReward['xp']], ["fuid" => $this->getUserID()]);
                             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-                            nxr( 4, "Awarding $cat / $event ($score) = " . $recordReward['xp'] . " xp");
+                            nxr(4, "Awarding $cat / $event ($score) = " . $recordReward['xp'] . " xp");
                             $state = 'delivered';
                         }
 
@@ -174,67 +179,67 @@ class RewardsMinecraft {
                             $recordReward['description'] = $this->getAppClass()->getDatabase()->get($db_prefix . "rewards", "description", ["rid" => $recordReward['rid']]);
                             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
-                            $nukeOne = $this->getAppClass()->getDatabase()->select( $db_prefix . "reward_nuke", 'rid', ["AND" => ["nukeid"      => $recordReward[ 'rid' ], "directional" => "true"]] );
-                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE"   => __LINE__] );
-                            if ( count( $nukeOne ) > 0 ) {
-                                foreach ( $nukeOne as $nukeId ) {
-                                    if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", [
+                            $nukeOne = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'rid', ["AND" => ["nukeid" => $recordReward['rid'], "directional" => "true"]]);
+                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+                            if (count($nukeOne) > 0) {
+                                foreach ($nukeOne as $nukeId) {
+                                    if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", [
                                         "AND" => [
-                                            'fuid'   => $this->getUserID(),
+                                            'fuid' => $this->getUserID(),
                                             'reward' => $nukeId
                                         ]
-                                    ] )
+                                    ])
                                     ) {
-                                        $this->getAppClass()->getDatabase()->delete( $db_prefix . "reward_queue", [
+                                        $this->getAppClass()->getDatabase()->delete($db_prefix . "reward_queue", [
                                             "AND" => [
-                                                'fuid'   => $this->getUserID(),
+                                                'fuid' => $this->getUserID(),
                                                 'reward' => $nukeId
                                             ]
-                                        ] );
+                                        ]);
                                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
                                     }
                                 }
                             }
 
-                            $nukeTwo = $this->getAppClass()->getDatabase()->select( $db_prefix . "reward_nuke", 'nukeid', ["AND" => ["rid"         => $recordReward[ 'rid' ], "directional" => "false"]] );
-                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE"   => __LINE__] );
-                            if ( count( $nukeTwo ) > 0 ) {
-                                foreach ( $nukeTwo as $nukeId ) {
-                                    if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "reward_queue", [
+                            $nukeTwo = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'nukeid', ["AND" => ["rid" => $recordReward['rid'], "directional" => "false"]]);
+                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+                            if (count($nukeTwo) > 0) {
+                                foreach ($nukeTwo as $nukeId) {
+                                    if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", [
                                         "AND" => [
-                                            'fuid'   => $this->getUserID(),
+                                            'fuid' => $this->getUserID(),
                                             'reward' => $nukeId
                                         ]
-                                    ] )
+                                    ])
                                     ) {
-                                        $this->getAppClass()->getDatabase()->delete( $db_prefix . "reward_queue", [
+                                        $this->getAppClass()->getDatabase()->delete($db_prefix . "reward_queue", [
                                             "AND" => [
-                                                'fuid'   => $this->getUserID(),
+                                                'fuid' => $this->getUserID(),
                                                 'reward' => $nukeId
                                             ]
-                                        ] );
+                                        ]);
                                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
                                     }
                                 }
                             }
 
-                            nxr( 4, "Awarding $cat / $event ($score) = " . print_r( $recordReward[ 'description' ], true ) );
+                            nxr(4, "Awarding $cat / $event ($score) = " . print_r($recordReward['description'], true));
                             $state = 'pending';
                         } else {
                             $recordReward['rid'] = null;
                         }
 
-                        $this->getAppClass()->getDatabase()->insert( $db_prefix . "reward_queue", [
-                            "fuid"   => $this->getUserID(),
-                            "state"  => $state,
-                            "rmid"   => $recordReward[ 'rmid' ],
-                            "reward" => $recordReward[ 'rid' ],
+                        $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_queue", [
+                            "fuid" => $this->getUserID(),
+                            "state" => $state,
+                            "rmid" => $recordReward['rmid'],
+                            "reward" => $recordReward['rid'],
                             "rkey" => $rewardKey
-                        ] );
-                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE"   => __LINE__] );
+                        ]);
+                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
                     } else {
-                        nxr( 4, "Already awarded $cat / $event ($score)");
+                        nxr(4, "Already awarded $cat / $event ($score)");
                     }
                 }
             }
@@ -246,34 +251,35 @@ class RewardsMinecraft {
 
     /**
      * @param string $goal
-     * @param int    $value
-     * @param int    $multiplyer
+     * @param int $value
+     * @param int $multiplyer
      *
      * @return bool
      */
-    private function reachedGoal( $goal, $value, $multiplyer = 1 ) {
-        $currentDate = new DateTime ( 'now' );
-        $currentDate = $currentDate->format( "Y-m-d" );
-        $db_prefix   = $this->getAppClass()->getSetting( "db_prefix", null, false );
-        if ( $value >= 1 ) {
-            $recordedValue  = $value;
-            $recordedTarget = round( $this->getAppClass()->getDatabase()->get( $db_prefix . "steps_goals", $goal,
+    private function reachedGoal($goal, $value, $multiplyer = 1)
+    {
+        $currentDate = new DateTime ('now');
+        $currentDate = $currentDate->format("Y-m-d");
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        if ($value >= 1) {
+            $recordedValue = $value;
+            $recordedTarget = round($this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", $goal,
                 [
                     "AND" => [
                         "user" => $this->getUserID(),
                         "date" => $currentDate
                     ]
-                ] ), 3 );
-            if ( ! is_numeric( $recordedTarget ) || $recordedTarget <= 0 ) {
-                $recordedTarget = round( $this->getAppClass()->getUserSetting( $this->getUserID(), "goal_" . $goal ),
-                    3 );
+                ]), 3);
+            if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
+                $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_" . $goal),
+                    3);
             }
             $requiredTarget = $recordedTarget * $multiplyer;
-            if ( $recordedValue >= $requiredTarget ) {
+            if ($recordedValue >= $requiredTarget) {
                 return true;
             }
         } else {
-            nxr( 4, "No $goal data recorded for $currentDate" );
+            nxr(4, "No $goal data recorded for $currentDate");
         }
 
         return false;
@@ -285,7 +291,10 @@ class RewardsMinecraft {
      *
      * @return bool
      */
-    private function smashedGoal( $goal, $value ) { return $this->reachedGoal( $goal, $value, 1.5 ); }
+    private function smashedGoal($goal, $value)
+    {
+        return $this->reachedGoal($goal, $value, 1.5);
+    }
 
     /**
      * @param string $goal
@@ -293,13 +302,17 @@ class RewardsMinecraft {
      *
      * @return bool
      */
-    private function crushedGoal( $goal, $value ) { return $this->reachedGoal( $goal, $value, 2 ); }
+    private function crushedGoal($goal, $value)
+    {
+        return $this->reachedGoal($goal, $value, 2);
+    }
 
     /**
      * @todo Consider test case
      * @return String
      */
-    public function getUserID() {
+    public function getUserID()
+    {
         return $this->UserID;
     }
 
@@ -308,7 +321,8 @@ class RewardsMinecraft {
      *
      * @param String $UserID
      */
-    public function setUserID( $UserID ) {
+    public function setUserID($UserID)
+    {
         $this->UserID = $UserID;
     }
 
@@ -316,7 +330,8 @@ class RewardsMinecraft {
      * @todo Consider test case
      * @return String
      */
-    public function getUserMinecraftID() {
+    public function getUserMinecraftID()
+    {
         return $this->UserMinecraftID;
     }
 
@@ -326,7 +341,8 @@ class RewardsMinecraft {
      * @todo     Consider test case
      * @internal param String $UserID
      */
-    public function setUserMinecraftID( $UserMinecraftID ) {
+    public function setUserMinecraftID($UserMinecraftID)
+    {
         $this->UserMinecraftID = $UserMinecraftID;
     }
 
@@ -334,77 +350,78 @@ class RewardsMinecraft {
      * @todo Consider test case
      * @return array
      */
-    public function queryMinecraftRewards() {
-        $wmc_key_provided = $_GET[ 'wmc_key' ];
-        $wmc_key_correct  = $this->getAppClass()->getSetting( "wmc_key", null, true );
-        nxr( 0, "Minecraft rewards Check" );
+    public function queryMinecraftRewards()
+    {
+        $wmc_key_provided = $_GET['wmc_key'];
+        $wmc_key_correct = $this->getAppClass()->getSetting("wmc_key", null, true);
+        nxr(0, "Minecraft rewards Check");
 
-        if ( $wmc_key_provided != $wmc_key_correct ) {
-            nxr( 1, "Key doesnt match" );
+        if ($wmc_key_provided != $wmc_key_correct) {
+            nxr(1, "Key doesnt match");
 
-            return [ "success" => false, "data" => [ "msg" => "Incorrect key" ] ];
+            return ["success" => false, "data" => ["msg" => "Incorrect key"]];
         }
 
-        $databaseTable = $this->getAppClass()->getSetting( "db_prefix", null, false );
+        $databaseTable = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        if ( $_SERVER[ 'REQUEST_METHOD' ] == "GET" ) {
+        if ($_SERVER['REQUEST_METHOD'] == "GET") {
             $rewards = $this->getAppClass()->getDatabase()->query(
                 "SELECT `" . $databaseTable . "rewards`.`reward` AS `reward`,"
                 . " `" . $databaseTable . "reward_queue`.`fuid` AS `fuid`,"
                 . " `" . $databaseTable . "reward_queue`.`rqid` AS `rqid`"
                 . " FROM `" . $databaseTable . "rewards`"
                 . " JOIN `" . $databaseTable . "reward_queue` ON (`" . $databaseTable . "reward_queue`.`reward` = `" . $databaseTable . "rewards`.`rid`)"
-                . " WHERE `" . $databaseTable . "reward_queue`.`state` = 'pending' AND `" . $databaseTable . "rewards`.`system` = 'minecraft' LIMIT 50" );
+                . " WHERE `" . $databaseTable . "reward_queue`.`state` = 'pending' AND `" . $databaseTable . "rewards`.`system` = 'minecraft' LIMIT 50");
 
             $data = [];
-            foreach ( $rewards as $dbReward ) {
-                $minecraftUsername = $this->getAppClass()->getUserSetting( $dbReward[ 'fuid' ], "minecraft_username",
-                    false );
+            foreach ($rewards as $dbReward) {
+                $minecraftUsername = $this->getAppClass()->getUserSetting($dbReward['fuid'], "minecraft_username",
+                    false);
 
-                if ( ! array_key_exists( $minecraftUsername, $data ) ) {
-                    $data[ $minecraftUsername ] = [];
+                if (!array_key_exists($minecraftUsername, $data)) {
+                    $data[$minecraftUsername] = [];
                 }
-                if ( ! array_key_exists( $dbReward[ 'rqid' ], $data[ $minecraftUsername ] ) ) {
-                    $data[ $minecraftUsername ][ $dbReward[ 'rqid' ] ] = [];
+                if (!array_key_exists($dbReward['rqid'], $data[$minecraftUsername])) {
+                    $data[$minecraftUsername][$dbReward['rqid']] = [];
                 }
-                $dbReward[ 'reward' ] = str_replace( "%s", $minecraftUsername, $dbReward[ 'reward' ] );
-                array_push( $data[ $minecraftUsername ][ $dbReward[ 'rqid' ] ], $dbReward[ 'reward' ] );
+                $dbReward['reward'] = str_replace("%s", $minecraftUsername, $dbReward['reward']);
+                array_push($data[$minecraftUsername][$dbReward['rqid']], $dbReward['reward']);
             }
 
-            return [ "success" => true, "data" => $data ];
+            return ["success" => true, "data" => $data];
 
-        } else if ( $_SERVER[ 'REQUEST_METHOD' ] == "POST" && array_key_exists( "processedOrders", $_POST ) ) {
+        } else if ($_SERVER['REQUEST_METHOD'] == "POST" && array_key_exists("processedOrders", $_POST)) {
 
-            $_POST[ 'processedOrders' ] = json_decode( $_POST[ 'processedOrders' ] );
+            $_POST['processedOrders'] = json_decode($_POST['processedOrders']);
 
-            if ( is_array( $_POST[ 'processedOrders' ] ) ) {
-                foreach ( $_POST[ 'processedOrders' ] as $processedOrder ) {
-                    if ( $this->getAppClass()->getDatabase()->has( $databaseTable . "reward_queue",
-                        [ "rqid" => $processedOrder ] )
+            if (is_array($_POST['processedOrders'])) {
+                foreach ($_POST['processedOrders'] as $processedOrder) {
+                    if ($this->getAppClass()->getDatabase()->has($databaseTable . "reward_queue",
+                        ["rqid" => $processedOrder])
                     ) {
 
-                        $this->getAppClass()->getDatabase()->update( $databaseTable . "reward_queue",
-                            [ "state" => "delivered" ], [ "rqid" => $processedOrder ] );
-                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
+                        $this->getAppClass()->getDatabase()->update($databaseTable . "reward_queue",
+                            ["state" => "delivered"], ["rqid" => $processedOrder]);
+                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
                             [
                                 "METHOD" => __METHOD__,
-                                "LINE"   => __LINE__
-                            ] );
+                                "LINE" => __LINE__
+                            ]);
 
-                        nxr( 1, "Reward " . $processedOrder . " processed" );
+                        nxr(1, "Reward " . $processedOrder . " processed");
                     } else {
-                        nxr( 1, "Reward " . $processedOrder . " is invalid ID" );
+                        nxr(1, "Reward " . $processedOrder . " is invalid ID");
                     }
                 }
             } else {
-                nxr( 1, "No processed rewards recived" );
+                nxr(1, "No processed rewards recived");
             }
 
-            return [ "success" => true ];
+            return ["success" => true];
 
         }
 
-        return [ "success" => false, "data" => [ "msg" => "Unknown Error" ] ];
+        return ["success" => false, "data" => ["msg" => "Unknown Error"]];
 
     }
 
@@ -413,10 +430,11 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerActivity( $activity ) {
-        $currentDate   = new DateTime ( 'now' );
-        $currentDate   = $currentDate->format( "Y-m-d" );
-        $db_prefix     = $this->getAppClass()->getSetting( "db_prefix", null, false );
+    public function eventTriggerActivity($activity)
+    {
+        $currentDate = new DateTime ('now');
+        $currentDate = $currentDate->format("Y-m-d");
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $checkForThese = [
             "Aerobic",
             "Bicycling",
@@ -442,41 +460,41 @@ class RewardsMinecraft {
         ];
 
         $supportActivity = false;
-        if ( $activity->activityName != "auto_detected" ) {
-            foreach ( $checkForThese as $tracker ) {
-                if ( ! $supportActivity && strpos( $activity->activityName, $tracker ) !== false ) {
+        if ($activity->activityName != "auto_detected") {
+            foreach ($checkForThese as $tracker) {
+                if (!$supportActivity && strpos($activity->activityName, $tracker) !== false) {
                     $supportActivity = true;
                 }
             }
         }
 
-        if ( $supportActivity ) {
-            $sql_search         = [
-                "user"            => $this->getUserID(),
+        if ($supportActivity) {
+            $sql_search = [
+                "user" => $this->getUserID(),
                 "activityName[~]" => $activity->activityName,
-                "startDate"       => $currentDate,
-                "logType[!]"      => 'auto_detected'
+                "startDate" => $currentDate,
+                "logType[!]" => 'auto_detected'
             ];
-            $minMaxAvg          = [];
-            $minMaxAvg[ 'min' ] = ( $this->getAppClass()->getDatabase()->min( $db_prefix . "activity_log", "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
-            $minMaxAvg[ 'avg' ] = ( $this->getAppClass()->getDatabase()->avg( $db_prefix . "activity_log", "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
-            $minMaxAvg[ 'max' ] = ( $this->getAppClass()->getDatabase()->max( $db_prefix . "activity_log", "activeDuration", [ "AND" => $sql_search ] ) / 1000 ) / 60;
+            $minMaxAvg = [];
+            $minMaxAvg['min'] = ($this->getAppClass()->getDatabase()->min($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
+            $minMaxAvg['avg'] = ($this->getAppClass()->getDatabase()->avg($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
+            $minMaxAvg['max'] = ($this->getAppClass()->getDatabase()->max($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
 
-            $minMaxAvg[ 'min2avg' ] = ( ( $minMaxAvg[ 'avg' ] - $minMaxAvg[ 'min' ] ) / 2 ) + $minMaxAvg[ 'min' ];
-            $minMaxAvg[ 'avg2max' ] = ( ( $minMaxAvg[ 'max' ] - $minMaxAvg[ 'avg' ] ) / 2 ) + $minMaxAvg[ 'avg' ];
+            $minMaxAvg['min2avg'] = (($minMaxAvg['avg'] - $minMaxAvg['min']) / 2) + $minMaxAvg['min'];
+            $minMaxAvg['avg2max'] = (($minMaxAvg['max'] - $minMaxAvg['avg']) / 2) + $minMaxAvg['avg'];
 
             $activeDuration = $activity->duration / 1000 / 60;
 
-            if ( $activeDuration == $minMaxAvg[ 'max' ] ) {
-                $this->checkForAward( "activity", $activity->activityName, "max", $activity->logId );
-            } else if ( $activeDuration >= $minMaxAvg[ 'avg2max' ] ) {
-                $this->checkForAward( "activity", $activity->activityName, "avg2max", $activity->logId );
-            } else if ( $activeDuration >= $minMaxAvg[ 'avg' ] ) {
-                $this->checkForAward( "activity", $activity->activityName, "avg", $activity->logId );
-            } else if ( $activeDuration >= $minMaxAvg[ 'min2avg' ] ) {
-                $this->checkForAward( "activity", $activity->activityName, "min2avg", $activity->logId );
+            if ($activeDuration == $minMaxAvg['max']) {
+                $this->checkForAward("activity", $activity->activityName, "max", $activity->logId);
+            } else if ($activeDuration >= $minMaxAvg['avg2max']) {
+                $this->checkForAward("activity", $activity->activityName, "avg2max", $activity->logId);
+            } else if ($activeDuration >= $minMaxAvg['avg']) {
+                $this->checkForAward("activity", $activity->activityName, "avg", $activity->logId);
+            } else if ($activeDuration >= $minMaxAvg['min2avg']) {
+                $this->checkForAward("activity", $activity->activityName, "min2avg", $activity->logId);
             } else {
-                $this->checkForAward( "activity", $activity->activityName, "other", $activity->logId );
+                $this->checkForAward("activity", $activity->activityName, "other", $activity->logId);
             }
         }
 
@@ -487,20 +505,21 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerBadgeAwarded( $badge ) {
-        nxr( 1, "** API Event Trigger Badge" );
+    public function eventTriggerBadgeAwarded($badge)
+    {
+        nxr(1, "** API Event Trigger Badge");
 
         //if (date('Y-m-d') == $badge->dateTime) {
-        nxr( 4,
-            $badge->shortName . " (" . $badge->category . ") awarded " . $badge->timesAchieved . " on " . $badge->dateTime );
+        nxr(4,
+            $badge->shortName . " (" . $badge->category . ") awarded " . $badge->timesAchieved . " on " . $badge->dateTime);
 
-        if ( $this->checkForAward( "badge", $badge->category . " | " . $badge->shortName, "awarded", $badge->category.$badge->shortName ) ) {
+        if ($this->checkForAward("badge", $badge->category . " | " . $badge->shortName, "awarded", $badge->category . $badge->shortName)) {
 
-        } else if ( $this->checkForAward( "badge", $badge->category, "awarded", $badge->category ) ) {
+        } else if ($this->checkForAward("badge", $badge->category, "awarded", $badge->category)) {
 
-        } else if ( $this->checkForAward( "badge", $badge->category . " | " . $badge->shortName, $badge->timesAchieved, $badge->category.$badge->shortName.$badge->timesAchieved )) {
+        } else if ($this->checkForAward("badge", $badge->category . " | " . $badge->shortName, $badge->timesAchieved, $badge->category . $badge->shortName . $badge->timesAchieved)) {
 
-        } else if ( $this->checkForAward( "badge", $badge->category, $badge->timesAchieved, $badge->category.$badge->timesAchieved ) ) {
+        } else if ($this->checkForAward("badge", $badge->category, $badge->timesAchieved, $badge->category . $badge->timesAchieved)) {
 
         }
         //}
@@ -513,15 +532,16 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerWeightChange( $current, $goal, $last ) {
+    public function eventTriggerWeightChange($current, $goal, $last)
+    {
         $currentDate = new DateTime ('now');
         $currentDate = $currentDate->format("Y-m-d");
-        if ( $current <= $goal ) {
-            $this->checkForAward( "body", "weight", "goal", $currentDate."weightgoal" );
-        } else if ( $current < $last ) {
-            $this->checkForAward( "body", "weight", "decreased", $currentDate."weightdecreased" );
-        } else if ( $current > $last ) {
-            $this->checkForAward( "body", "weight", "increased", $currentDate."weightincreased" );
+        if ($current <= $goal) {
+            $this->checkForAward("body", "weight", "goal", $currentDate . "weightgoal");
+        } else if ($current < $last) {
+            $this->checkForAward("body", "weight", "decreased", $currentDate . "weightdecreased");
+        } else if ($current > $last) {
+            $this->checkForAward("body", "weight", "increased", $currentDate . "weightincreased");
         }
     }
 
@@ -532,15 +552,16 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerFatChange( $current, $goal, $last ) {
+    public function eventTriggerFatChange($current, $goal, $last)
+    {
         $currentDate = new DateTime ('now');
         $currentDate = $currentDate->format("Y-m-d");
-        if ( $current <= $goal ) {
-            $this->checkForAward( "body", "fat", "goal", $currentDate."fatgoal" );
-        } else if ( $current < $last ) {
-            $this->checkForAward( "body", "fat", "decreased", $currentDate."fatdecreased" );
-        } else if ( $current > $last ) {
-            $this->checkForAward( "body", "fat", "increased", $currentDate."fatincreased" );
+        if ($current <= $goal) {
+            $this->checkForAward("body", "fat", "goal", $currentDate . "fatgoal");
+        } else if ($current < $last) {
+            $this->checkForAward("body", "fat", "decreased", $currentDate . "fatdecreased");
+        } else if ($current > $last) {
+            $this->checkForAward("body", "fat", "increased", $currentDate . "fatincreased");
         }
     }
 
@@ -549,9 +570,10 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerNewMeal( $meal ) {
-        nxr( 1, "** API Event Meal Logged" );
-        nxr( 6, $meal->loggedFood->name . " recorded" );
+    public function eventTriggerNewMeal($meal)
+    {
+        nxr(1, "** API Event Meal Logged");
+        nxr(6, $meal->loggedFood->name . " recorded");
         nxr(0, print_r($meal, true));
     }
 
@@ -560,26 +582,27 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerVeryActive( $veryActive ) {
-        $currentDate = new DateTime ( 'now' );
-        $currentDate = $currentDate->format( "Y-m-d" );
-        $db_prefix   = $this->getAppClass()->getSetting( "db_prefix", null, false );
-        if ( $veryActive >= 1 ) {
-            $recordedValue  = $veryActive;
-            $recordedTarget = $this->getAppClass()->getDatabase()->get( $db_prefix . "steps_goals", "activeMinutes",
+    public function eventTriggerVeryActive($veryActive)
+    {
+        $currentDate = new DateTime ('now');
+        $currentDate = $currentDate->format("Y-m-d");
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        if ($veryActive >= 1) {
+            $recordedValue = $veryActive;
+            $recordedTarget = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", "activeMinutes",
                 [
                     "AND" => [
                         "user" => $this->getUserID(),
                         "date" => $currentDate
                     ]
-                ] );
-            if ( ! is_numeric( $recordedTarget ) || $recordedTarget <= 0 ) {
-                $recordedTarget = round( $this->getAppClass()->getUserSetting( $this->getUserID(), "goal_activity" ),
-                    30 );
+                ]);
+            if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
+                $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_activity"),
+                    30);
             }
 
-            if ( $recordedValue >= $recordedTarget ) {
-                $this->checkForAward( "goal", "veryactive", "reached", date( 'Y-m-d' )."veryactive"."reached" );
+            if ($recordedValue >= $recordedTarget) {
+                $this->checkForAward("goal", "veryactive", "reached", date('Y-m-d') . "veryactive" . "reached");
             }
         }
     }
@@ -591,36 +614,37 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerTracker( $date, $trigger, $value ) {
-        $goalsToCheck = [ "steps", "floors", "distance" ];
+    public function eventTriggerTracker($date, $trigger, $value)
+    {
+        $goalsToCheck = ["steps", "floors", "distance"];
 
-        if ( in_array( $trigger, $goalsToCheck ) && date( 'Y-m-d' ) == $date ) {
+        if (in_array($trigger, $goalsToCheck) && date('Y-m-d') == $date) {
             // Crushed Step Goal
-            if ( ! $this->crushedGoal( $trigger, $value ) ) {
+            if (!$this->crushedGoal($trigger, $value)) {
                 // Smashed Step Goal
-                if ( ! $this->smashedGoal( $trigger, $value ) ) {
+                if (!$this->smashedGoal($trigger, $value)) {
                     // Reached Step Goal
-                    if ( $this->reachedGoal( $trigger, $value ) ) {
-                        $this->checkForAward( "goal", $trigger, "reached", date( 'Y-m-d' ).$trigger."reached" );
+                    if ($this->reachedGoal($trigger, $value)) {
+                        $this->checkForAward("goal", $trigger, "reached", date('Y-m-d') . $trigger . "reached");
                     }
                 } else {
-                    $this->checkForAward( "goal", $trigger, "smashed", date( 'Y-m-d' ).$trigger."smashed" );
+                    $this->checkForAward("goal", $trigger, "smashed", date('Y-m-d') . $trigger . "smashed");
                 }
             } else {
-                $this->checkForAward( "goal", $trigger, "crushed", date( 'Y-m-d' ).$trigger."crushed" );
+                $this->checkForAward("goal", $trigger, "crushed", date('Y-m-d') . $trigger . "crushed");
             }
 
-            if ( $trigger == "steps" ) {
+            if ($trigger == "steps") {
                 $divider = 100;
             } else {
                 $divider = 10;
             }
 
-            if ( $value >= 1 ) {
-                $recordedValue = round( $value, 3 );
-                $hundredth     = round( $recordedValue / $divider, 0 );
-                nxr( 1, "checking awards for $trigger $hundredth" );
-                $this->checkForAward( "hundredth", $trigger, $hundredth, date( 'Y-m-d' ).$trigger.$hundredth );
+            if ($value >= 1) {
+                $recordedValue = round($value, 3);
+                $hundredth = round($recordedValue / $divider, 0);
+                nxr(1, "checking awards for $trigger $hundredth");
+                $this->checkForAward("hundredth", $trigger, $hundredth, date('Y-m-d') . $trigger . $hundredth);
             }
         }
     }
@@ -630,15 +654,16 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerNomie( $inputArray ) {
-        $event = $inputArray[ 2 ];
-        $date  = $inputArray[ 5 ];
-        $score = $inputArray[ 4 ];
+    public function eventTriggerNomie($inputArray)
+    {
+        $event = $inputArray[2];
+        $date = $inputArray[5];
+        $score = $inputArray[4];
 
 //        nxr( 2, "** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score );
 
-        if ( ! $this->checkForAward( "nomie", "logged", $event, $date.$event ) ) {
-            $this->checkForAward( "nomie", "score", $score, $date.$score );
+        if (!$this->checkForAward("nomie", "logged", $event, $date . $event)) {
+            $this->checkForAward("nomie", "score", $score, $date . $score);
         }
     }
 
@@ -648,8 +673,9 @@ class RewardsMinecraft {
      *
      * @todo Consider test case
      */
-    public function eventTriggerStreak( $goal, $length ) {
-        $this->checkForAward( "streak", $goal, $length, $goal.$length );
+    public function eventTriggerStreak($goal, $length)
+    {
+        $this->checkForAward("streak", $goal, $length, $goal . $length);
     }
 
     /**
@@ -657,9 +683,9 @@ class RewardsMinecraft {
      */
     public function actionRewards()
     {
-        $prefix = $this->getAppClass()->getSetting("db_prefix", null,false);
+        $prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $this->getAppClass()->getDatabase()->delete($prefix . "reward_queue",
-            [ "AND" => [ "fuid" => $this->getUserID(), "state" => "delivered", "date[<]" => date('Y-m-d', strtotime(' -14 days')) ] ]);
+            ["AND" => ["fuid" => $this->getUserID(), "state" => "delivered", "date[<]" => date('Y-m-d', strtotime(' -14 days'))]]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
