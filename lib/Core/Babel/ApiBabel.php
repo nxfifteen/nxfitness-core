@@ -2761,8 +2761,6 @@ class ApiBabel
                     nxr(4, $nomie_url);
                     $parts = parse_url($nomie_url);
                     nxr(0, print_r($parts, true));
-                    $parts = parse_url("https://nomie:wyFLED924y@nxfifteen.me.uk:5223");
-                    nxr(0, print_r($parts, true));
 
                     if (!isset($nomie_username)) {
                         $was_username_set = "false";
