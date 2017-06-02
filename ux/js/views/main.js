@@ -1,10 +1,7 @@
 /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- * https://nxfifteen.me.uk
  *
- * Copyright (c) 2017, Stuart McCulloch Anderson
- *
- * Released under the MIT license
+ * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -239,5 +236,60 @@ $(function () {
         }
 
         debug_add_gen_time("dashboard", data.time);
+    });
+
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=xp", function (data) {
+        var xpRow = $('#xpRow');
+        if (xpRow.length > 0) {
+            /** @namespace data.results.xp */
+            $('#xp').html(data.results.xp);
+            /** @namespace data.results.level */
+            $('#xpLvl').html(data.results.level);
+            $('#xpLevelBadge').attr('src', 'img/xplevels/' + data.results.level + '.png');
+            $('#xpProgressNextLevel').attr('aria-valuenow', data.results.percent).css('width', data.results.percent + '%');
+        }
+
+        debug_add_gen_time("xp", data.time);
+    });
+
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=PendingRewards", function (data) {
+        var html = '';
+        $.each(data.results.pending, function (index, reward) {
+            html += '<li>';
+            html += '    <i class="icon-hourglass bg-primary"></i>';
+            html += '    <div class="desc">';
+            html += '        <div class="title">' + reward.action + '</div>';
+            html += '        <small>' + reward.reward + '</small>';
+            html += '    </div>';
+            html += '    <div class="value">';
+            html += '        <div class="small text-muted">' + reward.date + '</div>';
+            html += '        <strong>' + reward.state + '</strong>';
+            html += '    </div>';
+            html += '    <div class="actions">';
+            html += '        <button type="button" class="btn btn-link text-muted"><i class="icon-settings"></i>';
+            html += '        </button>';
+            html += '    </div>';
+            html += "</li>\n";
+        });
+        $.each(data.results.delivered, function (index, reward) {
+            html += '<li>';
+            html += '    <i class="icon-diamond bg-success"></i>';
+            html += '    <div class="desc">';
+            html += '        <div class="title">' + reward.action + '</div>';
+            html += '        <small>' + reward.reward + '</small>';
+            html += '    </div>';
+            html += '    <div class="value">';
+            html += '        <div class="small text-muted">' + reward.date + '</div>';
+            html += '        <strong>' + reward.state + '</strong>';
+            html += '    </div>';
+            html += '    <div class="actions">';
+            html += '        <button type="button" class="btn btn-link text-muted"><i class="icon-settings"></i>';
+            html += '        </button>';
+            html += '    </div>';
+            html += "</li>\n";
+        });
+        $('#rewardsList').html(html);
+
+        debug_add_gen_time("PendingRewards", data.time);
     });
 });

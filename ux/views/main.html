@@ -1,10 +1,7 @@
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ This file is part of NxFIFTEEN Fitness Core.
-  ~ https://nxfifteen.me.uk
   ~
-  ~ Copyright (c) 2017, Stuart McCulloch Anderson
-  ~
-  ~ Released under the MIT license
+  ~ Copyright (c) 2017. Stuart McCulloch Anderson
   ~
   ~ For the full copyright and license information, please view the LICENSE
   ~ file that was distributed with this source code.
@@ -114,10 +111,6 @@
                 </div>
             </div>
 
-        </div>
-
-        <div class="col-12 col-md-5">
-
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -147,13 +140,57 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="col-12 col-md-5">
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
                             <span>Inbox</span>
                         </div>
-                        <div class="card-block"></div>
+                        <div class="card-block">
+                            <div class="row" id="xpRow">
+                                <div class="col-12">
+                                    <div class="social-box xplvl">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <img id="xpLevelBadge" src="img/xplevels/0.png" style="float: right">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="progress progress-xs my-3">
+                                                    <div id="xpProgressNextLevel" class="progress-bar bg-info" role="progressbar" style="width: 0" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <ul>
+                                                    <li>
+                                                        <strong id="xp">0</strong>
+                                                        <span>XP</span>
+                                                    </li>
+                                                    <li>
+                                                        <strong id="xpLvl">0</strong>
+                                                        <span>Level</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-block">
+                                <div class="row" id="rewardLog">
+                                    <div class="col-12">
+                                        <ul class="icons-list" id="rewardsList"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
