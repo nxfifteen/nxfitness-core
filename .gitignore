@@ -120,3 +120,4 @@ config.inc.php
 /bundle/vendor/*/*/.gitmodules
 /bundle/vendor/*/*/.php_cs
 /bundle/vendor/*/*/phpunit.xml
+/ux/img/xplevels/*.png
