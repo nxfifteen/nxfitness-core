@@ -674,6 +674,10 @@ class Upgrade {
         if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
             return false;
         }
+        $this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "reward_queue` CHANGE `reward` `reward` INT(6) NULL;" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
 
         $this->setSetting( "version", "0.0.1.7", true );
 

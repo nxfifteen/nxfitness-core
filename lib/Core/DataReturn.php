@@ -2915,6 +2915,86 @@ class DataReturn
      * @todo Consider test case
      * @return array
      */
+    public function returnUserRecordPendingRewards()
+    {
+        $returnArray = [];
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+        $dbRewards = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_queue", [
+            "[>]" . $db_prefix . "reward_map" => ["rmid" => "rmid"],
+            "[>]" . $db_prefix . "rewards" => ["reward" => "rid"]
+        ],
+            [
+                $db_prefix . 'reward_queue.rqid',
+                $db_prefix . 'reward_queue.date',
+                $db_prefix . 'reward_queue.state',
+                $db_prefix . 'reward_map.cat',
+                $db_prefix . 'reward_map.event',
+                $db_prefix . 'reward_map.rule',
+                $db_prefix . 'reward_map.xp',
+                $db_prefix . 'reward_map.name',
+                $db_prefix . 'rewards.description',
+            ], [
+                $db_prefix . "reward_queue.fuid" => $this->getUserID(),
+                "ORDER" => [$db_prefix . 'reward_queue.date' => "DESC"],
+                "LIMIT" => 13
+            ]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+            "METHOD" => __METHOD__,
+            "LINE" => __LINE__
+        ]);
+
+        foreach ($dbRewards as $dbReward) {
+
+            if (!array_key_exists($dbReward['state'], $returnArray) || !is_array($returnArray[$dbReward['state']])) $returnArray[$dbReward['state']] = [];
+
+            $arrayKeyId = count($returnArray[$dbReward['state']]);
+            
+            $returnArray[$dbReward['state']][$arrayKeyId]['date'] = $dbReward['date'];
+
+            if (strtolower($dbReward['cat']) == "nomie" && strtolower($dbReward['event']) == "logged") {
+                $returnArray[$dbReward['state']][$arrayKeyId]['action'] = "Logged '" . $dbReward['rule'] . "' with Nomie";
+            } elseif (strtolower($dbReward['cat']) == "nomie" && strtolower($dbReward['event']) == "score") {
+                $returnArray[$dbReward['state']][$arrayKeyId]['action'] = "Logged a '" . $dbReward['rule'] . "' scoring item with Nomie";
+            } elseif (strtolower($dbReward['cat']) == "activity" && strtolower($dbReward['rule']) == "avg2max") {
+                $returnArray[$dbReward['state']][$arrayKeyId]['action'] = "Recoreded '" . $dbReward['event'] . "' with above average activity";
+            } elseif ($dbReward['name'] != "") {
+                $returnArray[$dbReward['state']][$arrayKeyId]['action'] = $dbReward['name'];
+            } else {
+                $returnArray[$dbReward['state']][$arrayKeyId]['action'] = $dbReward['cat'] . " " . $dbReward['event'] . " " . $dbReward['rule'];
+            }
+
+            $returnArray[$dbReward['state']][$arrayKeyId]['action'] = ucwords($returnArray[$dbReward['state']][$arrayKeyId]['action']);
+
+            if (is_numeric($dbReward['xp'])) {
+                if ($dbReward['xp'] > 0) {
+                    $dbReward['xp'] = "awarded " . $dbReward['xp'];
+                } else {
+                    $dbReward['xp'] = "subtracted " . ( $dbReward['xp'] * -1 );
+                }
+            }
+
+            if ($dbReward['description'] != "" && $dbReward['xp'] != "") {
+                $returnArray[$dbReward['state']][$arrayKeyId]['reward'] = $dbReward['description'] . " and " . $dbReward['xp'] . " xp points";
+            } else if ($dbReward['description'] != "") {
+                $returnArray[$dbReward['state']][$arrayKeyId]['reward'] = $dbReward['description'];
+            } else if ($dbReward['xp'] != "") {
+                $returnArray[$dbReward['state']][$arrayKeyId]['reward'] = $dbReward['xp'] . " xp points";
+            }
+            $returnArray[$dbReward['state']][$arrayKeyId]['reward'] = ucwords($returnArray[$dbReward['state']][$arrayKeyId]['reward']);
+
+            $returnArray[$dbReward['state']][$arrayKeyId]['state'] = $dbReward['state'];
+
+            ksort($returnArray[$dbReward['state']]);
+        }
+
+        return $returnArray;
+    }
+
+    /**
+     * @todo Consider test case
+     * @return array
+     */
     public function returnUserRecordTasker()
     {
         $taskerDataArray = [];
@@ -3149,6 +3229,7 @@ class DataReturn
         }
 
         $taskerDataArray['xp'] = $this->returnUserRecordXp();
+        $taskerDataArray['xp']['ico'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . $taskerDataArray['xp']['level'] . ".png";
 
         return $taskerDataArray;
     }
