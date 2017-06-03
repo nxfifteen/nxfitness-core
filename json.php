@@ -11,7 +11,7 @@
 require_once( dirname( __FILE__ ) . "/lib/autoloader.php" );
 
 use Core\DataReturn;
-use Core\Rewards\RewardsMinecraft;
+use Core\Rewards\RewardsSystem;
 
 header( 'Access-Control-Allow-Origin: https://wp.dev.psi.nxfifteen.me.uk' );
 header( 'Cache-Control: no-cache, must-revalidate' );
@@ -123,7 +123,7 @@ if ( array_key_exists( "user", $_GET ) && array_key_exists( "data", $_GET ) ) {
 } else if ( array_key_exists( "wmc_key", $_GET ) ) {
     $start = microtime( true );
 
-    $RewardsMinecraft = new RewardsMinecraft();
+    $RewardsMinecraft = new RewardsSystem();
 
     $json = $RewardsMinecraft->queryMinecraftRewards();
 
