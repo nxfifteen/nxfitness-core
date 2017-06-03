@@ -13,7 +13,7 @@ namespace Core\Babel;
 require_once(dirname(__FILE__) . "/../../autoloader.php");
 
 use Core\Core;
-use Core\Rewards\RewardsMinecraft;
+use Core\Rewards\RewardsSystem;
 use couchClient;
 use couchNotFoundException;
 use DateInterval;
@@ -46,7 +46,7 @@ class ApiBabel
      */
     protected $AppClass;
     /**
-     * @var RewardsMinecraft
+     * @var RewardsSystem
      */
     protected $RewardsSystem;
     /**
@@ -285,7 +285,7 @@ class ApiBabel
                     }
 
                     if (!is_null($this->RewardsSystem)) {
-                        $this->RewardsSystem->eventTriggerTracker($steps->dateTime, $trigger, $steps->value);
+                        $this->RewardsSystem->eventTrigger("FitbitTracker", [$steps->dateTime, $trigger, $steps->value]);
                     }
                 }
             }
@@ -354,7 +354,7 @@ class ApiBabel
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->eventTriggerStreak($goal, $days_between);
+                            $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between]);
                         }
                     }
 
@@ -385,7 +385,7 @@ class ApiBabel
                     ]);
 
                     if (!is_null($this->RewardsSystem)) {
-                        $this->RewardsSystem->eventTriggerStreak($goal, $days_between);
+                        $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between]);
                     }
 
                     nxr(5, "Steak started on $streak_start, but as ended on " . $streak_end);
@@ -416,7 +416,7 @@ class ApiBabel
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->eventTriggerStreak($goal, 1);
+                            $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, 1]);
                         }
                     }
 
@@ -550,9 +550,8 @@ class ApiBabel
 
                     if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d'))) {
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->eventTriggerVeryActive($series->value);
+                            $this->RewardsSystem->eventTrigger("FitbitVeryActive", $series->value);
                         }
-                        //$this->GoalStreakCheck($series->dateTime, "veryactive", $series->value);
                     }
                 }
             }
@@ -701,7 +700,7 @@ class ApiBabel
                             $this->setLastCleanRun("activity_log", new DateTime ($startDate));
 
                             if (!is_null($this->RewardsSystem)) {
-                                $this->RewardsSystem->eventTriggerActivity($activity);
+                                $this->RewardsSystem->eventTrigger("FitbitLoggedActivity", $activity);
                             }
                         }
 
@@ -930,7 +929,7 @@ class ApiBabel
                             ]);
 
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->eventTriggerNewMeal($meal);
+                            $this->RewardsSystem->eventTrigger("RecordedMeal", $meal);
                         }
                     }
 
@@ -1070,8 +1069,8 @@ class ApiBabel
                 }
 
                 if (!is_null($this->RewardsSystem)) {
-                    $this->RewardsSystem->eventTriggerWeightChange($weight, $goalsweight, $lastWeight);
-                    $this->RewardsSystem->eventTriggerFatChange($fat, $goalsfat, $lastFat);
+                    $this->RewardsSystem->eventTrigger("BodyWeight", [$weight, $goalsweight, $lastWeight]);
+                    $this->RewardsSystem->eventTrigger("BodyFat", [$fat, $goalsfat, $lastFat]);
                 }
 
                 if (!$fallback) {
@@ -1843,7 +1842,7 @@ class ApiBabel
                                 }
 
                                 if (!is_null($this->RewardsSystem)) {
-                                    $this->RewardsSystem->eventTriggerBadgeAwarded($badge);
+                                    $this->RewardsSystem->eventTrigger("FitbitBadgeAwarded", $badge);
                                 }
                             }
                         }
@@ -2978,7 +2977,7 @@ class ApiBabel
                             if (!is_null($this->RewardsSystem)) {
                                 if (date('Y-m-d', $event[3] / 1000) == date('Y-m-d')) {
                                     $event[2] = $indexedTrackers[$event[2]];
-                                    $this->RewardsSystem->eventTriggerNomie($event);
+                                    $this->RewardsSystem->eventTrigger('Nomie', $event);
                                 }
                             }
                         }
@@ -3068,7 +3067,7 @@ class ApiBabel
             nxr(0, " Checking $user for minecraft reward support");
 
             nxr(0, "  Reward system ready");
-            $this->RewardsSystem = new RewardsMinecraft($user);
+            $this->RewardsSystem = new RewardsSystem($user);
 
             $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
             if (strtotime($userCoolDownTime) >= date("U")) {
@@ -3308,8 +3307,6 @@ class ApiBabel
                             "LINE" => __LINE__
                         ]);
                 }
-
-                if (!is_null($this->RewardsSystem)) $this->RewardsSystem->actionRewards();
 
             } else {
                 nxr(0, "User has not yet authenticated with Fitbit");

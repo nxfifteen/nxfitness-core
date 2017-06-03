@@ -121,3 +121,5 @@ config.inc.php
 /bundle/vendor/*/*/.php_cs
 /bundle/vendor/*/*/phpunit.xml
 /ux/img/xplevels/*.png
+/ux/img/xplevels/*.psd
+/lib/Core/Rewards/Modules/Private/*.php

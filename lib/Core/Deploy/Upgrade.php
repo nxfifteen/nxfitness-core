@@ -684,6 +684,40 @@ class Upgrade {
         return true;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function updateRun108() {
+
+        $db_prefix = $this->getSetting( "db_prefix", false );
+        $this->getDatabase()->query( "UPDATE `" . $db_prefix . "reward_map` SET `event` = 'tick' WHERE `event` = 'logged' AND `cat` = 'nomie';" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+        $this->getDatabase()->query( "UPDATE `" . $db_prefix . "reward_map` SET `cat` = 'Nomie' WHERE `cat` = 'nomie';" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+        $this->getDatabase()->query( "UPDATE `" . $db_prefix . "reward_map` SET `event` = 'Scored' WHERE `event` = 'score';" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+        $this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "reward_queue` CHANGE `rmid` `rmid` INT(6) NULL;" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+        $this->getDatabase()->query( "CREATE TABLE `" . $db_prefix . "inbox` (`iid` int(6) NOT NULL,`fuid` varchar(8) NOT NULL,`date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,`expires` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',`ico` varchar(255) NOT NULL,`icoColour` varchar(255) NOT NULL,`subject` longtext NOT NULL,`body` longtext NOT NULL,`bold` varchar(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+        $this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "inbox` CHANGE `iid` `iid` INT(6) NOT NULL AUTO_INCREMENT;" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+
+        $this->setSetting( "version", "0.0.1.8", true );
+
+        return true;
+    }
+
     /**
      * @todo Consider test case
      * @return Config

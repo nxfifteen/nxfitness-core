@@ -16,18 +16,20 @@ use Core\Core;
 use DateTime;
 
 /**
- * RewardsMinecraft
+ * RewardsSystem
  *
  * @link      https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/phpdoc-class-RewardsMinecraft
- *            phpDocumentor wiki for RewardsMinecraft.
+ *            phpDocumentor wiki for RewardsSystem.
  * @version   0.0.1
  * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  */
-class RewardsMinecraft
+class RewardsSystem
 {
+
+    private $debug = false;
 
     /**
      * @var Core
@@ -42,11 +44,6 @@ class RewardsMinecraft
      * @var string
      */
     protected $UserMinecraftID;
-
-    /**
-     * @var boolean
-     */
-    protected $createRewards;
 
     /**
      * @var array
@@ -66,11 +63,6 @@ class RewardsMinecraft
     {
         $this->setAppClass(new Core());
         $this->AwardsGiven = [];
-//        if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
-        $this->createRewards = false;
-//        } else {
-//            $this->createRewards = true;
-//        }
         $this->setUserID($user);
         $this->user = $user;
     }
@@ -250,64 +242,6 @@ class RewardsMinecraft
     }
 
     /**
-     * @param string $goal
-     * @param int $value
-     * @param int $multiplyer
-     *
-     * @return bool
-     */
-    private function reachedGoal($goal, $value, $multiplyer = 1)
-    {
-        $currentDate = new DateTime ('now');
-        $currentDate = $currentDate->format("Y-m-d");
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        if ($value >= 1) {
-            $recordedValue = $value;
-            $recordedTarget = round($this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", $goal,
-                [
-                    "AND" => [
-                        "user" => $this->getUserID(),
-                        "date" => $currentDate
-                    ]
-                ]), 3);
-            if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
-                $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_" . $goal),
-                    3);
-            }
-            $requiredTarget = $recordedTarget * $multiplyer;
-            if ($recordedValue >= $requiredTarget) {
-                return true;
-            }
-        } else {
-            nxr(4, "No $goal data recorded for $currentDate");
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $goal
-     * @param string $value
-     *
-     * @return bool
-     */
-    private function smashedGoal($goal, $value)
-    {
-        return $this->reachedGoal($goal, $value, 1.5);
-    }
-
-    /**
-     * @param string $goal
-     * @param string $value
-     *
-     * @return bool
-     */
-    private function crushedGoal($goal, $value)
-    {
-        return $this->reachedGoal($goal, $value, 2);
-    }
-
-    /**
      * @todo Consider test case
      * @return String
      */
@@ -426,279 +360,34 @@ class RewardsMinecraft
     }
 
     /**
-     * @param object $activity
-     *
-     * @todo Consider test case
+     * @param $system
+     * @param $eventDetails
      */
-    public function eventTriggerActivity($activity)
+    public function eventTrigger($system, $eventDetails)
     {
-        $currentDate = new DateTime ('now');
-        $currentDate = $currentDate->format("Y-m-d");
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $checkForThese = [
-            "Aerobic",
-            "Bicycling",
-            "Bodyweight",
-            "Calisthenics",
-            "Circuit Training",
-            "Elliptical Trainer",
-            "Hike",
-            "Meditating",
-            "Outdoor Bike",
-            "Push-ups",
-            "Run",
-            "Sit-ups",
-            "Skiing",
-            "Stationary bike",
-            "Strength training",
-            "Swimming",
-            "Tai chi",
-            "Treadmill",
-            "Walk",
-            "Workout",
-            "Yoga"
-        ];
+        $className = "Core\\Rewards\\Modules\\" . $system;
+        $includePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . "Modules";
 
-        $supportActivity = false;
-        if ($activity->activityName != "auto_detected") {
-            foreach ($checkForThese as $tracker) {
-                if (!$supportActivity && strpos($activity->activityName, $tracker) !== false) {
-                    $supportActivity = true;
-                }
-            }
+        if (file_exists($includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system .".php")) {
+            $includePath = $includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system . ".php";
+        } else if (file_exists($includePath . DIRECTORY_SEPARATOR . $system.".php")) {
+            $includePath = $includePath . DIRECTORY_SEPARATOR . $system . ".php";
+        } else {
+            $includePath = null;
         }
 
-        if ($supportActivity) {
-            $sql_search = [
-                "user" => $this->getUserID(),
-                "activityName[~]" => $activity->activityName,
-                "startDate" => $currentDate,
-                "logType[!]" => 'auto_detected'
-            ];
-            $minMaxAvg = [];
-            $minMaxAvg['min'] = ($this->getAppClass()->getDatabase()->min($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
-            $minMaxAvg['avg'] = ($this->getAppClass()->getDatabase()->avg($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
-            $minMaxAvg['max'] = ($this->getAppClass()->getDatabase()->max($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
+        if (!is_null($includePath)) {
+            if ($this->debug) nxr(2, "includePath: " . $includePath);
+            if ($this->debug) nxr(2, "className: " . $className);
 
-            $minMaxAvg['min2avg'] = (($minMaxAvg['avg'] - $minMaxAvg['min']) / 2) + $minMaxAvg['min'];
-            $minMaxAvg['avg2max'] = (($minMaxAvg['max'] - $minMaxAvg['avg']) / 2) + $minMaxAvg['avg'];
+            /** @noinspection PhpIncludeInspection */
+            require_once($includePath);
+            $rewardSystem = new $className($this->getAppClass(), $this->getUserID());
+            /** @noinspection PhpUndefinedMethodInspection */
+            $rewardSystem->trigger($eventDetails);
 
-            $activeDuration = $activity->duration / 1000 / 60;
-
-            if ($activeDuration == $minMaxAvg['max']) {
-                $this->checkForAward("activity", $activity->activityName, "max", $activity->logId);
-            } else if ($activeDuration >= $minMaxAvg['avg2max']) {
-                $this->checkForAward("activity", $activity->activityName, "avg2max", $activity->logId);
-            } else if ($activeDuration >= $minMaxAvg['avg']) {
-                $this->checkForAward("activity", $activity->activityName, "avg", $activity->logId);
-            } else if ($activeDuration >= $minMaxAvg['min2avg']) {
-                $this->checkForAward("activity", $activity->activityName, "min2avg", $activity->logId);
-            } else {
-                $this->checkForAward("activity", $activity->activityName, "other", $activity->logId);
-            }
+        } else {
+            nxr(2, "Create a new class '$className' in " . $includePath);
         }
-
-    }
-
-    /**
-     * @param object $badge
-     *
-     * @todo Consider test case
-     */
-    public function eventTriggerBadgeAwarded($badge)
-    {
-        nxr(1, "** API Event Trigger Badge");
-
-        //if (date('Y-m-d') == $badge->dateTime) {
-        nxr(4,
-            $badge->shortName . " (" . $badge->category . ") awarded " . $badge->timesAchieved . " on " . $badge->dateTime);
-
-        if ($this->checkForAward("badge", $badge->category . " | " . $badge->shortName, "awarded", $badge->category . $badge->shortName)) {
-
-        } else if ($this->checkForAward("badge", $badge->category, "awarded", $badge->category)) {
-
-        } else if ($this->checkForAward("badge", $badge->category . " | " . $badge->shortName, $badge->timesAchieved, $badge->category . $badge->shortName . $badge->timesAchieved)) {
-
-        } else if ($this->checkForAward("badge", $badge->category, $badge->timesAchieved, $badge->category . $badge->timesAchieved)) {
-
-        }
-        //}
-    }
-
-    /**
-     * @param double $current
-     * @param double $goal
-     * @param double $last
-     *
-     * @todo Consider test case
-     */
-    public function eventTriggerWeightChange($current, $goal, $last)
-    {
-        $currentDate = new DateTime ('now');
-        $currentDate = $currentDate->format("Y-m-d");
-        if ($current <= $goal) {
-            $this->checkForAward("body", "weight", "goal", $currentDate . "weightgoal");
-        } else if ($current < $last) {
-            $this->checkForAward("body", "weight", "decreased", $currentDate . "weightdecreased");
-        } else if ($current > $last) {
-            $this->checkForAward("body", "weight", "increased", $currentDate . "weightincreased");
-        }
-    }
-
-    /**
-     * @param double $current
-     * @param double $goal
-     * @param double $last
-     *
-     * @todo Consider test case
-     */
-    public function eventTriggerFatChange($current, $goal, $last)
-    {
-        $currentDate = new DateTime ('now');
-        $currentDate = $currentDate->format("Y-m-d");
-        if ($current <= $goal) {
-            $this->checkForAward("body", "fat", "goal", $currentDate . "fatgoal");
-        } else if ($current < $last) {
-            $this->checkForAward("body", "fat", "decreased", $currentDate . "fatdecreased");
-        } else if ($current > $last) {
-            $this->checkForAward("body", "fat", "increased", $currentDate . "fatincreased");
-        }
-    }
-
-    /**
-     * @param object $meal
-     *
-     * @todo Consider test case
-     */
-    public function eventTriggerNewMeal($meal)
-    {
-        nxr(1, "** API Event Meal Logged");
-        nxr(6, $meal->loggedFood->name . " recorded");
-        nxr(0, print_r($meal, true));
-    }
-
-    /**
-     * @param string $veryActive
-     *
-     * @todo Consider test case
-     */
-    public function eventTriggerVeryActive($veryActive)
-    {
-        $currentDate = new DateTime ('now');
-        $currentDate = $currentDate->format("Y-m-d");
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        if ($veryActive >= 1) {
-            $recordedValue = $veryActive;
-            $recordedTarget = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", "activeMinutes",
-                [
-                    "AND" => [
-                        "user" => $this->getUserID(),
-                        "date" => $currentDate
-                    ]
-                ]);
-            if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
-                $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_activity"),
-                    30);
-            }
-
-            if ($recordedValue >= $recordedTarget) {
-                $this->checkForAward("goal", "veryactive", "reached", date('Y-m-d') . "veryactive" . "reached");
-            }
-        }
-    }
-
-    /**
-     * @param string $date
-     * @param string $trigger
-     * @param string $value
-     *
-     * @todo Consider test case
-     */
-    public function eventTriggerTracker($date, $trigger, $value)
-    {
-        $goalsToCheck = ["steps", "floors", "distance"];
-
-        if (in_array($trigger, $goalsToCheck) && date('Y-m-d') == $date) {
-            // Crushed Step Goal
-            if (!$this->crushedGoal($trigger, $value)) {
-                // Smashed Step Goal
-                if (!$this->smashedGoal($trigger, $value)) {
-                    // Reached Step Goal
-                    if ($this->reachedGoal($trigger, $value)) {
-                        $this->checkForAward("goal", $trigger, "reached", date('Y-m-d') . $trigger . "reached");
-                    }
-                } else {
-                    $this->checkForAward("goal", $trigger, "smashed", date('Y-m-d') . $trigger . "smashed");
-                }
-            } else {
-                $this->checkForAward("goal", $trigger, "crushed", date('Y-m-d') . $trigger . "crushed");
-            }
-
-            if ($trigger == "steps") {
-                $divider = 100;
-            } else {
-                $divider = 10;
-            }
-
-            if ($value >= 1) {
-                $yesterday = date('Y-m-d', strtotime('-1 days'));
-
-                $yesterdaySteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps_goals",
-                    $trigger, [
-                        "AND" => [
-                            "user" => $this->getUserID(),
-                            "date" => $yesterday
-                        ]
-                    ]);
-
-                $recordedValue = round($yesterdaySteps, 3);
-                $hundredth = round($recordedValue / $divider, 0);
-                nxr(1, "Checking awards for $yesterday on $trigger $hundredth");
-                $this->checkForAward("hundredth", $trigger, $hundredth, $yesterday . $trigger . $hundredth);
-            }
-        }
-    }
-
-    /**
-     * @param array $inputArray
-     *
-     * @todo Consider test case
-     */
-    public function eventTriggerNomie($inputArray)
-    {
-        $event = $inputArray[2];
-        $date = $inputArray[5];
-        $score = $inputArray[4];
-
-//        nxr( 2, "** API Event Nomie - " . $event . " logged on " . $date . " and scored " . $score );
-
-        if (!$this->checkForAward("nomie", "logged", $event, $date . $event)) {
-            $this->checkForAward("nomie", "score", $score, $date . $score);
-        }
-    }
-
-    /**
-     * @param string $goal
-     * @param string $length
-     *
-     * @todo Consider test case
-     */
-    public function eventTriggerStreak($goal, $length)
-    {
-        $this->checkForAward("streak", $goal, $length, $goal . $length);
-    }
-
-    /**
-     *
-     */
-    public function actionRewards()
-    {
-        $prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $this->getAppClass()->getDatabase()->delete($prefix . "reward_queue",
-            ["AND" => ["fuid" => $this->getUserID(), "state" => "delivered", "date[<]" => date('Y-m-d', strtotime(' -14 days'))]]);
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
-            "METHOD" => __METHOD__,
-            "LINE" => __LINE__
-        ]);
     }
 }
