@@ -66,6 +66,10 @@ class Delivery
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
+        if (!is_array($recordReward)) {
+            $recordReward = [];
+        }
+
         if (!array_key_exists("rmid", $recordReward)) {
             $recordReward['rmid'] = null;
         }
