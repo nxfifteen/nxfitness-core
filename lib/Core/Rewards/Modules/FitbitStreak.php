@@ -37,6 +37,8 @@ class FitbitStreak extends Modules
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
 
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
         $rewardKey = sha1($eventDetails['goal'] . $eventDetails['streak_start'] . $eventDetails['days_between']);
 
         if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
@@ -44,7 +46,21 @@ class FitbitStreak extends Modules
         }
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-            $this->getRewardsClass()->giveUserXp(5 * $eventDetails['days_between'], $rewardKey);
+            $avg = round($this->getAppClass()->getDatabase()->avg($db_prefix . "streak_goal", ['length'], ["fuid" => $this->getUserID()]), 0);
+            $max = round($this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null], "ORDER" => ["length" => "DESC"]]), 0);
+            $last = round($this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null], "ORDER" => ["start_date" => "DESC"]]), 0);
+
+            if ($eventDetails['days_between'] == $max) {
+                $muliplier = $max - $avg;
+            } else if ($eventDetails['days_between'] > $last) {
+                $muliplier = $eventDetails['days_between'] - $last;
+            } else if ($eventDetails['days_between'] > $avg) {
+                $muliplier = $eventDetails['days_between'] - $avg;
+            } else {
+                $muliplier = 0;
+            }
+
+            $this->getRewardsClass()->giveUserXp(5 * $eventDetails['days_between'] + $muliplier, $rewardKey);
             $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", "Streaking!!!", "Your " . $eventDetails['goal'] . " streak ran " . $eventDetails['days_between'] . " days", 5 * $eventDetails['days_between'] . "XP", '+5 hours');
         }
     }
