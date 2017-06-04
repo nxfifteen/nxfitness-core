@@ -927,10 +927,10 @@ class ApiBabel
                                 "METHOD" => __METHOD__,
                                 "LINE" => __LINE__
                             ]);
+                    }
 
-                        if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->eventTrigger("RecordedMeal", $meal);
-                        }
+                    if (!is_null($this->RewardsSystem)) {
+                        $this->RewardsSystem->eventTrigger("RecordedMeal", $meal);
                     }
 
                     $this->setLastCleanRun("foods", $targetDateTime);
@@ -1227,6 +1227,10 @@ class ApiBabel
                             "METHOD" => __METHOD__,
                             "LINE" => __LINE__
                         ]);
+                }
+
+                if (!is_null($this->RewardsSystem)) {
+                    $this->RewardsSystem->eventTrigger("RecordedWater", $userWaterLog);
                 }
 
                 $this->setLastCleanRun("water", $targetDateTime);
