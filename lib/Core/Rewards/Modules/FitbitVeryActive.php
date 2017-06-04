@@ -40,7 +40,6 @@ class FitbitVeryActive extends Modules
         if ($eventDetails >= 1) {
 
             $currentDate = new DateTime ('now');
-            $currentDate = $currentDate->modify("-1 days");
             $currentDate = $currentDate->format("Y-m-d");
 
             $rewardKey = $currentDate . "veryactive" . "reached";
