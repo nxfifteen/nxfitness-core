@@ -39,7 +39,7 @@ class Wordpress extends Delivery
                 $dbCurrentBalance = $this->getAppClass()->getDatabase()->get("wp_usermeta", 'meta_value', ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']]);
             } else {
                 nxr(0, print_r($this->getAppClass()->getDatabase()->error(), true));
-                $this->getAppClass()->getDatabase()->insert("wp_usermeta", ["wp_usermeta" => 0, "user_id" => $user_wp_id, "meta_key" => "_uw_balance"]);
+                $this->getAppClass()->getDatabase()->insert("wp_usermeta", ["meta_value" => 0, "user_id" => $user_wp_id, "meta_key" => "_uw_balance"]);
                 $dbCurrentBalance = 0;
             }
 
