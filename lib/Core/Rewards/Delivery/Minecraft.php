@@ -32,9 +32,18 @@ class Minecraft extends Delivery
      * @param string $rewardKey
      */
     public function deliver($recordReward, $state, $rewardKey) {
+        $minecraftUsername = $this->getAppClass()->getUserSetting($this->getUserID(), "minecraft_username", null);
 
-        nxr(0, print_r($recordReward, true));
-        nxr(0, $state);
+        if (!is_null($minecraftUsername) && !is_numeric($minecraftUsername)) {
+            $recordReward['reward'] = str_replace("%s", $minecraftUsername, $recordReward['reward']);
+
+            $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "minecraft", ["username" => $minecraftUsername, "command" => $recordReward['reward'], "delivery" => "pending"]);
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+            nxr(0, $this->getAppClass()->getDatabase()->last());
+
+        } else {
+            nxr(0, "User doesnt have a Minecraft Username");
+        }
 
         $this->recordDevlivery($recordReward, "delivered", $rewardKey);
     }
