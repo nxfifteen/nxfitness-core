@@ -12,7 +12,7 @@ namespace Core\Rewards\Delivery;
 
 use Core\Rewards\Delivery;
 
-require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
+require_once(dirname(__FILE__) . "/../../../autoloader.php");
 
 /**
  * Modules
@@ -30,7 +30,8 @@ class Wordpress extends Delivery
      * @param string $state
      * @param string $rewardKey
      */
-    public function deliver($recordReward, $state, $rewardKey) {
+    public function deliver($recordReward, $state, $rewardKey)
+    {
         $user_wp_id = $this->getAppClass()->getUserSetting($this->getUserID(), "wp_user_id");
         if (is_null($user_wp_id)) {
             nxr(0, "User doesnt have a WP ID");

@@ -33,7 +33,8 @@ class FitbitTracker extends Modules
     /**
      * @param $eventDetails
      */
-    public function trigger($eventDetails) {
+    public function trigger($eventDetails)
+    {
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
 
@@ -79,10 +80,10 @@ class FitbitTracker extends Modules
                 $rewardKey = sha1($yesterday . $eventDetails['trigger'] . $hundredth);
 
                 if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
-                    $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey."db"));
+                    $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey . "db"));
                 }
                 if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-                    $xp = round(($eventDetails['value'] - 5000) / 2 , 0);
+                    $xp = round(($eventDetails['value'] - 5000) / 2, 0);
                     if ($xp > 0) {
                         $this->getRewardsClass()->giveUserXp($xp, $rewardKey);
                         $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", "Step Mark", "You took " . $recordedValue . " steps yesterday", $xp . "XP", '+24 hours');
@@ -104,6 +105,17 @@ class FitbitTracker extends Modules
             "trigger" => $eventDetails[1],
             "value" => $eventDetails[2]
         ];
+    }
+
+    /**
+     * @param string $goal
+     * @param string $value
+     *
+     * @return bool
+     */
+    private function crushedGoal($goal, $value)
+    {
+        return $this->reachedGoal($goal, $value, 2);
     }
 
     /**
@@ -151,16 +163,5 @@ class FitbitTracker extends Modules
     private function smashedGoal($goal, $value)
     {
         return $this->reachedGoal($goal, $value, 1.5);
-    }
-
-    /**
-     * @param string $goal
-     * @param string $value
-     *
-     * @return bool
-     */
-    private function crushedGoal($goal, $value)
-    {
-        return $this->reachedGoal($goal, $value, 2);
     }
 }

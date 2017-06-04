@@ -12,7 +12,7 @@ namespace Core\Rewards\Delivery;
 
 use Core\Rewards\Delivery;
 
-require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
+require_once(dirname(__FILE__) . "/../../../autoloader.php");
 
 /**
  * Modules
@@ -31,7 +31,8 @@ class Minecraft extends Delivery
      * @param string $state
      * @param string $rewardKey
      */
-    public function deliver($recordReward, $state, $rewardKey) {
+    public function deliver($recordReward, $state, $rewardKey)
+    {
         $minecraftUsername = $this->getAppClass()->getUserSetting($this->getUserID(), "minecraft_username", null);
 
         if (!is_null($minecraftUsername) && !is_numeric($minecraftUsername)) {

@@ -11,7 +11,6 @@
 namespace Core\Rewards\Modules;
 
 use Core\Rewards\Modules;
-use DateTime;
 
 require_once(dirname(__FILE__) . "/../Modules.php");
 require_once(dirname(__FILE__) . "/../../../autoloader.php");
@@ -39,7 +38,7 @@ class RecordedWater extends Modules
         $userWaterLog = $this->getEventDetails();
 
         $yesterday = date("Y-m-d", strtotime("-1 days"));
-        $rewardKey = sha1("waterRecordingFor" . $yesterday );
+        $rewardKey = sha1("waterRecordingFor" . $yesterday);
 
         $goal = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
 

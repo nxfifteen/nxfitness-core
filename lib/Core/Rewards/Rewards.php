@@ -43,33 +43,10 @@ class Rewards
      * @param $AppClass
      * @param $UserID
      */
-    public function __construct($AppClass, $UserID) {
+    public function __construct($AppClass, $UserID)
+    {
         $this->setAppClass($AppClass);
         $this->setUserID($UserID);
-    }
-
-    /**
-     * @return String
-     */
-    private function getUserID()
-    {
-        return $this->UserID;
-    }
-
-    /**
-     * @param String $UserID
-     */
-    private function setUserID($UserID)
-    {
-        $this->UserID = $UserID;
-    }
-
-    /**
-     * @return Core
-     */
-    private function getAppClass()
-    {
-        return $this->AppClass;
     }
 
     /**
@@ -81,6 +58,14 @@ class Rewards
     }
 
     /**
+     * @param String $UserID
+     */
+    private function setUserID($UserID)
+    {
+        $this->UserID = $UserID;
+    }
+
+    /**
      * @param $rewardKey
      * @return bool
      */
@@ -88,6 +73,22 @@ class Rewards
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         return $this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", ["AND" => ['fuid' => $this->getUserID(), 'rkey[~]' => $rewardKey]]);
+    }
+
+    /**
+     * @return Core
+     */
+    private function getAppClass()
+    {
+        return $this->AppClass;
+    }
+
+    /**
+     * @return String
+     */
+    private function getUserID()
+    {
+        return $this->UserID;
     }
 
     /**
@@ -151,6 +152,37 @@ class Rewards
     public function giveUserXp($xp, $rewardKey)
     {
         $this->issueAwards($xp, $rewardKey, "pending", "Xp");
+    }
+
+    /**
+     * @param array $recordReward
+     * @param string $state
+     * @param string $rewardKey
+     * @param string $delivery
+     */
+    public function issueAwards($recordReward, $rewardKey, $state = "pending", $delivery = "Default")
+    {
+
+        $className = "Core\\Rewards\\Delivery";
+        $includePath = dirname(__FILE__);
+        $includeFile = $includePath . DIRECTORY_SEPARATOR . "Delivery.php";
+
+        if ($delivery != "Default") {
+            $delivery = ucwords($delivery);
+
+            if (file_exists($includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR . $delivery . ".php")) {
+                $includeFile = $includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR . $delivery . ".php";
+                $className = "Core\\Rewards\\Delivery\\" . $delivery;
+            } else {
+                nxr(2, "Create a new class 'Core\\Rewards\\Delivery\\$delivery' in " . $includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR);
+            }
+        }
+
+        /** @noinspection PhpIncludeInspection */
+        require_once($includeFile);
+        $rewardSystem = new $className($this->getAppClass(), $this->getUserID());
+        /** @noinspection PhpUndefinedMethodInspection */
+        $rewardSystem->deliver($recordReward, $state, $rewardKey);
     }
 
     /**
@@ -221,37 +253,6 @@ class Rewards
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
-    }
-
-    /**
-     * @param array $recordReward
-     * @param string $state
-     * @param string $rewardKey
-     * @param string $delivery
-     */
-    public function issueAwards($recordReward, $rewardKey, $state = "pending", $delivery = "Default")
-    {
-
-        $className = "Core\\Rewards\\Delivery";
-        $includePath = dirname(__FILE__);
-        $includeFile = $includePath . DIRECTORY_SEPARATOR . "Delivery.php";
-
-        if ($delivery != "Default") {
-            $delivery = ucwords($delivery);
-
-            if (file_exists($includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR . $delivery . ".php")) {
-                $includeFile = $includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR . $delivery . ".php";
-                $className = "Core\\Rewards\\Delivery\\" . $delivery;
-            } else {
-                nxr(2, "Create a new class 'Core\\Rewards\\Delivery\\$delivery' in " . $includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR);
-            }
-        }
-
-        /** @noinspection PhpIncludeInspection */
-        require_once($includeFile);
-        $rewardSystem = new $className($this->getAppClass(), $this->getUserID());
-        /** @noinspection PhpUndefinedMethodInspection */
-        $rewardSystem->deliver($recordReward, $state, $rewardKey);
     }
 
     /**

@@ -11,7 +11,6 @@
 namespace Core\Rewards\Modules;
 
 use Core\Rewards\Modules;
-use DateTime;
 
 require_once(dirname(__FILE__) . "/../Modules.php");
 require_once(dirname(__FILE__) . "/../../../autoloader.php");
@@ -41,7 +40,7 @@ class RecordedMeal extends Modules
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         $yesterday = date("Y-m-d", strtotime($meal->logDate . " -1 days"));
-        $rewardKey = sha1("mealRecordingFor" . $yesterday );
+        $rewardKey = sha1("mealRecordingFor" . $yesterday);
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
             $dbcalories = $this->getAppClass()->getDatabase()->sum($db_prefix . "food", "calories", ["AND" => ["date" => $yesterday, "user" => $this->getUserID()]]);

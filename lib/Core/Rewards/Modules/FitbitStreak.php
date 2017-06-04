@@ -11,7 +11,6 @@
 namespace Core\Rewards\Modules;
 
 use Core\Rewards\Modules;
-use DateTime;
 
 require_once(dirname(__FILE__) . "/../Modules.php");
 require_once(dirname(__FILE__) . "/../../../autoloader.php");
@@ -33,7 +32,8 @@ class FitbitStreak extends Modules
     /**
      * @param $eventDetails
      */
-    public function trigger($eventDetails) {
+    public function trigger($eventDetails)
+    {
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
 

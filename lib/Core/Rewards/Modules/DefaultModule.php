@@ -32,7 +32,8 @@ class DefaultModule extends Modules
     /**
      * @param $eventDetails
      */
-    public function trigger($eventDetails) {
+    public function trigger($eventDetails)
+    {
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
 

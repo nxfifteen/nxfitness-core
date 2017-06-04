@@ -33,7 +33,8 @@ class FitbitLoggedActivity extends Modules
     /**
      * @param $eventDetails
      */
-    public function trigger($eventDetails) {
+    public function trigger($eventDetails)
+    {
         $this->setEventDetails($eventDetails);
         $activity = $this->getEventDetails();
 
