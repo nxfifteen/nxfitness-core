@@ -704,6 +704,16 @@ class Upgrade {
         if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
             return false;
         }
+
+        $this->setSetting( "version", "0.0.1.8", true );
+
+        return true;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function updateRun109() {
+        $db_prefix = $this->getSetting( "db_prefix", false );
+
         $this->getDatabase()->query( "CREATE TABLE `" . $db_prefix . "inbox` (`iid` int(6) NOT NULL,`fuid` varchar(8) NOT NULL,`date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,`expires` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',`ico` varchar(255) NOT NULL,`icoColour` varchar(255) NOT NULL,`subject` longtext NOT NULL,`body` longtext NOT NULL,`bold` varchar(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
         if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
             return false;
@@ -725,7 +735,7 @@ class Upgrade {
             return false;
         }
 
-        $this->setSetting( "version", "0.0.1.8", true );
+        $this->setSetting( "version", "0.0.1.9", true );
 
         return true;
     }
