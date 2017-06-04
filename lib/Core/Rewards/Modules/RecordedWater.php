@@ -11,7 +11,6 @@
 namespace Core\Rewards\Modules;
 
 use Core\Rewards\Modules;
-use DateTime;
 
 require_once(dirname(__FILE__) . "/../Modules.php");
 require_once(dirname(__FILE__) . "/../../../autoloader.php");
@@ -36,15 +35,15 @@ class RecordedWater extends Modules
     public function trigger($eventDetails)
     {
         $this->setEventDetails($eventDetails);
-        $userWaterLog = $this->getEventDetails();
 
         $yesterday = date("Y-m-d", strtotime("-1 days"));
-        $rewardKey = sha1("waterRecordingFor" . $yesterday );
+        $rewardKey = sha1("waterRecordingFor" . $yesterday);
 
         $goal = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-            $water = (integer)$userWaterLog->summary->water;
+            $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+            $water = $this->getAppClass()->getDatabase()->get($db_prefix . "water", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
             $xp = 0;
             $inbox = [];

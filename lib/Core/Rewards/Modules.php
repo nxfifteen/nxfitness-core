@@ -13,7 +13,7 @@ namespace Core\Rewards;
 use Core\Core;
 use DateTime;
 
-require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
+require_once(dirname(__FILE__) . "/../../autoloader.php");
 
 /**
  * Modules
@@ -31,19 +31,15 @@ class Modules
      * @var array
      */
     protected $eventDetails;
-
-    private $createNewAwards = false;
-
     /**
      * @var String
      */
     protected $UserID;
-
     /**
      * @var Rewards
      */
     protected $RewardsClass;
-
+    private $createNewAwards = false;
     /**
      * @var Core
      */
@@ -54,59 +50,11 @@ class Modules
      * @param $AppClass
      * @param $UserID
      */
-    public function __construct($AppClass, $UserID) {
+    public function __construct($AppClass, $UserID)
+    {
         $this->setAppClass($AppClass);
         $this->setUserID($UserID);
         $this->setRewardsClass(new Rewards($AppClass, $UserID));
-    }
-
-    /**
-     * @return Rewards
-     */
-    protected function getRewardsClass()
-    {
-        return $this->RewardsClass;
-    }
-
-    /**
-     * @param Rewards $RewardsClass
-     */
-    protected function setRewardsClass($RewardsClass)
-    {
-        $this->RewardsClass = $RewardsClass;
-    }
-
-    /**
-     * @todo Consider test case
-     * @return String
-     */
-    protected function getUserID()
-    {
-        return $this->UserID;
-    }
-
-    /**
-     * @todo Consider test case
-     *
-     * @param String $UserID
-     */
-    protected function setUserID($UserID)
-    {
-        $this->UserID = $UserID;
-    }
-
-    /**
-     * @param Core $AppClass
-     */
-    protected function setAppClass($AppClass) {
-        $this->AppClass = $AppClass;
-    }
-
-    /**
-     * @return Core
-     */
-    protected function getAppClass() {
-        return $this->AppClass;
     }
 
     /**
@@ -124,7 +72,8 @@ class Modules
      * @param null $rewardKey
      * @return bool
      */
-    protected function checkDB($cat, $event, $score, $rewardKey = null) {
+    protected function checkDB($cat, $event, $score, $rewardKey = null)
+    {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (is_null($rewardKey)) {
@@ -207,7 +156,40 @@ class Modules
         return false;
     }
 
-    protected function cleanupQueue() {
+    /**
+     * @return Core
+     */
+    protected function getAppClass()
+    {
+        return $this->AppClass;
+    }
+
+    /**
+     * @param Core $AppClass
+     */
+    protected function setAppClass($AppClass)
+    {
+        $this->AppClass = $AppClass;
+    }
+
+    /**
+     * @return Rewards
+     */
+    protected function getRewardsClass()
+    {
+        return $this->RewardsClass;
+    }
+
+    /**
+     * @param Rewards $RewardsClass
+     */
+    protected function setRewardsClass($RewardsClass)
+    {
+        $this->RewardsClass = $RewardsClass;
+    }
+
+    protected function cleanupQueue()
+    {
         $prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $this->getAppClass()->getDatabase()->delete($prefix . "reward_queue",
             ["AND" => ["fuid" => $this->getUserID(), "state" => "delivered", "date[<]" => date('Y-m-d', strtotime(' -14 days'))]]);
@@ -215,6 +197,25 @@ class Modules
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
+    }
+
+    /**
+     * @todo Consider test case
+     * @return String
+     */
+    protected function getUserID()
+    {
+        return $this->UserID;
+    }
+
+    /**
+     * @todo Consider test case
+     *
+     * @param String $UserID
+     */
+    protected function setUserID($UserID)
+    {
+        $this->UserID = $UserID;
     }
 
 }

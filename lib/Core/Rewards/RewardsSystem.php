@@ -29,13 +29,10 @@ use DateTime;
 class RewardsSystem
 {
 
-    private $debug = false;
-
     /**
      * @var Core
      */
     protected $AppClass;
-
     /**
      * @var String
      */
@@ -44,11 +41,11 @@ class RewardsSystem
      * @var string
      */
     protected $UserMinecraftID;
-
     /**
      * @var array
      */
     protected $AwardsGiven;
+    private $debug = false;
     /**
      * @var null
      */
@@ -76,11 +73,128 @@ class RewardsSystem
     }
 
     /**
-     * @return Core
+     * @todo Consider test case
+     * @return String
      */
-    private function getAppClass()
+    public function getUserMinecraftID()
     {
-        return $this->AppClass;
+        return $this->UserMinecraftID;
+    }
+
+    /**
+     * @param string $UserMinecraftID
+     *
+     * @todo     Consider test case
+     * @internal param String $UserID
+     */
+    public function setUserMinecraftID($UserMinecraftID)
+    {
+        $this->UserMinecraftID = $UserMinecraftID;
+    }
+
+    /**
+     * @todo Consider test case
+     * @return array
+     */
+    public function queryMinecraftRewards()
+    {
+        $wmc_key_provided = $_GET['wmc_key'];
+        $wmc_key_correct = $this->getAppClass()->getSetting("wmc_key", null, true);
+        nxr(0, "Minecraft rewards Check");
+
+        if ($wmc_key_provided != $wmc_key_correct) {
+            nxr(1, "Key doesnt match");
+
+            return ["success" => false, "data" => ["msg" => "Incorrect key"]];
+        }
+
+        $databaseTable = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+        if ($_SERVER['REQUEST_METHOD'] == "GET") {
+            $rewards = $this->getAppClass()->getDatabase()->select($databaseTable . "minecraft",
+                [
+                    'mcrid',
+                    'username',
+                    'command'
+                ], [
+                    "delivery" => "pending",
+                    "ORDER" => ['mcrid' => "ASC"]
+                ]);
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+                "METHOD" => __METHOD__,
+                "LINE" => __LINE__
+            ]);
+
+            $data = [];
+            foreach ($rewards as $dbReward) {
+                if (!array_key_exists($dbReward['username'], $data)) {
+                    $data[$dbReward['username']] = [];
+                }
+                if (!array_key_exists($dbReward['mcrid'], $data[$dbReward['username']])) {
+                    $data[$dbReward['username']][$dbReward['mcrid']] = [];
+                }
+                array_push($data[$dbReward['username']][$dbReward['mcrid']], $dbReward['command']);
+            }
+
+            return ["success" => true, "data" => $data];
+
+        } else if ($_SERVER['REQUEST_METHOD'] == "POST" && array_key_exists("processedOrders", $_POST)) {
+
+            $_POST['processedOrders'] = json_decode($_POST['processedOrders']);
+
+            if (is_array($_POST['processedOrders'])) {
+                foreach ($_POST['processedOrders'] as $processedOrder) {
+                    if ($this->getAppClass()->getDatabase()->has($databaseTable . "minecraft", ["mcrid" => $processedOrder])) {
+                        $this->getAppClass()->getDatabase()->update($databaseTable . "minecraft", ["delivery" => "delivered"], ["mcrid" => $processedOrder]);
+                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+                        nxr(1, "Reward " . $processedOrder . " processed");
+                    } else {
+                        nxr(1, "Reward " . $processedOrder . " is invalid ID");
+                    }
+                }
+            } else {
+                nxr(1, "No processed rewards recived");
+            }
+
+            return ["success" => true];
+
+        }
+
+        return ["success" => false, "data" => ["msg" => "Unknown Error"]];
+
+    }
+
+    /**
+     * @param $system
+     * @param $eventDetails
+     */
+    public function eventTrigger($system, $eventDetails)
+    {
+        $className = "Core\\Rewards\\Modules\\" . $system;
+        $includePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . "Modules";
+
+        if (file_exists($includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system . ".php")) {
+            $includePath = $includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system . ".php";
+        } else if (file_exists($includePath . DIRECTORY_SEPARATOR . $system . ".php")) {
+            $includePath = $includePath . DIRECTORY_SEPARATOR . $system . ".php";
+        } else {
+            $includePath = null;
+        }
+
+        if (!is_null($includePath)) {
+            if ($this->debug) nxr(2, "includePath: " . $includePath);
+            if ($this->debug) nxr(2, "className: " . $className);
+
+            /** @noinspection PhpIncludeInspection */
+            require_once($includePath);
+            $rewardSystem = new $className($this->getAppClass(), $this->getUserID());
+            /** @noinspection PhpUndefinedMethodInspection */
+            $rewardSystem->trigger($eventDetails);
+
+        } else {
+            nxr(2, "Create a new class '$className' in " . $includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system . ".php");
+        }
     }
 
     /**
@@ -242,6 +356,14 @@ class RewardsSystem
     }
 
     /**
+     * @return Core
+     */
+    private function getAppClass()
+    {
+        return $this->AppClass;
+    }
+
+    /**
      * @todo Consider test case
      * @return String
      */
@@ -258,130 +380,5 @@ class RewardsSystem
     public function setUserID($UserID)
     {
         $this->UserID = $UserID;
-    }
-
-    /**
-     * @todo Consider test case
-     * @return String
-     */
-    public function getUserMinecraftID()
-    {
-        return $this->UserMinecraftID;
-    }
-
-    /**
-     * @param string $UserMinecraftID
-     *
-     * @todo     Consider test case
-     * @internal param String $UserID
-     */
-    public function setUserMinecraftID($UserMinecraftID)
-    {
-        $this->UserMinecraftID = $UserMinecraftID;
-    }
-
-    /**
-     * @todo Consider test case
-     * @return array
-     */
-    public function queryMinecraftRewards()
-    {
-        $wmc_key_provided = $_GET['wmc_key'];
-        $wmc_key_correct = $this->getAppClass()->getSetting("wmc_key", null, true);
-        nxr(0, "Minecraft rewards Check");
-
-        if ($wmc_key_provided != $wmc_key_correct) {
-            nxr(1, "Key doesnt match");
-
-            return ["success" => false, "data" => ["msg" => "Incorrect key"]];
-        }
-
-        $databaseTable = $this->getAppClass()->getSetting("db_prefix", null, false);
-
-        if ($_SERVER['REQUEST_METHOD'] == "GET") {
-            $rewards = $this->getAppClass()->getDatabase()->select($databaseTable . "minecraft",
-                [
-                    'mcrid',
-                    'username',
-                    'command'
-                ], [
-                    "delivery" => "pending",
-                    "ORDER" => ['mcrid' => "ASC"]
-                ]);
-            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
-                "METHOD" => __METHOD__,
-                "LINE" => __LINE__
-            ]);
-
-            $data = [];
-            foreach ($rewards as $dbReward) {
-                if (!array_key_exists($dbReward['username'], $data)) {
-                    $data[$dbReward['username']] = [];
-                }
-                if (!array_key_exists($dbReward['mcrid'], $data[$dbReward['username']])) {
-                    $data[$dbReward['username']][$dbReward['mcrid']] = [];
-                }
-                array_push($data[$dbReward['username']][$dbReward['mcrid']], $dbReward['command']);
-            }
-
-            return ["success" => true, "data" => $data];
-
-        } else if ($_SERVER['REQUEST_METHOD'] == "POST" && array_key_exists("processedOrders", $_POST)) {
-
-            $_POST['processedOrders'] = json_decode($_POST['processedOrders']);
-
-            if (is_array($_POST['processedOrders'])) {
-                foreach ($_POST['processedOrders'] as $processedOrder) {
-                    if ($this->getAppClass()->getDatabase()->has($databaseTable . "minecraft", ["mcrid" => $processedOrder])) {
-                        $this->getAppClass()->getDatabase()->update($databaseTable . "minecraft", ["delivery" => "delivered"], ["mcrid" => $processedOrder]);
-                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-
-                        nxr(1, "Reward " . $processedOrder . " processed");
-                    } else {
-                        nxr(1, "Reward " . $processedOrder . " is invalid ID");
-                    }
-                }
-            } else {
-                nxr(1, "No processed rewards recived");
-            }
-
-            return ["success" => true];
-
-        }
-
-        return ["success" => false, "data" => ["msg" => "Unknown Error"]];
-
-    }
-
-    /**
-     * @param $system
-     * @param $eventDetails
-     */
-    public function eventTrigger($system, $eventDetails)
-    {
-        $className = "Core\\Rewards\\Modules\\" . $system;
-        $includePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . "Modules";
-
-        if (file_exists($includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system .".php")) {
-            $includePath = $includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system . ".php";
-        } else if (file_exists($includePath . DIRECTORY_SEPARATOR . $system.".php")) {
-            $includePath = $includePath . DIRECTORY_SEPARATOR . $system . ".php";
-        } else {
-            $includePath = null;
-        }
-
-        if (!is_null($includePath)) {
-            if ($this->debug) nxr(2, "includePath: " . $includePath);
-            if ($this->debug) nxr(2, "className: " . $className);
-
-            /** @noinspection PhpIncludeInspection */
-            require_once($includePath);
-            $rewardSystem = new $className($this->getAppClass(), $this->getUserID());
-            /** @noinspection PhpUndefinedMethodInspection */
-            $rewardSystem->trigger($eventDetails);
-
-        } else {
-            nxr(2, "Create a new class '$className' in " . $includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system .".php");
-        }
     }
 }

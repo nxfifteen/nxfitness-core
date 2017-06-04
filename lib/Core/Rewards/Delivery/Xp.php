@@ -12,7 +12,7 @@ namespace Core\Rewards\Delivery;
 
 use Core\Rewards\Delivery;
 
-require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
+require_once(dirname(__FILE__) . "/../../../autoloader.php");
 
 /**
  * Modules
@@ -30,7 +30,8 @@ class Xp extends Delivery
      * @param string $state
      * @param string $rewardKey
      */
-    public function deliver($xp, $state, $rewardKey) {
+    public function deliver($xp, $state, $rewardKey)
+    {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
             $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["xp" => 0, "fuid" => $this->getUserID()]);

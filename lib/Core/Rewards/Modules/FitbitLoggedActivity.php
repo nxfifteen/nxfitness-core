@@ -33,13 +33,11 @@ class FitbitLoggedActivity extends Modules
     /**
      * @param $eventDetails
      */
-    public function trigger($eventDetails) {
+    public function trigger($eventDetails)
+    {
         $this->setEventDetails($eventDetails);
         $activity = $this->getEventDetails();
 
-        $currentDate = new DateTime ('now');
-        $currentDate = $currentDate->format("Y-m-d");
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $checkForThese = [
             "Aerobic",
             "Bicycling",
@@ -63,17 +61,11 @@ class FitbitLoggedActivity extends Modules
             "Workout",
             "Yoga"
         ];
+        if ($activity->activityName != "auto_detected" && in_array($activity->activityName, $checkForThese) && !$this->getRewardsClass()->alreadyAwarded($activity->logId)) {
+            $currentDate = new DateTime ('now');
+            $currentDate = $currentDate->format("Y-m-d");
+            $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        $supportActivity = false;
-        if ($activity->activityName != "auto_detected") {
-            foreach ($checkForThese as $tracker) {
-                if (!$supportActivity && strpos($activity->activityName, $tracker) !== false) {
-                    $supportActivity = true;
-                }
-            }
-        }
-
-        if ($supportActivity) {
             $sql_search = [
                 "user" => $this->getUserID(),
                 "activityName[~]" => $activity->activityName,

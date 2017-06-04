@@ -33,28 +33,29 @@ class FitbitVeryActive extends Modules
     /**
      * @param $eventDetails
      */
-    public function trigger($eventDetails) {
+    public function trigger($eventDetails)
+    {
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
-
-        $currentDate = new DateTime ('now');
-        $currentDate = $currentDate->format("Y-m-d");
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         if ($eventDetails >= 1) {
-            $recordedValue = $eventDetails;
-            $recordedTarget = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", "activeMinutes",
-                [
-                    "AND" => [
-                        "user" => $this->getUserID(),
-                        "date" => $currentDate
-                    ]
-                ]);
-            if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
-                $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_activity"), 30);
-            }
 
-            if ($recordedValue >= $recordedTarget) {
-                $this->checkDB("goal", "veryactive", "reached", date('Y-m-d') . "veryactive" . "reached");
+            $currentDate = new DateTime ('now');
+            $currentDate = $currentDate->format("Y-m-d");
+
+            $rewardKey = $currentDate . "veryactive" . "reached";
+
+            if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+
+                $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                $recordedValue = $eventDetails;
+                $recordedTarget = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", "activeMinutes", ["AND" => ["user" => $this->getUserID(), "date" => $currentDate]]);
+                if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
+                    $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_activity"), 30);
+                }
+
+                if ($recordedValue >= $recordedTarget) {
+                    $this->checkDB("goal", "veryactive", "reached", $rewardKey);
+                }
             }
         }
     }

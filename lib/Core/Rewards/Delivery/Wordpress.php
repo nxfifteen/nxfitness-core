@@ -12,7 +12,7 @@ namespace Core\Rewards\Delivery;
 
 use Core\Rewards\Delivery;
 
-require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
+require_once(dirname(__FILE__) . "/../../../autoloader.php");
 
 /**
  * Modules
@@ -30,22 +30,25 @@ class Wordpress extends Delivery
      * @param string $state
      * @param string $rewardKey
      */
-    public function deliver($recordReward, $state, $rewardKey) {
+    public function deliver($recordReward, $state, $rewardKey)
+    {
         $user_wp_id = $this->getAppClass()->getUserSetting($this->getUserID(), "wp_user_id");
         if (is_null($user_wp_id)) {
             nxr(0, "User doesnt have a WP ID");
         } else {
-            if ($this->getAppClass()->getDatabase()->has("wp_usermeta", ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']])) {
-                $dbCurrentBalance = $this->getAppClass()->getDatabase()->get("wp_usermeta", 'meta_value', ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']]);
+            $db_wp_prefix = $this->getAppClass()->getSetting("db_prefix", "wp_");
+
+            if ($this->getAppClass()->getDatabase()->has($db_wp_prefix . "usermeta", ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']])) {
+                $dbCurrentBalance = $this->getAppClass()->getDatabase()->get($db_wp_prefix . "usermeta", 'meta_value', ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']]);
             } else {
-                nxr(0, print_r($this->getAppClass()->getDatabase()->error(), true));
-                $this->getAppClass()->getDatabase()->insert("wp_usermeta", ["meta_value" => 0, "user_id" => $user_wp_id, "meta_key" => "_uw_balance"]);
+                $this->getAppClass()->getDatabase()->insert($db_wp_prefix . "usermeta", ["meta_value" => 0, "user_id" => $user_wp_id, "meta_key" => "_uw_balance"]);
                 $dbCurrentBalance = 0;
             }
 
-            $newBalance = $dbCurrentBalance + $recordReward['reward'];
+            $newBalance = round(($dbCurrentBalance + $recordReward['reward'])/100, 2);
+            if ($newBalance < 0) $newBalance = 0;
 
-            $this->getAppClass()->getDatabase()->update("wp_usermeta", ["meta_value" => $newBalance], ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']]);
+            $this->getAppClass()->getDatabase()->update($db_wp_prefix . "usermeta", ["meta_value" => $newBalance], ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']]);
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
         }
 

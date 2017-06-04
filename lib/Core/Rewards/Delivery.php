@@ -12,7 +12,7 @@ namespace Core\Rewards;
 
 use Core\Core;
 
-require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
+require_once(dirname(__FILE__) . "/../../autoloader.php");
 
 /**
  * Modules
@@ -41,7 +41,8 @@ class Delivery
      * @param $AppClass
      * @param $UserID
      */
-    public function __construct($AppClass, $UserID) {
+    public function __construct($AppClass, $UserID)
+    {
         $this->setAppClass($AppClass);
         $this->setUserID($UserID);
     }
@@ -51,7 +52,8 @@ class Delivery
      * @param string $state
      * @param string $rewardKey
      */
-    public function deliver($recordReward, $state, $rewardKey) {
+    public function deliver($recordReward, $state, $rewardKey)
+    {
         $this->recordDevlivery($recordReward, $state, $rewardKey);
     }
 
@@ -60,8 +62,13 @@ class Delivery
      * @param $state
      * @param $rewardKey
      */
-    protected function recordDevlivery($recordReward, $state, $rewardKey) {
+    protected function recordDevlivery($recordReward, $state, $rewardKey)
+    {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+        if (!is_array($recordReward)) {
+            $recordReward = [];
+        }
 
         if (!array_key_exists("rmid", $recordReward)) {
             $recordReward['rmid'] = null;
@@ -70,7 +77,7 @@ class Delivery
             $recordReward['rid'] = null;
         }
 
-        $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_queue", ["fuid" => $this->getUserID(), "state" => $state, "rmid" => $recordReward['rmid'], "reward" => $recordReward['rid'], "rkey" => $rewardKey]);
+        $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_queue", ["fuid" => $this->getUserID(), "state" => $state, "rmid" => $recordReward['rmid'], "reward" => $recordReward['rid'], "rkey" => sha1($rewardKey)]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
     }
 
