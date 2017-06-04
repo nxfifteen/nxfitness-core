@@ -56,54 +56,51 @@ class FitbitTracker extends Modules
                 } else {
                     $this->checkDB("goal", $eventDetails['trigger'], "crushed", date('Y-m-d') . $eventDetails['trigger'] . "crushed");
                 }
-            }
 
-            $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-            $eventDetails['value'] = $this->getAppClass()->getDatabase()->get($db_prefix . "water", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
-
-            if ($eventDetails['trigger'] == "steps") {
-                $divider = 100;
-                $cutOff = 5000;
-            } else if ($eventDetails['trigger'] == "distance") {
-                $divider = 10;
-                $cutOff = 10;
-            } else if ($eventDetails['trigger'] == "floors") {
-                $divider = 10;
-                $cutOff = 20;
-            } else {
-                $divider = 10;
-                $cutOff = 0;
-            }
-
-            if ($eventDetails['value'] > $cutOff) {
                 $yesterday = date('Y-m-d', strtotime('-1 days'));
+                $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                $eventDetails['value'] = $this->getAppClass()->getDatabase()->get($db_prefix . "steps", $eventDetails['trigger'], ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
-                $yesterdaySteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps_goals",
-                    $eventDetails['trigger'], [
-                        "AND" => [
-                            "user" => $this->getUserID(),
-                            "date" => $yesterday
-                        ]
-                    ]);
-
-                $recordedValue = round($yesterdaySteps, 3);
-                $hundredth = round($recordedValue / $divider, 0);
-
-                $rewardKey = sha1($yesterday . $eventDetails['trigger'] . $hundredth);
-
-                if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
-                    $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey . "db"));
+                if ($eventDetails['trigger'] == "steps") {
+                    $divider = 100;
+                    $cutOff = 5000;
+                } else if ($eventDetails['trigger'] == "distance") {
+                    $divider = 10;
+                    $cutOff = 10;
+                } else if ($eventDetails['trigger'] == "floors") {
+                    $divider = 10;
+                    $cutOff = 20;
+                } else {
+                    $divider = 10;
+                    $cutOff = 0;
                 }
-                if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-                    $xp = round(($eventDetails['value'] - $cutOff) / 2, 0);
-                    if ($xp > 0) {
-                        $this->getRewardsClass()->giveUserXp($xp, $rewardKey);
-                        $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", ucfirst($eventDetails['trigger']) . " Mark", "You took " . $recordedValue . " steps yesterday", $xp . "XP", '+24 hours');
+
+                if ($eventDetails['value'] > $cutOff) {
+                    $yesterdaySteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps_goals",
+                        $eventDetails['trigger'], [
+                            "AND" => [
+                                "user" => $this->getUserID(),
+                                "date" => $yesterday
+                            ]
+                        ]);
+
+                    $recordedValue = round($yesterdaySteps, 3);
+                    $hundredth = round($recordedValue / $divider, 0);
+
+                    $rewardKey = sha1($yesterday . $eventDetails['trigger'] . $hundredth);
+
+                    if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
+                        $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey . "db"));
+                    }
+                    if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+                        $xp = round(($eventDetails['value'] - $cutOff) / 2, 0);
+                        if ($xp > 0) {
+                            $this->getRewardsClass()->giveUserXp($xp, $rewardKey);
+                            $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", ucfirst($eventDetails['trigger']) . " Mark", "You took " . $recordedValue . " steps yesterday", $xp . "XP", '+24 hours');
+                        }
                     }
                 }
             }
-
-            $this->cleanupQueue();
         }
     }
 
