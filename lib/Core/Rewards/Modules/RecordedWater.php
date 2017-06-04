@@ -43,7 +43,7 @@ class RecordedWater extends Modules
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
             $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-            $water = $this->getAppClass()->getDatabase()->count($db_prefix . "water", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
+            $water = $this->getAppClass()->getDatabase()->get($db_prefix . "water", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
             $xp = 0;
             $inbox = [];

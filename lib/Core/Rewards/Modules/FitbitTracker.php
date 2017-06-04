@@ -40,22 +40,26 @@ class FitbitTracker extends Modules
 
         $goalsToCheck = ["steps", "floors", "distance"];
 
-        if (in_array($eventDetails['trigger'], $goalsToCheck) && date('Y-m-d') == $eventDetails['date']) {
-            // Crushed Step Goal
-            if (!$this->crushedGoal($eventDetails['trigger'], $eventDetails['value'])) {
-                // Smashed Step Goal
-                if (!$this->smashedGoal($eventDetails['trigger'], $eventDetails['value'])) {
-                    // Reached Step Goal
-                    if ($this->reachedGoal($eventDetails['trigger'], $eventDetails['value'])) {
-                        $this->checkDB("goal", $eventDetails['trigger'], "reached", date('Y-m-d') . $eventDetails['trigger'] . "reached");
+        if (in_array($eventDetails['trigger'], $goalsToCheck)) {
+            if (date('Y-m-d') == $eventDetails['date']) {
+                // Crushed Step Goal
+                if (!$this->crushedGoal($eventDetails['trigger'], $eventDetails['value'])) {
+                    // Smashed Step Goal
+                    if (!$this->smashedGoal($eventDetails['trigger'], $eventDetails['value'])) {
+                        // Reached Step Goal
+                        if ($this->reachedGoal($eventDetails['trigger'], $eventDetails['value'])) {
+                            $this->checkDB("goal", $eventDetails['trigger'], "reached", date('Y-m-d') . $eventDetails['trigger'] . "reached");
+                        }
+                    } else {
+                        $this->checkDB("goal", $eventDetails['trigger'], "smashed", date('Y-m-d') . $eventDetails['trigger'] . "smashed");
                     }
                 } else {
-                    $this->checkDB("goal", $eventDetails['trigger'], "smashed", date('Y-m-d') . $eventDetails['trigger'] . "smashed");
+                    $this->checkDB("goal", $eventDetails['trigger'], "crushed", date('Y-m-d') . $eventDetails['trigger'] . "crushed");
                 }
-            } else {
-                $this->checkDB("goal", $eventDetails['trigger'], "crushed", date('Y-m-d') . $eventDetails['trigger'] . "crushed");
             }
 
+            $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+            $eventDetails['value'] = $this->getAppClass()->getDatabase()->get($db_prefix . "water", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
             if ($eventDetails['trigger'] == "steps") {
                 $divider = 100;
