@@ -381,7 +381,7 @@ class RewardsSystem
             $rewardSystem->trigger($eventDetails);
 
         } else {
-            nxr(2, "Create a new class '$className' in " . $includePath);
+            nxr(2, "Create a new class '$className' in " . $includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system .".php");
         }
     }
 }
