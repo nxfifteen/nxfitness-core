@@ -62,7 +62,7 @@ class FitbitTracker extends Modules
                 $divider = 10;
             }
 
-            if ($eventDetails['value'] >= 1) {
+            if ($eventDetails['value'] > 5000) {
                 $yesterday = date('Y-m-d', strtotime('-1 days'));
 
                 $yesterdaySteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps_goals",
@@ -75,8 +75,19 @@ class FitbitTracker extends Modules
 
                 $recordedValue = round($yesterdaySteps, 3);
                 $hundredth = round($recordedValue / $divider, 0);
-                nxr(1, "Checking awards for $yesterday on " . $eventDetails['trigger'] . " $hundredth");
-                $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, $yesterday . $eventDetails['trigger'] . $hundredth);
+
+                $rewardKey = sha1($yesterday . $eventDetails['trigger'] . $hundredth);
+
+                if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
+                    $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey."db"));
+                }
+                if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+                    $xp = round(($eventDetails['value'] - 5000) / 2 , 0);
+                    if ($xp > 0) {
+                        $this->getRewardsClass()->giveUserXp($xp, $rewardKey);
+                        $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", "Step Mark", "You took " . $recordedValue . " steps yesterday", $xp . "XP", '+24 hours');
+                    }
+                }
             }
 
             $this->cleanupQueue();
