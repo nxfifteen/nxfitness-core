@@ -2847,7 +2847,9 @@ class ApiBabel
                     $trackedTrackers = [];
                     $indexedTrackers = [];
                     $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                    nxr(0, ".", true, false);
                     foreach ($trackerGroups as $tracker) {
+                        nxr(0, ".", false, false);
                         try {
                             $doc = $couchClient->getDoc($tracker);
                         } catch (couchNotFoundException $e) {
@@ -2889,8 +2891,6 @@ class ApiBabel
                                 ]
                             ])
                             ) {
-                                nxr(3, "Storing " . print_r($doc->label, true));
-
                                 $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers",
                                     $dbStorage);
                                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
@@ -2914,6 +2914,7 @@ class ApiBabel
                             }
                         }
                     }
+                    nxr(0, " [DONE]", false);
 
                     $couchClient->useDatabase($nomie_user_key . '_events');
                     if (!$couchClient->databaseExists()) {
