@@ -11,6 +11,7 @@
 namespace Core\Rewards;
 
 use Core\Core;
+use Core\Rewards\Delivery\Wordpress;
 
 require_once(dirname(__FILE__) . "/../../autoloader.php");
 
@@ -152,6 +153,8 @@ class Rewards
     public function giveUserXp($xp, $rewardKey)
     {
         $this->issueAwards($xp, $rewardKey, "pending", "Xp");
+        $wp = new Wordpress($this->getAppClass(), $this->getUserID());
+        $wp->deliver(['reward' => $xp], $rewardKey, "pending");
     }
 
     /**
