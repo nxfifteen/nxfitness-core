@@ -3697,6 +3697,21 @@ class ApiBabel
                 $currentDate = $currentDate->modify("+1 hours");
                 $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate->format("Y-m-d H:05:00"));
 
+                $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                $this->getAppClass()->getDatabase()->insert($db_prefix . "inbox",
+                    [
+                        "fuid" => $this->activeUser,
+                        "expires" => $currentDate->format("Y-m-d H:05:30"),
+                        "ico" => "icon-cloud-download",
+                        "icoColour" => "bg-danger",
+                        "subject" => "Rate limit reached",
+                        "body" => "Please try again after " . $currentDate->format("Y-m-d H:05:00"),
+                        "bold" => "API Error"
+                    ]
+                );
+
+                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
                 die();
             } else {
                 /*$this->getAppClass()->getErrorRecording()->captureException( $e, array(
