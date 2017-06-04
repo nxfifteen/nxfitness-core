@@ -59,11 +59,19 @@ class FitbitTracker extends Modules
 
             if ($eventDetails['trigger'] == "steps") {
                 $divider = 100;
+                $cutOff = 5000;
+            } else if ($eventDetails['trigger'] == "distance") {
+                $divider = 10;
+                $cutOff = 10;
+            } else if ($eventDetails['trigger'] == "floors") {
+                $divider = 10;
+                $cutOff = 20;
             } else {
                 $divider = 10;
+                $cutOff = 0;
             }
 
-            if ($eventDetails['value'] > 5000) {
+            if ($eventDetails['value'] > $cutOff) {
                 $yesterday = date('Y-m-d', strtotime('-1 days'));
 
                 $yesterdaySteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps_goals",
@@ -83,10 +91,10 @@ class FitbitTracker extends Modules
                     $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey . "db"));
                 }
                 if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-                    $xp = round(($eventDetails['value'] - 5000) / 2, 0);
+                    $xp = round(($eventDetails['value'] - $cutOff) / 2, 0);
                     if ($xp > 0) {
                         $this->getRewardsClass()->giveUserXp($xp, $rewardKey);
-                        $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", "Step Mark", "You took " . $recordedValue . " steps yesterday", $xp . "XP", '+24 hours');
+                        $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", ucfirst($eventDetails['trigger']) . " Mark", "You took " . $recordedValue . " steps yesterday", $xp . "XP", '+24 hours');
                     }
                 }
             }
