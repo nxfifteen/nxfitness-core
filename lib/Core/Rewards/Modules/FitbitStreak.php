@@ -37,7 +37,16 @@ class FitbitStreak extends Modules
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
 
-        $this->checkDB("streak", $eventDetails['goal'], $eventDetails['days_between'], $eventDetails['goal'] . $eventDetails['days_between']);
+        $rewardKey = sha1($eventDetails['goal'] . $eventDetails['streak_start'] . $eventDetails['days_between']);
+
+        if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
+            $this->checkDB("streak", $eventDetails['goal'], $eventDetails['days_between'], sha1($rewardKey . "db"));
+        }
+
+        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+            $this->getRewardsClass()->giveUserXp(5 * $eventDetails['days_between'], $rewardKey);
+            $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", "Streaking!!!", "Your " . $eventDetails['goal'] . " streak ran " . $eventDetails['days_between'] . " days", 5 * $eventDetails['days_between'] . "XP", '+5 hours');
+        }
     }
 
     /**
@@ -47,7 +56,8 @@ class FitbitStreak extends Modules
     {
         $this->eventDetails = [
             "goal" => $eventDetails[0],
-            "days_between" => $eventDetails[1]
+            "days_between" => $eventDetails[1],
+            "streak_start" => $eventDetails[2]
         ];
     }
 }
