@@ -2952,17 +2952,21 @@ class ApiBabel
                             ) {
                                 $document = json_decode(json_encode($couchClient->getDoc($events['id'])), true);
 
+                                $event[6] = $document['value'];
+
                                 $dbStorage = [
                                     "fuid" => $this->activeUser,
                                     "id" => $event[2],
                                     "datestamp" => $event[5],
-                                    "value" => $document['value'],
+                                    "value" => $event[6],
                                     "score" => $event[4],
                                 ];
 
                                 if (is_array($document['geo']) and count($document['geo']) == 2) {
                                     $dbStorage["geo_lat"] = $document['geo'][0];
                                     $dbStorage["geo_lon"] = $document['geo'][1];
+                                    $event[7] = $document['geo'][0];
+                                    $event[8] = $document['geo'][1];
                                 }
 
                                 $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_events",
@@ -2977,6 +2981,7 @@ class ApiBabel
 
                             if (!is_null($this->RewardsSystem)) {
                                 if (date('Y-m-d', $event[3] / 1000) == date('Y-m-d')) {
+                                    $event[1] = $event[2];
                                     $event[2] = $indexedTrackers[$event[2]];
                                     $this->RewardsSystem->eventTrigger('Nomie', $event);
                                 }
