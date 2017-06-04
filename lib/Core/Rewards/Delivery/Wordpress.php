@@ -36,7 +36,7 @@ class Wordpress extends Delivery
         if (is_null($user_wp_id)) {
             nxr(0, "User doesnt have a WP ID");
         } else {
-            $db_wp_prefix = $this->getAppClass()->getSetting("db_prefix", "wp_");
+            $db_wp_prefix = $this->getAppClass()->getSetting("wp_db_prefix", "wp_");
 
             if ($this->getAppClass()->getDatabase()->has($db_wp_prefix . "usermeta", ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']])) {
                 $dbCurrentBalance = $this->getAppClass()->getDatabase()->get($db_wp_prefix . "usermeta", 'meta_value', ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']]);
