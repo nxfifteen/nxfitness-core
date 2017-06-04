@@ -143,7 +143,7 @@ class Modules
                         $state = 'noaward';
                         $delivery = "Default";
                         if (is_numeric($recordReward['xp']) && $recordReward['xp'] <> 0) {
-                            $this->getRewardsClass()->giveUserXp($recordReward['xp']);
+                            $this->getRewardsClass()->giveUserXp($recordReward['xp'], $rewardKey);
                             $state = 'delivered';
                             if ($recordReward['xp'] > 0) {
                                 $recordReward['descriptionXp'] = "Awarded " . $recordReward['xp'] . " Xp Points";
@@ -188,9 +188,10 @@ class Modules
                             } else {
                                 $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", $recordReward['name'], $recordReward['description'], $state, '+2 hours');
                             }
+
+                            nxr(3, "Award Processed for $cat, $event - $score");
                         }
                     }
-                    nxr(3, "Award Processed for $cat, $event - $score");
 
                     return true;
                 }

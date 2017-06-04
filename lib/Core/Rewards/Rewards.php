@@ -146,21 +146,11 @@ class Rewards
 
     /**
      * @param $xp
+     * @param $rewardKey
      */
-    public function giveUserXp($xp)
+    public function giveUserXp($xp, $rewardKey)
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
-            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["xp" => 0, "fuid" => $this->getUserID()]);
-            $dbCurrentXp = 0;
-        } else {
-            $dbCurrentXp = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", 'xp', ["fuid" => $this->getUserID()]);
-        }
-
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-
-        $this->getAppClass()->getDatabase()->update($db_prefix . "users_xp", ["xp" => $dbCurrentXp + $xp], ["fuid" => $this->getUserID()]);
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+        $this->issueAwards($xp, $rewardKey, "pending", "Xp");
     }
 
     /**
@@ -278,7 +268,7 @@ class Rewards
         $this->getAppClass()->getDatabase()->insert($db_prefix . "inbox",
             [
                 "fuid" => $this->getUserID(),
-                "expires" => date("Y-m-d H:j:s", strtotime($expire)),
+                "expires" => date("Y-m-d H:i:s", strtotime($expire)),
                 "ico" => $ico,
                 "icoColour" => $icoColour,
                 "subject" => $subject,

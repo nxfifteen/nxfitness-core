@@ -2929,7 +2929,7 @@ class DataReturn
                 'body',
                 'bold'
             ], [
-                "AND" => ["fuid" => $this->getUserID(), "expires[>=]" => date("Y-m-d H:j:s")],
+                "AND" => ["fuid" => $this->getUserID(), "expires[>=]" => date("Y-m-d H:i:s")],
                 "ORDER" => ['date' => "DESC"]
             ]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
