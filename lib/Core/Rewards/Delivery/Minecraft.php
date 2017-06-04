@@ -39,7 +39,6 @@ class Minecraft extends Delivery
 
             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "minecraft", ["username" => $minecraftUsername, "command" => $recordReward['reward'], "delivery" => "pending"]);
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-            nxr(0, $this->getAppClass()->getDatabase()->last());
 
         } else {
             nxr(0, "User doesnt have a Minecraft Username");
