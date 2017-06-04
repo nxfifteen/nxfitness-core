@@ -712,6 +712,18 @@ class Upgrade {
         if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
             return false;
         }
+        $this->getDatabase()->query( "CREATE TABLE `" . $db_prefix . "minecraft` (`mcrid` int(6) NOT NULL, `username` varchar(255) NOT NULL, `delivery` varchar(255) NOT NULL, `command` longtext NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+        $this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "minecraft` ADD PRIMARY KEY (`mcrid`);" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
+        $this->getDatabase()->query( "ALTER TABLE `" . $db_prefix . "minecraft` MODIFY `mcrid` int(6) NOT NULL AUTO_INCREMENT;" );
+        if ( $this->wasMySQLError( $this->getDatabase()->error() ) ) {
+            return false;
+        }
 
         $this->setSetting( "version", "0.0.1.8", true );
 

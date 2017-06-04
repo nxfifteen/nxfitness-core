@@ -2915,6 +2915,43 @@ class DataReturn
      * @todo Consider test case
      * @return array
      */
+    public function returnUserRecordInbox()
+    {
+        $returnArray = [];
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+        $dbInbox = $this->getAppClass()->getDatabase()->select($db_prefix . "inbox",
+            [
+                'date',
+                'ico',
+                'icoColour',
+                'subject',
+                'body',
+                'bold'
+            ], [
+                "AND" => ["fuid" => $this->getUserID(), "expires[>=]" => date("Y-m-d H:j:s")],
+                "ORDER" => ['date' => "DESC"]
+            ]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+            "METHOD" => __METHOD__,
+            "LINE" => __LINE__
+        ]);
+
+        foreach ($dbInbox as $dbInboxItem) {
+            if ($dbInboxItem['subject'] == "" && $dbInboxItem['body'] != "") {
+                $dbInboxItem['subject'] = $dbInboxItem['body'];
+                $dbInboxItem['body'] = "";
+            }
+            array_push($returnArray, $dbInboxItem);
+        }
+
+        return $returnArray;
+    }
+
+    /**
+     * @todo Consider test case
+     * @return array
+     */
     public function returnUserRecordPendingRewards()
     {
         $returnArray = [];

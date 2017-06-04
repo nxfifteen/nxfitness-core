@@ -705,7 +705,7 @@ class ApiBabel
                         }
 
                     } else {
-                        nxr(0, "  No recorded activities");
+                        nxr(2, "No recorded activities");
                         $this->setLastCleanRun("activity_log",
                             new DateTime ($userActivityLog->pagination->afterDate), 2);
                         $this->setLastrun("activity_log");
@@ -717,7 +717,7 @@ class ApiBabel
                 }
 
             } else {
-                nxr(0, "  Error activity log: " . $this->getAppClass()->lookupErrorCode(-143));
+                nxr(2, "Error activity log: " . $this->getAppClass()->lookupErrorCode(-143));
             }
         }
 
@@ -878,7 +878,7 @@ class ApiBabel
         if (isset($userFoodLog)) {
             if (count($userFoodLog->foods) > 0) {
                 foreach ($userFoodLog->foods as $meal) {
-                    nxr(0, "  Logging meal " . $meal->loggedFood->name);
+                    nxr(2, "Logging meal " . $meal->loggedFood->name);
 
                     if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
                             false) . "food", [
@@ -1171,7 +1171,7 @@ class ApiBabel
 
                 $this->setLastCleanRun("sleep", new DateTime ($targetDate));
 
-                nxr(0, "  Sleeplog " . $loggedSleep->logId . " recorded");
+                nxr(2, "Sleeplog " . $loggedSleep->logId . " recorded");
             }
         } else {
             $this->setLastCleanRun("sleep", new DateTime ($targetDate), 7);
@@ -1633,7 +1633,7 @@ class ApiBabel
                                             true)
                                     ]
                                 ]);
-                            nxr(0, " No device image for " . $device->type . " " . $device->deviceVersion);
+                            nxr(1, "No device image for " . $device->type . " " . $device->deviceVersion);
                         }
 
                         if ($device->type == "TRACKER") {
@@ -2211,7 +2211,7 @@ class ApiBabel
                                 strlen($this->getActiveUser()) + strlen($cacheName) + 2) === "_" . $this->getActiveUser() . "_" . $cacheName
                         ) {
                             if (file_exists($cache_dir . $file) && is_writable($cache_dir . $file)) {
-                                nxr(0, "  $file cache file was deleted");
+                                nxr(2, "$file cache file was deleted");
                                 unlink($cache_dir . $file);
                             }
                         }
@@ -2736,7 +2736,7 @@ class ApiBabel
             if ($this->isTriggerCooled("nomie_trackers")) {
                 $nomie_user_key = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", 'nomie');
 
-                nxr(0, " Connecting to CouchDB");
+                nxr(1, "Connecting to CouchDB");
 
                 $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", null, false);
                 $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", null, false);
@@ -2745,7 +2745,7 @@ class ApiBabel
                 $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', false);
 
                 if (is_null($nomie_username)) {
-                    nxr(0, "  Nomie credentials missing");
+                    nxr(2, "Nomie credentials missing");
 
                     return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
                 }
@@ -2798,7 +2798,7 @@ class ApiBabel
                 }
 
                 if (!$couchClient->databaseExists()) {
-                    nxr(0, "  Nomie Meta table missing");
+                    nxr(2, "Nomie Meta table missing");
 
                     return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
                 }
@@ -2820,26 +2820,26 @@ class ApiBabel
                     if (is_array($trackerGroups) && array_key_exists("NxTracked",
                             $trackerGroups) && count($trackerGroups['NxTracked']) > 0
                     ) {
-                        nxr(0, "  Downloadnig NxTracked Group Trackers");
+                        nxr(2, "Downloadnig NxTracked Group Trackers");
                         $trackerGroups = $trackerGroups['NxTracked'];
                     } else if (is_array($trackerGroups) && array_key_exists("NxCore",
                             $trackerGroups) && count($trackerGroups['NxCore']) > 0
                     ) {
-                        nxr(0, "  Downloadnig NxCore Group Trackers");
+                        nxr(2, "Downloadnig NxCore Group Trackers");
                         $trackerGroups = $trackerGroups['NxCore'];
                     } else if (is_array($trackerGroups) && array_key_exists("Main",
                             $trackerGroups) && count($trackerGroups['Main']) > 0
                     ) {
-                        nxr(0, "  Downloadnig Main Group Trackers");
+                        nxr(2, "Downloadnig Main Group Trackers");
                         $trackerGroups = $trackerGroups['Main'];
                     } else {
-                        nxr(0, "  Downloading All Trackers");
+                        nxr(2, "Downloading All Trackers");
                         $trackerGroups = $trackerGroups['All'];
                     }
 
                     $couchClient->useDatabase($nomie_user_key . '_trackers');
                     if (!$couchClient->databaseExists()) {
-                        nxr(0, "  Nomie Tracker table missing");
+                        nxr(2, "Nomie Tracker table missing");
 
                         return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
                     }
@@ -2847,7 +2847,9 @@ class ApiBabel
                     $trackedTrackers = [];
                     $indexedTrackers = [];
                     $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                    nxr(2, ".", true, false);
                     foreach ($trackerGroups as $tracker) {
+                        nxr(0, ".", false, false);
                         try {
                             $doc = $couchClient->getDoc($tracker);
                         } catch (couchNotFoundException $e) {
@@ -2889,8 +2891,6 @@ class ApiBabel
                                 ]
                             ])
                             ) {
-                                nxr(3, "Storing " . print_r($doc->label, true));
-
                                 $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers",
                                     $dbStorage);
                                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
@@ -2914,10 +2914,11 @@ class ApiBabel
                             }
                         }
                     }
+                    nxr(1, "[DONE]", false);
 
                     $couchClient->useDatabase($nomie_user_key . '_events');
                     if (!$couchClient->databaseExists()) {
-                        nxr(0, "  Nomie Tracker table missing");
+                        nxr(2, "Nomie Tracker table missing");
 
                         return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
                     }
@@ -3064,9 +3065,9 @@ class ApiBabel
 
         // Check we have a valid user
         if ($this->getAppClass()->isUser($user)) {
-            nxr(0, " Checking $user for minecraft reward support");
+            nxr(1, "Checking $user for minecraft reward support");
 
-            nxr(0, "  Reward system ready");
+            nxr(2, "Reward system ready");
             $this->RewardsSystem = new RewardsSystem($user);
 
             $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
@@ -3080,7 +3081,7 @@ class ApiBabel
             if ($trigger == "all" || $trigger == "nomie_trackers") {
                 $pull = $this->pullNomieTrackers();
                 if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                    nxr(0, "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                    nxr(2, "Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                 }
             }
 
@@ -3096,7 +3097,7 @@ class ApiBabel
                 if ($trigger == "all" || $trigger == "profile") {
                     $pull = $this->pullBabelProfile();
                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(0, "  Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
+                        nxr(2, "Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
@@ -3104,7 +3105,7 @@ class ApiBabel
                 if ($trigger == "all" || $trigger == "devices") {
                     $pull = $this->pullBabelDevices();
                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(0, "  Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
+                        nxr(2, "Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
@@ -3112,28 +3113,28 @@ class ApiBabel
                 if ($trigger == "all" || $trigger == "badges") {
                     $pull = $this->pullBabelBadges();
                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(0, "  Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
+                        nxr(2, "Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "leaderboard") {
                     $pull = $this->pullBabelLeaderboard();
                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(0, "  Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
+                        nxr(2, "Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
                     $pull = $this->pullBabelCaloriesGoals();
                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(0, "  Error goals_calories: " . $this->getAppClass()->lookupErrorCode($pull));
+                        nxr(2, "Error goals_calories: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
                 if ($trigger == "all" || $trigger == "activity_log") {
                     $pull = $this->pullBabelActivityLogs();
                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(0, "  Error activity_log: " . $this->getAppClass()->lookupErrorCode($pull));
+                        nxr(2, "Error activity_log: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
@@ -3141,7 +3142,7 @@ class ApiBabel
                     nxr(0, ' Downloading Goals');
                     $pull = $this->pullBabelUserGoals();
                     if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(0, "  Error goals: " . $this->getAppClass()->lookupErrorCode($pull));
+                        nxr(2, "Error goals: " . $this->getAppClass()->lookupErrorCode($pull));
                     }
                 }
 
@@ -3160,12 +3161,12 @@ class ApiBabel
                                 nxr(0, ' Downloading Heart Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelHeartRateSeries($dt->format("Y-m-d"));
                                 if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(0, "  Error Heart: " . $this->getAppClass()->lookupErrorCode($pull));
+                                    nxr(2, "Error Heart: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
                             if (!IS_CRON_RUN) {
-                                nxr(0, "  Error Heart: " . $this->getAppClass()->lookupErrorCode(-143));
+                                nxr(2, "Error Heart: " . $this->getAppClass()->lookupErrorCode(-143));
                             }
                         }
                     }
@@ -3184,12 +3185,12 @@ class ApiBabel
                                 nxr(0, ' Downloading Water Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelWater($dt->format("Y-m-d"));
                                 if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(0, "  Error water: " . $this->getAppClass()->lookupErrorCode($pull));
+                                    nxr(2, "Error water: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
                             if (!IS_CRON_RUN) {
-                                nxr(0, "  Error water: " . $this->getAppClass()->lookupErrorCode(-143));
+                                nxr(2, "Error water: " . $this->getAppClass()->lookupErrorCode(-143));
                             }
                         }
                     }
@@ -3207,12 +3208,12 @@ class ApiBabel
                                 nxr(0, ' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelSleep($dt->format("Y-m-d"));
                                 if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(0, "  Error sleep: " . $this->getAppClass()->lookupErrorCode($pull));
+                                    nxr(2, "Error sleep: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
                             if (!IS_CRON_RUN) {
-                                nxr(0, "  Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
+                                nxr(2, "Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
                             }
                         }
                     }
@@ -3230,12 +3231,12 @@ class ApiBabel
                                 nxr(0, ' Downloading Body Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelBody($dt->format("Y-m-d"));
                                 if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(0, "  Error body: " . $this->getAppClass()->lookupErrorCode($pull));
+                                    nxr(2, "Error body: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
                             if (!IS_CRON_RUN) {
-                                nxr(0, "  Error body: " . $this->getAppClass()->lookupErrorCode(-143));
+                                nxr(2, "Error body: " . $this->getAppClass()->lookupErrorCode(-143));
                             }
                         }
                     }
@@ -3253,12 +3254,12 @@ class ApiBabel
                                 nxr(0, ' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
                                 $pull = $this->pullBabelMeals($dt->format("Y-m-d"));
                                 if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(0, "  Error foods: " . $this->getAppClass()->lookupErrorCode($pull));
+                                    nxr(2, "Error foods: " . $this->getAppClass()->lookupErrorCode($pull));
                                 }
                             }
                         } else {
                             if (!IS_CRON_RUN) {
-                                nxr(0, "  Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
+                                nxr(2, "Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
                             }
                         }
                     }
@@ -3279,7 +3280,7 @@ class ApiBabel
                     $isAllowed = $this->isAllowed("activities");
                     if (!is_numeric($isAllowed)) {
                         if ($this->isTriggerCooled("activities")) {
-                            nxr(0, " Downloading Series Info");
+                            nxr(1, "Downloading Series Info");
                             foreach ($timeSeries as $activity => $timeout) {
                                 $this->pullBabelTimeSeries($activity, true);
                             }
@@ -3485,7 +3486,7 @@ class ApiBabel
         $usrConfig = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'scope_' . $trigger, true);
         if (!is_null($usrConfig) AND $usrConfig != 1) {
             if (!$quiet) {
-                nxr(0, " Aborted $trigger disabled in user config");
+                nxr(1, "Aborted $trigger disabled in user config");
             }
 
             return "-145";
@@ -3494,7 +3495,7 @@ class ApiBabel
         $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, true);
         if ($sysConfig != 1) {
             if (!$quiet) {
-                nxr(0, " Aborted $trigger disabled in system config");
+                nxr(1, "Aborted $trigger disabled in system config");
             }
 
             return "-146";
@@ -3564,7 +3565,7 @@ class ApiBabel
             if ($request->getId() == $_nx_fb_usr) {
                 return true;
             } else {
-                nxr(0, " User miss match " . $request->getId() . " should equal " . $_nx_fb_usr);
+                nxr(1, "User miss match " . $request->getId() . " should equal " . $_nx_fb_usr);
 
                 return false;
             }
@@ -3577,7 +3578,7 @@ class ApiBabel
                     'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
                 ],
             ]);
-            nxr(0, " User validation test failed: " . print_r($e->getMessage(), true));
+            nxr(1, "User validation test failed: " . print_r($e->getMessage(), true));
             if ($e->getCode() == 400) {
                 $this->getAppClass()->delUserOAuthTokens($_nx_fb_usr);
             }
@@ -3691,11 +3692,26 @@ class ApiBabel
             // Failed to get the access token or user details.
 
             if ($e->getCode() == 429) {
-                nxr(0, " Rate limit reached. Please try again later");
+                nxr(1, "Rate limit reached. Please try again later");
 
                 $currentDate = new DateTime();
                 $currentDate = $currentDate->modify("+1 hours");
                 $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate->format("Y-m-d H:05:00"));
+
+                $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                $this->getAppClass()->getDatabase()->insert($db_prefix . "inbox",
+                    [
+                        "fuid" => $this->activeUser,
+                        "expires" => $currentDate->format("Y-m-d H:05:30"),
+                        "ico" => "icon-cloud-download",
+                        "icoColour" => "bg-danger",
+                        "subject" => "Rate limit reached",
+                        "body" => "Please try again after " . $currentDate->format("Y-m-d H:05:00"),
+                        "bold" => "API Error"
+                    ]
+                );
+
+                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
                 die();
             } else {

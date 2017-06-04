@@ -299,27 +299,29 @@ class RewardsSystem
         $databaseTable = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if ($_SERVER['REQUEST_METHOD'] == "GET") {
-            $rewards = $this->getAppClass()->getDatabase()->query(
-                "SELECT `" . $databaseTable . "rewards`.`reward` AS `reward`,"
-                . " `" . $databaseTable . "reward_queue`.`fuid` AS `fuid`,"
-                . " `" . $databaseTable . "reward_queue`.`rqid` AS `rqid`"
-                . " FROM `" . $databaseTable . "rewards`"
-                . " JOIN `" . $databaseTable . "reward_queue` ON (`" . $databaseTable . "reward_queue`.`reward` = `" . $databaseTable . "rewards`.`rid`)"
-                . " WHERE `" . $databaseTable . "reward_queue`.`state` = 'pending' AND `" . $databaseTable . "rewards`.`system` = 'minecraft' LIMIT 50");
+            $rewards = $this->getAppClass()->getDatabase()->select($databaseTable . "minecraft",
+                [
+                    'mcrid',
+                    'username',
+                    'command'
+                ], [
+                    "delivery" => "pending",
+                    "ORDER" => ['mcrid' => "ASC"]
+                ]);
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+                "METHOD" => __METHOD__,
+                "LINE" => __LINE__
+            ]);
 
             $data = [];
             foreach ($rewards as $dbReward) {
-                $minecraftUsername = $this->getAppClass()->getUserSetting($dbReward['fuid'], "minecraft_username",
-                    false);
-
-                if (!array_key_exists($minecraftUsername, $data)) {
-                    $data[$minecraftUsername] = [];
+                if (!array_key_exists($dbReward['username'], $data)) {
+                    $data[$dbReward['username']] = [];
                 }
-                if (!array_key_exists($dbReward['rqid'], $data[$minecraftUsername])) {
-                    $data[$minecraftUsername][$dbReward['rqid']] = [];
+                if (!array_key_exists($dbReward['mcrid'], $data[$dbReward['username']])) {
+                    $data[$dbReward['username']][$dbReward['mcrid']] = [];
                 }
-                $dbReward['reward'] = str_replace("%s", $minecraftUsername, $dbReward['reward']);
-                array_push($data[$minecraftUsername][$dbReward['rqid']], $dbReward['reward']);
+                array_push($data[$dbReward['username']][$dbReward['mcrid']], $dbReward['command']);
             }
 
             return ["success" => true, "data" => $data];
@@ -330,17 +332,9 @@ class RewardsSystem
 
             if (is_array($_POST['processedOrders'])) {
                 foreach ($_POST['processedOrders'] as $processedOrder) {
-                    if ($this->getAppClass()->getDatabase()->has($databaseTable . "reward_queue",
-                        ["rqid" => $processedOrder])
-                    ) {
-
-                        $this->getAppClass()->getDatabase()->update($databaseTable . "reward_queue",
-                            ["state" => "delivered"], ["rqid" => $processedOrder]);
-                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
-                            [
-                                "METHOD" => __METHOD__,
-                                "LINE" => __LINE__
-                            ]);
+                    if ($this->getAppClass()->getDatabase()->has($databaseTable . "minecraft", ["mcrid" => $processedOrder])) {
+                        $this->getAppClass()->getDatabase()->update($databaseTable . "minecraft", ["delivery" => "delivered"], ["mcrid" => $processedOrder]);
+                        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
                         nxr(1, "Reward " . $processedOrder . " processed");
                     } else {

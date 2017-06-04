@@ -252,35 +252,18 @@ $(function () {
         debug_add_gen_time("xp", data.time);
     });
 
-    $.getJSON("../json.php?user=" + fitbitUserId + "&data=PendingRewards", function (data) {
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=Inbox", function (data) {
         var html = '';
-        $.each(data.results.pending, function (index, reward) {
+        $.each(data.results, function (index, reward) {
             html += '<li>';
-            html += '    <i class="icon-hourglass bg-primary"></i>';
+            html += '    <i class="' + reward.ico + ' ' + reward.icoColour + '"></i>';
             html += '    <div class="desc">';
-            html += '        <div class="title">' + reward.action + '</div>';
-            html += '        <small>' + reward.reward + '</small>';
+            html += '        <div class="title">' + reward.subject + '</div>';
+            html += '        <small>' + reward.body + '</small>';
             html += '    </div>';
             html += '    <div class="value">';
             html += '        <div class="small text-muted">' + reward.date + '</div>';
-            html += '        <strong>' + reward.state + '</strong>';
-            html += '    </div>';
-            html += '    <div class="actions">';
-            html += '        <button type="button" class="btn btn-link text-muted"><i class="icon-settings"></i>';
-            html += '        </button>';
-            html += '    </div>';
-            html += "</li>\n";
-        });
-        $.each(data.results.delivered, function (index, reward) {
-            html += '<li>';
-            html += '    <i class="icon-diamond bg-success"></i>';
-            html += '    <div class="desc">';
-            html += '        <div class="title">' + reward.action + '</div>';
-            html += '        <small>' + reward.reward + '</small>';
-            html += '    </div>';
-            html += '    <div class="value">';
-            html += '        <div class="small text-muted">' + reward.date + '</div>';
-            html += '        <strong>' + reward.state + '</strong>';
+            html += '        <strong>' + reward.bold + '</strong>';
             html += '    </div>';
             html += '    <div class="actions">';
             html += '        <button type="button" class="btn btn-link text-muted"><i class="icon-settings"></i>';
@@ -290,6 +273,6 @@ $(function () {
         });
         $('#rewardsList').html(html);
 
-        debug_add_gen_time("PendingRewards", data.time);
+        debug_add_gen_time("Inbox", data.time);
     });
 });

@@ -21,7 +21,7 @@ if ( ! function_exists( "nxr" ) ) {
      * @param bool    $echoLine
      */
     function nxr( $indentation, $msg, $includeDate = true, $newline = true, $echoLine = true ) {
-        for ( $counter = 0; $counter <= $indentation; $counter++ ) {
+        for ( $counter = 0; $counter < $indentation; $counter++ ) {
             $msg = " " . $msg;
         }
 
