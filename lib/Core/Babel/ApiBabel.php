@@ -354,7 +354,7 @@ class ApiBabel
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between]);
+                            $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between, $streak_start]);
                         }
                     }
 
@@ -385,7 +385,7 @@ class ApiBabel
                     ]);
 
                     if (!is_null($this->RewardsSystem)) {
-                        $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between]);
+                        $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between, $streak_start]);
                     }
 
                     nxr(5, "Steak started on $streak_start, but as ended on " . $streak_end);
@@ -416,7 +416,7 @@ class ApiBabel
 
                     if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
                         if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, 1]);
+                            $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, 1, $streak_start]);
                         }
                     }
 
