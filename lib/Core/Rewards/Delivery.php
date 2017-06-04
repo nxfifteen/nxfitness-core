@@ -73,7 +73,7 @@ class Delivery
             $recordReward['rid'] = null;
         }
 
-        $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_queue", ["fuid" => $this->getUserID(), "state" => $state, "rmid" => $recordReward['rmid'], "reward" => $recordReward['rid'], "rkey" => $rewardKey]);
+        $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_queue", ["fuid" => $this->getUserID(), "state" => $state, "rmid" => $recordReward['rmid'], "reward" => $recordReward['rid'], "rkey" => sha1($rewardKey)]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
     }
 
