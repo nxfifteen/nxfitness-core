@@ -141,6 +141,7 @@ class Modules
                 if (count($rewards) > 0) {
                     foreach ($rewards as $recordReward) {
                         $state = 'noaward';
+                        $delivery = "Default";
                         if (is_numeric($recordReward['xp']) && $recordReward['xp'] <> 0) {
                             $this->getRewardsClass()->giveUserXp($recordReward['xp']);
                             $state = 'delivered';
@@ -154,7 +155,12 @@ class Modules
                         }
 
                         if ($recordReward['rid'] != "") {
-                            $recordReward['descriptionRid'] = $this->getAppClass()->getDatabase()->get($db_prefix . "rewards", "description", ["rid" => $recordReward['rid']]);
+                            $dbReward = $this->getAppClass()->getDatabase()->get($db_prefix . "rewards", ["description", "system", "reward"], ["rid" => $recordReward['rid']]);
+
+                            $recordReward['descriptionRid'] = $dbReward['description'];
+                            $recordReward['reward'] = $dbReward['reward'];
+                            $delivery = $dbReward['system'];
+
                             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
                             $this->getRewardsClass()->nukeConflictingAwards($recordReward['rid']);
@@ -176,7 +182,7 @@ class Modules
                         }
 
                         if ($state != "noaward") {
-                            $this->getRewardsClass()->issueAwards($recordReward, $state, $rewardKey);
+                            $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, $state, $delivery);
                             if ($state == "pending") {
                                 $this->getRewardsClass()->notifyUser("icon-hourglass", "bg-primary", $recordReward['name'], $recordReward['description'], $state, '+6 hours');
                             } else {
