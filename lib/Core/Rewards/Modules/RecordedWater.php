@@ -35,7 +35,6 @@ class RecordedWater extends Modules
     public function trigger($eventDetails)
     {
         $this->setEventDetails($eventDetails);
-        $userWaterLog = $this->getEventDetails();
 
         $yesterday = date("Y-m-d", strtotime("-1 days"));
         $rewardKey = sha1("waterRecordingFor" . $yesterday);
@@ -43,7 +42,8 @@ class RecordedWater extends Modules
         $goal = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-            $water = (integer)$userWaterLog->summary->water;
+            $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+            $water = $this->getAppClass()->getDatabase()->count($db_prefix . "water", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
             $xp = 0;
             $inbox = [];
