@@ -951,7 +951,7 @@ class Upgrade
             return false;
         }
 
-        $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "blancing` (`bid` int(8) NOT NULL,`class` varchar(255) NOT NULL,`xp` float(6,3) NOT NULL DEFAULT '0.000',`mana` float(6,3) NOT NULL DEFAULT '0.000',`health` float(6,3) NOT NULL DEFAULT '0.000') ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+        $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "blancing` (`bid` int(8) NOT NULL,`class` varchar(255) NOT NULL, `skill` VARCHAR(255) NOT NULL,`xp` float(6,3) NOT NULL DEFAULT '0.000',`mana` float(6,3) NOT NULL DEFAULT '0.000',`health` float(6,3) NOT NULL DEFAULT '0.000') ENGINE=InnoDB DEFAULT CHARSET=utf8;");
         if ($this->wasMySQLError($this->getDatabase()->error())) {
             return false;
         }
