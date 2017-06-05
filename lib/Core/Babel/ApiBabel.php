@@ -3026,7 +3026,7 @@ class ApiBabel
                             ]);
                     }
 
-                    if (!is_null($this->RewardsSystem)) {
+                    if ($targetDate == date("Y-m-d") && !is_null($this->RewardsSystem)) {
                         $this->RewardsSystem->eventTrigger("RecordedMeal", $meal);
                     }
 
