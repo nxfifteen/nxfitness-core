@@ -3231,7 +3231,7 @@ class ApiBabel
                             ]);
                     }
 
-                    if (!is_null($this->RewardsSystem)) {
+                    if ($currentDate->format("Y-m-d") == date("Y-m-d") && !is_null($this->RewardsSystem)) {
                         $this->RewardsSystem->eventTrigger("FitbitTracker", [$steps->dateTime, $trigger, $steps->value]);
                     }
                 }
