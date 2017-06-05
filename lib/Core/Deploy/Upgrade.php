@@ -931,4 +931,24 @@ class Upgrade
         return true;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function updateRun1010()
+    {
+        $db_prefix = $this->getSetting("db_prefix", false);
+
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` CHANGE `xp` `xp` INT(8) NOT NULL;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` ADD `mana` INT(8) NOT NULL DEFAULT '0' AFTER `xp`, ADD `health` INT(8) NOT NULL DEFAULT '100' AFTER `mana`;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
+        $this->setSetting("version", "0.0.1.10", true);
+
+        return true;
+    }
+
 }
