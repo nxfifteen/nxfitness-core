@@ -2912,7 +2912,7 @@ class ApiBabel
                         ]);
                 }
 
-                if (!is_null($this->RewardsSystem)) {
+                if ($currentDate->format("Y-m-d") == $targetDate && !is_null($this->RewardsSystem)) {
                     $this->RewardsSystem->eventTrigger("BodyWeight", [$weight, $goalsweight, $lastWeight]);
                     $this->RewardsSystem->eventTrigger("BodyFat", [$fat, $goalsfat, $lastFat]);
                 }
