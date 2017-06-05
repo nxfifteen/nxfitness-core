@@ -23,7 +23,7 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  */
-class Xp extends Delivery
+class Gaming extends Delivery
 {
     /**
      * @param int $xp
