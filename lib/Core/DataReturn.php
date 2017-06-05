@@ -3078,6 +3078,9 @@ class DataReturn
     private function calculateXP($myPoints)
     {
 
+        if ($myPoints <= 0)
+            return array('percent' => 0, 'level' => 0);
+
         $calcStart = 0; // Level 1 Start XP
         $calcEnd = 100;  // Level 1 End XP
         $calcInc = 100;   // Increase by extra how many per level?
