@@ -2691,7 +2691,7 @@ class ApiBabel
                         ]);
                 }
 
-                if (!is_null($this->RewardsSystem)) {
+                if ($targetDate == date("Y-m-d") && !is_null($this->RewardsSystem)) {
                     $this->RewardsSystem->eventTrigger("RecordedWater", $userWaterLog);
                 }
 
@@ -2912,7 +2912,7 @@ class ApiBabel
                         ]);
                 }
 
-                if (!is_null($this->RewardsSystem)) {
+                if ($currentDate->format("Y-m-d") == $targetDate && !is_null($this->RewardsSystem)) {
                     $this->RewardsSystem->eventTrigger("BodyWeight", [$weight, $goalsweight, $lastWeight]);
                     $this->RewardsSystem->eventTrigger("BodyFat", [$fat, $goalsfat, $lastFat]);
                 }
@@ -3026,7 +3026,7 @@ class ApiBabel
                             ]);
                     }
 
-                    if (!is_null($this->RewardsSystem)) {
+                    if ($targetDate == date("Y-m-d") && !is_null($this->RewardsSystem)) {
                         $this->RewardsSystem->eventTrigger("RecordedMeal", $meal);
                     }
 
@@ -3231,7 +3231,7 @@ class ApiBabel
                             ]);
                     }
 
-                    if (!is_null($this->RewardsSystem)) {
+                    if ($currentDate->format("Y-m-d") == date("Y-m-d") && !is_null($this->RewardsSystem)) {
                         $this->RewardsSystem->eventTrigger("FitbitTracker", [$steps->dateTime, $trigger, $steps->value]);
                     }
                 }

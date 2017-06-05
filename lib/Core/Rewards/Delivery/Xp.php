@@ -40,7 +40,10 @@ class Xp extends Delivery
             $dbCurrentXp = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", 'xp', ["fuid" => $this->getUserID()]);
         }
 
-        $this->getAppClass()->getDatabase()->update($db_prefix . "users_xp", ["xp" => $dbCurrentXp + $xp], ["fuid" => $this->getUserID()]);
+        $newXp = $dbCurrentXp + $xp;
+        if ($newXp < 0) $newXp = 0;
+
+        $this->getAppClass()->getDatabase()->update($db_prefix . "users_xp", ["xp" => $newXp], ["fuid" => $this->getUserID()]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
         $this->recordDevlivery([], "delivered", $rewardKey);
