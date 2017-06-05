@@ -35,8 +35,8 @@ class Gaming extends Delivery
     public function deliver($rewardProfile, $state, $rewardKey)
     {
         if (!$this->getAppClass()->getDatabase()->has($this->dbPrefix . "users_xp", ['fuid' => $this->getUserID()])) {
-            $this->getAppClass()->getDatabase()->insert($this->dbPrefix . "users_xp", ["class" => "Rebel", "xp" => 1, "mana" => 1, "health" => 1, "fuid" => $this->getUserID()]);
-            $dbCurrent = ["class" => "Rebel", "xp" => 1, "mana" => 1, "health" => 1];
+            $this->getAppClass()->getDatabase()->insert($this->dbPrefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100, "fuid" => $this->getUserID()]);
+            $dbCurrent = ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100];
         } else {
             $dbCurrent = $this->getAppClass()->getDatabase()->get($this->dbPrefix . "users_xp", ['class','xp','mana','health'], ["fuid" => $this->getUserID()]);
         }
