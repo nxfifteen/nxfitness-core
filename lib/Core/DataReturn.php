@@ -2658,6 +2658,7 @@ class DataReturn
 
         $taskerDataArray['xp'] = $this->returnUserRecordXp();
         $taskerDataArray['xp']['ico'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . $taskerDataArray['xp']['level'] . ".png";
+        $taskerDataArray['xp']['icoclass'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . strtolower($taskerDataArray['xp']['class']) . ".png";
 
         return $taskerDataArray;
     }
