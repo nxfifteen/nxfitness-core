@@ -946,6 +946,11 @@ class Upgrade
             return false;
         }
 
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` ADD `class` VARCHAR(255) NOT NULL DEFAULT 'Rebel' AFTER `fuid`;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
         $this->setSetting("version", "0.0.1.10", true);
 
         return true;
