@@ -2658,6 +2658,7 @@ class DataReturn
 
         $taskerDataArray['xp'] = $this->returnUserRecordXp();
         $taskerDataArray['xp']['ico'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . $taskerDataArray['xp']['level'] . ".png";
+        $taskerDataArray['xp']['icoclass'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . strtolower($taskerDataArray['xp']['class']) . ".png";
 
         return $taskerDataArray;
     }
@@ -3058,15 +3059,17 @@ class DataReturn
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
-            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["xp" => 0, "fuid" => $this->getUserID()]);
-            $return['xp'] = 0;
+            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100, "fuid" => $this->getUserID()]);
+            $return = ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100];
         } else {
-            $return['xp'] = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", 'xp', ["fuid" => $this->getUserID()]);
+            $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class','xp','mana','health'], ["fuid" => $this->getUserID()]);
         }
 
         $calculate = $this->calculateXP($return['xp']);
         $return['level'] = $calculate['level'];
         $return['percent'] = $calculate['percent'];
+        $return['ico'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . $return['level'] . ".png";
+        $return['icoclass'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . strtolower($return['class']) . ".png";
 
         return $return;
     }

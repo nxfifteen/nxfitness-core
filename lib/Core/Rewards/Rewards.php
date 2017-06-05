@@ -73,7 +73,7 @@ class Rewards
     public function alreadyAwarded($rewardKey)
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        return $this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", ["AND" => ['fuid' => $this->getUserID(), 'rkey[~]' => $rewardKey]]);
+        return $this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", ["AND" => ['fuid' => $this->getUserID(), 'rkey[~]' => sha1($rewardKey)]]);
     }
 
     /**
@@ -152,7 +152,7 @@ class Rewards
      */
     public function giveUserXp($xp, $rewardKey)
     {
-        $this->issueAwards($xp, $rewardKey, "pending", "Xp");
+        $this->issueAwards(["skill" => "health", "xp" => $xp], $rewardKey, "pending", "Gaming");
         $wp = new Wordpress($this->getAppClass(), $this->getUserID());
         $wp->deliver(['reward' => $xp], $rewardKey, "pending");
     }
@@ -165,7 +165,6 @@ class Rewards
      */
     public function issueAwards($recordReward, $rewardKey, $state = "pending", $delivery = "Default")
     {
-
         $className = "Core\\Rewards\\Delivery";
         $includePath = dirname(__FILE__);
         $includeFile = $includePath . DIRECTORY_SEPARATOR . "Delivery.php";
