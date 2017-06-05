@@ -3068,6 +3068,8 @@ class DataReturn
         $calculate = $this->calculateXP($return['xp']);
         $return['level'] = $calculate['level'];
         $return['percent'] = $calculate['percent'];
+        $return['ico'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . $return['level'] . ".png";
+        $return['icoclass'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . strtolower($return['class']) . ".png";
 
         return $return;
     }
