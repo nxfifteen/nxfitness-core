@@ -951,6 +951,21 @@ class Upgrade
             return false;
         }
 
+        $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "blancing` (`bid` int(8) NOT NULL,`class` varchar(255) NOT NULL,`xp` float(6,3) NOT NULL DEFAULT '0.000',`mana` float(6,3) NOT NULL DEFAULT '0.000',`health` float(6,3) NOT NULL DEFAULT '0.000') ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "blancing` ADD PRIMARY KEY (`bid`);");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "blancing` MODIFY `bid` int(8) NOT NULL AUTO_INCREMENT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
         $this->setSetting("version", "0.0.1.10", true);
 
         return true;
