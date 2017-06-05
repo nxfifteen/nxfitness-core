@@ -36,6 +36,8 @@ class Delivery
      */
     private $UserID;
 
+    protected $dbPrefix;
+
     /**
      * Delivery constructor.
      * @param $AppClass
@@ -45,6 +47,7 @@ class Delivery
     {
         $this->setAppClass($AppClass);
         $this->setUserID($UserID);
+        $this->dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
     }
 
     /**
@@ -64,8 +67,6 @@ class Delivery
      */
     protected function recordDevlivery($recordReward, $state, $rewardKey)
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-
         if (!is_array($recordReward)) {
             $recordReward = [];
         }
@@ -77,7 +78,7 @@ class Delivery
             $recordReward['rid'] = null;
         }
 
-        $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_queue", ["fuid" => $this->getUserID(), "state" => $state, "rmid" => $recordReward['rmid'], "reward" => $recordReward['rid'], "rkey" => sha1($rewardKey)]);
+        $this->getAppClass()->getDatabase()->insert($this->dbPrefix . "reward_queue", ["fuid" => $this->getUserID(), "state" => $state, "rmid" => $recordReward['rmid'], "reward" => $recordReward['rid'], "rkey" => sha1($rewardKey)]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
     }
 
