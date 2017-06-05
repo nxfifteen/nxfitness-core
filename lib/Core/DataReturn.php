@@ -3058,10 +3058,10 @@ class DataReturn
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
-            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["xp" => 0, "fuid" => $this->getUserID()]);
-            $return['xp'] = 0;
+            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100, "fuid" => $this->getUserID()]);
+            $return = ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100];
         } else {
-            $return['xp'] = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", 'xp', ["fuid" => $this->getUserID()]);
+            $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class','xp','mana','health'], ["fuid" => $this->getUserID()]);
         }
 
         $calculate = $this->calculateXP($return['xp']);
