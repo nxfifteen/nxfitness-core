@@ -14,21 +14,21 @@ if ( file_exists( dirname( __FILE__ ) . "/rewards.inc.php" ) ) {
     require_once(dirname(__FILE__) . "/rewards.inc.php");
 }
 
-$rewards = [
-    'TestGamingFileRule' => [
-        "system" => "gaming",
-        "description" => "Test Gaming File Rule",
-        "reward" => '{"skill": "Hello World","xp": 5000,"health": 500,"mana": 100}'
-    ]
-];
-
-
-$rules = [
-    "nomie" => [
-        "tick" => [
-            "peed" => [
-                array_merge(["name" => "You took a pee"], $rewards['TestGamingFileRule'])
-            ]
-        ]
-    ]
-];
+//$rewards = [
+//    'TestGamingFileRule' => [
+//        "system" => "gaming",
+//        "description" => "Test Gaming File Rule",
+//        "reward" => '{"skill": "Hello World","xp": 5000,"health": 500,"mana": 100}'
+//    ]
+//];
+//
+//
+//$rules = [
+//    "nomie" => [
+//        "tick" => [
+//            "peed" => [
+//                array_merge(["name" => "You took a pee"], $rewards['TestGamingFileRule'])
+//            ]
+//        ]
+//    ]
+//];
