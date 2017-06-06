@@ -42,22 +42,23 @@ class Gaming extends Delivery
         }
 
         $balancingRules = $this->get(["class" => $dbCurrent['class'], "skill" => $rewardProfile['skill']], ["xp" => 1, "mana" => 1, "health" => 1]);
+        $healthMulipiler = $dbCurrent['health'] / 100;
 
         $updatedValues = [];
         if (array_key_exists("xp", $rewardProfile)) {
-            $updatedValues['xp'] = round($dbCurrent['xp'] + ($rewardProfile['xp'] * $balancingRules['xp']), 0);
+            $updatedValues['xp'] = round($dbCurrent['xp'] + ( ( $rewardProfile['xp'] * $healthMulipiler ) * $balancingRules['xp']), 0, PHP_ROUND_HALF_DOWN);
             if ($updatedValues['xp'] < 0) $updatedValues['xp'] = 0;
         }
+        $xpLevel = $this->calculateXP($updatedValues['xp']);
         if (array_key_exists("mana", $rewardProfile)) {
-            $updatedValues['mana'] = round($dbCurrent['mana'] + ($rewardProfile['mana'] * $balancingRules['mana']), 0);
+            $updatedValues['mana'] = round($dbCurrent['mana'] + ( ( $rewardProfile['mana'] * $healthMulipiler ) * $balancingRules['mana']), 0, PHP_ROUND_HALF_DOWN);
             if ($updatedValues['mana'] < 0) $updatedValues['mana'] = 0;
         }
         if (array_key_exists("health", $rewardProfile)) {
-            $updatedValues['health'] = round($dbCurrent['health'] + ($rewardProfile['health'] * $balancingRules['health']), 0);
+            $updatedValues['health'] = $this->maxHealth(round($dbCurrent['health'] + ( ( $rewardProfile['health'] * $healthMulipiler ) * $balancingRules['health']), 0, PHP_ROUND_HALF_DOWN), $xpLevel['level']);
             if ($updatedValues['health'] < 0) $updatedValues['health'] = 0;
         }
 
-        $xpLevel = $this->calculateXP($updatedValues['xp']);
         $updatedValues['percent'] = $xpLevel['percent'];
         $updatedValues['level'] = $xpLevel['level'];
 
@@ -65,6 +66,38 @@ class Gaming extends Delivery
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
         $this->recordDevlivery([], "delivered", $rewardKey);
+    }
+
+    /**
+     * @param $health
+     * @param $level
+     */
+    private function maxHealth($health, $level) {
+        if ($level >= 0 && $level <= 9) {
+            if ($health > 100) return 100;
+        } else if ($level >= 10 && $level <= 19) {
+            if ($health > 110) return 110;
+        } else if ($level >= 20 && $level <= 29) {
+            if ($health > 120) return 120;
+        } else if ($level >= 30 && $level <= 39) {
+            if ($health > 130) return 130;
+        } else if ($level >= 40 && $level <= 49) {
+            if ($health > 140) return 140;
+        } else if ($level >= 50 && $level <= 59) {
+            if ($health > 150) return 150;
+        } else if ($level >= 60 && $level <= 69) {
+            if ($health > 160) return 160;
+        } else if ($level >= 70 && $level <= 79) {
+            if ($health > 170) return 170;
+        } else if ($level >= 80 && $level <= 89) {
+            if ($health > 180) return 180;
+        } else if ($level >= 90 && $level <= 99) {
+            if ($health > 190) return 190;
+        } else if ($level >= 100) {
+            if ($health > 200) return 200;
+        }
+
+        return $health;
     }
 
     /**
