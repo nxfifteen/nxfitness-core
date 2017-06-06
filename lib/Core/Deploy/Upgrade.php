@@ -19,7 +19,7 @@ use Core\Core;
 use DateTime;
 use Medoo\Medoo;
 
-require_once(dirname(__FILE__) . "/../../../config.def.dist.php");
+require_once(dirname(__FILE__) . "/../../../config/config.def.dist.php");
 
 /**
  * Upgrade
@@ -967,6 +967,21 @@ class Upgrade
         }
 
         $this->setSetting("version", "0.0.1.10", true);
+
+        return true;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function updateRun1011()
+    {
+        $db_prefix = $this->getSetting("db_prefix", false);
+
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` ADD `level` INT(3) NOT NULL DEFAULT '0' AFTER `xp`, ADD `percent` INT(3) NOT NULL DEFAULT '0' AFTER `level`;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
+        $this->setSetting("version", "0.0.1.11", true);
 
         return true;
     }

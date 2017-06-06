@@ -40,7 +40,7 @@ if ( ! array_key_exists( "timeout", $_SESSION ) || ! is_numeric( $_SESSION[ 'tim
 if ( ! array_key_exists( "core_config",
         $_SESSION ) || ! is_array( $_SESSION[ 'core_config' ] ) || count( $_SESSION[ 'core_config' ] ) == 0
 ) {
-    require_once( dirname( __FILE__ ) . "/config.inc.php" );
+    require_once(dirname(__FILE__) . "/config.inc.php");
     if ( isset( $config ) ) {
         $_SESSION[ 'core_config' ] = $config;
     }
@@ -258,7 +258,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
 
     if ( is_array( $_GET ) && array_key_exists( "verify", $_GET ) ) {
         $config = [];
-        require_once( dirname( __FILE__ ) . "/config.inc.php" );
+        require_once(dirname(__FILE__) . "/config.inc.php");
         if ( ( is_array( $config[ 'api_subValidity' ] ) and in_array( $_GET[ 'verify' ],
                     $config[ 'api_subValidity' ] ) ) OR ( $_GET[ 'verify' ] == $config[ 'api_subValidity' ] )
         ) {

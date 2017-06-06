@@ -3055,68 +3055,19 @@ class DataReturn
      */
     public function returnUserRecordXp()
     {
-        $return = [];
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
-            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100, "fuid" => $this->getUserID()]);
-            $return = ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100];
+            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "level" => 0, "percent" => 0, "health" => 100, "fuid" => $this->getUserID()]);
+            $return = ["class" => "Rebel", "xp" => 0, "mana" => 0, "level" => 0, "percent" => 0, "health" => 100];
         } else {
-            $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class','xp','mana','health'], ["fuid" => $this->getUserID()]);
+            $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class','xp','mana','health', 'level', 'percent'], ["fuid" => $this->getUserID()]);
         }
 
-        $calculate = $this->calculateXP($return['xp']);
-        $return['level'] = $calculate['level'];
-        $return['percent'] = $calculate['percent'];
         $return['ico'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . $return['level'] . ".png";
         $return['icoclass'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . strtolower($return['class']) . ".png";
 
         return $return;
-    }
-
-    /**
-     * @param $myPoints
-     * @return array
-     */
-    private function calculateXP($myPoints)
-    {
-
-        if ($myPoints <= 0)
-            return array('percent' => 0, 'level' => 0);
-
-        $calcStart = 0; // Level 1 Start XP
-        $calcEnd = 100;  // Level 1 End XP
-        $calcInc = 100;   // Increase by extra how many per level?
-        $calcLevel = 20; // Multiply by how many per level? (1- easy / 20- hard)
-
-        /* Calculate Level */
-        $myStart = 0;
-        $myEnd = 0;
-        $myLevel = 0;
-        $calcCount = 0;
-        do {
-            $calcCount = $calcCount + 1;
-            if ($calcCount % 2 == 0) {
-                $calcInc = $calcInc + $calcLevel;
-            }
-            if (($myPoints < $calcEnd) && ($myPoints >= $calcStart)) {
-                $myLevel = $calcCount;
-                $myStart = $calcStart;
-                $myEnd = $calcEnd;
-            }
-            $calcStart = $calcEnd;
-            $calcEnd = $calcEnd + $calcInc;
-        } while ($myLevel == 0);
-        $myLevel--;
-
-        /* Calculate Percentage to Next Level */
-        $myPercent = (($myPoints - $myStart) / ($myEnd - $myStart)) * 100;
-        $myPercent = round($myPercent);
-        if ($myPercent == 0) {
-            $myPercent = 1;
-        }
-
-        return array('percent' => $myPercent, 'level' => $myLevel);
     }
 
     /**

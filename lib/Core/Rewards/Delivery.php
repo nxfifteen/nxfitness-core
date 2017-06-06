@@ -61,6 +61,16 @@ class Delivery
     }
 
     /**
+     * @param $string
+     * @return bool
+     */
+    protected function isJson($string) {
+        return ((is_string($string) &&
+            (is_object(json_decode($string)) ||
+                is_array(json_decode($string))))) ? true : false;
+    }
+
+    /**
      * @param $recordReward
      * @param $state
      * @param $rewardKey
