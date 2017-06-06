@@ -19,7 +19,7 @@ use Core\Core;
 use DateTime;
 use Medoo\Medoo;
 
-require_once(dirname(__FILE__) . "/../../../config.def.dist.php");
+require_once(dirname(__FILE__) . "/../../../config/config.def.dist.php");
 
 /**
  * Upgrade

@@ -15,8 +15,8 @@
 /phpdoc.xml
 /tcx
 /Thumbs.db
-config.def.php
-config.inc.php
+config/config.def.php
+config/config.inc.php
 *.css.map
 /dev/index.php
 /dev/git-bump-version/

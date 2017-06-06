@@ -11,7 +11,7 @@
 namespace Core;
 
 require_once(dirname(__FILE__) . "/../autoloader.php");
-require_once(dirname(__FILE__) . "/../../config.def.dist.php");
+require_once(dirname(__FILE__) . "/../../config/config.def.dist.php");
 
 use Core\Analytics\ErrorRecording;
 use Core\Babel\ApiBabel;
