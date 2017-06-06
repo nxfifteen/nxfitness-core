@@ -78,9 +78,9 @@ class Modules
 
         if (is_null($rewardKey)) {
             $currentDate = new DateTime ('now');
-            $rewardKey = sha1($cat . $event . $score . $currentDate->format("Y-m-d")) . rand (0, 50);
+            $rewardKey = sha1($cat . $event . $score . $currentDate->format("Y-m-d"));
         } else {
-            $rewardKey = sha1($rewardKey) . rand (0, 50);
+            $rewardKey = sha1($rewardKey);
         }
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {

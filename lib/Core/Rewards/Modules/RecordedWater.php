@@ -41,7 +41,7 @@ class RecordedWater extends Modules
 
         $goal = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
 
-        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey.rand(0,50))) {
+        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
             $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
             $water = $this->getAppClass()->getDatabase()->get($db_prefix . "water", "liquid", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
