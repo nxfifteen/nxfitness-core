@@ -90,73 +90,81 @@ class Modules
                 if (count($rewards) > 0) {
                     foreach ($rewards as $recordReward) {
 
-                        $state = 'noaward';
-                        $delivery = "Default";
-                        if (is_numeric($recordReward['xp']) && $recordReward['xp'] <> 0) {
+                        if (array_key_exists("system", $recordReward)) {
 
-                            if (strtolower($cat) == "activity") {
-                                $skill = "fitness";
-                            } else if (strtolower($cat) == "body") {
-                                $skill = "health";
-                            } else if (strtolower($cat) == "goal") {
-                                $skill = "snipper";
-                            } else if (strtolower($cat) == "hundredth") {
-                                $skill = "close range";
-                            } else if (strtolower($cat) == "streak") {
-                                $skill = "rappid fire";
-                            } else if (strtolower($cat) == "nomie") {
-                                $skill = "quest";
-                            } else {
-                                $skill = "unbalanced";
-                            }
-                            $this->getRewardsClass()->issueAwards(["skill" => $skill, "xp" => $recordReward['xp']], $rewardKey, "pending", "Gaming");
+                            $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, "pending", $recordReward['system']);
+                            $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", $recordReward['name'], $recordReward['description'], "delivered", '+2 hours');
 
-                            $state = 'delivered';
-                            if ($recordReward['xp'] > 0) {
-                                $recordReward['descriptionXp'] = "Awarded " . $recordReward['xp'] . " Xp Points";
-                            } else {
-                                $recordReward['descriptionXp'] = "Subtracted " . ($recordReward['xp'] * -1) . " Xp Points";
-                            }
+                            nxr(3, "File Award Processed for $cat, $event - $score");
                         } else {
-                            $recordReward['descriptionXp'] = "";
-                        }
+                            $state = 'noaward';
+                            $delivery = "Default";
+                            if (array_key_exists("xp", $recordReward) && is_numeric($recordReward['xp']) && $recordReward['xp'] <> 0) {
 
-                        if ($recordReward['rid'] != "") {
-                            $dbReward = $this->getAppClass()->getDatabase()->get($db_prefix . "rewards", ["description", "system", "reward"], ["rid" => $recordReward['rid']]);
+                                if (strtolower($cat) == "activity") {
+                                    $skill = "fitness";
+                                } else if (strtolower($cat) == "body") {
+                                    $skill = "health";
+                                } else if (strtolower($cat) == "goal") {
+                                    $skill = "snipper";
+                                } else if (strtolower($cat) == "hundredth") {
+                                    $skill = "close range";
+                                } else if (strtolower($cat) == "streak") {
+                                    $skill = "rappid fire";
+                                } else if (strtolower($cat) == "nomie") {
+                                    $skill = "quest";
+                                } else {
+                                    $skill = "unbalanced";
+                                }
+                                $this->getRewardsClass()->issueAwards(["skill" => $skill, "xp" => $recordReward['xp']], $rewardKey, "pending", "Gaming");
 
-                            $recordReward['descriptionRid'] = $dbReward['description'];
-                            $recordReward['reward'] = $dbReward['reward'];
-                            $delivery = $dbReward['system'];
-
-                            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-
-                            $this->getRewardsClass()->nukeConflictingAwards($recordReward['rid']);
-
-                            $state = 'pending';
-                        } else {
-                            $recordReward['rid'] = null;
-                            $recordReward['descriptionRid'] = "";
-                        }
-
-                        if ($recordReward['descriptionRid'] != "" && $recordReward['descriptionXp'] != "") {
-                            $recordReward['description'] = $recordReward['descriptionRid'] . " and " . $recordReward['descriptionXp'];
-                        } else if ($recordReward['descriptionRid'] != "") {
-                            $recordReward['description'] = $recordReward['descriptionRid'];
-                        } else if ($recordReward['descriptionXp'] != "") {
-                            $recordReward['description'] = $recordReward['descriptionXp'];
-                        } else {
-                            $recordReward['description'] = "";
-                        }
-
-                        if ($state != "noaward") {
-                            $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, $state, $delivery);
-                            if ($state == "pending") {
-                                $this->getRewardsClass()->notifyUser("icon-hourglass", "bg-primary", $recordReward['name'], $recordReward['description'], $state, '+6 hours');
+                                $state = 'delivered';
+                                if ($recordReward['xp'] > 0) {
+                                    $recordReward['descriptionXp'] = "Awarded " . $recordReward['xp'] . " Xp Points";
+                                } else {
+                                    $recordReward['descriptionXp'] = "Subtracted " . ($recordReward['xp'] * -1) . " Xp Points";
+                                }
                             } else {
-                                $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", $recordReward['name'], $recordReward['description'], $state, '+2 hours');
+                                $recordReward['descriptionXp'] = "";
                             }
 
-                            nxr(3, "Award Processed for $cat, $event - $score");
+                            if (array_key_exists("rid", $recordReward) && $recordReward['rid'] != "") {
+                                $dbReward = $this->getAppClass()->getDatabase()->get($db_prefix . "rewards", ["description", "system", "reward"], ["rid" => $recordReward['rid']]);
+
+                                $recordReward['descriptionRid'] = $dbReward['description'];
+                                $recordReward['reward'] = $dbReward['reward'];
+                                $delivery = $dbReward['system'];
+
+                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+                                $this->getRewardsClass()->nukeConflictingAwards($recordReward['rid']);
+
+                                $state = 'pending';
+                            } else {
+                                $recordReward['rid'] = null;
+                                $recordReward['descriptionRid'] = "";
+                            }
+
+                            if ($recordReward['descriptionRid'] != "" && $recordReward['descriptionXp'] != "") {
+                                $recordReward['description'] = $recordReward['descriptionRid'] . " and " . $recordReward['descriptionXp'];
+                            } else if ($recordReward['descriptionRid'] != "") {
+                                $recordReward['description'] = $recordReward['descriptionRid'];
+                            } else if ($recordReward['descriptionXp'] != "") {
+                                $recordReward['description'] = $recordReward['descriptionXp'];
+                            } else {
+                                $recordReward['description'] = "";
+                            }
+
+                            if ($state != "noaward") {
+                                $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, $state, $delivery);
+                                if ($state == "pending") {
+                                    $this->getRewardsClass()->notifyUser("icon-hourglass", "bg-primary", $recordReward['name'], $recordReward['description'], $state, '+6 hours');
+                                } else {
+                                    $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", $recordReward['name'], $recordReward['description'], $state, '+2 hours');
+                                }
+
+                                nxr(3, "Award Processed for $cat, $event - $score");
+                            }
                         }
                     }
 

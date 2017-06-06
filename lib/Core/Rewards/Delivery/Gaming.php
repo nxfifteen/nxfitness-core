@@ -59,7 +59,7 @@ class Gaming extends Delivery
             if ($updatedValues['mana'] < 0) $updatedValues['mana'] = 0;
         }
         if (array_key_exists("health", $rewardProfile)) {
-            $updatedValues['health'] = $this->maxHealth(round($dbCurrent['health'] + ( ( $rewardProfile['health'] * $healthMulipiler ) * $balancingRules['health']), 0, PHP_ROUND_HALF_DOWN), $xpLevel['level']);
+            $updatedValues['health'] = $this->maxHealth(round($dbCurrent['health'] + $rewardProfile['health'] * $balancingRules['health'], 0, PHP_ROUND_HALF_DOWN), $xpLevel['level']);
             if ($updatedValues['health'] < 0) $updatedValues['health'] = 0;
         }
 

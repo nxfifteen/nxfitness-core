@@ -15,11 +15,10 @@ if ( file_exists( dirname( __FILE__ ) . "/rewards.inc.php" ) ) {
 }
 
 $rewards = [
-    "gaming" => [
-        'TestGamingFileRule' => [
-            "description" => "Test Gaming File Rule",
-            "reward" => '{"skill": "Hello World","xp": -10,"health": -100,"mana": 20}'
-        ]
+    'TestGamingFileRule' => [
+        "system" => "gaming",
+        "description" => "Test Gaming File Rule",
+        "reward" => '{"skill": "Hello World","xp": 5000,"health": 500,"mana": 100}'
     ]
 ];
 
@@ -28,7 +27,7 @@ $rules = [
     "nomie" => [
         "tick" => [
             "peed" => [
-                $rewards["gaming"]['TestGamingFileRule']
+                array_merge(["name" => "You took a pee"], $rewards['TestGamingFileRule'])
             ]
         ]
     ]

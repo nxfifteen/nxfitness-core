@@ -139,6 +139,20 @@ class Rewards
 
         }
 
+        $cat = strtolower($cat);
+        $event = strtolower($event);
+        $rule = strtolower($score);
+
+        if (
+            array_key_exists($cat, $this->FileRewards) &&
+            array_key_exists($event, $this->FileRewards[$cat]) &&
+            array_key_exists($rule, $this->FileRewards[$cat][$event])
+        ) {
+            foreach ($this->FileRewards[$cat][$event][$rule] as $fileReward) {
+                array_push($returnRewards, $fileReward);
+            }
+        }
+
         if (is_array($returnRewards) && count($returnRewards) > 0) {
             return $returnRewards;
         } else {
