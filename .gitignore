@@ -123,3 +123,4 @@ config/config.inc.php
 /ux/img/xplevels/*.png
 /ux/img/xplevels/*.psd
 /lib/Core/Rewards/Modules/Private/*.php
+/config/rewards.inc.php

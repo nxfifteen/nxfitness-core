@@ -40,6 +40,11 @@ class Rewards
     private $AppClass;
 
     /**
+     * @var Core
+     */
+    private $FileRewards;
+
+    /**
      * Modules constructor.
      * @param $AppClass
      * @param $UserID
@@ -48,6 +53,11 @@ class Rewards
     {
         $this->setAppClass($AppClass);
         $this->setUserID($UserID);
+        if ( file_exists( dirname( __FILE__ ) . "/../../../config/rewards.dist.php" ) ) {
+            $rules = [];
+            require(dirname(__FILE__) . "/../../../config/rewards.dist.php");
+            $this->FileRewards = $rules;
+        }
     }
 
     /**
@@ -143,7 +153,23 @@ class Rewards
     public function hasDBAwards($awardWhere)
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        return $this->getAppClass()->getDatabase()->has($db_prefix . "reward_map", $awardWhere);
+        if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_map", $awardWhere)) {
+            return true;
+        } else {
+            $cat = strtolower($awardWhere['AND']['cat']);
+            $event = strtolower($awardWhere['AND']['event']);
+            $rule = strtolower($awardWhere['AND']['rule']);
+
+            if (
+                array_key_exists($cat, $this->FileRewards) &&
+                array_key_exists($event, $this->FileRewards[$cat]) &&
+                array_key_exists($rule, $this->FileRewards[$cat][$event])
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     /**
