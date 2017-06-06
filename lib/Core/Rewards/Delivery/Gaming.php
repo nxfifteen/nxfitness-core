@@ -57,10 +57,59 @@ class Gaming extends Delivery
             if ($updatedValues['health'] < 0) $updatedValues['health'] = 0;
         }
 
+        $xpLevel = $this->calculateXP($updatedValues['xp']);
+        $updatedValues['percent'] = $xpLevel['percent'];
+        $updatedValues['level'] = $xpLevel['level'];
+
         $this->getAppClass()->getDatabase()->update($this->dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getUserID()]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
         $this->recordDevlivery([], "delivered", $rewardKey);
+    }
+
+    /**
+     * @param $myPoints
+     * @return array
+     */
+    private function calculateXP($myPoints)
+    {
+
+        if ($myPoints <= 0)
+            return array('percent' => 0, 'level' => 0);
+
+        $calcStart = 0; // Level 1 Start XP
+        $calcEnd = 100;  // Level 1 End XP
+        $calcInc = 100;   // Increase by extra how many per level?
+        $calcLevel = 20; // Multiply by how many per level? (1- easy / 20- hard)
+
+        /* Calculate Level */
+        $myStart = 0;
+        $myEnd = 0;
+        $myLevel = 0;
+        $calcCount = 0;
+        do {
+            $calcCount = $calcCount + 1;
+            if ($calcCount % 2 == 0) {
+                $calcInc = $calcInc + $calcLevel;
+            }
+            if (($myPoints < $calcEnd) && ($myPoints >= $calcStart)) {
+                $myLevel = $calcCount;
+                $myStart = $calcStart;
+                $myEnd = $calcEnd;
+            }
+            $calcStart = $calcEnd;
+            $calcEnd = $calcEnd + $calcInc;
+        } while ($myLevel == 0);
+        $myLevel--;
+
+        /* Calculate Percentage to Next Level */
+        $myPercent = (($myPoints - $myStart) / ($myEnd - $myStart)) * 100;
+        $myPercent = round($myPercent);
+        if ($myPercent == 0) {
+            $myPercent = 1;
+        }
+
+        return array('percent' => $myPercent, 'level' => $myLevel);
     }
 
     /**
@@ -74,7 +123,7 @@ class Gaming extends Delivery
      *
      * @return array Setting value, or default as per defined
      */
-    public function get($key, $default = null, $query_db = true)
+    private function get($key, $default = null, $query_db = true)
     {
         if ($query_db && $this->getAppClass()->getDatabase()->has($this->dbPrefix . "blancing", $key)) {
             $dbResults = $this->getAppClass()->getDatabase()->get($this->dbPrefix . "blancing", ['xp','mana','health'], $key);
@@ -98,7 +147,7 @@ class Gaming extends Delivery
      *
      * @return bool was data stored correctly
      */
-    public function set($key, $value)
+    private function set($key, $value)
     {
         if ($this->getAppClass()->getDatabase()->has($this->dbPrefix . "blancing", $key)) {
             $this->getAppClass()->getDatabase()->update($this->dbPrefix . "blancing", $value, $key);
