@@ -41,25 +41,26 @@ class RecordedWater extends Modules
 
         $goal = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
 
-        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey.rand(0,50))) {
             $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-            $water = $this->getAppClass()->getDatabase()->get($db_prefix . "water", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
+            $water = $this->getAppClass()->getDatabase()->get($db_prefix . "water", "liquid", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
             $xp = 0;
+            $health = 0;
             $inbox = [];
             if ($water < $goal) {
-                /** @noinspection PhpWrongStringConcatenationInspection */
                 $xpDiff = round((($goal - $water) / 2) * -1, 0);
-                /** @noinspection PhpWrongStringConcatenationInspection */
                 $xp = $xp + $xpDiff;
-                $inbox[] = ["fa fa-beer", "bg-warning", "You need water!", "Your body is like 80% water, drink more!", round($xpDiff, 0) . "XP"];
+                $health = -8;
+                $inbox[] = ["fa fa-beer", "bg-warning", "You need water!", "Drank $water ml out of $goal ml, drink more!", round($xpDiff, 0) . "XP"];
             } else {
                 $xpDiff = 50;
                 $xp = $xp + $xpDiff;
+                $health = 10;
                 $inbox[] = ["fa fa-beer", "bg-success", "Bang On", "You hit your goal!", round($xpDiff, 0) . "XP"];
             }
 
-            $this->getRewardsClass()->giveUserXp($xp, $rewardKey);
+            $this->getRewardsClass()->issueAwards(["skill" => "health", "health" => $health, "xp" => $xp], $rewardKey, "pending", "Gaming");
             foreach ($inbox as $inboxItem) {
                 $this->getRewardsClass()->notifyUser($inboxItem[0], $inboxItem[1], $inboxItem[2], $inboxItem[3], $inboxItem[4], '+1 days');
             }
