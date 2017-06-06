@@ -92,7 +92,24 @@ class Modules
                         $state = 'noaward';
                         $delivery = "Default";
                         if (is_numeric($recordReward['xp']) && $recordReward['xp'] <> 0) {
-                            $this->getRewardsClass()->giveUserXp($recordReward['xp'], $rewardKey);
+
+                            if (strtolower($cat) == "activity") {
+                                $skill = "fitness";
+                            } else if (strtolower($cat) == "body") {
+                                $skill = "health";
+                            } else if (strtolower($cat) == "goal") {
+                                $skill = "snipper";
+                            } else if (strtolower($cat) == "hundredth") {
+                                $skill = "close range";
+                            } else if (strtolower($cat) == "streak") {
+                                $skill = "rappid fire";
+                            } else if (strtolower($cat) == "nomie") {
+                                $skill = "quest";
+                            } else {
+                                $skill = "unbalanced";
+                            }
+                            $this->getRewardsClass()->issueAwards(["skill" => $skill, "xp" => $recordReward['xp']], $rewardKey, "pending", "Gaming");
+
                             $state = 'delivered';
                             if ($recordReward['xp'] > 0) {
                                 $recordReward['descriptionXp'] = "Awarded " . $recordReward['xp'] . " Xp Points";
