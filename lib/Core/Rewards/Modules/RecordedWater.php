@@ -49,20 +49,21 @@ class RecordedWater extends Modules
             $health = 0;
             $inbox = [];
             if ($water < $goal) {
-                $xpDiff = round((($goal - $water) / 2) * -1, 0);
+                $xpDiff = round((($goal - $water) / 4) * -1, 0);
                 $xp = $xp + $xpDiff;
                 $health = -8;
-                $inbox[] = ["fa fa-beer", "bg-warning", "You need water!", "Drank $water ml out of $goal ml, drink more!", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-beer", "bg-warning", $yesterday . " - You need water!", "Drank $water ml out of $goal ml, drink more!", ""];
             } else {
                 $xpDiff = 50;
                 $xp = $xp + $xpDiff;
                 $health = 10;
-                $inbox[] = ["fa fa-beer", "bg-success", "Bang On", "You hit your goal!", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-beer", "bg-success", $yesterday . " - Bang On", "You hit your goal!", ""];
             }
 
             $this->getRewardsClass()->issueAwards(["skill" => "health", "health" => $health, "xp" => $xp], $rewardKey, "pending", "Gaming");
             foreach ($inbox as $inboxItem) {
-                $this->getRewardsClass()->notifyUser($inboxItem[0], $inboxItem[1], $inboxItem[2], $inboxItem[3], $inboxItem[4], '+1 days');
+                $this->getRewardsClass()->setRewardReason($inboxItem[2] . "|" . $inboxItem[3]);
+                $this->getRewardsClass()->notifyUser($inboxItem[0], $inboxItem[1], '+1 days');
             }
         }
 

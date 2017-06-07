@@ -54,18 +54,18 @@ class Gaming extends Delivery
         if (array_key_exists("xp", $rewardProfile)) {
             $updatedValues['xp'] = round($dbCurrent['xp'] + ( ( $rewardProfile['xp'] * $healthMulipiler ) * $balancingRules['xp']), 0, PHP_ROUND_HALF_DOWN);
             if ($updatedValues['xp'] < 0) $updatedValues['xp'] = 0;
-            $recordReward .= $updatedValues['xp'] . " XP, ";
+            $recordReward .= ( ( $rewardProfile['xp'] * $healthMulipiler ) * $balancingRules['xp']) . " XP, ";
         }
         $xpLevel = $this->calculateXP($updatedValues['xp']);
         if (array_key_exists("mana", $rewardProfile)) {
             $updatedValues['mana'] = round($dbCurrent['mana'] + ( ( $rewardProfile['mana'] * $healthMulipiler ) * $balancingRules['mana']), 0, PHP_ROUND_HALF_DOWN);
             if ($updatedValues['mana'] < 0) $updatedValues['mana'] = 0;
-            $recordReward .= $updatedValues['mana'] . " Mana, ";
+            $recordReward .= ( ( $rewardProfile['mana'] * $healthMulipiler ) * $balancingRules['mana']) . " Mana, ";
         }
         if (array_key_exists("health", $rewardProfile)) {
             $updatedValues['health'] = $this->maxHealth(round($dbCurrent['health'] + $rewardProfile['health'] * $balancingRules['health'], 0, PHP_ROUND_HALF_DOWN), $xpLevel['level']);
             if ($updatedValues['health'] < 0) $updatedValues['health'] = 0;
-            $recordReward .= $updatedValues['health'] . " HP, ";
+            $recordReward .= $rewardProfile['health'] * $balancingRules['health'] . " HP, ";
         }
 
         $updatedValues['percent'] = $xpLevel['percent'];

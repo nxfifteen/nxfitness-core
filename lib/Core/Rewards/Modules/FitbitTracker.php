@@ -96,7 +96,8 @@ class FitbitTracker extends Modules
                         $xp = round(($eventDetails['value'] - $cutOff) / 2, 0);
                         if ($xp > 0) {
                             $this->getRewardsClass()->issueAwards(["skill" => "close range", "health" => round($xp / 3, 0), "xp" => $xp], $rewardKey, "pending", "Gaming");
-                            $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", ucfirst($eventDetails['trigger']) . " Mark", "You took " . $recordedValue . " steps yesterday", $xp . "XP", '+24 hours');
+                            $this->getRewardsClass()->setRewardReason(ucfirst($eventDetails['trigger']) . " Mark" . "|" . "You took " . $recordedValue . " steps yesterday");
+                            $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", '+24 hours');
                         }
                     }
                 }
