@@ -3064,6 +3064,9 @@ class DataReturn
             $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class','xp','mana','health', 'level', 'percent'], ["fuid" => $this->getUserID()]);
         }
 
+        if ($return['level'] > 100)
+            $return['level'] = 100;
+
         $return['ico'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . $return['level'] . ".png";
         $return['icoclass'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . strtolower($return['class']) . ".png";
 
