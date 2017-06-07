@@ -119,11 +119,6 @@ class Modules
                                 $this->getRewardsClass()->issueAwards(["skill" => $skill, "xp" => $recordReward['xp']], $rewardKey, "pending", "Gaming");
 
                                 $state = 'delivered';
-                                if ($recordReward['xp'] > 0) {
-                                    $recordReward['descriptionXp'] = "Awarded " . $recordReward['xp'] . " Xp Points";
-                                } else {
-                                    $recordReward['descriptionXp'] = "Subtracted " . ($recordReward['xp'] * -1) . " Xp Points";
-                                }
                             } else {
                                 $recordReward['descriptionXp'] = "";
                             }
@@ -145,12 +140,8 @@ class Modules
                                 $recordReward['descriptionRid'] = "";
                             }
 
-                            if ($recordReward['descriptionRid'] != "" && $recordReward['descriptionXp'] != "") {
-                                $recordReward['description'] = $recordReward['descriptionRid'] . " and " . $recordReward['descriptionXp'];
-                            } else if ($recordReward['descriptionRid'] != "") {
+                            if ($recordReward['descriptionRid'] != "") {
                                 $recordReward['description'] = $recordReward['descriptionRid'];
-                            } else if ($recordReward['descriptionXp'] != "") {
-                                $recordReward['description'] = $recordReward['descriptionXp'];
                             } else {
                                 $recordReward['description'] = "";
                             }
