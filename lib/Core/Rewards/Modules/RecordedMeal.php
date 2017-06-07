@@ -64,52 +64,42 @@ class RecordedMeal extends Modules
                 $xpDiff = round(((($dbcalories - $goalcalories) + 1) * -1) / 3, 0);
                 $xp = $xp + $xpDiff;
                 $health = $health + -5;
-                $inbox[] = ["fa fa-cutlery", "bg-warning", "Over Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories over your goal", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Over Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories over your goal", round($xpDiff, 0) . "XP"];
             } else if ($dbcalories <= 1200) {
                 $xpDiff = (($goalcalories - $dbcalories) + 20) * -1;
                 $xp = $xp + $xpDiff;
                 $health = $health + -10;
-                $inbox[] = ["fa fa-cutlery", "bg-danger", "Under Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories too few calories", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-danger", $yesterday . " - Under Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories too few calories", round($xpDiff, 0) . "XP"];
             } else {
-                $xpDiff = 50;
-                $xp = $xp + $xpDiff;
+                $xp = $xp + 50;
                 $health = $health + 10;
-                $inbox[] = ["fa fa-cutlery", "bg-success", "Bang On", "You hit your goal!", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-success", $yesterday . " - Bang On", "You hit your goal!", round(50, 0) . "XP"];
             }
             if ($dbcarbs > $goalcarbs) {
-                $xpDiff = (($dbcarbs - $goalcarbs) + 5) * -1;
-                $xp = $xp + $xpDiff;
                 $health = $health + -1;
-                $inbox[] = ["fa fa-cutlery", "bg-warning", "Carb Overload", "Your eatting too many carbs", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Carb Overload", "Your eatting too many carbs", ""];
             }
             if ($dbfat > $goalfat) {
-                $xpDiff = (($dbfat - $goalfat) + 15) * -1;
-                $xp = $xp + $xpDiff;
                 $health = $health + -2;
-                $inbox[] = ["fa fa-cutlery", "bg-warning", "Fatty Fat Fat", "Your eatting too much fat", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Fatty Fat Fat", "Your eatting too much fat", ""];
             }
             if ($dbfiber > $goalfiber) {
-                $xpDiff = (($dbfiber - $goalfiber) + 1) * -1;
-                $xp = $xp + $xpDiff;
                 $health = $health + -1;
-                $inbox[] = ["fa fa-cutlery", "bg-warning", "Fiber is binding", "Your eatting too much fiber", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Fiber is binding", "Your eatting too much fiber", ""];
             }
             if ($dbprotein > $goalprotein) {
-                $xpDiff = (($dbprotein - $goalprotein) + 1) * -1;
-                $xp = $xp + $xpDiff;
                 $health = $health + -1;
-                $inbox[] = ["fa fa-cutlery", "bg-warning", "Protein Overload", "Your eatting too much protein", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Protein Overload", "Your eatting too much protein", ""];
             }
             if ($dbsodium > $goalsodium) {
-                $xpDiff = (($dbsodium - $goalsodium) + 8) * -1;
-                $xp = $xp + $xpDiff;
                 $health = $health + -5;
-                $inbox[] = ["fa fa-cutlery", "bg-warning", "Salt isn't a good thing!", "Your eatting too much salt", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Salt isn't a good thing!", "Your eatting too much salt", ""];
             }
 
             $this->getRewardsClass()->issueAwards(["skill" => "health", "health" => $health, "xp" => $xp], $rewardKey, "pending", "Gaming");
             foreach ($inbox as $inboxItem) {
-                $this->getRewardsClass()->notifyUser($inboxItem[0], $inboxItem[1], $inboxItem[2], $inboxItem[3], $inboxItem[4], '+1 days');
+                $this->getRewardsClass()->setRewardReason($inboxItem[2] . "|" . $inboxItem[3]);
+                $this->getRewardsClass()->notifyUser($inboxItem[0], $inboxItem[1], '+1 days');
             }
         }
 

@@ -29,6 +29,7 @@ class Wordpress extends Delivery
      * @param array $recordReward
      * @param string $state
      * @param string $rewardKey
+     * @return array
      */
     public function deliver($recordReward, $state, $rewardKey)
     {
@@ -45,7 +46,7 @@ class Wordpress extends Delivery
                 $dbCurrentBalance = 0;
             }
 
-            $newBalance = round(($dbCurrentBalance + $recordReward['reward'])/100, 2);
+            $newBalance = round($dbCurrentBalance + ($recordReward['reward'])/100, 2);
             if ($newBalance < 0) $newBalance = 0;
 
             $this->getAppClass()->getDatabase()->update($db_wp_prefix . "usermeta", ["meta_value" => $newBalance], ['AND' => ['user_id' => $user_wp_id, 'meta_key' => '_uw_balance']]);
@@ -53,5 +54,6 @@ class Wordpress extends Delivery
         }
 
         $this->recordDevlivery($recordReward, "delivered", $rewardKey);
+        return ["Awarded " . ($recordReward['reward'])/100 . " WP Gold"];
     }
 }

@@ -61,7 +61,8 @@ class FitbitStreak extends Modules
             }
 
             $this->getRewardsClass()->issueAwards(["skill" => "rappid fire", "health" => 2 * $eventDetails['days_between'] + $muliplier, "xp" => 5 * $eventDetails['days_between'] + $muliplier], $rewardKey, "pending", "Gaming");
-            $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", "Streaking!!!", "Your " . $eventDetails['goal'] . " streak ran " . $eventDetails['days_between'] . " days", 5 * $eventDetails['days_between'] . "XP", '+5 hours');
+            $this->getRewardsClass()->setRewardReason("Streaking!!!" . "|" . "Your " . $eventDetails['goal'] . " streak ran " . $eventDetails['days_between'] . " days");
+            $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", '+5 hours');
         }
     }
 

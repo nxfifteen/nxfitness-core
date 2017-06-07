@@ -68,7 +68,7 @@ if ( array_key_exists( "user", $_GET ) && array_key_exists( "data", $_GET ) ) {
 
             // if data was cached recently, return cached data
             if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
-                $fileTimeOut = strtotime( '-5 minutes' );
+                $fileTimeOut = strtotime( '-30 seconds' );
             } else {
                 $fileTimeOut = strtotime( '-45 minutes' );
             }

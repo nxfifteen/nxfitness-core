@@ -45,6 +45,16 @@ class Rewards
     private $FileRewards;
 
     /**
+     * @var array
+     */
+    private $RewardsIssued = [];
+
+    /**
+     * @var string
+     */
+    private $RewardReason;
+
+    /**
      * Modules constructor.
      * @param $AppClass
      * @param $UserID
@@ -224,7 +234,8 @@ class Rewards
         require_once($includeFile);
         $rewardSystem = new $className($this->getAppClass(), $this->getUserID());
         /** @noinspection PhpUndefinedMethodInspection */
-        $rewardSystem->deliver($recordReward, $state, $rewardKey);
+        $deliveryReturn = $rewardSystem->deliver($recordReward, $state, $rewardKey);
+        $this->RewardsIssued = array_merge($this->RewardsIssued, $deliveryReturn);
     }
 
     /**
@@ -305,8 +316,16 @@ class Rewards
      * @param $bold
      * @param $expire
      */
-    public function notifyUser($ico, $icoColour, $subject, $body, $bold, $expire)
+    public function notifyUser($ico, $icoColour, $expire)
     {
+        $bold = "";
+        if (is_array($this->RewardsIssued) && count($this->RewardsIssued) > 0) {
+            foreach ($this->RewardsIssued as $item) {
+                $bold = $bold . " | " . $item;
+            }
+        }
+
+        $reason = $this->getRewardReason();
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $this->getAppClass()->getDatabase()->insert($db_prefix . "inbox",
             [
@@ -314,12 +333,28 @@ class Rewards
                 "expires" => date("Y-m-d H:i:s", strtotime($expire)),
                 "ico" => $ico,
                 "icoColour" => $icoColour,
-                "subject" => $subject,
-                "body" => $body,
+                "subject" => $reason[0],
+                "body" => $reason[1],
                 "bold" => $bold
             ]
         );
 
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getRewardReason()
+    {
+        return explode("|", $this->RewardReason);
+    }
+
+    /**
+     * @param string $RewardReason
+     */
+    public function setRewardReason($RewardReason)
+    {
+        $this->RewardReason = $RewardReason;
     }
 }
