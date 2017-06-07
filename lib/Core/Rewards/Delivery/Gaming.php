@@ -26,11 +26,12 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
 class Gaming extends Delivery
 {
     private $blancing = [];
-    
+
     /**
      * @param array $rewardProfile
      * @param string $state
      * @param string $rewardKey
+     * @return array
      */
     public function deliver($rewardProfile, $state, $rewardKey)
     {
@@ -49,18 +50,22 @@ class Gaming extends Delivery
         $healthMulipiler = $dbCurrent['health'] / 100;
 
         $updatedValues = [];
+        $recordReward = "Gave ";
         if (array_key_exists("xp", $rewardProfile)) {
             $updatedValues['xp'] = round($dbCurrent['xp'] + ( ( $rewardProfile['xp'] * $healthMulipiler ) * $balancingRules['xp']), 0, PHP_ROUND_HALF_DOWN);
             if ($updatedValues['xp'] < 0) $updatedValues['xp'] = 0;
+            $recordReward .= $updatedValues['xp'] . " XP, ";
         }
         $xpLevel = $this->calculateXP($updatedValues['xp']);
         if (array_key_exists("mana", $rewardProfile)) {
             $updatedValues['mana'] = round($dbCurrent['mana'] + ( ( $rewardProfile['mana'] * $healthMulipiler ) * $balancingRules['mana']), 0, PHP_ROUND_HALF_DOWN);
             if ($updatedValues['mana'] < 0) $updatedValues['mana'] = 0;
+            $recordReward .= $updatedValues['mana'] . " Mana, ";
         }
         if (array_key_exists("health", $rewardProfile)) {
             $updatedValues['health'] = $this->maxHealth(round($dbCurrent['health'] + $rewardProfile['health'] * $balancingRules['health'], 0, PHP_ROUND_HALF_DOWN), $xpLevel['level']);
             if ($updatedValues['health'] < 0) $updatedValues['health'] = 0;
+            $recordReward .= $updatedValues['health'] . " HP, ";
         }
 
         $updatedValues['percent'] = $xpLevel['percent'];
@@ -70,6 +75,8 @@ class Gaming extends Delivery
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
         $this->recordDevlivery([], "delivered", $rewardKey);
+
+        return ["RPG: " . $recordReward];
     }
 
     /**

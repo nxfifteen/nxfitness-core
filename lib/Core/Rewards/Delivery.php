@@ -54,10 +54,12 @@ class Delivery
      * @param array $recordReward
      * @param string $state
      * @param string $rewardKey
+     * @return array
      */
     public function deliver($recordReward, $state, $rewardKey)
     {
         $this->recordDevlivery($recordReward, $state, $rewardKey);
+        return [];
     }
 
     /**

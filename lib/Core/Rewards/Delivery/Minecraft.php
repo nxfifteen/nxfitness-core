@@ -30,6 +30,7 @@ class Minecraft extends Delivery
      * @param array $recordReward
      * @param string $state
      * @param string $rewardKey
+     * @return array
      */
     public function deliver($recordReward, $state, $rewardKey)
     {
@@ -41,10 +42,12 @@ class Minecraft extends Delivery
             $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "minecraft", ["username" => $minecraftUsername, "command" => $recordReward['reward'], "delivery" => "pending"]);
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
+            $this->recordDevlivery($recordReward, "delivered", $rewardKey);
+            return ["WooCraft: " . $recordReward['reward']];
         } else {
             nxr(0, "User doesnt have a Minecraft Username");
         }
 
-        $this->recordDevlivery($recordReward, "delivered", $rewardKey);
+        return [];
     }
 }
