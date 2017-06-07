@@ -313,9 +313,10 @@ class Rewards
      */
     public function notifyUser($ico, $icoColour, $subject, $body, $bold, $expire)
     {
+        $bold = "";
         if (is_array($this->RewardsIssued) && count($this->RewardsIssued) > 0) {
             foreach ($this->RewardsIssued as $item) {
-                $body = $body . " | " . $item;
+                $bold = $bold . " | " . $item;
             }
         }
 
