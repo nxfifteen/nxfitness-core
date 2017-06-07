@@ -45,6 +45,11 @@ class Rewards
     private $FileRewards;
 
     /**
+     * @var array
+     */
+    private $RewardsIssued = [];
+
+    /**
      * Modules constructor.
      * @param $AppClass
      * @param $UserID
@@ -224,7 +229,8 @@ class Rewards
         require_once($includeFile);
         $rewardSystem = new $className($this->getAppClass(), $this->getUserID());
         /** @noinspection PhpUndefinedMethodInspection */
-        $rewardSystem->deliver($recordReward, $state, $rewardKey);
+        $deliveryReturn = $rewardSystem->deliver($recordReward, $state, $rewardKey);
+        $this->RewardsIssued = array_merge($this->RewardsIssued, $deliveryReturn);
     }
 
     /**
@@ -307,6 +313,12 @@ class Rewards
      */
     public function notifyUser($ico, $icoColour, $subject, $body, $bold, $expire)
     {
+        if (is_array($this->RewardsIssued) && count($this->RewardsIssued) > 0) {
+            foreach ($this->RewardsIssued as $item) {
+                $body = $body . " | " . $item;
+            }
+        }
+
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $this->getAppClass()->getDatabase()->insert($db_prefix . "inbox",
             [
