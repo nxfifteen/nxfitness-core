@@ -319,11 +319,12 @@ class Rewards
     public function notifyUser($ico, $icoColour, $expire)
     {
         $bold = "";
-        if (is_array($this->RewardsIssued) && count($this->RewardsIssued) > 0) {
+        /*if (is_array($this->RewardsIssued) && count($this->RewardsIssued) > 0) {
             foreach ($this->RewardsIssued as $item) {
-                $bold = $bold . " | " . $item;
+                $bold = $item;
             }
-        }
+            $this->RewardsIssued = [];
+        }*/
 
         $reason = $this->getRewardReason();
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);

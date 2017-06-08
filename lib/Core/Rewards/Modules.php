@@ -96,7 +96,7 @@ class Modules
                             $this->getRewardsClass()->setRewardReason($recordReward['name'] . "|" . $recordReward['description']);
                             $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", '+2 hours');
 
-                            nxr(3, "File Award Processed for $cat, $event - $score");
+                            nxr(3, "File Award Processed '" . $recordReward['name'] . "', " . $recordReward['description']);
                         } else {
                             $state = 'noaward';
                             $delivery = "Default";
@@ -146,7 +146,7 @@ class Modules
                             }
 
                             if ($recordReward['name'] == "") {
-                                $recordReward['name'] = "Award Processed for $cat, $event - $score";
+                                $recordReward['name'] = "$cat, $event - $score";
                             }
 
                             if ($state != "noaward") {
@@ -158,7 +158,7 @@ class Modules
                                     $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", '+2 hours');
                                 }
 
-                                nxr(3, "Award Processed for $cat, $event - $score");
+                                nxr(3, "DB Award Processed '" . $recordReward['name'] . "', " . $recordReward['description']);
                             }
                         }
                     }
