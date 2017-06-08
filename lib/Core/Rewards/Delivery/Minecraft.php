@@ -43,7 +43,7 @@ class Minecraft extends Delivery
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
             $this->recordDevlivery($recordReward, "delivered", $rewardKey);
-            return ["WooCraft: " . $recordReward['reward']];
+            return [$recordReward['description']];
         } else {
             nxr(0, "User doesnt have a Minecraft Username");
         }
