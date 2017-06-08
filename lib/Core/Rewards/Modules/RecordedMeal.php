@@ -57,23 +57,20 @@ class RecordedMeal extends Modules
             $goalprotein = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_protein", 50);
             $goalsodium = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_sodium", 2300);
 
-            $xp = 0;
             $health = 0;
             $inbox = [];
             if ($dbcalories > $goalcalories) {
-                $xpDiff = round(((($dbcalories - $goalcalories) + 1) * -1) / 3, 0);
-                $xp = $xp + $xpDiff;
+                $xp = -20;
                 $health = $health + -5;
-                $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Over Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories over your goal", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Over Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories over your goal", "-20XP"];
             } else if ($dbcalories <= 1200) {
-                $xpDiff = (($goalcalories - $dbcalories) + 20) * -1;
-                $xp = $xp + $xpDiff;
+                $xp = 50;
                 $health = $health + -10;
-                $inbox[] = ["fa fa-cutlery", "bg-danger", $yesterday . " - Under Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories too few calories", round($xpDiff, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-danger", $yesterday . " - Under Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories too few calories", "-10XP"];
             } else {
-                $xp = $xp + 50;
+                $xp = 50;
                 $health = $health + 10;
-                $inbox[] = ["fa fa-cutlery", "bg-success", $yesterday . " - Bang On", "You hit your goal!", round(50, 0) . "XP"];
+                $inbox[] = ["fa fa-cutlery", "bg-success", $yesterday . " - Bang On", "You hit your goal!", "50XP"];
             }
             if ($dbcarbs > $goalcarbs) {
                 $health = $health + -1;

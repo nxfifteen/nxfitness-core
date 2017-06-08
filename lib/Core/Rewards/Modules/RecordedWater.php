@@ -45,17 +45,13 @@ class RecordedWater extends Modules
             $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
             $water = $this->getAppClass()->getDatabase()->get($db_prefix . "water", "liquid", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
-            $xp = 0;
-            $health = 0;
             $inbox = [];
             if ($water < $goal) {
-                $xpDiff = round((($goal - $water) / 4) * -1, 0);
-                $xp = $xp + $xpDiff;
+                $xp = -60;
                 $health = -8;
                 $inbox[] = ["fa fa-beer", "bg-warning", $yesterday . " - You need water!", "Drank $water ml out of $goal ml, drink more!", ""];
             } else {
-                $xpDiff = 50;
-                $xp = $xp + $xpDiff;
+                $xp = 50;
                 $health = 10;
                 $inbox[] = ["fa fa-beer", "bg-success", $yesterday . " - Bang On", "You hit your goal!", ""];
             }
