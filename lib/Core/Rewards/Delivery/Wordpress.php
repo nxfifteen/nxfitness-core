@@ -33,6 +33,8 @@ class Wordpress extends Delivery
      */
     public function deliver($recordReward, $state, $rewardKey)
     {
+        nxr(4, "Awarding Wordpress Rewards");
+
         $user_wp_id = $this->getAppClass()->getUserSetting($this->getUserID(), "wp_user_id");
         if (is_null($user_wp_id)) {
             nxr(0, "User doesnt have a WP ID");

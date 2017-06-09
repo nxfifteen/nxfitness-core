@@ -54,6 +54,7 @@ class RecordedWater extends Modules
                 $xp = 50;
                 $health = 10;
                 $inbox[] = ["fa fa-beer", "bg-success", $yesterday . " - Bang On", "You hit your goal!", ""];
+                $this->checkDB("meals", "water", "drank", $rewardKey . "Bang On");
             }
 
             $this->getRewardsClass()->issueAwards(["skill" => "health", "health" => $health, "xp" => $xp], $rewardKey, "pending", "Gaming");

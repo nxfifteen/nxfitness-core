@@ -71,6 +71,7 @@ class RecordedMeal extends Modules
                 $xp = 50;
                 $health = $health + 10;
                 $inbox[] = ["fa fa-cutlery", "bg-success", $yesterday . " - Bang On", "You hit your goal!", "50XP"];
+                $this->checkDB("meals", "food", "calories", $rewardKey . "Bang On");
             }
             if ($dbcarbs > $goalcarbs) {
                 $health = $health + -1;

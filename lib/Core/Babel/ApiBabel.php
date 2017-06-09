@@ -3465,7 +3465,7 @@ class ApiBabel
                     ]);
 
                     if (!is_null($this->RewardsSystem)) {
-                        $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between, $streak_start]);
+                        $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between, $streak_start, true]);
                     }
 
                     nxr(5, "Steak started on $streak_start, but as ended on " . $streak_end);
@@ -3476,7 +3476,8 @@ class ApiBabel
                         "AND" => [
                             "fuid" => $this->getActiveUser(),
                             "goal" => $goal,
-                            "start_date" => $dateTime->format("Y-m-d")
+                            "start_date" => $dateTime->format("Y-m-d"),
+                            "end_date[!]" => NULL
                         ]
                     ])
                     ) {
@@ -3492,15 +3493,27 @@ class ApiBabel
                                 "METHOD" => __METHOD__,
                                 "LINE" => __LINE__
                             ]);
-                    }
 
-                    if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
-                        if (!is_null($this->RewardsSystem)) {
-                            $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, 1, $streak_start]);
+                        if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
+                            if (!is_null($this->RewardsSystem)) {
+                                $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, 1, $streak_start]);
+                            }
                         }
+
+                        nxr(5, "No running streak, but a new one has started");
+                    } else {
+                        $end_date = $this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", "end_date", [
+                            "AND" => [
+                                "fuid" => $this->getActiveUser(),
+                                "goal" => $goal,
+                                "start_date" => $dateTime->format("Y-m-d"),
+                                "end_date[!]" => NULL
+                            ]
+                        ]);
+
+                        nxr(5, "Streak already recoreded between $streak_start and $end_date");
                     }
 
-                    nxr(5, "No running streak, but a new one has started");
                 }
             }
         }
@@ -3628,7 +3641,7 @@ class ApiBabel
                             ]);
                     }
 
-                    if ($databaseColumn == "veryactive" && strtotime($series->dateTime) < strtotime($todaysDate->format('Y-m-d'))) {
+                    if ($databaseColumn == "veryactive") {
                         if (!is_null($this->RewardsSystem)) {
                             $this->RewardsSystem->eventTrigger("FitbitVeryActive", $series->value);
                         }

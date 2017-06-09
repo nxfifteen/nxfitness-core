@@ -35,8 +35,16 @@ class Gaming extends Delivery
      */
     public function deliver($rewardProfile, $state, $rewardKey)
     {
+        nxr(4, "Awarding Gaming Rewards");
+
+        if (!array_key_exists("description", $rewardProfile)) {
+            $rewardProfile['description'] = "Un Described";
+        }
+
         if (array_key_exists("reward", $rewardProfile) && $this->isJson($rewardProfile["reward"])) {
             $rewardJson = json_decode($rewardProfile["reward"], true);
+        } else {
+            $rewardJson = $rewardProfile;
         }
 
         if (!$this->getAppClass()->getDatabase()->has($this->dbPrefix . "users_xp", ['fuid' => $this->getUserID()])) {
