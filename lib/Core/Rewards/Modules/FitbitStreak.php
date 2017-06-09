@@ -10,6 +10,7 @@
 
 namespace Core\Rewards\Modules;
 
+use Core\Rewards\Delivery\Habitica;
 use Core\Rewards\Modules;
 
 require_once(dirname(__FILE__) . "/../Modules.php");
@@ -34,6 +35,9 @@ class FitbitStreak extends Modules
      */
     public function trigger($eventDetails)
     {
+
+        print_r($eventDetails);
+
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
 
@@ -47,22 +51,42 @@ class FitbitStreak extends Modules
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
             $avg = round($this->getAppClass()->getDatabase()->avg($db_prefix . "streak_goal", ['length'], ["fuid" => $this->getUserID()]), 0);
-            $max = round($this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null], "ORDER" => ["length" => "DESC"]]), 0);
-            $last = round($this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => "steps", "end_date[!]" => null], "ORDER" => ["start_date" => "DESC"]]), 0);
+            $max = round($this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => $eventDetails['goal'], "end_date[!]" => null], "ORDER" => ["length" => "DESC"]]), 0);
+            $last = round($this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => $eventDetails['goal'], "end_date[!]" => null], "ORDER" => ["start_date" => "DESC"]]), 0);
 
-            if ($eventDetails['days_between'] == $max) {
-                $muliplier = $max - $avg;
-            } else if ($eventDetails['days_between'] > $last) {
-                $muliplier = $eventDetails['days_between'] - $last;
-            } else if ($eventDetails['days_between'] > $avg) {
-                $muliplier = $eventDetails['days_between'] - $avg;
-            } else {
-                $muliplier = 0;
+            $habitica = new Habitica($this->getAppClass(), $this->getUserID());
+            if ($habitica->isValidUser() && $habitica->getStatus() == 'up') {
+                if ($eventDetails['days_between'] == $max) {
+                    $habitica->deliver([
+                        "name" => "Beat Your Longest Streak",
+                        "system" => "habitica",
+                        "description" => "Your Beat Your Longest Steak",
+                        "reward" => '{"type": "todo", "priority": 2, "up": true, "down": false, "score": "up"}'
+                    ], "pending", $rewardKey);
+                } else if ($eventDetails['days_between'] > $last) {
+                    $habitica->deliver([
+                        "name" => "Beat Your Last Streak",
+                        "system" => "habitica",
+                        "description" => "Your Beat Your Last Steak",
+                        "reward" => '{"type": "todo", "priority": 1.5, "up": true, "down": false, "score": "up"}'
+                    ], "pending", $rewardKey);
+                } else if ($eventDetails['days_between'] > $avg) {
+                    $habitica->deliver([
+                        "name" => "Beat Your Average Streak",
+                        "system" => "habitica",
+                        "description" => "Your Beat Your Average",
+                        "reward" => '{"type": "todo", "priority": 1, "up": true, "down": false, "score": "up"}'
+                    ], "pending", $rewardKey);
+                } else if ($eventDetails['days_between'] > 0 && !$this->eventDetails["streak_ended"]) {
+                    $habitica->_create("todo", "Beat Your Longest Streak", json_decode('{"type": "todo", "priority": 2, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . ($max - $eventDetails['days_between']) . ' days')).'"}', true));
+                    $habitica->_create("todo", "Beat Your Last Streak", json_decode('{"type": "todo", "priority": 1.5, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . ($last - $eventDetails['days_between']) . ' days')).'"}', true));
+                    $habitica->_create("todo", "Beat Your Average Streak", json_decode('{"type": "todo", "priority": 1, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . ($avg - $eventDetails['days_between']) . ' days')).'"}', true));
+                } else {
+                    $habitica->_deleteIfIncomplete("Beat Your Longest Streak");
+                    $habitica->_deleteIfIncomplete("Beat Your Last Streak");
+                    $habitica->_deleteIfIncomplete("Beat Your Average Streak");
+                }
             }
-
-            $this->getRewardsClass()->issueAwards(["skill" => "rappid fire", "health" => 2 * $eventDetails['days_between'] + $muliplier, "xp" => 5 * $eventDetails['days_between'] + $muliplier], $rewardKey, "pending", "Gaming");
-            $this->getRewardsClass()->setRewardReason("Streaking!!!" . "|" . "Your " . $eventDetails['goal'] . " streak ran " . $eventDetails['days_between'] . " days");
-            $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", '+5 hours');
         }
     }
 
@@ -76,5 +100,11 @@ class FitbitStreak extends Modules
             "days_between" => $eventDetails[1],
             "streak_start" => $eventDetails[2]
         ];
+
+        if (count($eventDetails) == 4) {
+            $this->eventDetails["streak_ended"] = $eventDetails[3];
+        } else {
+            $this->eventDetails["streak_ended"] = false;
+        }
     }
 }

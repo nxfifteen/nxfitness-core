@@ -163,6 +163,22 @@ class Core
     }
 
     /**
+     * Get settings from config class
+     *
+     * @param string $fuid
+     * @param string $key
+     * @param null $default
+     * @param bool $query_db
+     *
+     * @todo Consider test case
+     * @return string
+     */
+    public function delUserSetting($fuid, $key)
+    {
+        return $this->getSettings()->delUser($fuid, $key);
+    }
+
+    /**
      * Users
      */
 

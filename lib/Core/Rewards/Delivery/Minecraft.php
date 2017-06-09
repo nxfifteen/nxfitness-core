@@ -34,6 +34,8 @@ class Minecraft extends Delivery
      */
     public function deliver($recordReward, $state, $rewardKey)
     {
+        nxr(4, "Awarding Minecraft Rewards");
+
         $minecraftUsername = $this->getAppClass()->getUserSetting($this->getUserID(), "minecraft_username", null);
 
         if (!is_null($minecraftUsername) && !is_numeric($minecraftUsername)) {
