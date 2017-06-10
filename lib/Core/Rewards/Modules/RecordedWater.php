@@ -50,12 +50,11 @@ class RecordedWater extends Modules
                 $xp = -60;
                 $health = -8;
                 $inbox[] = ["fa fa-beer", "bg-warning", $yesterday . " - You need water!", "Drank $water ml out of $goal ml, drink more!", ""];
-                $this->checkDB("meals", "water", "drank_down", $rewardKey . "Under");
             } else {
                 $xp = 50;
                 $health = 10;
                 $inbox[] = ["fa fa-beer", "bg-success", $yesterday . " - Bang On", "You hit your goal!", ""];
-                $this->checkDB("meals", "water", "drank_up", $rewardKey . "Bang On");
+                $this->checkDB("meals", "water", "drank", $rewardKey . "Bang On");
             }
 
             $this->getRewardsClass()->issueAwards(["skill" => "health", "health" => $health, "xp" => $xp], $rewardKey, "pending", "Gaming");
