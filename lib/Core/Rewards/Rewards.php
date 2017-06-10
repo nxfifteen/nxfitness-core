@@ -358,4 +358,26 @@ class Rewards
     {
         $this->RewardReason = $RewardReason;
     }
+
+    /**
+     * @param $string
+     * @return array
+     */
+    public function getSystemRewards($string)
+    {
+        $returnRewards = [];
+        foreach ($this->FileRewards as $fileRewardCat) {
+            foreach ($fileRewardCat as $fileRewardEvent) {
+                foreach ($fileRewardEvent as $fileRewardScore) {
+                    foreach ($fileRewardScore as $fileReward) {
+                        if (strtolower($fileReward['system']) == strtolower($string)) {
+                            $returnRewards[] = $fileReward;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $returnRewards;
+    }
 }

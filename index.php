@@ -258,7 +258,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
 
     if ( is_array( $_GET ) && array_key_exists( "verify", $_GET ) ) {
         $config = [];
-        require_once(dirname(__FILE__) . "/config.inc.php");
+        require_once(dirname(__FILE__) . "/config/config.inc.php");
         if ( ( is_array( $config[ 'api_subValidity' ] ) and in_array( $_GET[ 'verify' ],
                     $config[ 'api_subValidity' ] ) ) OR ( $_GET[ 'verify' ] == $config[ 'api_subValidity' ] )
         ) {
@@ -281,6 +281,20 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
         // Deal with Fitbit subscriptions
         require_once( dirname( __FILE__ ) . "/service.php" );
     }
+
+} else if ( $url_namespace == "habitica" ) {
+    date_default_timezone_set( 'Europe/London' );
+
+    header( 'Cache-Control: no-cache, must-revalidate' );
+    header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
+    header( 'Content-type: application/json' );
+
+    nxr( 0, "Namespace Called: " . $url_namespace );
+
+    $payload = file_get_contents( 'php://input' );
+    $data = json_decode( $payload, TRUE );
+
+    nxr( 0, $payload );
 
 } else if ( $url_namespace != "" && DEBUG_MY_PROJECT ) {
     header( 'Cache-Control: no-cache, must-revalidate' );

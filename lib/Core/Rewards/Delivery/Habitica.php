@@ -78,12 +78,19 @@ class Habitica extends Delivery
                 $tasks = $tasks['id'];
             }
 
-            if ($rewardJson['score'] == "up") {
-                $apiReturn = $this->getHabitRPHPG()->doTask($tasks, 'up');
-            } else {
-                $apiReturn = $this->getHabitRPHPG()->doTask($tasks, 'down');
+            if (!array_key_exists("repeat", $rewardJson)) {
+                $rewardJson['repeat'] = 1;
             }
 
+            for ($i = 1; $i <= $rewardJson['repeat']; $i++) {
+                if ($rewardJson['score'] == "up") {
+                    $this->getHabitRPHPG()->doTask($tasks, 'up');
+                } else {
+                    $this->getHabitRPHPG()->doTask($tasks, 'down');
+                }
+            }
+
+            $this->recordDevlivery($rewardProfile, "delivered", $rewardKey);
             return [$rewardProfile['description']];
         }
 
@@ -169,7 +176,7 @@ class Habitica extends Delivery
     /**
      * @return HabitRPHPG
      */
-    private function getHabitRPHPG()
+    public function getHabitRPHPG()
     {
         return $this->HabitRPHPG;
     }

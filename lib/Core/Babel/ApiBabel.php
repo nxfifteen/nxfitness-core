@@ -13,6 +13,8 @@ namespace Core\Babel;
 require_once(dirname(__FILE__) . "/../../autoloader.php");
 
 use Core\Core;
+use Core\Rewards\Delivery\Habitica;
+use Core\Rewards\Rewards;
 use Core\Rewards\RewardsSystem;
 use couchClient;
 use couchNotFoundException;
@@ -384,6 +386,12 @@ class ApiBabel
                             "METHOD" => __METHOD__,
                             "LINE" => __LINE__
                         ]);
+                }
+
+                // PULL - users profile
+                if ($trigger == "all" || $trigger == "habitica") {
+                    nxr(2, "habitica");
+                    $this->pullHabitica();
                 }
 
             } else {
@@ -3755,6 +3763,80 @@ class ApiBabel
             ]);
 
             return true;
+        }
+    }
+
+    private function pullHabitica()
+    {
+        $user_id = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'user_id', NULL, false);
+        $api_key = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'api_key', NULL, false);
+        if (!is_null($user_id) && !is_null($api_key)) {
+            nxr(3, "Habitica credentials okay");
+
+            $habiticaClass = new Habitica($this->getAppClass(), $this->getActiveUser());
+            $habiticaInstalled = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_installed', false);
+            if ($habiticaInstalled) {
+                nxr(4, "Habitica Already Installed");
+            } else {
+                nxr(4, "Installing Habitica");
+                $rewardClasss = new Rewards($this->getAppClass(), $this->getActiveUser());
+                $sysRewards = $rewardClasss->getSystemRewards('habitica');
+
+                $nomieUser = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", NULL);
+
+                $installRewards = [];
+                foreach ($sysRewards as $sysReward) {
+                    if (array_key_exists("install", $sysReward) && ($sysReward['install'] == "global" || $sysReward['install'] == $this->getActiveUser())) {
+                        if (array_key_exists("source", $sysReward) && $sysReward['source'] == "nomie" && !is_null($nomieUser)) {
+                            $installRewards[] = $sysReward;
+                        } else if (array_key_exists("source", $sysReward) && $sysReward['source'] == "fitbit") {
+                            $installRewards[] = $sysReward;
+                        } else if (!array_key_exists("source", $sysReward)) {
+                            $installRewards[] = $sysReward;
+                        }
+                    }
+                }
+
+                if ($installRewards > 0) {
+                    foreach ($installRewards as $installReward) {
+                        $rewardJson = json_decode($installReward["reward"], true);
+                        $rewardJson['alias']  = sha1("nx" . $installReward['name']);
+
+                        $habiticaClass->_create($rewardJson['type'], $installReward['name'], $rewardJson);
+                        nxr(5, "Created new " . $rewardJson['type'] . " " .$installReward['name']);
+                    }
+                }
+                $habiticaClass->getHabitRPHPG()->_request("post", "user/webhook", [
+                    "url" => $this->getAppClass()->getSetting('http/') . "/habitica/",
+                    "label" => "NxFITNESS",
+                    "enabled" => true,
+                    "type" => "taskActivity",
+                ]);
+                nxr(5, "Installed new Webhook " .$this->getAppClass()->getSetting('http/') . "/habitica/");
+
+                $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habitica_installed', true);
+            }
+
+            nxr(4, "Updating User Habitica Stats");
+            $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+            $user = $habiticaClass->getHabitRPHPG()->user();
+            $updatedValues = [
+                "class" => ucfirst($user['stats']['class']),
+                "xp" => round($user['stats']['exp'], 0, PHP_ROUND_HALF_DOWN),
+                "level" => $user['stats']['lvl'],
+                "percent" => round($user['stats']['exp'] * (100 / $user['stats']['toNextLevel']), 0, PHP_ROUND_HALF_DOWN),
+                "mana" => $user['stats']['mp'],
+                "health" => round($user['stats']['hp'] * (100 / $user['stats']['maxHealth']), 0, PHP_ROUND_HALF_DOWN)
+            ];
+            if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "users_xp", ['fuid' => $this->getActiveUser()])) {
+                $this->getAppClass()->getDatabase()->insert($dbPrefix . "users_xp", array_merge($updatedValues, ["fuid" => $this->getActiveUser()]));
+            } else {
+                $this->getAppClass()->getDatabase()->update($dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getActiveUser()]);
+            }
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+        } else {
+            nxr(3, "Your not a Habitica user");
         }
     }
 
