@@ -63,6 +63,7 @@ class RecordedMeal extends Modules
                 $xp = -20;
                 $health = $health + -5;
                 $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Over Eating", "Your eat " . ($dbcalories - $goalcalories) . " calories over your goal", "-20XP"];
+                $this->checkDB("meals", "food", "calories_down", $rewardKey . "Over");
             } else if ($dbcalories <= 1200) {
                 $xp = 50;
                 $health = $health + -10;
@@ -71,7 +72,7 @@ class RecordedMeal extends Modules
                 $xp = 50;
                 $health = $health + 10;
                 $inbox[] = ["fa fa-cutlery", "bg-success", $yesterday . " - Bang On", "You hit your goal!", "50XP"];
-                $this->checkDB("meals", "food", "calories", $rewardKey . "Bang On");
+                $this->checkDB("meals", "food", "calories_up", $rewardKey . "Bang On");
             }
             if ($dbcarbs > $goalcarbs) {
                 $health = $health + -1;
