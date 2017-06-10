@@ -258,7 +258,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
 
     if ( is_array( $_GET ) && array_key_exists( "verify", $_GET ) ) {
         $config = [];
-        require_once(dirname(__FILE__) . "/config.inc.php");
+        require_once(dirname(__FILE__) . "/config/config.inc.php");
         if ( ( is_array( $config[ 'api_subValidity' ] ) and in_array( $_GET[ 'verify' ],
                     $config[ 'api_subValidity' ] ) ) OR ( $_GET[ 'verify' ] == $config[ 'api_subValidity' ] )
         ) {
