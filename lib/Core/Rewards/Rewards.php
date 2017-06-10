@@ -326,7 +326,7 @@ class Rewards
             $this->RewardsIssued = [];
         }*/
 
-        $reason = $this->getRewardReason();
+        /*$reason = $this->getRewardReason();
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $this->getAppClass()->getDatabase()->insert($db_prefix . "inbox",
             [
@@ -340,7 +340,7 @@ class Rewards
             ]
         );
 
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);*/
     }
 
     /**
