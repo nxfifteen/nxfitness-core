@@ -84,6 +84,21 @@ class Habitica extends Delivery
                 $apiReturn = $this->getHabitRPHPG()->doTask($tasks, 'down');
             }
 
+            $updatedValues = [
+                "class" => $apiReturn['class'],
+                "xp" => round($apiReturn['exp'], 0, PHP_ROUND_HALF_DOWN),
+                "level" => $apiReturn['lvl'],
+                "percent" => 0,
+                "mana" => $apiReturn['mp'],
+                "health" => $apiReturn['hp']
+            ];
+            if (!$this->getAppClass()->getDatabase()->has($this->dbPrefix . "users_xp", ['fuid' => $this->getUserID()])) {
+                $this->getAppClass()->getDatabase()->insert($this->dbPrefix . "users_xp", array_merge($updatedValues, ["fuid" => $this->getUserID()]));
+            } else {
+                $this->getAppClass()->getDatabase()->update($this->dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getUserID()]);
+            }
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
             return [$rewardProfile['description']];
         }
 
