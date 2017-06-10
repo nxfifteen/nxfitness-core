@@ -282,6 +282,20 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
         require_once( dirname( __FILE__ ) . "/service.php" );
     }
 
+} else if ( $url_namespace == "habitica" ) {
+    date_default_timezone_set( 'Europe/London' );
+
+    header( 'Cache-Control: no-cache, must-revalidate' );
+    header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
+    header( 'Content-type: application/json' );
+
+    nxr( 0, "Namespace Called: " . $url_namespace );
+
+    $payload = file_get_contents( 'php://input' );
+    $data = json_decode( $payload );
+
+    nxr( 0, $payload );
+
 } else if ( $url_namespace != "" && DEBUG_MY_PROJECT ) {
     header( 'Cache-Control: no-cache, must-revalidate' );
     header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
