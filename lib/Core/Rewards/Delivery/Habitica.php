@@ -78,26 +78,17 @@ class Habitica extends Delivery
                 $tasks = $tasks['id'];
             }
 
-            if ($rewardJson['score'] == "up") {
-                $apiReturn = $this->getHabitRPHPG()->doTask($tasks, 'up');
-            } else {
-                $apiReturn = $this->getHabitRPHPG()->doTask($tasks, 'down');
+            if (!array_key_exists("repeat", $rewardJson)) {
+                $rewardJson['repeat'] = 1;
             }
 
-            $updatedValues = [
-                "class" => $apiReturn['class'],
-                "xp" => round($apiReturn['exp'], 0, PHP_ROUND_HALF_DOWN),
-                "level" => $apiReturn['lvl'],
-                "percent" => 0,
-                "mana" => $apiReturn['mp'],
-                "health" => $apiReturn['hp']
-            ];
-            if (!$this->getAppClass()->getDatabase()->has($this->dbPrefix . "users_xp", ['fuid' => $this->getUserID()])) {
-                $this->getAppClass()->getDatabase()->insert($this->dbPrefix . "users_xp", array_merge($updatedValues, ["fuid" => $this->getUserID()]));
-            } else {
-                $this->getAppClass()->getDatabase()->update($this->dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getUserID()]);
+            for ($i = 1; $i <= $rewardJson['repeat']; $i++) {
+                if ($rewardJson['score'] == "up") {
+                    $this->getHabitRPHPG()->doTask($tasks, 'up');
+                } else {
+                    $this->getHabitRPHPG()->doTask($tasks, 'down');
+                }
             }
-            $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
             $this->recordDevlivery($rewardProfile, "delivered", $rewardKey);
             return [$rewardProfile['description']];
@@ -185,7 +176,7 @@ class Habitica extends Delivery
     /**
      * @return HabitRPHPG
      */
-    private function getHabitRPHPG()
+    public function getHabitRPHPG()
     {
         return $this->HabitRPHPG;
     }
