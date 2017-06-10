@@ -93,14 +93,6 @@ class FitbitTracker extends Modules
                     if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
                         $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey . "db"));
                     }
-                    /*if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-                        $xp = round(($eventDetails['value'] - $cutOff) / 2, 0);
-                        if ($xp > 0) {
-                            $this->getRewardsClass()->issueAwards(["skill" => "close range", "health" => round($xp / 3, 0), "xp" => $xp], $rewardKey, "pending", "Gaming");
-                            $this->getRewardsClass()->setRewardReason(ucfirst($eventDetails['trigger']) . " Mark" . "|" . "You took " . $recordedValue . " steps yesterday");
-                            $this->getRewardsClass()->notifyUser("fa fa-git", "bg-success", '+24 hours');
-                        }
-                    }*/
                 }
             }
         }
