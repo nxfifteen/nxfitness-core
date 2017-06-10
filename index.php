@@ -292,7 +292,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
     nxr( 0, "Namespace Called: " . $url_namespace );
 
     $payload = file_get_contents( 'php://input' );
-    $data = json_decode( $payload );
+    $data = json_decode( $payload, TRUE );
 
     nxr( 0, $payload );
 
