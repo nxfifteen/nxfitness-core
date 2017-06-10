@@ -210,9 +210,9 @@ class Core
                     "METHOD" => __METHOD__,
                     "LINE" => __LINE__
                 ]);
-            } else {
+            } /*else {
                 nxr(0, "Cron job already present");
-            }
+            }*/
         } else {
             nxr(0, "I am not allowed to queue $trigger");
         }
