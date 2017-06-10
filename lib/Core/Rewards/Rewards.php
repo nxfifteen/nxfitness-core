@@ -202,7 +202,6 @@ class Rewards
      */
     public function giveUserXp($xp, $rewardKey)
     {
-        $this->issueAwards(["skill" => "health", "xp" => $xp], $rewardKey, "pending", "Gaming");
         $wp = new Wordpress($this->getAppClass(), $this->getUserID());
         $wp->deliver(['reward' => $xp], $rewardKey, "pending");
     }

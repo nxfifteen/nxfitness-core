@@ -68,19 +68,19 @@ class FitbitStreak extends Modules
                         "name" => "Beat Your Last Streak",
                         "system" => "habitica",
                         "description" => "Your Beat Your Last Steak",
-                        "reward" => '{"type": "todo", "priority": 1.5, "up": true, "down": false, "score": "up"}'
+                        "reward" => '{"type": "todo", "priority": 1, "up": true, "down": false, "score": "up"}'
                     ], "pending", $rewardKey);
                 } else if ($eventDetails['days_between'] > $avg) {
                     $habitica->deliver([
                         "name" => "Beat Your Average Streak",
                         "system" => "habitica",
                         "description" => "Your Beat Your Average",
-                        "reward" => '{"type": "todo", "priority": 1, "up": true, "down": false, "score": "up"}'
+                        "reward" => '{"type": "todo", "priority": 1.5, "up": true, "down": false, "score": "up"}'
                     ], "pending", $rewardKey);
                 } else if ($eventDetails['days_between'] > 0 && !$this->eventDetails["streak_ended"]) {
-                    $habitica->_create("todo", "Beat Your Longest Streak", json_decode('{"type": "todo", "priority": 2, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . ($max - $eventDetails['days_between']) . ' days')).'"}', true));
-                    $habitica->_create("todo", "Beat Your Last Streak", json_decode('{"type": "todo", "priority": 1.5, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . ($last - $eventDetails['days_between']) . ' days')).'"}', true));
-                    $habitica->_create("todo", "Beat Your Average Streak", json_decode('{"type": "todo", "priority": 1, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . ($avg - $eventDetails['days_between']) . ' days')).'"}', true));
+                    $habitica->_create("todo", "Beat Your Longest Streak", json_decode('{"type": "todo", "priority": 2, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . $max . ' days')).'"}', true));
+                    $habitica->_create("todo", "Beat Your Last Streak", json_decode('{"type": "todo", "priority": 1, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . $last . ' days')).'"}', true));
+                    $habitica->_create("todo", "Beat Your Average Streak", json_decode('{"type": "todo", "priority": 1.5, "up": true, "down": false, "score": "up", "date": "'.date("Y-m-d", strtotime($eventDetails['streak_start'] . ' +' . $avg . ' days')).'"}', true));
                 } else {
                     $habitica->_deleteIfIncomplete("Beat Your Longest Streak");
                     $habitica->_deleteIfIncomplete("Beat Your Last Streak");

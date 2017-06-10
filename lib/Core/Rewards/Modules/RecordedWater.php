@@ -39,28 +39,15 @@ class RecordedWater extends Modules
         $yesterday = date("Y-m-d", strtotime("-1 days"));
         $rewardKey = sha1("waterRecordingFor" . $yesterday);
 
-        $goal = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
+        //$goal = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');
+        $goal = 1600;
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
             $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
             $water = $this->getAppClass()->getDatabase()->get($db_prefix . "water", "liquid", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
-            $inbox = [];
-            if ($water < $goal) {
-                $xp = -60;
-                $health = -8;
-                $inbox[] = ["fa fa-beer", "bg-warning", $yesterday . " - You need water!", "Drank $water ml out of $goal ml, drink more!", ""];
-            } else {
-                $xp = 50;
-                $health = 10;
-                $inbox[] = ["fa fa-beer", "bg-success", $yesterday . " - Bang On", "You hit your goal!", ""];
+            if ($water > $goal) {
                 $this->checkDB("meals", "water", "drank", $rewardKey . "Bang On");
-            }
-
-            $this->getRewardsClass()->issueAwards(["skill" => "health", "health" => $health, "xp" => $xp], $rewardKey, "pending", "Gaming");
-            foreach ($inbox as $inboxItem) {
-                $this->getRewardsClass()->setRewardReason($inboxItem[2] . "|" . $inboxItem[3]);
-                $this->getRewardsClass()->notifyUser($inboxItem[0], $inboxItem[1], '+1 days');
             }
         }
 

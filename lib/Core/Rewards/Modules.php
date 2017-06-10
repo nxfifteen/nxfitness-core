@@ -100,27 +100,6 @@ class Modules
                         } else {
                             $state = 'noaward';
                             $delivery = "Default";
-                            if (array_key_exists("xp", $recordReward) && is_numeric($recordReward['xp']) && $recordReward['xp'] <> 0) {
-
-                                if (strtolower($cat) == "activity") {
-                                    $skill = "fitness";
-                                } else if (strtolower($cat) == "body") {
-                                    $skill = "health";
-                                } else if (strtolower($cat) == "goal") {
-                                    $skill = "snipper";
-                                } else if (strtolower($cat) == "hundredth") {
-                                    $skill = "close range";
-                                } else if (strtolower($cat) == "streak") {
-                                    $skill = "rappid fire";
-                                } else if (strtolower($cat) == "nomie") {
-                                    $skill = "quest";
-                                } else {
-                                    $skill = "unbalanced";
-                                }
-                                $this->getRewardsClass()->issueAwards(["skill" => $skill, "xp" => $recordReward['xp']], $rewardKey, "pending", "Gaming");
-
-                                $state = 'delivered';
-                            }
 
                             if (array_key_exists("rid", $recordReward) && $recordReward['rid'] != "") {
                                 $dbReward = $this->getAppClass()->getDatabase()->get($db_prefix . "rewards", ["description", "system", "reward"], ["rid" => $recordReward['rid']]);
