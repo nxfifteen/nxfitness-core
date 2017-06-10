@@ -559,7 +559,8 @@ class Core
             'profile' => 'User Profile',
             'heart' => 'Heart Rates',
             'activity_log' => 'Activities',
-            'nomie_trackers' => "Nomie Trackers"
+            'nomie_trackers' => "Nomie Trackers",
+            'habitica' => "Habitica"
         ];
         ksort($database_array);
 
