@@ -99,6 +99,7 @@ class Habitica extends Delivery
             }
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
+            $this->recordDevlivery($rewardProfile, "delivered", $rewardKey);
             return [$rewardProfile['description']];
         }
 
