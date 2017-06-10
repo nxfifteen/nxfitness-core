@@ -73,7 +73,7 @@ class RecordedMeal extends Modules
                 $inbox[] = ["fa fa-cutlery", "bg-success", $yesterday . " - Bang On", "You hit your goal!", "50XP"];
                 $this->checkDB("meals", "food", "calories", $rewardKey . "Bang On");
             }
-            if ($dbcarbs > $goalcarbs) {
+            /*if ($dbcarbs > $goalcarbs) {
                 $health = $health + -1;
                 $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Carb Overload", "Your eatting too many carbs", ""];
             }
@@ -92,13 +92,13 @@ class RecordedMeal extends Modules
             if ($dbsodium > $goalsodium) {
                 $health = $health + -5;
                 $inbox[] = ["fa fa-cutlery", "bg-warning", $yesterday . " - Salt isn't a good thing!", "Your eatting too much salt", ""];
-            }
+            }*/
 
-            $this->getRewardsClass()->issueAwards(["skill" => "health", "health" => $health, "xp" => $xp], $rewardKey, "pending", "Gaming");
+            /*$this->getRewardsClass()->issueAwards(["skill" => "health", "health" => $health, "xp" => $xp], $rewardKey, "pending", "Gaming");
             foreach ($inbox as $inboxItem) {
                 $this->getRewardsClass()->setRewardReason($inboxItem[2] . "|" . $inboxItem[3]);
                 $this->getRewardsClass()->notifyUser($inboxItem[0], $inboxItem[1], '+1 days');
-            }
+            }*/
         }
 
     }

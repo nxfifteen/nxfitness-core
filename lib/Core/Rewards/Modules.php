@@ -117,7 +117,7 @@ class Modules
                                 } else {
                                     $skill = "unbalanced";
                                 }
-                                $this->getRewardsClass()->issueAwards(["skill" => $skill, "xp" => $recordReward['xp']], $rewardKey, "pending", "Gaming");
+                                //$this->getRewardsClass()->issueAwards(["skill" => $skill, "xp" => $recordReward['xp']], $rewardKey, "pending", "Gaming");
 
                                 $state = 'delivered';
                             }
