@@ -125,3 +125,4 @@ config/config.inc.php
 /lib/Core/Rewards/Modules/Private/*.php
 /config/rewards.inc.php
 /ux/config.inc.php
+/rpg.php
