@@ -254,8 +254,6 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
     }
 
 } else if ( $url_namespace == "webhook" || $url_namespace == "service" ) {
-    nxr( 0, "Namespace Called: " . $url_namespace );
-
     if ( is_array( $_GET ) && array_key_exists( "verify", $_GET ) ) {
         $config = [];
         require_once(dirname(__FILE__) . "/config/config.inc.php");
@@ -289,12 +287,89 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
     header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
     header( 'Content-type: application/json' );
 
-    nxr( 0, "Namespace Called: " . $url_namespace );
+    //nxr( 1, "Processing Habitica Webhook" );
 
     $payload = file_get_contents( 'php://input' );
     $data = json_decode( $payload, TRUE );
 
-    nxr( 0, $payload );
+    //nxr( 2, "Hook for user ID: " . $data['user']['_id'] );
+    $config = [];
+    require(dirname(__FILE__) . "/config/config.inc.php");
+    if (in_array($data['user']['_id'], $config)) {
+        $coreUserId = str_replace("user_id_", "", array_search($data['user']['_id'], $config));
+        //nxr( 2, "User key: " . $coreUserId );
+
+        $fitbitApp = new Core();
+        if ( $fitbitApp->isUser( $coreUserId ) ) {
+            if ( $fitbitApp->getDatabase()->has( $fitbitApp->getSetting( "db_prefix", null,
+                    false ) . "runlog", [
+                "AND" => [
+                    "user"     => $coreUserId,
+                    "activity" => 'habitica'
+                ]
+            ] )
+            ) {
+                $fields = [
+                    "date"     => date( "Y-m-d H:i:s" ),
+                    "cooldown" => "1970-01-01 01:00:00"
+                ];
+                $fitbitApp->getDatabase()->update( $fitbitApp->getSetting( "db_prefix", null,
+                        false ) . "runlog", $fields, [
+                    "AND" => [
+                        "user"     => $coreUserId,
+                        "activity" => 'habitica'
+                    ]
+                ] );
+                $fitbitApp->getErrorRecording()->postDatabaseQuery( $fitbitApp->getDatabase(), [
+                    "METHOD" => __FILE__,
+                    "LINE"   => __LINE__
+                ] );
+            } else {
+                $fields = [
+                    "user"     => $coreUserId,
+                    "activity" => 'habitica',
+                    "date"     => date( "Y-m-d H:i:s" ),
+                    "cooldown" => "1970-01-01 01:00:00"
+                ];
+                $fitbitApp->getDatabase()->insert( $fitbitApp->getSetting( "db_prefix", null,
+                        false ) . "runlog", $fields );
+                $fitbitApp->getErrorRecording()->postDatabaseQuery( $fitbitApp->getDatabase(), [
+                    "METHOD" => __FILE__,
+                    "LINE"   => __LINE__
+                ] );
+            }
+
+            $fitbitApp->addCronJob( $coreUserId, 'habitica', true );
+            nxr(1, "New API request: " . $coreUserId);
+
+            if ($data['direction'] == "up") {
+                $icoColour = "bg-success";
+            } else {
+                $icoColour = "bg-danger";
+            }
+
+            $db_prefix = $fitbitApp->getSetting("db_prefix", null, false);
+            $fitbitApp->getDatabase()->insert($db_prefix . "inbox",
+                [
+                    "fuid" => $coreUserId,
+                    "expires" => date("Y-m-d H:i:s", strtotime('+6 hours')),
+                    "ico" => 'fa fa-rebel',
+                    "icoColour" => $icoColour,
+                    "subject" => $data['task']['text'],
+                    "body" => $data['task']['updatedAt'],
+                    "bold" => strtoupper($data['direction'])
+                ]
+            );
+
+
+        } else {
+            nxr( 2, "Not a valid database user" );
+        }
+    } else {
+        nxr( 2, "Unknown user ID" );
+    }
+
+    header( 'HTTP/1.0 204 No Content' );
 
 } else if ( $url_namespace != "" && DEBUG_MY_PROJECT ) {
     header( 'Cache-Control: no-cache, must-revalidate' );
@@ -302,7 +377,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
     header( 'HTTP/1.0 404 Not Found' );
 
     // If we're debugging things print out the unknown namespace
-    nxr( 0, "Namespace Called: " . $url_namespace );
+    nxr( 1, "404 Not Found" );
 
 } else {
     // When we don't know what to do put the user over to the user interface screens
