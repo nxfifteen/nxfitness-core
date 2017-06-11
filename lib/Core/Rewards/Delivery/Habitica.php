@@ -75,7 +75,7 @@ class Habitica extends Delivery
                 return ["Failed"];
             }
 
-            $tasks = $this->_search($rewardJson['alias'], $rewardProfile['name'], '', false, true);
+            $tasks = $this->_search($rewardJson['alias'], $rewardProfile['name'], $rewardJson['type'], false, true);
 
             if(is_null($tasks)) {
                 $tasks = $this->_create($rewardJson['type'], $rewardProfile['name'], $rewardJson);
