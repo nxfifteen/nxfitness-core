@@ -614,6 +614,7 @@ class ApiBabel
                         return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
                     }
                     $trackerEvents = json_decode(json_encode($couchClient->getAllDocs()), true);
+
                     foreach ($trackerEvents['rows'] as $events) {
                         $event = explode("|", $events['id']);
                         $event[5] = date('Y-m-d H:i:s', $event[3] / 1000);
@@ -669,14 +670,33 @@ class ApiBabel
                                     ]);
                                 nxr(3, "Stored event : " . $event[2] . " from " . $event[3]);
                             }
+                        }
+                    }
 
-                            if (!is_null($this->RewardsSystem)) {
-                                if (date('Y-m-d', $event[3] / 1000) == date('Y-m-d')) {
-                                    $event[1] = $event[2];
-                                    $event[2] = $indexedTrackers[$event[2]];
-                                    $this->RewardsSystem->eventTrigger('Nomie', $event);
-                                }
-                            }
+                    if (!is_null($this->RewardsSystem)) {
+                        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+                        $dbEvents = $this->getAppClass()->getDatabase()->select($db_prefix . "nomie_events", [
+                            "[>]" . $db_prefix . "nomie_trackers" => "id"
+                        ], [
+                            $db_prefix . "nomie_trackers.label(tracker)",
+                            $db_prefix . "nomie_trackers.id(trackerId)",
+                            $db_prefix . "nomie_trackers.type(action)",
+                            $db_prefix . "nomie_events.score",
+                            $db_prefix . "nomie_events.datestamp(datetime)",
+                            $db_prefix . "nomie_events.value",
+                            $db_prefix . "nomie_events.geo_lat",
+                            $db_prefix . "nomie_events.geo_lon"
+                        ], [
+                            "AND" => [
+                                $db_prefix . "nomie_events.fuid" => $this->activeUser,
+                                $db_prefix . "nomie_events.datestamp[>=]" => date("Y-m-d 00:00:00")
+                            ],
+                            "ORDER" => [$db_prefix . "nomie_events.datestamp" => "ASC"]
+                        ]);
+
+                        foreach ($dbEvents as $event) {
+                            $this->RewardsSystem->eventTrigger('Nomie', $event);
                         }
                     }
                 }
