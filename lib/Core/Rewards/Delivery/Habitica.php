@@ -116,7 +116,8 @@ class Habitica extends Delivery
                 }
 
                 $api = $this->getHabitRPHPG()->createTask($type, $name, $options);
-                $this->getAppClass()->setUserSetting($_GET[ 'user' ], 'habitica_' . $options['alias'], $api['id']);
+                if ( $type != "todo" )
+                    $this->getAppClass()->setUserSetting($_GET[ 'user' ], 'habitica_' . $options['alias'], $api['id']);
                 return $api;
             } else {
                 return true;
