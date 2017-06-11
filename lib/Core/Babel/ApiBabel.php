@@ -3855,6 +3855,11 @@ class ApiBabel
             }
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
+            $avatarFolder = dirname(__FILE__) . "/../../../images/avatars/";
+            if (file_exists($avatarFolder) AND is_writable($avatarFolder)) {
+                nxr(4, "Updating User Habitica Avatar");
+                file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
+            }
         } else {
             nxr(3, "Your not a Habitica user");
         }
