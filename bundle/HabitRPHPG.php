@@ -27,6 +27,7 @@ class HabitRPHPG {
     private $hatch_types = array('Base','White','Desert','Red','Shade','Skeleton','Zombie','CottonCandyPink','CottonCandyBlue','Golden');
     private $food_types = array('Meat','Milk','Potatoe','Strawberry','Chocolate','Fish','RottenMeat','CottonCandyPink','CottonCandyBlue','Cake_Skeleton','Cake_Base','Honey','Saddle');
     private $pet_types = array();
+    public $tags = array();
 
     ///Constructor
     function __construct($user_id, $api_key) {
@@ -51,10 +52,9 @@ class HabitRPHPG {
         $url_parts = parse_url($url);
         $ch = curl_init($url_parts['host']);
 
-        $data_sting = '';
         if(is_array($data)) {
-            foreach($data as $key=>$value) { $data_sting .= $key.'='.$value.'&'; }
-            rtrim($data_sting, '&');
+            $options['encoding'] = true;
+            $data_sting = json_encode($data);
         } else {
             $data_sting = $data;
         }
@@ -76,7 +76,7 @@ class HabitRPHPG {
             if (isset($options['encoding'])) curl_setopt($ch, CURLOPT_ENCODING, "application/json");
 
             if ($method == 'post') {
-                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data_sting);
             } else if ($method == 'delete') {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
@@ -85,6 +85,8 @@ class HabitRPHPG {
             $custom_headers = array(
                 "x-api-user: {$this->user_id}",
                 "x-api-key: {$this->api_key}",
+                "Content-Type: application/json",
+                "Content-Type: " . strlen($data_sting),
             );
 
             curl_setopt($ch, CURLOPT_HTTPHEADER, $custom_headers);
@@ -262,5 +264,22 @@ class HabitRPHPG {
         }
 
         return $this->_request("post", "user/hatch/$egg/$hatching_portion");
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function getTags()
+    {
+        if (count($this->tags) == 0) {
+            $this->tags = $this->_request("get", "tags");
+        }
+
+        return $this->tags;
+    }
+
+    public function clearTags()
+    {
+        $this->tags = [];
     }
 }
