@@ -379,4 +379,19 @@ class Rewards
 
         return $returnRewards;
     }
+
+    /**
+     * @param $rewardKey
+     */
+    public function recordAwarded($rewardKey)
+    {
+        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "reward_queue", [
+            "fuid" => $this->getUserID(),
+            "state" => 'recorded',
+            "rmid" => NULL,
+            "reward" => NULL,
+            "rkey" => sha1($rewardKey)
+        ]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+    }
 }
