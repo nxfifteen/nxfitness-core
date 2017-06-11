@@ -107,6 +107,14 @@ class Habitica extends Delivery
         if ($this->isValidUser() && $this->getStatus() == 'up') {
             $options['alias']  = sha1("nx" . $name);
             if (is_null($this->_search($options['alias'], $name))) {
+
+                if (array_key_exists("tags", $options)) {
+                    foreach ($options['tags'] as $id => $tag) {
+                        $tagId = $this->_searchTasks($tag);
+                        $options['tags'][$id] = $tagId;
+                    }
+                }
+
                 $api = $this->getHabitRPHPG()->createTask($type, $name, $options);
                 $this->getAppClass()->setUserSetting($_GET[ 'user' ], 'habitica_' . $options['alias'], $api['id']);
                 return $api;
@@ -170,6 +178,30 @@ class Habitica extends Delivery
             }
         } else {
             return $dbValue;
+        }
+    }
+
+    /**
+     * @param $task_string
+     * @return mixed
+     * @internal param $alias
+     */
+    private function _searchTasks($task_string) {
+        $apiValues = $this->getHabitRPHPG()->getTags();
+        if(count($apiValues) > 0) {
+
+            foreach ($apiValues as $apiValue) {
+                if ($apiValue['name'] == $task_string) {
+                    return $apiValue['id'];
+                }
+            }
+
+            $this->getHabitRPHPG()->clearTags();
+            $newTag = $this->getHabitRPHPG()->_request("post", "tags", array('name'=>$task_string));
+
+            return $newTag['id'];
+        } else {
+            return NULL;
         }
     }
 
