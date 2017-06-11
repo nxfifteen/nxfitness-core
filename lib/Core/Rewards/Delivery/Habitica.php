@@ -66,7 +66,11 @@ class Habitica extends Delivery
 
             if (array_key_exists("reward", $rewardProfile) && $this->isJson($rewardProfile["reward"])) {
                 $rewardJson = json_decode($rewardProfile["reward"], true);
-                $rewardJson['alias']  = sha1("nx" . $rewardProfile['name']);
+                if (array_key_exists("alias", $rewardProfile)) {
+                    $rewardJson['alias'] = sha1("nx" . $rewardProfile['alias']);
+                } else {
+                    $rewardJson['alias'] = sha1("nx" . $rewardProfile['name']);
+                }
             } else {
                 return ["Failed"];
             }
@@ -164,18 +168,26 @@ class Habitica extends Delivery
     /**
      * @param $alias
      * @param $task_string
+     * @param string $type
+     * @param bool $returnObject
      * @return mixed
      */
-    private function _search($alias, $task_string) {
-
-        $dbValue = $this->getAppClass()->getUserSetting($_GET[ 'user' ], 'habitica_' . $alias, NULL, true);
+    public function _search($alias, $task_string, $type = '', $returnObject = false) {
+        $dbValue = null;
+        if (!$returnObject) {
+            $dbValue = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_' . $alias, NULL, true);
+        }
         if (is_null($dbValue) || !$this->cache) {
-            $apiValue = $this->getHabitRPHPG()->findTask($task_string);
-            if(count($apiValue) == 1) {
-                $this->getAppClass()->setUserSetting($_GET[ 'user' ], 'habitica_' . $alias, $apiValue[0]['_id']);
-                return $apiValue[0]['_id'];
+            $apiValue = $this->getHabitRPHPG()->findTask($task_string, $type);
+            if ($returnObject) {
+                return $apiValue;
             } else {
-                return NULL;
+                if (count($apiValue) == 1) {
+                    $this->getAppClass()->setUserSetting($this->getUserID(), 'habitica_' . $alias, $apiValue[0]['_id']);
+                    return $apiValue[0]['_id'];
+                } else {
+                    return NULL;
+                }
             }
         } else {
             return $dbValue;
