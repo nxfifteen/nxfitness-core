@@ -198,6 +198,9 @@ class HabitRPHPG {
         if(!isset($data['completed'])) $data['completed'] = false;
         if(!isset($data['value'])) $data['value'] = 0;
         if(!isset($data['notes'])) $data['notes'] = "";
+        if (!array_key_exists("alias", $data)) {
+            $data['alias'] = sha1("nx" . $data['text']);
+        }
 
         return $this->_request("post", "tasks/user", $data);
     }

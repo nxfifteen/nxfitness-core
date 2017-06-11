@@ -53,7 +53,11 @@ class FitbitVeryActive extends Modules
                     $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_activity"), 30);
                 }
 
-                if ($recordedValue >= $recordedTarget) {
+                if ($recordedValue >= $recordedTarget * 2) {
+                    $this->checkDB("goal", "veryactive", "crushed", $rewardKey);
+                } else if ($recordedValue >= $recordedTarget * 1.5) {
+                    $this->checkDB("goal", "veryactive", "smashed", $rewardKey);
+                } else if ($recordedValue >= $recordedTarget) {
                     $this->checkDB("goal", "veryactive", "reached", $rewardKey);
                 }
             }
