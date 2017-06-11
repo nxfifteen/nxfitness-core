@@ -83,15 +83,20 @@ class FitbitLoggedActivity extends Modules
             $activeDuration = $activity->duration / 1000 / 60;
 
             if ($activeDuration == $minMaxAvg['max']) {
-                $this->checkDB("activity", $activity->activityName, "max", $activity->logId);
+                $awardMade = $this->checkDB("activity", strtolower($activity->activityName), "max", $activity->logId);
+                if (!$awardMade) $this->checkDB("activity", 'other', "max", $activity->logId);
             } else if ($activeDuration >= $minMaxAvg['avg2max']) {
-                $this->checkDB("activity", $activity->activityName, "avg2max", $activity->logId);
+                $awardMade = $this->checkDB("activity", strtolower($activity->activityName), "avg2max", $activity->logId);
+                if (!$awardMade) $this->checkDB("activity", 'other', "max", $activity->logId);
             } else if ($activeDuration >= $minMaxAvg['avg']) {
-                $this->checkDB("activity", $activity->activityName, "avg", $activity->logId);
+                $awardMade = $this->checkDB("activity", strtolower($activity->activityName), "avg", $activity->logId);
+                if (!$awardMade) $this->checkDB("activity", 'other', "max", $activity->logId);
             } else if ($activeDuration >= $minMaxAvg['min2avg']) {
-                $this->checkDB("activity", $activity->activityName, "min2avg", $activity->logId);
+                $awardMade = $this->checkDB("activity", strtolower($activity->activityName), "min2avg", $activity->logId);
+                if (!$awardMade) $this->checkDB("activity", 'other', "max", $activity->logId);
             } else {
-                $this->checkDB("activity", $activity->activityName, "other", $activity->logId);
+                $awardMade = $this->checkDB("activity", strtolower($activity->activityName), "other", $activity->logId);
+                if (!$awardMade) $this->checkDB("activity", 'other', "max", $activity->logId);
             }
         }
     }
