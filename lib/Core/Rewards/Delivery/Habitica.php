@@ -62,7 +62,7 @@ class Habitica extends Delivery
     public function deliver($rewardProfile, $state, $rewardKey)
     {
         if ($this->isValidUser() && $this->getStatus() == 'up') {
-            nxr(4, "Awarding Habitica Rewards");
+            nxr(3, "Awarding Habitica Rewards");
 
             if (array_key_exists("reward", $rewardProfile) && $this->isJson($rewardProfile["reward"])) {
                 $rewardJson = json_decode($rewardProfile["reward"], true);
