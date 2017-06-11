@@ -156,7 +156,7 @@ class Habitica extends Delivery
             if (is_null($searchTask)) {
                 return true;
             } else {
-                var_dump($this->getHabitRPHPG()->_request("delete", "tasks/" . $searchTask));
+                $this->getHabitRPHPG()->_request("delete", "tasks/" . $searchTask);
                 $this->getAppClass()->delUserSetting($_GET[ 'user' ], 'habitica_' . $alias);
                 return true;
             }
