@@ -35,9 +35,6 @@ class FitbitStreak extends Modules
      */
     public function trigger($eventDetails)
     {
-
-        print_r($eventDetails);
-
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
 
