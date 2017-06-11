@@ -170,11 +170,12 @@ class Habitica extends Delivery
      * @param $task_string
      * @param string $type
      * @param bool $returnObject
+     * @param bool $skipCache
      * @return mixed
      */
-    public function _search($alias, $task_string, $type = '', $returnObject = false) {
+    public function _search($alias, $task_string, $type = '', $returnObject = false, $skipCache = false) {
         $dbValue = null;
-        if (!$returnObject) {
+        if (!$skipCache && !$returnObject) {
             $dbValue = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_' . $alias, NULL, true);
         }
         if (is_null($dbValue) || !$this->cache) {
