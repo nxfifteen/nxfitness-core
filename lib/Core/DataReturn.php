@@ -3069,6 +3069,7 @@ class DataReturn
 
         $return['ico'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . $return['level'] . ".png";
         $return['icoclass'] = $this->getAppClass()->getSetting("http/admin") . "/img/xplevels/" . strtolower($return['class']) . ".png";
+        $return['avatar'] = $this->getAppClass()->getSetting("http/") . "/images/avatars/" . $this->getUserID() . "_habitica.png";
 
         return $return;
     }
