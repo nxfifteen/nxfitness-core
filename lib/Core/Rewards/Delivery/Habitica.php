@@ -78,15 +78,17 @@ class Habitica extends Delivery
             $tasks = $this->_search($rewardJson['alias'], $rewardProfile['name'], '', false, true);
 
             if(is_null($tasks)) {
+                nxr(0, print_r($rewardJson, true));
+
                 $tasks = $this->_create($rewardJson['type'], $rewardProfile['name'], $rewardJson);
                 $tasks = $tasks['id'];
             }
 
-            if (!array_key_exists("repeat", $rewardJson)) {
-                $rewardJson['repeat'] = 1;
+            if (!array_key_exists("repeat", $rewardProfile)) {
+                $rewardProfile['repeat'] = 1;
             }
 
-            for ($i = 1; $i <= $rewardJson['repeat']; $i++) {
+            for ($i = 1; $i <= $rewardProfile['repeat']; $i++) {
                 if ($rewardJson['score'] == "up") {
                     $this->getHabitRPHPG()->doTask($tasks, 'up');
                 } else {
@@ -110,7 +112,7 @@ class Habitica extends Delivery
     public function _create($type, $name, $options) {
         if ($this->isValidUser() && $this->getStatus() == 'up') {
             $options['alias']  = sha1("nx" . $name);
-            if (is_null($this->_search($options['alias'], $name))) {
+            if (is_null($this->_search($options['alias'], $name, '', false, true))) {
 
                 if (array_key_exists("tags", $options)) {
                     foreach ($options['tags'] as $id => $tag) {
@@ -174,6 +176,9 @@ class Habitica extends Delivery
      * @return mixed
      */
     public function _search($alias, $task_string, $type = '', $returnObject = false, $skipCache = false) {
+
+        nxr(0, "Search for $task_string");
+
         $dbValue = null;
         if (!$skipCache && !$returnObject) {
             $dbValue = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_' . $alias, NULL, true);
