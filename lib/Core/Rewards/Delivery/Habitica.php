@@ -78,8 +78,6 @@ class Habitica extends Delivery
             $tasks = $this->_search($rewardJson['alias'], $rewardProfile['name'], '', false, true);
 
             if(is_null($tasks)) {
-                nxr(0, print_r($rewardJson, true));
-
                 $tasks = $this->_create($rewardJson['type'], $rewardProfile['name'], $rewardJson);
                 $tasks = $tasks['id'];
             }
