@@ -121,7 +121,7 @@ class Habitica extends Delivery
 
                 $api = $this->getHabitRPHPG()->createTask($type, $name, $options);
                 if ( $type != "todo" )
-                    $this->getAppClass()->setUserSetting($_GET[ 'user' ], 'habitica_' . $options['alias'], $api['id']);
+                    $this->getAppClass()->setUserSetting($this->getUserID(), 'habitica_' . $options['alias'], $api['id']);
                 return $api;
             } else {
                 return true;
@@ -157,7 +157,7 @@ class Habitica extends Delivery
                 return true;
             } else {
                 $this->getHabitRPHPG()->_request("delete", "tasks/" . $searchTask);
-                $this->getAppClass()->delUserSetting($_GET[ 'user' ], 'habitica_' . $alias);
+                $this->getAppClass()->delUserSetting($this->getUserID(), 'habitica_' . $alias);
                 return true;
             }
         } else {
