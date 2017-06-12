@@ -174,9 +174,6 @@ class Habitica extends Delivery
      * @return mixed
      */
     public function _search($alias, $task_string, $type = '', $returnObject = false, $skipCache = false) {
-
-        nxr(0, "Search for $task_string");
-
         $dbValue = null;
         if (!$skipCache && !$returnObject) {
             $dbValue = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_' . $alias, NULL, true);
@@ -259,6 +256,58 @@ class Habitica extends Delivery
             $this->apiStatus = $this->getHabitRPHPG()->getStatus();
         }
         return $this->apiStatus;
+    }
+
+    /**
+     * @param $guildUuid
+     * @return bool|mixed
+     */
+    public function inviteToGuild($guildUuid)
+    {
+        $habiticaAdmin = $this->getAppClass()->getSetting('habitica_admin_user', null);
+        $habiticaKey = $this->getAppClass()->getSetting('habitica_admin_key', null);
+
+        if (is_null($habiticaAdmin) || is_null($habiticaKey)) {
+            nxr(0, "No guild master defined");
+            return false;
+        }
+
+        if ($habiticaAdmin == $this->user_id) {
+            nxr(0, "Current user is already the guild master");
+            return false;
+        }
+
+        $user = $this->getHabitRPHPG()->user();
+        foreach ($user['guilds'] as $guild) {
+            if ($guild == $guildUuid) {
+                nxr(0, "Use is already in the guild");
+                return false;
+            }
+        }
+
+        $user_id_old = $this->user_id;
+        $api_key_old = $this->api_key;
+
+        $this->user_id = $habiticaAdmin;
+        $this->api_key = $habiticaKey;
+
+        if ($this->isValidUser()) {
+            $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
+        } else {
+            $this->user_id = $user_id_old;
+            $this->api_key = $api_key_old;
+        }
+
+        $this->getHabitRPHPG()->_request("post", "groups/$guildUuid/invite", array('uuids'=>[$user_id_old]));
+
+        $this->user_id = $user_id_old;
+        $this->api_key = $api_key_old;
+
+        if ($this->isValidUser()) {
+            $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
+        }
+
+        return true;
     }
 
 }
