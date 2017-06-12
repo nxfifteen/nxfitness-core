@@ -36,7 +36,7 @@ class RecordedWater extends Modules
     {
         $this->setEventDetails($eventDetails);
 
-        $yesterday = date("Y-m-d", strtotime("-1 days"));
+        $yesterday = date("Y-m-d");
         $rewardKey = sha1("waterRecordingFor" . $yesterday);
 
         //$goal = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_water", '200');

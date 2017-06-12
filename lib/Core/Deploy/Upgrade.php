@@ -986,4 +986,19 @@ class Upgrade
         return true;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function updateRun1012()
+    {
+        $db_prefix = $this->getSetting("db_prefix", false);
+
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` ADD `gold` FLOAT(7,2) NOT NULL DEFAULT '0' AFTER `health`;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
+        $this->setSetting("version", "0.0.1.12", true);
+
+        return true;
+    }
+
 }

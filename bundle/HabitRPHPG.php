@@ -116,7 +116,7 @@ class HabitRPHPG {
             if($return['success']) {
                 if(isset($return['data'])) $tasks = $return['data'];
             } else {
-                print_r($return);
+                nxr(0, $return['error'] . ": " . $return['message']);
                 return false;
             }
         } else {

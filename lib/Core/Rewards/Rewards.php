@@ -381,6 +381,19 @@ class Rewards
     }
 
     /**
+     * @param $string
+     * @return array
+     */
+    public function getCatRewards($string)
+    {
+        if (array_key_exists($string, $this->FileRewards)) {
+            return $this->FileRewards[$string];
+        }
+
+        return [];
+    }
+
+    /**
      * @param $rewardKey
      */
     public function recordAwarded($rewardKey)

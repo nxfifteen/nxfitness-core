@@ -38,17 +38,13 @@ class FitbitVeryActive extends Modules
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
         if ($eventDetails >= 1) {
-
-            $currentDate = new DateTime ('now');
-            $currentDate = $currentDate->format("Y-m-d");
-
-            $rewardKey = $currentDate . "veryactive" . "reached";
+            $rewardKey = date("Y-m-d") . "veryactive" . "reached";
 
             if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
 
                 $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
                 $recordedValue = $eventDetails;
-                $recordedTarget = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", "activeMinutes", ["AND" => ["user" => $this->getUserID(), "date" => $currentDate]]);
+                $recordedTarget = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", "activeMinutes", ["AND" => ["user" => $this->getUserID(), "date" => date("Y-m-d")]]);
                 if (!is_numeric($recordedTarget) || $recordedTarget <= 0) {
                     $recordedTarget = round($this->getAppClass()->getUserSetting($this->getUserID(), "goal_activity"), 30);
                 }

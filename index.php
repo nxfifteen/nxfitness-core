@@ -357,7 +357,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
                     "icoColour" => $icoColour,
                     "subject" => $data['task']['text'],
                     "body" => $data['task']['updatedAt'],
-                    "bold" => strtoupper($data['direction'])
+                    "bold" => round($data['task']['value'], 2)
                 ]
             );
 

@@ -690,7 +690,7 @@ class ApiBabel
                         ], [
                             "AND" => [
                                 $db_prefix . "nomie_events.fuid" => $this->activeUser,
-                                $db_prefix . "nomie_events.datestamp[>=]" => date("Y-m-d 00:00:00")
+                                $db_prefix . "nomie_events.datestamp[>=]" => date("Y-m-d H:i:s", strtotime('-24 hours'))
                             ],
                             "ORDER" => [$db_prefix . "nomie_events.datestamp" => "ASC"]
                         ]);
@@ -3834,6 +3834,12 @@ class ApiBabel
                 ]);
                 nxr(5, "Installed new Webhook " .$this->getAppClass()->getSetting('http/') . "/habitica/");
 
+                $guildUuid = $this->getAppClass()->getSetting("habitica_guild", null);
+                if (!is_null($guildUuid)) {
+                    nxr(4, "Inviting User to Guild");
+                    $habiticaClass->inviteToGuild($guildUuid);
+                }
+
                 $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habitica_installed', true);
             }
 
@@ -3842,12 +3848,14 @@ class ApiBabel
             $user = $habiticaClass->getHabitRPHPG()->user();
             $updatedValues = [
                 "class" => ucfirst($user['stats']['class']),
+                "gold" => round($user['stats']['gp'], 2, PHP_ROUND_HALF_DOWN),
                 "xp" => round($user['stats']['exp'], 0, PHP_ROUND_HALF_DOWN),
                 "level" => $user['stats']['lvl'],
                 "percent" => round($user['stats']['exp'] * (100 / $user['stats']['toNextLevel']), 0, PHP_ROUND_HALF_DOWN),
                 "mana" => $user['stats']['mp'],
                 "health" => round($user['stats']['hp'] * (100 / $user['stats']['maxHealth']), 0, PHP_ROUND_HALF_DOWN)
             ];
+
             if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "users_xp", ['fuid' => $this->getActiveUser()])) {
                 $this->getAppClass()->getDatabase()->insert($dbPrefix . "users_xp", array_merge($updatedValues, ["fuid" => $this->getActiveUser()]));
             } else {
@@ -3860,6 +3868,7 @@ class ApiBabel
                 nxr(4, "Updating User Habitica Avatar");
                 file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
             }
+
         } else {
             nxr(3, "Your not a Habitica user");
         }
