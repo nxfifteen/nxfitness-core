@@ -179,8 +179,10 @@ class FitbitTracker extends Modules
         foreach ($sysRewards['steps'] as $score => $sysReward) {
             if ($eventDetails['value'] >= $score) {
                 if (!$this->getRewardsClass()->alreadyAwarded($eventDetails['trigger'] . $eventDetails['date'] . $score)) {
-                    nxr(2, "Awarding " . $eventDetails['trigger'] . " " . $eventDetails['date'] . " " . $score);
+                    nxr(3, "Awarding " . $eventDetails['trigger'] . " " . $eventDetails['date'] . " " . $score);
                     $this->checkDB("fitbit_tracker", "steps", $score, $eventDetails['trigger'] . $eventDetails['date'] . $score);
+                } else {
+                    nxr(3, "Already rewarded " . $eventDetails['trigger'] . " " . $eventDetails['date'] . " " . $score);
                 }
             }
         }
