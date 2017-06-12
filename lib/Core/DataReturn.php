@@ -3084,10 +3084,11 @@ class DataReturn
      */
     public function returnUserRecordTopBadges()
     {
-        $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
-                null, false) . "bages_user",
-            ['badgeType', 'value', 'dateTime', 'timesAchieved'],
-            ["user" => $this->getUserID()]);
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix",null, false);
+        $userBadges = $this->getAppClass()->getDatabase()->select($db_prefix . "bages_user",
+            ["[>]" . $db_prefix . "bages" => ["badgeid" => "encodedId"]],
+            [$db_prefix . 'bages.badgeType', $db_prefix . 'bages.value', $db_prefix . 'bages_user.dateTime', $db_prefix . 'bages_user.timesAchieved'],
+            [$db_prefix . 'bages_user.fuid' => $this->getUserID()]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
