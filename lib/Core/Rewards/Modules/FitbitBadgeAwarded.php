@@ -37,6 +37,8 @@ class FitbitBadgeAwarded extends Modules
         $this->setEventDetails($eventDetails);
         $badge = $this->getEventDetails();
 
+        nxr(0, "DEBUG:: " . print_r($badge, true));
+
         if ($this->checkDB("badge", $badge->category . " | " . $badge->shortName, "awarded", $badge->category . $badge->shortName)) {
 
         } else if ($this->checkDB("badge", $badge->category, "awarded", $badge->category)) {
