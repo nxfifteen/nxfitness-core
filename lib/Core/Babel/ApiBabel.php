@@ -690,7 +690,7 @@ class ApiBabel
                         ], [
                             "AND" => [
                                 $db_prefix . "nomie_events.fuid" => $this->activeUser,
-                                $db_prefix . "nomie_events.datestamp[>=]" => date("Y-m-d 00:00:00")
+                                $db_prefix . "nomie_events.datestamp[>=]" => date("Y-m-d H:i:s", strtotime('-24 hours'))
                             ],
                             "ORDER" => [$db_prefix . "nomie_events.datestamp" => "ASC"]
                         ]);
