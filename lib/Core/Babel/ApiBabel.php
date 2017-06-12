@@ -3834,6 +3834,12 @@ class ApiBabel
                 ]);
                 nxr(5, "Installed new Webhook " .$this->getAppClass()->getSetting('http/') . "/habitica/");
 
+                $guildUuid = $this->getAppClass()->getSetting("habitica_guild", null);
+                if (!is_null($guildUuid)) {
+                    nxr(4, "Inviting User to Guild");
+                    $habiticaClass->inviteToGuild($guildUuid);
+                }
+
                 $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habitica_installed', true);
             }
 
@@ -3860,6 +3866,7 @@ class ApiBabel
                 nxr(4, "Updating User Habitica Avatar");
                 file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
             }
+
         } else {
             nxr(3, "Your not a Habitica user");
         }
