@@ -127,3 +127,4 @@ config/config.inc.php
 /config/rewards.inc.php
 /ux/config.inc.php
 /rpg.php
+/.gtm/
