@@ -3504,8 +3504,7 @@ class ApiBabel
                         "AND" => [
                             "fuid" => $this->getActiveUser(),
                             "goal" => $goal,
-                            "start_date" => $dateTime->format("Y-m-d"),
-                            "end_date[!]" => NULL
+                            "start_date" => $dateTime->format("Y-m-d")
                         ]
                     ])
                     ) {
