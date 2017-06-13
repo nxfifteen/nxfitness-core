@@ -10,6 +10,7 @@
 
 namespace Core\Rewards\Modules;
 
+use Core\Rewards\Delivery\Habitica;
 use Core\Rewards\Modules;
 
 require_once(dirname(__FILE__) . "/../Modules.php");
@@ -37,16 +38,26 @@ class FitbitBadgeAwarded extends Modules
         $this->setEventDetails($eventDetails);
         $badge = $this->getEventDetails();
 
-        nxr(0, "DEBUG:: " . print_r($badge, true));
+        if ($badge->category == "Challenge" && $badge->description == "Challenge") {
+            $this->triggerChallenge($badge);
+        } else if ($badge->category == "Challenge" && $badge->description == "Adventure") {
+            $this->triggerAdventure($badge);
+        } else if (date("Y-m-d") == $badge->dateTime) {
+            $rewardKey = sha1($badge->dateTime . $badge->encodedId . $badge->timesAchieved . $badge->name);
 
-        if ($this->checkDB("badge", $badge->category . " | " . $badge->shortName, "awarded", $badge->category . $badge->shortName)) {
-
-        } else if ($this->checkDB("badge", $badge->category, "awarded", $badge->category)) {
-
-        } else if ($this->checkDB("badge", $badge->category . " | " . $badge->shortName, $badge->timesAchieved, $badge->category . $badge->shortName . $badge->timesAchieved)) {
-
-        } else if ($this->checkDB("badge", $badge->category, $badge->timesAchieved, $badge->category . $badge->timesAchieved)) {
-
+            if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+                nxr(2, "Awarding " . $badge->name);
+                $habitica = new Habitica($this->getAppClass(), $this->getUserID());
+                $habitica->deliver([
+                    "name" => "Earn Fitbit Badge: " . $badge->name,
+                    "system" => "habitica",
+                    "source" => "nomie",
+                    "description" => $badge->marketingDescription,
+                    "reward" => '{"type": "habit", "tags": ["Health Wellness", "Exercise"], "priority": 1, "up": true, "down": false, "score": "up", "attribute": "per"}'
+                ], 'pending', $rewardKey);
+            } else {
+                nxr(2, "Already rewarded " . $badge->name);
+            }
         }
     }
 
@@ -56,5 +67,49 @@ class FitbitBadgeAwarded extends Modules
     private function setEventDetails($eventDetails)
     {
         $this->eventDetails = $eventDetails;
+    }
+
+    /**
+     * @param $badge
+     */
+    private function triggerChallenge($badge)
+    {
+        $rewardKey = sha1($badge->dateTime . $badge->encodedId . $badge->timesAchieved . $badge->name);
+
+        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+            nxr(2, "Awarding Challenge Badge " . $badge->name);
+            $habitica = new Habitica($this->getAppClass(), $this->getUserID());
+            $habitica->deliver([
+                "name" => "Earn Challenge Badge",
+                "system" => "habitica",
+                "source" => "nomie",
+                "description" => $badge->marketingDescription,
+                "reward" => '{"type": "habit", "tags": ["Health Wellness", "Exercise"], "priority": 2, "up": true, "down": false, "score": "up", "attribute": "per"}'
+            ], 'pending', $rewardKey);
+        } else {
+            nxr(2, "Already rewarded Challenge Badge " . $badge->name);
+        }
+    }
+
+    /**
+     * @param $badge
+     */
+    private function triggerAdventure($badge)
+    {
+        $rewardKey = sha1($badge->dateTime . $badge->encodedId . $badge->timesAchieved . $badge->name);
+
+        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+            nxr(2, "Awarding Adventure Badge " . $badge->name);
+            $habitica = new Habitica($this->getAppClass(), $this->getUserID());
+            $habitica->deliver([
+                "name" => "Earn Adventure Badge: " . $badge->name,
+                "system" => "habitica",
+                "source" => "nomie",
+                "description" => $badge->marketingDescription,
+                "reward" => '{"type": "habit", "tags": ["Health Wellness", "Exercise"], "priority": 2, "up": true, "down": false, "score": "up", "attribute": "per"}'
+            ], 'pending', $rewardKey);
+        } else {
+            nxr(2, "Already rewarded Adventure Badge " . $badge->name);
+        }
     }
 }
