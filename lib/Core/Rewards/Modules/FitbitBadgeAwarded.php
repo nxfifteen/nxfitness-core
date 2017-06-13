@@ -49,7 +49,7 @@ class FitbitBadgeAwarded extends Modules
                 nxr(2, "Awarding " . $badge->name);
                 $habitica = new Habitica($this->getAppClass(), $this->getUserID());
                 $habitica->deliver([
-                    "name" => "Earn Fitbit Badge: " . $badge->name,
+                    "name" => "Earn A " . $badge->category . " Badge",
                     "system" => "habitica",
                     "source" => "nomie",
                     "description" => $badge->marketingDescription,
@@ -80,7 +80,7 @@ class FitbitBadgeAwarded extends Modules
             nxr(2, "Awarding Challenge Badge " . $badge->name);
             $habitica = new Habitica($this->getAppClass(), $this->getUserID());
             $habitica->deliver([
-                "name" => "Earn Challenge Badge",
+                "name" => "Earn a Challenge Badge",
                 "system" => "habitica",
                 "source" => "nomie",
                 "description" => $badge->marketingDescription,
@@ -102,7 +102,7 @@ class FitbitBadgeAwarded extends Modules
             nxr(2, "Awarding Adventure Badge " . $badge->name);
             $habitica = new Habitica($this->getAppClass(), $this->getUserID());
             $habitica->deliver([
-                "name" => "Earn Adventure Badge: " . $badge->name,
+                "name" => "Earn an Adventure Badge",
                 "system" => "habitica",
                 "source" => "nomie",
                 "description" => $badge->marketingDescription,
