@@ -617,6 +617,13 @@ class ApiBabel
 
                     foreach ($trackerEvents['rows'] as $events) {
                         $event = explode("|", $events['id']);
+
+                        if ($event[1] == "tm") {
+                            $holdValue = $event[2];
+                            $event[2] = $event[3];
+                            $event[3] = $holdValue;
+                        }
+
                         $event[5] = date('Y-m-d H:i:s', $event[3] / 1000);
 
                         if (in_array($event[2], $trackedTrackers)) {
