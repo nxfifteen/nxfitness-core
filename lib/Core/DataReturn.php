@@ -3058,7 +3058,6 @@ class DataReturn
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
-            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "level" => 0, "percent" => 0, "gold" => 0, "health" => 100, "fuid" => $this->getUserID()]);
             $return = ["class" => "Rebel", "xp" => 0, "mana" => 0, "level" => 0, "percent" => 0, "gold" => 0, "health" => 100];
         } else {
             $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class','xp','mana','health','gold','level','percent'], ["fuid" => $this->getUserID()]);

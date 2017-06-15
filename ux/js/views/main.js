@@ -239,15 +239,26 @@ $(function () {
     });
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=xp", function (data) {
-        var xpRow = $('#xpRow');
-        if (xpRow.length > 0) {
-            /** @namespace data.results.xp */
-            $('#xp').html(data.results.xp);
-            /** @namespace data.results.level */
-            $('#xpLvl').html(data.results.level);
-            $('#xpLevelBadge').attr('src', 'img/xplevels/' + data.results.level + '.png');
-            $('#xpProgressNextLevel').attr('aria-valuenow', data.results.percent).css('width', data.results.percent + '%');
+
+        var habiticaXp = $('#habiticaXp');
+        var habiticaReg = $('#habiticaReg');
+
+        /** @namespace data.results.class */
+        if (data.results.class == "Rebel") {
+            habiticaXp.remove();
+        } else {
+            habiticaReg.remove();
+            var xpRow = $('#xpRow');
+            if (xpRow.length > 0) {
+                /** @namespace data.results.xp */
+                $('#xp').html(data.results.xp);
+                /** @namespace data.results.level */
+                $('#xpLvl').html(data.results.level);
+                $('#xpLevelBadge').attr('src', 'img/xplevels/' + data.results.level + '.png');
+                $('#xpProgressNextLevel').attr('aria-valuenow', data.results.percent).css('width', data.results.percent + '%');
+            }
         }
+
 
         debug_add_gen_time("xp", data.time);
     });
@@ -275,4 +286,38 @@ $(function () {
 
         debug_add_gen_time("Inbox", data.time);
     });
+});
+
+// this is the id of the form
+$("#habiticaRegister").submit(function(e) {
+
+    var url = "../ajax.php"; // the script where you handle the form input.
+
+     $.ajax({
+         type: "POST",
+         url: url,
+         data: $("#habiticaRegister").serialize(), // serializes the form's elements.
+         success: function(data) {
+             window.location.reload();
+         }
+     });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+
+// this is the id of the form
+$("#habiticaConnect").submit(function(e) {
+
+    var url = "../ajax.php"; // the script where you handle the form input.
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: $("#habiticaConnect").serialize(), // serializes the form's elements.
+        success: function(data) {
+            window.location.reload();
+        }
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
 });
