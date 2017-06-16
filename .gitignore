@@ -128,3 +128,7 @@ config/config.inc.php
 /ux/config.inc.php
 /rpg.php
 /.gtm/
+!/ux/img/xplevels/mage.png
+!/ux/img/xplevels/healer.png
+!/ux/img/xplevels/rogue.png
+!/ux/img/xplevels/warrior.png
