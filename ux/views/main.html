@@ -14,6 +14,7 @@
     loadJS(requireJS, "js/views/main.js");
 
     loadCSS("css/bucket-ico-fonts.css");
+    loadCSS("css/nomie.css");
     setUpBreadcrumb([], 'Dashboard');
 </script>
 
@@ -164,8 +165,8 @@
                                     <div class="col-12">
                                         <form class="form-signin" id="habiticaConnect">
                                             <p class="text-muted">Connect your account by providing your User ID and API Token from <a target="_blank" href="https://habitica.com/#/options/settings/api">Settings -> API</a> </p>
-                                            <div class="input-group mb-3"><span class="input-group-addon"><i class="icon-user"></i></span> <input type="text" class="form-control" name="userid" title="User ID" placeholder="User ID" autofocus></div>
-                                            <div class="input-group mb-3"><span class="input-group-addon"><i class="icon-lock"></i></span> <input type="text" class="form-control" name="token" title="API Token" placeholder="API Token"></div>
+                                            <div class="input-group mb-3"><span class="input-group-addon"><i class="line-icon-user"></i></span> <input type="text" class="form-control" name="userid" title="User ID" placeholder="User ID" autofocus></div>
+                                            <div class="input-group mb-3"><span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="text" class="form-control" name="token" title="API Token" placeholder="API Token"></div>
                                             <button type="submit" class="btn btn-block btn-success">Connect Account</button>
                                         </form>
                                     </div>
@@ -183,17 +184,17 @@
                                         <form class="form-signin" id="habiticaRegister">
                                             <p class="text-muted">You can create new Habitica user from the <a href="https://habitica.com" target="_blank">habitica.com</a> website, or using the form bellow.</p>
                                             <div class="input-group mb-3">
-                                                <span class="input-group-addon"><i class="icon-user"></i></span> <input type="text" class="form-control" name="username" title="User ID" placeholder="User ID" ></div>
+                                                <span class="input-group-addon"><i class="line-icon-user"></i></span> <input type="text" class="form-control" name="username" title="User ID" placeholder="User ID" ></div>
 
                                             <div class="input-group mb-3">
                                                 <span class="input-group-addon">@</span> <input type="text" class="form-control" name="email" title="User ID" placeholder="Email Address" ></div>
 
                                             <div class="input-group mb-3">
-                                                <span class="input-group-addon"><i class="icon-lock"></i></span> <input type="password" class="form-control" placeholder="Password" name="password">
+                                                <span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="password" class="form-control" placeholder="Password" name="password">
                                             </div>
 
                                             <div class="input-group mb-4">
-                                                <span class="input-group-addon"><i class="icon-lock"></i></span> <input type="password" class="form-control" placeholder="Repeat password" name="password2">
+                                                <span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="password" class="form-control" placeholder="Repeat password" name="password2">
                                             </div>
 
                                             <button type="submit" class="btn btn-block btn-success">Create Account</button>
