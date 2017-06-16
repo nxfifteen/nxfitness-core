@@ -2328,11 +2328,31 @@ class DataReturn
             "LINE" => __LINE__
         ]);
 
+
+
         foreach ($dbInbox as $dbInboxItem) {
             if ($dbInboxItem['subject'] == "" && $dbInboxItem['body'] != "") {
                 $dbInboxItem['subject'] = $dbInboxItem['body'];
                 $dbInboxItem['body'] = "";
             }
+
+            $rules = [];
+            require(dirname(__FILE__) . "/../../config/rewards.dist.php");
+            foreach ($rules as $cat) {
+                foreach ($cat as $event) {
+                    foreach ($event as $action) {
+                        foreach ($action as $reward) {
+                            nxr(0, $reward['name']);
+                            if (strpos($reward['name'], $dbInboxItem['subject']) !== false) {
+                                if (array_key_exists("icon", $reward) && $reward['icon'] != "") {
+                                    $dbInboxItem['ico'] = $reward['icon'];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             array_push($returnArray, $dbInboxItem);
         }
 

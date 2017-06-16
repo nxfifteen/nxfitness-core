@@ -278,7 +278,7 @@ $(function () {
         var html = '';
         $.each(data.results, function (index, reward) {
             html += '<li>';
-            html += '    <i class="' + reward.ico + ' ' + reward.icoColour + '"></i>';
+            html += '    <i class="' + reward.ico + ' ' + reward.icoColour + '" style="font-size: 30px;"></i>';
             html += '    <div class="desc">';
             html += '        <div class="title">' + reward.subject + '</div>';
             html += '        <small>' + reward.body + '</small>';
