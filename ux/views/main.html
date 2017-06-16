@@ -147,10 +147,18 @@
             <div class="row">
                 <div class="col-md-12">
                     <div id="habiticaReg">
+
+                        <div class="card">
+                            <div class="card-block">
+                                <img src="img/habitica.png" />
+                            </div>
+                        </div>
+
                         <div class="card">
                             <div class="card-header">
                                 <span>Connect Your Habitica Account</span>
                             </div>
+                            <div class="card-block" style="display: none" id="habiticaConnectError"></div>
                             <div class="card-block">
                                 <div class="row">
                                     <div class="col-12">
@@ -168,6 +176,7 @@
                             <div class="card-header">
                                 <span>Create A Habitica Account</span>
                             </div>
+                            <div class="card-block" style="display: none" id="habiticaRegisterError"></div>
                             <div class="card-block">
                                 <div class="row">
                                     <div class="col-12">
@@ -201,10 +210,23 @@
                             </div>
                             <div class="card-block">
                                 <div class="row" id="xpRow">
-                                    <div class="col-12">
+                                    <div class="col-3">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <img id="xpAvatar" src="img/xplevels/0.png">
+                                            </div>
+                                            <div class="col-12">
+                                                <strong id="xpClass">0</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-9">
                                         <div class="social-box xplvl">
                                             <div class="row">
-                                                <div class="col-12">
+                                                <div class="col-6">
+                                                    <img id="xpClassBadge" src="img/xplevels/0.png" style="text-align: center">
+                                                </div>
+                                                <div class="col-6">
                                                     <img id="xpLevelBadge" src="img/xplevels/0.png" style="float: right">
                                                 </div>
                                             </div>

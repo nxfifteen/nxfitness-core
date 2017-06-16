@@ -251,10 +251,15 @@ $(function () {
             var xpRow = $('#xpRow');
             if (xpRow.length > 0) {
                 /** @namespace data.results.xp */
-                $('#xp').html(data.results.xp);
                 /** @namespace data.results.level */
+                /** @namespace data.results.icoclass */
+                /** @namespace data.results.ico */
+                $('#xp').html(data.results.xp);
                 $('#xpLvl').html(data.results.level);
-                $('#xpLevelBadge').attr('src', 'img/xplevels/' + data.results.level + '.png');
+                $('#xpAvatar').attr('src', data.results.avatar);
+                $('#xpClass').html(data.results.class);
+                $('#xpLevelBadge').attr('src', data.results.ico);
+                $('#xpClassBadge').attr('src', data.results.icoclass);
                 $('#xpProgressNextLevel').attr('aria-valuenow', data.results.percent).css('width', data.results.percent + '%');
             }
         }
@@ -292,14 +297,27 @@ $(function () {
 $("#habiticaRegister").submit(function(e) {
 
     var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#habiticaRegister").serialize();
+
+    var html = '';
+    html += '        <div class="row">';
+    html += '            <div class="col-12">';
+    html += '                <p>I\'m currently creating your new Habitica account and installing some of the default dailies and habbits.</p>';
+    html += '                <p>More are added automatically to your account as you reach set triggers.</p>';
+    html += '                <p>You will also be invited to join the NxCore guild.</p>';
+    html += '                <p>This process can take 20/30 seconds, and you dont have to stick around for it. Once complete this page will refresh.</p>';
+    html += '            </div>';
+    html += '        </div>';
+    $('#habiticaRegisterError').html(html).show();
 
      $.ajax({
          type: "POST",
          url: url,
-         data: $("#habiticaRegister").serialize(), // serializes the form's elements.
-         success: function(data) {
-             window.location.reload();
-         }
+         data: data
+     }).done(function(response) {
+         window.location.reload();
+     }).fail(function(response) {
+         $('#habiticaRegisterError').html(response.responseText);
      });
 
     e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -309,14 +327,27 @@ $("#habiticaRegister").submit(function(e) {
 $("#habiticaConnect").submit(function(e) {
 
     var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#habiticaConnect").serialize();
+
+    var html = '';
+    html += '        <div class="row">';
+    html += '            <div class="col-12">';
+    html += '                <p>I\'m currently connecting to your Habitica account and installing some of the default dailies and habbits.</p>';
+    html += '                <p>More are added automatically to your account as you reach set triggers.</p>';
+    html += '                <p>You will also be invited to join the NxCore guild.</p>';
+    html += '                <p>This process can take 20/30 seconds, and you dont have to stick around for it. Once complete this page will refresh.</p>';
+    html += '            </div>';
+    html += '        </div>';
+    $('#habiticaConnectError').html(html).show();
 
     $.ajax({
         type: "POST",
         url: url,
-        data: $("#habiticaConnect").serialize(), // serializes the form's elements.
-        success: function(data) {
-            window.location.reload();
-        }
+        data: data
+    }).done(function(response) {
+        window.location.reload();
+    }).fail(function(response) {
+        $('#habiticaConnectError').html(response.responseText);
     });
 
     e.preventDefault(); // avoid to execute the actual submit of the form.
