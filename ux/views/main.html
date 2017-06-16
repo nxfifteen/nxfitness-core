@@ -209,15 +209,16 @@
                                 <span><a href="https://habitica.com" target="_blank">Habitica</a> | RPG - <a href="https://habitica.com/#/options/groups/guilds/87aeb151-1e95-4291-a8ce-faff4082120e">NxCore Guild</a> </span>
                             </div>
                             <div class="card-block">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <strong id="xpClass">0</strong>
+                                    </div>
+                                </div>
                                 <div class="row" id="xpRow">
                                     <div class="col-3">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <img id="xpAvatar" src="img/xplevels/0.png">
-                                            </div>
-                                            <div class="col-12">
-                                                <strong id="xpClass">0</strong>
-                                            </div>
+                                        <img id="xpAvatar" src="img/xplevels/0.png">
+                                        <div class="progress progress-xs my-3">
+                                            <div id="xpHealth" class="progress-bar bg-danger" role="progressbar" style="width: 0" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </div>
                                     <div class="col-9">
@@ -240,13 +241,21 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <ul>
-                                                        <li>
+                                                        <li class="col-3">
                                                             <strong id="xp">0</strong>
                                                             <span>XP</span>
                                                         </li>
-                                                        <li>
+                                                        <li class="col-3">
                                                             <strong id="xpLvl">0</strong>
                                                             <span>Level</span>
+                                                        </li>
+                                                        <li class="col-3">
+                                                            <strong id="xpMana">0</strong>
+                                                            <span>Mana</span>
+                                                        </li>
+                                                        <li class="col-3">
+                                                            <strong id="xGold">0</strong>
+                                                            <span>Gold</span>
                                                         </li>
                                                     </ul>
                                                 </div>

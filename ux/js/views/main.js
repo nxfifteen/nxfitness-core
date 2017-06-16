@@ -254,12 +254,18 @@ $(function () {
                 /** @namespace data.results.level */
                 /** @namespace data.results.icoclass */
                 /** @namespace data.results.ico */
+                /** @namespace data.results.mana */
                 $('#xp').html(data.results.xp);
+                $('#xpMana').html(data.results.mana);
                 $('#xpLvl').html(data.results.level);
-                $('#xpAvatar').attr('src', data.results.avatar);
                 $('#xpClass').html(data.results.class);
+                $('#xGold').html(data.results.gold + "." + data.results.silver );
+
+                $('#xpAvatar').attr('src', data.results.avatar);
                 $('#xpLevelBadge').attr('src', data.results.ico);
                 $('#xpClassBadge').attr('src', data.results.icoclass);
+
+                $('#xpHealth').attr('aria-valuenow', data.results.health).css('width', data.results.health + '%');
                 $('#xpProgressNextLevel').attr('aria-valuenow', data.results.percent).css('width', data.results.percent + '%');
             }
         }
