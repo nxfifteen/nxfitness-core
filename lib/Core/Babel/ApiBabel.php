@@ -3445,11 +3445,10 @@ class ApiBabel
 
         if (strtotime($dateTime->format("Y-m-d")) >= strtotime($streak_start)) {
             if ($streak) {
-                if ($value) {
-                    $dateTimeStart = new DateTime ($streak_start);
-                    $days_between = $dateTimeStart->diff($dateTime)->format("%a");
-                    $days_between = (int)$days_between + 1;
+                $dateTimeStart = new DateTime ($streak_start);
+                $days_between = $dateTimeStart->diff($dateTime)->format("%a");
 
+                if ($value) {
                     $this->getAppClass()->getDatabase()->update($db_prefix . "streak_goal", [
                         "length" => $days_between
                     ],
@@ -3473,14 +3472,11 @@ class ApiBabel
                         }
                     }
 
-                    nxr(5, "Steak started on $streak_start on will continue");
+                    nxr(5, "Steak started on $streak_start ($days_between) on will continue");
                 } else {
                     $dateTimeEnd = $dateTime;
                     $dateTimeEnd->add(DateInterval::createFromDateString('yesterday'));
                     $streak_end = $dateTimeEnd->format('Y-m-d');
-
-                    $days_between = $dateTime->diff($dateTimeEnd)->format("%a");
-                    $days_between = 1 + (int)$days_between;
 
                     $this->getAppClass()->getDatabase()->update($db_prefix . "streak_goal", [
                         "end_date" => $streak_end,
@@ -3503,7 +3499,7 @@ class ApiBabel
                         $this->RewardsSystem->eventTrigger('FitbitStreak', [$goal, $days_between, $streak_start, true]);
                     }
 
-                    nxr(5, "Steak started on $streak_start, but as ended on " . $streak_end);
+                    nxr(5, "Steak started on $streak_start, but as ended after $days_between days on " . $streak_end);
                 }
             } else {
                 if ($value) {
