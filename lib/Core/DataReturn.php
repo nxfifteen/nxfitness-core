@@ -2856,6 +2856,7 @@ class DataReturn
                 "length"
             ],
                 ["AND" => ["fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null]]);
+            $currentStreakStart["length"] = $currentStreakStart["length"] + 1;
 
             $taskerDataArray['current']['start'] = $currentStreakStart["start_date"];
             $taskerDataArray['current']['start_f'] = date("M jS, Y", strtotime($taskerDataArray['current']['start']));
