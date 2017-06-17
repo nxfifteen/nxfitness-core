@@ -110,7 +110,8 @@ class Habitica extends Delivery
     public function _create($type, $name, $options) {
         if ($this->isValidUser() && $this->getStatus() == 'up') {
             $options['alias']  = sha1("nx" . $name);
-            if (is_null($this->_search($options['alias'], $name, '', false, true))) {
+            $searchResults = $this->_search($options['alias'], $name, '', false, true);
+            if (is_null($searchResults)) {
 
                 if (array_key_exists("tags", $options)) {
                     foreach ($options['tags'] as $id => $tag) {
@@ -124,7 +125,7 @@ class Habitica extends Delivery
                     $this->getAppClass()->setUserSetting($this->getUserID(), 'habitica_' . $options['alias'], $api['id']);
                 return $api;
             } else {
-                return true;
+                return $searchResults;
             }
         } else {
             return false;
