@@ -165,7 +165,7 @@ $(function () {
             var CurrentDays = $('#CurrentDays');
             if (CurrentDays.length > 0) {
                 if (data.results.current.days > 0) {
-                    CurrentDays.html("Current streak started on " + data.results.current.start + " and has lasted " + data.results.current.days + " days");
+                    CurrentDays.html("Current streak started on " + data.results.current.start_f + " and has lasted " + data.results.current.days + " days");
                 } else {
                     CurrentDays.html("You need to beat your step goal to start a streak");
                 }
@@ -174,7 +174,7 @@ $(function () {
             var AverageDays = $('#AverageDays');
             if (AverageDays.length > 0) {
                 if (parseInt(data.results.current.days) < parseInt(data.results.avg.days)) {
-                    AverageDays.html("Lasts " + data.results.avg.days + " days and your " + (data.results.avg.days - data.results.current.days) + " days away from it.");
+                    AverageDays.html("Lasts for " + data.results.avg.days + " days and your " + (data.results.avg.days - data.results.current.days) + " days away from it.");
                 } else {
                     AverageDays.html("Is toast! Your betting your " + data.results.avg.days + " day average by " + (data.results.current.days - data.results.avg.days) + " days.");
                 }
@@ -184,7 +184,7 @@ $(function () {
             var LastDays = $('#LastDays');
             if (LastDays.length > 0) {
                 if (parseInt(data.results.current.days) < parseInt(data.results.last.days)) {
-                    LastDays.html("Ran between " + data.results.last.start + " and " + data.results.last.end + ", lasting " + data.results.last.days + " days and your " + (data.results.last.days - data.results.current.days) + " days away from it.");
+                    LastDays.html("Ran between " + data.results.last.start_f + " and " + data.results.last.end_f + ", lasting " + data.results.last.days + " days and your " + (data.results.last.days - data.results.current.days) + " days away from it.");
                 } else {
                     LastDays.html("Is toast! Your betting your last streak of " + data.results.last.days + " day by " + (data.results.current.days - data.results.last.days) + " days.");
                 }
@@ -194,7 +194,7 @@ $(function () {
             var LongestDays = $('#LongestDays');
             if (LongestDays.length > 0) {
                 if (parseInt(data.results.current.days) < parseInt(data.results.max.days)) {
-                    LongestDays.html("Ran between " + data.results.max.start + " and " + data.results.max.end + ", lasting " + data.results.max.days + " days and your " + (data.results.max.days - data.results.current.days) + " days away from it.");
+                    LongestDays.html("Ran between " + data.results.max.start_f + " and " + data.results.max.end_f + ", lasting " + data.results.max.days + " days and your " + (data.results.max.days - data.results.current.days) + " days away from it.");
                 } else {
                     LongestDays.html("Is toast! Your betting your longest streak of " + data.results.max.days + " days by " + data.results.current.days + " days.");
                 }
@@ -239,15 +239,37 @@ $(function () {
     });
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=xp", function (data) {
-        var xpRow = $('#xpRow');
-        if (xpRow.length > 0) {
-            /** @namespace data.results.xp */
-            $('#xp').html(data.results.xp);
-            /** @namespace data.results.level */
-            $('#xpLvl').html(data.results.level);
-            $('#xpLevelBadge').attr('src', 'img/xplevels/' + data.results.level + '.png');
-            $('#xpProgressNextLevel').attr('aria-valuenow', data.results.percent).css('width', data.results.percent + '%');
+
+        var habiticaXp = $('#habiticaXp');
+        var habiticaReg = $('#habiticaReg');
+
+        /** @namespace data.results.class */
+        if (data.results.class == "Rebel") {
+            habiticaXp.remove();
+        } else {
+            habiticaReg.remove();
+            var xpRow = $('#xpRow');
+            if (xpRow.length > 0) {
+                /** @namespace data.results.xp */
+                /** @namespace data.results.level */
+                /** @namespace data.results.icoclass */
+                /** @namespace data.results.ico */
+                /** @namespace data.results.mana */
+                $('#xp').html(data.results.xp);
+                $('#xpMana').html(data.results.mana);
+                $('#xpLvl').html(data.results.level);
+                $('#xpClass').html(data.results.class);
+                $('#xGold').html(data.results.gold + "." + data.results.silver);
+
+                $('#xpAvatar').attr('src', data.results.avatar);
+                $('#xpLevelBadge').attr('src', data.results.ico);
+                $('#xpClassBadge').attr('src', data.results.icoclass);
+
+                $('#xpHealth').attr('aria-valuenow', data.results.health).css('width', data.results.health + '%');
+                $('#xpProgressNextLevel').attr('aria-valuenow', data.results.percent).css('width', data.results.percent + '%');
+            }
         }
+
 
         debug_add_gen_time("xp", data.time);
     });
@@ -256,7 +278,7 @@ $(function () {
         var html = '';
         $.each(data.results, function (index, reward) {
             html += '<li>';
-            html += '    <i class="' + reward.ico + ' ' + reward.icoColour + '"></i>';
+            html += '    <i class="' + reward.ico + ' ' + reward.icoColour + '" style="font-size: 30px;"></i>';
             html += '    <div class="desc">';
             html += '        <div class="title">' + reward.subject + '</div>';
             html += '        <small>' + reward.body + '</small>';
@@ -275,4 +297,64 @@ $(function () {
 
         debug_add_gen_time("Inbox", data.time);
     });
+});
+
+// this is the id of the form
+$("#habiticaRegister").submit(function (e) {
+
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#habiticaRegister").serialize();
+
+    var html = '';
+    html += '        <div class="row">';
+    html += '            <div class="col-12">';
+    html += '                <p>I\'m currently creating your new Habitica account and installing some of the default dailies and habbits.</p>';
+    html += '                <p>More are added automatically to your account as you reach set triggers.</p>';
+    html += '                <p>You will also be invited to join the NxCore guild.</p>';
+    html += '                <p>This process can take 20/30 seconds, and you dont have to stick around for it. Once complete this page will refresh.</p>';
+    html += '            </div>';
+    html += '        </div>';
+    $('#habiticaRegisterError').html(html).show();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        window.location.reload();
+    }).fail(function (response) {
+        $('#habiticaRegisterError').html(response.responseText);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+
+// this is the id of the form
+$("#habiticaConnect").submit(function (e) {
+
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#habiticaConnect").serialize();
+
+    var html = '';
+    html += '        <div class="row">';
+    html += '            <div class="col-12">';
+    html += '                <p>I\'m currently connecting to your Habitica account and installing some of the default dailies and habbits.</p>';
+    html += '                <p>More are added automatically to your account as you reach set triggers.</p>';
+    html += '                <p>You will also be invited to join the NxCore guild.</p>';
+    html += '                <p>This process can take 20/30 seconds, and you dont have to stick around for it. Once complete this page will refresh.</p>';
+    html += '            </div>';
+    html += '        </div>';
+    $('#habiticaConnectError').html(html).show();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        window.location.reload();
+    }).fail(function (response) {
+        $('#habiticaConnectError').html(response.responseText);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
 });

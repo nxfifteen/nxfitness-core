@@ -80,7 +80,7 @@ if ( ! array_key_exists( "admin_config", $_SESSION ) ) {
                         <h1>Register</h1>
                         <p class="text-muted">Create your account</p>
                         <div class="input-group mb-3">
-                            <span class="input-group-addon"><i class="icon-user"></i></span> <input type="text" class="form-control" name="fuid" <?php if ( isset( $_GET[ 'usr' ] ) ) {
+                            <span class="input-group-addon"><i class="line-icon-user"></i></span> <input type="text" class="form-control" name="fuid" <?php if ( isset( $_GET[ 'usr' ] ) ) {
                                 echo " value=\"" . $_GET[ 'usr' ] . "\"";
                             } else {
                                 echo " placeholder=\"User Name\"";
@@ -96,11 +96,11 @@ if ( ! array_key_exists( "admin_config", $_SESSION ) ) {
                         </div>
 
                         <div class="input-group mb-3">
-                            <span class="input-group-addon"><i class="icon-lock"></i></span> <input type="password" class="form-control" placeholder="Password" name="password">
+                            <span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="password" class="form-control" placeholder="Password" name="password">
                         </div>
 
                         <div class="input-group mb-4">
-                            <span class="input-group-addon"><i class="icon-lock"></i></span> <input type="password" class="form-control" placeholder="Repeat password" name="password2">
+                            <span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="password" class="form-control" placeholder="Repeat password" name="password2">
                         </div>
 
                         <button type="submit" class="btn btn-block btn-success">Create Account</button>

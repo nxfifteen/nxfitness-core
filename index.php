@@ -348,6 +348,13 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
                 $icoColour = "bg-danger";
             }
 
+            if (preg_match('/^:/m', $data['task']['text'])) {
+                $data['task']['text'] = preg_replace('/^:([\w_]+): (.+)/m', '$2', $data['task']['text']);
+            }
+
+            $rewards = [];
+            require(dirname(__FILE__) . "/config/rewards.dist.php");
+
             $db_prefix = $fitbitApp->getSetting("db_prefix", null, false);
             $fitbitApp->getDatabase()->insert($db_prefix . "inbox",
                 [

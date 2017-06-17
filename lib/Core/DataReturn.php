@@ -2328,11 +2328,31 @@ class DataReturn
             "LINE" => __LINE__
         ]);
 
+
+
         foreach ($dbInbox as $dbInboxItem) {
             if ($dbInboxItem['subject'] == "" && $dbInboxItem['body'] != "") {
                 $dbInboxItem['subject'] = $dbInboxItem['body'];
                 $dbInboxItem['body'] = "";
             }
+
+            $rules = [];
+            require(dirname(__FILE__) . "/../../config/rewards.dist.php");
+            foreach ($rules as $cat) {
+                foreach ($cat as $event) {
+                    foreach ($event as $action) {
+                        foreach ($action as $reward) {
+                            nxr(0, $reward['name']);
+                            if (strpos($reward['name'], $dbInboxItem['subject']) !== false) {
+                                if (array_key_exists("icon", $reward) && $reward['icon'] != "") {
+                                    $dbInboxItem['ico'] = $reward['icon'];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             array_push($returnArray, $dbInboxItem);
         }
 
@@ -2838,9 +2858,11 @@ class DataReturn
                 ["AND" => ["fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null]]);
 
             $taskerDataArray['current']['start'] = $currentStreakStart["start_date"];
+            $taskerDataArray['current']['start_f'] = date("M jS, Y", strtotime($taskerDataArray['current']['start']));
             $taskerDataArray['current']['days'] = $currentStreakStart["length"];
         } else {
-            $taskerDataArray['current']['start'] = date('Y-m-d');
+            $taskerDataArray['current']['start'] = date('M jS, Y');
+            $taskerDataArray['current']['start_f'] = date('Y-m-d');
             $taskerDataArray['current']['days'] = 0;
         }
 
@@ -2869,7 +2891,9 @@ class DataReturn
                 ]);
 
             $taskerDataArray['max']['start'] = $databaseResults['start_date'];
+            $taskerDataArray['max']['start_f'] = date("M jS, Y", strtotime($taskerDataArray['max']['start']));
             $taskerDataArray['max']['end'] = $databaseResults['end_date'];
+            $taskerDataArray['max']['end_f'] = date("M jS", strtotime($taskerDataArray['max']['end']));
             $taskerDataArray['max']['days'] = $databaseResults['length'];
             if ($taskerDataArray['current']['days'] > 0) {
                 $taskerDataArray['max']['dist'] = round(($taskerDataArray['current']['days'] / $databaseResults['length']) * 100,
@@ -2902,10 +2926,12 @@ class DataReturn
                 ]);
 
             $taskerDataArray['last']['start'] = $databaseResults['start_date'];
+            $taskerDataArray['last']['start_f'] = date("M jS, Y", strtotime($taskerDataArray['last']['start']));
             $taskerDataArray['last']['end'] = $databaseResults['end_date'];
+            $taskerDataArray['last']['end_f'] = date("M jS", strtotime($taskerDataArray['last']['end']));
             $taskerDataArray['last']['days'] = $databaseResults['length'];
             if ($taskerDataArray['current']['days'] > 0) {
-                $taskerDataArray['last']['dist'] = round(($taskerDataArray['last']['days'] / $databaseResults['length']) * 100,
+                $taskerDataArray['last']['dist'] = round(($taskerDataArray['current']['days'] / $databaseResults['length']) * 100,
                     0);
             } else {
                 $taskerDataArray['last']['dist'] = 0;
@@ -3058,7 +3084,6 @@ class DataReturn
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
-            $this->getAppClass()->getDatabase()->insert($db_prefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "level" => 0, "percent" => 0, "gold" => 0, "health" => 100, "fuid" => $this->getUserID()]);
             $return = ["class" => "Rebel", "xp" => 0, "mana" => 0, "level" => 0, "percent" => 0, "gold" => 0, "health" => 100];
         } else {
             $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class','xp','mana','health','gold','level','percent'], ["fuid" => $this->getUserID()]);

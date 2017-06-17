@@ -14,6 +14,7 @@
     loadJS(requireJS, "js/views/main.js");
 
     loadCSS("css/bucket-ico-fonts.css");
+    loadCSS("css/nomie.css");
     setUpBreadcrumb([], 'Dashboard');
 </script>
 
@@ -146,47 +147,128 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <span>Inbox</span>
+                    <div id="habiticaReg">
+
+                        <div class="card">
+                            <div class="card-block">
+                                <img src="img/habitica.png" />
+                            </div>
                         </div>
-                        <div class="card-block">
-                            <div class="row" id="xpRow">
-                                <div class="col-12">
-                                    <div class="social-box xplvl">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <img id="xpLevelBadge" src="img/xplevels/0.png" style="float: right">
+
+                        <div class="card">
+                            <div class="card-header">
+                                <span>Connect Your Habitica Account</span>
+                            </div>
+                            <div class="card-block" style="display: none" id="habiticaConnectError"></div>
+                            <div class="card-block">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <form class="form-signin" id="habiticaConnect">
+                                            <p class="text-muted">Connect your account by providing your User ID and API Token from <a target="_blank" href="https://habitica.com/#/options/settings/api">Settings -> API</a> </p>
+                                            <div class="input-group mb-3"><span class="input-group-addon"><i class="line-icon-user"></i></span> <input type="text" class="form-control" name="userid" title="User ID" placeholder="User ID" autofocus></div>
+                                            <div class="input-group mb-3"><span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="text" class="form-control" name="token" title="API Token" placeholder="API Token"></div>
+                                            <button type="submit" class="btn btn-block btn-success">Connect Account</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span>Create A Habitica Account</span>
+                            </div>
+                            <div class="card-block" style="display: none" id="habiticaRegisterError"></div>
+                            <div class="card-block">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <form class="form-signin" id="habiticaRegister">
+                                            <p class="text-muted">You can create new Habitica user from the <a href="https://habitica.com" target="_blank">habitica.com</a> website, or using the form bellow.</p>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-addon"><i class="line-icon-user"></i></span> <input type="text" class="form-control" name="username" title="User ID" placeholder="User ID" ></div>
+
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-addon">@</span> <input type="text" class="form-control" name="email" title="User ID" placeholder="Email Address" ></div>
+
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="password" class="form-control" placeholder="Password" name="password">
                                             </div>
+
+                                            <div class="input-group mb-4">
+                                                <span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="password" class="form-control" placeholder="Repeat password" name="password2">
+                                            </div>
+
+                                            <button type="submit" class="btn btn-block btn-success">Create Account</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div  id="habiticaXp">
+                        <div class="card">
+                            <div class="card-header">
+                                <span><a href="https://habitica.com" target="_blank">Habitica</a> | RPG - <a href="https://habitica.com/#/options/groups/guilds/87aeb151-1e95-4291-a8ce-faff4082120e">NxCore Guild</a> </span>
+                            </div>
+                            <div class="card-block">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <strong id="xpClass">0</strong>
+                                    </div>
+                                </div>
+                                <div class="row" id="xpRow">
+                                    <div class="col-3">
+                                        <img id="xpAvatar" src="img/xplevels/0.png">
+                                        <div class="progress progress-xs my-3">
+                                            <div id="xpHealth" class="progress-bar bg-danger" role="progressbar" style="width: 0" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="progress progress-xs my-3">
-                                                    <div id="xpProgressNextLevel" class="progress-bar bg-info" role="progressbar" style="width: 0" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="social-box xplvl">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <img id="xpClassBadge" src="img/xplevels/0.png" style="text-align: center">
+                                                </div>
+                                                <div class="col-6">
+                                                    <img id="xpLevelBadge" src="img/xplevels/0.png" style="float: right">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <ul>
-                                                    <li>
-                                                        <strong id="xp">0</strong>
-                                                        <span>XP</span>
-                                                    </li>
-                                                    <li>
-                                                        <strong id="xpLvl">0</strong>
-                                                        <span>Level</span>
-                                                    </li>
-                                                </ul>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="progress progress-xs my-3">
+                                                        <div id="xpProgressNextLevel" class="progress-bar bg-info" role="progressbar" style="width: 0" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <ul>
+                                                        <li class="col-3">
+                                                            <strong id="xp">0</strong>
+                                                            <span>XP</span>
+                                                        </li>
+                                                        <li class="col-3">
+                                                            <strong id="xpLvl">0</strong>
+                                                            <span>Level</span>
+                                                        </li>
+                                                        <li class="col-3">
+                                                            <strong id="xpMana">0</strong>
+                                                            <span>Mana</span>
+                                                        </li>
+                                                        <li class="col-3">
+                                                            <strong id="xGold">0</strong>
+                                                            <span>Gold</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-block">
-                                <div class="row" id="rewardLog">
-                                    <div class="col-12">
-                                        <ul class="icons-list" id="rewardsList"></ul>
+                                <div class="card-block">
+                                    <div class="row" id="rewardLog">
+                                        <div class="col-12">
+                                            <ul class="icons-list" id="rewardsList"></ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

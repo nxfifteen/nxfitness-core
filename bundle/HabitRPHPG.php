@@ -43,7 +43,7 @@ class HabitRPHPG {
         }
     }
 
-    public function _request($method, $operation, $data = '') {
+    public function _request($method, $operation, $data = '', $returnError = false) {
         if(!function_exists("curl_init")) die("HabitRPG Library requires curl to function.");
 
         $url = $this->base_url . 'api/v3/' . $operation;
@@ -116,8 +116,12 @@ class HabitRPHPG {
             if($return['success']) {
                 if(isset($return['data'])) $tasks = $return['data'];
             } else {
-                nxr(0, $return['error'] . ": " . $return['message']);
-                return false;
+                if ($returnError) {
+                    return $return;
+                } else {
+                    nxr(0, $return['error'] . ": " . $return['message']);
+                    return false;
+                }
             }
         } else {
             die("Make sure HabitRPHPG::json_return_format_is_array is true for this to work");

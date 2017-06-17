@@ -81,11 +81,11 @@ if ( ! array_key_exists( "admin_config", $_SESSION ) ) {
                         <p class="text-muted">Sign In to your account</p>
                         <form action="<?php echo $config[ 'http/admin' ]; ?>/login/redirect" method="post">
                             <div class="input-group mb-3">
-                                    <span class="input-group-addon"><i class="icon-user"></i>
+                                    <span class="input-group-addon"><i class="line-icon-user"></i>
                                     </span> <input type="text" class="form-control" placeholder="Username" name="fuid" autofocus>
                             </div>
                             <div class="input-group mb-4">
-                                    <span class="input-group-addon"><i class="icon-lock"></i>
+                                    <span class="input-group-addon"><i class="line-icon-lock"></i>
                                     </span> <input type="password" class="form-control" placeholder="Password" name="password">
                             </div>
                             <div class="row">
