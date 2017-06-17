@@ -79,9 +79,29 @@ class FitbitStreak extends Modules
                         "reward" => '{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "up": true, "down": false, "score": "up"}'
                     ], "pending", $rewardKey);
                 } else if ($eventDetails['days_between'] > 0 && !$this->eventDetails["streak_ended"]) {
-                    $habitica->_create("todo", "Beat Your Last Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1, "notes": "Your last streak was '.$last.' days, beat that!", "up": true, "down": false, "score": "up", "date": "'.date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $last . ' days')).'"}', true));
-                    $habitica->_create("todo", "Beat Your Average Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "notes": "Your average streak is '.$avg.' days, beat that!", "up": true, "down": false, "score": "up", "date": "'.date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $avg . ' days')).'"}', true));
-                    $habitica->_create("todo", "Beat Your Longest Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 2, "notes": "Your longest streak was '.$max.' days, beat that!", "up": true, "down": false, "score": "up", "date": "'.date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $max . ' days')).'"}', true));
+                    $tasks = $habitica->_create("todo", "Beat Your Last Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1, "notes": "Your last streak was '.$last.' days, beat that!", "up": true, "down": false, "score": "up", "date": "'.date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $last . ' days')).'"}', true));
+                    if (is_array($tasks)) {
+                        $tasks = $tasks['_id'];
+                    }
+                    for ($i = 1; $i < $last; $i++) {
+                        $habitica->getHabitRPHPG()->_request("post", "tasks/".$tasks."/checklist", ["text" => "Beat Your Steps on " . date("M jS", strtotime($eventDetails['streak_start'] . ' +' . $i . ' days'))]);
+                    }
+
+                    $tasks = $habitica->_create("todo", "Beat Your Average Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "notes": "Your average streak is '.$avg.' days, beat that!", "up": true, "down": false, "score": "up", "date": "'.date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $avg . ' days')).'"}', true));
+                    if (is_array($tasks)) {
+                        $tasks = $tasks['_id'];
+                    }
+                    for ($i = 1; $i < $avg; $i++) {
+                        $habitica->getHabitRPHPG()->_request("post", "tasks/".$tasks."/checklist", ["text" => "Beat Your Steps on " . date("M jS", strtotime($eventDetails['streak_start'] . ' +' . $i . ' days'))]);
+                    }
+
+                    $tasks = $habitica->_create("todo", "Beat Your Longest Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 2, "notes": "Your longest streak was '.$max.' days, beat that!", "up": true, "down": false, "score": "up", "date": "'.date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $max . ' days')).'"}', true));
+                    if (is_array($tasks)) {
+                        $tasks = $tasks['_id'];
+                    }
+                    for ($i = 1; $i < $max; $i++) {
+                        $habitica->getHabitRPHPG()->_request("post", "tasks/".$tasks."/checklist", ["text" => "Beat Your Steps on " . date("M jS", strtotime($eventDetails['streak_start'] . ' +' . $i . ' days'))]);
+                    }
                 }
             }
         }
