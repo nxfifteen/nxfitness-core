@@ -2925,7 +2925,7 @@ class DataReturn
             $taskerDataArray['last']['end'] = $databaseResults['end_date'];
             $taskerDataArray['last']['days'] = $databaseResults['length'];
             if ($taskerDataArray['current']['days'] > 0) {
-                $taskerDataArray['last']['dist'] = round(($taskerDataArray['last']['days'] / $databaseResults['length']) * 100,
+                $taskerDataArray['last']['dist'] = round(($taskerDataArray['current']['days'] / $databaseResults['length']) * 100,
                     0);
             } else {
                 $taskerDataArray['last']['dist'] = 0;
