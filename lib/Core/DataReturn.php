@@ -2858,9 +2858,11 @@ class DataReturn
                 ["AND" => ["fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null]]);
 
             $taskerDataArray['current']['start'] = $currentStreakStart["start_date"];
+            $taskerDataArray['current']['start_f'] = date("M jS, Y", strtotime($taskerDataArray['current']['start']));
             $taskerDataArray['current']['days'] = $currentStreakStart["length"];
         } else {
-            $taskerDataArray['current']['start'] = date('Y-m-d');
+            $taskerDataArray['current']['start'] = date('M jS, Y');
+            $taskerDataArray['current']['start_f'] = date('Y-m-d');
             $taskerDataArray['current']['days'] = 0;
         }
 
@@ -2889,7 +2891,9 @@ class DataReturn
                 ]);
 
             $taskerDataArray['max']['start'] = $databaseResults['start_date'];
+            $taskerDataArray['max']['start_f'] = date("M jS, Y", strtotime($taskerDataArray['max']['start']));
             $taskerDataArray['max']['end'] = $databaseResults['end_date'];
+            $taskerDataArray['max']['end_f'] = date("M jS", strtotime($taskerDataArray['max']['end']));
             $taskerDataArray['max']['days'] = $databaseResults['length'];
             if ($taskerDataArray['current']['days'] > 0) {
                 $taskerDataArray['max']['dist'] = round(($taskerDataArray['current']['days'] / $databaseResults['length']) * 100,
@@ -2922,7 +2926,9 @@ class DataReturn
                 ]);
 
             $taskerDataArray['last']['start'] = $databaseResults['start_date'];
+            $taskerDataArray['last']['start_f'] = date("M jS, Y", strtotime($taskerDataArray['last']['start']));
             $taskerDataArray['last']['end'] = $databaseResults['end_date'];
+            $taskerDataArray['last']['end_f'] = date("M jS", strtotime($taskerDataArray['last']['end']));
             $taskerDataArray['last']['days'] = $databaseResults['length'];
             if ($taskerDataArray['current']['days'] > 0) {
                 $taskerDataArray['last']['dist'] = round(($taskerDataArray['current']['days'] / $databaseResults['length']) * 100,

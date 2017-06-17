@@ -165,7 +165,7 @@ $(function () {
             var CurrentDays = $('#CurrentDays');
             if (CurrentDays.length > 0) {
                 if (data.results.current.days > 0) {
-                    CurrentDays.html("Current streak started on " + data.results.current.start + " and has lasted " + data.results.current.days + " days");
+                    CurrentDays.html("Current streak started on " + data.results.current.start_f + " and has lasted " + data.results.current.days + " days");
                 } else {
                     CurrentDays.html("You need to beat your step goal to start a streak");
                 }
@@ -174,7 +174,7 @@ $(function () {
             var AverageDays = $('#AverageDays');
             if (AverageDays.length > 0) {
                 if (parseInt(data.results.current.days) < parseInt(data.results.avg.days)) {
-                    AverageDays.html("Lasts " + data.results.avg.days + " days and your " + (data.results.avg.days - data.results.current.days) + " days away from it.");
+                    AverageDays.html("Lasts for " + data.results.avg.days + " days and your " + (data.results.avg.days - data.results.current.days) + " days away from it.");
                 } else {
                     AverageDays.html("Is toast! Your betting your " + data.results.avg.days + " day average by " + (data.results.current.days - data.results.avg.days) + " days.");
                 }
@@ -184,7 +184,7 @@ $(function () {
             var LastDays = $('#LastDays');
             if (LastDays.length > 0) {
                 if (parseInt(data.results.current.days) < parseInt(data.results.last.days)) {
-                    LastDays.html("Ran between " + data.results.last.start + " and " + data.results.last.end + ", lasting " + data.results.last.days + " days and your " + (data.results.last.days - data.results.current.days) + " days away from it.");
+                    LastDays.html("Ran between " + data.results.last.start_f + " and " + data.results.last.end_f + ", lasting " + data.results.last.days + " days and your " + (data.results.last.days - data.results.current.days) + " days away from it.");
                 } else {
                     LastDays.html("Is toast! Your betting your last streak of " + data.results.last.days + " day by " + (data.results.current.days - data.results.last.days) + " days.");
                 }
@@ -194,7 +194,7 @@ $(function () {
             var LongestDays = $('#LongestDays');
             if (LongestDays.length > 0) {
                 if (parseInt(data.results.current.days) < parseInt(data.results.max.days)) {
-                    LongestDays.html("Ran between " + data.results.max.start + " and " + data.results.max.end + ", lasting " + data.results.max.days + " days and your " + (data.results.max.days - data.results.current.days) + " days away from it.");
+                    LongestDays.html("Ran between " + data.results.max.start_f + " and " + data.results.max.end_f + ", lasting " + data.results.max.days + " days and your " + (data.results.max.days - data.results.current.days) + " days away from it.");
                 } else {
                     LongestDays.html("Is toast! Your betting your longest streak of " + data.results.max.days + " days by " + data.results.current.days + " days.");
                 }
@@ -259,7 +259,7 @@ $(function () {
                 $('#xpMana').html(data.results.mana);
                 $('#xpLvl').html(data.results.level);
                 $('#xpClass').html(data.results.class);
-                $('#xGold').html(data.results.gold + "." + data.results.silver );
+                $('#xGold').html(data.results.gold + "." + data.results.silver);
 
                 $('#xpAvatar').attr('src', data.results.avatar);
                 $('#xpLevelBadge').attr('src', data.results.ico);
@@ -300,7 +300,7 @@ $(function () {
 });
 
 // this is the id of the form
-$("#habiticaRegister").submit(function(e) {
+$("#habiticaRegister").submit(function (e) {
 
     var url = "../ajax.php"; // the script where you handle the form input.
     var data = $("#habiticaRegister").serialize();
@@ -316,21 +316,21 @@ $("#habiticaRegister").submit(function(e) {
     html += '        </div>';
     $('#habiticaRegisterError').html(html).show();
 
-     $.ajax({
-         type: "POST",
-         url: url,
-         data: data
-     }).done(function(response) {
-         window.location.reload();
-     }).fail(function(response) {
-         $('#habiticaRegisterError').html(response.responseText);
-     });
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        window.location.reload();
+    }).fail(function (response) {
+        $('#habiticaRegisterError').html(response.responseText);
+    });
 
     e.preventDefault(); // avoid to execute the actual submit of the form.
 });
 
 // this is the id of the form
-$("#habiticaConnect").submit(function(e) {
+$("#habiticaConnect").submit(function (e) {
 
     var url = "../ajax.php"; // the script where you handle the form input.
     var data = $("#habiticaConnect").serialize();
@@ -350,9 +350,9 @@ $("#habiticaConnect").submit(function(e) {
         type: "POST",
         url: url,
         data: data
-    }).done(function(response) {
+    }).done(function (response) {
         window.location.reload();
-    }).fail(function(response) {
+    }).fail(function (response) {
         $('#habiticaConnectError').html(response.responseText);
     });
 
