@@ -1174,7 +1174,7 @@ class ApiBabel
                 $path = '';
             }
 
-            $request = $this->getLibrary()->getAuthenticatedRequest(OAUTH_HTTP_METHOD_POST,
+            $request = $this->getLibrary()->getAuthenticatedRequest('POST',
                 FITBIT_COM . "/1/user/-" . $path . "/apiSubscriptions/" . $id . ".json", $accessToken,
                 ["headers" => $userHeaders]);
             // Make the authenticated API request and get the response.
