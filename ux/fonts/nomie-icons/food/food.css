@@ -1,228 +1,437 @@
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
 /*
   food icon font: food
   Creation date: 19/02/2016 14:48
   */
 
 @font-face {
-    font-family : "food";
-    src         : url("../nomie-icons/food/food.eot");
-    src         : url("../nomie-icons/food/food.eot?#iefix") format("embedded-opentype"),
+    font-family: "food";
+    src: url("../nomie-icons/food/food.eot");
+    src: url("../nomie-icons/food/food.eot?#iefix") format("embedded-opentype"),
     url("../nomie-icons/food/food.woff") format("woff"),
     url("../nomie-icons/food/food.ttf") format("truetype"),
     url("../nomie-icons/food/food.svg#food") format("svg");
-    font-weight : normal;
-    font-style  : normal;
+    font-weight: normal;
+    font-style: normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio : 0) {
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
     @font-face {
-        font-family : "food";
-        src         : url("../nomie-icons/food/food.svg#food") format("svg");
+        font-family: "food";
+        src: url("../nomie-icons/food/food.svg#food") format("svg");
     }
 }
 
 [class^="food-"]:before, [class*=" food-"]:before,
 [class^="food-"]:after, [class*=" food-"]:after {
-    font-family : food;
-    font-style  : normal;
+    font-family: food;
+    font-style: normal;
 }
 
-.food-aubergine:before { content : "\f100"; }
-
-.food-bag-of-sugar:before { content : "\f101"; }
-
-.food-baked-bun:before { content : "\f102"; }
-
-.food-bell-covering-hot-dish:before { content : "\f103"; }
-
-.food-boiled-egg-on-cup:before { content : "\f104"; }
-
-.food-bowl-of-food:before { content : "\f105"; }
-
-.food-bowl-of-noodles:before { content : "\f106"; }
-
-.food-bowl-of-white-rice:before { content : "\f107"; }
-
-.food-bowl-with-chopsticks:before { content : "\f108"; }
-
-.food-broccoli-outline:before { content : "\f109"; }
-
-.food-bunch-of-grapes:before { content : "\f10a"; }
-
-.food-candy:before { content : "\f10b"; }
-
-.food-cardboard-box-with-chopsticks:before { content : "\f10c"; }
-
-.food-carrot:before { content : "\f10d"; }
-
-.food-cart-wheel:before { content : "\f10e"; }
-
-.food-cheese-grater:before { content : "\f10f"; }
-
-.food-cherries:before { content : "\f110"; }
-
-.food-chicken-leg:before { content : "\f111"; }
-
-.food-cocktail-glass:before { content : "\f112"; }
-
-.food-coffee-beans:before { content : "\f113"; }
-
-.food-coffee-maker-with-coffee-cup:before { content : "\f114"; }
-
-.food-corn-dog:before { content : "\f115"; }
-
-.food-corn-snacks:before { content : "\f116"; }
-
-.food-corncob:before { content : "\f117"; }
-
-.food-croissant-outline:before { content : "\f118"; }
-
-.food-crossed-knife-and-fork:before { content : "\f119"; }
-
-.food-cubes:before { content : "\f11a"; }
-
-.food-cutlery:before { content : "\f11b"; }
-
-.food-ear-of-wheat:before { content : "\f11c"; }
-
-.food-eggs:before { content : "\f11d"; }
-
-.food-electric-mixer:before { content : "\f11e"; }
-
-.food-empty-plate:before { content : "\f11f"; }
-
-.food-filled-glass:before { content : "\f120"; }
-
-.food-fish:before { content : "\f121"; }
-
-.food-fried-egg:before { content : "\f122"; }
-
-.food-fruits-on-branch:before { content : "\f123"; }
-
-.food-garlic:before { content : "\f124"; }
-
-.food-glass-of-alcoholic-beverage:before { content : "\f125"; }
-
-.food-glass-of-drink:before { content : "\f126"; }
-
-.food-ham:before { content : "\f127"; }
-
-.food-hot-cup-of-tea:before { content : "\f128"; }
-
-.food-hot-dog:before { content : "\f129"; }
-
-.food-hot-pepper-outline:before { content : "\f12a"; }
-
-.food-hot-soup:before { content : "\f12b"; }
-
-.food-ice-cream-cone-with-three-scoops:before { content : "\f12c"; }
-
-.food-ice-cream-with-topping:before { content : "\f12d"; }
-
-.food-jar-for-measuring-liquids:before { content : "\f12e"; }
-
-.food-jar-of-beer:before { content : "\f12f"; }
-
-.food-jar-of-jam:before { content : "\f130"; }
-
-.food-kitchen-scale:before { content : "\f131"; }
-
-.food-knife-fork-and-plate:before { content : "\f132"; }
-
-.food-lemon:before { content : "\f133"; }
-
-.food-loaf-of-bread:before { content : "\f134"; }
-
-.food-lollipop-candy:before { content : "\f135"; }
-
-.food-meat-pie:before { content : "\f136"; }
-
-.food-meat-steak:before { content : "\f137"; }
-
-.food-mexican-taco:before { content : "\f138"; }
-
-.food-mincer:before { content : "\f139"; }
-
-.food-muffin:before { content : "\f13a"; }
-
-.food-mushroom-outline:before { content : "\f13b"; }
-
-.food-nachos-and-dish:before { content : "\f13c"; }
-
-.food-onion:before { content : "\f13d"; }
-
-.food-oven-mitt:before { content : "\f13e"; }
-
-.food-pair-of-bananas:before { content : "\f13f"; }
-
-.food-pair-of-bottles:before { content : "\f140"; }
-
-.food-pasta-serving:before { content : "\f141"; }
-
-.food-pear:before { content : "\f142"; }
-
-.food-pepper:before { content : "\f143"; }
-
-.food-piece-of-cake-with-berries:before { content : "\f144"; }
-
-.food-piece-of-cake-with-berries-1:before { content : "\f145"; }
-
-.food-piece-of-cheese:before { content : "\f146"; }
-
-.food-pinecone:before { content : "\f147"; }
-
-.food-plastic-coffee-cup:before { content : "\f148"; }
-
-.food-pomegranate:before { content : "\f149"; }
-
-.food-prawn:before { content : "\f14a"; }
-
-.food-pumpkin:before { content : "\f14b"; }
-
-.food-restaurant-tray:before { content : "\f14c"; }
-
-.food-rice-bowl:before { content : "\f14d"; }
-
-.food-roast-chicken:before { content : "\f14e"; }
-
-.food-rolling-pin:before { content : "\f14f"; }
-
-.food-round-bread:before { content : "\f150"; }
-
-.food-salami:before { content : "\f151"; }
-
-.food-sausage-and-fork:before { content : "\f152"; }
-
-.food-skewer:before { content : "\f153"; }
-
-.food-slice-of-bread:before { content : "\f154"; }
-
-.food-slice-of-melon:before { content : "\f155"; }
-
-.food-slice-of-pizza:before { content : "\f156"; }
-
-.food-slice-of-watermelon:before { content : "\f157"; }
-
-.food-smoking-barbecue:before { content : "\f158"; }
-
-.food-soft-drink-in-paper-cup-with-drinking-straw:before { content : "\f159"; }
-
-.food-soft-drink-with-straw:before { content : "\f15a"; }
-
-.food-soup-ladle:before { content : "\f15b"; }
-
-.food-spatula:before { content : "\f15c"; }
-
-.food-strawberry:before { content : "\f15d"; }
-
-.food-tea-bag:before { content : "\f15e"; }
-
-.food-tetra-brik-with-cap:before { content : "\f15f"; }
-
-.food-tomato:before { content : "\f160"; }
-
-.food-toque:before { content : "\f161"; }
-
-.food-wedding-cake:before { content : "\f162"; }
-
-.food-wine-glass:before { content : "\f163"; }
+.food-aubergine:before {
+    content: "\f100";
+}
+
+.food-bag-of-sugar:before {
+    content: "\f101";
+}
+
+.food-baked-bun:before {
+    content: "\f102";
+}
+
+.food-bell-covering-hot-dish:before {
+    content: "\f103";
+}
+
+.food-boiled-egg-on-cup:before {
+    content: "\f104";
+}
+
+.food-bowl-of-food:before {
+    content: "\f105";
+}
+
+.food-bowl-of-noodles:before {
+    content: "\f106";
+}
+
+.food-bowl-of-white-rice:before {
+    content: "\f107";
+}
+
+.food-bowl-with-chopsticks:before {
+    content: "\f108";
+}
+
+.food-broccoli-outline:before {
+    content: "\f109";
+}
+
+.food-bunch-of-grapes:before {
+    content: "\f10a";
+}
+
+.food-candy:before {
+    content: "\f10b";
+}
+
+.food-cardboard-box-with-chopsticks:before {
+    content: "\f10c";
+}
+
+.food-carrot:before {
+    content: "\f10d";
+}
+
+.food-cart-wheel:before {
+    content: "\f10e";
+}
+
+.food-cheese-grater:before {
+    content: "\f10f";
+}
+
+.food-cherries:before {
+    content: "\f110";
+}
+
+.food-chicken-leg:before {
+    content: "\f111";
+}
+
+.food-cocktail-glass:before {
+    content: "\f112";
+}
+
+.food-coffee-beans:before {
+    content: "\f113";
+}
+
+.food-coffee-maker-with-coffee-cup:before {
+    content: "\f114";
+}
+
+.food-corn-dog:before {
+    content: "\f115";
+}
+
+.food-corn-snacks:before {
+    content: "\f116";
+}
+
+.food-corncob:before {
+    content: "\f117";
+}
+
+.food-croissant-outline:before {
+    content: "\f118";
+}
+
+.food-crossed-knife-and-fork:before {
+    content: "\f119";
+}
+
+.food-cubes:before {
+    content: "\f11a";
+}
+
+.food-cutlery:before {
+    content: "\f11b";
+}
+
+.food-ear-of-wheat:before {
+    content: "\f11c";
+}
+
+.food-eggs:before {
+    content: "\f11d";
+}
+
+.food-electric-mixer:before {
+    content: "\f11e";
+}
+
+.food-empty-plate:before {
+    content: "\f11f";
+}
+
+.food-filled-glass:before {
+    content: "\f120";
+}
+
+.food-fish:before {
+    content: "\f121";
+}
+
+.food-fried-egg:before {
+    content: "\f122";
+}
+
+.food-fruits-on-branch:before {
+    content: "\f123";
+}
+
+.food-garlic:before {
+    content: "\f124";
+}
+
+.food-glass-of-alcoholic-beverage:before {
+    content: "\f125";
+}
+
+.food-glass-of-drink:before {
+    content: "\f126";
+}
+
+.food-ham:before {
+    content: "\f127";
+}
+
+.food-hot-cup-of-tea:before {
+    content: "\f128";
+}
+
+.food-hot-dog:before {
+    content: "\f129";
+}
+
+.food-hot-pepper-outline:before {
+    content: "\f12a";
+}
+
+.food-hot-soup:before {
+    content: "\f12b";
+}
+
+.food-ice-cream-cone-with-three-scoops:before {
+    content: "\f12c";
+}
+
+.food-ice-cream-with-topping:before {
+    content: "\f12d";
+}
+
+.food-jar-for-measuring-liquids:before {
+    content: "\f12e";
+}
+
+.food-jar-of-beer:before {
+    content: "\f12f";
+}
+
+.food-jar-of-jam:before {
+    content: "\f130";
+}
+
+.food-kitchen-scale:before {
+    content: "\f131";
+}
+
+.food-knife-fork-and-plate:before {
+    content: "\f132";
+}
+
+.food-lemon:before {
+    content: "\f133";
+}
+
+.food-loaf-of-bread:before {
+    content: "\f134";
+}
+
+.food-lollipop-candy:before {
+    content: "\f135";
+}
+
+.food-meat-pie:before {
+    content: "\f136";
+}
+
+.food-meat-steak:before {
+    content: "\f137";
+}
+
+.food-mexican-taco:before {
+    content: "\f138";
+}
+
+.food-mincer:before {
+    content: "\f139";
+}
+
+.food-muffin:before {
+    content: "\f13a";
+}
+
+.food-mushroom-outline:before {
+    content: "\f13b";
+}
+
+.food-nachos-and-dish:before {
+    content: "\f13c";
+}
+
+.food-onion:before {
+    content: "\f13d";
+}
+
+.food-oven-mitt:before {
+    content: "\f13e";
+}
+
+.food-pair-of-bananas:before {
+    content: "\f13f";
+}
+
+.food-pair-of-bottles:before {
+    content: "\f140";
+}
+
+.food-pasta-serving:before {
+    content: "\f141";
+}
+
+.food-pear:before {
+    content: "\f142";
+}
+
+.food-pepper:before {
+    content: "\f143";
+}
+
+.food-piece-of-cake-with-berries:before {
+    content: "\f144";
+}
+
+.food-piece-of-cake-with-berries-1:before {
+    content: "\f145";
+}
+
+.food-piece-of-cheese:before {
+    content: "\f146";
+}
+
+.food-pinecone:before {
+    content: "\f147";
+}
+
+.food-plastic-coffee-cup:before {
+    content: "\f148";
+}
+
+.food-pomegranate:before {
+    content: "\f149";
+}
+
+.food-prawn:before {
+    content: "\f14a";
+}
+
+.food-pumpkin:before {
+    content: "\f14b";
+}
+
+.food-restaurant-tray:before {
+    content: "\f14c";
+}
+
+.food-rice-bowl:before {
+    content: "\f14d";
+}
+
+.food-roast-chicken:before {
+    content: "\f14e";
+}
+
+.food-rolling-pin:before {
+    content: "\f14f";
+}
+
+.food-round-bread:before {
+    content: "\f150";
+}
+
+.food-salami:before {
+    content: "\f151";
+}
+
+.food-sausage-and-fork:before {
+    content: "\f152";
+}
+
+.food-skewer:before {
+    content: "\f153";
+}
+
+.food-slice-of-bread:before {
+    content: "\f154";
+}
+
+.food-slice-of-melon:before {
+    content: "\f155";
+}
+
+.food-slice-of-pizza:before {
+    content: "\f156";
+}
+
+.food-slice-of-watermelon:before {
+    content: "\f157";
+}
+
+.food-smoking-barbecue:before {
+    content: "\f158";
+}
+
+.food-soft-drink-in-paper-cup-with-drinking-straw:before {
+    content: "\f159";
+}
+
+.food-soft-drink-with-straw:before {
+    content: "\f15a";
+}
+
+.food-soup-ladle:before {
+    content: "\f15b";
+}
+
+.food-spatula:before {
+    content: "\f15c";
+}
+
+.food-strawberry:before {
+    content: "\f15d";
+}
+
+.food-tea-bag:before {
+    content: "\f15e";
+}
+
+.food-tetra-brik-with-cap:before {
+    content: "\f15f";
+}
+
+.food-tomato:before {
+    content: "\f160";
+}
+
+.food-toque:before {
+    content: "\f161";
+}
+
+.food-wedding-cake:before {
+    content: "\f162";
+}
+
+.food-wine-glass:before {
+    content: "\f163";
+}

@@ -26,17 +26,15 @@ require_once(dirname(__FILE__) . "/../../autoloader.php");
 class Delivery
 {
 
+    protected $dbPrefix;
     /**
      * @var Core
      */
     private $AppClass;
-
     /**
      * @var String
      */
     private $UserID;
-
-    protected $dbPrefix;
 
     /**
      * Delivery constructor.
@@ -51,6 +49,22 @@ class Delivery
     }
 
     /**
+     * @return Core
+     */
+    protected function getAppClass()
+    {
+        return $this->AppClass;
+    }
+
+    /**
+     * @param Core $AppClass
+     */
+    protected function setAppClass($AppClass)
+    {
+        $this->AppClass = $AppClass;
+    }
+
+    /**
      * @param array $recordReward
      * @param string $state
      * @param string $rewardKey
@@ -60,16 +74,6 @@ class Delivery
     {
         $this->recordDevlivery($recordReward, $state, $rewardKey);
         return [];
-    }
-
-    /**
-     * @param $string
-     * @return bool
-     */
-    protected function isJson($string) {
-        return ((is_string($string) &&
-            (is_object(json_decode($string)) ||
-                is_array(json_decode($string))))) ? true : false;
     }
 
     /**
@@ -95,22 +99,6 @@ class Delivery
     }
 
     /**
-     * @return Core
-     */
-    protected function getAppClass()
-    {
-        return $this->AppClass;
-    }
-
-    /**
-     * @param Core $AppClass
-     */
-    protected function setAppClass($AppClass)
-    {
-        $this->AppClass = $AppClass;
-    }
-
-    /**
      * @return String
      */
     protected function getUserID()
@@ -124,6 +112,17 @@ class Delivery
     protected function setUserID($UserID)
     {
         $this->UserID = $UserID;
+    }
+
+    /**
+     * @param $string
+     * @return bool
+     */
+    protected function isJson($string)
+    {
+        return ((is_string($string) &&
+            (is_object(json_decode($string)) ||
+                is_array(json_decode($string))))) ? true : false;
     }
 
 }

@@ -109,7 +109,8 @@ $(function () {
     }
 
     function graphWeight($, data, st) {
-        var i, dataSet1, dataSet2, dataSet3, dataSet4, dataSet5, dataSet6, dataTimeScale, aniDuration, pointRadius, weight_units;
+        var i, dataSet1, dataSet2, dataSet3, dataSet4, dataSet5, dataSet6, dataTimeScale, aniDuration, pointRadius,
+            weight_units;
 
         /** @namespace data.results.weight_units */
         //noinspection JSValidateTypes

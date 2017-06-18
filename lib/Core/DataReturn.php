@@ -2321,13 +2321,13 @@ class DataReturn
                 'bold'
             ], [
                 "AND" => ["fuid" => $this->getUserID(), "expires[>=]" => date("Y-m-d H:i:s")],
-                "ORDER" => ['date' => "DESC"]
+                "ORDER" => ['date' => "DESC"],
+                "LIMIT" => 14
             ]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
-
 
 
         foreach ($dbInbox as $dbInboxItem) {
@@ -2856,6 +2856,7 @@ class DataReturn
                 "length"
             ],
                 ["AND" => ["fuid" => $this->getUserID(), "goal" => "steps", "end_date" => null]]);
+            $currentStreakStart["length"] = $currentStreakStart["length"] + 1;
 
             $taskerDataArray['current']['start'] = $currentStreakStart["start_date"];
             $taskerDataArray['current']['start_f'] = date("M jS, Y", strtotime($taskerDataArray['current']['start']));
@@ -3086,7 +3087,7 @@ class DataReturn
         if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
             $return = ["class" => "Rebel", "xp" => 0, "mana" => 0, "level" => 0, "percent" => 0, "gold" => 0, "health" => 100];
         } else {
-            $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class','xp','mana','health','gold','level','percent'], ["fuid" => $this->getUserID()]);
+            $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class', 'xp', 'mana', 'health', 'gold', 'level', 'percent'], ["fuid" => $this->getUserID()]);
         }
 
         $currancy = explode('.', $return['gold']);
@@ -3109,7 +3110,7 @@ class DataReturn
      */
     public function returnUserRecordTopBadges()
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix",null, false);
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $userBadges = $this->getAppClass()->getDatabase()->select($db_prefix . "bages_user",
             ["[>]" . $db_prefix . "bages" => ["badgeid" => "encodedId"]],
             [$db_prefix . 'bages.badgeType', $db_prefix . 'bages.value', $db_prefix . 'bages_user.dateTime', $db_prefix . 'bages_user.timesAchieved'],

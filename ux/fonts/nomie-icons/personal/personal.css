@@ -1,192 +1,365 @@
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
 /*
   personal icon font: personal
   Creation date: 28/03/2016 04:39
   */
 
 @font-face {
-    font-family : "personal";
-    src         : url("../nomie-icons/personal/personal.eot");
-    src         : url("../nomie-icons/personal/personal.eot?#iefix") format("embedded-opentype"),
+    font-family: "personal";
+    src: url("../nomie-icons/personal/personal.eot");
+    src: url("../nomie-icons/personal/personal.eot?#iefix") format("embedded-opentype"),
     url("../nomie-icons/personal/personal.woff") format("woff"),
     url("../nomie-icons/personal/personal.ttf") format("truetype"),
     url("../nomie-icons/personal/personal.svg#personal") format("svg");
-    font-weight : normal;
-    font-style  : normal;
+    font-weight: normal;
+    font-style: normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio : 0) {
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
     @font-face {
-        font-family : "personal";
-        src         : url("../nomie-icons/personal/personal.svg#personal") format("svg");
+        font-family: "personal";
+        src: url("../nomie-icons/personal/personal.svg#personal") format("svg");
     }
 }
 
 [class^="personal-"]:before, [class*=" personal-"]:before,
 [class^="personal-"]:after, [class*=" personal-"]:after {
-    font-family : personal;
-    font-style  : normal;
+    font-family: personal;
+    font-style: normal;
 }
 
-.personal-bathroom:before { content : "\f100"; }
-
-.personal-body:before { content : "\f101"; }
-
-.personal-gender-both:before { content : "\f102"; }
-
-.personal-gender-gay:before { content : "\f103"; }
-
-.personal-gender-lesbian:before { content : "\f104"; }
-
-.personal-logo:before { content : "\f105"; }
-
-.personal-love:before { content : "\f106"; }
-
-.personal-love-1:before { content : "\f107"; }
-
-.personal-love-2:before { content : "\f108"; }
-
-.personal-love-3:before { content : "\f109"; }
-
-.personal-love-bed:before { content : "\f10a"; }
-
-.personal-love-bird:before { content : "\f10b"; }
-
-.personal-love-bottle:before { content : "\f10c"; }
-
-.personal-love-boy:before { content : "\f10d"; }
-
-.personal-love-camera:before { content : "\f10e"; }
-
-.personal-love-coffee:before { content : "\f10f"; }
-
-.personal-love-dance:before { content : "\f110"; }
-
-.personal-love-dinner:before { content : "\f111"; }
-
-.personal-love-fav:before { content : "\f112"; }
-
-.personal-love-flower:before { content : "\f113"; }
-
-.personal-love-flower-1:before { content : "\f114"; }
-
-.personal-love-food:before { content : "\f115"; }
-
-.personal-love-gift:before { content : "\f116"; }
-
-.personal-love-girl:before { content : "\f117"; }
-
-.personal-love-men:before { content : "\f118"; }
-
-.personal-love-note:before { content : "\f119"; }
-
-.personal-love-notes:before { content : "\f11a"; }
-
-.personal-love-people:before { content : "\f11b"; }
-
-.personal-love-people-1:before { content : "\f11c"; }
-
-.personal-love-people-2:before { content : "\f11d"; }
-
-.personal-love-people-3:before { content : "\f11e"; }
-
-.personal-love-position:before { content : "\f11f"; }
-
-.personal-love-search:before { content : "\f120"; }
-
-.personal-love-shape:before { content : "\f121"; }
-
-.personal-love-sign:before { content : "\f122"; }
-
-.personal-love-sign-1:before { content : "\f123"; }
-
-.personal-love-sign-2:before { content : "\f124"; }
-
-.personal-love-sign-3:before { content : "\f125"; }
-
-.personal-love-talk:before { content : "\f126"; }
-
-.personal-meds-bottle:before { content : "\f127"; }
-
-.personal-meds-marijuana:before { content : "\f128"; }
-
-.personal-meds-pill:before { content : "\f129"; }
-
-.personal-meds-shootup:before { content : "\f12a"; }
-
-.personal-meds-smoke-cig:before { content : "\f12b"; }
-
-.personal-meds-weed:before { content : "\f12c"; }
-
-.personal-sex-bed:before { content : "\f12d"; }
-
-.personal-sex-black-penis:before { content : "\f12e"; }
-
-.personal-sex-clamp:before { content : "\f12f"; }
-
-.personal-sex-dick:before { content : "\f130"; }
-
-.personal-sex-dick-1:before { content : "\f131"; }
-
-.personal-sex-dress:before { content : "\f132"; }
-
-.personal-sex-gear:before { content : "\f133"; }
-
-.personal-sex-gear-1:before { content : "\f134"; }
-
-.personal-sex-gear-2:before { content : "\f135"; }
-
-.personal-sex-gear-3:before { content : "\f136"; }
-
-.personal-sex-gear-4:before { content : "\f137"; }
-
-.personal-sex-gear-5:before { content : "\f138"; }
-
-.personal-sex-handcuff:before { content : "\f139"; }
-
-.personal-sex-mind:before { content : "\f13a"; }
-
-.personal-sex-naked:before { content : "\f13b"; }
-
-.personal-sex-naked-1:before { content : "\f13c"; }
-
-.personal-sex-penis:before { content : "\f13d"; }
-
-.personal-sex-rope:before { content : "\f13e"; }
-
-.personal-wc-bath:before { content : "\f13f"; }
-
-.personal-wc-bath-1:before { content : "\f140"; }
-
-.personal-wc-brush:before { content : "\f141"; }
-
-.personal-wc-pee:before { content : "\f142"; }
-
-.personal-wc-people:before { content : "\f143"; }
-
-.personal-wc-poop:before { content : "\f144"; }
-
-.personal-wc-poop-1:before { content : "\f145"; }
-
-.personal-wc-shave:before { content : "\f146"; }
-
-.personal-wc-shower:before { content : "\f147"; }
-
-.personal-wc-sign:before { content : "\f148"; }
-
-.personal-wc-soap:before { content : "\f149"; }
-
-.personal-wc-toilet:before { content : "\f14a"; }
-
-.personal-wc-toilet-1:before { content : "\f14b"; }
-
-.personal-wc-toilet-2:before { content : "\f14c"; }
-
-.personal-wc-tool:before { content : "\f14d"; }
-
-.personal-wc-tool-1:before { content : "\f14e"; }
-
-.personal-wc-tool-2:before { content : "\f14f"; }
-
-.personal-wc-tools:before { content : "\f150"; }
-
-.personal-wc-women:before { content : "\f151"; }
+.personal-bathroom:before {
+    content: "\f100";
+}
+
+.personal-body:before {
+    content: "\f101";
+}
+
+.personal-gender-both:before {
+    content: "\f102";
+}
+
+.personal-gender-gay:before {
+    content: "\f103";
+}
+
+.personal-gender-lesbian:before {
+    content: "\f104";
+}
+
+.personal-logo:before {
+    content: "\f105";
+}
+
+.personal-love:before {
+    content: "\f106";
+}
+
+.personal-love-1:before {
+    content: "\f107";
+}
+
+.personal-love-2:before {
+    content: "\f108";
+}
+
+.personal-love-3:before {
+    content: "\f109";
+}
+
+.personal-love-bed:before {
+    content: "\f10a";
+}
+
+.personal-love-bird:before {
+    content: "\f10b";
+}
+
+.personal-love-bottle:before {
+    content: "\f10c";
+}
+
+.personal-love-boy:before {
+    content: "\f10d";
+}
+
+.personal-love-camera:before {
+    content: "\f10e";
+}
+
+.personal-love-coffee:before {
+    content: "\f10f";
+}
+
+.personal-love-dance:before {
+    content: "\f110";
+}
+
+.personal-love-dinner:before {
+    content: "\f111";
+}
+
+.personal-love-fav:before {
+    content: "\f112";
+}
+
+.personal-love-flower:before {
+    content: "\f113";
+}
+
+.personal-love-flower-1:before {
+    content: "\f114";
+}
+
+.personal-love-food:before {
+    content: "\f115";
+}
+
+.personal-love-gift:before {
+    content: "\f116";
+}
+
+.personal-love-girl:before {
+    content: "\f117";
+}
+
+.personal-love-men:before {
+    content: "\f118";
+}
+
+.personal-love-note:before {
+    content: "\f119";
+}
+
+.personal-love-notes:before {
+    content: "\f11a";
+}
+
+.personal-love-people:before {
+    content: "\f11b";
+}
+
+.personal-love-people-1:before {
+    content: "\f11c";
+}
+
+.personal-love-people-2:before {
+    content: "\f11d";
+}
+
+.personal-love-people-3:before {
+    content: "\f11e";
+}
+
+.personal-love-position:before {
+    content: "\f11f";
+}
+
+.personal-love-search:before {
+    content: "\f120";
+}
+
+.personal-love-shape:before {
+    content: "\f121";
+}
+
+.personal-love-sign:before {
+    content: "\f122";
+}
+
+.personal-love-sign-1:before {
+    content: "\f123";
+}
+
+.personal-love-sign-2:before {
+    content: "\f124";
+}
+
+.personal-love-sign-3:before {
+    content: "\f125";
+}
+
+.personal-love-talk:before {
+    content: "\f126";
+}
+
+.personal-meds-bottle:before {
+    content: "\f127";
+}
+
+.personal-meds-marijuana:before {
+    content: "\f128";
+}
+
+.personal-meds-pill:before {
+    content: "\f129";
+}
+
+.personal-meds-shootup:before {
+    content: "\f12a";
+}
+
+.personal-meds-smoke-cig:before {
+    content: "\f12b";
+}
+
+.personal-meds-weed:before {
+    content: "\f12c";
+}
+
+.personal-sex-bed:before {
+    content: "\f12d";
+}
+
+.personal-sex-black-penis:before {
+    content: "\f12e";
+}
+
+.personal-sex-clamp:before {
+    content: "\f12f";
+}
+
+.personal-sex-dick:before {
+    content: "\f130";
+}
+
+.personal-sex-dick-1:before {
+    content: "\f131";
+}
+
+.personal-sex-dress:before {
+    content: "\f132";
+}
+
+.personal-sex-gear:before {
+    content: "\f133";
+}
+
+.personal-sex-gear-1:before {
+    content: "\f134";
+}
+
+.personal-sex-gear-2:before {
+    content: "\f135";
+}
+
+.personal-sex-gear-3:before {
+    content: "\f136";
+}
+
+.personal-sex-gear-4:before {
+    content: "\f137";
+}
+
+.personal-sex-gear-5:before {
+    content: "\f138";
+}
+
+.personal-sex-handcuff:before {
+    content: "\f139";
+}
+
+.personal-sex-mind:before {
+    content: "\f13a";
+}
+
+.personal-sex-naked:before {
+    content: "\f13b";
+}
+
+.personal-sex-naked-1:before {
+    content: "\f13c";
+}
+
+.personal-sex-penis:before {
+    content: "\f13d";
+}
+
+.personal-sex-rope:before {
+    content: "\f13e";
+}
+
+.personal-wc-bath:before {
+    content: "\f13f";
+}
+
+.personal-wc-bath-1:before {
+    content: "\f140";
+}
+
+.personal-wc-brush:before {
+    content: "\f141";
+}
+
+.personal-wc-pee:before {
+    content: "\f142";
+}
+
+.personal-wc-people:before {
+    content: "\f143";
+}
+
+.personal-wc-poop:before {
+    content: "\f144";
+}
+
+.personal-wc-poop-1:before {
+    content: "\f145";
+}
+
+.personal-wc-shave:before {
+    content: "\f146";
+}
+
+.personal-wc-shower:before {
+    content: "\f147";
+}
+
+.personal-wc-sign:before {
+    content: "\f148";
+}
+
+.personal-wc-soap:before {
+    content: "\f149";
+}
+
+.personal-wc-toilet:before {
+    content: "\f14a";
+}
+
+.personal-wc-toilet-1:before {
+    content: "\f14b";
+}
+
+.personal-wc-toilet-2:before {
+    content: "\f14c";
+}
+
+.personal-wc-tool:before {
+    content: "\f14d";
+}
+
+.personal-wc-tool-1:before {
+    content: "\f14e";
+}
+
+.personal-wc-tool-2:before {
+    content: "\f14f";
+}
+
+.personal-wc-tools:before {
+    content: "\f150";
+}
+
+.personal-wc-women:before {
+    content: "\f151";
+}

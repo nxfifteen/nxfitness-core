@@ -45,7 +45,7 @@ class RecordedWater extends Modules
             $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
             $water = $this->getAppClass()->getDatabase()->get($db_prefix . "water", "liquid", ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
-            if ($water > $goal) {
+            if ($water >= $goal) {
                 $this->checkDB("meals", "water", "drank", $rewardKey . "Bang On");
             }
         }

@@ -11,7 +11,6 @@
 namespace Core\Rewards\Modules;
 
 use Core\Rewards\Modules;
-use DateTime;
 
 require_once(dirname(__FILE__) . "/../Modules.php");
 require_once(dirname(__FILE__) . "/../../../autoloader.php");

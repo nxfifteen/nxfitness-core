@@ -8,11 +8,11 @@
  ******************************************************************************/
 
 @font-face {
-    font-family : 'simple-line-icons';
-    src         : url('../fonts/Simple-Line-Icons.eot?v=2.4.0');
-    src         : url('../fonts/Simple-Line-Icons.eot?v=2.4.0#iefix') format('embedded-opentype'), url('../fonts/Simple-Line-Icons.woff2?v=2.4.0') format('woff2'), url('../fonts/Simple-Line-Icons.ttf?v=2.4.0') format('truetype'), url('../fonts/Simple-Line-Icons.woff?v=2.4.0') format('woff'), url('../fonts/Simple-Line-Icons.svg?v=2.4.0#simple-line-icons') format('svg');
-    font-weight : normal;
-    font-style  : normal;
+    font-family: 'simple-line-icons';
+    src: url('../fonts/Simple-Line-Icons.eot?v=2.4.0');
+    src: url('../fonts/Simple-Line-Icons.eot?v=2.4.0#iefix') format('embedded-opentype'), url('../fonts/Simple-Line-Icons.woff2?v=2.4.0') format('woff2'), url('../fonts/Simple-Line-Icons.ttf?v=2.4.0') format('truetype'), url('../fonts/Simple-Line-Icons.woff?v=2.4.0') format('woff'), url('../fonts/Simple-Line-Icons.svg?v=2.4.0#simple-line-icons') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
 /*
@@ -209,770 +209,770 @@
 .line-icon-social-dropbox,
 .line-icon-social-vkontakte,
 .line-icon-social-steam {
-    font-family             : 'simple-line-icons';
-    speak                   : none;
-    font-style              : normal;
-    font-weight             : normal;
-    font-variant            : normal;
-    text-transform          : none;
-    line-height             : 1;
+    font-family: 'simple-line-icons';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
     /* Better Font Rendering =========== */
-    -webkit-font-smoothing  : antialiased;
-    -moz-osx-font-smoothing : grayscale;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .line-icon-user:before {
-    content : "\e005";
+    content: "\e005";
 }
 
 .line-icon-people:before {
-    content : "\e001";
+    content: "\e001";
 }
 
 .line-icon-user-female:before {
-    content : "\e000";
+    content: "\e000";
 }
 
 .line-icon-user-follow:before {
-    content : "\e002";
+    content: "\e002";
 }
 
 .line-icon-user-following:before {
-    content : "\e003";
+    content: "\e003";
 }
 
 .line-icon-user-unfollow:before {
-    content : "\e004";
+    content: "\e004";
 }
 
 .line-icon-login:before {
-    content : "\e066";
+    content: "\e066";
 }
 
 .line-icon-logout:before {
-    content : "\e065";
+    content: "\e065";
 }
 
 .line-icon-emotsmile:before {
-    content : "\e021";
+    content: "\e021";
 }
 
 .line-icon-phone:before {
-    content : "\e600";
+    content: "\e600";
 }
 
 .line-icon-call-end:before {
-    content : "\e048";
+    content: "\e048";
 }
 
 .line-icon-call-in:before {
-    content : "\e047";
+    content: "\e047";
 }
 
 .line-icon-call-out:before {
-    content : "\e046";
+    content: "\e046";
 }
 
 .line-icon-map:before {
-    content : "\e033";
+    content: "\e033";
 }
 
 .line-icon-location-pin:before {
-    content : "\e096";
+    content: "\e096";
 }
 
 .line-icon-direction:before {
-    content : "\e042";
+    content: "\e042";
 }
 
 .line-icon-directions:before {
-    content : "\e041";
+    content: "\e041";
 }
 
 .line-icon-compass:before {
-    content : "\e045";
+    content: "\e045";
 }
 
 .line-icon-layers:before {
-    content : "\e034";
+    content: "\e034";
 }
 
 .line-icon-menu:before {
-    content : "\e601";
+    content: "\e601";
 }
 
 .line-icon-list:before {
-    content : "\e067";
+    content: "\e067";
 }
 
 .line-icon-options-vertical:before {
-    content : "\e602";
+    content: "\e602";
 }
 
 .line-icon-options:before {
-    content : "\e603";
+    content: "\e603";
 }
 
 .line-icon-arrow-down:before {
-    content : "\e604";
+    content: "\e604";
 }
 
 .line-icon-arrow-left:before {
-    content : "\e605";
+    content: "\e605";
 }
 
 .line-icon-arrow-right:before {
-    content : "\e606";
+    content: "\e606";
 }
 
 .line-icon-arrow-up:before {
-    content : "\e607";
+    content: "\e607";
 }
 
 .line-icon-arrow-up-circle:before {
-    content : "\e078";
+    content: "\e078";
 }
 
 .line-icon-arrow-left-circle:before {
-    content : "\e07a";
+    content: "\e07a";
 }
 
 .line-icon-arrow-right-circle:before {
-    content : "\e079";
+    content: "\e079";
 }
 
 .line-icon-arrow-down-circle:before {
-    content : "\e07b";
+    content: "\e07b";
 }
 
 .line-icon-check:before {
-    content : "\e080";
+    content: "\e080";
 }
 
 .line-icon-clock:before {
-    content : "\e081";
+    content: "\e081";
 }
 
 .line-icon-plus:before {
-    content : "\e095";
+    content: "\e095";
 }
 
 .line-icon-minus:before {
-    content : "\e615";
+    content: "\e615";
 }
 
 .line-icon-close:before {
-    content : "\e082";
+    content: "\e082";
 }
 
 .line-icon-event:before {
-    content : "\e619";
+    content: "\e619";
 }
 
 .line-icon-exclamation:before {
-    content : "\e617";
+    content: "\e617";
 }
 
 .line-icon-organization:before {
-    content : "\e616";
+    content: "\e616";
 }
 
 .line-icon-trophy:before {
-    content : "\e006";
+    content: "\e006";
 }
 
 .line-icon-screen-smartphone:before {
-    content : "\e010";
+    content: "\e010";
 }
 
 .line-icon-screen-desktop:before {
-    content : "\e011";
+    content: "\e011";
 }
 
 .line-icon-plane:before {
-    content : "\e012";
+    content: "\e012";
 }
 
 .line-icon-notebook:before {
-    content : "\e013";
+    content: "\e013";
 }
 
 .line-icon-mustache:before {
-    content : "\e014";
+    content: "\e014";
 }
 
 .line-icon-mouse:before {
-    content : "\e015";
+    content: "\e015";
 }
 
 .line-icon-magnet:before {
-    content : "\e016";
+    content: "\e016";
 }
 
 .line-icon-energy:before {
-    content : "\e020";
+    content: "\e020";
 }
 
 .line-icon-disc:before {
-    content : "\e022";
+    content: "\e022";
 }
 
 .line-icon-cursor:before {
-    content : "\e06e";
+    content: "\e06e";
 }
 
 .line-icon-cursor-move:before {
-    content : "\e023";
+    content: "\e023";
 }
 
 .line-icon-crop:before {
-    content : "\e024";
+    content: "\e024";
 }
 
 .line-icon-chemistry:before {
-    content : "\e026";
+    content: "\e026";
 }
 
 .line-icon-speedometer:before {
-    content : "\e007";
+    content: "\e007";
 }
 
 .line-icon-shield:before {
-    content : "\e00e";
+    content: "\e00e";
 }
 
 .line-icon-screen-tablet:before {
-    content : "\e00f";
+    content: "\e00f";
 }
 
 .line-icon-magic-wand:before {
-    content : "\e017";
+    content: "\e017";
 }
 
 .line-icon-hourglass:before {
-    content : "\e018";
+    content: "\e018";
 }
 
 .line-icon-graduation:before {
-    content : "\e019";
+    content: "\e019";
 }
 
 .line-icon-ghost:before {
-    content : "\e01a";
+    content: "\e01a";
 }
 
 .line-icon-game-controller:before {
-    content : "\e01b";
+    content: "\e01b";
 }
 
 .line-icon-fire:before {
-    content : "\e01c";
+    content: "\e01c";
 }
 
 .line-icon-eyeglass:before {
-    content : "\e01d";
+    content: "\e01d";
 }
 
 .line-icon-envelope-open:before {
-    content : "\e01e";
+    content: "\e01e";
 }
 
 .line-icon-envelope-letter:before {
-    content : "\e01f";
+    content: "\e01f";
 }
 
 .line-icon-bell:before {
-    content : "\e027";
+    content: "\e027";
 }
 
 .line-icon-badge:before {
-    content : "\e028";
+    content: "\e028";
 }
 
 .line-icon-anchor:before {
-    content : "\e029";
+    content: "\e029";
 }
 
 .line-icon-wallet:before {
-    content : "\e02a";
+    content: "\e02a";
 }
 
 .line-icon-vector:before {
-    content : "\e02b";
+    content: "\e02b";
 }
 
 .line-icon-speech:before {
-    content : "\e02c";
+    content: "\e02c";
 }
 
 .line-icon-puzzle:before {
-    content : "\e02d";
+    content: "\e02d";
 }
 
 .line-icon-printer:before {
-    content : "\e02e";
+    content: "\e02e";
 }
 
 .line-icon-present:before {
-    content : "\e02f";
+    content: "\e02f";
 }
 
 .line-icon-playlist:before {
-    content : "\e030";
+    content: "\e030";
 }
 
 .line-icon-pin:before {
-    content : "\e031";
+    content: "\e031";
 }
 
 .line-icon-picture:before {
-    content : "\e032";
+    content: "\e032";
 }
 
 .line-icon-handbag:before {
-    content : "\e035";
+    content: "\e035";
 }
 
 .line-icon-globe-alt:before {
-    content : "\e036";
+    content: "\e036";
 }
 
 .line-icon-globe:before {
-    content : "\e037";
+    content: "\e037";
 }
 
 .line-icon-folder-alt:before {
-    content : "\e039";
+    content: "\e039";
 }
 
 .line-icon-folder:before {
-    content : "\e089";
+    content: "\e089";
 }
 
 .line-icon-film:before {
-    content : "\e03a";
+    content: "\e03a";
 }
 
 .line-icon-feed:before {
-    content : "\e03b";
+    content: "\e03b";
 }
 
 .line-icon-drop:before {
-    content : "\e03e";
+    content: "\e03e";
 }
 
 .line-icon-drawer:before {
-    content : "\e03f";
+    content: "\e03f";
 }
 
 .line-icon-docs:before {
-    content : "\e040";
+    content: "\e040";
 }
 
 .line-icon-doc:before {
-    content : "\e085";
+    content: "\e085";
 }
 
 .line-icon-diamond:before {
-    content : "\e043";
+    content: "\e043";
 }
 
 .line-icon-cup:before {
-    content : "\e044";
+    content: "\e044";
 }
 
 .line-icon-calculator:before {
-    content : "\e049";
+    content: "\e049";
 }
 
 .line-icon-bubbles:before {
-    content : "\e04a";
+    content: "\e04a";
 }
 
 .line-icon-briefcase:before {
-    content : "\e04b";
+    content: "\e04b";
 }
 
 .line-icon-book-open:before {
-    content : "\e04c";
+    content: "\e04c";
 }
 
 .line-icon-basket-loaded:before {
-    content : "\e04d";
+    content: "\e04d";
 }
 
 .line-icon-basket:before {
-    content : "\e04e";
+    content: "\e04e";
 }
 
 .line-icon-bag:before {
-    content : "\e04f";
+    content: "\e04f";
 }
 
 .line-icon-action-undo:before {
-    content : "\e050";
+    content: "\e050";
 }
 
 .line-icon-action-redo:before {
-    content : "\e051";
+    content: "\e051";
 }
 
 .line-icon-wrench:before {
-    content : "\e052";
+    content: "\e052";
 }
 
 .line-icon-umbrella:before {
-    content : "\e053";
+    content: "\e053";
 }
 
 .line-icon-trash:before {
-    content : "\e054";
+    content: "\e054";
 }
 
 .line-icon-tag:before {
-    content : "\e055";
+    content: "\e055";
 }
 
 .line-icon-support:before {
-    content : "\e056";
+    content: "\e056";
 }
 
 .line-icon-frame:before {
-    content : "\e038";
+    content: "\e038";
 }
 
 .line-icon-size-fullscreen:before {
-    content : "\e057";
+    content: "\e057";
 }
 
 .line-icon-size-actual:before {
-    content : "\e058";
+    content: "\e058";
 }
 
 .line-icon-shuffle:before {
-    content : "\e059";
+    content: "\e059";
 }
 
 .line-icon-share-alt:before {
-    content : "\e05a";
+    content: "\e05a";
 }
 
 .line-icon-share:before {
-    content : "\e05b";
+    content: "\e05b";
 }
 
 .line-icon-rocket:before {
-    content : "\e05c";
+    content: "\e05c";
 }
 
 .line-icon-question:before {
-    content : "\e05d";
+    content: "\e05d";
 }
 
 .line-icon-pie-chart:before {
-    content : "\e05e";
+    content: "\e05e";
 }
 
 .line-icon-pencil:before {
-    content : "\e05f";
+    content: "\e05f";
 }
 
 .line-icon-note:before {
-    content : "\e060";
+    content: "\e060";
 }
 
 .line-icon-loop:before {
-    content : "\e064";
+    content: "\e064";
 }
 
 .line-icon-home:before {
-    content : "\e069";
+    content: "\e069";
 }
 
 .line-icon-grid:before {
-    content : "\e06a";
+    content: "\e06a";
 }
 
 .line-icon-graph:before {
-    content : "\e06b";
+    content: "\e06b";
 }
 
 .line-icon-microphone:before {
-    content : "\e063";
+    content: "\e063";
 }
 
 .line-icon-music-tone-alt:before {
-    content : "\e061";
+    content: "\e061";
 }
 
 .line-icon-music-tone:before {
-    content : "\e062";
+    content: "\e062";
 }
 
 .line-icon-earphones-alt:before {
-    content : "\e03c";
+    content: "\e03c";
 }
 
 .line-icon-earphones:before {
-    content : "\e03d";
+    content: "\e03d";
 }
 
 .line-icon-equalizer:before {
-    content : "\e06c";
+    content: "\e06c";
 }
 
 .line-icon-like:before {
-    content : "\e068";
+    content: "\e068";
 }
 
 .line-icon-dislike:before {
-    content : "\e06d";
+    content: "\e06d";
 }
 
 .line-icon-control-start:before {
-    content : "\e06f";
+    content: "\e06f";
 }
 
 .line-icon-control-rewind:before {
-    content : "\e070";
+    content: "\e070";
 }
 
 .line-icon-control-play:before {
-    content : "\e071";
+    content: "\e071";
 }
 
 .line-icon-control-pause:before {
-    content : "\e072";
+    content: "\e072";
 }
 
 .line-icon-control-forward:before {
-    content : "\e073";
+    content: "\e073";
 }
 
 .line-icon-control-end:before {
-    content : "\e074";
+    content: "\e074";
 }
 
 .line-icon-volume-1:before {
-    content : "\e09f";
+    content: "\e09f";
 }
 
 .line-icon-volume-2:before {
-    content : "\e0a0";
+    content: "\e0a0";
 }
 
 .line-icon-volume-off:before {
-    content : "\e0a1";
+    content: "\e0a1";
 }
 
 .line-icon-calendar:before {
-    content : "\e075";
+    content: "\e075";
 }
 
 .line-icon-bulb:before {
-    content : "\e076";
+    content: "\e076";
 }
 
 .line-icon-chart:before {
-    content : "\e077";
+    content: "\e077";
 }
 
 .line-icon-ban:before {
-    content : "\e07c";
+    content: "\e07c";
 }
 
 .line-icon-bubble:before {
-    content : "\e07d";
+    content: "\e07d";
 }
 
 .line-icon-camrecorder:before {
-    content : "\e07e";
+    content: "\e07e";
 }
 
 .line-icon-camera:before {
-    content : "\e07f";
+    content: "\e07f";
 }
 
 .line-icon-cloud-download:before {
-    content : "\e083";
+    content: "\e083";
 }
 
 .line-icon-cloud-upload:before {
-    content : "\e084";
+    content: "\e084";
 }
 
 .line-icon-envelope:before {
-    content : "\e086";
+    content: "\e086";
 }
 
 .line-icon-eye:before {
-    content : "\e087";
+    content: "\e087";
 }
 
 .line-icon-flag:before {
-    content : "\e088";
+    content: "\e088";
 }
 
 .line-icon-heart:before {
-    content : "\e08a";
+    content: "\e08a";
 }
 
 .line-icon-info:before {
-    content : "\e08b";
+    content: "\e08b";
 }
 
 .line-icon-key:before {
-    content : "\e08c";
+    content: "\e08c";
 }
 
 .line-icon-link:before {
-    content : "\e08d";
+    content: "\e08d";
 }
 
 .line-icon-lock:before {
-    content : "\e08e";
+    content: "\e08e";
 }
 
 .line-icon-lock-open:before {
-    content : "\e08f";
+    content: "\e08f";
 }
 
 .line-icon-magnifier:before {
-    content : "\e090";
+    content: "\e090";
 }
 
 .line-icon-magnifier-add:before {
-    content : "\e091";
+    content: "\e091";
 }
 
 .line-icon-magnifier-remove:before {
-    content : "\e092";
+    content: "\e092";
 }
 
 .line-icon-paper-clip:before {
-    content : "\e093";
+    content: "\e093";
 }
 
 .line-icon-paper-plane:before {
-    content : "\e094";
+    content: "\e094";
 }
 
 .line-icon-power:before {
-    content : "\e097";
+    content: "\e097";
 }
 
 .line-icon-refresh:before {
-    content : "\e098";
+    content: "\e098";
 }
 
 .line-icon-reload:before {
-    content : "\e099";
+    content: "\e099";
 }
 
 .line-icon-settings:before {
-    content : "\e09a";
+    content: "\e09a";
 }
 
 .line-icon-star:before {
-    content : "\e09b";
+    content: "\e09b";
 }
 
 .line-icon-symbol-female:before {
-    content : "\e09c";
+    content: "\e09c";
 }
 
 .line-icon-symbol-male:before {
-    content : "\e09d";
+    content: "\e09d";
 }
 
 .line-icon-target:before {
-    content : "\e09e";
+    content: "\e09e";
 }
 
 .line-icon-credit-card:before {
-    content : "\e025";
+    content: "\e025";
 }
 
 .line-icon-paypal:before {
-    content : "\e608";
+    content: "\e608";
 }
 
 .line-icon-social-tumblr:before {
-    content : "\e00a";
+    content: "\e00a";
 }
 
 .line-icon-social-twitter:before {
-    content : "\e009";
+    content: "\e009";
 }
 
 .line-icon-social-facebook:before {
-    content : "\e00b";
+    content: "\e00b";
 }
 
 .line-icon-social-instagram:before {
-    content : "\e609";
+    content: "\e609";
 }
 
 .line-icon-social-linkedin:before {
-    content : "\e60a";
+    content: "\e60a";
 }
 
 .line-icon-social-pinterest:before {
-    content : "\e60b";
+    content: "\e60b";
 }
 
 .line-icon-social-github:before {
-    content : "\e60c";
+    content: "\e60c";
 }
 
 .line-icon-social-google:before {
-    content : "\e60d";
+    content: "\e60d";
 }
 
 .line-icon-social-reddit:before {
-    content : "\e60e";
+    content: "\e60e";
 }
 
 .line-icon-social-skype:before {
-    content : "\e60f";
+    content: "\e60f";
 }
 
 .line-icon-social-dribbble:before {
-    content : "\e00d";
+    content: "\e00d";
 }
 
 .line-icon-social-behance:before {
-    content : "\e610";
+    content: "\e610";
 }
 
 .line-icon-social-foursqare:before {
-    content : "\e611";
+    content: "\e611";
 }
 
 .line-icon-social-soundcloud:before {
-    content : "\e612";
+    content: "\e612";
 }
 
 .line-icon-social-spotify:before {
-    content : "\e613";
+    content: "\e613";
 }
 
 .line-icon-social-stumbleupon:before {
-    content : "\e614";
+    content: "\e614";
 }
 
 .line-icon-social-youtube:before {
-    content : "\e008";
+    content: "\e008";
 }
 
 .line-icon-social-dropbox:before {
-    content : "\e00c";
+    content: "\e00c";
 }
 
 .line-icon-social-vkontakte:before {
-    content : "\e618";
+    content: "\e618";
 }
 
 .line-icon-social-steam:before {
-    content : "\e620";
+    content: "\e620";
 }

@@ -63,7 +63,7 @@ class Rewards
     {
         $this->setAppClass($AppClass);
         $this->setUserID($UserID);
-        if ( file_exists( dirname( __FILE__ ) . "/../../../config/rewards.dist.php" ) ) {
+        if (file_exists(dirname(__FILE__) . "/../../../config/rewards.dist.php")) {
             $rules = [];
             require(dirname(__FILE__) . "/../../../config/rewards.dist.php");
             $this->FileRewards = $rules;
