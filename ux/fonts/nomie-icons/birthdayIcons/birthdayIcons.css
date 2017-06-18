@@ -1,130 +1,239 @@
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
 /*
   birthdayIcons icon font: birthdayIcons
   Creation date: 18/03/2016 11:58
   */
 
 @font-face {
-    font-family : "birthdayIcons";
-    src         : url("../nomie-icons/birthdayIcons/birthdayIcons.eot");
-    src         : url("../nomie-icons/birthdayIcons/birthdayIcons.eot?#iefix") format("embedded-opentype"),
+    font-family: "birthdayIcons";
+    src: url("../nomie-icons/birthdayIcons/birthdayIcons.eot");
+    src: url("../nomie-icons/birthdayIcons/birthdayIcons.eot?#iefix") format("embedded-opentype"),
     url("../nomie-icons/birthdayIcons/birthdayIcons.woff") format("woff"),
     url("../nomie-icons/birthdayIcons/birthdayIcons.ttf") format("truetype"),
     url("../nomie-icons/birthdayIcons/birthdayIcons.svg#birthdayIcons") format("svg");
-    font-weight : normal;
-    font-style  : normal;
+    font-weight: normal;
+    font-style: normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio : 0) {
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
     @font-face {
-        font-family : "birthdayIcons";
-        src         : url(".../nomie-icons/birthdayIcons/nomie-icons/birthdayIcons/birthdayIcons.svg#birthdayIcons") format("svg");
+        font-family: "birthdayIcons";
+        src: url(".../nomie-icons/birthdayIcons/nomie-icons/birthdayIcons/birthdayIcons.svg#birthdayIcons") format("svg");
     }
 }
 
 [class^="birthdayIcons-"]:before, [class*=" birthdayIcons-"]:before,
 [class^="birthdayIcons-"]:after, [class*=" birthdayIcons-"]:after {
-    font-family : birthdayIcons;
-    font-size   : 20px;
-    font-style  : normal;
-    margin-left : 20px;
+    font-family: birthdayIcons;
+    font-size: 20px;
+    font-style: normal;
+    margin-left: 20px;
 }
 
-.birthdayIcons-balloons:before { content : "\f100"; }
+.birthdayIcons-balloons:before {
+    content: "\f100";
+}
 
-.birthdayIcons-beer:before { content : "\f101"; }
+.birthdayIcons-beer:before {
+    content: "\f101";
+}
 
-.birthdayIcons-birthday-boy:before { content : "\f102"; }
+.birthdayIcons-birthday-boy:before {
+    content: "\f102";
+}
 
-.birthdayIcons-birthday-cake:before { content : "\f103"; }
+.birthdayIcons-birthday-cake:before {
+    content: "\f103";
+}
 
-.birthdayIcons-birthday-cake-piece:before { content : "\f104"; }
+.birthdayIcons-birthday-cake-piece:before {
+    content: "\f104";
+}
 
-.birthdayIcons-birthday-card:before { content : "\f105"; }
+.birthdayIcons-birthday-card:before {
+    content: "\f105";
+}
 
-.birthdayIcons-birthday-card-1:before { content : "\f106"; }
+.birthdayIcons-birthday-card-1:before {
+    content: "\f106";
+}
 
-.birthdayIcons-birthday-girl:before { content : "\f107"; }
+.birthdayIcons-birthday-girl:before {
+    content: "\f107";
+}
 
-.birthdayIcons-calendar:before { content : "\f108"; }
+.birthdayIcons-calendar:before {
+    content: "\f108";
+}
 
-.birthdayIcons-candle:before { content : "\f109"; }
+.birthdayIcons-candle:before {
+    content: "\f109";
+}
 
-.birthdayIcons-candles:before { content : "\f10a"; }
+.birthdayIcons-candles:before {
+    content: "\f10a";
+}
 
-.birthdayIcons-candy:before { content : "\f10b"; }
+.birthdayIcons-candy:before {
+    content: "\f10b";
+}
 
-.birthdayIcons-cell-phone:before { content : "\f10c"; }
+.birthdayIcons-cell-phone:before {
+    content: "\f10c";
+}
 
-.birthdayIcons-champagne:before { content : "\f10d"; }
+.birthdayIcons-champagne:before {
+    content: "\f10d";
+}
 
-.birthdayIcons-champagne-glass:before { content : "\f10e"; }
+.birthdayIcons-champagne-glass:before {
+    content: "\f10e";
+}
 
-.birthdayIcons-chocolate:before { content : "\f10f"; }
+.birthdayIcons-chocolate:before {
+    content: "\f10f";
+}
 
-.birthdayIcons-clown:before { content : "\f110"; }
+.birthdayIcons-clown:before {
+    content: "\f110";
+}
 
-.birthdayIcons-confetti:before { content : "\f111"; }
+.birthdayIcons-confetti:before {
+    content: "\f111";
+}
 
-.birthdayIcons-crown:before { content : "\f112"; }
+.birthdayIcons-crown:before {
+    content: "\f112";
+}
 
-.birthdayIcons-cupcake:before { content : "\f113"; }
+.birthdayIcons-cupcake:before {
+    content: "\f113";
+}
 
-.birthdayIcons-cutlery:before { content : "\f114"; }
+.birthdayIcons-cutlery:before {
+    content: "\f114";
+}
 
-.birthdayIcons-cutlery-1:before { content : "\f115"; }
+.birthdayIcons-cutlery-1:before {
+    content: "\f115";
+}
 
-.birthdayIcons-disco-ball:before { content : "\f116"; }
+.birthdayIcons-disco-ball:before {
+    content: "\f116";
+}
 
-.birthdayIcons-eye-mask:before { content : "\f117"; }
+.birthdayIcons-eye-mask:before {
+    content: "\f117";
+}
 
-.birthdayIcons-fireworks:before { content : "\f118"; }
+.birthdayIcons-fireworks:before {
+    content: "\f118";
+}
 
-.birthdayIcons-flags:before { content : "\f119"; }
+.birthdayIcons-flags:before {
+    content: "\f119";
+}
 
-.birthdayIcons-gift-tag:before { content : "\f11a"; }
+.birthdayIcons-gift-tag:before {
+    content: "\f11a";
+}
 
-.birthdayIcons-hamburger:before { content : "\f11b"; }
+.birthdayIcons-hamburger:before {
+    content: "\f11b";
+}
 
-.birthdayIcons-hat:before { content : "\f11c"; }
+.birthdayIcons-hat:before {
+    content: "\f11c";
+}
 
-.birthdayIcons-horn:before { content : "\f11d"; }
+.birthdayIcons-horn:before {
+    content: "\f11d";
+}
 
-.birthdayIcons-ice-cream:before { content : "\f11e"; }
+.birthdayIcons-ice-cream:before {
+    content: "\f11e";
+}
 
-.birthdayIcons-karaoke:before { content : "\f11f"; }
+.birthdayIcons-karaoke:before {
+    content: "\f11f";
+}
 
-.birthdayIcons-lollipop:before { content : "\f120"; }
+.birthdayIcons-lollipop:before {
+    content: "\f120";
+}
 
-.birthdayIcons-musical-note:before { content : "\f121"; }
+.birthdayIcons-musical-note:before {
+    content: "\f121";
+}
 
-.birthdayIcons-party-blower:before { content : "\f122"; }
+.birthdayIcons-party-blower:before {
+    content: "\f122";
+}
 
-.birthdayIcons-photo-camera:before { content : "\f123"; }
+.birthdayIcons-photo-camera:before {
+    content: "\f123";
+}
 
-.birthdayIcons-piano:before { content : "\f124"; }
+.birthdayIcons-piano:before {
+    content: "\f124";
+}
 
-.birthdayIcons-piata:before { content : "\f125"; }
+.birthdayIcons-piata:before {
+    content: "\f125";
+}
 
-.birthdayIcons-pizza:before { content : "\f126"; }
+.birthdayIcons-pizza:before {
+    content: "\f126";
+}
 
-.birthdayIcons-polaroid:before { content : "\f127"; }
+.birthdayIcons-polaroid:before {
+    content: "\f127";
+}
 
-.birthdayIcons-present:before { content : "\f128"; }
+.birthdayIcons-present:before {
+    content: "\f128";
+}
 
-.birthdayIcons-present-1:before { content : "\f129"; }
+.birthdayIcons-present-1:before {
+    content: "\f129";
+}
 
-.birthdayIcons-punch-bowl:before { content : "\f12a"; }
+.birthdayIcons-punch-bowl:before {
+    content: "\f12a";
+}
 
-.birthdayIcons-record-player:before { content : "\f12b"; }
+.birthdayIcons-record-player:before {
+    content: "\f12b";
+}
 
-.birthdayIcons-sandwich:before { content : "\f12c"; }
+.birthdayIcons-sandwich:before {
+    content: "\f12c";
+}
 
-.birthdayIcons-shirt:before { content : "\f12d"; }
+.birthdayIcons-shirt:before {
+    content: "\f12d";
+}
 
-.birthdayIcons-snack:before { content : "\f12e"; }
+.birthdayIcons-snack:before {
+    content: "\f12e";
+}
 
-.birthdayIcons-soda:before { content : "\f12f"; }
+.birthdayIcons-soda:before {
+    content: "\f12f";
+}
 
-.birthdayIcons-sparkler:before { content : "\f130"; }
+.birthdayIcons-sparkler:before {
+    content: "\f130";
+}
 
-.birthdayIcons-speakers:before { content : "\f131"; }
+.birthdayIcons-speakers:before {
+    content: "\f131";
+}

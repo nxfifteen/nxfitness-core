@@ -221,11 +221,41 @@ class Upgrade
     }
 
     /**
+     * Get settings from config class
+     *
+     * @param string $key
+     * @param null $default
+     * @param bool $query_db
+     *
+     * @todo Consider test case
+     * @return string
+     */
+    public function getSetting($key, $default = null, $query_db = true)
+    {
+        return $this->getSettings()->get($key, $default, $query_db);
+    }
+
+    /**
      * @return array
      */
     private function getInstallingVersionBrakeDown()
     {
         return explode(".", $this->VersionInstalling);
+    }
+
+    /**
+     * Set value in database/config class
+     *
+     * @param string $key
+     * @param string $value
+     * @param bool $query_db
+     *
+     * @todo Consider test case
+     * @return bool
+     */
+    public function setSetting($key, $value, $query_db = true)
+    {
+        return $this->getSettings()->set($key, $value, $query_db);
     }
 
     /**
@@ -316,21 +346,6 @@ class Upgrade
     }
 
     /**
-     * Get settings from config class
-     *
-     * @param string $key
-     * @param null $default
-     * @param bool $query_db
-     *
-     * @todo Consider test case
-     * @return string
-     */
-    public function getSetting($key, $default = null, $query_db = true)
-    {
-        return $this->getSettings()->get($key, $default, $query_db);
-    }
-
-    /**
      * @param array $error
      *
      * @return bool
@@ -349,21 +364,6 @@ class Upgrade
 
             return true;
         }
-    }
-
-    /**
-     * Set value in database/config class
-     *
-     * @param string $key
-     * @param string $value
-     * @param bool $query_db
-     *
-     * @todo Consider test case
-     * @return bool
-     */
-    public function setSetting($key, $value, $query_db = true)
-    {
-        return $this->getSettings()->set($key, $value, $query_db);
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
@@ -951,7 +951,7 @@ class Upgrade
             return false;
         }
 
-        $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "blancing` (`bid` int(8) NOT NULL,`class` varchar(255) NOT NULL, `skill` VARCHAR(255) NOT NULL,`xp` float(6,3) NOT NULL DEFAULT '0.000',`mana` float(6,3) NOT NULL DEFAULT '0.000',`health` float(6,3) NOT NULL DEFAULT '0.000') ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+        $this->getDatabase()->query("CREATE TABLE `" . $db_prefix . "blancing` (`bid` INT(8) NOT NULL,`class` VARCHAR(255) NOT NULL, `skill` VARCHAR(255) NOT NULL,`xp` FLOAT(6,3) NOT NULL DEFAULT '0.000',`mana` FLOAT(6,3) NOT NULL DEFAULT '0.000',`health` FLOAT(6,3) NOT NULL DEFAULT '0.000') ENGINE=InnoDB DEFAULT CHARSET=utf8;");
         if ($this->wasMySQLError($this->getDatabase()->error())) {
             return false;
         }
@@ -961,7 +961,7 @@ class Upgrade
             return false;
         }
 
-        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "blancing` MODIFY `bid` int(8) NOT NULL AUTO_INCREMENT;");
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "blancing` MODIFY `bid` INT(8) NOT NULL AUTO_INCREMENT;");
         if ($this->wasMySQLError($this->getDatabase()->error())) {
             return false;
         }

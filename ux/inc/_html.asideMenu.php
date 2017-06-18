@@ -1,7 +1,8 @@
 <!-- Left Sidebar -->
 <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#timeline" role="tab"><i class="line-icon-speedometer"></i></a>
+        <a class="nav-link active" data-toggle="tab" href="#timeline" role="tab"><i
+                    class="line-icon-speedometer"></i></a>
     </li>
 </ul>
 

@@ -1,88 +1,157 @@
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
 /*
   weather icon font: weather
   Creation date: 19/02/2016 14:53
   */
 
 @font-face {
-    font-family : "weather";
-    src         : url("../nomie-icons/weather/weather.eot");
-    src         : url("../nomie-icons/weather/weather.eot?#iefix") format("embedded-opentype"),
+    font-family: "weather";
+    src: url("../nomie-icons/weather/weather.eot");
+    src: url("../nomie-icons/weather/weather.eot?#iefix") format("embedded-opentype"),
     url("../nomie-icons/weather/weather.woff") format("woff"),
     url("../nomie-icons/weather/weather.ttf") format("truetype"),
     url("../nomie-icons/weather/weather.svg#weather") format("svg");
-    font-weight : normal;
-    font-style  : normal;
+    font-weight: normal;
+    font-style: normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio : 0) {
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
     @font-face {
-        font-family : "weather";
-        src         : url("../nomie-icons/weather/weather.svg#weather") format("svg");
+        font-family: "weather";
+        src: url("../nomie-icons/weather/weather.svg#weather") format("svg");
     }
 }
 
 [class^="weather-"]:before, [class*=" weather-"]:before,
 [class^="weather-"]:after, [class*=" weather-"]:after {
-    font-family : weather;
-    font-style  : normal;
+    font-family: weather;
+    font-style: normal;
 }
 
-.weather-blizzard:before { content : "\f100"; }
+.weather-blizzard:before {
+    content: "\f100";
+}
 
-.weather-breeze:before { content : "\f101"; }
+.weather-breeze:before {
+    content: "\f101";
+}
 
-.weather-cloudy-day:before { content : "\f102"; }
+.weather-cloudy-day:before {
+    content: "\f102";
+}
 
-.weather-cold:before { content : "\f103"; }
+.weather-cold:before {
+    content: "\f103";
+}
 
-.weather-dark-night:before { content : "\f104"; }
+.weather-dark-night:before {
+    content: "\f104";
+}
 
-.weather-drizzle:before { content : "\f105"; }
+.weather-drizzle:before {
+    content: "\f105";
+}
 
-.weather-drought:before { content : "\f106"; }
+.weather-drought:before {
+    content: "\f106";
+}
 
-.weather-flood:before { content : "\f107"; }
+.weather-flood:before {
+    content: "\f107";
+}
 
-.weather-foggy:before { content : "\f108"; }
+.weather-foggy:before {
+    content: "\f108";
+}
 
-.weather-hail:before { content : "\f109"; }
+.weather-hail:before {
+    content: "\f109";
+}
 
-.weather-hail-storm:before { content : "\f10a"; }
+.weather-hail-storm:before {
+    content: "\f10a";
+}
 
-.weather-hot-weather:before { content : "\f10b"; }
+.weather-hot-weather:before {
+    content: "\f10b";
+}
 
-.weather-hurricane:before { content : "\f10c"; }
+.weather-hurricane:before {
+    content: "\f10c";
+}
 
-.weather-lighting:before { content : "\f10d"; }
+.weather-lighting:before {
+    content: "\f10d";
+}
 
-.weather-mist:before { content : "\f10e"; }
+.weather-mist:before {
+    content: "\f10e";
+}
 
-.weather-moon-eclipse:before { content : "\f10f"; }
+.weather-moon-eclipse:before {
+    content: "\f10f";
+}
 
-.weather-night:before { content : "\f110"; }
+.weather-night:before {
+    content: "\f110";
+}
 
-.weather-overcast-day:before { content : "\f111"; }
+.weather-overcast-day:before {
+    content: "\f111";
+}
 
-.weather-partialy-cloudy:before { content : "\f112"; }
+.weather-partialy-cloudy:before {
+    content: "\f112";
+}
 
-.weather-pour-rain:before { content : "\f113"; }
+.weather-pour-rain:before {
+    content: "\f113";
+}
 
-.weather-puddles:before { content : "\f114"; }
+.weather-puddles:before {
+    content: "\f114";
+}
 
-.weather-rainbow:before { content : "\f115"; }
+.weather-rainbow:before {
+    content: "\f115";
+}
 
-.weather-rainy-day:before { content : "\f116"; }
+.weather-rainy-day:before {
+    content: "\f116";
+}
 
-.weather-sleet:before { content : "\f117"; }
+.weather-sleet:before {
+    content: "\f117";
+}
 
-.weather-smog:before { content : "\f118"; }
+.weather-smog:before {
+    content: "\f118";
+}
 
-.weather-snow-cloud:before { content : "\f119"; }
+.weather-snow-cloud:before {
+    content: "\f119";
+}
 
-.weather-sun-eclipse:before { content : "\f11a"; }
+.weather-sun-eclipse:before {
+    content: "\f11a";
+}
 
-.weather-sunny-day:before { content : "\f11b"; }
+.weather-sunny-day:before {
+    content: "\f11b";
+}
 
-.weather-temperature:before { content : "\f11c"; }
+.weather-temperature:before {
+    content: "\f11c";
+}
 
-.weather-windy-day:before { content : "\f11d"; }
+.weather-windy-day:before {
+    content: "\f11d";
+}

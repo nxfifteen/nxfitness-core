@@ -54,6 +54,26 @@ class Habitica extends Delivery
     }
 
     /**
+     * @return bool
+     */
+    public function isValidUser()
+    {
+        if (!is_null($this->user_id) && !is_null($this->api_key)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param HabitRPHPG $HabitRPHPG
+     */
+    private function setHabitRPHPG($HabitRPHPG)
+    {
+        $this->HabitRPHPG = $HabitRPHPG;
+    }
+
+    /**
      * @param array $rewardProfile
      * @param string $state
      * @param string $rewardKey
@@ -77,7 +97,7 @@ class Habitica extends Delivery
 
             $tasks = $this->_search($rewardJson['alias'], $rewardProfile['name'], '', false, true);
 
-            if(is_null($tasks)) {
+            if (is_null($tasks)) {
                 $tasks = $this->_create($rewardJson['type'], $rewardProfile['name'], $rewardJson);
                 $tasks = $tasks['id'];
             }
@@ -102,68 +122,22 @@ class Habitica extends Delivery
     }
 
     /**
-     * @param $type
-     * @param $name
-     * @param $options
-     * @return mixed
+     * @return mixed|null
      */
-    public function _create($type, $name, $options) {
-        if ($this->isValidUser() && $this->getStatus() == 'up') {
-            $options['alias']  = sha1("nx" . $name);
-            $searchResults = $this->_search($options['alias'], $name, '', false, true);
-            if (is_null($searchResults)) {
-
-                if (array_key_exists("tags", $options)) {
-                    foreach ($options['tags'] as $id => $tag) {
-                        $tagId = $this->_searchTasks($tag);
-                        $options['tags'][$id] = $tagId;
-                    }
-                }
-
-                $api = $this->getHabitRPHPG()->createTask($type, $name, $options);
-                if ( $type != "todo" )
-                    $this->getAppClass()->setUserSetting($this->getUserID(), 'habitica_' . $options['alias'], $api['id']);
-                return $api;
-            } else {
-                return $searchResults;
-            }
-        } else {
-            return false;
+    public function getStatus()
+    {
+        if (is_null($this->apiStatus)) {
+            $this->apiStatus = $this->getHabitRPHPG()->getStatus();
         }
+        return $this->apiStatus;
     }
 
     /**
-     * @param $name
-     * @return mixed
+     * @return HabitRPHPG
      */
-    public function _deleteIfIncomplete($name) {
-        if ($this->isValidUser() && $this->getStatus() == 'up') {
-            $apiValue = $this->getHabitRPHPG()->findTask($name);
-            if(count($apiValue) == 1) {
-                print_r($apiValue);
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public function _delete($name) {
-        if ($this->isValidUser() && $this->getStatus() == 'up') {
-            $alias  = sha1("nx" . $name);
-            $searchTask = $this->_search($alias, $name);
-            if (is_null($searchTask)) {
-                return true;
-            } else {
-                $this->getHabitRPHPG()->_request("delete", "tasks/" . $searchTask);
-                $this->getAppClass()->delUserSetting($this->getUserID(), 'habitica_' . $alias);
-                return true;
-            }
-        } else {
-            return false;
-        }
+    public function getHabitRPHPG()
+    {
+        return $this->HabitRPHPG;
     }
 
     /**
@@ -174,7 +148,8 @@ class Habitica extends Delivery
      * @param bool $skipCache
      * @return mixed
      */
-    public function _search($alias, $task_string, $type = '', $returnObject = false, $skipCache = false) {
+    public function _search($alias, $task_string, $type = '', $returnObject = false, $skipCache = false)
+    {
         $dbValue = null;
         if (!$skipCache && !$returnObject) {
             $dbValue = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_' . $alias, NULL, true);
@@ -197,13 +172,46 @@ class Habitica extends Delivery
     }
 
     /**
+     * @param $type
+     * @param $name
+     * @param $options
+     * @return mixed
+     */
+    public function _create($type, $name, $options)
+    {
+        if ($this->isValidUser() && $this->getStatus() == 'up') {
+            $options['alias'] = sha1("nx" . $name);
+            $searchResults = $this->_search($options['alias'], $name, '', false, true);
+            if (is_null($searchResults)) {
+
+                if (array_key_exists("tags", $options)) {
+                    foreach ($options['tags'] as $id => $tag) {
+                        $tagId = $this->_searchTasks($tag);
+                        $options['tags'][$id] = $tagId;
+                    }
+                }
+
+                $api = $this->getHabitRPHPG()->createTask($type, $name, $options);
+                if ($type != "todo")
+                    $this->getAppClass()->setUserSetting($this->getUserID(), 'habitica_' . $options['alias'], $api['id']);
+                return $api;
+            } else {
+                return $searchResults;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @param $task_string
      * @return mixed
      * @internal param $alias
      */
-    private function _searchTasks($task_string) {
+    private function _searchTasks($task_string)
+    {
         $apiValues = $this->getHabitRPHPG()->getTags();
-        if(count($apiValues) > 0) {
+        if (count($apiValues) > 0) {
 
             foreach ($apiValues as $apiValue) {
                 if ($apiValue['name'] == $task_string) {
@@ -212,7 +220,7 @@ class Habitica extends Delivery
             }
 
             $this->getHabitRPHPG()->clearTags();
-            $newTag = $this->getHabitRPHPG()->_request("post", "tags", array('name'=>$task_string));
+            $newTag = $this->getHabitRPHPG()->_request("post", "tags", array('name' => $task_string));
 
             return $newTag['id'];
         } else {
@@ -221,42 +229,39 @@ class Habitica extends Delivery
     }
 
     /**
-     * @return HabitRPHPG
+     * @param $name
+     * @return mixed
      */
-    public function getHabitRPHPG()
+    public function _deleteIfIncomplete($name)
     {
-        return $this->HabitRPHPG;
+        if ($this->isValidUser() && $this->getStatus() == 'up') {
+            $apiValue = $this->getHabitRPHPG()->findTask($name);
+            if (count($apiValue) == 1) {
+                print_r($apiValue);
+            }
+        }
+        return true;
     }
 
     /**
-     * @param HabitRPHPG $HabitRPHPG
+     * @param $name
+     * @return mixed
      */
-    private function setHabitRPHPG($HabitRPHPG)
+    public function _delete($name)
     {
-        $this->HabitRPHPG = $HabitRPHPG;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isValidUser()
-    {
-        if (!is_null($this->user_id) && !is_null($this->api_key)) {
-            return true;
+        if ($this->isValidUser() && $this->getStatus() == 'up') {
+            $alias = sha1("nx" . $name);
+            $searchTask = $this->_search($alias, $name);
+            if (is_null($searchTask)) {
+                return true;
+            } else {
+                $this->getHabitRPHPG()->_request("delete", "tasks/" . $searchTask);
+                $this->getAppClass()->delUserSetting($this->getUserID(), 'habitica_' . $alias);
+                return true;
+            }
         } else {
             return false;
         }
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function getStatus()
-    {
-        if (is_null($this->apiStatus)) {
-            $this->apiStatus = $this->getHabitRPHPG()->getStatus();
-        }
-        return $this->apiStatus;
     }
 
     /**
@@ -299,7 +304,7 @@ class Habitica extends Delivery
             $this->api_key = $api_key_old;
         }
 
-        $this->getHabitRPHPG()->_request("post", "groups/$guildUuid/invite", array('uuids'=>[$user_id_old]));
+        $this->getHabitRPHPG()->_request("post", "groups/$guildUuid/invite", array('uuids' => [$user_id_old]));
 
         $this->user_id = $user_id_old;
         $this->api_key = $api_key_old;

@@ -1,158 +1,297 @@
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
 /*
   petIcons icon font: petIcons
   Creation date: 27/03/2016 04:56
   */
 
 @font-face {
-    font-family : "petIcons";
-    src         : url("../nomie-icons/petIcons/petIcons.eot");
-    src         : url("../nomie-icons/petIcons/petIcons.eot?#iefix") format("embedded-opentype"),
+    font-family: "petIcons";
+    src: url("../nomie-icons/petIcons/petIcons.eot");
+    src: url("../nomie-icons/petIcons/petIcons.eot?#iefix") format("embedded-opentype"),
     url("../nomie-icons/petIcons/petIcons.woff") format("woff"),
     url("../nomie-icons/petIcons/petIcons.ttf") format("truetype"),
     url("../nomie-icons/petIcons/petIcons.svg#petIcons") format("svg");
-    font-weight : normal;
-    font-style  : normal;
+    font-weight: normal;
+    font-style: normal;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio : 0) {
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
     @font-face {
-        font-family : "petIcons";
-        src         : url("../nomie-icons/petIcons/petIcons.svg#petIcons") format("svg");
+        font-family: "petIcons";
+        src: url("../nomie-icons/petIcons/petIcons.svg#petIcons") format("svg");
     }
 }
 
 [class^="petIcons-"]:before, [class*=" petIcons-"]:before,
 [class^="petIcons-"]:after, [class*=" petIcons-"]:after {
-    font-family : petIcons;
-    font-style  : normal;
+    font-family: petIcons;
+    font-style: normal;
 }
 
-.petIcons-animal:before { content : "\f100"; }
-
-.petIcons-animal-1:before { content : "\f101"; }
-
-.petIcons-animal-10:before { content : "\f102"; }
-
-.petIcons-animal-11:before { content : "\f103"; }
-
-.petIcons-animal-12:before { content : "\f104"; }
-
-.petIcons-animal-13:before { content : "\f105"; }
-
-.petIcons-animal-14:before { content : "\f106"; }
-
-.petIcons-animal-15:before { content : "\f107"; }
-
-.petIcons-animal-16:before { content : "\f108"; }
-
-.petIcons-animal-17:before { content : "\f109"; }
-
-.petIcons-animal-18:before { content : "\f10a"; }
-
-.petIcons-animal-19:before { content : "\f10b"; }
-
-.petIcons-animal-2:before { content : "\f10c"; }
-
-.petIcons-animal-20:before { content : "\f10d"; }
-
-.petIcons-animal-3:before { content : "\f10e"; }
-
-.petIcons-animal-4:before { content : "\f10f"; }
-
-.petIcons-animal-5:before { content : "\f110"; }
-
-.petIcons-animal-6:before { content : "\f111"; }
-
-.petIcons-animal-7:before { content : "\f112"; }
-
-.petIcons-animal-8:before { content : "\f113"; }
-
-.petIcons-animal-9:before { content : "\f114"; }
-
-.petIcons-animals:before { content : "\f115"; }
-
-.petIcons-animals-1:before { content : "\f116"; }
-
-.petIcons-animals-10:before { content : "\f117"; }
-
-.petIcons-animals-11:before { content : "\f118"; }
-
-.petIcons-animals-12:before { content : "\f119"; }
-
-.petIcons-animals-13:before { content : "\f11a"; }
-
-.petIcons-animals-2:before { content : "\f11b"; }
-
-.petIcons-animals-3:before { content : "\f11c"; }
-
-.petIcons-animals-4:before { content : "\f11d"; }
-
-.petIcons-animals-5:before { content : "\f11e"; }
-
-.petIcons-animals-6:before { content : "\f11f"; }
-
-.petIcons-animals-7:before { content : "\f120"; }
-
-.petIcons-animals-8:before { content : "\f121"; }
-
-.petIcons-animals-9:before { content : "\f122"; }
-
-.petIcons-black:before { content : "\f123"; }
-
-.petIcons-brush:before { content : "\f124"; }
-
-.petIcons-brush-1:before { content : "\f125"; }
-
-.petIcons-buildings:before { content : "\f126"; }
-
-.petIcons-dog:before { content : "\f127"; }
-
-.petIcons-dog-1:before { content : "\f128"; }
-
-.petIcons-dog-2:before { content : "\f129"; }
-
-.petIcons-dog-3:before { content : "\f12a"; }
-
-.petIcons-dog-4:before { content : "\f12b"; }
-
-.petIcons-dog-5:before { content : "\f12c"; }
-
-.petIcons-food:before { content : "\f12d"; }
-
-.petIcons-food-1:before { content : "\f12e"; }
-
-.petIcons-food-2:before { content : "\f12f"; }
-
-.petIcons-food-3:before { content : "\f130"; }
-
-.petIcons-food-4:before { content : "\f131"; }
-
-.petIcons-food-5:before { content : "\f132"; }
-
-.petIcons-hairdresser:before { content : "\f133"; }
-
-.petIcons-hairdresser-1:before { content : "\f134"; }
-
-.petIcons-healthy:before { content : "\f135"; }
-
-.petIcons-market:before { content : "\f136"; }
-
-.petIcons-mechanical:before { content : "\f137"; }
-
-.petIcons-medical:before { content : "\f138"; }
-
-.petIcons-medical-1:before { content : "\f139"; }
-
-.petIcons-medical-2:before { content : "\f13a"; }
-
-.petIcons-music:before { content : "\f13b"; }
-
-.petIcons-people:before { content : "\f13c"; }
-
-.petIcons-person:before { content : "\f13d"; }
-
-.petIcons-skeleton:before { content : "\f13e"; }
-
-.petIcons-snack:before { content : "\f13f"; }
-
-.petIcons-technology:before { content : "\f140"; }
+.petIcons-animal:before {
+    content: "\f100";
+}
+
+.petIcons-animal-1:before {
+    content: "\f101";
+}
+
+.petIcons-animal-10:before {
+    content: "\f102";
+}
+
+.petIcons-animal-11:before {
+    content: "\f103";
+}
+
+.petIcons-animal-12:before {
+    content: "\f104";
+}
+
+.petIcons-animal-13:before {
+    content: "\f105";
+}
+
+.petIcons-animal-14:before {
+    content: "\f106";
+}
+
+.petIcons-animal-15:before {
+    content: "\f107";
+}
+
+.petIcons-animal-16:before {
+    content: "\f108";
+}
+
+.petIcons-animal-17:before {
+    content: "\f109";
+}
+
+.petIcons-animal-18:before {
+    content: "\f10a";
+}
+
+.petIcons-animal-19:before {
+    content: "\f10b";
+}
+
+.petIcons-animal-2:before {
+    content: "\f10c";
+}
+
+.petIcons-animal-20:before {
+    content: "\f10d";
+}
+
+.petIcons-animal-3:before {
+    content: "\f10e";
+}
+
+.petIcons-animal-4:before {
+    content: "\f10f";
+}
+
+.petIcons-animal-5:before {
+    content: "\f110";
+}
+
+.petIcons-animal-6:before {
+    content: "\f111";
+}
+
+.petIcons-animal-7:before {
+    content: "\f112";
+}
+
+.petIcons-animal-8:before {
+    content: "\f113";
+}
+
+.petIcons-animal-9:before {
+    content: "\f114";
+}
+
+.petIcons-animals:before {
+    content: "\f115";
+}
+
+.petIcons-animals-1:before {
+    content: "\f116";
+}
+
+.petIcons-animals-10:before {
+    content: "\f117";
+}
+
+.petIcons-animals-11:before {
+    content: "\f118";
+}
+
+.petIcons-animals-12:before {
+    content: "\f119";
+}
+
+.petIcons-animals-13:before {
+    content: "\f11a";
+}
+
+.petIcons-animals-2:before {
+    content: "\f11b";
+}
+
+.petIcons-animals-3:before {
+    content: "\f11c";
+}
+
+.petIcons-animals-4:before {
+    content: "\f11d";
+}
+
+.petIcons-animals-5:before {
+    content: "\f11e";
+}
+
+.petIcons-animals-6:before {
+    content: "\f11f";
+}
+
+.petIcons-animals-7:before {
+    content: "\f120";
+}
+
+.petIcons-animals-8:before {
+    content: "\f121";
+}
+
+.petIcons-animals-9:before {
+    content: "\f122";
+}
+
+.petIcons-black:before {
+    content: "\f123";
+}
+
+.petIcons-brush:before {
+    content: "\f124";
+}
+
+.petIcons-brush-1:before {
+    content: "\f125";
+}
+
+.petIcons-buildings:before {
+    content: "\f126";
+}
+
+.petIcons-dog:before {
+    content: "\f127";
+}
+
+.petIcons-dog-1:before {
+    content: "\f128";
+}
+
+.petIcons-dog-2:before {
+    content: "\f129";
+}
+
+.petIcons-dog-3:before {
+    content: "\f12a";
+}
+
+.petIcons-dog-4:before {
+    content: "\f12b";
+}
+
+.petIcons-dog-5:before {
+    content: "\f12c";
+}
+
+.petIcons-food:before {
+    content: "\f12d";
+}
+
+.petIcons-food-1:before {
+    content: "\f12e";
+}
+
+.petIcons-food-2:before {
+    content: "\f12f";
+}
+
+.petIcons-food-3:before {
+    content: "\f130";
+}
+
+.petIcons-food-4:before {
+    content: "\f131";
+}
+
+.petIcons-food-5:before {
+    content: "\f132";
+}
+
+.petIcons-hairdresser:before {
+    content: "\f133";
+}
+
+.petIcons-hairdresser-1:before {
+    content: "\f134";
+}
+
+.petIcons-healthy:before {
+    content: "\f135";
+}
+
+.petIcons-market:before {
+    content: "\f136";
+}
+
+.petIcons-mechanical:before {
+    content: "\f137";
+}
+
+.petIcons-medical:before {
+    content: "\f138";
+}
+
+.petIcons-medical-1:before {
+    content: "\f139";
+}
+
+.petIcons-medical-2:before {
+    content: "\f13a";
+}
+
+.petIcons-music:before {
+    content: "\f13b";
+}
+
+.petIcons-people:before {
+    content: "\f13c";
+}
+
+.petIcons-person:before {
+    content: "\f13d";
+}
+
+.petIcons-skeleton:before {
+    content: "\f13e";
+}
+
+.petIcons-snack:before {
+    content: "\f13f";
+}
+
+.petIcons-technology:before {
+    content: "\f140";
+}

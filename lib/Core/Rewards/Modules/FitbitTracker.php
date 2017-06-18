@@ -10,7 +10,6 @@
 
 namespace Core\Rewards\Modules;
 
-use Core\Rewards\Delivery\Habitica;
 use Core\Rewards\Modules;
 use DateTime;
 

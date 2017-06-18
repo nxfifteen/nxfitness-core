@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  ******************************************************************************/
 
-header( "X-Clacks-Overhead: GNU Terry Pratchett" ); ?>
+header("X-Clacks-Overhead: GNU Terry Pratchett"); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,7 +48,7 @@ header( "X-Clacks-Overhead: GNU Terry Pratchett" ); ?>
 
 <!--suppress JSUnusedLocalSymbols -->
 <script type="application/javascript">
-    var fitbitUserId = '<?php echo $_COOKIE[ '_nx_fb_usr' ]; ?>';
+    var fitbitUserId = '<?php echo $_COOKIE['_nx_fb_usr']; ?>';
 </script>
 
 <!-- Bootstrap and necessary plugins -->

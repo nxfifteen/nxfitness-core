@@ -166,6 +166,14 @@ class RewardsSystem
     }
 
     /**
+     * @return Core
+     */
+    private function getAppClass()
+    {
+        return $this->AppClass;
+    }
+
+    /**
      * @param $system
      * @param $eventDetails
      */
@@ -195,6 +203,25 @@ class RewardsSystem
         } else {
             nxr(2, "Create a new class '$className' in " . $includePath . DIRECTORY_SEPARATOR . "Private" . DIRECTORY_SEPARATOR . $system . ".php");
         }
+    }
+
+    /**
+     * @todo Consider test case
+     * @return String
+     */
+    public function getUserID()
+    {
+        return $this->UserID;
+    }
+
+    /**
+     * @todo Consider test case
+     *
+     * @param String $UserID
+     */
+    public function setUserID($UserID)
+    {
+        $this->UserID = $UserID;
     }
 
     /**
@@ -353,32 +380,5 @@ class RewardsSystem
             return $reward;
         }
 
-    }
-
-    /**
-     * @return Core
-     */
-    private function getAppClass()
-    {
-        return $this->AppClass;
-    }
-
-    /**
-     * @todo Consider test case
-     * @return String
-     */
-    public function getUserID()
-    {
-        return $this->UserID;
-    }
-
-    /**
-     * @todo Consider test case
-     *
-     * @param String $UserID
-     */
-    public function setUserID($UserID)
-    {
-        $this->UserID = $UserID;
     }
 }
