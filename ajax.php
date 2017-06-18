@@ -81,8 +81,10 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             }
 
             http_response_code(200);
-        } else if ($_POST['formId'] == "") {
-
+        } else if ($_POST['formId'] == "accDeletion") {
+            nxr(0, print_r($_POST, true));
+            sleep(10);
+            http_response_code(200);
         } else {
             nxr(1, "Unknown Form");
             http_response_code(403);

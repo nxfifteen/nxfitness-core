@@ -30,6 +30,7 @@
             <div class="card">
                 <div class="card-header">Actions</div>
                 <div class="card-block">
+                    <span id="actionsText"></span>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#dangerModal"><i class="fa fa-bomb"></i>&nbsp; Delete Account!</button>
                 </div>
             </div>
@@ -50,8 +51,11 @@
                 <p>This action will delete your account from NxCore. This is unrevocable, so be sure before you hit the button.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger">Yes, Delete My Account</button>
+                <form class="form-signin" id="accDeletion">
+                    <input type="hidden" name="formId" value="accDeletion">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete My Account</button>
+                </form>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -59,3 +63,31 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+
+<script type="application/javascript">
+    // this is the id of the form
+    $("#accDeletion").submit(function (e) {
+
+        $('#dangerModal').modal('hide');
+
+        var url = "../ajax.php"; // the script where you handle the form input.
+        var data = $("#accDeletion").serialize();
+
+        var html = '';
+        html += '                <p>I\'m currently deleting your account.</p>';
+        html += '                <p>This process can take 20/30 seconds, and you dont have to stick around for it. Once complete this page will refresh and you will be logged out.</p>';
+        $('#actionsText').html(html).show();
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data
+        }).done(function (response) {
+            window.location.reload();
+        }).fail(function (response) {
+            $('#actionsText').html(response.responseText);
+        });
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
+</script>
