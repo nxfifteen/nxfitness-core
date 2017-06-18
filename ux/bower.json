@@ -1,5 +1,5 @@
 {
-  "name": "NxFITNESS Core",
+  "name": "nxfiftness-core",
   "version": "0.0.0.8",
   "dependencies": {
     "bootstrap": "4.0.0-alpha.6",
