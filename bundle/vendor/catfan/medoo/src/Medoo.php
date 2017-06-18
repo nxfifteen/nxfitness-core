@@ -2,7 +2,7 @@
 /*!
  * Medoo database framework
  * https://medoo.in
- * Version 1.4.2
+ * Version 1.4.4
  *
  * Copyright 2017, Angel Lai
  * Released under the MIT license
@@ -19,6 +19,8 @@ class Medoo
 	protected $database_type;
 
 	protected $prefix;
+
+	protected $statement;
 
 	protected $option = [];
 
@@ -303,6 +305,8 @@ class Medoo
 
 		$statement->execute();
 
+		$this->statement = $statement;
+
 		return $statement;
 	}
 
@@ -460,6 +464,15 @@ class Medoo
 					preg_match('/(#?)([a-zA-Z0-9_\.]+)(\[(?<operator>\>|\>\=|\<|\<\=|\!|\<\>|\>\<|\!?~)\])?/i', $key, $match);
 					$column = $this->columnQuote($match[ 2 ]);
 
+					if (!empty($match[ 1 ]))
+					{
+						$wheres[] = $column .
+							(isset($match[ 'operator' ]) ? ' ' . $match[ 'operator' ] . ' ' : ' = ') .
+							$this->fnQuote($key, $value);
+
+						continue;
+					}
+
 					if (isset($match[ 'operator' ]))
 					{
 						$operator = $match[ 'operator' ];
@@ -559,10 +572,6 @@ class Medoo
 							{
 								$condition .= $map_key;
 								$map[ $map_key ] = [$value, PDO::PARAM_INT];
-							}
-							elseif (strpos($key, '#') === 0)
-							{
-								$condition .= $this->fnQuote($key, $value);
 							}
 							else
 							{
@@ -1091,6 +1100,12 @@ class Medoo
 
 			foreach ($columns as $key)
 			{
+				if (strpos($key, '#') === 0)
+				{
+					$values[] = $this->fnQuote($key, $data[ $key ]);	
+					continue;
+				}
+
 				$map_key =$this->mapKey();
 
 				$values[] = $map_key;
@@ -1160,6 +1175,14 @@ class Medoo
 
 		foreach ($data as $key => $value)
 		{
+			$column = $this->columnQuote(preg_replace("/(^#|\s*\[(JSON|\+|\-|\*|\/)\]$)/i", '', $key));
+
+			if (strpos($key, '#') === 0)
+			{
+				$fields[] = $column . ' = ' . $value;
+				continue;
+			}
+
 			$map_key = $this->mapKey();
 
 			preg_match('/(?<column>[a-zA-Z0-9_]+)(\[(?<operator>\+|\-|\*|\/)\])?/i', $key, $match);
@@ -1168,12 +1191,11 @@ class Medoo
 			{
 				if (is_numeric($value))
 				{
-					$fields[] = $this->columnQuote($match[ 'column' ]) . ' = ' . $this->columnQuote($match[ 'column' ]) . ' ' . $match[ 'operator' ] . ' ' . $value;
+					$fields[] = $column . ' = ' . $column . ' ' . $match[ 'operator' ] . ' ' . $value;
 				}
 			}
 			else
 			{
-				$column = $this->columnQuote(preg_replace("/(^#|\s*\[JSON\]$)/i", '', $key));
 				$fields[] = $column . ' = ' . $map_key;
 
 				switch (gettype($value))
@@ -1441,7 +1463,7 @@ class Medoo
 
 	public function error()
 	{
-		return $this->pdo->errorInfo();
+		return $this->statement ? $this->statement->errorInfo() : null;
 	}
 
 	public function last()
