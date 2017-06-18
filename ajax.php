@@ -94,13 +94,25 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
                 $prefix = $core->getSetting("db_prefix", null, false);
                 foreach ($data as $dbTable) {
                     if (substr($dbTable[0], 0, strlen($prefix)) === $prefix) {
-                        $userColumn = whatIsUserColumn($dbTable[0]);
+                        $userColumn = whatIsUserColumn($prefix, $dbTable[0]);
                         if (!is_null($userColumn)) {
-                            nxr(0, $userColumn . " in " . $dbTable[0]);
+                            $tableFunction = "delUserFrom_" . $dbTable[0];
+                            if (function_exists($tableFunction)){
+                                $tableFunction($core, $prefix);
+                            } else {
+                                nxr(0, "Removing user from " . $dbTable[0]);
+                                $core->getDatabase()->delete($dbTable[0], [$userColumn => $_COOKIE['_nx_fb_usr']]);
+                            }
                         }
                     }
                 }
             }
+
+            setcookie('_nx_fb_key', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
+            setcookie('_nx_fb_usr', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
+
+            nxr_destroy_session();
+
             http_response_code(200);
         } else {
             nxr(1, "Unknown Form");
@@ -121,39 +133,66 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
 }
 
 /**
+ * @param Core $core
+ * @param string $prefix
+ */
+function delUserFrom_nx_fitbit_devices_user($core, $prefix) {
+    nxr(0, "Need to delete rated device and charges");
+    $deviceIds = $core->getDatabase()->select($prefix . "devices_user", "device", ["user" => $_COOKIE['_nx_fb_usr']]);
+    foreach ($deviceIds as $deviceId) {
+        $core->getDatabase()->delete($prefix . "devices", ["id" => $deviceId]);
+        $core->getDatabase()->delete($prefix . "devices_user", ["id" => $deviceId]);
+    }
+    $core->getDatabase()->delete($prefix . "devices_user", ["user" => $_COOKIE['_nx_fb_usr']]);
+}
+
+/**
+ * @param Core $core
+ * @param string $prefix
+ */
+function delUserFrom_nx_fitbit_sleep($core, $prefix) {
+    nxr(0, "Need to delete rated sleep records");
+    $sleepIds = $core->getDatabase()->select($prefix . "sleep_user", "sleeplog", ["user" => $_COOKIE['_nx_fb_usr']]);
+    foreach ($sleepIds as $sleepId) {
+        $core->getDatabase()->delete($prefix . "sleep", ["logId" => $sleepId]);
+    }
+    $core->getDatabase()->delete($prefix . "sleep_user", ["user" => $_COOKIE['_nx_fb_usr']]);
+}
+
+/**
  * @param $tableName
  * @return string
  */
-function whatIsUserColumn($tableName) {
+function whatIsUserColumn($prefix, $tableName) {
     switch ($tableName) {
-        case "nx_fitbit_activity":
-        case "nx_fitbit_activity_log":
-        case "nx_fitbit_body":
-        case "nx_fitbit_devices_user":
-        case "nx_fitbit_food":
-        case "nx_fitbit_food_goals":
-        case "nx_fitbit_heartAverage":
-        case "nx_fitbit_heart_activity":
-        case "nx_fitbit_push":
-        case "nx_fitbit_queue":
-        case "nx_fitbit_runlog":
-        case "nx_fitbit_sleep":
-        case "nx_fitbit_steps":
-        case "nx_fitbit_steps_goals":
-        case "nx_fitbit_streak_goal":
-        case "nx_fitbit_units":
-        case "nx_fitbit_water":
+        case $prefix . "activity":
+        case $prefix . "activity_log":
+        case $prefix . "body":
+        case $prefix . "devices_user":
+        case $prefix . "food":
+        case $prefix . "food_goals":
+        case $prefix . "heartAverage":
+        case $prefix . "heart_activity":
+        case $prefix . "push":
+        case $prefix . "queue":
+        case $prefix . "runlog":
+        case $prefix . "sleep":
+        case $prefix . "steps":
+        case $prefix . "steps_goals":
+        case $prefix . "units":
+        case $prefix . "water":
             return "user";
 
-        case "nx_fitbit_bages_user":
-        case "nx_fitbit_inbox":
-        case "nx_fitbit_journeys_travellers":
-        case "nx_fitbit_nomie_events":
-        case "nx_fitbit_nomie_trackers":
-        case "nx_fitbit_reward_queue":
-        case "nx_fitbit_settings_users":
-        case "nx_fitbit_users":
-        case "nx_fitbit_users_xp":
+        case $prefix . "bages_user":
+        case $prefix . "inbox":
+        case $prefix . "journeys_travellers":
+        case $prefix . "nomie_events":
+        case $prefix . "nomie_trackers":
+        case $prefix . "reward_queue":
+        case $prefix . "settings_users":
+        case $prefix . "streak_goal":
+        case $prefix . "users":
+        case $prefix . "users_xp":
             return "fuid";
 
         default:
