@@ -997,7 +997,176 @@ class Upgrade
         }
 
         $this->setSetting("version", "0.0.1.12", true);
+        return true;
+    }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function updateRun1013()
+    {
+        $db_prefix = $this->getSetting("db_prefix", false);
+
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "activity` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "activity_log` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "bages_user` ADD FOREIGN KEY (`badgeid`) REFERENCES `" . $db_prefix . "bages`(`encodedId`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "bages_user` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "body` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "devices_charges` ADD FOREIGN KEY (`id`) REFERENCES `" . $db_prefix . "devices`(`id`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "devices_user` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "devices_user` ADD FOREIGN KEY (`device`) REFERENCES `" . $db_prefix . "devices`(`id`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "food` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "food_goals` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "heartAverage` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "heart_activity` CHANGE `user` `user` VARCHAR(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "heart_activity` CHANGE `json` `json` LONGTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "heart_activity` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "inbox` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "journeys_legs` ADD FOREIGN KEY (`jid`) REFERENCES `" . $db_prefix . "journeys`(`jid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "journeys_narrative` ADD FOREIGN KEY (`lid`) REFERENCES `" . $db_prefix . "journeys_legs`(`lid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "journeys_travellers` ADD FOREIGN KEY (`jid`) REFERENCES `" . $db_prefix . "journeys`(`jid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "journeys_travellers` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "nomie_events` CHANGE `fuid` `fuid` VARCHAR(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, CHANGE `value` `value` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "nomie_trackers` CHANGE `fuid` `fuid` VARCHAR(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, CHANGE `label` `label` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, CHANGE `icon` `icon` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, CHANGE `color` `color` VARCHAR(7) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, CHANGE `type` `type` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL, CHANGE `math` `math` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL, CHANGE `uom` `uom` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "nomie_events` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "nomie_trackers` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "push` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "queue` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_map` ADD FOREIGN KEY (`reward`) REFERENCES `" . $db_prefix . "rewards`(`rid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_nuke` ADD FOREIGN KEY (`rid`) REFERENCES `" . $db_prefix . "rewards`(`rid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_nuke` ADD FOREIGN KEY (`nukeid`) REFERENCES `" . $db_prefix . "rewards`(`rid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_queue` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "reward_queue` ADD FOREIGN KEY (`reward`) REFERENCES `" . $db_prefix . "rewards`(`rid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "runlog` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "settings_users` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "sleep_user` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "sleep_user` ADD FOREIGN KEY (`sleeplog`) REFERENCES `" . $db_prefix . "sleep`(`logId`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "steps` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "steps_goals` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "streak_goal` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "units` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "users_xp` ADD FOREIGN KEY (`fuid`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+        $this->getDatabase()->query("ALTER TABLE `" . $db_prefix . "water` ADD FOREIGN KEY (`user`) REFERENCES `" . $db_prefix . "users`(`fuid`) ON DELETE NO ACTION ON UPDATE RESTRICT;");
+        if ($this->wasMySQLError($this->getDatabase()->error())) {
+            return false;
+        }
+
+        $this->setSetting("version", "0.0.1.13", true);
         return true;
     }
 
