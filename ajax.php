@@ -175,22 +175,28 @@ function delUserFrom_activity_log($core, $prefix) {
     foreach ($tcxIds as $tcxFile) {
         nxr(2, "Deleteing " . $tcxFile);
 
-        $tcxFile = "tcx" . DIRECTORY_SEPARATOR . $tcxFile . ".tcx";
-        if ( file_exists( $tcxFile ) ) {
+        $tcxFile_tcx = "tcx" . DIRECTORY_SEPARATOR . $tcxFile . ".tcx";
+        if ( file_exists( $tcxFile_tcx ) ) {
             nxr(3, "TCX Deleted");
-            unlink($tcxFile);
+            unlink($tcxFile_tcx);
+        } else {
+            nxr(3, "TCX Missing " . $tcxFile_tcx);
         }
 
-        $tcxFile = "tcx" . DIRECTORY_SEPARATOR . $tcxFile . ".gpx";
-        if ( file_exists( $tcxFile ) ) {
+        $tcxFile_gpx = "cache" . DIRECTORY_SEPARATOR . $tcxFile . ".gpx";
+        if ( file_exists( $tcxFile_gpx ) ) {
             nxr(3, "GPX Cache Deleted");
-            unlink($tcxFile);
+            unlink($tcxFile_gpx);
+        } else {
+            nxr(3, "GPX Missing " . $tcxFile_gpx);
         }
 
-        $tcxFile = "tcx" . DIRECTORY_SEPARATOR . $tcxFile . "_laps.json";
-        if ( file_exists( $tcxFile ) ) {
+        $tcxFile_laps = "cache" . DIRECTORY_SEPARATOR . $tcxFile . "_laps.json";
+        if ( file_exists( $tcxFile_laps ) ) {
             nxr(3, "Laps Cache Deleted");
-            unlink($tcxFile);
+            unlink($tcxFile_laps);
+        } else {
+            nxr(3, "Laps Missing " . $tcxFile_laps);
         }
     }
     $core->getDatabase()->delete($prefix . "activity_log", ["user" => $_COOKIE['_nx_fb_usr']]);
