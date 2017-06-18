@@ -96,7 +96,7 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
                     if (substr($dbTable[0], 0, strlen($prefix)) === $prefix) {
                         $userColumn = whatIsUserColumn($prefix, $dbTable[0]);
                         if (!is_null($userColumn)) {
-                            $tableFunction = "delUserFrom_" . $dbTable[0];
+                            $tableFunction = "delUserFrom_" . str_ireplace($prefix, "", $dbTable[0]);
                             if (function_exists($tableFunction)){
                                 $tableFunction($core, $prefix);
                             } else {
@@ -110,8 +110,6 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
 
             setcookie('_nx_fb_key', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
             setcookie('_nx_fb_usr', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
-
-            nxr_destroy_session();
 
             $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_';
             foreach(glob($cacheFile . "*") as $f) {
@@ -144,7 +142,7 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
  * @param Core $core
  * @param string $prefix
  */
-function delUserFrom_nx_fitbit_devices_user($core, $prefix) {
+function delUserFrom_devices_user($core, $prefix) {
     nxr(2, "Deleting users devices");
     $deviceIds = $core->getDatabase()->select($prefix . "devices_user", "device", ["user" => $_COOKIE['_nx_fb_usr']]);
     foreach ($deviceIds as $deviceId) {
@@ -158,13 +156,44 @@ function delUserFrom_nx_fitbit_devices_user($core, $prefix) {
  * @param Core $core
  * @param string $prefix
  */
-function delUserFrom_nx_fitbit_sleep($core, $prefix) {
+function delUserFrom_sleep($core, $prefix) {
     nxr(2, "Deleting users Sleep logs");
     $sleepIds = $core->getDatabase()->select($prefix . "sleep_user", "sleeplog", ["user" => $_COOKIE['_nx_fb_usr']]);
     foreach ($sleepIds as $sleepId) {
         $core->getDatabase()->delete($prefix . "sleep", ["logId" => $sleepId]);
     }
     $core->getDatabase()->delete($prefix . "sleep_user", ["user" => $_COOKIE['_nx_fb_usr']]);
+}
+
+/**
+ * @param Core $core
+ * @param string $prefix
+ */
+function delUserFrom_activity_log($core, $prefix) {
+    nxr(2, "Deleting users TCX files");
+    $tcxIds = $core->getDatabase()->select($prefix . "activity_log", "logId", ["user" => $_COOKIE['_nx_fb_usr']]);
+    foreach ($tcxIds as $tcxFile) {
+        nxr(2, "Deleteing " . $tcxFile);
+
+        $tcxFile = "tcx" . DIRECTORY_SEPARATOR . $tcxFile . ".tcx";
+        if ( file_exists( $tcxFile ) ) {
+            nxr(3, "TCX Deleted");
+            unlink($tcxFile);
+        }
+
+        $tcxFile = "tcx" . DIRECTORY_SEPARATOR . $tcxFile . ".gpx";
+        if ( file_exists( $tcxFile ) ) {
+            nxr(3, "GPX Cache Deleted");
+            unlink($tcxFile);
+        }
+
+        $tcxFile = "tcx" . DIRECTORY_SEPARATOR . $tcxFile . "_laps.json";
+        if ( file_exists( $tcxFile ) ) {
+            nxr(3, "Laps Cache Deleted");
+            unlink($tcxFile);
+        }
+    }
+    $core->getDatabase()->delete($prefix . "activity_log", ["user" => $_COOKIE['_nx_fb_usr']]);
 }
 
 /**
