@@ -481,6 +481,8 @@ class Core
                 return "API cool down in effect.";
             case "-142":
                 return "Unable to create required directory.";
+            case "-141":
+                return "Fitbit API Error";
             case "429":
                 if (!is_null($user)) {
                     $hour = date("H") + 1;

@@ -940,6 +940,10 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("profile")) {
                 $userProfile = $this->pullBabel('user/-/profile.json');
+                if (is_null($userProfile)) {
+                    return "-141";
+                }
+
                 $userProfile = $userProfile['user'];
 
                 if (!isset($userProfile['height'])) {
@@ -980,6 +984,9 @@ class ApiBabel
                 $this->setLastrun("profile", null, true);
 
                 $subscriptions = $this->pullBabel('user/-/apiSubscriptions.json', true);
+                if (is_null($subscriptions)) {
+                    return "-141";
+                }
                 if (count($subscriptions->apiSubscriptions) == 0) {
                     nxr(1, $this->getActiveUser() . " is not subscribed to the site");
                     $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
@@ -1072,7 +1079,7 @@ class ApiBabel
 
                 die();
             } else {
-                /*$this->getAppClass()->getErrorRecording()->captureException( $e, array(
+                $this->getAppClass()->getErrorRecording()->captureException( $e, array(
 						'level' => 'error',
 						'extra' => array(
 							'api_path'     => $path,
@@ -1080,14 +1087,11 @@ class ApiBabel
 							'php_version'  => phpversion(),
 							'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
 						),
-					) );*/
-                nxr(0, "Error " . $e->getCode() . ": " . $e->getMessage());
-                nxr(0, $e->getFile() . " @" . $e->getLine());
-                nxr(0, $e->getTraceAsString());
+					) );
                 if ($supportFailures) {
                     return $e->getCode();
                 } else {
-                    die();
+                    return null;
                 }
             }
         }
@@ -1203,6 +1207,9 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("devices")) {
                 $userDevices = $this->pullBabel('user/-/devices.json', true);
+                if (is_null($userDevices)) {
+                    return "-141";
+                }
 
                 $trackers = [];
                 foreach ($userDevices as $device) {
@@ -1390,6 +1397,9 @@ class ApiBabel
                 if (file_exists($badgeFolder) AND is_writable($badgeFolder)) {
 
                     $userBadges = $this->pullBabel('user/' . $this->getActiveUser() . '/badges.json', true);
+                    if (is_null($userBadges)) {
+                        return "-141";
+                    }
 
                     if (isset($userBadges)) {
                         foreach ($userBadges->badges as $badge) {
@@ -1579,6 +1589,9 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("leaderboard")) {
                 $userFriends = $this->pullBabel('user/-/friends/leaderboard.json', true);
+                if (is_null($userFriends)) {
+                    return "-141";
+                }
 
                 if (isset($userFriends)) {
                     $userFriends = $userFriends->friends;
@@ -1710,6 +1723,9 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("goals_calories")) {
                 $userCaloriesGoals = $this->pullBabel('user/-/foods/log/goal.json', true);
+                if (is_null($userCaloriesGoals)) {
+                    return "-141";
+                }
 
                 if (isset($userCaloriesGoals) && isset($userCaloriesGoals->goals) && isset($userCaloriesGoals->foodPlan)) {
                     $fallback = false;
@@ -1821,6 +1837,9 @@ class ApiBabel
 
                 $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0',
                     true);
+                if (is_null($userActivityLog)) {
+                    return "-141";
+                }
 
                 if (isset($userActivityLog) and is_object($userActivityLog)) {
                     $activityLog = $userActivityLog->activities;
@@ -2050,6 +2069,9 @@ class ApiBabel
 
                     $hrUrl = "https://api.fitbit.com/1/user/-/activities/heart/date/" . $startDate . "/1d/1sec/time/" . $startTime . "/" . $endTime . ".json";
                     $heartRateValues = $this->pullBabel($hrUrl);
+                    if (is_null($heartRateValues)) {
+                        return "-141";
+                    }
 
                     if (array_key_exists("activities-heart", $heartRateValues) &&
                         count($heartRateValues['activities-heart']) > 0 &&
@@ -2193,6 +2215,9 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("goals")) {
                 $userGoals = $this->pullBabel('user/-/activities/goals/daily.json', true);
+                if (is_null($userGoals)) {
+                    return "-141";
+                }
 
                 if (isset($userGoals) && isset($userGoals->goals)) {
                     $currentDate = new DateTime();
@@ -2603,6 +2628,9 @@ class ApiBabel
                 $lastCleanRun = new DateTime ($lastCleanRun);
                 $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/' . $lastCleanRun->format('Y-m-d') . '/1d.json',
                     true, false, true);
+                if (is_null($userHeartRateLog)) {
+                    return "-141";
+                }
                 if (isset($userHeartRateLog) and is_numeric($userHeartRateLog)) {
                     return "-" . $userHeartRateLog;
                 }
@@ -2695,6 +2723,9 @@ class ApiBabel
         $targetDateTime = new DateTime ($targetDate);
         $userWaterLog = $this->pullBabel('user/-/foods/log/water/date/' . $targetDateTime->format('Y-m-d') . '.json',
             true);
+        if (is_null($userWaterLog)) {
+            return "-141";
+        }
 
         if (isset($userWaterLog)) {
             if (isset($userWaterLog->summary->water)) {
@@ -2753,6 +2784,9 @@ class ApiBabel
         $targetDateTime = new DateTime ($targetDate);
         $userSleepLog = $this->pullBabel('user/' . $this->getActiveUser() . '/sleep/date/' . $targetDateTime->format('Y-m-d') . '.json',
             true);
+        if (is_null($userSleepLog)) {
+            return "-141";
+        }
 
         if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
             $loggedSleep = $userSleepLog->sleep[0];
@@ -2844,6 +2878,9 @@ class ApiBabel
         $targetDateTime = new DateTime ($targetDate);
         $userBodyLog = $this->pullBabel('user/' . $this->getActiveUser() . '/body/date/' . $targetDateTime->format('Y-m-d') . '.json',
             true);
+        if (is_null($userBodyLog)) {
+            return "-141";
+        }
 
         if (isset($userBodyLog)) {
             $fallback = false;
@@ -3012,6 +3049,9 @@ class ApiBabel
         $targetDateTime = new DateTime ($targetDate);
         $userFoodLog = $this->pullBabel('user/' . $this->getActiveUser() . '/foods/log/date/' . $targetDateTime->format('Y-m-d') . '.json',
             true);
+        if (is_null($userFoodLog)) {
+            return "-141";
+        }
 
         if (isset($userFoodLog)) {
             if (count($userFoodLog->foods) > 0) {
@@ -3400,6 +3440,9 @@ class ApiBabel
 
         $response = $this->pullBabel('user/' . $this->getActiveUser() . $path . '/date/' . (is_string($baseDate) ? $baseDate : $baseDate->format('Y-m-d')) . "/" . (is_string($to_period) ? $to_period : $to_period->format('Y-m-d')) . '.json',
             true);
+        if (is_null($response)) {
+            return "-141";
+        }
 
         switch ($type) {
             case 'caloriesOut':
@@ -3603,6 +3646,9 @@ class ApiBabel
                 }
                 $this->holdingVar = ["type" => "activities/goals/daily.json", "data" => ""];
                 $this->holdingVar["data"] = $this->pullBabel('user/-/activities/goals/daily.json', true);
+                if (is_null($this->holdingVar["data"])) {
+                    return "-141";
+                }
 
                 if ($trigger == "minutesVeryActive") {
                     $newGoal = $this->thisWeeksGoal("activeMinutes",
