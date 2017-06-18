@@ -83,7 +83,7 @@
             url: url,
             data: data
         }).done(function (response) {
-            window.location.reload();
+            window.location.href = "views/pages/logout";
         }).fail(function (response) {
             $('#actionsText').html(response.responseText);
         });
