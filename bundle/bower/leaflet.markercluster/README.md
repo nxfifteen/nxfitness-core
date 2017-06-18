@@ -48,8 +48,8 @@ removed link to h1 and indented back 2 spaces all links.
 
 ## Using the plugin
 Include the plugin CSS and JS files on your page after Leaflet files, using your method of choice:
-* [Download the `v1.0.4` release](https://github.com/Leaflet/Leaflet.markercluster/archive/v1.0.4.zip)
-* Use unpkg CDN: `https://unpkg.com/leaflet.markercluster@1.0.4/dist/`
+* [Download the `v1.0.5` release](https://github.com/Leaflet/Leaflet.markercluster/archive/v1.0.5.zip)
+* Use unpkg CDN: `https://unpkg.com/leaflet.markercluster@1.0.5/dist/`
 * Install with npm: `npm install leaflet.markercluster`
 
 In each case, use files in the `dist` folder:
@@ -245,10 +245,12 @@ markers.on('clusterclick', function (a) {
 #### Zooming to the bounds of a cluster
 When you receive an event from a cluster you can zoom to its bounds in one easy step.
 If all of the markers will appear at a higher zoom level, that zoom level is zoomed to instead.
+`zoomToBounds` takes an optional argument to pass [options to the resulting `fitBounds` call](http://leafletjs.com/reference.html#map-fitboundsoptions).
+
 See [marker-clustering-zoomtobounds.html](http://leaflet.github.io/Leaflet.markercluster/example/marker-clustering-zoomtobounds.html) for a working example.
 ```javascript
 markers.on('clusterclick', function (a) {
-	a.layer.zoomToBounds();
+	a.layer.zoomToBounds({padding: [20, 20]});
 });
 ```
 
