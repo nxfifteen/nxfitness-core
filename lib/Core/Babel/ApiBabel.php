@@ -433,290 +433,296 @@ class ApiBabel
         $isAllowed = $this->isAllowed("nomie_trackers");
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("nomie_trackers")) {
-                $nomie_user_key = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", 'nomie');
+                $nomie_user_key = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", null);
 
-                nxr(1, "Connecting to CouchDB");
+                if (!is_null($nomie_user_key)) {
 
-                $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", null, false);
-                $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", null, false);
-                $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', false);
-                $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', false);
-                $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', false);
+                    nxr(1, "Connecting to CouchDB");
 
-                if (is_null($nomie_username)) {
-                    nxr(2, "Nomie credentials missing");
+                    $nomie_username = $this->getAppClass()->getSetting("db_nomie_username", null, false);
+                    $nomie_password = $this->getAppClass()->getSetting("db_nomie_password", null, false);
+                    $nomie_protocol = $this->getAppClass()->getSetting("db_nomie_protocol", 'http', false);
+                    $nomie_host = $this->getAppClass()->getSetting("db_nomie_host", 'localhost', false);
+                    $nomie_port = $this->getAppClass()->getSetting("db_nomie_port", '5984', false);
 
-                    return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
-                }
+                    if (is_null($nomie_username)) {
+                        nxr(2, "Nomie credentials missing");
 
-                $nomie_url = $nomie_protocol . '://' . $nomie_username . ':' . $nomie_password . '@' . $nomie_host . ':' . $nomie_port;
-
-                try {
-                    $couchClient = new couchClient ($nomie_url, $nomie_user_key . '_meta', [
-                        "cookie_auth" => "true"
-                    ]);
-                } catch (Exception $e) {
-                    nxr(4, $nomie_url);
-                    $parts = parse_url($nomie_url);
-                    nxr(0, print_r($parts, true));
-
-                    if (!isset($nomie_username)) {
-                        $was_username_set = "false";
-                    } else {
-                        $was_username_set = "true";
-                    }
-                    if (!isset($nomie_password)) {
-                        $was_id_set = "false";
-                    } else {
-                        $was_id_set = "true";
-                    }
-                    if (!isset($nomie_host)) {
-                        $was_host_set = "false";
-                    } else {
-                        $was_host_set = "true";
-                    }
-                    if (!isset($nomie_port)) {
-                        $was_port_set = "false";
-                    } else {
-                        $was_port_set = "true";
+                        return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
                     }
 
-                    $this->getAppClass()->getErrorRecording()->captureException($e, [
-                        'extra' => [
-                            'php_version' => phpversion(),
-                            'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true),
-                            'nomie_protocol' => $nomie_protocol,
-                            'nomie_username' => $was_username_set,
-                            'nomie_username_id' => $was_id_set,
-                            'nomie_host' => $was_host_set,
-                            'nomie_port' => $was_port_set,
-                        ],
-                    ]);
+                    $nomie_url = $nomie_protocol . '://' . $nomie_username . ':' . $nomie_password . '@' . $nomie_host . ':' . $nomie_port;
 
-                    return "-144";
-                }
-
-                if (!$couchClient->databaseExists()) {
-                    nxr(2, "Nomie Meta table missing");
-
-                    return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
-                }
-
-                try {
-                    $trackerGroups = json_decode(json_encode($couchClient->getDoc('hyperStorage-groups')), true);
-                } catch (couchNotFoundException $e) {
                     try {
-                        $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')), true);
-                    } catch (couchNotFoundException $e) {
-                        $this->setLastrun("nomie_trackers", null, true);
+                        $couchClient = new couchClient ($nomie_url, $nomie_user_key . '_meta', [
+                            "cookie_auth" => "true"
+                        ]);
+                    } catch (Exception $e) {
+                        nxr(4, $nomie_url);
+                        $parts = parse_url($nomie_url);
+                        nxr(0, print_r($parts, true));
+
+                        if (!isset($nomie_username)) {
+                            $was_username_set = "false";
+                        } else {
+                            $was_username_set = "true";
+                        }
+                        if (!isset($nomie_password)) {
+                            $was_id_set = "false";
+                        } else {
+                            $was_id_set = "true";
+                        }
+                        if (!isset($nomie_host)) {
+                            $was_host_set = "false";
+                        } else {
+                            $was_host_set = "true";
+                        }
+                        if (!isset($nomie_port)) {
+                            $was_port_set = "false";
+                        } else {
+                            $was_port_set = "true";
+                        }
+
+                        $this->getAppClass()->getErrorRecording()->captureException($e, [
+                            'extra' => [
+                                'php_version' => phpversion(),
+                                'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true),
+                                'nomie_protocol' => $nomie_protocol,
+                                'nomie_username' => $was_username_set,
+                                'nomie_username_id' => $was_id_set,
+                                'nomie_host' => $was_host_set,
+                                'nomie_port' => $was_port_set,
+                            ],
+                        ]);
 
                         return "-144";
                     }
-                }
 
-                if (is_array($trackerGroups) && array_key_exists("groups", $trackerGroups)) {
-                    $trackerGroups = $trackerGroups['groups'];
-                    if (is_array($trackerGroups) && array_key_exists("NxTracked",
-                            $trackerGroups) && count($trackerGroups['NxTracked']) > 0
-                    ) {
-                        nxr(2, "Downloadnig NxTracked Group Trackers");
-                        $trackerGroups = $trackerGroups['NxTracked'];
-                    } else if (is_array($trackerGroups) && array_key_exists("NxCore",
-                            $trackerGroups) && count($trackerGroups['NxCore']) > 0
-                    ) {
-                        nxr(2, "Downloadnig NxCore Group Trackers");
-                        $trackerGroups = $trackerGroups['NxCore'];
-                    } else if (is_array($trackerGroups) && array_key_exists("Main",
-                            $trackerGroups) && count($trackerGroups['Main']) > 0
-                    ) {
-                        nxr(2, "Downloadnig Main Group Trackers");
-                        $trackerGroups = $trackerGroups['Main'];
-                    } else {
-                        nxr(2, "Downloading All Trackers");
-                        $trackerGroups = $trackerGroups['All'];
-                    }
-
-                    $couchClient->useDatabase($nomie_user_key . '_trackers');
                     if (!$couchClient->databaseExists()) {
-                        nxr(2, "Nomie Tracker table missing");
+                        nxr(2, "Nomie Meta table missing");
 
                         return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
                     }
 
-                    $trackedTrackers = [];
-                    $indexedTrackers = [];
-                    $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-                    nxr(2, ".", true, false);
-                    foreach ($trackerGroups as $tracker) {
-                        nxr(0, ".", false, false);
+                    try {
+                        $trackerGroups = json_decode(json_encode($couchClient->getDoc('hyperStorage-groups')), true);
+                    } catch (couchNotFoundException $e) {
                         try {
-                            $doc = $couchClient->getDoc($tracker);
+                            $trackerGroups = json_decode(json_encode($couchClient->getDoc('groups')), true);
                         } catch (couchNotFoundException $e) {
-                            $this->getAppClass()->getErrorRecording()->captureException($e, [
-                                'extra' => [
-                                    'php_version' => phpversion(),
-                                    'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
-                                ],
-                            ]);
-                        }
+                            $this->setLastrun("nomie_trackers", null, true);
 
-                        if (isset($doc) && is_object($doc)) {
-                            array_push($trackedTrackers, $tracker);
-                            $indexedTrackers[$tracker] = $doc->label;
-
-                            $dbStorage = [
-                                "fuid" => $this->activeUser,
-                                "id" => $tracker,
-                                "label" => $doc->label,
-                                "icon" => trim(str_ireplace("  ", " ", $doc->icon)),
-                                "color" => $doc->color,
-                                "charge" => $doc->charge
-                            ];
-
-                            if (isset($doc->config->type)) {
-                                $dbStorage['type'] = $doc->config->type;
-                            }
-                            if (isset($doc->config->math)) {
-                                $dbStorage['math'] = $doc->config->math;
-                            }
-                            if (isset($doc->config->uom)) {
-                                $dbStorage['uom'] = $doc->config->uom;
-                            }
-
-                            if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", [
-                                "AND" => [
-                                    "fuid" => $this->activeUser,
-                                    "id" => $tracker
-                                ]
-                            ])
-                            ) {
-                                $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers",
-                                    $dbStorage);
-                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
-                                    [
-                                        "METHOD" => __METHOD__,
-                                        "LINE" => __LINE__
-                                    ]);
-                            } else {
-                                $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers",
-                                    $dbStorage, [
-                                        "AND" => [
-                                            "fuid" => $this->activeUser,
-                                            "id" => $tracker
-                                        ]
-                                    ]);
-                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
-                                    [
-                                        "METHOD" => __METHOD__,
-                                        "LINE" => __LINE__
-                                    ]);
-                            }
+                            return "-144";
                         }
                     }
-                    nxr(1, "[DONE]", false);
 
-                    $couchClient->useDatabase($nomie_user_key . '_events');
-                    if (!$couchClient->databaseExists()) {
-                        nxr(2, "Nomie Tracker table missing");
-
-                        return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
-                    }
-                    $trackerEvents = json_decode(json_encode($couchClient->getAllDocs()), true);
-
-                    foreach ($trackerEvents['rows'] as $events) {
-                        $event = explode("|", $events['id']);
-
-                        if ($event[1] == "tm") {
-                            $holdValue = $event[2];
-                            $event[2] = $event[3];
-                            $event[3] = $holdValue;
+                    if (is_array($trackerGroups) && array_key_exists("groups", $trackerGroups)) {
+                        $trackerGroups = $trackerGroups['groups'];
+                        if (is_array($trackerGroups) && array_key_exists("NxTracked",
+                                $trackerGroups) && count($trackerGroups['NxTracked']) > 0
+                        ) {
+                            nxr(2, "Downloadnig NxTracked Group Trackers");
+                            $trackerGroups = $trackerGroups['NxTracked'];
+                        } else if (is_array($trackerGroups) && array_key_exists("NxCore",
+                                $trackerGroups) && count($trackerGroups['NxCore']) > 0
+                        ) {
+                            nxr(2, "Downloadnig NxCore Group Trackers");
+                            $trackerGroups = $trackerGroups['NxCore'];
+                        } else if (is_array($trackerGroups) && array_key_exists("Main",
+                                $trackerGroups) && count($trackerGroups['Main']) > 0
+                        ) {
+                            nxr(2, "Downloadnig Main Group Trackers");
+                            $trackerGroups = $trackerGroups['Main'];
+                        } else {
+                            nxr(2, "Downloading All Trackers");
+                            $trackerGroups = $trackerGroups['All'];
                         }
 
-                        $event[5] = date('Y-m-d H:i:s', $event[3] / 1000);
+                        $couchClient->useDatabase($nomie_user_key . '_trackers');
+                        if (!$couchClient->databaseExists()) {
+                            nxr(2, "Nomie Tracker table missing");
 
-                        if (in_array($event[2], $trackedTrackers)) {
-                            if (strlen($event[2]) > 30) {
-                                $this->getAppClass()->getErrorRecording()->captureMessage("Observed event ID grater than DB supports",
-                                    ['database'], [
-                                        'level' => 'warning',
-                                        'extra' => [
-                                            'event_id' => $event[2],
-                                            'string_length' => strlen($event[2]),
-                                            'php_version' => phpversion(),
-                                            'core_version' => $this->getAppClass()->getSetting("version",
-                                                "0.0.0.1", true)
-                                        ]
-                                    ]);
+                            return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
+                        }
+
+                        $trackedTrackers = [];
+                        $indexedTrackers = [];
+                        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                        nxr(2, ".", true, false);
+                        foreach ($trackerGroups as $tracker) {
+                            nxr(0, ".", false, false);
+                            try {
+                                $doc = $couchClient->getDoc($tracker);
+                            } catch (couchNotFoundException $e) {
+                                $this->getAppClass()->getErrorRecording()->captureException($e, [
+                                    'extra' => [
+                                        'php_version' => phpversion(),
+                                        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", true)
+                                    ],
+                                ]);
                             }
 
-                            if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_events", [
-                                "AND" => [
-                                    "fuid" => $this->activeUser,
-                                    "id" => $event[2],
-                                    "datestamp" => $event[5]
-                                ]
-                            ])
-                            ) {
-                                $document = json_decode(json_encode($couchClient->getDoc($events['id'])), true);
-
-                                $event[6] = $document['value'];
+                            if (isset($doc) && is_object($doc)) {
+                                array_push($trackedTrackers, $tracker);
+                                $indexedTrackers[$tracker] = $doc->label;
 
                                 $dbStorage = [
                                     "fuid" => $this->activeUser,
-                                    "id" => $event[2],
-                                    "datestamp" => $event[5],
-                                    "value" => $event[6],
-                                    "score" => $event[4],
+                                    "id" => $tracker,
+                                    "label" => $doc->label,
+                                    "icon" => trim(str_ireplace("  ", " ", $doc->icon)),
+                                    "color" => $doc->color,
+                                    "charge" => $doc->charge
                                 ];
 
-                                if (is_array($document['geo']) and count($document['geo']) == 2) {
-                                    $dbStorage["geo_lat"] = $document['geo'][0];
-                                    $dbStorage["geo_lon"] = $document['geo'][1];
-                                    $event[7] = $document['geo'][0];
-                                    $event[8] = $document['geo'][1];
+                                if (isset($doc->config->type)) {
+                                    $dbStorage['type'] = $doc->config->type;
+                                }
+                                if (isset($doc->config->math)) {
+                                    $dbStorage['math'] = $doc->config->math;
+                                }
+                                if (isset($doc->config->uom)) {
+                                    $dbStorage['uom'] = $doc->config->uom;
                                 }
 
-                                $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_events",
-                                    $dbStorage);
-                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
-                                    [
-                                        "METHOD" => __METHOD__,
-                                        "LINE" => __LINE__
-                                    ]);
-                                nxr(3, "Stored event : " . $event[2] . " from " . $event[3]);
+                                if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_trackers", [
+                                    "AND" => [
+                                        "fuid" => $this->activeUser,
+                                        "id" => $tracker
+                                    ]
+                                ])
+                                ) {
+                                    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_trackers",
+                                        $dbStorage);
+                                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
+                                        [
+                                            "METHOD" => __METHOD__,
+                                            "LINE" => __LINE__
+                                        ]);
+                                } else {
+                                    $this->getAppClass()->getDatabase()->update($db_prefix . "nomie_trackers",
+                                        $dbStorage, [
+                                            "AND" => [
+                                                "fuid" => $this->activeUser,
+                                                "id" => $tracker
+                                            ]
+                                        ]);
+                                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
+                                        [
+                                            "METHOD" => __METHOD__,
+                                            "LINE" => __LINE__
+                                        ]);
+                                }
+                            }
+                        }
+                        nxr(1, "[DONE]", false);
+
+                        $couchClient->useDatabase($nomie_user_key . '_events');
+                        if (!$couchClient->databaseExists()) {
+                            nxr(2, "Nomie Tracker table missing");
+
+                            return ["error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly"];
+                        }
+                        $trackerEvents = json_decode(json_encode($couchClient->getAllDocs()), true);
+
+                        foreach ($trackerEvents['rows'] as $events) {
+                            $event = explode("|", $events['id']);
+
+                            if ($event[1] == "tm") {
+                                $holdValue = $event[2];
+                                $event[2] = $event[3];
+                                $event[3] = $holdValue;
+                            }
+
+                            $event[5] = date('Y-m-d H:i:s', $event[3] / 1000);
+
+                            if (in_array($event[2], $trackedTrackers)) {
+                                if (strlen($event[2]) > 30) {
+                                    $this->getAppClass()->getErrorRecording()->captureMessage("Observed event ID grater than DB supports",
+                                        ['database'], [
+                                            'level' => 'warning',
+                                            'extra' => [
+                                                'event_id' => $event[2],
+                                                'string_length' => strlen($event[2]),
+                                                'php_version' => phpversion(),
+                                                'core_version' => $this->getAppClass()->getSetting("version",
+                                                    "0.0.0.1", true)
+                                            ]
+                                        ]);
+                                }
+
+                                if (!$this->getAppClass()->getDatabase()->has($db_prefix . "nomie_events", [
+                                    "AND" => [
+                                        "fuid" => $this->activeUser,
+                                        "id" => $event[2],
+                                        "datestamp" => $event[5]
+                                    ]
+                                ])
+                                ) {
+                                    $document = json_decode(json_encode($couchClient->getDoc($events['id'])), true);
+
+                                    $event[6] = $document['value'];
+
+                                    $dbStorage = [
+                                        "fuid" => $this->activeUser,
+                                        "id" => $event[2],
+                                        "datestamp" => $event[5],
+                                        "value" => $event[6],
+                                        "score" => $event[4],
+                                    ];
+
+                                    if (is_array($document['geo']) and count($document['geo']) == 2) {
+                                        $dbStorage["geo_lat"] = $document['geo'][0];
+                                        $dbStorage["geo_lon"] = $document['geo'][1];
+                                        $event[7] = $document['geo'][0];
+                                        $event[8] = $document['geo'][1];
+                                    }
+
+                                    $this->getAppClass()->getDatabase()->insert($db_prefix . "nomie_events",
+                                        $dbStorage);
+                                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
+                                        [
+                                            "METHOD" => __METHOD__,
+                                            "LINE" => __LINE__
+                                        ]);
+                                    nxr(3, "Stored event : " . $event[2] . " from " . $event[3]);
+                                }
+                            }
+                        }
+
+                        if (!is_null($this->RewardsSystem)) {
+                            $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+                            $dbEvents = $this->getAppClass()->getDatabase()->select($db_prefix . "nomie_events", [
+                                "[>]" . $db_prefix . "nomie_trackers" => "id"
+                            ], [
+                                $db_prefix . "nomie_trackers.label(tracker)",
+                                $db_prefix . "nomie_trackers.id(trackerId)",
+                                $db_prefix . "nomie_trackers.type(action)",
+                                $db_prefix . "nomie_events.score",
+                                $db_prefix . "nomie_events.datestamp(datetime)",
+                                $db_prefix . "nomie_events.value",
+                                $db_prefix . "nomie_events.geo_lat",
+                                $db_prefix . "nomie_events.geo_lon"
+                            ], [
+                                "AND" => [
+                                    $db_prefix . "nomie_events.fuid" => $this->activeUser,
+                                    $db_prefix . "nomie_events.datestamp[>=]" => date("Y-m-d H:i:s", strtotime('-24 hours'))
+                                ],
+                                "ORDER" => [$db_prefix . "nomie_events.datestamp" => "ASC"]
+                            ]);
+
+                            foreach ($dbEvents as $event) {
+                                $this->RewardsSystem->eventTrigger('Nomie', $event);
                             }
                         }
                     }
 
-                    if (!is_null($this->RewardsSystem)) {
-                        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-
-                        $dbEvents = $this->getAppClass()->getDatabase()->select($db_prefix . "nomie_events", [
-                            "[>]" . $db_prefix . "nomie_trackers" => "id"
-                        ], [
-                            $db_prefix . "nomie_trackers.label(tracker)",
-                            $db_prefix . "nomie_trackers.id(trackerId)",
-                            $db_prefix . "nomie_trackers.type(action)",
-                            $db_prefix . "nomie_events.score",
-                            $db_prefix . "nomie_events.datestamp(datetime)",
-                            $db_prefix . "nomie_events.value",
-                            $db_prefix . "nomie_events.geo_lat",
-                            $db_prefix . "nomie_events.geo_lon"
-                        ], [
-                            "AND" => [
-                                $db_prefix . "nomie_events.fuid" => $this->activeUser,
-                                $db_prefix . "nomie_events.datestamp[>=]" => date("Y-m-d H:i:s", strtotime('-24 hours'))
-                            ],
-                            "ORDER" => [$db_prefix . "nomie_events.datestamp" => "ASC"]
-                        ]);
-
-                        foreach ($dbEvents as $event) {
-                            $this->RewardsSystem->eventTrigger('Nomie', $event);
-                        }
-                    }
+                    $this->setLastrun("nomie_trackers", null, true);
+                } else {
+                    nxr(1, "User is not a Nomie User");
+                    return "-143";
                 }
-
-                $this->setLastrun("nomie_trackers", null, true);
 
             } else {
                 return "-143";
@@ -934,6 +940,10 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("profile")) {
                 $userProfile = $this->pullBabel('user/-/profile.json');
+                if (is_null($userProfile)) {
+                    return "-141";
+                }
+
                 $userProfile = $userProfile['user'];
 
                 if (!isset($userProfile['height'])) {
@@ -974,6 +984,9 @@ class ApiBabel
                 $this->setLastrun("profile", null, true);
 
                 $subscriptions = $this->pullBabel('user/-/apiSubscriptions.json', true);
+                if (is_null($subscriptions)) {
+                    return "-141";
+                }
                 if (count($subscriptions->apiSubscriptions) == 0) {
                     nxr(1, $this->getActiveUser() . " is not subscribed to the site");
                     $user_db_id = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
@@ -1066,7 +1079,7 @@ class ApiBabel
 
                 die();
             } else {
-                /*$this->getAppClass()->getErrorRecording()->captureException( $e, array(
+                $this->getAppClass()->getErrorRecording()->captureException( $e, array(
 						'level' => 'error',
 						'extra' => array(
 							'api_path'     => $path,
@@ -1074,14 +1087,11 @@ class ApiBabel
 							'php_version'  => phpversion(),
 							'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
 						),
-					) );*/
-                nxr(0, "Error " . $e->getCode() . ": " . $e->getMessage());
-                nxr(0, $e->getFile() . " @" . $e->getLine());
-                nxr(0, $e->getTraceAsString());
+					) );
                 if ($supportFailures) {
                     return $e->getCode();
                 } else {
-                    die();
+                    return null;
                 }
             }
         }
@@ -1164,7 +1174,7 @@ class ApiBabel
                 $path = '';
             }
 
-            $request = $this->getLibrary()->getAuthenticatedRequest(OAUTH_HTTP_METHOD_POST,
+            $request = $this->getLibrary()->getAuthenticatedRequest('POST',
                 FITBIT_COM . "/1/user/-" . $path . "/apiSubscriptions/" . $id . ".json", $accessToken,
                 ["headers" => $userHeaders]);
             // Make the authenticated API request and get the response.
@@ -1197,6 +1207,9 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("devices")) {
                 $userDevices = $this->pullBabel('user/-/devices.json', true);
+                if (is_null($userDevices)) {
+                    return "-141";
+                }
 
                 $trackers = [];
                 foreach ($userDevices as $device) {
@@ -1384,6 +1397,9 @@ class ApiBabel
                 if (file_exists($badgeFolder) AND is_writable($badgeFolder)) {
 
                     $userBadges = $this->pullBabel('user/' . $this->getActiveUser() . '/badges.json', true);
+                    if (is_null($userBadges)) {
+                        return "-141";
+                    }
 
                     if (isset($userBadges)) {
                         foreach ($userBadges->badges as $badge) {
@@ -1573,6 +1589,9 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("leaderboard")) {
                 $userFriends = $this->pullBabel('user/-/friends/leaderboard.json', true);
+                if (is_null($userFriends)) {
+                    return "-141";
+                }
 
                 if (isset($userFriends)) {
                     $userFriends = $userFriends->friends;
@@ -1704,6 +1723,9 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("goals_calories")) {
                 $userCaloriesGoals = $this->pullBabel('user/-/foods/log/goal.json', true);
+                if (is_null($userCaloriesGoals)) {
+                    return "-141";
+                }
 
                 if (isset($userCaloriesGoals) && isset($userCaloriesGoals->goals) && isset($userCaloriesGoals->foodPlan)) {
                     $fallback = false;
@@ -1815,6 +1837,9 @@ class ApiBabel
 
                 $userActivityLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/list.json?afterDate=' . $targetDateTime->format("Y-m-d") . '&sort=asc&limit=100&offset=0',
                     true);
+                if (is_null($userActivityLog)) {
+                    return "-141";
+                }
 
                 if (isset($userActivityLog) and is_object($userActivityLog)) {
                     $activityLog = $userActivityLog->activities;
@@ -2044,6 +2069,9 @@ class ApiBabel
 
                     $hrUrl = "https://api.fitbit.com/1/user/-/activities/heart/date/" . $startDate . "/1d/1sec/time/" . $startTime . "/" . $endTime . ".json";
                     $heartRateValues = $this->pullBabel($hrUrl);
+                    if (is_null($heartRateValues)) {
+                        return "-141";
+                    }
 
                     if (array_key_exists("activities-heart", $heartRateValues) &&
                         count($heartRateValues['activities-heart']) > 0 &&
@@ -2187,6 +2215,9 @@ class ApiBabel
         if (!is_numeric($isAllowed)) {
             if ($this->isTriggerCooled("goals")) {
                 $userGoals = $this->pullBabel('user/-/activities/goals/daily.json', true);
+                if (is_null($userGoals)) {
+                    return "-141";
+                }
 
                 if (isset($userGoals) && isset($userGoals->goals)) {
                     $currentDate = new DateTime();
@@ -2597,6 +2628,9 @@ class ApiBabel
                 $lastCleanRun = new DateTime ($lastCleanRun);
                 $userHeartRateLog = $this->pullBabel('user/' . $this->getActiveUser() . '/activities/heart/date/' . $lastCleanRun->format('Y-m-d') . '/1d.json',
                     true, false, true);
+                if (is_null($userHeartRateLog)) {
+                    return "-141";
+                }
                 if (isset($userHeartRateLog) and is_numeric($userHeartRateLog)) {
                     return "-" . $userHeartRateLog;
                 }
@@ -2689,6 +2723,9 @@ class ApiBabel
         $targetDateTime = new DateTime ($targetDate);
         $userWaterLog = $this->pullBabel('user/-/foods/log/water/date/' . $targetDateTime->format('Y-m-d') . '.json',
             true);
+        if (is_null($userWaterLog)) {
+            return "-141";
+        }
 
         if (isset($userWaterLog)) {
             if (isset($userWaterLog->summary->water)) {
@@ -2747,6 +2784,9 @@ class ApiBabel
         $targetDateTime = new DateTime ($targetDate);
         $userSleepLog = $this->pullBabel('user/' . $this->getActiveUser() . '/sleep/date/' . $targetDateTime->format('Y-m-d') . '.json',
             true);
+        if (is_null($userSleepLog)) {
+            return "-141";
+        }
 
         if (isset($userSleepLog) and is_object($userSleepLog) and is_array($userSleepLog->sleep) and count($userSleepLog->sleep) > 0) {
             $loggedSleep = $userSleepLog->sleep[0];
@@ -2838,6 +2878,9 @@ class ApiBabel
         $targetDateTime = new DateTime ($targetDate);
         $userBodyLog = $this->pullBabel('user/' . $this->getActiveUser() . '/body/date/' . $targetDateTime->format('Y-m-d') . '.json',
             true);
+        if (is_null($userBodyLog)) {
+            return "-141";
+        }
 
         if (isset($userBodyLog)) {
             $fallback = false;
@@ -3006,6 +3049,9 @@ class ApiBabel
         $targetDateTime = new DateTime ($targetDate);
         $userFoodLog = $this->pullBabel('user/' . $this->getActiveUser() . '/foods/log/date/' . $targetDateTime->format('Y-m-d') . '.json',
             true);
+        if (is_null($userFoodLog)) {
+            return "-141";
+        }
 
         if (isset($userFoodLog)) {
             if (count($userFoodLog->foods) > 0) {
@@ -3394,6 +3440,9 @@ class ApiBabel
 
         $response = $this->pullBabel('user/' . $this->getActiveUser() . $path . '/date/' . (is_string($baseDate) ? $baseDate : $baseDate->format('Y-m-d')) . "/" . (is_string($to_period) ? $to_period : $to_period->format('Y-m-d')) . '.json',
             true);
+        if (is_null($response)) {
+            return "-141";
+        }
 
         switch ($type) {
             case 'caloriesOut':
@@ -3597,6 +3646,9 @@ class ApiBabel
                 }
                 $this->holdingVar = ["type" => "activities/goals/daily.json", "data" => ""];
                 $this->holdingVar["data"] = $this->pullBabel('user/-/activities/goals/daily.json', true);
+                if (is_null($this->holdingVar["data"])) {
+                    return "-141";
+                }
 
                 if ($trigger == "minutesVeryActive") {
                     $newGoal = $this->thisWeeksGoal("activeMinutes",

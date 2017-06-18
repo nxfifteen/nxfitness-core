@@ -1,14 +1,13 @@
-/*! Raven.js 3.14.1 (21187de) | github.com/getsentry/raven-js */
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
 
-/*
- * Includes TraceKit
- * https://github.com/getsentry/TraceKit
- *
- * Copyright 2017 Matt Robenolt and other contributors
- * Released under the BSD license
- * https://github.com/getsentry/raven-js/blob/master/LICENSE
- *
- */
+/*! Raven.js 3.16.0 (a8e28af) | github.com/getsentry/raven-js */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Raven = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 'use strict';
@@ -91,6 +90,13 @@ var _window = typeof window !== 'undefined' ? window
 var _document = _window.document;
 var _navigator = _window.navigator;
 
+
+function keepOriginalCallback(original, callback) {
+    return isFunction(callback) ?
+    function (data) { return callback(data, original) } :
+    callback;
+}
+
 // First, check for JSON support
 // If there is no JSON, we no-op the core features of Raven
 // since JSON is required to encode the payload
@@ -120,6 +126,7 @@ function Raven() {
         maxUrlLength: 250,
         stackTraceLimit: 50,
         autoBreadcrumbs: true,
+        instrument: true,
         sampleRate: 1
     };
     this._ignoreOnError = 0;
@@ -155,7 +162,7 @@ Raven.prototype = {
     // webpack (using a build step causes webpack #1617). Grunt verifies that
     // this value matches package.json during build.
     //   See: https://github.com/getsentry/raven-js/issues/465
-    VERSION: '3.14.1',
+    VERSION: '3.16.0',
 
     debug: false,
 
@@ -220,6 +227,18 @@ Raven.prototype = {
         }
         globalOptions.autoBreadcrumbs = autoBreadcrumbs;
 
+        var instrumentDefaults = {
+            tryCatch: true
+        };
+
+        var instrument = globalOptions.instrument;
+        if ({}.toString.call(instrument) === '[object Object]') {
+            instrument = objectMerge(instrumentDefaults, instrument);
+        } else if (instrument !== false) {
+            instrument = instrumentDefaults;
+        }
+        globalOptions.instrument = instrument;
+
         TraceKit.collectWindowErrors = !!globalOptions.collectWindowErrors;
 
         // return for chaining
@@ -240,7 +259,10 @@ Raven.prototype = {
             TraceKit.report.subscribe(function () {
                 self._handleOnErrorStackInfo.apply(self, arguments);
             });
-            self._instrumentTryCatch();
+            if (self._globalOptions.instrument && self._globalOptions.instrument.tryCatch) {
+              self._instrumentTryCatch();
+            }
+
             if (self._globalOptions.autoBreadcrumbs)
                 self._instrumentBreadcrumbs();
 
@@ -622,10 +644,8 @@ Raven.prototype = {
      */
     setDataCallback: function(callback) {
         var original = this._globalOptions.dataCallback;
-        this._globalOptions.dataCallback = isFunction(callback)
-          ? function (data) { return callback(data, original); }
-          : callback;
-
+        this._globalOptions.dataCallback =
+          keepOriginalCallback(original, callback);
         return this;
     },
 
@@ -638,10 +658,8 @@ Raven.prototype = {
      */
     setBreadcrumbCallback: function(callback) {
         var original = this._globalOptions.breadcrumbCallback;
-        this._globalOptions.breadcrumbCallback = isFunction(callback)
-          ? function (data) { return callback(data, original); }
-          : callback;
-
+        this._globalOptions.breadcrumbCallback =
+          keepOriginalCallback(original, callback);
         return this;
     },
 
@@ -654,10 +672,8 @@ Raven.prototype = {
      */
     setShouldSendCallback: function(callback) {
         var original = this._globalOptions.shouldSendCallback;
-        this._globalOptions.shouldSendCallback = isFunction(callback)
-            ? function (data) { return callback(data, original); }
-            : callback;
-
+        this._globalOptions.shouldSendCallback =
+          keepOriginalCallback(original, callback);
         return this;
     },
 
@@ -918,7 +934,8 @@ Raven.prototype = {
     },
 
     /**
-     * Install any queued plugins
+     * Wrap timer functions and event targets to catch errors and provide
+     * better metadata.
      */
     _instrumentTryCatch: function() {
         var self = this;
@@ -1116,11 +1133,22 @@ Raven.prototype = {
                     // Make a copy of the arguments to prevent deoptimization
                     // https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#32-leaking-arguments
                     var args = new Array(arguments.length);
-                    for(var i = 0; i < args.length; ++i) {
+                    for (var i = 0; i < args.length; ++i) {
                         args[i] = arguments[i];
                     }
 
+                    var fetchInput = args[0];
                     var method = 'GET';
+                    var url;
+
+                    if (typeof fetchInput === 'string') {
+                        url = fetchInput;
+                    } else {
+                        url = fetchInput.url;
+                        if (fetchInput.method) {
+                            method = fetchInput.method;
+                        }
+                    }
 
                     if (args[1] && args[1].method) {
                         method = args[1].method;
@@ -1128,7 +1156,7 @@ Raven.prototype = {
 
                     var fetchData = {
                         method: method,
-                        url: args[0],
+                        url: url,
                         status_code: null
                     };
 
@@ -1421,16 +1449,17 @@ Raven.prototype = {
 
         for (var i = 0; i < breadcrumbs.values.length; ++i) {
             crumb = breadcrumbs.values[i];
-            if (!crumb.hasOwnProperty('data') || !isObject(crumb.data))
+            if (!crumb.hasOwnProperty('data') || !isObject(crumb.data) || objectFrozen(crumb.data))
                 continue;
 
-            data = crumb.data;
+            data = objectMerge({}, crumb.data);
             for (var j = 0; j < urlProps.length; ++j) {
                 urlProp = urlProps[j];
                 if (data.hasOwnProperty(urlProp)) {
                     data[urlProp] = truncate(data[urlProp], this._globalOptions.maxUrlLength);
                 }
             }
+            breadcrumbs.values[i].data = data;
         }
     },
 
@@ -1815,6 +1844,21 @@ function objectMerge(obj1, obj2) {
     return obj1;
 }
 
+/**
+ * This function is only used for react-native.
+ * react-native freezes object that have already been sent over the
+ * js bridge. We need this function in order to check if the object is frozen.
+ * So it's ok that objectFrozen returns false if Object.isFrozen is not
+ * supported because it's not relevant for other "platforms". See related issue:
+ * https://github.com/getsentry/react-native-sentry/issues/57
+ */
+function objectFrozen(obj) {
+    if (!Object.isFrozen) {
+        return false;
+    }
+    return Object.isFrozen(obj);
+}
+
 function truncate(str, max) {
     return !max || str.length <= max ? str : str.substr(0, max) + '\u2026';
 }
@@ -2140,9 +2184,22 @@ function isError(value) {
   }
 }
 
+function wrappedCallback(callback) {
+    function dataCallback(data, original) {
+      var normalizedData = callback(data) || data;
+      if (original) {
+          return original(normalizedData) || normalizedData;
+      }
+      return normalizedData;
+    }
+
+    return dataCallback;
+}
+
 module.exports = {
     isObject: isObject,
-    isError: isError
+    isError: isError,
+    wrappedCallback: wrappedCallback
 };
 
 },{}],6:[function(_dereq_,module,exports){

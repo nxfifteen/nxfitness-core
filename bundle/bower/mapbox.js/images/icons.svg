@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ This file is part of NxFIFTEEN Fitness Core.
+  ~
+  ~ Copyright (c) 2017. Stuart McCulloch Anderson
+  ~
+  ~ For the full copyright and license information, please view the LICENSE
+  ~ file that was distributed with this source code.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
 <svg xmlns="http://www.w3.org/2000/svg" width="26" height="260" viewBox="0 0 26 260" >
   <g id="sprite" fill="#000000">
     <path

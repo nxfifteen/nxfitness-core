@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ ******************************************************************************/
+
 /*
  Leaflet.markercluster, Provides Beautiful Animated Marker Clustering functionality for Leaflet, a JS library for interactive maps.
  https://github.com/Leaflet/Leaflet.markercluster
@@ -938,7 +947,7 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 			radiusFn = function () { return radius; };
 		}
 
-		if (this.options.disableClusteringAtZoom) {
+		if (this.options.disableClusteringAtZoom !== null) {
 			maxZoom = this.options.disableClusteringAtZoom - 1;
 		}
 		this._maxZoom = maxZoom;
@@ -1422,7 +1431,7 @@ L.MarkerCluster = L.Marker.extend({
 	},
 
 	//Zoom to the minimum of showing all of the child markers, or the extents of this cluster
-	zoomToBounds: function () {
+	zoomToBounds: function (fitBoundsOptions) {
 		var childClusters = this._childClusters.slice(),
 			map = this._group._map,
 			boundsZoom = map.getBoundsZoom(this._bounds),
@@ -1445,7 +1454,7 @@ L.MarkerCluster = L.Marker.extend({
 		} else if (boundsZoom <= mapZoom) { //If fitBounds wouldn't zoom us down, zoom us down instead
 			this._group._map.setView(this._latlng, mapZoom + 1);
 		} else {
-			this._group._map.fitBounds(this._bounds);
+			this._group._map.fitBounds(this._bounds, fitBoundsOptions);
 		}
 	},
 

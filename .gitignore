@@ -96,6 +96,7 @@ config/config.inc.php
 /bundle/bower/chart.js/composer.json
 /bundle/bower/chart.js/.eslintrc
 /bundle/bower/chart.js/samples/
+/bundle/bower/chart.js/book.json
 /bundle/bower/bower-jquery-easyPieChart/src/
 /bundle/bower/bootstrap/Gruntfile.js
 /bundle/bower/bootstrap/Gemfile.lock
@@ -108,6 +109,8 @@ config/config.inc.php
 /bundle/bower/bootstrap/scss/
 *.bat
 /composer.json
+/bundle/vendor/*/*/.scrutinizer.yml
+/bundle/vendor/*/*/.gitignore
 /bundle/vendor/*/*/.gitattributes
 /bundle/vendor/*/*/examples/
 /bundle/vendor/*/*/test/
