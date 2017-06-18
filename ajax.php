@@ -82,7 +82,7 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
 
             http_response_code(200);
         } else if ($_POST['formId'] == "accDeletion") {
-            nxr(0, print_r($_POST, true));
+            nxr(1, "Users requested an account deletion");
             $core = new Core();
             if (isset($apiUserid) && isset($apiKey)) {
                 $core->setUserSetting($_COOKIE['_nx_fb_usr'], "user_id", $apiUserid);
@@ -100,7 +100,7 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
                             if (function_exists($tableFunction)){
                                 $tableFunction($core, $prefix);
                             } else {
-                                nxr(0, "Removing user from " . $dbTable[0]);
+                                nxr(2, "Removing user from " . $dbTable[0]);
                                 $core->getDatabase()->delete($dbTable[0], [$userColumn => $_COOKIE['_nx_fb_usr']]);
                             }
                         }
@@ -112,6 +112,14 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             setcookie('_nx_fb_usr', '', time() - 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
 
             nxr_destroy_session();
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_';
+            foreach(glob($cacheFile . "*") as $f) {
+                nxr(2, "Deleteing $f");
+                if ( file_exists( $f ) ) {
+                    unlink($f);
+                }
+            }
 
             http_response_code(200);
         } else {
@@ -137,7 +145,7 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
  * @param string $prefix
  */
 function delUserFrom_nx_fitbit_devices_user($core, $prefix) {
-    nxr(0, "Need to delete rated device and charges");
+    nxr(2, "Deleting users devices");
     $deviceIds = $core->getDatabase()->select($prefix . "devices_user", "device", ["user" => $_COOKIE['_nx_fb_usr']]);
     foreach ($deviceIds as $deviceId) {
         $core->getDatabase()->delete($prefix . "devices", ["id" => $deviceId]);
@@ -151,7 +159,7 @@ function delUserFrom_nx_fitbit_devices_user($core, $prefix) {
  * @param string $prefix
  */
 function delUserFrom_nx_fitbit_sleep($core, $prefix) {
-    nxr(0, "Need to delete rated sleep records");
+    nxr(2, "Deleting users Sleep logs");
     $sleepIds = $core->getDatabase()->select($prefix . "sleep_user", "sleeplog", ["user" => $_COOKIE['_nx_fb_usr']]);
     foreach ($sleepIds as $sleepId) {
         $core->getDatabase()->delete($prefix . "sleep", ["logId" => $sleepId]);
@@ -160,6 +168,7 @@ function delUserFrom_nx_fitbit_sleep($core, $prefix) {
 }
 
 /**
+ * @param $prefix
  * @param $tableName
  * @return string
  */
