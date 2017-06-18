@@ -110,6 +110,9 @@ if ($_COOKIE['_nx_fb_usr'] == $App->getNxFit()->getSetting('ownerFuid', null, fa
         Settings
     </li>
     <li class="nav-item">
+        <a class="nav-link" href="settings/account.html"><i class="fa fa-chain"></i> Account</a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices</a>
     </li>
     <?php if ($isDeveloper) { ?>
