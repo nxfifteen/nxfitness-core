@@ -1072,7 +1072,7 @@ class ApiBabel
 
                 die();
             } else {
-                /*$this->getAppClass()->getErrorRecording()->captureException( $e, array(
+                $this->getAppClass()->getErrorRecording()->captureException( $e, array(
 						'level' => 'error',
 						'extra' => array(
 							'api_path'     => $path,
@@ -1080,14 +1080,11 @@ class ApiBabel
 							'php_version'  => phpversion(),
 							'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
 						),
-					) );*/
-                nxr(0, "Error " . $e->getCode() . ": " . $e->getMessage());
-                nxr(0, $e->getFile() . " @" . $e->getLine());
-                nxr(0, $e->getTraceAsString());
+					) );
                 if ($supportFailures) {
                     return $e->getCode();
                 } else {
-                    die();
+                    return null;
                 }
             }
         }
