@@ -83,7 +83,24 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             http_response_code(200);
         } else if ($_POST['formId'] == "accDeletion") {
             nxr(0, print_r($_POST, true));
-            sleep(10);
+            $core = new Core();
+            if (isset($apiUserid) && isset($apiKey)) {
+                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "user_id", $apiUserid);
+                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "api_key", $apiKey);
+            }
+
+            $data = $core->getDatabase()->query("SHOW TABLES FROM " . $core->getSetting("db_name", null, false))->fetchAll();
+            if (count($data) > 0) {
+                $prefix = $core->getSetting("db_prefix", null, false);
+                foreach ($data as $dbTable) {
+                    if (substr($dbTable[0], 0, strlen($prefix)) === $prefix) {
+                        $userColumn = whatIsUserColumn($dbTable[0]);
+                        if (!is_null($userColumn)) {
+                            nxr(0, $userColumn . " in " . $dbTable[0]);
+                        }
+                    }
+                }
+            }
             http_response_code(200);
         } else {
             nxr(1, "Unknown Form");
@@ -101,4 +118,46 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
     nxr(1, "User Unsecured");
     http_response_code(403);
     echo "Unauthorised Access";
+}
+
+/**
+ * @param $tableName
+ * @return string
+ */
+function whatIsUserColumn($tableName) {
+    switch ($tableName) {
+        case "nx_fitbit_activity":
+        case "nx_fitbit_activity_log":
+        case "nx_fitbit_body":
+        case "nx_fitbit_devices_user":
+        case "nx_fitbit_food":
+        case "nx_fitbit_food_goals":
+        case "nx_fitbit_heartAverage":
+        case "nx_fitbit_heart_activity":
+        case "nx_fitbit_push":
+        case "nx_fitbit_queue":
+        case "nx_fitbit_runlog":
+        case "nx_fitbit_sleep":
+        case "nx_fitbit_steps":
+        case "nx_fitbit_steps_goals":
+        case "nx_fitbit_streak_goal":
+        case "nx_fitbit_units":
+        case "nx_fitbit_water":
+            return "user";
+
+        case "nx_fitbit_bages_user":
+        case "nx_fitbit_inbox":
+        case "nx_fitbit_journeys_travellers":
+        case "nx_fitbit_nomie_events":
+        case "nx_fitbit_nomie_trackers":
+        case "nx_fitbit_reward_queue":
+        case "nx_fitbit_settings_users":
+        case "nx_fitbit_users":
+        case "nx_fitbit_users_xp":
+            return "fuid";
+
+        default:
+            return null;
+
+    }
 }
