@@ -17,7 +17,7 @@ header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
 require_once( dirname( __FILE__ ) . "/lib/autoloader.php" );
 
 if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
-    nxr(1, "User " . $_COOKIE['_nx_fb_usr'] . " Secured");
+    //nxr(1, "User " . $_COOKIE['_nx_fb_usr'] . " Secured");
 
     if (array_key_exists('formId', $_POST)) {
         if ($_POST['formId'] == "habiticaRegister" || $_POST['formId'] == "habiticaConnect") {
@@ -120,22 +120,115 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             }
 
             http_response_code(200);
+        } else if ($_POST['formId'] == "intentSwitch") {
+            $core = new Core();
+            nxr(0, "Updated " . $_POST['switch'] . " to " . $_POST['value'] . " for " . $_COOKIE[ '_nx_fb_usr' ]);
+            if ($_POST['value'] == "true") {
+                $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], 'scope_' . $_POST['switch'], 1);
+            } else {
+                $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], 'scope_' . $_POST['switch'], 0);
+            }
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Account";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            http_response_code(200);
+        } else if ($_POST['formId'] == "basicProfile") {
+            $core = new Core();
+            $db_prefix = $core->getSetting("db_prefix", null, false);
+            $core->getDatabase()->update($db_prefix . "users", ['eml' => $_POST['eml']], ["fuid" => $_COOKIE[ '_nx_fb_usr' ]]);
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Account";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            http_response_code(200);
+        } else if ($_POST['formId'] == "passwordChange") {
+            $core = new Core();
+            $db_prefix = $core->getSetting("db_prefix", null, false);
+
+            nxr(0, "New password request");
+            nxr(1, "Current supplied password " . $_POST['passwordCurrent']);
+            nxr(2, "New supplied password " . $_POST['passwordNew']);
+            nxr(2, "Confirmation password " . $_POST['passwordNew2']);
+
+            $valid = $core->isUserValid($_COOKIE[ '_nx_fb_usr' ], hash("sha256", $core->getSetting("salt") . $_POST['passwordCurrent']));
+            nxr(1, "Validity " . print_r($valid, true));
+            if ($valid == $_COOKIE[ '_nx_fb_usr' ] && array_key_exists("passwordNew", $_POST) and array_key_exists("passwordNew2", $_POST) and $_POST['passwordNew'] != "" && $_POST['passwordNew'] == $_POST['passwordNew2']) {
+                $newUserArray = ['password' => hash("sha256", $core->getSetting("salt") . $_POST['passwordNew'])];
+                $core->getDatabase()->update($db_prefix . "users", $newUserArray, ['fuid' => $_COOKIE[ '_nx_fb_usr' ]]);
+
+                setcookie('_nx_fb_usr', $_COOKIE[ '_nx_fb_usr' ], false, '/', $_SERVER['SERVER_NAME']);
+                setcookie('_nx_fb_key', gen_cookie_hash($core, $_COOKIE[ '_nx_fb_usr' ]), false, '/', $_SERVER['SERVER_NAME']);
+                $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Account";
+                if ( file_exists( $babelCacheFile ) ) {
+                    unlink($babelCacheFile);
+                }
+
+                nxr(0, "Password changed for " . $_COOKIE[ '_nx_fb_usr' ]);
+
+                echo "Password changed to " . $_POST['passwordNew'];
+                http_response_code(200);
+            } else if ($valid != $_COOKIE[ '_nx_fb_usr' ]) {
+                nxr(0, "Incorrect Password");
+                echo "Incorrect Password";
+                http_response_code(403);
+            } else if (!array_key_exists("passwordNew", $_POST) || $_POST['passwordNew'] == "") {
+                nxr(0, "New Password not supplied");
+                echo "New Password not supplied";
+                http_response_code(500);
+            } else if (!array_key_exists("passwordNew2", $_POST)) {
+                nxr(0, "New Password not confirmed");
+                echo "New Password not confirmed";
+                http_response_code(500);
+            } else if ($_POST['passwordNew'] != $_POST['passwordNew2']) {
+                nxr(0, "Password doesnt match confirmaton");
+                echo "Password doesnt match confirmaton";
+                http_response_code(500);
+            }
+
+        } else if ($_POST['formId'] == "apiKeyRefresh") {
+
+            $core = new Core();
+            $db_prefix = $core->getSetting("db_prefix", null, false);
+            $newKeySalt = $core->getDatabase()->get($db_prefix . "users", ['eml', 'password', 'rank', 'tkn_refresh', 'tkn_access'], ["fuid" => $_COOKIE[ '_nx_fb_usr' ]]);
+            $newKey = random_bytes(10);
+            foreach ($newKeySalt as $key => $value) {
+                $newKey .= $value.$key.random_bytes(5);
+            }
+
+            $newKey = sha1($newKey);
+            $newKey = preg_replace('/^([\w]{4})([\w]{7})([\w]{6})([\w]+)/m', '$1-$2-$3', $newKey);
+            $core->getDatabase()->update($db_prefix . "users", ['api' => $newKey], ["fuid" => $_COOKIE[ '_nx_fb_usr' ]]);
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Account";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            echo $newKey;
+
+            http_response_code(200);
         } else {
             nxr(1, "Unknown Form");
-            http_response_code(403);
+            nxr(0, print_r($_POST, true));
             echo "Unknown Form";
+            http_response_code(403);
         }
 
     } else {
         nxr(1, "Invalid Form");
-        http_response_code(403);
         echo "Invalid Form";
+        http_response_code(403);
     }
 
 } else {
     nxr(1, "User Unsecured");
-    http_response_code(403);
     echo "Unauthorised Access";
+    http_response_code(403);
 }
 
 /**
@@ -243,4 +336,17 @@ function whatIsUserColumn($prefix, $tableName) {
             return null;
 
     }
+}
+
+/**
+ * @param Core $fitbitApp
+ * @param          $fuid
+ *
+ * @return string
+ * @internal param array $_POST
+ */
+function gen_cookie_hash($fitbitApp, $fuid)
+{
+    return hash("sha256",
+        $fitbitApp->getSetting("salt") . $fuid . $_SERVER['SERVER_NAME'] . $_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR']);
 }

@@ -3080,6 +3080,51 @@ class DataReturn
      * @todo Consider test case
      * @return array
      */
+    public function returnUserRecordAccount()
+    {
+        $supported = $this->getAppClass()->supportedApi();
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+        $returnBabels = $this->getAppClass()->getDatabase()->get($db_prefix . "users", ['eml', 'api', 'name', 'fuid'], ["fuid" => $this->getUserID()]);
+        $returnBabels['babel'] = [];
+
+        foreach ($supported as $babel => $name) {
+            if ($babel != "all" && $babel != "profile") {
+                $returnBabels['babel'][$babel] = [
+                    "name" => $name,
+                    "status" => $this->isAllowed($babel)
+                ];
+            }
+        }
+
+        return $returnBabels;
+    }
+
+    /**
+     * @param string $trigger
+     *
+     * @todo Consider test case
+     * @return bool|string
+     */
+    public function isAllowed($trigger)
+    {
+        $usrConfig = $this->getAppClass()->getUserSetting($this->getUserID(), 'scope_' . $trigger, true);
+        if (!is_null($usrConfig) AND $usrConfig != 1) {
+            return false;
+        }
+
+        $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, true);
+        if ($sysConfig != 1) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @todo Consider test case
+     * @return array
+     */
     public function returnUserRecordXp()
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
