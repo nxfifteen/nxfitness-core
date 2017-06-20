@@ -12,9 +12,12 @@ $(function () {
 
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=Account", function (data) {
-        var switches = '';
+        var switches = '<div class="row">';
         $.each(data.results.babel, function (babelKey, babelValues) {
+            switches += '<div class="col-9 col-md-2">';
             switches += '<span class="form-control-label" style="padding-right: 10px">'+babelValues.name+'</span>';
+            switches += '</div>';
+            switches += '<div class="col-3 col-md-1">';
             switches += '<label class="switch switch-text switch-pill switch-success" style="margin-right: 10px">';
             switches += '  <input type="checkbox" class="switch-input" name="'+babelValues.name+'" id="'+babelKey+'" onchange="submitSwitch(this)"';
             if (babelValues.status) {
@@ -24,7 +27,9 @@ $(function () {
             switches += '  <span class="switch-label" data-on="On" data-off="Off"></span>';
             switches += '  <span class="switch-handle"></span>';
             switches += '</label>';
+            switches += '</div>';
         });
+        switches += '</div>';
         $('#ActiveIntents').html(switches);
 
         $('#fullName').html(data.results.name);
