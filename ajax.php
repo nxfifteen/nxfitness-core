@@ -212,6 +212,59 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             echo $newKey;
 
             http_response_code(200);
+
+        } else if ($_POST['formId'] == "privacyPoint") {
+            $core = new Core();
+            $currentPoints = json_decode($core->getUserSetting($_COOKIE[ '_nx_fb_usr' ], "geo_private", array()), true);
+            if (!is_array($currentPoints)) {
+                $currentPoints = [];
+            }
+            $currentPoints[] = [
+                "display_name" => $_POST['display_name'],
+                "lat" => $_POST['lat'],
+                "lon" => $_POST['lon']
+            ];
+
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "geo_private", json_encode($currentPoints));
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_GeoSecure";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            echo "Okay";
+
+            http_response_code(200);
+
+        } else if ($_POST['formId'] == "privacyPointDel") {
+            $core = new Core();
+            $currentPoints = json_decode($core->getUserSetting($_COOKIE[ '_nx_fb_usr' ], "geo_private", array()), true);
+            if (!is_array($currentPoints)) {
+                $currentPoints = [];
+            }
+
+            $newPoints = [];
+            if (count($currentPoints) > 0) {
+                nxr(0, $_POST['point']);
+                foreach ($currentPoints as $currentPoint) {
+                    nxr(1, $currentPoint['display_name']);
+                    if ($currentPoint['display_name'] != $_POST['point']) {
+                        $newPoints[] = $currentPoint;
+                    }
+                }
+            }
+
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "geo_private", json_encode($newPoints));
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_GeoSecure";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            echo "Okay";
+
+            http_response_code(200);
+
         } else {
             nxr(1, "Unknown Form");
             nxr(0, print_r($_POST, true));

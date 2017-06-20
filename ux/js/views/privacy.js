@@ -7,6 +7,9 @@
  * file that was distributed with this source code.
  ******************************************************************************/
 
+var spotlat = 0;
+var spotlon = 0;
+
 $(function () {
     'use strict';
 
@@ -19,30 +22,7 @@ $(function () {
         mapGPS("St Andrews", 56.33861769463613, -2.798058986663819);
     }
 
-    $.getJSON("../json.php?user=" + fitbitUserId + "&data=GeoSecure", function (data) {
-        var html = '';
-        $.each(data.results, function (index, locationPoint) {
-            html += '  <div class="col-sm-6 col-lg-3">';
-            html += '    <div class="card card-inverse card-primary">';
-            /** @namespace locationPoint.display_name */
-            html += '      <div class="card-header" id="header"><a style="color: white" href="javascript:;" onclick="mapGPS(\'' + locationPoint.display_name.split('\'').join('') + '\', ' + locationPoint.lat + ', ' + locationPoint.lon + ');">' + locationPoint.display_name + '</a></div>';
-            html += '      <div class="card-block" id="location-map-' + index + '">';
-            /** @namespace locationPoint.lon */
-            html += '        <img class="img-fluid" src="inc/StaticMapLite.php?center=' + locationPoint.lat + ',' + locationPoint.lon + '&zoom=14&size=380x150&maptype=mapnik&markers=' + locationPoint.lat + ',' + locationPoint.lon + ',ol-marker" width="380" height="150" />';
-            html += '      </div>';
-            // html += '      <div class="card-footer">';
-            // html += '        <button class="btn btn-danger" type="button">Delete</button>';
-            // html += '      </div>';
-            html += '    </div>';
-            html += '  </div>';
-
-            if (locationPoint.display_name === "Home") {
-                mapGPS("Your " + locationPoint.display_name, locationPoint.lat, locationPoint.lon);
-            }
-
-        });
-        $("#locations-map").html(html);
-    });
+    getMapPoints($);
 
     $("#search").click(function () {
         mapQuery();
@@ -67,6 +47,8 @@ function mapGPS(name, lat, lng) {
         zoomLev = 16;
     }
 
+    spotlat = lat;
+    spotlon = lng;
 
     $('#header').html(name);
 
@@ -92,4 +74,64 @@ function mapGPS(name, lat, lng) {
 
 function onMapClick(e) {
     mapGPS("Map Point - " + e.latlng.lat + "," + e.latlng.lng, e.latlng.lat, e.latlng.lng);
+}
+
+// this is the id of the form
+$("#privacyPoint").submit(function (e) {
+
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#privacyPoint").serialize() + "&lat="+spotlat + "&lon="+spotlon;
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        $("#display_name").val("");
+        getMapPoints($);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+
+function privacyPointDel(pointName) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+
+    var data = "formId=privacyPointDel&point=" + pointName;
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        $("#display_name").val("");
+        getMapPoints($);
+    });
+}
+
+function getMapPoints($) {
+    $.getJSON("../json.php?user=" + fitbitUserId + "&data=GeoSecure", function (data) {
+        var html = '';
+        $.each(data.results, function (index, locationPoint) {
+            html += '  <div class="col-sm-6 col-lg-3">';
+            html += '    <div class="card card-inverse card-primary">';
+            /** @namespace locationPoint.display_name */
+            html += '      <div class="card-header" id="header"><a style="color: white" href="javascript:;" onclick="mapGPS(\'' + locationPoint.display_name.split('\'').join('') + '\', ' + locationPoint.lat + ', ' + locationPoint.lon + ');">' + locationPoint.display_name + '</a></div>';
+            html += '      <div class="card-block" id="location-map-' + index + '">';
+            /** @namespace locationPoint.lon */
+            html += '        <img class="img-fluid" src="inc/StaticMapLite.php?center=' + locationPoint.lat + ',' + locationPoint.lon + '&zoom=14&size=380x150&maptype=mapnik&markers=' + locationPoint.lat + ',' + locationPoint.lon + ',ol-marker" width="380" height="150" />';
+            html += '      </div>';
+            html += '      <div class="card-footer">';
+            html += '        <button class="btn btn-danger" type="button" onclick="privacyPointDel(\'' + locationPoint.display_name.split('\'').join('\\\'') + '\')">Delete</button>';
+            html += '      </div>';
+            html += '    </div>';
+            html += '  </div>';
+
+            if (locationPoint.display_name === "Home") {
+                mapGPS("Your " + locationPoint.display_name, locationPoint.lat, locationPoint.lon);
+            }
+
+        });
+        $("#locations-map").html(html);
+    });
 }
