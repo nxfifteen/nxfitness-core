@@ -278,18 +278,14 @@ $(function () {
         var html = '';
         $.each(data.results, function (index, reward) {
             html += '<li>';
-            html += '    <i class="' + reward.ico + ' ' + reward.icoColour + '" style="font-size: 30px;"></i>';
-            html += '    <div class="desc">';
+            html += '    <i class="' + reward.ico + ' ' + reward.icoColour + ' hidden-sm-down" style="font-size: 30px;"></i>';
+            html += '    <div class="desc" style="margin-left: 0;">';
             html += '        <div class="title">' + reward.subject + '</div>';
             html += '        <small>' + reward.body + '</small>';
             html += '    </div>';
-            html += '    <div class="value">';
+            html += '    <div class="value hidden-sm-down" style="right: 1px">';
             html += '        <div class="small text-muted">' + reward.date + '</div>';
             html += '        <strong>' + reward.bold + '</strong>';
-            html += '    </div>';
-            html += '    <div class="actions">';
-            html += '        <button type="button" class="btn btn-link text-muted"><i class="icon-settings"></i>';
-            html += '        </button>';
             html += '    </div>';
             html += "</li>\n";
         });

@@ -150,7 +150,7 @@ class ApiBabel
             $this->RewardsSystem = new RewardsSystem($user);
 
             $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
-            if (strtotime($userCoolDownTime) >= date("U")) {
+            if ($trigger != "habitica" && $trigger != "nomie_trackers" && strtotime($userCoolDownTime) >= date("U")) {
                 nxr(0,
                     "User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
                 die();

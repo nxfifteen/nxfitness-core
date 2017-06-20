@@ -37,8 +37,19 @@
                 <div class="card-header" id="header">Sync Progress</div>
                 <div class="card-block">
                     <div class="row">
-                        <div class="col-md-12" id="map-container">
+                        <div class="col-12" id="map-container">
                             <div class="map" id="map"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <form class="form-inline" style="width: 100%" id="privacyPoint">
+                                <div class="input-group" style="width: 100%">
+                                    <input type="hidden" name="formId" value="privacyPoint">
+                                    <input type="text" id="display_name" name="display_name" class="form-control" value="" aria-label="Give it a name" title="Search For">
+                                    <span class="input-group-btn"><button class="btn btn-primary" type="submit" id="savePoint">Save</button></span>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -46,8 +57,7 @@
                     <form class="form-inline" style="width: 100%">
                         <div class="form-group" style="width: 100%">
                             <div class="input-group" style="width: 100%">
-                                <input type="text" id="searchAddress" name="searchAddress" class="form-control" value=""
-                                       aria-label="Search for..." title="Search For">
+                                <input type="text" id="searchAddress" name="searchAddress" class="form-control" value="" aria-label="Search for..." title="Search For">
                                 <span class="input-group-btn">
                                     <button class="btn btn-primary" type="button" id="search">Go..!</button>
                                 </span>

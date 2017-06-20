@@ -21,21 +21,20 @@
 <div class="animated fadeIn">
     <div class="row">
         <!--weather panel-->
-        <div class="col-12 col-md-7">
+        <div class="col-12 col-lg-7">
 
             <div class="row">
                 <div class="col-12">
                     <div class="card card-outline-success">
-                        <img id="weatherPanelImage" class="card-img-top d-sm-down-none" src="img/local/default.jpg"
-                             alt="Card image cap">
+                        <img id="weatherPanelImage" class="card-img-top hidden-md-down" src="img/local/default.jpg" alt="Card image cap">
                         <div class="card-block" id="weatherPanel">
                             <div class="row weather-full-info">
-                                <div class="col-12 col-md-3 today-status">
+                                <div class="col-12 col-md-3 col-lg-3 today-status">
                                     <h1 id="frcstTodayDay">Today</h1>
                                     <i id="frcstTodayIco" class="ico-weather"></i>
                                     <div id="frcstToday" class="degree">0</div>
                                 </div>
-                                <div class="d-sm-down-none col-md-9">
+                                <div class="hidden-sm-down col-md-9">
                                     <ul>
                                         <li>
                                             <h2 id="frcstOneDay"></h2>
@@ -62,7 +61,7 @@
                                             <i id="frcstFiveIco" class="ico-weather text-warning"></i>
                                             <div id="frcstFive" class="statistics">0</div>
                                         </li>
-                                        <li>
+                                        <li class="hidden-md-down">
                                             <h2 id="frcstSixDay"></h2>
                                             <i id="frcstSixIco" class="ico-weather"></i>
                                             <div id="frcstSix" class="statistics">0</div>
@@ -150,13 +149,13 @@
 
         </div>
 
-        <div class="col-12 col-md-5">
+        <div class="col-12 col-lg-5">
 
             <div class="row">
                 <div class="col-md-12">
                     <div id="habiticaReg">
 
-                        <div class="card">
+                        <div class="card hidden-md-down">
                             <div class="card-block">
                                 <img src="img/habitica.png"/>
                             </div>
@@ -256,51 +255,45 @@
                                     </div>
                                 </div>
                                 <div class="row" id="xpRow">
-                                    <div class="col-3">
+                                    <div class="col-3 hidden-sm-down">
                                         <img id="xpAvatar" src="img/xplevels/0.png">
                                         <div class="progress progress-xs my-3">
-                                            <div id="xpHealth" class="progress-bar bg-danger" role="progressbar"
-                                                 style="width: 0" aria-valuenow="25" aria-valuemin="0"
-                                                 aria-valuemax="100"></div>
+                                            <div id="xpHealth" class="progress-bar bg-danger" role="progressbar" style="width: 0" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </div>
-                                    <div class="col-9">
+                                    <div class="col-12 col-md-9">
                                         <div class="social-box xplvl">
                                             <div class="row">
-                                                <div class="col-6">
-                                                    <img id="xpClassBadge" src="img/xplevels/0.png"
-                                                         style="text-align: center">
+                                                <div class="col-6 hidden-sm-down">
+                                                    <img id="xpClassBadge" src="img/xplevels/0.png" style="text-align: center">
                                                 </div>
-                                                <div class="col-6">
-                                                    <img id="xpLevelBadge" src="img/xplevels/0.png"
-                                                         style="float: right">
+                                                <div class="col-12 col-md-6">
+                                                    <img id="xpLevelBadge" src="img/xplevels/0.png" style="float: right">
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="progress progress-xs my-3">
-                                                        <div id="xpProgressNextLevel" class="progress-bar bg-info"
-                                                             role="progressbar" style="width: 0" aria-valuenow="25"
-                                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                                        <div id="xpProgressNextLevel" class="progress-bar bg-info" role="progressbar" style="width: 0" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-12">
                                                     <ul>
-                                                        <li class="col-3">
+                                                        <li class="col-4 col-md-3">
                                                             <strong id="xp">0</strong>
                                                             <span>XP</span>
                                                         </li>
-                                                        <li class="col-3">
+                                                        <li class="col-3 hidden-sm-down">
                                                             <strong id="xpLvl">0</strong>
                                                             <span>Level</span>
                                                         </li>
-                                                        <li class="col-3">
+                                                        <li class="col-4 col-md-3">
                                                             <strong id="xpMana">0</strong>
                                                             <span>Mana</span>
                                                         </li>
-                                                        <li class="col-3">
+                                                        <li class="col-4 col-md-3">
                                                             <strong id="xGold">0</strong>
                                                             <span>Gold</span>
                                                         </li>
@@ -310,12 +303,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-block">
-                                    <div class="row" id="rewardLog">
-                                        <div class="col-12">
-                                            <ul class="icons-list" id="rewardsList"></ul>
-                                        </div>
-                                    </div>
+                                <div class="card-block" id="rewardLog">
+                                    <ul class="icons-list" id="rewardsList"></ul>
                                 </div>
                             </div>
                         </div>

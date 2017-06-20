@@ -8,25 +8,133 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <script>
-    //    var requireJS = [];
-    //
-    //    loadJS(requireJS, "");
+    var requireJS = [];
+    loadJS(requireJS, "js/views/account.js");
     //    loadCSS("");
     setUpBreadcrumb(['Settings'], 'Account');
 </script>
 
 <div class="animated fadeIn">
     <div class="row">
-        <div class="col-8">
-            <div class="card">
-                <div class="card-header">Profile</div>
-                <div class="card-block">
-                    <div class="row" id="syncTotalProgress"></div>
+        <div class="col-12 col-md-10">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Basic Profile
+                        </div>
+                        <div class="card-block">
+                            <form id="basicProfile">
+                                <input type="hidden" name="formId" value="basicProfile">
+                                <div class="form-group row">
+                                    <label class="col-12 col-md-md-3 form-control-label">Your Name</label>
+                                    <div class="col-12 col-md-md-9">
+                                        <p class="form-control-static" id="fullName">&nbsp;</p>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-12 col-md-md-3 form-control-label">Username</label>
+                                    <div class="col-12 col-md-md-9">
+                                        <p class="form-control-static" id="fuid">&nbsp;</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="hidden-sm-down input-group-addon">Email</span>
+                                        <input type="email" id="email" name="eml" class="form-control">
+                                        <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                                    </div>
+                                </div>
+                                <div class="form-group form-actions">
+                                    <button type="submit" class="btn btn-sm btn-primary">Update Email</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <div id="basicProfileReport">&nbsp;</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hidden-sm-down col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Update Your Password
+                        </div>
+                        <div class="card-block">
+                            <form id="passwordChange">
+                                <input type="hidden" name="formId" value="passwordChange">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Current Password</span>
+                                        <input type="password" id="passwordCurrent" name="passwordCurrent" class="form-control" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIUlEQVQ4EX2TOYhTURSG87IMihDsjGghBhFBmHFDHLWwSqcikk4RRKJgk0KL7C8bMpWpZtIqNkEUl1ZCgs0wOo0SxiLMDApWlgOPrH7/5b2QkYwX7jvn/uc//zl3edZ4PPbNGvF4fC4ajR5VrNvt/mo0Gr1ZPOtfgWw2e9Lv9+chX7cs64CS4Oxg3o9GI7tUKv0Q5o1dAiTfCgQCLwnOkfQOu+oSLyJ2A783HA7vIPLGxX0TgVwud4HKn0nc7Pf7N6vV6oZHkkX8FPG3uMfgXC0Wi2vCg/poUKGGcagQI3k7k8mcp5slcGswGDwpl8tfwGJg3xB6Dvey8vz6oH4C3iXcFYjbwiDeo1KafafkC3NjK7iL5ESFGQEUF7Sg+ifZdDp9GnMF/KGmfBdT2HCwZ7TwtrBPC7rQaav6Iv48rqZwg+F+p8hOMBj0IbxfMdMBrW5pAVGV/ztINByENkU0t5BIJEKRSOQ3Aj+Z57iFs1R5NK3EQS6HQqF1zmQdzpFWq3W42WwOTAf1er1PF2USFlC+qxMvFAr3HcexWX+QX6lUvsKpkTyPSEXJkw6MQ4S38Ljdbi8rmM/nY+CvgNcQqdH6U/xrYK9t244jZv6ByUOSiDdIfgBZ12U6dHEHu9TpdIr8F0OP692CtzaW/a6y3y0Wx5kbFHvGuXzkgf0xhKnPzA4UTyaTB8Ph8AvcHi3fnsrZ7Wore02YViqVOrRXXPhfqP8j6MYlawoAAAAASUVORK5CYII=&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+                                        <span class="input-group-addon"><i class="fa fa-asterisk"></i>
+                                </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">New Password</span>
+                                        <input type="password" id="passwordNew" name="passwordNew" class="form-control" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIUlEQVQ4EX2TOYhTURSG87IMihDsjGghBhFBmHFDHLWwSqcikk4RRKJgk0KL7C8bMpWpZtIqNkEUl1ZCgs0wOo0SxiLMDApWlgOPrH7/5b2QkYwX7jvn/uc//zl3edZ4PPbNGvF4fC4ajR5VrNvt/mo0Gr1ZPOtfgWw2e9Lv9+chX7cs64CS4Oxg3o9GI7tUKv0Q5o1dAiTfCgQCLwnOkfQOu+oSLyJ2A783HA7vIPLGxX0TgVwud4HKn0nc7Pf7N6vV6oZHkkX8FPG3uMfgXC0Wi2vCg/poUKGGcagQI3k7k8mcp5slcGswGDwpl8tfwGJg3xB6Dvey8vz6oH4C3iXcFYjbwiDeo1KafafkC3NjK7iL5ESFGQEUF7Sg+ifZdDp9GnMF/KGmfBdT2HCwZ7TwtrBPC7rQaav6Iv48rqZwg+F+p8hOMBj0IbxfMdMBrW5pAVGV/ztINByENkU0t5BIJEKRSOQ3Aj+Z57iFs1R5NK3EQS6HQqF1zmQdzpFWq3W42WwOTAf1er1PF2USFlC+qxMvFAr3HcexWX+QX6lUvsKpkTyPSEXJkw6MQ4S38Ljdbi8rmM/nY+CvgNcQqdH6U/xrYK9t244jZv6ByUOSiDdIfgBZ12U6dHEHu9TpdIr8F0OP692CtzaW/a6y3y0Wx5kbFHvGuXzkgf0xhKnPzA4UTyaTB8Ph8AvcHi3fnsrZ7Wore02YViqVOrRXXPhfqP8j6MYlawoAAAAASUVORK5CYII=&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+                                        <span class="input-group-addon"><i class="fa fa-asterisk"></i>
+                                </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Confirm New Password</span>
+                                        <input type="password" id="passwordNew2" name="passwordNew2" class="form-control" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIUlEQVQ4EX2TOYhTURSG87IMihDsjGghBhFBmHFDHLWwSqcikk4RRKJgk0KL7C8bMpWpZtIqNkEUl1ZCgs0wOo0SxiLMDApWlgOPrH7/5b2QkYwX7jvn/uc//zl3edZ4PPbNGvF4fC4ajR5VrNvt/mo0Gr1ZPOtfgWw2e9Lv9+chX7cs64CS4Oxg3o9GI7tUKv0Q5o1dAiTfCgQCLwnOkfQOu+oSLyJ2A783HA7vIPLGxX0TgVwud4HKn0nc7Pf7N6vV6oZHkkX8FPG3uMfgXC0Wi2vCg/poUKGGcagQI3k7k8mcp5slcGswGDwpl8tfwGJg3xB6Dvey8vz6oH4C3iXcFYjbwiDeo1KafafkC3NjK7iL5ESFGQEUF7Sg+ifZdDp9GnMF/KGmfBdT2HCwZ7TwtrBPC7rQaav6Iv48rqZwg+F+p8hOMBj0IbxfMdMBrW5pAVGV/ztINByENkU0t5BIJEKRSOQ3Aj+Z57iFs1R5NK3EQS6HQqF1zmQdzpFWq3W42WwOTAf1er1PF2USFlC+qxMvFAr3HcexWX+QX6lUvsKpkTyPSEXJkw6MQ4S38Ljdbi8rmM/nY+CvgNcQqdH6U/xrYK9t244jZv6ByUOSiDdIfgBZ12U6dHEHu9TpdIr8F0OP692CtzaW/a6y3y0Wx5kbFHvGuXzkgf0xhKnPzA4UTyaTB8Ph8AvcHi3fnsrZ7Wore02YViqVOrRXXPhfqP8j6MYlawoAAAAASUVORK5CYII=&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+                                        <span class="input-group-addon"><i class="fa fa-asterisk"></i></span>
+                                    </div>
+                                </div>
+                                <div class="form-group form-actions">
+                                    <button type="submit" class="btn btn-sm btn-primary">Change Password</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <div id="passwordChangeReport">&nbsp;</div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Active Intents
+                        </div>
+                        <div class="card-block">
+                            <form class="form-signin" id="ActiveIntents">
+                                <div class="form-group row"></div>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <div id="ActiveIntentsReport">&nbsp;</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <div class="col-4">
+        <div class="col-12 col-md-2">
+            <div class="card hidden-sm-down ">
+                <div class="card-header">API Key</div>
+                <div class="card-block">
+                    <div class="form-group row">
+                        <div class="col-md-9">
+                            <p class="form-control-static" id="apiKey">&nbsp;</p>
+                            <form class="form-signin" id="apiKeyRefresh">
+                                <input type="hidden" name="formId" value="apiKeyRefresh">
+                                <button type="submit" class="btn btn-danger">Generate a new Key</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-header">Actions</div>
                 <div class="card-block">
@@ -63,31 +171,3 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-
-<script type="application/javascript">
-    // this is the id of the form
-    $("#accDeletion").submit(function (e) {
-
-        $('#dangerModal').modal('hide');
-
-        var url = "../ajax.php"; // the script where you handle the form input.
-        var data = $("#accDeletion").serialize();
-
-        var html = '';
-        html += '                <p>I\'m currently deleting your account.</p>';
-        html += '                <p>This process can take 20/30 seconds, and you dont have to stick around for it. Once complete this page will refresh and you will be logged out.</p>';
-        $('#actionsText').html(html).show();
-
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: data
-        }).done(function (response) {
-            window.location.href = "views/pages/logout";
-        }).fail(function (response) {
-            $('#actionsText').html(response.responseText);
-        });
-
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-    });
-</script>
