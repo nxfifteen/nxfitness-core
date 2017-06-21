@@ -4,6 +4,16 @@ CI_COMMIT_REF_NAME="$2"
 CI_ENVIRONMENT_SLUG="$3"
 
 eval $(ssh-agent -s)
+
+echo -n "Working in "
+pwd
+
+echo -n "As "
+whoami
+
+echo -n "From "
+echo $HOME
+
 ssh-add /home/nxad/.ssh/id_rsa_pss
 
 if [ ! -d "$ROOTPATH" ]; then
