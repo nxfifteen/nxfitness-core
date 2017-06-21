@@ -1,6 +1,10 @@
 #!/bin/bash
 ROOTPATH="$1"
 
+eval $(ssh-agent -s)
+
+ssh-add $HOME/id_rsa_nxcore
+
 if [ ! -d "$ROOTPATH/binaries" ]; then
     echo "creating binaries"
     mkdir "$ROOTPATH/binaries"
