@@ -3,16 +3,6 @@ stages:
   - stage
   - deploy
 
-test:unit_7.0.18:
-  stage: test
-  before_script:
-    - sh ./dev/build_dev_env.sh
-    - sh ./dev/build_dev_env_phpunit.sh
-  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
-  script:
-  - php ./binaries/phpunit.phar -c phpunit.xml
-  #allow_failure: true
-
 # Run our tests
 test:docblock:
   stage: test
@@ -21,6 +11,16 @@ test:docblock:
     - sh ./dev/build_dev_env_docblock.sh
   script:
   - ./binaries/php-docblock-checker-1.3.4/phpdoccheck -d ./lib --no-interaction
+  #allow_failure: true
+
+test:unit_7.0.18:
+  stage: test
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - sh ./dev/build_dev_env_phpunit.sh
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  script:
+  - php ./binaries/phpunit.phar -c phpunit.xml
   #allow_failure: true
 
 # Run our tests
