@@ -121,7 +121,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return Config
      */
     public function getSettings()
@@ -130,7 +129,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return Medoo
      */
     public function getDatabase()
@@ -139,7 +137,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     public function getInstallingVersion()
@@ -148,7 +145,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return int
      */
     public function getNumUpdates()
@@ -161,7 +157,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function getUpdatesRequired()
@@ -206,7 +201,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     public function getInstallVersion()
@@ -227,7 +221,6 @@ class Upgrade
      * @param null $default
      * @param bool $query_db
      *
-     * @todo Consider test case
      * @return string
      */
     public function getSetting($key, $default = null, $query_db = true)
@@ -250,7 +243,6 @@ class Upgrade
      * @param string $value
      * @param bool $query_db
      *
-     * @todo Consider test case
      * @return bool
      */
     public function setSetting($key, $value, $query_db = true)
@@ -259,7 +251,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function getUpdates()
@@ -272,7 +263,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function getUpdateFunctions()
@@ -285,7 +275,6 @@ class Upgrade
     }
 
     /**
-     * @todo Consider test case
      * @return bool
      */
     public function runUpdates()

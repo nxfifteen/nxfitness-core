@@ -118,7 +118,6 @@ class Gaming extends Delivery
      *
      * @param array $key Setting to query
      * @param array $value Value to store
-     * @param bool $query_db Boolean to store in database or not
      *
      * @return bool was data stored correctly
      */

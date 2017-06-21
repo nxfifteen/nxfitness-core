@@ -208,8 +208,8 @@ class Rewards
 
     /**
      * @param array $recordReward
-     * @param string $state
      * @param string $rewardKey
+     * @param string $state
      * @param string $delivery
      */
     public function issueAwards($recordReward, $rewardKey, $state = "pending", $delivery = "Default")
@@ -305,18 +305,6 @@ class Rewards
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $ico Icon to use in notification
-     * @param string $icoColour Colour of icon
-     * @param string $expire Time notification will expire
-     */
-    public function notifyUser($ico, $icoColour, $expire)
-    {
-        $bold = "";
     }
 
     /**

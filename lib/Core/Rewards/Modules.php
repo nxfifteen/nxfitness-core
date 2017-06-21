@@ -92,7 +92,6 @@ class Modules
 
                             $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, "pending", $recordReward['system']);
                             $this->getRewardsClass()->setRewardReason($recordReward['name'] . "|" . $recordReward['description']);
-                            $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", '+2 hours');
 
                             nxr(3, "File Award Processed '" . $recordReward['name'] . "', " . $recordReward['description']);
                         } else {
@@ -129,11 +128,6 @@ class Modules
                             if ($state != "noaward") {
                                 $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, $state, $delivery);
                                 $this->getRewardsClass()->setRewardReason($recordReward['name'] . "|" . $recordReward['description']);
-                                if ($state == "pending") {
-                                    $this->getRewardsClass()->notifyUser("icon-hourglass", "bg-primary", '+6 hours');
-                                } else {
-                                    $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", '+2 hours');
-                                }
 
                                 nxr(3, "DB Award Processed '" . $recordReward['name'] . "', " . $recordReward['description']);
                             }
@@ -201,7 +195,6 @@ class Modules
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     protected function getUserID()
@@ -210,7 +203,6 @@ class Modules
     }
 
     /**
-     * @todo Consider test case
      *
      * @param String $UserID
      */

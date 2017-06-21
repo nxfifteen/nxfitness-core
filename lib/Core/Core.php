@@ -271,8 +271,8 @@ class Core
     }
 
     /**
-     * @param bool $reset
      * @param string $userFitbitId
+     * @param bool $reset
      *
      * @return ApiBabel
      */

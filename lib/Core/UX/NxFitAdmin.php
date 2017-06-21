@@ -99,7 +99,6 @@ class NxFitAdmin
      * @param null $default
      * @param bool $query_db
      *
-     * @todo Consider test case
      * @return string
      */
     public function getApiSetting($key = "", $default = null, $query_db = true)
@@ -108,7 +107,6 @@ class NxFitAdmin
     }
 
     /**
-     * @todo Consider test case
      * @return Config
      */
     public function getApiSettingClass()
@@ -117,7 +115,6 @@ class NxFitAdmin
     }
 
     /**
-     * @todo Consider test case
      * @return Core
      */
     public function getNxFit()
@@ -126,7 +123,6 @@ class NxFitAdmin
     }
 
     /**
-     * @todo Consider test case
      * @return medoo
      */
     public function getDatabase()
@@ -145,7 +141,6 @@ class NxFitAdmin
     /**
      * @param string $key
      *
-     * @todo Consider test case
      * @return array
      */
     public function getConfig($key = "")
@@ -160,7 +155,7 @@ class NxFitAdmin
     /**
      * @param array $config
      *
-     * @todo Consider test case
+
      */
     public function setConfig($config)
     {
@@ -215,7 +210,6 @@ class NxFitAdmin
     }
 
     /**
-     * @todo Consider test case
      * @return Config
      */
     public function getUserProfile()
@@ -245,7 +239,6 @@ class NxFitAdmin
     }
 
     /**
-     * @todo Consider test case
      * @return string
      */
     public function getActiveUser()
@@ -256,7 +249,7 @@ class NxFitAdmin
     /**
      * @param string $activeUser
      *
-     * @todo Consider test case
+
      */
     public function setActiveUser($activeUser)
     {
@@ -266,7 +259,6 @@ class NxFitAdmin
     /**
      * @param null $scope
      *
-     * @todo Consider test case
      * @return DateTime
      */
     public function getOldestScope($scope = null)
@@ -306,7 +298,6 @@ class NxFitAdmin
     }
 
     /**
-     * @todo Consider test case
      * @return string
      */
     public function getLocalWeatherImage()
@@ -354,7 +345,6 @@ class NxFitAdmin
     }
 
     /**
-     * @todo Consider test case
      * @return string
      */
     public function getLocalWeatherCode()
@@ -371,7 +361,6 @@ class NxFitAdmin
     }
 
     /**
-     * @todo Consider test case
      * @return string|array
      */
     public function getUserTheme()
@@ -385,7 +374,6 @@ class NxFitAdmin
     /**
      * @param string $trigger
      *
-     * @todo Consider test case
      * @return DateTime
      */
     public function getScopeCoolDown($trigger)
@@ -413,7 +401,6 @@ class NxFitAdmin
      * @param string $string
      * @param array $array
      *
-     * @todo Consider test case
      * @return string
      */
     public function getThemeWidgets($string, $array)

@@ -57,8 +57,6 @@ class DataReturn
 
     /**
      * @param string $userFid
-     *
-     * @todo Consider test case
      */
     public function __construct($userFid)
     {
@@ -89,7 +87,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return bool
      */
     public function isUser()
@@ -98,7 +95,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     public function getUserID()
@@ -109,7 +105,7 @@ class DataReturn
     /**
      * @param String $UserID
      *
-     * @todo Consider test case
+
      */
     public function setUserID($UserID)
     {
@@ -117,7 +113,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordAboutMe()
@@ -162,7 +157,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordGeoSecure()
@@ -177,7 +171,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return bool
      */
     public function returnUserRecordActivity()
@@ -196,7 +189,6 @@ class DataReturn
      * @param int $limit
      * @param string $tableName
      *
-     * @todo Consider test case
      * @return array
      */
     public function dbWhere($limit = 1, $tableName = '')
@@ -239,7 +231,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     public function getParamPeriod()
@@ -259,7 +250,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      *
      * @param String $paramPeriod
      */
@@ -269,7 +259,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     public function getParamDate()
@@ -282,7 +271,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      *
      * @param String $paramDate
      */
@@ -292,7 +280,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordActivityHistory()
@@ -482,7 +469,6 @@ class DataReturn
      * @param null $tcxFileName
      * @param null $tcxTrackName
      *
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null)
@@ -739,7 +725,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordBadges()
@@ -787,7 +772,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array|bool
      */
     public function returnUserRecordBody()
@@ -820,7 +804,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordChallenger()
@@ -829,7 +812,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordPush()
@@ -1118,7 +1100,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordPushCalendar()
@@ -1188,7 +1169,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordConky()
@@ -1314,7 +1294,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordJourneysState()
@@ -1494,7 +1473,6 @@ class DataReturn
     /**
      * @param string $start_date
      *
-     * @todo Consider test case
      * @return bool|int
      */
     public function getUserMilesSince($start_date)
@@ -1508,7 +1486,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return UserAnalytics
      */
     public function getTracking()
@@ -1519,7 +1496,7 @@ class DataReturn
     /**
      * @param UserAnalytics $tracking
      *
-     * @todo Consider test case
+
      */
     public function setTracking($tracking)
     {
@@ -1527,7 +1504,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordDashboard()
@@ -1592,7 +1568,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordLeaderboard()
@@ -1633,7 +1608,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordFoodDiary()
@@ -1772,7 +1746,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordKeyPoints()
@@ -2022,7 +1995,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordSleep()
@@ -2088,7 +2060,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordSteps()
@@ -2164,7 +2135,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array|bool
      */
     public function returnUserRecordStepsGoal()
@@ -2188,7 +2158,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array|bool
      */
     public function returnUserRecordTrackerHistoryChart()
@@ -2257,7 +2226,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array|bool
      */
     public function returnUserRecordTrackerHistory()
@@ -2304,7 +2272,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordInbox()
@@ -2361,7 +2328,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordPendingRewards()
@@ -2441,7 +2407,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordTasker()
@@ -2685,7 +2650,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array|bool
      */
     public function returnUserRecordWater()
@@ -2725,7 +2689,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordFood()
@@ -2766,7 +2729,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordDevices()
@@ -2833,7 +2795,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordGoalStreak()
@@ -2949,7 +2910,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordJourneys()
@@ -3078,7 +3038,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordAccount()
@@ -3104,7 +3063,6 @@ class DataReturn
     /**
      * @param string $trigger
      *
-     * @todo Consider test case
      * @return bool|string
      */
     public function isAllowed($trigger)
@@ -3123,7 +3081,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordXp()
@@ -3151,7 +3108,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordTopBadges()
@@ -3201,7 +3157,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordTracked()
@@ -3336,7 +3291,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordStepGoal()
@@ -3383,7 +3337,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordFloorGoal()
@@ -3430,7 +3383,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordActiveGoal()
@@ -3480,7 +3432,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordTrend()
@@ -3525,7 +3476,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array|bool
      */
     public function returnUserRecordWeightLossForcast()
@@ -3583,7 +3533,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array|bool
      */
     public function returnUserRecordWeekPedometer()
@@ -3606,7 +3555,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordSyncState()
@@ -3693,7 +3641,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordWeight()
@@ -4032,7 +3979,6 @@ class DataReturn
     /**
      * @param array $get
      *
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecords($get)
@@ -4093,7 +4039,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return int
      */
     public function getForCache()
@@ -4108,7 +4053,7 @@ class DataReturn
     /**
      * @param bool $forCache
      *
-     * @todo Consider test case
+
      */
     public function setForCache($forCache)
     {
@@ -4116,7 +4061,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordNomie()
@@ -4129,7 +4073,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordNomieDashboard()
@@ -4203,7 +4146,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordNomieTrackers()
@@ -4323,7 +4265,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordNomieGPS()
@@ -4459,7 +4400,6 @@ class DataReturn
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function returnUserRecordNomieScoreGraph()
