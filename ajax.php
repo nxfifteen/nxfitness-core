@@ -222,7 +222,8 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             $currentPoints[] = [
                 "display_name" => $_POST['display_name'],
                 "lat" => $_POST['lat'],
-                "lon" => $_POST['lon']
+                "lon" => $_POST['lon'],
+                "radious" => $_POST['radious']
             ];
 
             $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "geo_private", json_encode($currentPoints));
@@ -230,6 +231,27 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_GeoSecure";
             if ( file_exists( $babelCacheFile ) ) {
                 unlink($babelCacheFile);
+            }
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_ActivityHistory_';
+            foreach(glob($cacheFile . "*") as $f) {
+                if ( file_exists( $f ) ) {
+                    unlink($f);
+                }
+            }
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_';
+            foreach(glob($cacheFile . "*.gpx") as $f) {
+                if ( file_exists( $f ) ) {
+                    unlink($f);
+                }
+            }
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_';
+            foreach(glob($cacheFile . "*_laps.json") as $f) {
+                if ( file_exists( $f ) ) {
+                    unlink($f);
+                }
             }
 
             echo "Okay";
@@ -259,6 +281,27 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_GeoSecure";
             if ( file_exists( $babelCacheFile ) ) {
                 unlink($babelCacheFile);
+            }
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_ActivityHistory_';
+            foreach(glob($cacheFile . "*") as $f) {
+                if ( file_exists( $f ) ) {
+                    unlink($f);
+                }
+            }
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_';
+            foreach(glob($cacheFile . "*.gpx") as $f) {
+                if ( file_exists( $f ) ) {
+                    unlink($f);
+                }
+            }
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_';
+            foreach(glob($cacheFile . "*_laps.json") as $f) {
+                if ( file_exists( $f ) ) {
+                    unlink($f);
+                }
             }
 
             echo "Okay";

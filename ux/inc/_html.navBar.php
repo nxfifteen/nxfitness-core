@@ -109,23 +109,24 @@ if ($_COOKIE['_nx_fb_usr'] == $App->getNxFit()->getSetting('ownerFuid', null, fa
     <li class="nav-title">
         Settings
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="settings/account.html"><i class="fa fa-chain"></i> Account</a>
+    <li class="nav-item nav-dropdown">
+        <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-street-view"></i> Account</a>
+        <ul class="nav-dropdown-items">
+            <li class="nav-item">
+                <a class="nav-link" href="settings/account.html"><i class="fa fa-chain"></i> Basic Profile</a>
+            </li>
+        </ul>
+        <ul class="nav-dropdown-items">
+            <li class="nav-item">
+                <a class="nav-link" href="settings/privacy.html"><i class="fa fa-tasks"></i> Privacy</a>
+            </li>
+        </ul>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="settings/devices.html"><i class="fa fa-chain"></i> Devices</a>
     </li>
-    <?php if ($isDeveloper) { ?>
-        <li class="nav-item">
-            <a class="nav-link" href="settings/feeds.html"><i class="fa fa-gear"></i> Feeds <span
-                        class="badge badge-danger">WIP</span></a>
-        </li>
-    <?php } ?>
     <li class="nav-item">
         <a class="nav-link" href="settings/progress.html"><i class="fa fa-tasks"></i> Sync Progress</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="settings/privacy.html"><i class="fa fa-tasks"></i> Privacy</a>
     </li>
 
 </ul>
