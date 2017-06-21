@@ -1,24 +1,10 @@
-image: php:7.1.4
-
 stages:
   - test
   - stage
   - deploy
 
-# Run our tests
-test:unit_7.1.4:
-  stage: test
-  before_script:
-    - sh ./dev/build_dev_env.sh
-    - sh ./dev/build_dev_env_phpunit.sh
-  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
-  script:
-  - php ./binaries/phpunit.phar -c phpunit.xml
-  allow_failure: true
-
 test:unit_7.0.18:
   stage: test
-  image: php:7.0.18
   before_script:
     - sh ./dev/build_dev_env.sh
     - sh ./dev/build_dev_env_phpunit.sh
