@@ -47,8 +47,8 @@ class Modules
 
     /**
      * Modules constructor.
-     * @param $AppClass
-     * @param $UserID
+     * @param Core $AppClass Core API Class
+     * @param string $UserID Fitbit user ID
      */
     public function __construct($AppClass, $UserID)
     {
@@ -66,10 +66,10 @@ class Modules
     }
 
     /**
-     * @param $cat
-     * @param $event
-     * @param $score
-     * @param null $rewardKey
+     * @param string $cat Reward Category
+     * @param string $event Reward Event
+     * @param string $score Reward Score
+     * @param null|string $rewardKey Reward Key
      * @return bool
      */
     protected function checkDB($cat, $event, $score, $rewardKey = null)

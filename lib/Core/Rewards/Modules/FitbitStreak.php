@@ -31,7 +31,7 @@ class FitbitStreak extends Modules
     private $debug = false;
 
     /**
-     * @param $eventDetails
+     * @param array $eventDetails Array holding details of award to issue
      */
     public function trigger($eventDetails)
     {

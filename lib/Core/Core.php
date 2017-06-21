@@ -116,9 +116,9 @@ class Core
     /**
      * Get settings from config class
      *
-     * @param string $key
-     * @param null $default
-     * @param bool $query_db
+     * @param string $key Settings key to return
+     * @param null $default Default value, if nothing already held in settings
+     * @param bool $query_db Should the DB be checked
      *
      * @todo Consider test case
      * @return string
@@ -165,13 +165,14 @@ class Core
     /**
      * Get settings from config class
      *
-     * @param string $fuid
-     * @param string $key
-     * @param null $default
-     * @param bool $query_db
+     * @param string $fuid Fitbit user ID
+     * @param string $key Trigger ID to add to cron
+     * @return string
+     *
+     * @internal param null $default
+     * @internal param bool $query_db
      *
      * @todo Consider test case
-     * @return string
      */
     public function delUserSetting($fuid, $key)
     {
@@ -185,9 +186,9 @@ class Core
     /**
      * Add new cron jobs to queue
      *
-     * @param string $user_fitbit_id
-     * @param string $trigger
-     * @param bool $force
+     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $trigger Trigger ID to add to cron
+     * @param bool $force Should we honnor hot API
      *
      * @todo Consider test case
      */
@@ -317,8 +318,8 @@ class Core
      */
 
     /**
-     * @param string $user_fitbit_id
-     * @param string|DateTime $datetime
+     * @param string $user_fitbit_id Fitbit user ID
+     * @param string|DateTime $datetime DataTime the cooldown will end
      *
      * @todo Consider test case
      * @return array|int

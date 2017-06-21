@@ -31,7 +31,7 @@ class FitbitBadgeAwarded extends Modules
     private $debug = false;
 
     /**
-     * @param $eventDetails
+     * @param array $eventDetails Array holding details of award to issue
      */
     public function trigger($eventDetails)
     {
@@ -62,7 +62,7 @@ class FitbitBadgeAwarded extends Modules
     }
 
     /**
-     * @param mixed $eventDetails
+     * @param array $eventDetails Array holding details of award to issue
      */
     private function setEventDetails($eventDetails)
     {
@@ -70,7 +70,7 @@ class FitbitBadgeAwarded extends Modules
     }
 
     /**
-     * @param $badge
+     * @param object $badge Fitbit API object holding details of badge awarded
      */
     private function triggerChallenge($badge)
     {
@@ -92,7 +92,7 @@ class FitbitBadgeAwarded extends Modules
     }
 
     /**
-     * @param $badge
+     * @param object $badge Fitbit API object holding details of badge awarded
      */
     private function triggerAdventure($badge)
     {
