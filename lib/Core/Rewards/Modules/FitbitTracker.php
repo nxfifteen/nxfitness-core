@@ -169,6 +169,9 @@ class FitbitTracker extends Modules
         return $this->reachedGoal($goal, $value, 1.5);
     }
 
+    /**
+     *
+     */
     private function triggerSteps()
     {
         $eventDetails = $this->getEventDetails();

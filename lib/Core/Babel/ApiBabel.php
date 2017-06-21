@@ -3735,6 +3735,9 @@ class ApiBabel
         return true;
     }
 
+    /**
+     *
+     */
     private function pullHabitica()
     {
         $user_id = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'user_id', NULL, false);

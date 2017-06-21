@@ -186,6 +186,9 @@ class Modules
         $this->RewardsClass = $RewardsClass;
     }
 
+    /**
+     *
+     */
     protected function cleanupQueue()
     {
         $prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
