@@ -80,7 +80,7 @@ function onMapClick(e) {
 $("#privacyPoint").submit(function (e) {
 
     var url = "../ajax.php"; // the script where you handle the form input.
-    var data = $("#privacyPoint").serialize() + "&lat="+spotlat + "&lon="+spotlon;
+    var data = $("#privacyPoint").serialize() + "&radious=200&lat="+spotlat + "&lon="+spotlon;
 
     $.ajax({
         type: "POST",
@@ -112,25 +112,40 @@ function privacyPointDel(pointName) {
 function getMapPoints($) {
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=GeoSecure", function (data) {
         var html = '';
+        /** @namespace locationPoint.display_name */
+        /** @namespace locationPoint.lon */
         $.each(data.results, function (index, locationPoint) {
-            html += '  <div class="col-sm-6 col-lg-3">';
-            html += '    <div class="card card-inverse card-primary">';
-            /** @namespace locationPoint.display_name */
-            html += '      <div class="card-header" id="header"><a style="color: white" href="javascript:;" onclick="mapGPS(\'' + locationPoint.display_name.split('\'').join('') + '\', ' + locationPoint.lat + ', ' + locationPoint.lon + ');">' + locationPoint.display_name + '</a></div>';
-            html += '      <div class="card-block" id="location-map-' + index + '">';
-            /** @namespace locationPoint.lon */
-            html += '        <img class="img-fluid" src="inc/StaticMapLite.php?center=' + locationPoint.lat + ',' + locationPoint.lon + '&zoom=14&size=380x150&maptype=mapnik&markers=' + locationPoint.lat + ',' + locationPoint.lon + ',ol-marker" width="380" height="150" />';
-            html += '      </div>';
-            html += '      <div class="card-footer">';
-            html += '        <button class="btn btn-danger" type="button" onclick="privacyPointDel(\'' + locationPoint.display_name.split('\'').join('\\\'') + '\')">Delete</button>';
-            html += '      </div>';
-            html += '    </div>';
-            html += '  </div>';
+            var show = '';
 
             if (locationPoint.display_name === "Home") {
                 mapGPS("Your " + locationPoint.display_name, locationPoint.lat, locationPoint.lon);
+                show = 'show';
             }
 
+            html += '  <div class="card">';
+            html += '    <div class="card-header" role="tab" id="heading-map-' + index + '">';
+            html += '      <h5 class="mb-0">';
+            html += '        <a data-toggle="collapse" href="#collapse-map-' + index + '" aria-expanded="true" aria-controls="collapse-map-' + index + '">';
+            html += '          ' + locationPoint.display_name + '';
+            html += '        </a>';
+            html += '      </h5>';
+            html += '    </div>';
+            html += '    <div id="collapse-map-' + index + '" class="collapse ' + show + '" role="tabpanel" aria-labelledby="heading-map-' + index + '" data-parent="#locations-map">';
+            html += '      <div class="card-block" id="location-map-' + index + '">';
+            html += '        <img class="img-fluid" src="inc/StaticMapLite.php?center=' + locationPoint.lat + ',' + locationPoint.lon + '&zoom=14&size=380x150&maptype=mapnik&markers=' + locationPoint.lat + ',' + locationPoint.lon + ',ol-marker" width="380" height="150" />';
+            html += '      </div>';
+            html += '      <div class="card-footer">';
+            html += '        <div class="row">';
+            html += '          <div class="col-6">';
+            html += '            <button class="btn btn-success" style="width: 100%" type="button" onclick="mapGPS(\'' + locationPoint.display_name.split('\'').join('') + '\', ' + locationPoint.lat + ', ' + locationPoint.lon + ');">Show</button>';
+            html += '          </div>';
+            html += '          <div class="col-6">';
+            html += '            <button class="btn btn-danger" style="width: 100%" type="button" onclick="privacyPointDel(\'' + locationPoint.display_name.split('\'').join('\\\'') + '\')">Delete</button>';
+            html += '          </div>';
+            html += '        </div>';
+            html += '      </div>';
+            html += '    </div>';
+            html += '  </div>';
         });
         $("#locations-map").html(html);
     });
