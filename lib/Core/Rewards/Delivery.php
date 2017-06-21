@@ -77,9 +77,9 @@ class Delivery
     }
 
     /**
-     * @param $recordReward
-     * @param $state
-     * @param $rewardKey
+     * @param array $recordReward Array holding details of award that has been issued
+     * @param string $state State of award - Issued/Pending
+     * @param string $rewardKey Reward Key
      */
     protected function recordDevlivery($recordReward, $state, $rewardKey)
     {
