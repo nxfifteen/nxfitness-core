@@ -3,7 +3,6 @@
     "vendor-dir": "bundle/vendor"
   },
   "require": {
-    "phpdocumentor/phpdocumentor": "2.*",
     "jakub-onderka/php-parallel-lint": "^0.9.2",
     "phpunit/php-code-coverage": "^5.2",
     "squizlabs/php_codesniffer": "*",
