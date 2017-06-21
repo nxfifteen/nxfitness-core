@@ -10,6 +10,7 @@
 
 namespace Core\Rewards\Delivery;
 
+use Core\Core;
 use Core\Rewards\Delivery;
 use HabitRPHPG;
 
@@ -37,8 +38,8 @@ class Habitica extends Delivery
 
     /**
      * Delivery constructor.
-     * @param $AppClass
-     * @param $UserID
+     * @param Core $AppClass Core API Class
+     * @param string $UserID Fitbit user ID
      */
     public function __construct($AppClass, $UserID)
     {
@@ -74,9 +75,9 @@ class Habitica extends Delivery
     }
 
     /**
-     * @param array $rewardProfile
-     * @param string $state
-     * @param string $rewardKey
+     * @param array $rewardProfile Array holding details of award that has been issued
+     * @param string $state State of award - Issued/Pending
+     * @param string $rewardKey Reward Key
      * @return array
      */
     public function deliver($rewardProfile, $state, $rewardKey)
@@ -141,11 +142,11 @@ class Habitica extends Delivery
     }
 
     /**
-     * @param $alias
-     * @param $task_string
-     * @param string $type
-     * @param bool $returnObject
-     * @param bool $skipCache
+     * @param string $alias Alias of habit to find
+     * @param string $task_string Name of habit to find
+     * @param string $type Type of habbit to find
+     * @param bool $returnObject Return full item object
+     * @param bool $skipCache Skip the cache and search the API
      * @return mixed
      */
     public function _search($alias, $task_string, $type = '', $returnObject = false, $skipCache = false)
@@ -172,9 +173,9 @@ class Habitica extends Delivery
     }
 
     /**
-     * @param $type
-     * @param $name
-     * @param $options
+     * @param string $type Type of habbit
+     * @param string $name Name of habbit to create
+     * @param array $options Array of habbit options
      * @return mixed
      */
     public function _create($type, $name, $options)
@@ -204,7 +205,7 @@ class Habitica extends Delivery
     }
 
     /**
-     * @param $task_string
+     * @param string $task_string Name of habit to find
      * @return mixed
      * @internal param $alias
      */
@@ -229,7 +230,7 @@ class Habitica extends Delivery
     }
 
     /**
-     * @param $name
+     * @param string $name Name of habit to delete
      * @return mixed
      */
     public function _deleteIfIncomplete($name)
@@ -244,7 +245,7 @@ class Habitica extends Delivery
     }
 
     /**
-     * @param $name
+     * @param string $name Name of habit to delete
      * @return mixed
      */
     public function _delete($name)
@@ -265,7 +266,7 @@ class Habitica extends Delivery
     }
 
     /**
-     * @param $guildUuid
+     * @param string $guildUuid UUID of the sites guild
      * @return bool|mixed
      */
     public function inviteToGuild($guildUuid)

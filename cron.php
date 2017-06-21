@@ -120,7 +120,7 @@ function run_through_queue() {
             if ( time() < $end ) {
                 if ( $fitbitApp->isUser( $job[ 'user' ] ) ) {
                     $cooldown = $fitbitApp->getUserCooldown( $job[ 'user' ] );
-                    if ( $fitbitApp->getSetting( 'scope_' . $job[ 'trigger' ], true ) ) { //TODO: Set top false by default
+                    if ( $fitbitApp->getSetting( 'scope_' . $job[ 'trigger' ], true ) ) {
                         if ( strtotime( $cooldown ) < strtotime( date( "Y-m-d H:i:s" ) ) ) {
                             nxr( 0, "Processing queue item " . $fitbitApp->supportedApi( $job[ 'trigger' ] ) . " for " . $job[ 'user' ] );
                             $jobRun = $fitbitApp->getFitbitAPI( $job[ 'user' ], true )->pull( $job[ 'user' ],

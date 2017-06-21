@@ -112,7 +112,7 @@ class ApiBabel
     /**
      * @param Fitbit $fitbitapi
      *
-     * @todo Consider test case
+
      */
     public function setLibrary($fitbitapi)
     {
@@ -122,7 +122,7 @@ class ApiBabel
     /**
      * @param mixed $userAccessToken
      *
-     * @todo Consider test case
+
      */
     public function setUserAccessToken($userAccessToken)
     {
@@ -134,7 +134,6 @@ class ApiBabel
      * @param string $trigger
      * @param bool $return
      *
-     * @todo Consider test case
      * @return mixed|null|SimpleXMLElement|string
      */
     public function pull($user, $trigger, $return = false)
@@ -410,7 +409,7 @@ class ApiBabel
     /**
      * @param mixed $activeUser
      *
-     * @todo Consider test case
+
      */
     public function setActiveUser($activeUser)
     {
@@ -736,7 +735,6 @@ class ApiBabel
      * @param string $trigger
      * @param bool $quiet
      *
-     * @todo Consider test case
      * @return bool|string
      */
     public function isAllowed($trigger, $quiet = false)
@@ -778,7 +776,6 @@ class ApiBabel
      * @param string $trigger
      * @param bool $reset
      *
-     * @todo Consider test case
      * @return bool
      */
     public function isTriggerCooled($trigger, $reset = false)
@@ -919,7 +916,6 @@ class ApiBabel
     /**
      * @param string|int $xml
      *
-     * @todo Consider test case
      * @return bool
      */
     public function isApiError($xml)
@@ -1012,7 +1008,6 @@ class ApiBabel
      * @param bool $debugOutput
      * @param bool $supportFailures
      *
-     * @todo Consider test case
      * @return mixed
      */
     public function pullBabel($path, $returnObject = false, $debugOutput = false, $supportFailures = false)
@@ -1079,15 +1074,15 @@ class ApiBabel
 
                 die();
             } else {
-                $this->getAppClass()->getErrorRecording()->captureException( $e, array(
-						'level' => 'error',
-						'extra' => array(
-							'api_path'     => $path,
-							'user'         => $this->activeUser,
-							'php_version'  => phpversion(),
-							'core_version' => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE )
-						),
-					) );
+                $this->getAppClass()->getErrorRecording()->captureException($e, array(
+                    'level' => 'error',
+                    'extra' => array(
+                        'api_path' => $path,
+                        'user' => $this->activeUser,
+                        'php_version' => phpversion(),
+                        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+                    ),
+                ));
                 if ($supportFailures) {
                     return $e->getCode();
                 } else {
@@ -1137,7 +1132,6 @@ class ApiBabel
     }
 
     /**
-     * @todo Consider test case
      * @return Fitbit
      */
     public function getLibrary()
@@ -3017,7 +3011,6 @@ class ApiBabel
      * @param string $user
      * @param string $string
      *
-     * @todo Consider test case
      * @return bool|int
      */
     public function getDBCurrentBody($user, $string)
@@ -3339,7 +3332,6 @@ class ApiBabel
      * @param string|DateTime $baseDate DateTime or 'today', to_period
      * @param string|DateTime $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
      *
-     * @todo Consider test case
      * @return array|boolean
      */
     public function getTimeSeries($type, $baseDate, $to_period)
@@ -3735,6 +3727,9 @@ class ApiBabel
         return true;
     }
 
+    /**
+     *
+     */
     private function pullHabitica()
     {
         $user_id = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'user_id', NULL, false);
@@ -3836,7 +3831,7 @@ class ApiBabel
     /**
      * @param boolean $forceSync
      *
-     * @todo Consider test case
+
      */
     public function setForceSync($forceSync)
     {
@@ -3846,7 +3841,6 @@ class ApiBabel
     /**
      * @param string $_nx_fb_usr
      *
-     * @todo Consider test case
      * @return bool
      */
     public function validateOAuth($_nx_fb_usr)
@@ -3886,7 +3880,6 @@ class ApiBabel
     /**
      * @param mixed $newUserProfile
      *
-     * @todo Consider test case
      * @return bool
      */
     public function createNewUser($newUserProfile)

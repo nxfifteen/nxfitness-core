@@ -47,8 +47,8 @@ class Modules
 
     /**
      * Modules constructor.
-     * @param $AppClass
-     * @param $UserID
+     * @param Core $AppClass Core API Class
+     * @param string $UserID Fitbit user ID
      */
     public function __construct($AppClass, $UserID)
     {
@@ -66,10 +66,10 @@ class Modules
     }
 
     /**
-     * @param $cat
-     * @param $event
-     * @param $score
-     * @param null $rewardKey
+     * @param string $cat Reward Category
+     * @param string $event Reward Event
+     * @param string $score Reward Score
+     * @param null|string $rewardKey Reward Key
      * @return bool
      */
     protected function checkDB($cat, $event, $score, $rewardKey = null)
@@ -92,7 +92,6 @@ class Modules
 
                             $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, "pending", $recordReward['system']);
                             $this->getRewardsClass()->setRewardReason($recordReward['name'] . "|" . $recordReward['description']);
-                            $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", '+2 hours');
 
                             nxr(3, "File Award Processed '" . $recordReward['name'] . "', " . $recordReward['description']);
                         } else {
@@ -129,11 +128,6 @@ class Modules
                             if ($state != "noaward") {
                                 $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, $state, $delivery);
                                 $this->getRewardsClass()->setRewardReason($recordReward['name'] . "|" . $recordReward['description']);
-                                if ($state == "pending") {
-                                    $this->getRewardsClass()->notifyUser("icon-hourglass", "bg-primary", '+6 hours');
-                                } else {
-                                    $this->getRewardsClass()->notifyUser("icon-diamond", "bg-success", '+2 hours');
-                                }
 
                                 nxr(3, "DB Award Processed '" . $recordReward['name'] . "', " . $recordReward['description']);
                             }
@@ -186,6 +180,9 @@ class Modules
         $this->RewardsClass = $RewardsClass;
     }
 
+    /**
+     *
+     */
     protected function cleanupQueue()
     {
         $prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
@@ -198,7 +195,6 @@ class Modules
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     protected function getUserID()
@@ -207,7 +203,6 @@ class Modules
     }
 
     /**
-     * @todo Consider test case
      *
      * @param String $UserID
      */

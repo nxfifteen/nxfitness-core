@@ -402,7 +402,6 @@ class Config
      *
      * @param string $fuid User fuid
      * @param string $key Setting to query
-     * @param string $value Value to store
      *
      * @return bool was data stored correctly
      */

@@ -73,7 +73,6 @@ class RewardsSystem
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     public function getUserMinecraftID()
@@ -93,7 +92,6 @@ class RewardsSystem
     }
 
     /**
-     * @todo Consider test case
      * @return array
      */
     public function queryMinecraftRewards()
@@ -174,8 +172,8 @@ class RewardsSystem
     }
 
     /**
-     * @param $system
-     * @param $eventDetails
+     * @param string $system Name of system used to issue reward, also Class name
+     * @param array $eventDetails Array holding details of award to issue
      */
     public function eventTrigger($system, $eventDetails)
     {
@@ -206,7 +204,6 @@ class RewardsSystem
     }
 
     /**
-     * @todo Consider test case
      * @return String
      */
     public function getUserID()
@@ -215,7 +212,6 @@ class RewardsSystem
     }
 
     /**
-     * @todo Consider test case
      *
      * @param String $UserID
      */

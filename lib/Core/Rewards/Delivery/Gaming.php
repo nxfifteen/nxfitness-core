@@ -28,9 +28,9 @@ class Gaming extends Delivery
     private $blancing = [];
 
     /**
-     * @param array $rewardProfile
-     * @param string $state
-     * @param string $rewardKey
+     * @param array $rewardProfile Array holding details of award that has been issued
+     * @param string $state State of award - Issued/Pending
+     * @param string $rewardKey Reward Key
      * @return array
      */
     public function deliver($rewardProfile, $state, $rewardKey)
@@ -118,7 +118,6 @@ class Gaming extends Delivery
      *
      * @param array $key Setting to query
      * @param array $value Value to store
-     * @param bool $query_db Boolean to store in database or not
      *
      * @return bool was data stored correctly
      */
@@ -132,7 +131,7 @@ class Gaming extends Delivery
     }
 
     /**
-     * @param $myPoints
+     * @param integer $myPoints Users current points
      * @return array
      */
     private function calculateXP($myPoints)
@@ -177,8 +176,10 @@ class Gaming extends Delivery
     }
 
     /**
-     * @param $health
-     * @param $level
+     * @param integer $health Current Health
+     * @param integer $level Current Level
+     *
+     * @return int
      */
     private function maxHealth($health, $level)
     {

@@ -31,7 +31,7 @@ class FitbitTracker extends Modules
     private $debug = false;
 
     /**
-     * @param $eventDetails
+     * @param array $eventDetails Array holding details of award to issue
      */
     public function trigger($eventDetails)
     {
@@ -169,6 +169,9 @@ class FitbitTracker extends Modules
         return $this->reachedGoal($goal, $value, 1.5);
     }
 
+    /**
+     *
+     */
     private function triggerSteps()
     {
         $eventDetails = $this->getEventDetails();

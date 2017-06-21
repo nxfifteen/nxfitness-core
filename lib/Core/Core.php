@@ -55,7 +55,6 @@ class Core
     protected $errorRecording;
 
     /**
-     * @todo Consider test case
      */
     public function __construct()
     {
@@ -116,11 +115,10 @@ class Core
     /**
      * Get settings from config class
      *
-     * @param string $key
-     * @param null $default
-     * @param bool $query_db
+     * @param string $key Settings key to return
+     * @param null $default Default value, if nothing already held in settings
+     * @param bool $query_db Should the DB be checked
      *
-     * @todo Consider test case
      * @return string
      */
     public function getSetting($key, $default = null, $query_db = true)
@@ -129,7 +127,6 @@ class Core
     }
 
     /**
-     * @todo Consider test case
      * @return Config
      */
     public function getSettings()
@@ -138,7 +135,6 @@ class Core
     }
 
     /**
-     * @todo Consider test case
      * @return Medoo
      */
     public function getDatabase()
@@ -154,7 +150,6 @@ class Core
      * @param null $default
      * @param bool $query_db
      *
-     * @todo Consider test case
      * @return string
      */
     public function getUserSetting($fuid, $key, $default = null, $query_db = true)
@@ -165,13 +160,12 @@ class Core
     /**
      * Get settings from config class
      *
-     * @param string $fuid
-     * @param string $key
-     * @param null $default
-     * @param bool $query_db
-     *
-     * @todo Consider test case
+     * @param string $fuid Fitbit user ID
+     * @param string $key Trigger ID to add to cron
      * @return string
+     *
+     * @internal param null $default
+     * @internal param bool $query_db
      */
     public function delUserSetting($fuid, $key)
     {
@@ -185,11 +179,9 @@ class Core
     /**
      * Add new cron jobs to queue
      *
-     * @param string $user_fitbit_id
-     * @param string $trigger
-     * @param bool $force
-     *
-     * @todo Consider test case
+     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $trigger Trigger ID to add to cron
+     * @param bool $force Should we honnor hot API
      */
     public function addCronJob($user_fitbit_id, $trigger, $force = false)
     {
@@ -219,7 +211,6 @@ class Core
     }
 
     /**
-     * @todo Consider test case
      * @return ErrorRecording
      */
     public function getErrorRecording()
@@ -234,10 +225,8 @@ class Core
     /**
      * Delete cron jobs from queue
      *
-     * @param string $user_fitbit_id
-     * @param string $trigger
-     *
-     * @todo Consider test case
+     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $trigger Trigger ID to add to cron
      */
     public function delCronJob($user_fitbit_id, $trigger)
     {
@@ -273,7 +262,6 @@ class Core
     /**
      * Get list of pending cron jobs from database
      *
-     * @todo Consider test case
      * @return array|bool
      */
     public function getCronJobs()
@@ -283,10 +271,9 @@ class Core
     }
 
     /**
-     * @param bool $reset
      * @param string $userFitbitId
+     * @param bool $reset
      *
-     * @todo Consider test case
      * @return ApiBabel
      */
     public function getFitbitAPI($userFitbitId = "", $reset = false)
@@ -304,8 +291,6 @@ class Core
 
     /**
      * @param ApiBabel $fitbitapi
-     *
-     * @todo Consider test case
      */
     public function setFitbitapi($fitbitapi)
     {
@@ -317,10 +302,9 @@ class Core
      */
 
     /**
-     * @param string $user_fitbit_id
-     * @param string|DateTime $datetime
+     * @param string $user_fitbit_id Fitbit user ID
+     * @param string|DateTime $datetime DataTime the cooldown will end
      *
-     * @todo Consider test case
      * @return array|int
      */
     public function setUserCooldown($user_fitbit_id, $datetime)
@@ -339,9 +323,8 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id
+     * @param string $user_fitbit_id Fitbit user ID
      *
-     * @todo Consider test case
      * @return bool
      */
     public function isUser($user_fitbit_id)
@@ -356,9 +339,8 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id
+     * @param string $user_fitbit_id Fitbit user ID
      *
-     * @todo Consider test case
      * @return int|array
      */
     public function getUserCooldown($user_fitbit_id)
@@ -372,10 +354,8 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id
+     * @param string $user_fitbit_id Fitbit user ID
      * @param AccessToken $accessToken
-     *
-     * @todo Consider test case
      */
     public function setUserOAuthTokens($user_fitbit_id, $accessToken)
     {
@@ -389,9 +369,7 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id
-     *
-     * @todo Consider test case
+     * @param string $user_fitbit_id Fitbit user ID
      */
     public function delUserOAuthTokens($user_fitbit_id)
     {
@@ -404,10 +382,9 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id
+     * @param string $user_fitbit_id Fitbit user ID
      * @param string $user_fitbit_password
      *
-     * @todo Consider test case
      * @return bool
      */
     public function isUserValid($user_fitbit_id, $user_fitbit_password)
@@ -442,9 +419,8 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id
+     * @param string $user_fitbit_id Fitbit user ID
      *
-     * @todo Consider test case
      * @return bool
      */
     public function isUserValidEml($user_fitbit_id)
@@ -465,7 +441,6 @@ class Core
      * @param string|int $errCode
      * @param null $user
      *
-     * @todo Consider test case
      * @return string
      */
     public function lookupErrorCode($errCode, $user = null)
@@ -504,7 +479,6 @@ class Core
      * @param string $value
      * @param bool $query_db
      *
-     * @todo Consider test case
      * @return bool
      */
     public function setSetting($key, $value, $query_db = true)
@@ -519,7 +493,6 @@ class Core
      * @param string $key
      * @param string $value
      *
-     * @todo Consider test case
      * @return string
      */
     public function setUserSetting($fuid, $key, $value)
@@ -532,7 +505,6 @@ class Core
      *
      * @param null $key
      *
-     * @todo Consider test case
      * @return array|null|string
      */
     public function supportedApi($key = null)
@@ -580,7 +552,6 @@ class Core
     /**
      * @param string $_nx_fb_usr
      *
-     * @todo Consider test case
      * @return bool
      */
     public function isUserOAuthAuthorised($_nx_fb_usr)
@@ -603,7 +574,6 @@ class Core
     /**
      * @param array|bool $userArray
      *
-     * @todo Consider test case
      * @return bool
      */
     public function valdidateOAuth($userArray)
@@ -616,10 +586,9 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id
+     * @param string $user_fitbit_id Fitbit user ID
      * @param bool $validate
      *
-     * @todo Consider test case
      * @return bool
      */
     public function getUserOAuthTokens($user_fitbit_id, $validate = true)

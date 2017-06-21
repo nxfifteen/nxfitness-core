@@ -38,8 +38,8 @@ class Delivery
 
     /**
      * Delivery constructor.
-     * @param $AppClass
-     * @param $UserID
+     * @param Core $AppClass Core API Class
+     * @param string $UserID Fitbit user ID
      */
     public function __construct($AppClass, $UserID)
     {
@@ -57,7 +57,7 @@ class Delivery
     }
 
     /**
-     * @param Core $AppClass
+     * @param Core $AppClass Core API Class
      */
     protected function setAppClass($AppClass)
     {
@@ -65,9 +65,9 @@ class Delivery
     }
 
     /**
-     * @param array $recordReward
-     * @param string $state
-     * @param string $rewardKey
+     * @param array $recordReward Array holding details of award that has been issued
+     * @param string $state State of award - Issued/Pending
+     * @param string $rewardKey Reward Key
      * @return array
      */
     public function deliver($recordReward, $state, $rewardKey)
@@ -77,9 +77,9 @@ class Delivery
     }
 
     /**
-     * @param $recordReward
-     * @param $state
-     * @param $rewardKey
+     * @param array $recordReward Array holding details of award that has been issued
+     * @param string $state State of award - Issued/Pending
+     * @param string $rewardKey Reward Key
      */
     protected function recordDevlivery($recordReward, $state, $rewardKey)
     {
@@ -115,7 +115,7 @@ class Delivery
     }
 
     /**
-     * @param $string
+     * @param string $string Value to test for JSON
      * @return bool
      */
     protected function isJson($string)

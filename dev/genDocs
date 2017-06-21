@@ -1,6 +1,10 @@
 #!/bin/bash
 ROOTPATH="$1"
 
+eval $(ssh-agent -s)
+
+ssh-add $HOME/id_rsa_nxcore
+
 if [ ! -d "$ROOTPATH/binaries" ]; then
     echo "creating binaries"
     mkdir "$ROOTPATH/binaries"
@@ -26,8 +30,12 @@ if [ -f "$ROOTPATH/dev/.lastChangeLog" ]; then
     fi
 fi
 
-/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/change-log.md" $FROMTAG;
-/home/nxad/gits/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/extended-change-log.md" --extended;
+cd "$ROOTPATH/docs/wiki.core"
+git pull
+cd "$ROOTPATH"
+
+$HOME/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/change-log.md" $FROMTAG;
+$HOME/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/extended-change-log.md" --extended;
 
 cd "$ROOTPATH/docs/wiki.core"
 git add change-log.md extended-change-log.md

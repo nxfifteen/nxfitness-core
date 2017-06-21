@@ -56,8 +56,8 @@ class Rewards
 
     /**
      * Modules constructor.
-     * @param $AppClass
-     * @param $UserID
+     * @param Core $AppClass Core API Class
+     * @param string $UserID Fitbit user ID
      */
     public function __construct($AppClass, $UserID)
     {
@@ -87,7 +87,7 @@ class Rewards
     }
 
     /**
-     * @param $rewardKey
+     * @param string $rewardKey Unique RewardKey
      * @return bool
      */
     public function alreadyAwarded($rewardKey)
@@ -113,9 +113,9 @@ class Rewards
     }
 
     /**
-     * @param $cat
-     * @param $event
-     * @param $score
+     * @param string $cat Reward Category
+     * @param string $event Reward Event
+     * @param string $score Reward Score
      * @return array|\PDOStatement
      */
     public function getDBAwards($cat, $event, $score)
@@ -171,7 +171,7 @@ class Rewards
     }
 
     /**
-     * @param $awardWhere
+     * @param array $awardWhere Medoo style where search clause
      * @return bool
      */
     public function hasDBAwards($awardWhere)
@@ -197,8 +197,8 @@ class Rewards
     }
 
     /**
-     * @param $xp
-     * @param $rewardKey
+     * @param integer $xp XP to award
+     * @param string $rewardKey Reward Key
      */
     public function giveUserXp($xp, $rewardKey)
     {
@@ -208,8 +208,8 @@ class Rewards
 
     /**
      * @param array $recordReward
-     * @param string $state
      * @param string $rewardKey
+     * @param string $state
      * @param string $delivery
      */
     public function issueAwards($recordReward, $rewardKey, $state = "pending", $delivery = "Default")
@@ -238,7 +238,7 @@ class Rewards
     }
 
     /**
-     * @param $rid
+     * @param integer $rid Reward ID
      */
     public function nukeConflictingAwards($rid)
     {
@@ -289,9 +289,9 @@ class Rewards
     }
 
     /**
-     * @param $cat
-     * @param $event
-     * @param $score
+     * @param string $cat Reward Category
+     * @param string $event Reward Event
+     * @param string $score Reward Score
      */
     public function createDBAwards($cat, $event, $score)
     {
@@ -305,41 +305,6 @@ class Rewards
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
-    }
-
-    /**
-     * @param $ico
-     * @param $icoColour
-     * @param $subject
-     * @param $body
-     * @param $bold
-     * @param $expire
-     */
-    public function notifyUser($ico, $icoColour, $expire)
-    {
-        $bold = "";
-        /*if (is_array($this->RewardsIssued) && count($this->RewardsIssued) > 0) {
-            foreach ($this->RewardsIssued as $item) {
-                $bold = $item;
-            }
-            $this->RewardsIssued = [];
-        }*/
-
-        /*$reason = $this->getRewardReason();
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $this->getAppClass()->getDatabase()->insert($db_prefix . "inbox",
-            [
-                "fuid" => $this->getUserID(),
-                "expires" => date("Y-m-d H:i:s", strtotime($expire)),
-                "ico" => $ico,
-                "icoColour" => $icoColour,
-                "subject" => $reason[0],
-                "body" => $reason[1],
-                "bold" => $bold
-            ]
-        );
-
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);*/
     }
 
     /**
@@ -359,7 +324,7 @@ class Rewards
     }
 
     /**
-     * @param $string
+     * @param string $string Name of reward system to return
      * @return array
      */
     public function getSystemRewards($string)
@@ -381,7 +346,7 @@ class Rewards
     }
 
     /**
-     * @param $string
+     * @param string $string Reward category
      * @return array
      */
     public function getCatRewards($string)
@@ -394,7 +359,7 @@ class Rewards
     }
 
     /**
-     * @param $rewardKey
+     * @param string $rewardKey Reward Key
      */
     public function recordAwarded($rewardKey)
     {

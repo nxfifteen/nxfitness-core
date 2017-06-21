@@ -27,9 +27,9 @@ class Minecraft extends Delivery
 {
 
     /**
-     * @param array $recordReward
-     * @param string $state
-     * @param string $rewardKey
+     * @param array $recordReward Array holding details of award that has been issued
+     * @param string $state State of award - Issued/Pending
+     * @param string $rewardKey Reward Key
      * @return array
      */
     public function deliver($recordReward, $state, $rewardKey)
