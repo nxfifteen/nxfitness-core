@@ -4,12 +4,12 @@ WORKINGDIR=`pwd`
 
 echo "# Working in $WORKINGDIR"
 
-echo "## Updated System Image"
-apt-get update -yqq >/dev/null 2>&1
-apt-get install -yqq git zip unzip wget php5-xdebug >/tmp/apt 2>&1
-if [ $? != 0 ]; then
-    cat /tmp/apt
-fi
+# echo "## Updated System Image"
+# apt-get update -yqq >/dev/null 2>&1
+# apt-get install -yqq git zip unzip wget php5-xdebug >/tmp/apt 2>&1
+# if [ $? != 0 ]; then
+#     cat /tmp/apt
+# fi
 
 if [ ! -d "binaries" ]; then
     echo "## Creating Binaries Folder"
