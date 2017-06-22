@@ -1080,7 +1080,9 @@ class ApiBabel
                         'api_path' => $path,
                         'user' => $this->activeUser,
                         'php_version' => phpversion(),
-                        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+                        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE),
+                        'error_code' => $e->getCode(),
+                        'error_message' => $e->getMessage()
                     ),
                 ));
                 if ($supportFailures) {
@@ -2356,14 +2358,10 @@ class ApiBabel
         $plusTargetSteps = -1;
 
         if ($string == "steps") {
-            $userPushLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length",
-                '50');
-            $userPushStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push",
-                '12-01 last sunday'); // Default to last Sunday in March
-            $userPushStartDate = date("Y-m-d",
-                strtotime(date("Y") . '-' . $userPushStartString)); // Default to last Sunday in March
-            $userPushEndDate = date("Y-m-d",
-                strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
+            $userPushLength = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push_length", '50');
+            $userPushStartString = $this->getAppClass()->getUserSetting($this->getActiveUser(), "push", '12-01 last sunday'); // Default to last Sunday in March
+            $userPushStartDate = date("Y-m-d", strtotime(date("Y") . '-' . $userPushStartString)); // Default to last Sunday in March
+            $userPushEndDate = date("Y-m-d", strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
             $today = strtotime(date("Y-m-d"));
             if ($today >= strtotime($userPushStartDate) && $today <= strtotime($userPushEndDate)) {

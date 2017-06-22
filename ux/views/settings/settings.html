@@ -1,0 +1,86 @@
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ This file is part of NxFIFTEEN Fitness Core.
+  ~
+  ~ Copyright (c) 2017. Stuart McCulloch Anderson
+  ~
+  ~ For the full copyright and license information, please view the LICENSE
+  ~ file that was distributed with this source code.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<script>
+    var requireJS = ["../bundle/bower/seiyria-bootstrap-slider/dist/bootstrap-slider.js"];
+    loadJS(requireJS, "js/views/settings.js");
+    loadCSS("../bundle/bower/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css");
+    setUpBreadcrumb(['Settings'], 'Settings');
+</script>
+
+<div class="animated fadeIn">
+
+    <div class="row">
+        <div class="col-8">
+
+            <div class="card">
+                <div class="card-header">
+                    Adaptive Step Goal
+                </div>
+                <div class="card-block">
+                    <form class="form-inline row" id="desireImprovment">
+
+                        <input type="hidden" name="formId" value="desireStep">
+
+                        <div class="col-2">
+                            <label for="minimumSteps">Minimum Steps a Day</label>
+                            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                <div class="input-group-addon">-</div>
+                                <input type="text" class="form-control" id="minimumSteps" name="minimumSteps" placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <label for="desireSteps">Weekly Goal Increase</label>
+                            <input id="ex2" style="width: 95%" name="desireSteps" id="desireSteps" />
+                        </div>
+                        <div class="col-2">
+                            <label for="maximumSteps">Final Daily Steps Goal</label>
+                            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                <div class="input-group-addon">+</div>
+                                <input type="text" class="form-control" id="maximumSteps" name="maximumSteps" placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="col-12" style="text-align: center">
+                            <hr />
+                            <button type="submit" class="btn btn-sm btn-primary">Save Update</button>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-6">Your Current Step Goal is <span id="currentStepGoal"></span> steps a day</div>
+                        <div class="col-6" id="desireMsg" style="text-align: right"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Active Intents
+                </div>
+                <div class="card-block">
+                    <form class="form-signin" id="ActiveIntents">
+                        <div class="form-group row"></div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div id="ActiveIntentsReport">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
