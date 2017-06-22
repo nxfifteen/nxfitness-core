@@ -1080,7 +1080,9 @@ class ApiBabel
                         'api_path' => $path,
                         'user' => $this->activeUser,
                         'php_version' => phpversion(),
-                        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE)
+                        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE),
+                        'error_code' => $e->getCode(),
+                        'error_message' => $e->getMessage()
                     ),
                 ));
                 if ($supportFailures) {
