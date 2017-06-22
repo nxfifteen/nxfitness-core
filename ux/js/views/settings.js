@@ -11,6 +11,12 @@ $(function () {
     'use strict';
 
     $.getJSON("../json.php?user=" + fitbitUserId + "&data=Account", function (data) {
+        /** @namespace data.results.tweak */
+        /** @namespace data.results.tweak.desire_steps */
+        /** @namespace data.results.tweak.desire_steps_min */
+        /** @namespace data.results.tweak.desire_steps_max */
+        /** @namespace data.results.tweak.current_steps */
+
         var switches = '<div class="row">';
         $.each(data.results.babel, function (babelKey, babelValues) {
             switches += '<div class="col-9 col-md-2">';
@@ -30,7 +36,39 @@ $(function () {
         });
         switches += '</div>';
         $('#ActiveIntents').html(switches);
+
+        $('#currentStepGoal').html(data.results.tweak.current_steps);
+
+        $("#minimumSteps").val(data.results.tweak.desire_steps_min);
+        $("#maximumSteps").val(data.results.tweak.desire_steps_max);
+
+        // With JQuery
+        $("#ex2").slider({
+            value: data.results.tweak.desire_steps,
+            ticks: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110],
+            ticks_labels: ['0%', '5%', '10%', '', '20%', '', '30%', '', '40%', '', '50%', '', '60%', '', '70%', '', '80%', '', '90%', '', '100%', '', '110%'],
+            ticks_snap_bounds: 1
+        });
     });
+
+});
+
+// this is the id of the form
+$("#desireImprovment").submit(function (e) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#desireImprovment").serialize();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        $('#desireMsg').html(response);
+    }).fail(function (response) {
+        $('#desireMsg').html(response.responseText);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
 });
 
 function submitSwitch(e) {

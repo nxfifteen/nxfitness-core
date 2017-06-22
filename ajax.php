@@ -308,6 +308,27 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
 
             http_response_code(200);
 
+        } else if ($_POST['formId'] == "desireStep") {
+
+            if ($_POST['maximumSteps'] < $_POST['minimumSteps']) {
+                echo "Your final goal can't really be less than your minimum";
+                http_response_code(403);
+            } else {
+                $core = new Core();
+                $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "desire_steps", $_POST['desireSteps']);
+                $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "desire_steps_min", $_POST['minimumSteps']);
+                $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "desire_steps_max", $_POST['maximumSteps']);
+
+                $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Account";
+                if ( file_exists( $babelCacheFile ) ) {
+                    unlink($babelCacheFile);
+                }
+
+                echo "Step goal increase set to " . $_POST['desireSteps'] . "%, aiming for " . $_POST['maximumSteps'] . " with a lower limit of " . $_POST['minimumSteps'];
+
+                http_response_code(200);
+            }
+
         } else {
             nxr(1, "Unknown Form");
             nxr(0, print_r($_POST, true));

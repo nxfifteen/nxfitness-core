@@ -3046,8 +3046,14 @@ class DataReturn
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         $returnBabels = $this->getAppClass()->getDatabase()->get($db_prefix . "users", ['eml', 'api', 'name', 'fuid'], ["fuid" => $this->getUserID()]);
-        $returnBabels['babel'] = [];
 
+        $returnBabels['tweak'] = [];
+        $returnBabels['tweak']['current_steps'] = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", "steps", ["user" => $this->getUserID(), "ORDER" => ["date" => "DESC"]]);
+        $returnBabels['tweak']['desire_steps'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps", 0);
+        $returnBabels['tweak']['desire_steps_min'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_min", 0);
+        $returnBabels['tweak']['desire_steps_max'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 0);
+
+        $returnBabels['babel'] = [];
         foreach ($supported as $babel => $name) {
             if ($babel != "all" && $babel != "profile") {
                 $returnBabels['babel'][$babel] = [
