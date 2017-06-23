@@ -1073,6 +1073,9 @@ class ApiBabel
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
                 die();
+            } else if ($e->getMessage() == "401") {
+                nxr(0, "ERR401: '" . $e->getMessage() . "'");
+                die();
             } else {
                 $this->getAppClass()->getErrorRecording()->captureException($e, array(
                     'level' => 'error',
