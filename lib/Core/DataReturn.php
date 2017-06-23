@@ -117,9 +117,6 @@ class DataReturn
      */
     public function returnUserRecordAboutMe()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbSteps = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
             ['steps'],
@@ -164,9 +161,6 @@ class DataReturn
      */
     public function returnUserRecordGeoSecure()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         if (
             (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != $_GET['user']) || !array_key_exists('_nx_fb_usr', $_COOKIE)
         ) {
@@ -181,9 +175,6 @@ class DataReturn
      */
     public function returnUserRecordActivity()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $userActivity = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "activity",
             ['sedentary', 'lightlyactive', 'fairlyactive', 'veryactive'],
@@ -293,9 +284,6 @@ class DataReturn
      */
     public function returnUserRecordActivityHistory()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
             $days = $this->getParamPeriod();
             $sqlLimit = str_ireplace("last", "", $days);
@@ -485,9 +473,6 @@ class DataReturn
      */
     public function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null)
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         if (is_null($tcxFileName)) {
             if (array_key_exists("tcx", $_GET)) {
                 $tcxFileName = $_GET['tcx'];
@@ -744,9 +729,6 @@ class DataReturn
      */
     public function returnUserRecordBadges()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "bages_user", [
             "[>]" . $this->getAppClass()->getSetting("db_prefix", null,
@@ -794,9 +776,6 @@ class DataReturn
      */
     public function returnUserRecordBody()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $return = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "body",
             [
@@ -829,9 +808,6 @@ class DataReturn
      */
     public function returnUserRecordChallenger()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         return $this->returnUserRecordPush();
     }
 
@@ -840,9 +816,6 @@ class DataReturn
      */
     public function returnUserRecordPush()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $userPushLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
         $userPushStartString = $this->getAppClass()->getUserSetting($this->getUserID(), "push",
             '03-31 last sunday'); // Default to last Sunday in March
@@ -1131,9 +1104,6 @@ class DataReturn
      */
     public function returnUserRecordPushCalendar()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         // Short-circuit if the client did not give us a date range.
         if (!isset($_GET['start']) || !isset($_GET['end'])) {
             return ["error" => "true", "code" => 105, "msg" => "No start or end date given"];
@@ -1203,9 +1173,6 @@ class DataReturn
      */
     public function returnUserRecordConky()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
             ['distance', 'floors', 'steps'],
@@ -1331,9 +1298,6 @@ class DataReturn
      */
     public function returnUserRecordJourneysState()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "journeys_travellers", ["fuid" => $this->getUserID()])
         ) {
@@ -1544,9 +1508,6 @@ class DataReturn
      */
     public function returnUserRecordDashboard()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         // Achivment
         $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps", [
@@ -1611,9 +1572,6 @@ class DataReturn
      */
     public function returnUserRecordLeaderboard()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $leaderboard = $this->getAppClass()->getUserSetting($this->getUserID(), "leaderboard", "none");
 
         if ($leaderboard == "none") {
@@ -1654,9 +1612,6 @@ class DataReturn
      */
     public function returnUserRecordFoodDiary()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $returnArray = [];
 
         $where = $this->dbWhere();
@@ -1795,9 +1750,6 @@ class DataReturn
      */
     public function returnUserRecordKeyPoints()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         // Get Users Gender and leaderboard ranking
         $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "users", [
@@ -2047,9 +1999,6 @@ class DataReturn
      */
     public function returnUserRecordSleep()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "sleep", [
             "[>]" . $this->getAppClass()->getSetting("db_prefix", null,
@@ -2114,9 +2063,6 @@ class DataReturn
      */
     public function returnUserRecordSteps()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
             ['distance', 'floors', 'steps'],
@@ -2192,9 +2138,6 @@ class DataReturn
      */
     public function returnUserRecordStepsGoal()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps_goals",
             ['date', 'distance', 'floors', 'steps'],
@@ -2218,9 +2161,6 @@ class DataReturn
      */
     public function returnUserRecordTrackerHistoryChart()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $convertedOutput = $this->returnUserRecordTrackerHistory();
 
         $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
@@ -2289,9 +2229,6 @@ class DataReturn
      */
     public function returnUserRecordTrackerHistory()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
             ['date', 'distance', 'floors', 'steps'],
@@ -2338,9 +2275,6 @@ class DataReturn
      */
     public function returnUserRecordInbox()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $returnArray = [];
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
@@ -2397,9 +2331,6 @@ class DataReturn
      */
     public function returnUserRecordPendingRewards()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $returnArray = [];
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
@@ -2479,9 +2410,6 @@ class DataReturn
      */
     public function returnUserRecordTasker()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $taskerDataArray = [];
 
         $minecraftUsername = $this->getAppClass()->getUserSetting($this->getUserID(), "minecraft_username");
@@ -2725,9 +2653,6 @@ class DataReturn
      */
     public function returnUserRecordWater()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbWater = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "water",
             ['date', 'liquid'],
@@ -2767,9 +2692,6 @@ class DataReturn
      */
     public function returnUserRecordFood()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "food",
             ['meal', 'calories'],
@@ -2810,9 +2732,6 @@ class DataReturn
      */
     public function returnUserRecordDevices()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbDevices = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "devices", [
             "[>]" . $this->getAppClass()->getSetting("db_prefix", null,
@@ -2879,9 +2798,6 @@ class DataReturn
      */
     public function returnUserRecordGoalStreak()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $taskerDataArray = [
             "avg" => [
                 "days" => round($this->getAppClass()->getDatabase()->avg($this->getAppClass()->getSetting("db_prefix",
@@ -2976,7 +2892,7 @@ class DataReturn
             $taskerDataArray['last']['end'] = $databaseResults['end_date'];
             $taskerDataArray['last']['end_f'] = date("M jS", strtotime($taskerDataArray['last']['end']));
             $taskerDataArray['last']['days'] = $databaseResults['length'];
-            if ($taskerDataArray['current']['days'] > 0) {
+            if ($taskerDataArray['current']['days'] > 0 && $databaseResults['length'] > 0) {
                 $taskerDataArray['last']['dist'] = round(($taskerDataArray['current']['days'] / $databaseResults['length']) * 100,
                     0);
             } else {
@@ -2997,9 +2913,6 @@ class DataReturn
      */
     public function returnUserRecordJourneys()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "journeys_travellers", ["fuid" => $this->getUserID()])
         ) {
@@ -3128,9 +3041,6 @@ class DataReturn
      */
     public function returnUserRecordAccount()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $supported = $this->getAppClass()->supportedApi();
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
@@ -3176,11 +3086,29 @@ class DataReturn
     }
 
     /**
-     * @return bool
+     * @return bool|string
      */
     private function isUserAuthorised() {
 
-        return true;
+        if ( array_key_exists('HTTP_REFERER', $_SERVER) ) {
+            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getSetting("http/")) !== false) {
+                return "hostdomain";
+            }
+            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getUserSetting($this->getUserID(), 'safe_domain', null)) !== false) {
+                return "safedomain";
+            }
+        }
+
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $apiKey = $this->getAppClass()->getDatabase()->get($db_prefix . "users", "api", ["fuid" => $this->getUserID()]);
+
+        if ( array_key_exists('api', $_GET) && $apiKey == $_GET['api'] ) {
+            return "apikey";
+        } else if ( array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] == $_GET['user'] ) {
+            return "cookieish";
+        }
+
+        return false;
     }
 
     /**
@@ -3188,9 +3116,6 @@ class DataReturn
      */
     public function returnUserRecordXp()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
@@ -3218,9 +3143,6 @@ class DataReturn
      */
     public function returnUserRecordTopBadges()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $userBadges = $this->getAppClass()->getDatabase()->select($db_prefix . "bages_user",
             ["[>]" . $db_prefix . "bages" => ["badgeid" => "encodedId"]],
@@ -3270,9 +3192,6 @@ class DataReturn
      */
     public function returnUserRecordTracked()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $nx_fitbit_steps = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps';
         $nx_fitbit_steps_goals = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps_goals';
 
@@ -3407,9 +3326,6 @@ class DataReturn
      */
     public function returnUserRecordStepGoal()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $lastMonday = date('Y-m-d', strtotime('last sunday'));
         $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
 
@@ -3456,9 +3372,6 @@ class DataReturn
      */
     public function returnUserRecordFloorGoal()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $lastMonday = date('Y-m-d', strtotime('last sunday'));
         $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
 
@@ -3505,9 +3418,6 @@ class DataReturn
      */
     public function returnUserRecordActiveGoal()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $lastMonday = date('Y-m-d', strtotime('last sunday'));
         $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
 
@@ -3557,9 +3467,6 @@ class DataReturn
      */
     public function returnUserRecordTrend()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $trendArray = [];
 
         $estimation = $this->returnUserRecordWeightLossForcast();
@@ -3604,9 +3511,6 @@ class DataReturn
      */
     public function returnUserRecordWeightLossForcast()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $return = array();
 
         $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps", ['caloriesOut'], ["user" => $this->getUserID(), "ORDER" => ["date" => "DESC"]]);
@@ -3664,9 +3568,6 @@ class DataReturn
      */
     public function returnUserRecordWeekPedometer()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "steps",
             ['date', 'steps', 'distance', 'floors'],
@@ -3689,9 +3590,6 @@ class DataReturn
      */
     public function returnUserRecordSyncState()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $timeToday = strtotime(date("Y-m-d H:i:s")) - (1 * 60 * 60);
         $userFirstSeenDb = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "users", 'seen', ["fuid" => $this->getUserID()]);
@@ -3778,9 +3676,6 @@ class DataReturn
      */
     public function returnUserRecordWeight()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $days = 7;
         $returnWeight = [];
 
@@ -4141,7 +4036,16 @@ class DataReturn
                 "period" => $this->getParamPeriod(),
                 "date" => $this->getParamDate()
             ];
-            $resultsArray['results'] = $this->$functionName();
+
+            $authorised = $this->isUserAuthorised();
+            if (!is_string($authorised)) {
+                $resultsArray[ 'authorised' ] = "failed";
+                $resultsArray[ 'results' ] = [];
+            } else {
+                $resultsArray[ 'authorised' ] = $authorised;
+                $resultsArray['results'] = $this->$functionName();
+            }
+
             if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
                 $resultsArray = $resultsArray['results']['return'];
             } else {
@@ -4201,9 +4105,6 @@ class DataReturn
      */
     public function returnUserRecordNomie()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $returnArray = [];
         $returnArray['dashboard'] = $this->returnUserRecordNomieDashboard();
         $returnArray['dbTrackers'] = $this->returnUserRecordNomieTrackers();
@@ -4216,9 +4117,6 @@ class DataReturn
      */
     public function returnUserRecordNomieDashboard()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         $returnArray = [];
@@ -4292,9 +4190,6 @@ class DataReturn
      */
     public function returnUserRecordNomieTrackers()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $dbTrackers = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "nomie_trackers",
             ['id', 'label', 'icon', 'color', 'charge', 'sort'],
@@ -4414,9 +4309,6 @@ class DataReturn
      */
     public function returnUserRecordNomieGPS()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         if (array_key_exists('tracker', $_GET)) {
             $searchTracker = $_GET['tracker'];
         } else {
@@ -4552,9 +4444,6 @@ class DataReturn
      */
     public function returnUserRecordNomieScoreGraph()
     {
-        if (!$this->isUserAuthorised())
-            return [];
-
         $days = 30;
         $returnAr = [];
         $returnAr['graph'] = [];
