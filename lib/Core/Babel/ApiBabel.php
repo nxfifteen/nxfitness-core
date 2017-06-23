@@ -3811,6 +3811,106 @@ class ApiBabel
                 file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
             }
 
+            nxr(4, "Hatching your Pets");
+            $eggs = $user['items']['eggs'];
+            $pets = $user['items']['pets'];
+            $hatchingPotions = $user['items']['hatchingPotions'];
+            if (count($hatchingPotions) > 0) {
+                if (count($eggs) > 0) {
+                    foreach ( $eggs as $egg => $count ) {
+                        if ($count > 0) {
+                            nxr( 5, "You have $count $egg eggs" );
+                            for ( $i = 1; $i <= $count; $i++ ) {
+                                foreach ( $hatchingPotions as $potion => $potionCount ) {
+                                    if ( $potionCount > 0 && ! array_key_exists( $egg . "-" . $potion, $pets ) ) {
+                                        nxr( 6, "You dont yet have a $potion $egg pet - hatching ($potionCount)" );
+                                        $pets[ $egg . "-" . $potion ] = 5;
+                                        $hatchingPotions[ $potion ]   = $hatchingPotions[ $potion ] - 1;
+                                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/hatch/" . $egg . "/" . $potion . "", [] );
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (count($pets) > 0) {
+                nxr( 4, "Feeding your Pets" );
+                $foodPrefernce = [
+                    "Base"            => "Meat",
+                    "White"           => "Milk",
+                    "Desert"          => "Potatoe",
+                    "Red"             => "Strawberry",
+                    "Shade"           => "Chocolate",
+                    "Skeleton"        => "Fish",
+                    "Zombie"          => "RottenMeat",
+                    "CottonCandyPink" => "CottonCandyPink",
+                    "CottonCandyBlue" => "CottonCandyBlue",
+                    "Golden"          => "Honey",
+                ];
+                asort( $pets );
+                $foods     = $user[ 'items' ][ 'food' ];
+                $petsMagic = [];
+                if ( count( $foods ) > 0 ) {
+                    nxr( 5, "Feeding your normal Pets" );
+                    $fedAnyPets = false;
+                    foreach ( $pets as $pet => $petHealth ) {
+                        if ( $petHealth > 0 ) {
+                            $petString = explode( "-", $pet );
+                            if ( array_key_exists( $petString[ 1 ], $foodPrefernce ) ) {
+                                if ( array_key_exists( $foodPrefernce[ $petString[ 1 ] ], $foods ) && $foods[ $foodPrefernce[ $petString[ 1 ] ] ] > 0 ) {
+                                    nxr( 6, "Feeding some " . $foodPrefernce[ $petString[ 1 ] ] . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
+                                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/feed/$pet/" . $foodPrefernce[ $petString[ 1 ] ] . "", [] );
+                                    $foods[ $foodPrefernce[ $petString[ 1 ] ] ] = $foods[ $foodPrefernce[ $petString[ 1 ] ] ] - 1;
+                                    $fedAnyPets                                 = true;
+                                }
+                            } else {
+                                $petsMagic[] = $pet;
+                            }
+                        }
+                    }
+
+                    if ( $fedAnyPets ) {
+                        if ( count( $petsMagic ) > 0 ) {
+                            nxr( 5, "Feeding your magical Pets" );
+                            arsort( $foods );
+                            $petLoop = 0;
+                            foreach ( $foods as $food => $spareFood ) {
+                                if ( $petLoop < count( $petsMagic ) ) {
+                                    if ( $spareFood > 0 ) {
+                                        $petString = explode( "-", $petsMagic[ $petLoop ] );
+                                        nxr( 6, "Feeding some " . $food . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
+                                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/feed/" . $petsMagic[ $petLoop ] . "/$food", [] );
+                                        $petLoop = $petLoop + 1;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        nxr( 5, "Noone else got get so not feeding your magical Pets" );
+                    }
+
+                }
+
+                nxr( 4, "Randomizing your pet" );
+                $petNames = array_keys( $pets );
+                shuffle( $petNames );
+                $newPet = array_pop( $petNames );
+                nxr( 5, "The winning pet is $newPet" );
+                $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/pet/$newPet", [] );
+            }
+
+            $mounts = $user['items']['mounts'];
+            if (count($mounts) > 1) {
+                nxr( 4, "Randomizing your mount" );
+                $mountNames = array_keys( $mounts );
+                shuffle( $mountNames );
+                $mountPet = array_pop( $mountNames );
+                nxr( 5, "The winning mount is $mountPet" );
+                $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/mount/$mountPet", [] );
+            }
         } else {
             nxr(3, "Your not a Habitica user");
         }
