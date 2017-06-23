@@ -2505,16 +2505,24 @@ class DataReturn
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
-        $taskerDataArray['snapshot']['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100,
-            0);
-        $taskerDataArray['snapshot']['today']['distance'] = round((round($dbSteps[0]['distance'],
-                    2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
-        $taskerDataArray['snapshot']['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100,
-            0);
 
-        $taskerDataArray['snapshot']['goals']['steps'] = $dbGoals[0]['steps'];
-        $taskerDataArray['snapshot']['goals']['distance'] = round($dbGoals[0]['distance'], 2);
-        $taskerDataArray['snapshot']['goals']['floors'] = $dbGoals[0]['floors'];
+        if (count($dbGoals) > 0) {
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'steps' ] = round( ( $dbSteps[ 0 ][ 'steps' ] / $dbGoals[ 0 ][ 'steps' ] ) * 100, 0 );
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'distance' ] = round( ( round( $dbSteps[ 0 ][ 'distance' ], 2 ) / round( $dbGoals[ 0 ][ 'distance' ], 2 ) ) * 100, 0 );
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'floors' ]   = round( ( $dbSteps[ 0 ][ 'floors' ] / $dbGoals[ 0 ][ 'floors' ] ) * 100, 0 );
+
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'steps' ]    = $dbGoals[ 0 ][ 'steps' ];
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'distance' ] = round( $dbGoals[ 0 ][ 'distance' ], 2 );
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'floors' ]   = $dbGoals[ 0 ][ 'floors' ];
+        } else {
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'steps' ] = 0;
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'distance' ] = 0;
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'floors' ] = 0;
+
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'steps' ] = 0;
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'distance' ] = 0;
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'floors' ] = 0;
+        }
 
         $dbActive = $this->getAppClass()->getDatabase()->query("SELECT target, fairlyactive, veryactive, syncd FROM "
             . $this->getAppClass()->getSetting("db_prefix", null,
@@ -2533,13 +2541,18 @@ class DataReturn
         $taskerDataArray['syncd']['steps'] = $dbSteps[0]['syncd'];
         $taskerDataArray['syncd']['distance'] = $dbSteps[0]['syncd'];
         $taskerDataArray['syncd']['floors'] = $dbSteps[0]['syncd'];
-        $taskerDataArray['syncd']['goals'] = $dbGoals[0]['syncd'];
+
+        if (count($dbGoals) > 0) {
+            $taskerDataArray[ 'syncd' ][ 'goals' ] = $dbGoals[ 0 ][ 'syncd' ];
+        } else {
+            $taskerDataArray[ 'syncd' ][ 'goals' ] = 0;
+        }
 
         $cheer = ["distance" => 0, "floors" => 0, "steps" => 0];
         foreach ($cheer as $key => $value) {
             $taskerDataArray['snapshot']['raw'][$key] = round($dbSteps[0][$key], 2);
 
-            if ($dbGoals[0][$key] > 0) {
+            if (count($dbGoals) > 0 && $dbGoals[0][$key] > 0) {
                 if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
                     $taskerDataArray['snapshot']['cheer'][$key] = 7;
                 } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
