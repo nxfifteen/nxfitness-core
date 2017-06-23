@@ -3065,6 +3065,18 @@ class DataReturn
         $returnBabels['tweak']['desire_steps_min'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_min", 0);
         $returnBabels['tweak']['desire_steps_max'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 0);
 
+        $dbJourney = $this->getAppClass()->getDatabase()->select($db_prefix . "journeys_travellers", [ 'jid', 'start_date' ], ["fuid" => $this->getUserID(), "LIMIT" => 1]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
+        if (count($dbJourney) > 0) {
+            $returnBabels[ 'journey' ] = $dbJourney[ 0 ];
+        } else {
+            $returnBabels[ 'journey' ] = [];
+        }
+
+        $dbJourneys = $this->getAppClass()->getDatabase()->select($db_prefix . "journeys", [ 'jid', 'name', 'blurb' ]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
+        $returnBabels['journeys'] = $dbJourneys;
+
         $returnBabels['babel'] = [];
         foreach ($supported as $babel => $name) {
             if ($babel != "all" && $babel != "profile") {
