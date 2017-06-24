@@ -31,6 +31,11 @@ class HabitRPHPG {
 
     ///Constructor
     function __construct($user_id, $api_key) {
+        if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
+            nxr(0, "** Connecting to development habitica");
+            $this->base_url = 'http://10.1.1.1:3000/';
+        }
+
         $this->user_id = $user_id;
         $this->api_key = $api_key;
 
