@@ -3811,7 +3811,11 @@ class ApiBabel
             $avatarFolder = dirname(__FILE__) . "/../../../images/avatars/";
             if (file_exists($avatarFolder) AND is_writable($avatarFolder)) {
                 nxr(4, "Updating User Habitica Avatar");
-                file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
+                if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
+                    //file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("http://10.1.1.1:3000/export/avatar-" . $user['id'] . ".png"));
+                } else {
+                    file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
+                }
             }
 
             nxr(4, "Hatching your Pets");
@@ -3914,6 +3918,7 @@ class ApiBabel
                 nxr( 5, "The winning mount is $mountPet" );
                 $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/mount/$mountPet", [] );
             }
+
         } else {
             nxr(3, "Your not a Habitica user");
         }
