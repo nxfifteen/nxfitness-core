@@ -3827,19 +3827,35 @@ class ApiBabel
                     if ( count( $eggs ) > 0 ) {
                         foreach ( $eggs as $egg => $count ) {
                             if ( $count > 0 ) {
+                                $eggHatched = false;
                                 nxr( 5, "You have $count $egg eggs" );
                                 for ( $i = 1; $i <= $count; $i++ ) {
                                     foreach ( $hatchingPotions as $potion => $potionCount ) {
                                         if ( $potionCount > 0 && ! array_key_exists( $egg . "-" . $potion, $pets ) ) {
-                                            nxr( 6, "You dont yet have a $potion $egg pet - hatching ($potionCount)" );
-                                            $pets[ $egg . "-" . $potion ] = 5;
-                                            $hatchingPotions[ $potion ]   = $hatchingPotions[ $potion ] - 1;
-                                            $habiticaClass->getHabitRPHPG()->_request( "post", "user/hatch/" . $egg . "/" . $potion . "", [] );
-                                            break;
+                                            if(in_array($egg . "-" . $potion, $habiticaClass->getHabitRPHPG()->pet_types)) {
+                                                nxr( 6, "You dont yet have a $potion $egg pet - hatching ($potionCount)" );
+                                                $pets[ $egg . "-" . $potion ] = 5;
+                                                $hatchingPotions[ $potion ]   = $hatchingPotions[ $potion ] - 1;
+                                                $habiticaClass->getHabitRPHPG()->hatch( $egg, $potion, false );
+                                                $eggHatched = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!$eggHatched && $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_eggs', true)) {
+                                    if ($count > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)) {
+                                        nxr( 6, "No eggs hatched, and you have too many" );
+                                        for ( $i = 1; $i <= ($count - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)); $i++ ) {
+                                            nxr(7, "Selling egg $i");
+                                            $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/eggs/$egg", [] );
                                         }
                                     }
                                 }
                             }
+
+                            die();
                         }
                     }
                 }
@@ -3872,7 +3888,7 @@ class ApiBabel
                                 if ( array_key_exists( $petString[ 1 ], $foodPrefernce ) ) {
                                     if ( array_key_exists( $foodPrefernce[ $petString[ 1 ] ], $foods ) && $foods[ $foodPrefernce[ $petString[ 1 ] ] ] > 0 ) {
                                         nxr( 6, "Feeding some " . $foodPrefernce[ $petString[ 1 ] ] . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
-                                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/feed/$pet/" . $foodPrefernce[ $petString[ 1 ] ] . "", [] );
+                                        $habiticaClass->getHabitRPHPG()->feed($foodPrefernce[ $petString[ 1 ] ], $pet, false);
                                         $foods[ $foodPrefernce[ $petString[ 1 ] ] ] = $foods[ $foodPrefernce[ $petString[ 1 ] ] ] - 1;
                                         $fedAnyPets                                 = true;
                                     }

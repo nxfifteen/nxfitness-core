@@ -26,7 +26,7 @@ class HabitRPHPG {
     private $egg_types = array('Wolf', 'TigerCub', 'PandaCub','LionCub','Fox','FlyingPig','Dragon','Cactus','BearCub', 'Egg','Gryphon');
     private $hatch_types = array('Base','White','Desert','Red','Shade','Skeleton','Zombie','CottonCandyPink','CottonCandyBlue','Golden');
     private $food_types = array('Meat','Milk','Potatoe','Strawberry','Chocolate','Fish','RottenMeat','CottonCandyPink','CottonCandyBlue','Cake_Skeleton','Cake_Base','Honey','Saddle');
-    private $pet_types = array();
+    public $pet_types = array();
     public $tags = array();
 
     ///Constructor
