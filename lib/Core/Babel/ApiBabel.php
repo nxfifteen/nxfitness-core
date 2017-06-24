@@ -3846,11 +3846,13 @@ class ApiBabel
 
                                 if (!$eggHatched && $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_eggs', true)) {
                                     if ($count > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)) {
-                                        nxr( 6, "No eggs hatched, and you have too many" );
+                                        nxr( 6, "No eggs hatched, selling off your spare $egg" );
+                                        nxr(7, ".", true, false);
                                         for ( $i = 0; $i <= ($count - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)); $i++ ) {
-                                            nxr(7, "Selling egg $i");
+                                            nxr(0, ".", false, false);
                                             $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/eggs/$egg", [] );
                                         }
+                                        nxr(0, " [SOLD]", false);
                                     }
                                 }
                             }
@@ -3861,10 +3863,12 @@ class ApiBabel
                         foreach ( $hatchingPotions as $potion => $potionCount ) {
                             if ( $potionCount > $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ) {
                                 nxr( 5, "You've got more $potion than needed" );
+                                nxr(6, ".", true, false);
                                 for ( $i = 0; $i <= ( $potionCount - $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ); $i++ ) {
-                                    nxr( 6, "Selling off potion $i" );
+                                    nxr(0, ".", false, false);
                                     $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/hatchingPotions/$potion", [] );
                                 }
+                                nxr(0, " [SOLD]", false);
                             }
                         }
                     }
