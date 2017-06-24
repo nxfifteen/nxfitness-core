@@ -55,6 +55,7 @@ class Core
     protected $errorRecording;
 
     /**
+     * Create the core Core class, storing child classes as required
      */
     public function __construct()
     {

@@ -56,6 +56,8 @@ class DataReturn
     protected $tracking;
 
     /**
+     * Create the DataReturn class to communicate with Core and return all users information from storage
+     *
      * @param string $userFid
      */
     public function __construct($userFid)

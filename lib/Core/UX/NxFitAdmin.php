@@ -54,7 +54,7 @@ class NxFitAdmin
     protected $dbUserProfile;
 
     /**
-     *
+     * Create the admin UX class, parent class to Code with additonal UX methods
      */
     public function __construct()
     {

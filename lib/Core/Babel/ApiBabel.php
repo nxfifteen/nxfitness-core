@@ -76,6 +76,8 @@ class ApiBabel
     private $userAccessToken;
 
     /**
+     * Create a new ApiBabel class, connecting to all other API's; e.g. Fitbit
+     *
      * @param Core $fitbitApp
      * @param bool $personal
      */
