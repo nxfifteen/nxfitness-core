@@ -108,4 +108,65 @@
         </div>
     </div>
 
+    <div class="row" id="habiticaSettings">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Habitica
+                </div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-12 col-md-7">
+                            <img src="img/habitica.png"/>
+
+                            <hr />
+
+                            <form class="form-signin" id="habiticaSwitcheSettings">
+                                <input type="hidden" name="formId" value="habiticaSwitches">
+                                <div id="habiticaSwitches"></div>
+                            </form>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <form class="form-signin" id="habiticaMaxItems">
+                                <input type="hidden" name="formId" value="habiticaMaxItems">
+
+                                <label for="habitica_max_eggs">Maximum Eggs To Hold</label>
+                                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                    <div class="input-group-addon">+</div>
+                                    <input type="text" class="form-control" id="habitica_max_eggs" name="habitica_max_eggs" placeholder="0">
+                                </div>
+
+                                <label for="habitica_max_potions">Maximum Potions To Hold</label>
+                                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                    <div class="input-group-addon">+</div>
+                                    <input type="text" class="form-control" id="habitica_max_potions" name="habitica_max_potions" placeholder="0">
+                                </div>
+
+                                <hr />
+
+                                <button type="submit" class="btn btn-block btn-success">Update Settings</button>
+                            </form>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <form class="form-signin" id="habiticaConnect">
+                                <input type="hidden" name="formId" value="habiticaKeyUpdate">
+                                <p class="text-muted">Connect your account by providing your User ID and API Token from <a target="_blank" href="https://habitica.com/#/options/settings/api">Settings -> API</a></p>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-addon"><i class="line-icon-user"></i></span> <input type="text" class="form-control" name="habitica_user_id" id="habitica_user_id" title="User ID">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-addon"><i class="line-icon-lock"></i></span> <input type="text" class="form-control" name="habitica_api_key" id="habitica_api_key" title="API Token">
+                                </div>
+                                <button type="submit" class="btn btn-block btn-success">Update Credentials</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div id="habiticaReport">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
