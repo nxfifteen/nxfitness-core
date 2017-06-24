@@ -3718,7 +3718,7 @@ class ApiBabel
                             ]);
                     }
 
-                    if ($databaseColumn == "veryactive") {
+                    if (strtotime($series->dateTime) == strtotime($series->dateTime . ' -1 days') && $databaseColumn == "veryactive") {
                         if (!is_null($this->RewardsSystem)) {
                             $this->RewardsSystem->eventTrigger("FitbitVeryActive", $series->value);
                         }
