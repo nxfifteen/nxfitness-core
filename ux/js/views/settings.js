@@ -49,8 +49,42 @@ $(function () {
             ticks_labels: ['0%', '5%', '10%', '', '20%', '', '30%', '', '40%', '', '50%', '', '60%', '', '70%', '', '80%', '', '90%', '', '100%', '', '110%'],
             ticks_snap_bounds: 1
         });
+
+        var output = [];
+        var outputDefault = '<option>Select a new Journey</option>';
+
+        $.each(data.results.journeys, function(key, journey)
+        {
+            var selected = '';
+            if (journey.jid === data.results.journey.jid) {
+                selected = 'selected';
+                outputDefault = '<option selected>Select a new Journey</option>';
+            }
+
+            output.push('<option '+selected+'>'+ journey.name +'</option>');
+        });
+
+        $('#selectedJourney').html(outputDefault + output.join(''));
     });
 
+});
+
+// this is the id of the form
+$("#journeySelector").submit(function (e) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#journeySelector").serialize();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        $('#journeyAlert').html(response);
+    }).fail(function (response) {
+        $('#journeyAlert').html(response.responseText);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
 });
 
 // this is the id of the form

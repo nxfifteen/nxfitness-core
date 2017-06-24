@@ -329,6 +329,29 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
                 http_response_code(200);
             }
 
+        } else if ($_POST['formId'] == "journeySelector") {
+
+            $core = new Core();
+            $db_prefix = $core->getSetting("db_prefix", null, false);
+
+            $dbJourneyId = $core->getDatabase()->get($db_prefix . "journeys", 'jid', ['name' => $_POST['selectedJourney']]);
+            $core->getErrorRecording()->postDatabaseQuery($core->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
+            if ($_POST['selectedJourney'] == "Select a new Journey") {
+                $dbJourney = $core->getDatabase()->delete($db_prefix . "journeys_travellers", ["fuid" => $_COOKIE[ '_nx_fb_usr' ]]);
+                $core->getErrorRecording()->postDatabaseQuery($core->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
+
+                echo "Time to end your journey";
+            } else {
+                $dbJourney = $core->getDatabase()->insert($db_prefix . "journeys_travellers", ["jid" => $dbJourneyId, "fuid" => $_COOKIE[ '_nx_fb_usr' ], "start_date" => date('Y-m-d')]);
+                echo "Get ready to start " . $_POST['selectedJourney'] . " journey";
+            }
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Account";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            http_response_code(200);
         } else {
             nxr(1, "Unknown Form");
             nxr(0, print_r($_POST, true));

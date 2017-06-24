@@ -1999,7 +1999,6 @@ class DataReturn
      */
     public function returnUserRecordSleep()
     {
-
         $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "sleep", [
             "[>]" . $this->getAppClass()->getSetting("db_prefix", null,
@@ -2506,16 +2505,24 @@ class DataReturn
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
-        $taskerDataArray['snapshot']['today']['steps'] = round(($dbSteps[0]['steps'] / $dbGoals[0]['steps']) * 100,
-            0);
-        $taskerDataArray['snapshot']['today']['distance'] = round((round($dbSteps[0]['distance'],
-                    2) / round($dbGoals[0]['distance'], 2)) * 100, 0);
-        $taskerDataArray['snapshot']['today']['floors'] = round(($dbSteps[0]['floors'] / $dbGoals[0]['floors']) * 100,
-            0);
 
-        $taskerDataArray['snapshot']['goals']['steps'] = $dbGoals[0]['steps'];
-        $taskerDataArray['snapshot']['goals']['distance'] = round($dbGoals[0]['distance'], 2);
-        $taskerDataArray['snapshot']['goals']['floors'] = $dbGoals[0]['floors'];
+        if (count($dbGoals) > 0) {
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'steps' ] = round( ( $dbSteps[ 0 ][ 'steps' ] / $dbGoals[ 0 ][ 'steps' ] ) * 100, 0 );
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'distance' ] = round( ( round( $dbSteps[ 0 ][ 'distance' ], 2 ) / round( $dbGoals[ 0 ][ 'distance' ], 2 ) ) * 100, 0 );
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'floors' ]   = round( ( $dbSteps[ 0 ][ 'floors' ] / $dbGoals[ 0 ][ 'floors' ] ) * 100, 0 );
+
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'steps' ]    = $dbGoals[ 0 ][ 'steps' ];
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'distance' ] = round( $dbGoals[ 0 ][ 'distance' ], 2 );
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'floors' ]   = $dbGoals[ 0 ][ 'floors' ];
+        } else {
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'steps' ] = 0;
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'distance' ] = 0;
+            $taskerDataArray[ 'snapshot' ][ 'today' ][ 'floors' ] = 0;
+
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'steps' ] = 0;
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'distance' ] = 0;
+            $taskerDataArray[ 'snapshot' ][ 'goals' ][ 'floors' ] = 0;
+        }
 
         $dbActive = $this->getAppClass()->getDatabase()->query("SELECT target, fairlyactive, veryactive, syncd FROM "
             . $this->getAppClass()->getSetting("db_prefix", null,
@@ -2534,13 +2541,18 @@ class DataReturn
         $taskerDataArray['syncd']['steps'] = $dbSteps[0]['syncd'];
         $taskerDataArray['syncd']['distance'] = $dbSteps[0]['syncd'];
         $taskerDataArray['syncd']['floors'] = $dbSteps[0]['syncd'];
-        $taskerDataArray['syncd']['goals'] = $dbGoals[0]['syncd'];
+
+        if (count($dbGoals) > 0) {
+            $taskerDataArray[ 'syncd' ][ 'goals' ] = $dbGoals[ 0 ][ 'syncd' ];
+        } else {
+            $taskerDataArray[ 'syncd' ][ 'goals' ] = 0;
+        }
 
         $cheer = ["distance" => 0, "floors" => 0, "steps" => 0];
         foreach ($cheer as $key => $value) {
             $taskerDataArray['snapshot']['raw'][$key] = round($dbSteps[0][$key], 2);
 
-            if ($dbGoals[0][$key] > 0) {
+            if (count($dbGoals) > 0 && $dbGoals[0][$key] > 0) {
                 if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
                     $taskerDataArray['snapshot']['cheer'][$key] = 7;
                 } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
@@ -2893,7 +2905,7 @@ class DataReturn
             $taskerDataArray['last']['end'] = $databaseResults['end_date'];
             $taskerDataArray['last']['end_f'] = date("M jS", strtotime($taskerDataArray['last']['end']));
             $taskerDataArray['last']['days'] = $databaseResults['length'];
-            if ($taskerDataArray['current']['days'] > 0) {
+            if ($taskerDataArray['current']['days'] > 0 && $databaseResults['length'] > 0) {
                 $taskerDataArray['last']['dist'] = round(($taskerDataArray['current']['days'] / $databaseResults['length']) * 100,
                     0);
             } else {
@@ -3053,6 +3065,18 @@ class DataReturn
         $returnBabels['tweak']['desire_steps_min'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_min", 0);
         $returnBabels['tweak']['desire_steps_max'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 0);
 
+        $dbJourney = $this->getAppClass()->getDatabase()->select($db_prefix . "journeys_travellers", [ 'jid', 'start_date' ], ["fuid" => $this->getUserID(), "LIMIT" => 1]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
+        if (count($dbJourney) > 0) {
+            $returnBabels[ 'journey' ] = $dbJourney[ 0 ];
+        } else {
+            $returnBabels[ 'journey' ] = [];
+        }
+
+        $dbJourneys = $this->getAppClass()->getDatabase()->select($db_prefix . "journeys", [ 'jid', 'name', 'blurb' ]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
+        $returnBabels['journeys'] = $dbJourneys;
+
         $returnBabels['babel'] = [];
         foreach ($supported as $babel => $name) {
             if ($babel != "all" && $babel != "profile") {
@@ -3084,6 +3108,32 @@ class DataReturn
         }
 
         return true;
+    }
+
+    /**
+     * @return bool|string
+     */
+    private function isUserAuthorised() {
+
+        if ( array_key_exists('HTTP_REFERER', $_SERVER) ) {
+            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getSetting("http/")) !== false) {
+                return "hostdomain";
+            }
+            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getUserSetting($this->getUserID(), 'safe_domain', null)) !== false) {
+                return "safedomain";
+            }
+        }
+
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $apiKey = $this->getAppClass()->getDatabase()->get($db_prefix . "users", "api", ["fuid" => $this->getUserID()]);
+
+        if ( array_key_exists('api', $_GET) && $apiKey == $_GET['api'] ) {
+            return "apikey";
+        } else if ( array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] == $_GET['user'] ) {
+            return "cookieish";
+        }
+
+        return false;
     }
 
     /**
@@ -4011,7 +4061,16 @@ class DataReturn
                 "period" => $this->getParamPeriod(),
                 "date" => $this->getParamDate()
             ];
-            $resultsArray['results'] = $this->$functionName();
+
+            $authorised = $this->isUserAuthorised();
+            if (!is_string($authorised)) {
+                $resultsArray[ 'authorised' ] = "failed";
+                $resultsArray[ 'results' ] = [];
+            } else {
+                $resultsArray[ 'authorised' ] = $authorised;
+                $resultsArray['results'] = $this->$functionName();
+            }
+
             if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
                 $resultsArray = $resultsArray['results']['return'];
             } else {
