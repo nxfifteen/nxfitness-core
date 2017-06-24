@@ -69,8 +69,8 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
 
             $core = new Core();
             if (isset($apiUserid) && isset($apiKey)) {
-                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "user_id", $apiUserid);
-                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "api_key", $apiKey);
+                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "habitica_user_id", $apiUserid);
+                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "habitica_api_key", $apiKey);
             }
             $core->getFitbitAPI( $_COOKIE['_nx_fb_usr'] )->setForceSync( true );
             $core->getFitbitAPI( $_COOKIE['_nx_fb_usr'] )->pull( $_COOKIE['_nx_fb_usr'], 'habitica' );
@@ -85,8 +85,8 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             nxr(1, "Users requested an account deletion");
             $core = new Core();
             if (isset($apiUserid) && isset($apiKey)) {
-                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "user_id", $apiUserid);
-                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "api_key", $apiKey);
+                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "habitica_user_id", $apiUserid);
+                $core->setUserSetting($_COOKIE['_nx_fb_usr'], "habitica_api_key", $apiKey);
             }
 
             $data = $core->getDatabase()->query("SHOW TABLES FROM " . $core->getSetting("db_name", null, false))->fetchAll();

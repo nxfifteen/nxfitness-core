@@ -45,8 +45,8 @@ class Habitica extends Delivery
     {
         parent::__construct($AppClass, $UserID);
 
-        $this->user_id = $this->getAppClass()->getUserSetting($UserID, 'user_id', NULL, false);
-        $this->api_key = $this->getAppClass()->getUserSetting($UserID, 'api_key', NULL, false);
+        $this->user_id = $this->getAppClass()->getUserSetting($UserID, 'habitica_user_id', NULL, false);
+        $this->api_key = $this->getAppClass()->getUserSetting($UserID, 'habitica_api_key', NULL, false);
 
         if ($this->isValidUser()) {
             $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));

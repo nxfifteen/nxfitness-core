@@ -3733,8 +3733,8 @@ class ApiBabel
      */
     private function pullHabitica()
     {
-        $user_id = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'user_id', NULL, false);
-        $api_key = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'api_key', NULL, false);
+        $user_id = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_user_id', NULL, false);
+        $api_key = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_api_key', NULL, false);
         if (!is_null($user_id) && !is_null($api_key)) {
             nxr(3, "Habitica credentials okay");
 
