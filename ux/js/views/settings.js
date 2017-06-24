@@ -16,6 +16,10 @@ $(function () {
         /** @namespace data.results.tweak.desire_steps_min */
         /** @namespace data.results.tweak.desire_steps_max */
         /** @namespace data.results.tweak.current_steps */
+        /** @namespace data.results.tweak.habitica */
+        /** @namespace data.results.tweak.habitica.habitica_user_id */
+        /** @namespace data.results.tweak.habitica.habitica_api_key */
+        /** @namespace data.results.tweak.habitica.habitia_switches */
 
         var switches = '<div class="row">';
         $.each(data.results.babel, function (babelKey, babelValues) {
@@ -65,6 +69,37 @@ $(function () {
         });
 
         $('#selectedJourney').html(outputDefault + output.join(''));
+
+        if (data.results.habitica.length === 0) {
+            $('#habiticaSettings').remove();
+        } else {
+            var habiticaSwitches = '<div class="row">';
+            $.each(data.results.habitica.habitia_switches, function (babelKey, babelValues) {
+                habiticaSwitches += '<div class="col-9 col-md-2">';
+                habiticaSwitches += '<span class="form-control-label" style="padding-right: 10px">' + babelValues.name + '</span>';
+                habiticaSwitches += '</div>';
+                habiticaSwitches += '<div class="col-3 col-md-1">';
+                habiticaSwitches += '<label class="switch switch-text switch-pill switch-success" style="margin-right: 10px">';
+                habiticaSwitches += '  <input type="checkbox" class="switch-input" name="' + babelValues.name + '" id="' + babelKey + '" onchange="submitHabiticaSwitch(this)"';
+                if (babelValues.status !== '0') {
+                    habiticaSwitches += ' checked';
+                }
+                habiticaSwitches += '  >';
+                habiticaSwitches += '  <span class="switch-label" data-on="On" data-off="Off"></span>';
+                habiticaSwitches += '  <span class="switch-handle"></span>';
+                habiticaSwitches += '</label>';
+                habiticaSwitches += '</div>';
+
+                console.log(babelValues.status);
+            });
+            habiticaSwitches += '</div>';
+            $('#habiticaSwitches').html(habiticaSwitches);
+
+            $("#habitica_user_id").val(data.results.habitica.habitica_user_id);
+            $("#habitica_api_key").val(data.results.habitica.habitica_api_key);
+            $("#habitica_max_eggs").val(data.results.habitica.habitica_max_eggs);
+            $("#habitica_max_potions").val(data.results.habitica.habitica_max_potions);
+        }
     });
 
 });
@@ -105,6 +140,42 @@ $("#desireImprovment").submit(function (e) {
     e.preventDefault(); // avoid to execute the actual submit of the form.
 });
 
+// this is the id of the form
+$("#habiticaConnect").submit(function (e) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#habiticaConnect").serialize();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        $('#habiticaReport').html(response);
+    }).fail(function (response) {
+        $('#habiticaReport').html(response.responseText);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+
+// this is the id of the form
+$("#habiticaMaxItems").submit(function (e) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#habiticaMaxItems").serialize();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        $('#habiticaReport').html(response);
+    }).fail(function (response) {
+        $('#habiticaReport').html(response.responseText);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+
 function submitSwitch(e) {
     var url = "../ajax.php"; // the script where you handle the form input.
 
@@ -122,5 +193,25 @@ function submitSwitch(e) {
         }
     }).fail(function (response) {
         $('#ActiveIntentsReport').html(response.responseText);
+    });
+}
+
+function submitHabiticaSwitch(e) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+
+    var data = "formId=habiticaSwitches&switch=" + e.id + "&value=" +  e.checked;
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        if (e.checked) {
+            $('#habiticaReport').html("Enabled " + e.name);
+        } else {
+            $('#habiticaReport').html("Disabled " + e.name);
+        }
+    }).fail(function (response) {
+        $('#habiticaReport').html(response.responseText);
     });
 }

@@ -81,6 +81,48 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
             }
 
             http_response_code(200);
+        } else if ($_POST['formId'] == "habiticaMaxItems") {
+            $core = new Core();
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], 'habitica_max_eggs', $_POST['habitica_max_eggs']);
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], 'habitica_max_potions', $_POST['habitica_max_potions']);
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_Account';
+            if ( file_exists( $cacheFile ) ) {
+                unlink($cacheFile);
+            }
+
+            echo "Updated Maximum Eggs/Potions You Will Hold";
+
+            http_response_code(200);
+        } else if ($_POST['formId'] == "habiticaSwitches") {
+            $core = new Core();
+            if ($_POST['value'] == "true") {
+                $core->setUserSetting( $_COOKIE[ '_nx_fb_usr' ], $_POST[ 'switch' ], 1 );
+            } else {
+                $core->setUserSetting( $_COOKIE[ '_nx_fb_usr' ], $_POST[ 'switch' ], 0 );
+            }
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_Account';
+            if ( file_exists( $cacheFile ) ) {
+                unlink($cacheFile);
+            }
+
+            echo "okay";
+
+            http_response_code(200);
+        } else if ($_POST['formId'] == "habiticaKeyUpdate") {
+            $core = new Core();
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], 'habitica_user_id', $_POST['habitica_user_id']);
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], 'habitica_api_key', $_POST['habitica_api_key']);
+
+            $cacheFile = 'cache' . DIRECTORY_SEPARATOR . '_' . $_COOKIE[ '_nx_fb_usr' ] . '_Account';
+            if ( file_exists( $cacheFile ) ) {
+                unlink($cacheFile);
+            }
+
+            echo "Habitica Credentials Updated";
+
+            http_response_code(200);
         } else if ($_POST['formId'] == "accDeletion") {
             nxr(1, "Users requested an account deletion");
             $core = new Core();

@@ -3065,6 +3065,45 @@ class DataReturn
         $returnBabels['tweak']['desire_steps_min'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_min", 0);
         $returnBabels['tweak']['desire_steps_max'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 0);
 
+        $user_id = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_user_id', NULL);
+        $api_key = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_api_key', NULL);
+        if (!is_null($user_id) && !is_null($api_key)) {
+            $returnBabels[ 'habitica' ] = [
+                'habitica_user_id' => $user_id,
+                'habitica_api_key' => $api_key,
+                'habitia_switches' => [
+                    'habitica_rand_pet' => [
+                        "name" => "Randomize Pets",
+                        "status" => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_rand_pet', false)
+                    ],
+                    'habitica_rand_mount' => [
+                        "name" => "Randomize Mount",
+                        "status" => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_rand_mount', false)
+                    ],
+                    'habitica_hatch' => [
+                        "name" => "Hatch New Eggs",
+                        "status" => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_hatch', false)
+                    ],
+                    'habitica_feed' => [
+                        "name" => "Feed Your Pets",
+                        "status" => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_feed', false)
+                    ],
+                    'habitica_sell_eggs' => [
+                        "name" => "Sell Off Extra Eggs",
+                        "status" => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_sell_eggs', false)
+                    ],
+                    'habitica_sell_potions' => [
+                        "name" => "Sell Off Extra Potions",
+                        "status" => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_sell_potions', false)
+                    ]
+                ],
+                'habitica_max_eggs' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_max_eggs', 10),
+                'habitica_max_potions' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_max_potions', 50)
+            ];
+        } else {
+            $returnBabels[ 'habitica' ] = [];
+        }
+
         $dbJourney = $this->getAppClass()->getDatabase()->select($db_prefix . "journeys_travellers", [ 'jid', 'start_date' ], ["fuid" => $this->getUserID(), "LIMIT" => 1]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
         if (count($dbJourney) > 0) {
