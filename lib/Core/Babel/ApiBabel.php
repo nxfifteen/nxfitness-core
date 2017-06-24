@@ -3847,15 +3847,25 @@ class ApiBabel
                                 if (!$eggHatched && $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_eggs', true)) {
                                     if ($count > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)) {
                                         nxr( 6, "No eggs hatched, and you have too many" );
-                                        for ( $i = 1; $i <= ($count - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)); $i++ ) {
+                                        for ( $i = 0; $i <= ($count - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)); $i++ ) {
                                             nxr(7, "Selling egg $i");
                                             $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/eggs/$egg", [] );
                                         }
                                     }
                                 }
                             }
+                        }
+                    }
 
-                            die();
+                    if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_potions', false)) {
+                        foreach ( $hatchingPotions as $potion => $potionCount ) {
+                            if ( $potionCount > $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ) {
+                                nxr( 5, "You've got more $potion than needed" );
+                                for ( $i = 0; $i <= ( $potionCount - $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ); $i++ ) {
+                                    nxr( 6, "Selling off potion $i" );
+                                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/hatchingPotions/$potion", [] );
+                                }
+                            }
                         }
                     }
                 }
