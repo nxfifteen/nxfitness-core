@@ -64,17 +64,27 @@
         </div>
         <div class="col-4">
 
-            <div class="card">
-                <div class="card-header">
-                    Journey
+            <form id="journeySelector">
+                <div class="card">
+                    <div class="card-header">
+                        Journey
+                    </div>
+                    <div class="card-block">
+                        <div class="row">
+                            <div class="col-8">
+                                <input type="hidden" name="formId" value="journeySelector">
+                                <select class="selectedJourney" id="selectedJourney" name="selectedJourney">
+                                    <option selected>Select a new Journey</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-sm btn-primary">Start Your Jounrey</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer" id="journeyAlert">&nbsp;</div>
                 </div>
-                <div class="card-block">
-                    Something
-                </div>
-                <div class="card-footer">
-                    Something Else
-                </div>
-            </div>
+            </form>
 
         </div>
 
