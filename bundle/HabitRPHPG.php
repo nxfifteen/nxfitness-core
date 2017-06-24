@@ -26,11 +26,16 @@ class HabitRPHPG {
     private $egg_types = array('Wolf', 'TigerCub', 'PandaCub','LionCub','Fox','FlyingPig','Dragon','Cactus','BearCub', 'Egg','Gryphon');
     private $hatch_types = array('Base','White','Desert','Red','Shade','Skeleton','Zombie','CottonCandyPink','CottonCandyBlue','Golden');
     private $food_types = array('Meat','Milk','Potatoe','Strawberry','Chocolate','Fish','RottenMeat','CottonCandyPink','CottonCandyBlue','Cake_Skeleton','Cake_Base','Honey','Saddle');
-    private $pet_types = array();
+    public $pet_types = array();
     public $tags = array();
 
     ///Constructor
     function __construct($user_id, $api_key) {
+        if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
+            nxr(0, "** Connecting to development habitica");
+            $this->base_url = 'http://10.1.1.1:3000/';
+        }
+
         $this->user_id = $user_id;
         $this->api_key = $api_key;
 

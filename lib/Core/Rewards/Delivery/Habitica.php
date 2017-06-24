@@ -45,8 +45,8 @@ class Habitica extends Delivery
     {
         parent::__construct($AppClass, $UserID);
 
-        $this->user_id = $this->getAppClass()->getUserSetting($UserID, 'user_id', NULL, false);
-        $this->api_key = $this->getAppClass()->getUserSetting($UserID, 'api_key', NULL, false);
+        $this->user_id = $this->getAppClass()->getUserSetting($UserID, 'habitica_user_id', NULL);
+        $this->api_key = $this->getAppClass()->getUserSetting($UserID, 'habitica_api_key', NULL);
 
         if ($this->isValidUser()) {
             $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
@@ -271,6 +271,39 @@ class Habitica extends Delivery
      */
     public function inviteToGuild($guildUuid)
     {
+        $user = $this->getHabitRPHPG()->user();
+        foreach ($user['guilds'] as $guild) {
+            if ($guild == $guildUuid) {
+                nxr(0, "Use is already in the guild");
+                return false;
+            }
+        }
+
+        $user_id_old = $this->user_id;
+        if ($this->switchToAdmin()) {
+            $this->getHabitRPHPG()->_request( "post", "groups/$guildUuid/invite", [ 'uuids' => [ $user_id_old ] ] );
+            $this->switchToUser();
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function switchToUser() {
+        $this->user_id = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_user_id', NULL, false);
+        $this->api_key = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_api_key', NULL, false);
+
+        if ($this->isValidUser()) {
+            $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function switchToAdmin() {
         $habiticaAdmin = $this->getAppClass()->getSetting('habitica_admin_user', null);
         $habiticaKey = $this->getAppClass()->getSetting('habitica_admin_key', null);
 
@@ -284,14 +317,6 @@ class Habitica extends Delivery
             return false;
         }
 
-        $user = $this->getHabitRPHPG()->user();
-        foreach ($user['guilds'] as $guild) {
-            if ($guild == $guildUuid) {
-                nxr(0, "Use is already in the guild");
-                return false;
-            }
-        }
-
         $user_id_old = $this->user_id;
         $api_key_old = $this->api_key;
 
@@ -300,21 +325,11 @@ class Habitica extends Delivery
 
         if ($this->isValidUser()) {
             $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
+            return true;
         } else {
             $this->user_id = $user_id_old;
             $this->api_key = $api_key_old;
+            return false;
         }
-
-        $this->getHabitRPHPG()->_request("post", "groups/$guildUuid/invite", array('uuids' => [$user_id_old]));
-
-        $this->user_id = $user_id_old;
-        $this->api_key = $api_key_old;
-
-        if ($this->isValidUser()) {
-            $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
-        }
-
-        return true;
     }
-
 }
