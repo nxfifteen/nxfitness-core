@@ -528,14 +528,14 @@ class DataReturn
 
                 /** @lang XML */
                 $gpx = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-                $gpx .= "<gpx creator=\"NxFit - http://nxfifteen.me.uk\" ";
+                $gpx .= "<gpx creator=\"NxFit - https://nxfifteen.me.uk\" ";
                 $gpx .= "\n   xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\"";
                 $gpx .= "\n   xmlns=\"http://www.topografix.com/GPX/1/1\"";
                 $gpx .= "\n   xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"";
                 $gpx .= "\n   xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
                 $gpx .= "\n <metadata>";
                 $gpx .= "\n  <name>" . $tcxTrackName . "</name>";
-                $gpx .= "\n  <link href=\"http://nxfifteen.me.uk/\"><text>" . $tcxFileName . " Fitbit Track</text></link>";
+                $gpx .= "\n  <link href=\"https://nxfifteen.me.uk/\"><text>" . $tcxFileName . " Fitbit Track</text></link>";
                 $gpx .= "\n  <time>" . $items->Activities->Activity->Id . "</time>";
                 $gpx .= "\n </metadata>";
                 $gpx .= "\n <trk>";

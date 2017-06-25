@@ -14,16 +14,6 @@ use Core\Core;
 
 define( 'IS_CRON_RUN', true );
 
-/**
- * Core - Cron commandline tool
- *
- * @version   0.0.1
- * @author    Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
- * @link      http://nxfifteen.me.uk NxFIFTEEN
- * @copyright 2015 Stuart McCulloch Anderson
- * @license   http://stuart.nx15.at/mit/2015 MIT
- */
-
 $fitbitApp = new Core();
 
 $end              = time() + 20;
