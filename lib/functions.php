@@ -1,23 +1,12 @@
 <?php
-/**
+/*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
  *
  * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @package     Core
- * @subpackage  
- * @version     0.0.1.x
- * @since       0.0.0.1
- * @author      Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
- * @link        https://nxfifteen.me.uk NxFIFTEEN
- * @link        https://nxfifteen.me.uk/nxcore Project Page
- * @link        https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core Git Repo
- * @copyright   2017 Stuart McCulloch Anderson
- * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
- */
+ ******************************************************************************/
 
 if (!function_exists("nxr")) {
     /**
@@ -25,14 +14,18 @@ if (!function_exists("nxr")) {
      * and when run from a command line output is displayed on screen as
      * well
      *
-     * @param integer $indentation
-     * @param string $msg String input to be displayed in logs files
+     * @param integer $indentation Log line indenation
+     * @param string|array|object $msg String input to be displayed in logs files
      * @param bool $includeDate If true appends datetime stamp
      * @param bool $newline If true adds a new line character
-     * @param bool $echoLine
+     * @param bool $echoLine Print a new line or not
      */
     function nxr($indentation, $msg, $includeDate = true, $newline = true, $echoLine = true)
     {
+        if (is_array($msg) || is_object($msg)) {
+            $msg = print_r($msg, true);
+        }
+
         for ($counter = 0; $counter < $indentation; $counter++) {
             $msg = " " . $msg;
         }
