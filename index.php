@@ -292,17 +292,17 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
     $payload = file_get_contents( 'php://input' );
     $data = json_decode( $payload, TRUE );
 
-    //nxr( 2, "Hook for user ID: " . $data['user']['_id'] );
+    nxr( 2, "Hook for user ID: " . $data['user']['_id'] );
     $config = [];
     require(dirname(__FILE__) . "/config/config.inc.php");
     if (in_array($data['user']['_id'], $config)) {
-        $coreUserId = str_replace("user_id_", "", array_search($data['user']['_id'], $config));
-        //nxr( 2, "User key: " . $coreUserId );
 
         $fitbitApp = new Core();
+        $db_prefix = $fitbitApp->getSetting( "db_prefix", null,false );
+        $coreUserId = $fitbitApp->getDatabase()->get( $db_prefix . "settings_users", "fuid", [ "AND" => [ "var" => "habitica_user_id", "data" => $data['user']['_id'] ] ] );
+
         if ( $fitbitApp->isUser( $coreUserId ) ) {
-            if ( $fitbitApp->getDatabase()->has( $fitbitApp->getSetting( "db_prefix", null,
-                    false ) . "runlog", [
+            if ( $fitbitApp->getDatabase()->has( $db_prefix . "runlog", [
                 "AND" => [
                     "user"     => $coreUserId,
                     "activity" => 'habitica'
@@ -313,8 +313,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
                     "date"     => date( "Y-m-d H:i:s" ),
                     "cooldown" => "1970-01-01 01:00:00"
                 ];
-                $fitbitApp->getDatabase()->update( $fitbitApp->getSetting( "db_prefix", null,
-                        false ) . "runlog", $fields, [
+                $fitbitApp->getDatabase()->update( $db_prefix . "runlog", $fields, [
                     "AND" => [
                         "user"     => $coreUserId,
                         "activity" => 'habitica'
@@ -331,8 +330,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
                     "date"     => date( "Y-m-d H:i:s" ),
                     "cooldown" => "1970-01-01 01:00:00"
                 ];
-                $fitbitApp->getDatabase()->insert( $fitbitApp->getSetting( "db_prefix", null,
-                        false ) . "runlog", $fields );
+                $fitbitApp->getDatabase()->insert( $db_prefix . "runlog", $fields );
                 $fitbitApp->getErrorRecording()->postDatabaseQuery( $fitbitApp->getDatabase(), [
                     "METHOD" => __FILE__,
                     "LINE"   => __LINE__
@@ -344,6 +342,8 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
 
             if ($data['direction'] == "up") {
                 $icoColour = "bg-success";
+            } else if ($data['type'] == "reward") {
+                $icoColour = "bg-info";
             } else {
                 $icoColour = "bg-danger";
             }
@@ -355,7 +355,6 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
             $rewards = [];
             require(dirname(__FILE__) . "/config/rewards.dist.php");
 
-            $db_prefix = $fitbitApp->getSetting("db_prefix", null, false);
             $fitbitApp->getDatabase()->insert($db_prefix . "inbox",
                 [
                     "fuid" => $coreUserId,
