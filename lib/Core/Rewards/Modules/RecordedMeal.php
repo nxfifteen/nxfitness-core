@@ -1,12 +1,23 @@
 <?php
-/*******************************************************************************
+/**
  * This file is part of NxFIFTEEN Fitness Core.
  *
  * Copyright (c) 2017. Stuart McCulloch Anderson
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- ******************************************************************************/
+ *
+ * @package     Rewards
+ * @subpackage  Modules
+ * @version     0.0.1.x
+ * @since       0.0.0.1
+ * @author      Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+ * @link        https://nxfifteen.me.uk NxFIFTEEN
+ * @link        https://nxfifteen.me.uk/nxcore Project Page
+ * @link        https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core Git Repo
+ * @copyright   2017 Stuart McCulloch Anderson
+ * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
+ */
 
 namespace Core\Rewards\Modules;
 
@@ -76,18 +87,17 @@ class RecordedMeal extends Modules
 
         $rewardKey = $meal->loggedFood->name . "healthy" . $meal->logDate;
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-
             $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
             $mealKey = strtolower(str_ireplace(" Summary", "", $meal->loggedFood->name)) . "_healthy";
 
             if ($meal->loggedFood->name == "Breakfast Summary") {
-                if ($this->getAppClass()->getDatabase()->has($db_prefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])) {
+                if (date("H") > 11 || $this->getAppClass()->getDatabase()->has($db_prefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])) {
                     if ($this->wasMealHealthy()) {
                         $this->checkDB("meals", "logged", $mealKey, $rewardKey);
                     }
                 }
             } else if ($meal->loggedFood->name == "Lunch Summary") {
-                if ($this->getAppClass()->getDatabase()->has($db_prefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])) {
+                if (date("H") > 14 || $this->getAppClass()->getDatabase()->has($db_prefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])) {
                     if ($this->wasMealHealthy()) {
                         $this->checkDB("meals", "logged", $mealKey, $rewardKey);
                     }
@@ -119,38 +129,28 @@ class RecordedMeal extends Modules
         $carbs_per = round(($meal->nutritionalValues->carbs / $carbs) * 100, 0);
         $fat = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_fat", 70);
         $fat_per = round(($meal->nutritionalValues->fat / $fat) * 100, 0);
-        $fiber = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_fiber", 30);
-        $fiber_per = round(($meal->nutritionalValues->fiber / $fiber) * 100, 0);
-        $protein = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_protein", 50);
-        $protein_per = round(($meal->nutritionalValues->protein / $protein) * 100, 0);
         $sodium = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_sodium", 2300);
         $sodium_per = round(($meal->nutritionalValues->sodium / $sodium) * 100, 0);
 
-        //nxr(4, "New Healthy ($mealKey, quotoa $mealQuota) - " . $meal->loggedFood->name);
-        //nxr(5, "goal_food_calories " . $totalCalories);
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(4, "New Healthy ($mealKey, quotoa $mealQuota) - " . $meal->loggedFood->name);
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_calories " . $calories_per);
         if ($calories_per > $mealQuota) {
             return false;
         }
-        //nxr(5, "goal_food_carbs    " . $carbs_per);
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_carbs    " . $carbs_per);
         if ($carbs_per > $mealQuota) {
             return false;
         }
-        //nxr(5, "goal_food_fat      " . $fat_per);
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_fat      " . $fat_per);
         if ($fat_per > $mealQuota) {
             return false;
         }
-        //nxr(5, "goal_food_fiber    " . $fiber_per);
-        if ($fiber_per > $mealQuota) {
-            return false;
-        }
-        //nxr(5, "goal_food_protein  " . $protein_per);
-        if ($protein_per > $mealQuota) {
-            return false;
-        }
-        //nxr(5, "goal_food_sodium   " . $sodium_per);
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_sodium   " . $sodium_per);
         if ($sodium_per > $mealQuota) {
             return false;
         }
+
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "Happy");
 
         return true;
     }

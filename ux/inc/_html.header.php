@@ -1,4 +1,24 @@
-<!--suppress HtmlUnknownTarget -->
+<?php
+/**
+ * This file is part of NxFIFTEEN Fitness Core.
+ *
+ * Copyright (c) 2017. Stuart McCulloch Anderson
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package     Core
+ * @subpackage  UX
+ * @version     0.0.1.x
+ * @since       0.0.0.1
+ * @author      Stuart McCulloch Anderson <stuart@nxfifteen.me.uk>
+ * @link        https://nxfifteen.me.uk NxFIFTEEN
+ * @link        https://nxfifteen.me.uk/nxcore Project Page
+ * @link        https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core Git Repo
+ * @copyright   2017 Stuart McCulloch Anderson
+ * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
+ */
+?><!--suppress HtmlUnknownTarget -->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

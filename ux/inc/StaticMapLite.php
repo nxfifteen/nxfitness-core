@@ -1,15 +1,4 @@
 <?php
-/*******************************************************************************
- * This file is part of NxFIFTEEN Fitness Core.
- *
- * Copyright (c) 2017. Stuart McCulloch Anderson
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- ******************************************************************************/
-
-namespace Map;
-
 /**
  * StaticMapLite 0.3.1
  * Copyright 2009 Gerhard Koch
@@ -27,6 +16,8 @@ namespace Map;
  * USAGE:
  *  StaticMapLite.php?center=40.714728,-73.998672&zoom=14&size=512x512&maptype=mapnik&markers=40.702147,-74.015794,blues|40.711614,-74.012318,greeng|40.718217,-73.998284,redc
  */
+
+namespace Map;
 
 error_reporting(0);
 ini_set('display_errors', 'off');
