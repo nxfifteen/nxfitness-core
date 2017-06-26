@@ -3953,8 +3953,10 @@ class ApiBabel
                     $petNames = array_keys( $pets );
                     shuffle( $petNames );
                     $newPet = array_pop( $petNames );
-                    nxr( 5, "The winning pet is $newPet" );
-                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/pet/$newPet", [] );
+                    if ($pets[$newPet] > 0) {
+                        nxr( 5, "The winning pet is $newPet" );
+                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/pet/$newPet", [] );
+                    }
                 }
             }
 
@@ -3965,8 +3967,39 @@ class ApiBabel
                     $mountNames = array_keys( $mounts );
                     shuffle( $mountNames );
                     $mountPet = array_pop( $mountNames );
-                    nxr( 5, "The winning mount is $mountPet" );
-                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/mount/$mountPet", [] );
+                    if ($mounts[$mountPet] > 0) {
+                        nxr( 5, "The winning mount is $mountPet" );
+                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/mount/$mountPet", [] );
+                    }
+                }
+            }
+
+            if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_bye_gems', true) && array_key_exists("planId", $user[ 'purchased' ][ 'plan' ])) {
+                if ($user['stats']['gp'] > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_min_gold', 90)) {
+                    if ($user['balance'] / 0.25 < $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_gems', 25)) {
+                        nxr(4, "We're ready to buy new gems");
+                        $newGems = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_gems', 25) - ($user['balance'] / 0.25);
+                        $newGemsCost = $newGems * 20;
+                        nxr(5, "We could still buy $newGems more gems for $newGemsCost gold");
+
+                        $availableGold = $user['stats']['gp'] - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_min_gold', 90);
+                        $availableGems = round($availableGold / 20, 0, PHP_ROUND_HALF_DOWN);
+                        if ($availableGems < $newGems) {
+                            nxr( 5, "But you can only afford $availableGems" );
+                        } else {
+                            $availableGems = $newGems;
+                        }
+
+                        for ($i=0; $i < $availableGems; $i++) {
+                            $gemPurchase = $habiticaClass->getHabitRPHPG()->_request( "post", "user/purchase/gems/gem", [], true );
+                            //nxr(6, $gemPurchase);
+                        }
+
+                    } else {
+                        nxr(4, "You already have your maximun gems");
+                    }
+                } else {
+                    nxr(4, "You have less than your minimum gold");
                 }
             }
 

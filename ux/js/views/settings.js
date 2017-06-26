@@ -89,8 +89,6 @@ $(function () {
                 habiticaSwitches += '  <span class="switch-handle"></span>';
                 habiticaSwitches += '</label>';
                 habiticaSwitches += '</div>';
-
-                console.log(babelValues.status);
             });
             habiticaSwitches += '</div>';
             $('#habiticaSwitches').html(habiticaSwitches);
@@ -99,9 +97,52 @@ $(function () {
             $("#habitica_api_key").val(data.results.habitica.habitica_api_key);
             $("#habitica_max_eggs").val(data.results.habitica.habitica_max_eggs);
             $("#habitica_max_potions").val(data.results.habitica.habitica_max_potions);
+
+            $("#habitica_max_gems").val(data.results.habitica.habitica_max_gems);
+            $("#habitica_min_gold").val(data.results.habitica.habitica_min_gold);
+
+            var buyGems = '<div class="row">';
+            buyGems += '<div class="col-2">';
+            buyGems += '<span class="form-control-label" style="padding-right: 10px">Bye Gems</span>';
+            buyGems += '</div>';
+            buyGems += '<div class="col-10">';
+            buyGems += '<label class="switch switch-text switch-pill switch-success" style="margin-right: 10px">';
+            buyGems += '  <input type="checkbox" class="switch-input" name="habitica_bye_gems" id="habitica_bye_gems" onchange="submitBuyGems(this)"';
+            if (data.results.habitica.habitica_bye_gems !== '0') {
+                buyGems += ' checked';
+                $('#gemForm').show();
+            } else {
+                $('#gemForm').hide();
+            }
+            buyGems += '  >';
+            buyGems += '  <span class="switch-label" data-on="On" data-off="Off"></span>';
+            buyGems += '  <span class="switch-handle"></span>';
+            buyGems += '</label>';
+            buyGems += '</div>';
+
+            buyGems += '</div>';
+            $('#buyGems').html(buyGems);
         }
     });
 
+});
+
+// this is the id of the form
+$("#habiticaBuyGems").submit(function (e) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#habiticaBuyGems").serialize();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        $('#habiticaReport').html(response);
+    }).fail(function (response) {
+        $('#habiticaReport').html(response.responseText);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
 });
 
 // this is the id of the form
@@ -175,6 +216,32 @@ $("#habiticaMaxItems").submit(function (e) {
 
     e.preventDefault(); // avoid to execute the actual submit of the form.
 });
+
+function submitBuyGems(e) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+
+    var data = "formId=habiticaBuyGems&switch=" + e.id + "&value=" +  e.checked;
+
+    if (e.checked) {
+        $('#gemForm').show();
+    } else {
+        $('#gemForm').hide();
+    }
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        if (e.checked) {
+            $('#habiticaReport').html("Turned On Auto Purchasing Gems");
+        } else {
+            $('#habiticaReport').html("Turned Off Auto Purchasing Gems");
+        }
+    }).fail(function (response) {
+        $('#habiticaReport').html(response.responseText);
+    });
+}
 
 function submitSwitch(e) {
     var url = "../ajax.php"; // the script where you handle the form input.
