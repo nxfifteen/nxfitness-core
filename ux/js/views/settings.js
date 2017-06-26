@@ -90,7 +90,42 @@ $(function () {
                 habiticaSwitches += '</label>';
                 habiticaSwitches += '</div>';
             });
+
+            habiticaSwitches += '<div class="col-9 col-md-2">';
+            habiticaSwitches += '<span class="form-control-label" style="padding-right: 10px">Bye Gems</span>';
             habiticaSwitches += '</div>';
+            habiticaSwitches += '<div class="col-3 col-md-1">';
+            habiticaSwitches += '<label class="switch switch-text switch-pill switch-success" style="margin-right: 10px">';
+            habiticaSwitches += '  <input type="checkbox" class="switch-input" name="habitica_bye_gems" id="habitica_bye_gems" onchange="submitBuyGems(this)"';
+            if (data.results.habitica.habitica_bye_gems !== '0') {
+                habiticaSwitches += ' checked';
+                $('#gemForm').show();
+            } else {
+                $('#gemForm').hide();
+            }
+            habiticaSwitches += '  >';
+            habiticaSwitches += '  <span class="switch-label" data-on="On" data-off="Off"></span>';
+            habiticaSwitches += '  <span class="switch-handle"></span>';
+            habiticaSwitches += '</label>';
+            habiticaSwitches += '</div>';
+
+            habiticaSwitches += '<div class="col-9 col-md-2">';
+            habiticaSwitches += '<span class="form-control-label" style="padding-right: 10px">Auto Accept Quest Invites</span>';
+            habiticaSwitches += '</div>';
+            habiticaSwitches += '<div class="col-3 col-md-1">';
+            habiticaSwitches += '<label class="switch switch-text switch-pill switch-success" style="margin-right: 10px">';
+            habiticaSwitches += '  <input type="checkbox" class="switch-input" name="habitica_challenge_join" id="habitica_challenge_join" onchange="submitHabiticaSwitch(this)"';
+            if (data.results.habitica.habitica_challenge_join !== '0') {
+                habiticaSwitches += ' checked';
+            }
+            habiticaSwitches += '  >';
+            habiticaSwitches += '  <span class="switch-label" data-on="On" data-off="Off"></span>';
+            habiticaSwitches += '  <span class="switch-handle"></span>';
+            habiticaSwitches += '</label>';
+            habiticaSwitches += '</div>';
+
+            habiticaSwitches += '</div>';
+
             $('#habiticaSwitches').html(habiticaSwitches);
 
             $("#habitica_user_id").val(data.results.habitica.habitica_user_id);
@@ -101,27 +136,6 @@ $(function () {
             $("#habitica_max_gems").val(data.results.habitica.habitica_max_gems);
             $("#habitica_min_gold").val(data.results.habitica.habitica_min_gold);
 
-            var buyGems = '<div class="row">';
-            buyGems += '<div class="col-2">';
-            buyGems += '<span class="form-control-label" style="padding-right: 10px">Bye Gems</span>';
-            buyGems += '</div>';
-            buyGems += '<div class="col-10">';
-            buyGems += '<label class="switch switch-text switch-pill switch-success" style="margin-right: 10px">';
-            buyGems += '  <input type="checkbox" class="switch-input" name="habitica_bye_gems" id="habitica_bye_gems" onchange="submitBuyGems(this)"';
-            if (data.results.habitica.habitica_bye_gems !== '0') {
-                buyGems += ' checked';
-                $('#gemForm').show();
-            } else {
-                $('#gemForm').hide();
-            }
-            buyGems += '  >';
-            buyGems += '  <span class="switch-label" data-on="On" data-off="Off"></span>';
-            buyGems += '  <span class="switch-handle"></span>';
-            buyGems += '</label>';
-            buyGems += '</div>';
-
-            buyGems += '</div>';
-            $('#buyGems').html(buyGems);
         }
     });
 
@@ -222,12 +236,6 @@ function submitBuyGems(e) {
 
     var data = "formId=habiticaBuyGems&switch=" + e.id + "&value=" +  e.checked;
 
-    if (e.checked) {
-        $('#gemForm').show();
-    } else {
-        $('#gemForm').hide();
-    }
-
     $.ajax({
         type: "POST",
         url: url,
@@ -235,8 +243,10 @@ function submitBuyGems(e) {
     }).done(function (response) {
         if (e.checked) {
             $('#habiticaReport').html("Turned On Auto Purchasing Gems");
+            $('#gemForm').show();
         } else {
             $('#habiticaReport').html("Turned Off Auto Purchasing Gems");
+            $('#gemForm').hide();
         }
     }).fail(function (response) {
         $('#habiticaReport').html(response.responseText);
@@ -274,9 +284,9 @@ function submitHabiticaSwitch(e) {
         data: data
     }).done(function (response) {
         if (e.checked) {
-            $('#habiticaReport').html("Enabled " + e.name);
+            $('#habiticaReport').html("You will automatically join any quest");
         } else {
-            $('#habiticaReport').html("Disabled " + e.name);
+            $('#habiticaReport').html("You will have to join any quest yourself");
         }
     }).fail(function (response) {
         $('#habiticaReport').html(response.responseText);

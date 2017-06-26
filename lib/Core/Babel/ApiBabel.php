@@ -3974,7 +3974,7 @@ class ApiBabel
                 }
             }
 
-            if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_bye_gems', true) && array_key_exists("planId", $user[ 'purchased' ][ 'plan' ])) {
+            if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_bye_gems', false) && array_key_exists("planId", $user[ 'purchased' ][ 'plan' ])) {
                 if ($user['stats']['gp'] > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_min_gold', 90)) {
                     if ($user['balance'] / 0.25 < $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_gems', 25)) {
                         nxr(4, "We're ready to buy new gems");
@@ -4001,6 +4001,11 @@ class ApiBabel
                 } else {
                     nxr(4, "You have less than your minimum gold");
                 }
+            }
+
+            if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_challenge_join', false) && $user['party']['quest']['RSVPNeeded']) {
+                $habiticaClass->getHabitRPHPG()->_request( "post", "groups/" . $user['party']['_id'] . "/quests/accept", []);
+                nxr(5, "Accepted quest invite to '" . $user['party']['quest']['key'] . "'");
             }
 
         } else {
