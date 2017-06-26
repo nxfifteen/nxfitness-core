@@ -161,6 +161,45 @@
                             </form>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <hr />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12" id="buyGems"></div>
+                    </div>
+
+                    <div class="row" id="gemForm">
+                        <div class="col-12">
+                            <form class="form-signin" id="habiticaBuyGems">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="habitica_max_gems">Maximum Gems To Hold</label>
+                                        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                            <div class="input-group-addon">Gems</div>
+                                            <input type="text" class="form-control" id="habitica_max_gems" name="habitica_max_gems" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="habitica_min_gold">Minimum Gold To Hold</label>
+                                        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                            <input type="text" class="form-control" id="habitica_min_gold" name="habitica_min_gold" placeholder="0">
+                                            <div class="input-group-addon">Gold</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <hr />
+                                        <input type="hidden" name="formId" value="habiticaBuyGems">
+                                        <button type="submit" class="btn btn-block btn-success">Update Settings</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="card-footer">
                     <div id="habiticaReport">&nbsp;</div>
