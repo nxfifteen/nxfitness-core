@@ -94,11 +94,6 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
         } else if ($_POST['formId'] == "habiticaBuyGems") {
             $core = new Core();
 
-            if (array_key_exists("habitica_max_gems", $_POST)) {
-                $core->setUserSetting( $_COOKIE[ '_nx_fb_usr' ], 'habitica_max_gems', $_POST[ 'habitica_max_gems' ] );
-                $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], 'habitica_min_gold', $_POST['habitica_min_gold']);
-                echo "Updated Minimum Gold To Keep & Maximum Gems You Want";
-            }
             if (array_key_exists("switch", $_POST)) {
                 if ($_POST['value'] == "true") {
                     $core->setUserSetting( $_COOKIE[ '_nx_fb_usr' ], $_POST[ 'switch' ], 1 );

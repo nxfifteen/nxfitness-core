@@ -3084,6 +3084,7 @@ class DataReturn
             $returnBabels[ 'habitica' ] = [
                 'habitica_user_id' => $user_id,
                 'habitica_api_key' => $api_key,
+                'habitica_challenge_join' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_challenge_join', false),
                 'habitica_bye_gems' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_bye_gems', false),
                 'habitica_min_gold' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_min_gold', 100),
                 'habitica_max_gems' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_max_gems', 25),
