@@ -17,32 +17,32 @@ $(function () {
         var html = '';
         var devicesBlock = $('#devices');
         var devices = data.results;
+        /** @namespace device.deviceVersion */
+        /** @namespace device.imageSmall */
+        /** @namespace device.lastSyncTime */
+        /** @namespace device.battery */
+        /** @namespace device.charges */
+        /** @namespace device.precentage */
 
         $.each(devices, function (i, device) {
             html += '<tr>';
-            /** @namespace device.deviceVersion */
-            /** @namespace device.imageSmall */
-            html += '    <td><img class="hidden-sm-down" src="../' + device.imageSmall + '" style="width: 35%;height: 35%;"><span class="hidden-md-up">' + device.deviceVersion + '<br />' + device.type + '</span></td>';
+            html += '    <td rowspan="2" width="200px"><img class="hidden-sm-down" src="../' + device.imageSmall + '" class="img-fluid"></td>';
             /** @namespace device.alertTime */
-            //noinspection JSValidateTypes
-            if (device.alertTime === 1) {
-                /** @namespace device.lastSyncTime */
-                html += '    <td class="badge-warning">' + device.lastSyncTime + '</td>';
+            if (device.alertTime === '1') {
+                html += '    <td class="bg-success">';
             } else {
-                html += '    <td>' + device.lastSyncTime + '</td>';
+                html += '    <td>';
             }
-            /** @namespace device.battery */
-            /** @namespace device.charges */
+            html += '<span>' + device.deviceVersion + '<br />' + device.type + '</span><br />' + device.lastSyncTime + '</td>';
             html += '    <td>' + device.battery + ' <br /> Charged ' + device.charges + ' times.</td>';
             html += '</tr>';
 
-            /** @namespace device.precentage */
             if (device.precentage < 50) {
-                html += '<tr class="badge-danger">';
+                html += '<tr class="bg-danger">';
             } else {
                 html += '<tr>';
             }
-            html += '    <td colspan="3">';
+            html += '    <td colspan="2">';
             html += '        <div class="progress">';
             html += '            <div class="progress-bar" role="progressbar" style="width: ' + device.precentage + '%" aria-valuenow="' + device.precentage + '" aria-valuemin="0" aria-valuemax="100"></div>';
             html += '        </div>';
