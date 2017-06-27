@@ -419,6 +419,36 @@ if (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != "") {
                 unlink($babelCacheFile);
             }
 
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Journeys";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_JourneysState";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            http_response_code(200);
+        } else if ($_POST['formId'] == "pushSelector") {
+
+            $core = new Core();
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "push", $_POST['push']);
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "push_steps", $_POST['push_steps']);
+            $core->setUserSetting($_COOKIE[ '_nx_fb_usr' ], "push_length", $_POST['push_length']);
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Account";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            $babelCacheFile = "cache" . DIRECTORY_SEPARATOR . "_" . $_COOKIE[ '_nx_fb_usr' ] . "_Push";
+            if ( file_exists( $babelCacheFile ) ) {
+                unlink($babelCacheFile);
+            }
+
+            echo "Okay";
+
             http_response_code(200);
         } else {
             nxr(1, "Unknown Form");

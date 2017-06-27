@@ -158,6 +158,83 @@ $(function () {
         });
     }
 
+
+    var activityKeyPointsSteps = $( '#KeyPointsSteps' );
+    if ( activityKeyPointsSteps.length > 0 ) {
+        $.getJSON( "../json.php?user=" + fitbitUserId + "&data=KeyPoints&personal=true", function (data) {
+            var KeyPointsStepsHtml = '<ul>';
+            $.each( data.results.distance, function (index, line) {
+                KeyPointsStepsHtml += '<li>' + line + '</li>';
+            } );
+            KeyPointsStepsHtml += '</ul>';
+            activityKeyPointsSteps.html( KeyPointsStepsHtml );
+
+            var activityKeyPointsFloors = $( '#KeyPointsFloors' );
+            if ( activityKeyPointsFloors.length > 0 ) {
+                var KeyPointsFloorsHtml = '<ul>';
+                $.each( data.results.floors, function (index, line) {
+                    KeyPointsFloorsHtml += '<li>' + line + '</li>';
+                } );
+                KeyPointsFloorsHtml += '</ul>';
+                activityKeyPointsFloors.html( KeyPointsFloorsHtml );
+            }
+
+            var activityMaxPoints = $( '#MaxPoints' );
+            if ( activityMaxPoints.length > 0 ) {
+                var MaxPointsHtml = '<ul>';
+                $.each( data.results.max, function (index, line) {
+                    MaxPointsHtml += '<li>' + line + '</li>';
+                } );
+                MaxPointsHtml += '</ul>';
+                activityMaxPoints.html( MaxPointsHtml );
+            }
+
+            var keyPointsLeaderboard = $( '#KeyPointsLeaderboard' );
+            if ( keyPointsLeaderboard.length > 0 ) {
+                keyPointsLeaderboard.html( "<p>" + data.results.friends + "</p>" );
+            }
+        } );
+    }
+
+    var Push = $('#Push');
+    if (Push.length > 0) {
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=Push", function (data) {
+            if (data.results.pushActive === "active") {
+                $('#PushName').html("<strong>" + data.results.next.startDateF + "</strong> till <strong>" + data.results.next.endDateF + "</strong>");
+                $('#PushBlock').html(
+                    "Your step goal for this push is " + data.results.goals.Steps + " steps a day. Your on day " + data.results.current.day + " of your " + data.results.pushLength + " day push, and have betten your goal for " + data.results.current.day_past + " days."
+                );
+                $('#PushProgress').attr('aria-valuenow', data.results.current.score).css('width', data.results.current.score + '%');
+            } else if (data.results.pushActive === "future") {
+                $('#PushName').html("<strong>" + data.results.next.startDateF + "</strong> till <strong>" + data.results.next.endDateF + "</strong>");
+                $('#PushBlock').html(
+                    "Your next " + data.results.pushLength + " day push will start on " + data.results.next.startDateF + " day push. Your target will be " + data.results.goals.Steps + " steps a day."
+                );
+                $('#PushFooter').remove();
+            } else {
+                Push.remove();
+            }
+        } );
+    }
+
+    var JourneyBlock = $('#Journey');
+    if (JourneyBlock.length > 0) {
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=Journeys", function (data) {
+            if (data.results.msg !== "Not on any jounry") {
+                $('#JourneyProgress').attr('aria-valuenow', data.results[1].legs_progress[1]).css('width', data.results[1].legs_progress[1] + '%');
+                $.getJSON("../json.php?user=" + fitbitUserId + "&data=JourneysState", function (data) {
+                    $('#JourneyName').html("<strong>" + data.results[1].name + "</strong> <small>" + data.results[1].blurb + "</small>");
+                    $('#JourneyBlock').html(
+                        "<em>" + data.results[1].legs.last.subtitle + "</em> <strong>" + data.results[1].legs.last.legs_names + "</strong> <small>" + data.results[1].legs.last.miles + " miles</small><br />" + data.results[1].legs.last.narrative + "<hr />" +
+                        "<em>" + data.results[1].legs.next.subtitle + "</em> <strong>" + data.results[1].legs.next.legs_names + "</strong> <small>" + data.results[1].legs.next.miles + " miles</small><br />" + data.results[1].legs.next.narrative
+                    );
+                } );
+            } else {
+                JourneyBlock.remove();
+            }
+        } );
+    }
+
     var StreakGoals = $('#StreakGoals');
     if (StreakGoals.length > 0) {
         $.getJSON("../json.php?user=" + fitbitUserId + "&data=GoalStreak", function (data) {
