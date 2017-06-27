@@ -202,7 +202,7 @@ $(function () {
             if (data.results.pushActive === "active") {
                 $('#PushName').html("<strong>" + data.results.next.startDateF + "</strong> till <strong>" + data.results.next.endDateF + "</strong>");
                 $('#PushBlock').html(
-                    "Your step goal for this push is " + data.results.goals.Steps + " steps a day. Your on day " + data.results.current.day + " and have betten your goal for " + data.results.current.day_past + " days."
+                    "Your step goal for this push is " + data.results.goals.Steps + " steps a day. Your on day " + data.results.current.day + " of your " + data.results.pushLength + " day push, and have betten your goal for " + data.results.current.day_past + " days."
                 );
                 $('#PushProgress').attr('aria-valuenow', data.results.current.score).css('width', data.results.current.score + '%');
             } else {
