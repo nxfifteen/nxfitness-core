@@ -196,6 +196,20 @@ $(function () {
         } );
     }
 
+    var JourneyBlock = $('#JourneyBlock');
+    if (JourneyBlock.length > 0) {
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=Journeys", function (data) {
+            $('#JourneyProgress').attr('aria-valuenow', data.results[1].legs_progress[1]).css('width', data.results[1].legs_progress[1] + '%');
+        } );
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=JourneysState", function (data) {
+            $('#JourneyName').html("<strong>" + data.results[1].name + "</strong> <small>" + data.results[1].blurb + "</small>");
+            $('#JourneyBlock').html(
+                "<em>" + data.results[1].legs.last.subtitle + "</em> <strong>" + data.results[1].legs.last.legs_names + "</strong> <small>" + data.results[1].legs.last.miles + " miles</small><br />" + data.results[1].legs.last.narrative + "<hr />" +
+                "<em>" + data.results[1].legs.next.subtitle + "</em> <strong>" + data.results[1].legs.next.legs_names + "</strong> <small>" + data.results[1].legs.next.miles + " miles</small><br />" + data.results[1].legs.next.narrative
+            );
+        } );
+    }
+
     var StreakGoals = $('#StreakGoals');
     if (StreakGoals.length > 0) {
         $.getJSON("../json.php?user=" + fitbitUserId + "&data=GoalStreak", function (data) {
