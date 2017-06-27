@@ -2590,7 +2590,7 @@ class ApiBabel
                 $pushObject = http_build_query($pushObject);
             }
 
-            $request = $this->getLibrary()->getAuthenticatedRequest(OAUTH_HTTP_METHOD_POST,
+            $request = $this->getLibrary()->getAuthenticatedRequest('POST',
                 FITBIT_COM . "/1/" . $path, $accessToken,
                 [
                     "headers" =>
