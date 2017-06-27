@@ -136,9 +136,31 @@ $(function () {
             $("#habitica_max_gems").val(data.results.habitica.habitica_max_gems);
             $("#habitica_min_gold").val(data.results.habitica.habitica_min_gold);
 
+            $("#push").val(data.results.push.push);
+            $("#push_steps").val(data.results.push.push_steps);
+            $("#push_length").val(data.results.push.push_length);
+
         }
     });
 
+});
+
+// this is the id of the form
+$("#pushSelector").submit(function (e) {
+    var url = "../ajax.php"; // the script where you handle the form input.
+    var data = $("#pushSelector").serialize();
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data
+    }).done(function (response) {
+        $('#pushAlert').html(response);
+    }).fail(function (response) {
+        $('#pushAlert').html(response.responseText);
+    });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
 });
 
 // this is the id of the form

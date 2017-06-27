@@ -3078,6 +3078,15 @@ class DataReturn
         $returnBabels['tweak']['desire_steps_min'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_min", 0);
         $returnBabels['tweak']['desire_steps_max'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 0);
 
+        $returnBabels['push'] = [];
+        $returnBabels['push']['push'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push", '03-31 last sunday');
+        $returnBabels['push']['push_steps'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", 10000);
+        $returnBabels['push']['push_length'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", 50);
+        $returnBabels['push']['push_distance'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", 5);
+        $returnBabels['push']['push_activity'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", 30);
+        $returnBabels['push']['push_passmark'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_passmark", 95);
+        $returnBabels['push']['push_unit'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
+
         $user_id = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_user_id', NULL);
         $api_key = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_api_key', NULL);
         if (!is_null($user_id) && !is_null($api_key)) {

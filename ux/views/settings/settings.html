@@ -19,44 +19,66 @@
     <div class="row">
         <div class="col-8">
 
-            <div class="card">
-                <div class="card-header">
-                    Adaptive Step Goal
-                </div>
-                <div class="card-block">
-                    <form class="form-inline row" id="desireImprovment">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Adaptive Step Goal
+                        </div>
+                        <div class="card-block">
+                            <form class="form-inline row" id="desireImprovment">
 
-                        <input type="hidden" name="formId" value="desireStep">
+                                <input type="hidden" name="formId" value="desireStep">
 
-                        <div class="col-2">
-                            <label for="minimumSteps">Minimum Steps a Day</label>
-                            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                <div class="input-group-addon">-</div>
-                                <input type="text" class="form-control" id="minimumSteps" name="minimumSteps" placeholder="Username">
+                                <div class="col-2">
+                                    <label for="minimumSteps">Minimum Steps a Day</label>
+                                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                        <div class="input-group-addon">-</div>
+                                        <input type="text" class="form-control" id="minimumSteps" name="minimumSteps" placeholder="Username">
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <label for="desireSteps">Weekly Goal Increase</label>
+                                    <input id="ex2" style="width: 95%" name="desireSteps" id="desireSteps" />
+                                </div>
+                                <div class="col-2">
+                                    <label for="maximumSteps">Final Daily Steps Goal</label>
+                                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                        <div class="input-group-addon">+</div>
+                                        <input type="text" class="form-control" id="maximumSteps" name="maximumSteps" placeholder="Username">
+                                    </div>
+                                </div>
+                                <div class="col-12" style="text-align: center">
+                                    <hr />
+                                    <button type="submit" class="btn btn-sm btn-primary">Save Update</button>
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-6">Your Current Step Goal is <span id="currentStepGoal"></span> steps a day</div>
+                                <div class="col-6" id="desireMsg" style="text-align: right"></div>
                             </div>
                         </div>
-                        <div class="col-8">
-                            <label for="desireSteps">Weekly Goal Increase</label>
-                            <input id="ex2" style="width: 95%" name="desireSteps" id="desireSteps" />
-                        </div>
-                        <div class="col-2">
-                            <label for="maximumSteps">Final Daily Steps Goal</label>
-                            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                <div class="input-group-addon">+</div>
-                                <input type="text" class="form-control" id="maximumSteps" name="maximumSteps" placeholder="Username">
-                            </div>
-                        </div>
-                        <div class="col-12" style="text-align: center">
-                            <hr />
-                            <button type="submit" class="btn btn-sm btn-primary">Save Update</button>
-                        </div>
-
-                    </form>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    <div class="row">
-                        <div class="col-6">Your Current Step Goal is <span id="currentStepGoal"></span> steps a day</div>
-                        <div class="col-6" id="desireMsg" style="text-align: right"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Active Intents
+                        </div>
+                        <div class="card-block">
+                            <form class="form-signin" id="ActiveIntents">
+                                <div class="form-group row"></div>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <div id="ActiveIntentsReport">&nbsp;</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -86,26 +108,44 @@
                 </div>
             </form>
 
+            <form id="pushSelector">
+                <input type="hidden" name="formId" value="pushSelector">
+                <div class="card">
+                    <div class="card-header">
+                        Push
+                    </div>
+                    <div class="card-block">
+                        <div class="row">
+                            <div class="col-8">
+                                <label for="push">Start Date</label>
+                                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                    <div class="input-group-addon">+</div>
+                                    <input type="text" class="form-control" id="push" name="push" placeholder="Date">
+                                </div>
+
+                                <label for="push_steps">Step Goal</label>
+                                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                    <div class="input-group-addon">+</div>
+                                    <input type="text" class="form-control" id="push_steps" name="push_steps" placeholder="Steps">
+                                </div>
+
+                                <label for="push_length">Length</label>
+                                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                    <div class="input-group-addon">+</div>
+                                    <input type="text" class="form-control" id="push_length" name="push_length" placeholder="Length">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-sm btn-primary">Schedual A Push</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer" id="pushAlert">&nbsp;</div>
+                </div>
+            </form>
+
         </div>
 
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    Active Intents
-                </div>
-                <div class="card-block">
-                    <form class="form-signin" id="ActiveIntents">
-                        <div class="form-group row"></div>
-                    </form>
-                </div>
-                <div class="card-footer">
-                    <div id="ActiveIntentsReport">&nbsp;</div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="row" id="habiticaSettings">
