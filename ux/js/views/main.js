@@ -158,6 +158,44 @@ $(function () {
         });
     }
 
+
+    var activityKeyPointsSteps = $( '#KeyPointsSteps' );
+    if ( activityKeyPointsSteps.length > 0 ) {
+        $.getJSON( "../json.php?user=" + fitbitUserId + "&data=KeyPoints&personal=true", function (data) {
+            var KeyPointsStepsHtml = '<ul>';
+            $.each( data.results.distance, function (index, line) {
+                KeyPointsStepsHtml += '<li>' + line + '</li>';
+            } );
+            KeyPointsStepsHtml += '</ul>';
+            activityKeyPointsSteps.html( KeyPointsStepsHtml );
+
+            var activityKeyPointsFloors = $( '#KeyPointsFloors' );
+            if ( activityKeyPointsFloors.length > 0 ) {
+                var KeyPointsFloorsHtml = '<ul>';
+                $.each( data.results.floors, function (index, line) {
+                    KeyPointsFloorsHtml += '<li>' + line + '</li>';
+                } );
+                KeyPointsFloorsHtml += '</ul>';
+                activityKeyPointsFloors.html( KeyPointsFloorsHtml );
+            }
+
+            var activityMaxPoints = $( '#MaxPoints' );
+            if ( activityMaxPoints.length > 0 ) {
+                var MaxPointsHtml = '<ul>';
+                $.each( data.results.max, function (index, line) {
+                    MaxPointsHtml += '<li>' + line + '</li>';
+                } );
+                MaxPointsHtml += '</ul>';
+                activityMaxPoints.html( MaxPointsHtml );
+            }
+
+            var keyPointsLeaderboard = $( '#KeyPointsLeaderboard' );
+            if ( keyPointsLeaderboard.length > 0 ) {
+                keyPointsLeaderboard.html( "<p>" + data.results.friends + "</p>" );
+            }
+        } );
+    }
+
     var StreakGoals = $('#StreakGoals');
     if (StreakGoals.length > 0) {
         $.getJSON("../json.php?user=" + fitbitUserId + "&data=GoalStreak", function (data) {
