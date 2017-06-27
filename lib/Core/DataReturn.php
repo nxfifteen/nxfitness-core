@@ -3169,7 +3169,7 @@ class DataReturn
     /**
      * @return bool|string
      */
-    private function isUserAuthorised() {
+    public function isUserAuthorised() {
 
         if ( array_key_exists('HTTP_REFERER', $_SERVER) ) {
             if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getSetting("http/")) !== false) {
