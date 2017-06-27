@@ -196,17 +196,36 @@ $(function () {
         } );
     }
 
-    var JourneyBlock = $('#JourneyBlock');
+    var Push = $('#Push');
+    if (Push.length > 0) {
+        $.getJSON("../json.php?user=" + fitbitUserId + "&data=Push", function (data) {
+            if (data.results.pushActive === "active") {
+                $('#PushName').html("<strong>" + data.results.next.startDateF + "</strong> till <strong>" + data.results.next.endDateF + "</strong>");
+                $('#PushBlock').html(
+                    "Your step goal for this push is " + data.results.goals.Steps + " steps a day. Your on day " + data.results.current.day + " and have betten your goal for " + data.results.current.day_past + " days."
+                );
+                $('#PushProgress').attr('aria-valuenow', data.results.current.score).css('width', data.results.current.score + '%');
+            } else {
+                Push.remove();
+            }
+        } );
+    }
+
+    var JourneyBlock = $('#Journey');
     if (JourneyBlock.length > 0) {
         $.getJSON("../json.php?user=" + fitbitUserId + "&data=Journeys", function (data) {
-            $('#JourneyProgress').attr('aria-valuenow', data.results[1].legs_progress[1]).css('width', data.results[1].legs_progress[1] + '%');
-        } );
-        $.getJSON("../json.php?user=" + fitbitUserId + "&data=JourneysState", function (data) {
-            $('#JourneyName').html("<strong>" + data.results[1].name + "</strong> <small>" + data.results[1].blurb + "</small>");
-            $('#JourneyBlock').html(
-                "<em>" + data.results[1].legs.last.subtitle + "</em> <strong>" + data.results[1].legs.last.legs_names + "</strong> <small>" + data.results[1].legs.last.miles + " miles</small><br />" + data.results[1].legs.last.narrative + "<hr />" +
-                "<em>" + data.results[1].legs.next.subtitle + "</em> <strong>" + data.results[1].legs.next.legs_names + "</strong> <small>" + data.results[1].legs.next.miles + " miles</small><br />" + data.results[1].legs.next.narrative
-            );
+            if (data.results.msg !== "Not on any jounry") {
+                $('#JourneyProgress').attr('aria-valuenow', data.results[1].legs_progress[1]).css('width', data.results[1].legs_progress[1] + '%');
+                $.getJSON("../json.php?user=" + fitbitUserId + "&data=JourneysState", function (data) {
+                    $('#JourneyName').html("<strong>" + data.results[1].name + "</strong> <small>" + data.results[1].blurb + "</small>");
+                    $('#JourneyBlock').html(
+                        "<em>" + data.results[1].legs.last.subtitle + "</em> <strong>" + data.results[1].legs.last.legs_names + "</strong> <small>" + data.results[1].legs.last.miles + " miles</small><br />" + data.results[1].legs.last.narrative + "<hr />" +
+                        "<em>" + data.results[1].legs.next.subtitle + "</em> <strong>" + data.results[1].legs.next.legs_names + "</strong> <small>" + data.results[1].legs.next.miles + " miles</small><br />" + data.results[1].legs.next.narrative
+                    );
+                } );
+            } else {
+                JourneyBlock.remove();
+            }
         } );
     }
 
