@@ -2302,7 +2302,7 @@ class DataReturn
             ], [
                 "AND" => ["fuid" => $this->getUserID(), "expires[>=]" => date("Y-m-d H:i:s")],
                 "ORDER" => ['date' => "DESC"],
-                "LIMIT" => 14
+                "LIMIT" => 20
             ]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
