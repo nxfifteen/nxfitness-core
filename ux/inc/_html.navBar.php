@@ -54,13 +54,12 @@ if ($_COOKIE['_nx_fb_usr'] == $App->getNxFit()->getSetting('ownerFuid', null, fa
                 <a class="nav-link" href="activities/activity/log.html"><i class="fa fa-archive"></i> Activity Log</a>
             </li>
         </ul>
-        <?php /*if ($isDeveloper) { */ ?><!--
-                            <ul class="nav-dropdown-items">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="activities/activity/goals.html"><i class="fa fa-bullseye"></i> Activity Goals <span class="badge badge-danger">WIP</span></a>
-                                </li>
-                            </ul>
-		                    --><?php /*}*/ ?>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="dashboard/push.html"><i class="fa fa-dashboard"></i> Push</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="dashboard/journey.html"><i class="fa fa-dashboard"></i> Journey</a>
     </li>
 
     <li class="nav-title">

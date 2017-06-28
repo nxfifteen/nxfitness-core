@@ -9,8 +9,7 @@
 
 <!--suppress HtmlUnknownTarget, HtmlUnknownTarget, HtmlUnknownTarget -->
 <script>
-    var requireJS = ["../bundle/bower/simpleWeather/jquery.simpleWeather.min.js"];
-    loadJS([], "js/env/main.js.php");
+    var requireJS = ["../bundle/bower/simpleWeather/jquery.simpleWeather.min.js", "js/env/main.js.php"];
     loadJS(requireJS, "js/views/main.js");
 
     loadCSS("css/bucket-ico-fonts.css");
@@ -352,14 +351,14 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-6">
+        <div class="col-12 col-md-6">
             <div class="card card-inverse card-info">
                 <div class="card-header">Key Points</div>
                 <div class="card-block" id="KeyPointsSteps"></div>
             </div>
         </div>
 
-        <div class="col-6">
+        <div class="col-12 col-md-6">
             <div class="card card-inverse card-danger">
                 <div class="card-header">Key Points</div>
                 <div class="card-block" id="KeyPointsFloors"></div>

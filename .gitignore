@@ -135,3 +135,7 @@
 /ux/sites.json
 config/config.def.php
 config/config.inc.php
+/bundle/bower/bootstrap-calendar/events.json.php
+/bundle/bower/bootstrap-calendar/index-bs3.html
+/bundle/bower/bootstrap-calendar/index.html
+/bundle/bower/bootstrap-calendar/web.config
