@@ -879,10 +879,10 @@ class DataReturn
             $dbPushRec = $this->calculatePushDays($userPushStartDate, $userPushEndDate,
                 new DateTime($userPushStartDate));
             foreach ($dbPushRec['events'] as $dayRecord) {
-                if ($dayRecord['className'] == "label-pass") {
+                if ($dayRecord['class'] == "event-success") {
                     $days += 1;
                     $daysPast += 1;
-                } else if ($dayRecord['className'] == "label-today") {
+                } else if ($dayRecord['class'] == "event-info") {
                     $currentPush['distance'] = $dayRecord['distance'];
                     $currentPush['active'] = $dayRecord['active'];
                     $currentPush['steps'] = $dayRecord['steps'];
@@ -900,7 +900,11 @@ class DataReturn
 
             $currentPush['day'] = $days;
             $currentPush['day_past'] = $daysPast;
-            $currentPush['score'] = ($currentPush['day_past'] / $currentPush['day']) * 100;
+            if ($currentPush['day'] > 0) {
+                $currentPush[ 'score' ] = ( $currentPush[ 'day_past' ] / $currentPush[ 'day' ] ) * 100;
+            } else {
+                $currentPush[ 'score' ] = 0;
+            }
 
             return [
                 'pushActive' => 'active',
@@ -1045,11 +1049,13 @@ class DataReturn
                         $score = 0;
                     }
                     array_push($calenderEvents, [
+                        'id' => $days,
                         "title" => $dbEvent['steps'] . " steps"
                             . "\n" . $dbEvent['veryactive'] . " min"
                             . "\n" . number_format($dbEvent['distance'], 2) . $userPushTrgUnit,
-                        "start" => $dbEvent['date'],
-                        'className' => 'label-today',
+                        "start" => strtotime($dbEvent['date']).'000',
+                        "end" => strtotime($dbEvent['date']).'000',
+                        'class' => 'event-info',
                         'distance' => round($dbEvent['distance'], 2),
                         'active' => $dbEvent['veryactive'],
                         'steps' => $dbEvent['steps']
@@ -1057,32 +1063,40 @@ class DataReturn
                 } else if ($dbEvent['steps'] >= $userPushTrgSteps) {
                     $score = $score + 1;
                     array_push($calenderEvents, [
+                        'id' => $days,
                         "title" => "Past!\nSteps: " . number_format($dbEvent['steps'], 0),
-                        "start" => $dbEvent['date'],
-                        'className' => 'label-pass'
+                        "start" => strtotime($dbEvent['date']).'000',
+                        "end" => strtotime($dbEvent['date']).'000',
+                        'class' => 'event-success'
                     ]);
                 } else if ($dbEvent['veryactive'] >= $userPushTrgActivity) {
                     $score = $score + 1;
                     array_push($calenderEvents, [
+                        'id' => $days,
                         "title" => "Past!\nActivity: " . $dbEvent['veryactive'] . " min",
-                        "start" => $dbEvent['date'],
-                        'className' => 'label-pass'
+                        "start" => strtotime($dbEvent['date']).'000',
+                        "end" => strtotime($dbEvent['date']).'000',
+                        'class' => 'event-success'
                     ]);
                 } else if ($dbEvent['distance'] >= $userPushTrgDistance) {
                     $score = $score + 1;
                     array_push($calenderEvents, [
+                        'id' => $days,
                         "title" => "Past!\nDistance: " . number_format($dbEvent['distance'],
                                 2) . $userPushTrgUnit,
-                        "start" => $dbEvent['date'],
-                        'className' => 'label-pass'
+                        "start" => strtotime($dbEvent['date']).'000',
+                        "end" => strtotime($dbEvent['date']).'000',
+                        'class' => 'event-success'
                     ]);
                 } else {
                     array_push($calenderEvents, [
+                        'id' => $days,
                         "title" => "Steps: " . number_format($dbEvent['steps'], 0)
                             . "\nDistance: " . number_format($dbEvent['distance'], 2) . $userPushTrgUnit
                             . "\nActivity: " . $dbEvent['veryactive'] . " min",
-                        "start" => $dbEvent['date'],
-                        'className' => 'label-failed'
+                        "start" => strtotime($dbEvent['date']).'000',
+                        "end" => strtotime($dbEvent['date']).'000',
+                        'class' => 'event-important'
                     ]);
                 }
 
@@ -1178,7 +1192,7 @@ class DataReturn
             $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $range_start);
         }
 
-        return ['sole' => true, 'return' => $calenderEvents['events']];
+        return ['sole' => true, 'return' => array('success' => 1, 'result' => $calenderEvents['events'])];
     }
 
     /**
@@ -2599,8 +2613,11 @@ class DataReturn
 
             $taskerDataArray['push']['length'] = round(($returnUserRecordPush['current']['day'] / $returnUserRecordPush['pushLength']) * 100,
                 0);
-            $taskerDataArray['push']['day'] = round(($returnUserRecordPush['current']['day_past'] / $returnUserRecordPush['current']['day']) * 100,
-                0);
+            if ($returnUserRecordPush['current']['day'] > 0) {
+                $taskerDataArray[ 'push' ][ 'day' ] = round( ( $returnUserRecordPush[ 'current' ][ 'day_past' ] / $returnUserRecordPush[ 'current' ][ 'day' ] ) * 100, 0 );
+            } else {
+                $taskerDataArray[ 'push' ][ 'day' ] = 0;
+            }
 
             $taskerDataArray['push']['distance'] = round(($returnUserRecordPush['current']['distance'] / $returnUserRecordPush['current']['distance_g']) * 100,
                 0);
@@ -2639,7 +2656,7 @@ class DataReturn
         ) {
             $taskerDataArray['journeys']['name'] = "Not on any journey";
         } else {
-            if (is_array($returnUserRecordJourneysState) && count($returnUserRecordJourneysState) >= 2) {
+            if (is_array($returnUserRecordJourneysState) && count($returnUserRecordJourneysState) >= 1) {
                 $returnUserRecordJourneysState = $returnUserRecordJourneysState[1];
                 $taskerDataArray['journeys']['name'] = $returnUserRecordJourneysState['name'];
                 $taskerDataArray['journeys']['blurb'] = $returnUserRecordJourneysState['blurb'];
