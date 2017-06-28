@@ -900,7 +900,11 @@ class DataReturn
 
             $currentPush['day'] = $days;
             $currentPush['day_past'] = $daysPast;
-            $currentPush['score'] = ($currentPush['day_past'] / $currentPush['day']) * 100;
+            if ($currentPush['day'] > 0) {
+                $currentPush[ 'score' ] = ( $currentPush[ 'day_past' ] / $currentPush[ 'day' ] ) * 100;
+            } else {
+                $currentPush[ 'score' ] = 0;
+            }
 
             return [
                 'pushActive' => 'active',
@@ -2599,8 +2603,11 @@ class DataReturn
 
             $taskerDataArray['push']['length'] = round(($returnUserRecordPush['current']['day'] / $returnUserRecordPush['pushLength']) * 100,
                 0);
-            $taskerDataArray['push']['day'] = round(($returnUserRecordPush['current']['day_past'] / $returnUserRecordPush['current']['day']) * 100,
-                0);
+            if ($returnUserRecordPush['current']['day'] > 0) {
+                $taskerDataArray[ 'push' ][ 'day' ] = round( ( $returnUserRecordPush[ 'current' ][ 'day_past' ] / $returnUserRecordPush[ 'current' ][ 'day' ] ) * 100, 0 );
+            } else {
+                $taskerDataArray[ 'push' ][ 'day' ] = 0;
+            }
 
             $taskerDataArray['push']['distance'] = round(($returnUserRecordPush['current']['distance'] / $returnUserRecordPush['current']['distance_g']) * 100,
                 0);
@@ -2639,7 +2646,7 @@ class DataReturn
         ) {
             $taskerDataArray['journeys']['name'] = "Not on any journey";
         } else {
-            if (is_array($returnUserRecordJourneysState) && count($returnUserRecordJourneysState) >= 2) {
+            if (is_array($returnUserRecordJourneysState) && count($returnUserRecordJourneysState) >= 1) {
                 $returnUserRecordJourneysState = $returnUserRecordJourneysState[1];
                 $taskerDataArray['journeys']['name'] = $returnUserRecordJourneysState['name'];
                 $taskerDataArray['journeys']['blurb'] = $returnUserRecordJourneysState['blurb'];
