@@ -3,6 +3,7 @@
 *.css.map
 /.gtm/
 /.idea
+/vendor
 /binaries/
 /bundle/bower/*/*.coffee
 /bundle/bower/*/.bower.json
