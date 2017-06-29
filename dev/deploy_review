@@ -48,7 +48,7 @@ fi
 
 cd "$ROOTPATH"
 php "$ROOTPATH/binaries/phpDocumentor.phar"  >/dev/null 2>&1
-if [ ! -d "$ROOTPATH/binaries" ]; then
+if [ ! -d "/var/www/dev/docs/$CI_COMMIT_REF_NAME" ]; then
     mkdir -p "/var/www/dev/docs/$CI_COMMIT_REF_NAME"
 fi
 rsync -vhru --delete-after ./docs/development/* "/var/www/dev/docs/$CI_COMMIT_REF_NAME/"
