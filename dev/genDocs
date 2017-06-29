@@ -22,8 +22,8 @@ php "$ROOTPATH/binaries/composer.phar" install --dev #>/dev/null 2>&1
 
 FROMTAG=""
 CURRENTCOMIT=`git rev-parse --verify HEAD`
-if [ -f "$ROOTPATH/dev/.lastChangeLog" ]; then
-    LASTCOMMIT=`cat "$ROOTPATH/dev/.lastChangeLog"`
+if [ -f "$ROOTPATH/docs/wiki.core/.lastChangeLog" ]; then
+    LASTCOMMIT=`cat "$ROOTPATH/docs/wiki.core/.lastChangeLog"`
 
     if [ "$LASTCOMMIT" != "$CURRENTCOMIT" ]; then
         FROMTAG="--tag $LASTCOMMIT"
@@ -38,6 +38,6 @@ $HOME/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/
 $HOME/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/extended-change-log.md" --extended;
 
 cd "$ROOTPATH/docs/wiki.core"
-git add change-log.md extended-change-log.md
+git add change-log.md extended-change-log.md .lastChangeLog
 git commit -m "chore(changelog): Updated changelog files"
 git push
