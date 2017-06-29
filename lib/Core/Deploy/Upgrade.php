@@ -1001,7 +1001,7 @@ class Upgrade
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function updateRun1013()
+    private function updateRun2000000()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
 
