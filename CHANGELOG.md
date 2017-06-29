@@ -4,7 +4,7 @@
 
 _Use the Fitbit API to cache user stats and allow queries returned over JSON. An up-to-date [change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/change-log) is also available on the wiki, as well as an [extended change log](https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/wikis/extended-change-log) - with everything since the down of time_
 
-## v0.0.1.13 242a08b6c30cf1ebaac04bdb7ee6de100d0bb640 ( Thu Jun 29 2017 19:33:20 GMT+0100 (BST) )
+## v0.0.1.14 242a08b6c30cf1ebaac04bdb7ee6de100d0bb640 ( Thu Jun 29 2017 19:34:22 GMT+0100 (BST) )
 
 
 
