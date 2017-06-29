@@ -37,6 +37,8 @@ cd "$ROOTPATH"
 $HOME/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/change-log.md" $FROMTAG;
 $HOME/git-changelog/tasks/command.js -p gitlab --file "$ROOTPATH/docs/wiki.core/extended-change-log.md" --extended;
 
+echo "$CURRENTCOMIT" > "$ROOTPATH/docs/wiki.core/.lastChangeLog"
+
 cd "$ROOTPATH/docs/wiki.core"
 git add change-log.md extended-change-log.md .lastChangeLog
 git commit -m "chore(changelog): Updated changelog files"
