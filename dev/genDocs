@@ -22,11 +22,11 @@ php "$ROOTPATH/binaries/composer.phar" install --dev #>/dev/null 2>&1
 
 FROMTAG=""
 CURRENTCOMIT=`git rev-parse --verify HEAD`
-if [ -f "$ROOTPATH/dev/.lastChangeLog" ]; then
-    LASTCOMMIT=`cat "$ROOTPATH/dev/.lastChangeLog"`
+if [ -f "$ROOTPATH/docs/wiki.core/changelog/.lastChangeLog" ]; then
+    LASTCOMMIT=`cat "$ROOTPATH/docs/wiki.core/changelog/.lastChangeLog"`
 
     if [ "$LASTCOMMIT" != "$CURRENTCOMIT" ]; then
-        FROMTAG="--tag $LASTCOMMIT"
+        FROMTAG="--tag $LASTCOMMIT...HEAD"
     fi
 fi
 

@@ -3,6 +3,7 @@
 *.css.map
 /.gtm/
 /.idea
+/vendor
 /binaries/
 /bundle/bower/*/*.coffee
 /bundle/bower/*/.bower.json
@@ -139,3 +140,4 @@ config/config.inc.php
 /bundle/bower/bootstrap-calendar/index-bs3.html
 /bundle/bower/bootstrap-calendar/index.html
 /bundle/bower/bootstrap-calendar/web.config
+/bundle/bower/underscore/underscore-min.map
