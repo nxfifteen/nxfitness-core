@@ -23,7 +23,12 @@ class HabitRPHPG {
         'cache_path'	=> '/tmp/',	// Use this for faster testing
         'debug'			=> false,	// Development only.
     );
-    private $egg_types = array('Wolf', 'TigerCub', 'PandaCub','LionCub','Fox','FlyingPig','Dragon','Cactus','BearCub', 'Egg','Gryphon');
+    private $egg_types = array(
+        'Armadillo', 'Axolotl', 'BearCub', 'Beetle', 'Bunny', 'Butterfly', 'Cactus', 'Cheetah', 'Cow', 'Cuttlefish', 'Deer', 'Dragon', 'Egg', 'Egg', 'Falcon', 'Falcon', 'Ferret',
+        'FlyingPig', 'Fox', 'Frog', 'Gryphon', 'Gryphon', 'GuineaPig', 'Hedgehog', 'Horse', 'LionCub', 'Monkey', 'Nudibranch', 'Octopus', 'Owl', 'PandaCub', 'Parrot', 'Peacock',
+        'Penguin', 'Rat', 'Rock', 'Rooster', 'Sabretooth', 'Seahorse', 'Sheep', 'Slime', 'Sloth', 'Snail', 'Snake', 'Spider', 'TigerCub', 'Treeling', 'TRex', 'Triceratops',
+        'Turtle', 'Unicorn', 'Whale', 'Wolf'
+    );
     private $hatch_types = array('Base','White','Desert','Red','Shade','Skeleton','Zombie','CottonCandyPink','CottonCandyBlue','Golden');
     private $food_types = array('Meat','Milk','Potatoe','Strawberry','Chocolate','Fish','RottenMeat','CottonCandyPink','CottonCandyBlue','Cake_Skeleton','Cake_Base','Honey','Saddle');
     public $pet_types = array();
