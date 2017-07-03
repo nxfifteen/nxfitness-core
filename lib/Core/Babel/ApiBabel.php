@@ -3831,7 +3831,14 @@ class ApiBabel
                 }
             }
 
-            $pets            = $user[ 'items' ][ 'pets' ];
+            $pets = [];
+            
+            foreach ($user[ 'items' ][ 'pets' ] as $pet => $health) {
+                if ($health > 0) {
+                    $pets[$pet] = $health;
+                }
+            }
+            
             if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_hatch', false)) {
                 nxr( 4, "Hatching your Pets" );
                 $eggs            = $user[ 'items' ][ 'eggs' ];
