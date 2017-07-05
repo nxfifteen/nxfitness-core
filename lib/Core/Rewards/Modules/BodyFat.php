@@ -58,6 +58,7 @@ class BodyFat extends Modules
         } else if ($body['current'] > $body['last']) {
             $this->checkDB("body", "fat", "increased", $currentDate . "fatincreased");
         }
+        $this->checkDB("body", "scales", "report", $currentDate . "scalesreported");
     }
 
     /**

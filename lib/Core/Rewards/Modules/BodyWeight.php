@@ -58,6 +58,7 @@ class BodyWeight extends Modules
         } else if ($body['current'] > $body['last']) {
             $this->checkDB("body", "weight", "increased", $currentDate . "weightincreased");
         }
+        $this->checkDB("body", "scales", "report", $currentDate . "scalesreported");
     }
 
     /**
