@@ -46,8 +46,6 @@ class RecordedMeal extends Modules
     public function trigger($eventDetails)
     {
         $this->setEventDetails($eventDetails);
-
-        $this->checkYesterdaysCalories();
         if ($eventDetails->loggedFood->name != "Snacks Summary") {
             $this->checkMealLogged();
             $this->checkMealHealthynessLogged();
@@ -155,23 +153,4 @@ class RecordedMeal extends Modules
         return true;
     }
 
-    /**
-     *
-     */
-    private function checkYesterdaysCalories() {
-        $meal = $this->getEventDetails();
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-
-        $yesterday = date("Y-m-d", strtotime($meal->logDate . " -1 days"));
-        $rewardKey = sha1("mealRecordingFor" . $yesterday);
-
-        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-            $dbcalories = $this->getAppClass()->getDatabase()->sum($db_prefix . "food", "calories", ["AND" => ["date" => $yesterday, "user" => $this->getUserID()]]);
-            $goalcalories = $this->getAppClass()->getDatabase()->sum($db_prefix . "food_goals", 'calories', ["AND" => ["date" => $yesterday, "user" => $this->getUserID()]]);
-
-            if ($dbcalories < $goalcalories && $dbcalories >= 1200) {
-                $this->checkDB("meals", "food", "calories", $rewardKey . "Bang On");
-            }
-        }
-    }
 }
