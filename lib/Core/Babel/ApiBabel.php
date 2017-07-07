@@ -3746,284 +3746,289 @@ class ApiBabel
      */
     private function pullHabitica()
     {
-        $user_id = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_user_id', NULL);
-        $api_key = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_api_key', NULL);
-        if (!is_null($user_id) && !is_null($api_key)) {
-            if ($this->isTriggerCooled("habitica")) {
-                nxr(3, "Habitica credentials okay");
+        $isAllowed = $this->isAllowed("habitica");
+        if (!is_numeric($isAllowed)) {
+            $user_id = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_user_id', NULL);
+            $api_key = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_api_key', NULL);
+            if (!is_null($user_id) && !is_null($api_key)) {
+                if ($this->isTriggerCooled("habitica")) {
+                    nxr(3, "Habitica credentials okay");
 
-                $habiticaClass = new Habitica($this->getAppClass(), $this->getActiveUser());
-                $habiticaInstalled = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_installed', false);
-                if ($habiticaInstalled) {
-                    nxr(4, "Habitica Already Installed");
-                } else {
-                    nxr(4, "Installing Habitica");
-                    $rewardClasss = new Rewards($this->getAppClass(), $this->getActiveUser());
-                    $sysRewards = $rewardClasss->getSystemRewards('habitica');
+                    $habiticaClass = new Habitica($this->getAppClass(), $this->getActiveUser());
+                    $habiticaInstalled = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_installed', false);
+                    if ($habiticaInstalled) {
+                        nxr(4, "Habitica Already Installed");
+                    } else {
+                        nxr(4, "Installing Habitica");
+                        $rewardClasss = new Rewards($this->getAppClass(), $this->getActiveUser());
+                        $sysRewards = $rewardClasss->getSystemRewards('habitica');
 
-                    $nomieUser = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", NULL);
+                        $nomieUser = $this->getAppClass()->getUserSetting($this->activeUser, "nomie_key", NULL);
 
-                    $installRewards = [];
-                    foreach ($sysRewards as $sysReward) {
-                        if (array_key_exists("install", $sysReward) && ($sysReward['install'] == "global" || $sysReward['install'] == $this->getActiveUser())) {
-                            if (array_key_exists("source", $sysReward) && $sysReward['source'] == "nomie" && !is_null($nomieUser)) {
-                                $installRewards[] = $sysReward;
-                            } else if (array_key_exists("source", $sysReward) && $sysReward['source'] == "fitbit") {
-                                $installRewards[] = $sysReward;
-                            } else if (!array_key_exists("source", $sysReward)) {
-                                $installRewards[] = $sysReward;
+                        $installRewards = [];
+                        foreach ($sysRewards as $sysReward) {
+                            if (array_key_exists("install", $sysReward) && ($sysReward['install'] == "global" || $sysReward['install'] == $this->getActiveUser())) {
+                                if (array_key_exists("source", $sysReward) && $sysReward['source'] == "nomie" && !is_null($nomieUser)) {
+                                    $installRewards[] = $sysReward;
+                                } else if (array_key_exists("source", $sysReward) && $sysReward['source'] == "fitbit") {
+                                    $installRewards[] = $sysReward;
+                                } else if (!array_key_exists("source", $sysReward)) {
+                                    $installRewards[] = $sysReward;
+                                }
+                            }
+                        }
+
+                        if ($installRewards > 0) {
+                            foreach ($installRewards as $installReward) {
+                                $rewardJson = json_decode($installReward["reward"], true);
+                                $rewardJson['alias'] = sha1("nx" . $installReward['name']);
+
+                                $habiticaClass->_create($rewardJson['type'], $installReward['name'], $rewardJson);
+                                nxr(5, "Created new " . $rewardJson['type'] . " " . $installReward['name']);
+                            }
+                        }
+                        $habiticaClass->getHabitRPHPG()->_request("post", "user/webhook", [
+                            "url" => $this->getAppClass()->getSetting('http/') . "/habitica/",
+                            "label" => "NxFITNESS",
+                            "enabled" => true,
+                            "type" => "taskActivity",
+                        ]);
+                        nxr(5, "Installed new Webhook " . $this->getAppClass()->getSetting('http/') . "/habitica/");
+
+                        $guildUuid = $this->getAppClass()->getSetting("habitica_guild", null);
+                        if (!is_null($guildUuid)) {
+                            nxr(4, "Inviting User to Guild");
+                            $habiticaClass->inviteToGuild($guildUuid);
+                        }
+
+                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habitica_installed', true);
+                    }
+
+                    nxr(4, "Updating User Habitica Stats");
+                    $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                    $user = $habiticaClass->getHabitRPHPG()->user();
+                    $updatedValues = [
+                        "class" => ucfirst($user['stats']['class']),
+                        "gold" => round($user['stats']['gp'], 2, PHP_ROUND_HALF_DOWN),
+                        "xp" => round($user['stats']['exp'], 0, PHP_ROUND_HALF_DOWN),
+                        "level" => $user['stats']['lvl'],
+                        "percent" => round($user['stats']['exp'] * (100 / $user['stats']['toNextLevel']), 0, PHP_ROUND_HALF_DOWN),
+                        "mana" => $user['stats']['mp'],
+                        "health" => round($user['stats']['hp'] * (100 / $user['stats']['maxHealth']), 0, PHP_ROUND_HALF_DOWN)
+                    ];
+
+                    if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "users_xp", ['fuid' => $this->getActiveUser()])) {
+                        $this->getAppClass()->getDatabase()->insert($dbPrefix . "users_xp", array_merge($updatedValues, ["fuid" => $this->getActiveUser()]));
+                    } else {
+                        $this->getAppClass()->getDatabase()->update($dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getActiveUser()]);
+                    }
+                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+                    $avatarFolder = dirname(__FILE__) . "/../../../images/avatars/";
+                    if (file_exists($avatarFolder) AND is_writable($avatarFolder)) {
+                        nxr(4, "Updating User Habitica Avatar");
+                        if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
+                            //file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("http://10.1.1.1:3000/export/avatar-" . $user['id'] . ".png"));
+                        } else {
+                            file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
+                        }
+                    }
+
+                    $pets = [];
+
+                    foreach ($user[ 'items' ][ 'pets' ] as $pet => $health) {
+                        if ($health > 0) {
+                            $pets[$pet] = $health;
+                        }
+                    }
+
+                    if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_hatch', false)) {
+                        nxr( 4, "Hatching your Pets" );
+                        $eggs            = $user[ 'items' ][ 'eggs' ];
+                        $hatchingPotions = $user[ 'items' ][ 'hatchingPotions' ];
+                        if ( count( $hatchingPotions ) > 0 ) {
+                            if ( count( $eggs ) > 0 ) {
+                                foreach ( $eggs as $egg => $count ) {
+                                    if ( $count > 0 ) {
+                                        $eggHatched = false;
+                                        nxr( 5, "You have $count $egg eggs" );
+                                        for ( $i = 1; $i <= $count; $i++ ) {
+                                            foreach ( $hatchingPotions as $potion => $potionCount ) {
+                                                if ( $potionCount > 0 && ! array_key_exists( $egg . "-" . $potion, $pets ) ) {
+                                                    if(in_array($egg . "-" . $potion, $habiticaClass->getHabitRPHPG()->pet_types)) {
+                                                        nxr( 6, "You dont yet have a $potion $egg pet - hatching ($potionCount)" );
+                                                        $pets[ $egg . "-" . $potion ] = 5;
+                                                        $hatchingPotions[ $potion ]   = $hatchingPotions[ $potion ] - 1;
+                                                        $habiticaClass->getHabitRPHPG()->hatch( $egg, $potion, false );
+                                                        $eggHatched = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if (!$eggHatched && $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_eggs', true)) {
+                                            if ($count > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)) {
+                                                nxr( 6, "No eggs hatched, selling off your spare $egg" );
+                                                nxr(7, ".", true, false);
+                                                for ( $i = 0; $i <= ($count - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)); $i++ ) {
+                                                    nxr(0, ".", false, false);
+                                                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/eggs/$egg", [] );
+                                                }
+                                                nxr(0, " [SOLD]", false);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_potions', false)) {
+                                foreach ( $hatchingPotions as $potion => $potionCount ) {
+                                    if ( $potionCount > $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ) {
+                                        nxr( 5, "You've got more $potion than needed" );
+                                        nxr(6, ".", true, false);
+                                        for ( $i = 0; $i <= ( $potionCount - $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ); $i++ ) {
+                                            nxr(0, ".", false, false);
+                                            $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/hatchingPotions/$potion", [] );
+                                        }
+                                        nxr(0, " [SOLD]", false);
+                                    }
+                                }
                             }
                         }
                     }
 
-                    if ($installRewards > 0) {
-                        foreach ($installRewards as $installReward) {
-                            $rewardJson = json_decode($installReward["reward"], true);
-                            $rewardJson['alias'] = sha1("nx" . $installReward['name']);
+                    if (count($pets) > 0) {
+                        if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_feed', false)) {
+                            nxr( 4, "Feeding your Pets" );
+                            $foodPrefernce = [
+                                "Base"            => "Meat",
+                                "White"           => "Milk",
+                                "Desert"          => "Potatoe",
+                                "Red"             => "Strawberry",
+                                "Shade"           => "Chocolate",
+                                "Skeleton"        => "Fish",
+                                "Zombie"          => "RottenMeat",
+                                "CottonCandyPink" => "CottonCandyPink",
+                                "CottonCandyBlue" => "CottonCandyBlue",
+                                "Golden"          => "Honey",
+                            ];
+                            asort( $pets );
+                            $foods     = $user[ 'items' ][ 'food' ];
+                            $petsMagic = [];
+                            if ( count( $foods ) > 0 ) {
+                                nxr( 5, "Feeding your normal Pets" );
+                                $fedAnyPets = false;
+                                foreach ( $pets as $pet => $petHealth ) {
+                                    if ( $petHealth > 0 ) {
+                                        $petString = explode( "-", $pet );
+                                        if ( array_key_exists( $petString[ 1 ], $foodPrefernce ) ) {
+                                            if ( array_key_exists( $foodPrefernce[ $petString[ 1 ] ], $foods ) && $foods[ $foodPrefernce[ $petString[ 1 ] ] ] > 0 ) {
+                                                nxr( 6, "Feeding some " . $foodPrefernce[ $petString[ 1 ] ] . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
+                                                $habiticaClass->getHabitRPHPG()->feed($foodPrefernce[ $petString[ 1 ] ], $pet, false);
+                                                $foods[ $foodPrefernce[ $petString[ 1 ] ] ] = $foods[ $foodPrefernce[ $petString[ 1 ] ] ] - 1;
+                                                $fedAnyPets                                 = true;
+                                            }
+                                        } else {
+                                            $petsMagic[] = $pet;
+                                        }
+                                    }
+                                }
 
-                            $habiticaClass->_create($rewardJson['type'], $installReward['name'], $rewardJson);
-                            nxr(5, "Created new " . $rewardJson['type'] . " " . $installReward['name']);
-                        }
-                    }
-                    $habiticaClass->getHabitRPHPG()->_request("post", "user/webhook", [
-                        "url" => $this->getAppClass()->getSetting('http/') . "/habitica/",
-                        "label" => "NxFITNESS",
-                        "enabled" => true,
-                        "type" => "taskActivity",
-                    ]);
-                    nxr(5, "Installed new Webhook " . $this->getAppClass()->getSetting('http/') . "/habitica/");
-
-                    $guildUuid = $this->getAppClass()->getSetting("habitica_guild", null);
-                    if (!is_null($guildUuid)) {
-                        nxr(4, "Inviting User to Guild");
-                        $habiticaClass->inviteToGuild($guildUuid);
-                    }
-
-                    $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habitica_installed', true);
-                }
-
-                nxr(4, "Updating User Habitica Stats");
-                $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-                $user = $habiticaClass->getHabitRPHPG()->user();
-                $updatedValues = [
-                    "class" => ucfirst($user['stats']['class']),
-                    "gold" => round($user['stats']['gp'], 2, PHP_ROUND_HALF_DOWN),
-                    "xp" => round($user['stats']['exp'], 0, PHP_ROUND_HALF_DOWN),
-                    "level" => $user['stats']['lvl'],
-                    "percent" => round($user['stats']['exp'] * (100 / $user['stats']['toNextLevel']), 0, PHP_ROUND_HALF_DOWN),
-                    "mana" => $user['stats']['mp'],
-                    "health" => round($user['stats']['hp'] * (100 / $user['stats']['maxHealth']), 0, PHP_ROUND_HALF_DOWN)
-                ];
-
-                if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "users_xp", ['fuid' => $this->getActiveUser()])) {
-                    $this->getAppClass()->getDatabase()->insert($dbPrefix . "users_xp", array_merge($updatedValues, ["fuid" => $this->getActiveUser()]));
-                } else {
-                    $this->getAppClass()->getDatabase()->update($dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getActiveUser()]);
-                }
-                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-
-                $avatarFolder = dirname(__FILE__) . "/../../../images/avatars/";
-                if (file_exists($avatarFolder) AND is_writable($avatarFolder)) {
-                    nxr(4, "Updating User Habitica Avatar");
-                    if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
-                        //file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("http://10.1.1.1:3000/export/avatar-" . $user['id'] . ".png"));
-                    } else {
-                        file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
-                    }
-                }
-
-                $pets = [];
-
-                foreach ($user[ 'items' ][ 'pets' ] as $pet => $health) {
-                    if ($health > 0) {
-                        $pets[$pet] = $health;
-                    }
-                }
-
-                if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_hatch', false)) {
-                    nxr( 4, "Hatching your Pets" );
-                    $eggs            = $user[ 'items' ][ 'eggs' ];
-                    $hatchingPotions = $user[ 'items' ][ 'hatchingPotions' ];
-                    if ( count( $hatchingPotions ) > 0 ) {
-                        if ( count( $eggs ) > 0 ) {
-                            foreach ( $eggs as $egg => $count ) {
-                                if ( $count > 0 ) {
-                                    $eggHatched = false;
-                                    nxr( 5, "You have $count $egg eggs" );
-                                    for ( $i = 1; $i <= $count; $i++ ) {
-                                        foreach ( $hatchingPotions as $potion => $potionCount ) {
-                                            if ( $potionCount > 0 && ! array_key_exists( $egg . "-" . $potion, $pets ) ) {
-                                                if(in_array($egg . "-" . $potion, $habiticaClass->getHabitRPHPG()->pet_types)) {
-                                                    nxr( 6, "You dont yet have a $potion $egg pet - hatching ($potionCount)" );
-                                                    $pets[ $egg . "-" . $potion ] = 5;
-                                                    $hatchingPotions[ $potion ]   = $hatchingPotions[ $potion ] - 1;
-                                                    $habiticaClass->getHabitRPHPG()->hatch( $egg, $potion, false );
-                                                    $eggHatched = true;
-                                                    break;
+                                if ( $fedAnyPets ) {
+                                    if ( count( $petsMagic ) > 0 ) {
+                                        nxr( 5, "Feeding your magical Pets" );
+                                        arsort( $foods );
+                                        $petLoop = 0;
+                                        foreach ( $foods as $food => $spareFood ) {
+                                            if ( $petLoop < count( $petsMagic ) ) {
+                                                if ( $spareFood > 0 ) {
+                                                    $petString = explode( "-", $petsMagic[ $petLoop ] );
+                                                    nxr( 6, "Feeding some " . $food . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
+                                                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/feed/" . $petsMagic[ $petLoop ] . "/$food", [] );
+                                                    $petLoop = $petLoop + 1;
                                                 }
                                             }
                                         }
                                     }
-
-                                    if (!$eggHatched && $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_eggs', true)) {
-                                        if ($count > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)) {
-                                            nxr( 6, "No eggs hatched, selling off your spare $egg" );
-                                            nxr(7, ".", true, false);
-                                            for ( $i = 0; $i <= ($count - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)); $i++ ) {
-                                                nxr(0, ".", false, false);
-                                                $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/eggs/$egg", [] );
-                                            }
-                                            nxr(0, " [SOLD]", false);
-                                        }
-                                    }
+                                } else {
+                                    nxr( 5, "Noone else got get so not feeding your magical Pets" );
                                 }
+
                             }
                         }
 
-                        if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_potions', false)) {
-                            foreach ( $hatchingPotions as $potion => $potionCount ) {
-                                if ( $potionCount > $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ) {
-                                    nxr( 5, "You've got more $potion than needed" );
-                                    nxr(6, ".", true, false);
-                                    for ( $i = 0; $i <= ( $potionCount - $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ); $i++ ) {
-                                        nxr(0, ".", false, false);
-                                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/hatchingPotions/$potion", [] );
-                                    }
-                                    nxr(0, " [SOLD]", false);
-                                }
+                        if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_rand_pet', false)) {
+                            nxr( 4, "Randomizing your pet" );
+                            $petNames = array_keys( $pets );
+                            shuffle( $petNames );
+                            $newPet = array_pop( $petNames );
+                            if ($pets[$newPet] > 0) {
+                                nxr( 5, "The winning pet is $newPet" );
+                                $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/pet/$newPet", [] );
                             }
                         }
                     }
-                }
 
-                if (count($pets) > 0) {
-                    if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_feed', false)) {
-                        nxr( 4, "Feeding your Pets" );
-                        $foodPrefernce = [
-                            "Base"            => "Meat",
-                            "White"           => "Milk",
-                            "Desert"          => "Potatoe",
-                            "Red"             => "Strawberry",
-                            "Shade"           => "Chocolate",
-                            "Skeleton"        => "Fish",
-                            "Zombie"          => "RottenMeat",
-                            "CottonCandyPink" => "CottonCandyPink",
-                            "CottonCandyBlue" => "CottonCandyBlue",
-                            "Golden"          => "Honey",
-                        ];
-                        asort( $pets );
-                        $foods     = $user[ 'items' ][ 'food' ];
-                        $petsMagic = [];
-                        if ( count( $foods ) > 0 ) {
-                            nxr( 5, "Feeding your normal Pets" );
-                            $fedAnyPets = false;
-                            foreach ( $pets as $pet => $petHealth ) {
-                                if ( $petHealth > 0 ) {
-                                    $petString = explode( "-", $pet );
-                                    if ( array_key_exists( $petString[ 1 ], $foodPrefernce ) ) {
-                                        if ( array_key_exists( $foodPrefernce[ $petString[ 1 ] ], $foods ) && $foods[ $foodPrefernce[ $petString[ 1 ] ] ] > 0 ) {
-                                            nxr( 6, "Feeding some " . $foodPrefernce[ $petString[ 1 ] ] . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
-                                            $habiticaClass->getHabitRPHPG()->feed($foodPrefernce[ $petString[ 1 ] ], $pet, false);
-                                            $foods[ $foodPrefernce[ $petString[ 1 ] ] ] = $foods[ $foodPrefernce[ $petString[ 1 ] ] ] - 1;
-                                            $fedAnyPets                                 = true;
-                                        }
-                                    } else {
-                                        $petsMagic[] = $pet;
-                                    }
-                                }
+                    if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_rand_mount', false)) {
+                        $mounts = $user[ 'items' ][ 'mounts' ];
+                        if ( count( $mounts ) > 1 ) {
+                            nxr( 4, "Randomizing your mount" );
+                            $mountNames = array_keys( $mounts );
+                            shuffle( $mountNames );
+                            $mountPet = array_pop( $mountNames );
+                            if ($mounts[$mountPet] > 0) {
+                                nxr( 5, "The winning mount is $mountPet" );
+                                $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/mount/$mountPet", [] );
                             }
+                        }
+                    }
 
-                            if ( $fedAnyPets ) {
-                                if ( count( $petsMagic ) > 0 ) {
-                                    nxr( 5, "Feeding your magical Pets" );
-                                    arsort( $foods );
-                                    $petLoop = 0;
-                                    foreach ( $foods as $food => $spareFood ) {
-                                        if ( $petLoop < count( $petsMagic ) ) {
-                                            if ( $spareFood > 0 ) {
-                                                $petString = explode( "-", $petsMagic[ $petLoop ] );
-                                                nxr( 6, "Feeding some " . $food . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
-                                                $habiticaClass->getHabitRPHPG()->_request( "post", "user/feed/" . $petsMagic[ $petLoop ] . "/$food", [] );
-                                                $petLoop = $petLoop + 1;
-                                            }
-                                        }
-                                    }
+                    if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_bye_gems', false) && array_key_exists("planId", $user[ 'purchased' ][ 'plan' ])) {
+                        if ($user['stats']['gp'] > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_min_gold', 90)) {
+                            if ($user['balance'] / 0.25 < $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_gems', 25)) {
+                                nxr(4, "We're ready to buy new gems");
+                                $newGems = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_gems', 25) - ($user['balance'] / 0.25);
+                                $newGemsCost = $newGems * 20;
+                                nxr(5, "We could still buy $newGems more gems for $newGemsCost gold");
+
+                                $availableGold = $user['stats']['gp'] - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_min_gold', 90);
+                                $availableGems = round($availableGold / 20, 0, PHP_ROUND_HALF_DOWN);
+                                if ($availableGems < $newGems) {
+                                    nxr( 5, "But you can only afford $availableGems" );
+                                } else {
+                                    $availableGems = $newGems;
                                 }
+
+                                for ($i=0; $i < $availableGems; $i++) {
+                                    $gemPurchase = $habiticaClass->getHabitRPHPG()->_request( "post", "user/purchase/gems/gem", [], true );
+                                    //nxr(6, $gemPurchase);
+                                }
+
                             } else {
-                                nxr( 5, "Noone else got get so not feeding your magical Pets" );
+                                nxr(4, "You already have your maximun gems");
                             }
-
-                        }
-                    }
-
-                    if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_rand_pet', false)) {
-                        nxr( 4, "Randomizing your pet" );
-                        $petNames = array_keys( $pets );
-                        shuffle( $petNames );
-                        $newPet = array_pop( $petNames );
-                        if ($pets[$newPet] > 0) {
-                            nxr( 5, "The winning pet is $newPet" );
-                            $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/pet/$newPet", [] );
-                        }
-                    }
-                }
-
-                if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_rand_mount', false)) {
-                    $mounts = $user[ 'items' ][ 'mounts' ];
-                    if ( count( $mounts ) > 1 ) {
-                        nxr( 4, "Randomizing your mount" );
-                        $mountNames = array_keys( $mounts );
-                        shuffle( $mountNames );
-                        $mountPet = array_pop( $mountNames );
-                        if ($mounts[$mountPet] > 0) {
-                            nxr( 5, "The winning mount is $mountPet" );
-                            $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/mount/$mountPet", [] );
-                        }
-                    }
-                }
-
-                if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_bye_gems', false) && array_key_exists("planId", $user[ 'purchased' ][ 'plan' ])) {
-                    if ($user['stats']['gp'] > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_min_gold', 90)) {
-                        if ($user['balance'] / 0.25 < $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_gems', 25)) {
-                            nxr(4, "We're ready to buy new gems");
-                            $newGems = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_gems', 25) - ($user['balance'] / 0.25);
-                            $newGemsCost = $newGems * 20;
-                            nxr(5, "We could still buy $newGems more gems for $newGemsCost gold");
-
-                            $availableGold = $user['stats']['gp'] - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_min_gold', 90);
-                            $availableGems = round($availableGold / 20, 0, PHP_ROUND_HALF_DOWN);
-                            if ($availableGems < $newGems) {
-                                nxr( 5, "But you can only afford $availableGems" );
-                            } else {
-                                $availableGems = $newGems;
-                            }
-
-                            for ($i=0; $i < $availableGems; $i++) {
-                                $gemPurchase = $habiticaClass->getHabitRPHPG()->_request( "post", "user/purchase/gems/gem", [], true );
-                                //nxr(6, $gemPurchase);
-                            }
-
                         } else {
-                            nxr(4, "You already have your maximun gems");
+                            nxr(4, "You have less than your minimum gold");
                         }
-                    } else {
-                        nxr(4, "You have less than your minimum gold");
                     }
+
+                    if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_challenge_join', false) && $user['party']['quest']['RSVPNeeded']) {
+                        $habiticaClass->getHabitRPHPG()->_request( "post", "groups/" . $user['party']['_id'] . "/quests/accept", []);
+                        nxr(5, "Accepted quest invite to '" . $user['party']['quest']['key'] . "'");
+                    }
+
+                    $this->setLastrun("habitica", null, true);
+                } else {
+                    return "-143";
                 }
 
-                if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_challenge_join', false) && $user['party']['quest']['RSVPNeeded']) {
-                    $habiticaClass->getHabitRPHPG()->_request( "post", "groups/" . $user['party']['_id'] . "/quests/accept", []);
-                    nxr(5, "Accepted quest invite to '" . $user['party']['quest']['key'] . "'");
-                }
-
-                $this->setLastrun("habitica", null, true);
             } else {
-                return "-143";
+                nxr(3, "Your not a Habitica user");
             }
-
-        } else {
-            nxr(3, "Your not a Habitica user");
         }
+
+        return $isAllowed;
     }
 
     /**
