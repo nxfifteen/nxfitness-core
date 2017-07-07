@@ -93,7 +93,7 @@ class Habitica extends Delivery
      */
     public function deliver($rewardProfile, $state, $rewardKey)
     {
-        if ($this->isValidUser() && $this->getStatus() == 'up') {
+        if ($this->isValidUser() && $this->isAllowed() && $this->getStatus() == 'up') {
             nxr(3, "Awarding Habitica Rewards");
 
             if (array_key_exists("reward", $rewardProfile) && $this->isJson($rewardProfile["reward"])) {
@@ -131,6 +131,36 @@ class Habitica extends Delivery
         }
 
         return ["Failed"];
+    }
+
+    /**
+     * @param bool $quiet
+     *
+     * @return bool|string
+     */
+    public function isAllowed($quiet = false)
+    {
+        $trigger = "habitica";
+
+        $usrConfig = $this->getAppClass()->getUserSetting($this->getUserID(), 'scope_' . $trigger, true);
+        if (!is_null($usrConfig) AND $usrConfig != 1) {
+            if (!$quiet) {
+                nxr(1, "Aborted $trigger disabled in user config");
+            }
+
+            return false;
+        }
+
+        $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, true);
+        if ($sysConfig != 1) {
+            if (!$quiet) {
+                nxr(1, "Aborted $trigger disabled in system config");
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
