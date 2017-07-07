@@ -145,7 +145,7 @@ class Habitica extends Delivery
         $usrConfig = $this->getAppClass()->getUserSetting($this->getUserID(), 'scope_' . $trigger, true);
         if (!is_null($usrConfig) AND $usrConfig != 1) {
             if (!$quiet) {
-                nxr(1, "Aborted $trigger disabled in user config");
+                nxr(3, "Aborted $trigger disabled in user config");
             }
 
             return false;
@@ -154,7 +154,7 @@ class Habitica extends Delivery
         $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, true);
         if ($sysConfig != 1) {
             if (!$quiet) {
-                nxr(1, "Aborted $trigger disabled in system config");
+                nxr(3, "Aborted $trigger disabled in system config");
             }
 
             return false;
