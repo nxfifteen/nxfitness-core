@@ -4213,10 +4213,20 @@ class DataReturn
     public function returnUserRecordNomie()
     {
         $returnArray = [];
+        $returnArray['score'] = $this->returnUserRecordNomieScore()[0];
         $returnArray['dashboard'] = $this->returnUserRecordNomieDashboard();
         $returnArray['dbTrackers'] = $this->returnUserRecordNomieTrackers();
 
         return $returnArray;
+    }
+
+    /**
+     * @return array
+     */
+    public function returnUserRecordNomieScore()
+    {
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        return [$this->getAppClass()->getDatabase()->sum($db_prefix . "nomie_events",'score', ["fuid" => $this->getUserID(), "datestamp[~]" => $this->getParamDate() . ' %'])];
     }
 
     /**

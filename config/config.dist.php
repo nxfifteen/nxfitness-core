@@ -20,6 +20,36 @@
  */
 
 $config = [];
+
+$config['scope_habitica_timeout'] = (3 * 60 * 60);
+$config['scope_activities_timeout'] = (6 * 60 * 60);
+$config['scope_activity_log_timeout'] = (3 * 60 * 60);
+$config['scope_all_timeout'] = (24 * 60 * 60);
+$config['scope_badges_timeout'] = (48 * 60 * 60);
+$config['scope_body_timeout'] = (12 * 60 * 60);
+$config['scope_caloriesOut_timeout'] = (10 * 60);
+$config['scope_devices_timeout'] = (10 * 60);
+$config['scope_distance_timeout'] = (3 * 60 * 60);
+$config['scope_elevation_timeout'] = (3 * 60 * 60);
+$config['scope_floors_timeout'] = (3 * 60 * 60);
+$config['scope_foods_timeout'] = (2 * 60 * 60);
+$config['scope_goals_calories_timeout'] = (75 * 60);
+$config['scope_goals_timeout'] = (10 * 60 * 60);
+$config['scope_heart_timeout'] = (12 * 60 * 60);
+$config['scope_leaderboard_timeout'] = (30 * 60);
+$config['scope_minutesFairlyActive_timeout'] = (60 * 60);
+$config['scope_minutesLightlyActive_timeout'] = (60 * 60);
+$config['scope_minutesSedentary_timeout'] = (60 * 60);
+$config['scope_minutesVeryActive_timeout'] = (60 * 60);
+$config['scope_nomie_trackers_timeout'] = (30 * 60);
+$config['scope_pedomitor_timeout'] = (3 * 60 * 60);
+$config['scope_profile_timeout'] = (3 * 24 * 60 * 60);
+$config['scope_sleep_timeout'] = (20 * 60 * 60);
+$config['scope_water_timeout'] = (2 * 60 * 60);
+
+/*
+ * Personal settings will therefor overright settings above
+ */
 if ( file_exists( dirname( __FILE__ ) . "/config.inc.php" ) ) {
     require(dirname(__FILE__) . "/config.inc.php");
 }

@@ -73,7 +73,7 @@ class FitbitVeryActive extends Modules
     }
 
     /**
-     * @param string $eventDetails
+     * @param array $eventDetails
      */
     private function setEventDetails($eventDetails)
     {
