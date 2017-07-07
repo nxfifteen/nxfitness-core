@@ -12,5 +12,7 @@ if [ -d "/home/nxad/public_html/api/fitbit" ]; then
     git pull
 
     php5 ./get.php --user=269VLG --get=nomie_trackers
+
+    echo "**** Master Patch Applied ****" >> "/home/nxad/public_html/api/fitbit/fitbit.log"
 fi
 
