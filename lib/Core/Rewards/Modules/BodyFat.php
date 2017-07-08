@@ -38,8 +38,17 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class BodyFat extends Modules
 {
-
-    private $debug = false;
+    /**
+     * @param mixed $eventDetails
+     */
+    private function setEventDetails($eventDetails)
+    {
+        $this->eventDetails = [
+            "current" => $eventDetails[0],
+            "goal" => $eventDetails[1],
+            "last" => $eventDetails[2]
+        ];
+    }
 
     /**
      * @param array $eventDetails Array holding details of award to issue
@@ -59,17 +68,5 @@ class BodyFat extends Modules
             $this->checkDB("body", "fat", "increased", $currentDate . "fatincreased");
         }
         $this->checkDB("body", "scales", "report", $currentDate . "scalesreported");
-    }
-
-    /**
-     * @param mixed $eventDetails
-     */
-    private function setEventDetails($eventDetails)
-    {
-        $this->eventDetails = [
-            "current" => $eventDetails[0],
-            "goal" => $eventDetails[1],
-            "last" => $eventDetails[2]
-        ];
     }
 }

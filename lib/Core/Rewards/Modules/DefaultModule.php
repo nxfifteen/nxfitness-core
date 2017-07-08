@@ -23,8 +23,8 @@ namespace Core\Rewards\Modules;
 
 use Core\Rewards\Modules;
 
-require_once(dirname(__FILE__) . "/../../Modules.php");
-require_once(dirname(__FILE__) . "/../../../../autoloader.php");
+require_once(dirname(__FILE__) . "/../Modules.php");
+require_once(dirname(__FILE__) . "/../../../autoloader.php");
 
 /**
  * Nomie
@@ -35,28 +35,4 @@ require_once(dirname(__FILE__) . "/../../../../autoloader.php");
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  */
-class DefaultModule extends Modules
-{
-
-    private $debug = false;
-
-    /**
-     * @param array $eventDetails Array holding details of award to issue
-     */
-    public function trigger($eventDetails)
-    {
-        $this->setEventDetails($eventDetails);
-        $eventDetails = $this->getEventDetails();
-
-        $this->checkDB($cat, $event, $score, $rewardKey = null);
-        $this->cleanupQueue();
-    }
-
-    /**
-     * @param array $eventDetails
-     */
-    private function setEventDetails($eventDetails)
-    {
-        $this->eventDetails = $eventDetails;
-    }
-}
+class DefaultModule extends Modules {}

@@ -37,22 +37,6 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class RecordedMeal extends Modules
 {
-
-    private $debug = false;
-
-    /**
-     * @param array $eventDetails Array holding details of award to issue
-     */
-    public function trigger($eventDetails)
-    {
-        $this->setEventDetails($eventDetails);
-        if ($eventDetails->loggedFood->name != "Snacks Summary") {
-            $this->checkMealLogged();
-            $this->checkMealHealthynessLogged();
-        }
-
-    }
-
     /**
      * @param mixed $eventDetails
      */
@@ -151,6 +135,19 @@ class RecordedMeal extends Modules
         //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "Happy");
 
         return true;
+    }
+
+    /**
+     * @param array $eventDetails Array holding details of award to issue
+     */
+    public function trigger($eventDetails)
+    {
+        $this->setEventDetails($eventDetails);
+        if ($eventDetails->loggedFood->name != "Snacks Summary") {
+            $this->checkMealLogged();
+            $this->checkMealHealthynessLogged();
+        }
+
     }
 
 }

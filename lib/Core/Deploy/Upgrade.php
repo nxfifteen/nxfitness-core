@@ -132,74 +132,6 @@ class Upgrade
     }
 
     /**
-     * @return Config
-     */
-    public function getSettings()
-    {
-        return $this->settings;
-    }
-
-    /**
-     * @return Medoo
-     */
-    public function getDatabase()
-    {
-        return $this->database;
-    }
-
-    /**
-     * @return String
-     */
-    public function getInstallingVersion()
-    {
-        return $this->VersionInstalling;
-    }
-
-    /**
-     * @return int
-     */
-    public function getNumUpdates()
-    {
-        if (is_null($this->NumUpdates)) {
-            $this->getUpdatesRequired();
-        }
-
-        return $this->NumUpdates;
-    }
-
-    /**
-     * @return array
-     */
-    public function getUpdatesRequired()
-    {
-        $currentVersion = $this->getInstallVersionBrakeDown();
-        $installVersion = $this->getInstallingVersionBrakeDown();
-
-        $updateFunctions = [];
-
-        $currentNumber = (($currentVersion[0] * 1000) . ($currentVersion[1] * 100) . ($currentVersion[2] * 10) . $currentVersion[3]) * 1;
-        $installNumber = (($installVersion[0] * 1000) . ($installVersion[1] * 100) . ($installVersion[2] * 10) . $installVersion[3]) * 1;
-
-        for ($x = ((int)$currentNumber + 1); $x <= $installNumber; $x++) {
-            if (method_exists($this, "updateRun" . $x)) {
-                array_push($updateFunctions, "updateRun" . $x);
-            }
-        }
-
-        $this->UpdateFunctions = $updateFunctions;
-        $this->NumUpdates = count($updateFunctions);
-
-        if ($this->NumUpdates == 0 && $currentNumber != $installNumber) {
-            nxr(0, "No pending updates, but missmatch version numbers");
-            $this->setSetting("version",
-                $installVersion[0] . "." . $installVersion[1] . "." . $installVersion[2] . "." . $installVersion[3],
-                true);
-        }
-
-        return $updateFunctions;
-    }
-
-    /**
      * @return array
      */
     private function getInstallVersionBrakeDown()
@@ -212,34 +144,6 @@ class Upgrade
     }
 
     /**
-     * @return String
-     */
-    public function getInstallVersion()
-    {
-        if (is_null($this->VersionCurrent)) {
-            $this->VersionCurrent = $this->getSetting("version", "0.0.0.1", true);
-
-            $this->VersionCurrentArray = explode(".", $this->VersionCurrent);
-        }
-
-        return $this->VersionCurrent;
-    }
-
-    /**
-     * Get settings from config class
-     *
-     * @param string $key
-     * @param null $default
-     * @param bool $query_db
-     *
-     * @return string
-     */
-    public function getSetting($key, $default = null, $query_db = true)
-    {
-        return $this->getSettings()->get($key, $default, $query_db);
-    }
-
-    /**
      * @return array
      */
     private function getInstallingVersionBrakeDown()
@@ -248,69 +152,8 @@ class Upgrade
     }
 
     /**
-     * Set value in database/config class
-     *
-     * @param string $key
-     * @param string $value
-     * @param bool $query_db
-     *
-     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    public function setSetting($key, $value, $query_db = true)
-    {
-        return $this->getSettings()->set($key, $value, $query_db);
-    }
-
-    /**
-     * @return array
-     */
-    public function getUpdates()
-    {
-        if (is_null($this->UpdateFunctions)) {
-            $this->getUpdatesRequired();
-        }
-
-        return $this->UpdateFunctions;
-    }
-
-    /**
-     * @return array
-     */
-    public function getUpdateFunctions()
-    {
-        if (is_null($this->UpdateFunctions)) {
-            $this->getUpdatesRequired();
-        }
-
-        return $this->UpdateFunctions;
-    }
-
-    /**
-     * @return bool
-     */
-    public function runUpdates()
-    {
-        if (is_null($this->UpdateFunctions)) {
-            $this->getUpdatesRequired();
-        }
-
-        foreach ($this->UpdateFunctions as $updateFunction) {
-            if (method_exists($this, $updateFunction)) {
-                echo " Running " . $updateFunction . "\n";
-                if ($this->$updateFunction()) {
-                    echo "  + " . $updateFunction . " [OKAY]\n";
-                } else {
-                    echo "  + " . $updateFunction . " [FAILED]\n";
-
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function updateRun2()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -366,7 +209,9 @@ class Upgrade
         }
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun3()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -475,7 +320,9 @@ class Upgrade
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun4()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -556,7 +403,9 @@ class Upgrade
 
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun5()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -592,7 +441,9 @@ class Upgrade
 
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun6()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -662,7 +513,9 @@ class Upgrade
 
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun7()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -682,7 +535,9 @@ class Upgrade
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun8()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -754,7 +609,9 @@ class Upgrade
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun9()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -784,7 +641,9 @@ class Upgrade
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun10()
     {
         $this->setSetting("version", "0.0.0.10", true);
@@ -792,7 +651,9 @@ class Upgrade
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun12()
     {
 
@@ -808,6 +669,10 @@ class Upgrade
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun13()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -850,7 +715,9 @@ class Upgrade
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun107()
     {
 
@@ -874,6 +741,10 @@ class Upgrade
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun108()
     {
 
@@ -901,6 +772,10 @@ class Upgrade
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun109()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -932,6 +807,10 @@ class Upgrade
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun1010()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -972,6 +851,10 @@ class Upgrade
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun1011()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -987,6 +870,10 @@ class Upgrade
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun1012()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -1001,6 +888,10 @@ class Upgrade
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
     private function updateRun2000000()
     {
         $db_prefix = $this->getSetting("db_prefix", false);
@@ -1167,6 +1058,187 @@ class Upgrade
         }
 
         $this->setSetting("version", "0.0.1.13", true);
+        return true;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return Config
+     */
+    public function getSettings()
+    {
+        return $this->settings;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return Medoo
+     */
+    public function getDatabase()
+    {
+        return $this->database;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return String
+     */
+    public function getInstallingVersion()
+    {
+        return $this->VersionInstalling;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return int
+     */
+    public function getNumUpdates()
+    {
+        if (is_null($this->NumUpdates)) {
+            $this->getUpdatesRequired();
+        }
+
+        return $this->NumUpdates;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return array
+     */
+    public function getUpdatesRequired()
+    {
+        $currentVersion = $this->getInstallVersionBrakeDown();
+        $installVersion = $this->getInstallingVersionBrakeDown();
+
+        $updateFunctions = [];
+
+        $currentNumber = (($currentVersion[0] * 1000) . ($currentVersion[1] * 100) . ($currentVersion[2] * 10) . $currentVersion[3]) * 1;
+        $installNumber = (($installVersion[0] * 1000) . ($installVersion[1] * 100) . ($installVersion[2] * 10) . $installVersion[3]) * 1;
+
+        for ($x = ((int)$currentNumber + 1); $x <= $installNumber; $x++) {
+            if (method_exists($this, "updateRun" . $x)) {
+                array_push($updateFunctions, "updateRun" . $x);
+            }
+        }
+
+        $this->UpdateFunctions = $updateFunctions;
+        $this->NumUpdates = count($updateFunctions);
+
+        if ($this->NumUpdates == 0 && $currentNumber != $installNumber) {
+            nxr(0, "No pending updates, but missmatch version numbers");
+            $this->setSetting("version",
+                $installVersion[0] . "." . $installVersion[1] . "." . $installVersion[2] . "." . $installVersion[3],
+                true);
+        }
+
+        return $updateFunctions;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return String
+     */
+    public function getInstallVersion()
+    {
+        if (is_null($this->VersionCurrent)) {
+            $this->VersionCurrent = $this->getSetting("version", "0.0.0.1", true);
+
+            $this->VersionCurrentArray = explode(".", $this->VersionCurrent);
+        }
+
+        return $this->VersionCurrent;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * Get settings from config class
+     *
+     * @param string $key
+     * @param null $default
+     * @param bool $query_db
+     *
+     * @return string
+     */
+    public function getSetting($key, $default = null, $query_db = true)
+    {
+        return $this->getSettings()->get($key, $default, $query_db);
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * Set value in database/config class
+     *
+     * @param string $key
+     * @param string $value
+     * @param bool $query_db
+     *
+     * @return bool
+     */
+    public function setSetting($key, $value, $query_db = true)
+    {
+        return $this->getSettings()->set($key, $value, $query_db);
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return array
+     */
+    public function getUpdates()
+    {
+        if (is_null($this->UpdateFunctions)) {
+            $this->getUpdatesRequired();
+        }
+
+        return $this->UpdateFunctions;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return array
+     */
+    public function getUpdateFunctions()
+    {
+        if (is_null($this->UpdateFunctions)) {
+            $this->getUpdatesRequired();
+        }
+
+        return $this->UpdateFunctions;
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+
+    /**
+     * @return bool
+     */
+    public function runUpdates()
+    {
+        if (is_null($this->UpdateFunctions)) {
+            $this->getUpdatesRequired();
+        }
+
+        foreach ($this->UpdateFunctions as $updateFunction) {
+            if (method_exists($this, $updateFunction)) {
+                echo " Running " . $updateFunction . "\n";
+                if ($this->$updateFunction()) {
+                    echo "  + " . $updateFunction . " [OKAY]\n";
+                } else {
+                    echo "  + " . $updateFunction . " [FAILED]\n";
+
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 

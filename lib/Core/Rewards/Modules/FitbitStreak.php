@@ -38,8 +38,23 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class FitbitStreak extends Modules
 {
+    /**
+     * @param array $eventDetails
+     */
+    private function setEventDetails($eventDetails)
+    {
+        $this->eventDetails = [
+            "goal" => $eventDetails[0],
+            "days_between" => $eventDetails[1],
+            "streak_start" => $eventDetails[2]
+        ];
 
-    private $debug = false;
+        if (count($eventDetails) == 4) {
+            $this->eventDetails["streak_ended"] = $eventDetails[3];
+        } else {
+            $this->eventDetails["streak_ended"] = false;
+        }
+    }
 
     /**
      * @param array $eventDetails Array holding details of award to issue
@@ -115,24 +130,6 @@ class FitbitStreak extends Modules
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * @param array $eventDetails
-     */
-    private function setEventDetails($eventDetails)
-    {
-        $this->eventDetails = [
-            "goal" => $eventDetails[0],
-            "days_between" => $eventDetails[1],
-            "streak_start" => $eventDetails[2]
-        ];
-
-        if (count($eventDetails) == 4) {
-            $this->eventDetails["streak_ended"] = $eventDetails[3];
-        } else {
-            $this->eventDetails["streak_ended"] = false;
         }
     }
 }

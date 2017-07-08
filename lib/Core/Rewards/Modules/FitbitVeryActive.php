@@ -37,8 +37,13 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class FitbitVeryActive extends Modules
 {
-
-    private $debug = false;
+    /**
+     * @param array $eventDetails
+     */
+    private function setEventDetails($eventDetails)
+    {
+        $this->eventDetails = $eventDetails;
+    }
 
     /**
      * @param array $eventDetails Array holding details of award to issue
@@ -70,13 +75,5 @@ class FitbitVeryActive extends Modules
                 }
             }
         }
-    }
-
-    /**
-     * @param array $eventDetails
-     */
-    private function setEventDetails($eventDetails)
-    {
-        $this->eventDetails = $eventDetails;
     }
 }

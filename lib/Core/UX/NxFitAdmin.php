@@ -187,7 +187,7 @@ class NxFitAdmin
 
             $totalProgress = 0;
             $allowed_triggers = [];
-            foreach ($this->getNxFit()->supportedApi() as $key => $name) {
+            foreach (array_keys($this->getNxFit()->supportedApi()) as $key) {
                 if ($this->getApiSetting('scope_' . $key) && $this->getNxFit()->getUserSetting($_COOKIE['_nx_fb_usr'],
                         'scope_' . $key) && $key != "all"
                 ) {
