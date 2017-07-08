@@ -46,6 +46,7 @@ error_reporting(E_ALL);
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Core
 {
