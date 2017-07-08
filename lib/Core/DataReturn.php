@@ -2661,9 +2661,9 @@ class DataReturn
                 $taskerDataArray['journeys']['name'] = $returnUserRecordJourneysState['name'];
                 $taskerDataArray['journeys']['blurb'] = $returnUserRecordJourneysState['blurb'];
                 $taskerDataArray['journeys']['start_date'] = $returnUserRecordJourneysState['start_date'];
-                $returnUserRecordJourneys = $this->returnUserRecordJourneys();
-                $returnUserRecordJourneys = $returnUserRecordJourneys[1];
-                $taskerDataArray['journeys']['progress'] = $returnUserRecordJourneys['legs_progress'][1];
+                $journeysArray = $this->returnUserRecordJourneys();
+                $journeysArray = $journeysArray[1];
+                $taskerDataArray['journeys']['progress'] = $journeysArray['legs_progress'][1];
 
                 $taskerDataArray['journeys']['legs'] = [
                     "last" => [
