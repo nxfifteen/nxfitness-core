@@ -23,7 +23,6 @@ require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
 
 use Core\Core;
 use Core\Rewards\Delivery\Habitica;
-use Core\Rewards\Rewards;
 use Core\Rewards\RewardsSystem;
 use couchClient;
 use couchNotFoundException;
@@ -3093,36 +3092,6 @@ class ApiBabel {
                     $habiticaInstalled = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_installed', false );
                     if ( ! $habiticaInstalled ) {
                         nxr( 4, "Installing Habitica" );
-                        $rewardClasss = new Rewards( $this->getAppClass(), $this->getActiveUser() );
-                        $sysRewards   = $rewardClasss->getSystemRewards( 'habitica' );
-
-                        $nomieUser = $this->getAppClass()->getUserSetting( $this->activeUser, "nomie_key", null );
-
-                        $installRewards = [];
-                        foreach ( $sysRewards as $sysReward ) {
-                            if ( array_key_exists( "install", $sysReward ) && ( $sysReward[ 'install' ] == "global" || $sysReward[ 'install' ] == $this->getActiveUser() ) ) {
-                                if ( array_key_exists( "source", $sysReward ) && $sysReward[ 'source' ] == "nomie" && ! is_null( $nomieUser ) ) {
-                                    $installRewards[] = $sysReward;
-                                } else if ( array_key_exists( "source", $sysReward ) && $sysReward[ 'source' ] == "fitbit" ) {
-                                    $installRewards[] = $sysReward;
-                                } else if ( ! array_key_exists( "source", $sysReward ) ) {
-                                    $installRewards[] = $sysReward;
-                                }
-                            }
-                        }
-
-                        if ( $installRewards > 0 ) {
-                            foreach ( $installRewards as $installReward ) {
-                                if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_hatch', false ) ) {
-                                    $rewardJson            = json_decode( $installReward[ "reward" ], true );
-                                    $rewardJson[ 'alias' ] = sha1( "nx" . $installReward[ 'name' ] );
-
-                                    $habiticaClass->_create( $rewardJson[ 'type' ], $installReward[ 'name' ], $rewardJson );
-                                    nxr( 5, "Created new " . $rewardJson[ 'type' ] . " " . $installReward[ 'name' ] );
-                                }
-                            }
-                        }
-
                         if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_hatch', false ) ) {
                             $habiticaClass->getHabitRPHPG()->_request( "post", "user/webhook", [
                                 "url"     => $this->getAppClass()->getSetting( 'http/' ) . "/habitica/",
