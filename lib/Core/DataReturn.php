@@ -956,15 +956,15 @@ class DataReturn
             ];
         } else if ($today < strtotime($userPushStartDate)) {
 
-            $nimusOnePushStartDate = date("Y-m-d",
+            $startDateMinOne = date("Y-m-d",
                 strtotime((date("Y") - 1) . '-' . $userPushStartString)); // Default to last Sunday in March
             $nimusOnePushEndDate = date("Y-m-d",
-                strtotime($nimusOnePushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
+                strtotime($startDateMinOne . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
             return [
                 'pushActive' => 'future',
                 'pushLength' => $userPushLength,
-                'showDate' => $nimusOnePushStartDate,
+                'showDate' => $startDateMinOne,
                 'scores' => $dbPush,
                 'goals' => [
                     'Activity' => $userPushTrgActivity,
@@ -979,8 +979,8 @@ class DataReturn
                     'endDateF' => date("jS F, Y", strtotime($userPushEndDate))
                 ],
                 'last' => [
-                    'startDate' => $nimusOnePushStartDate,
-                    'startDateF' => date("jS F, Y", strtotime($nimusOnePushStartDate)),
+                    'startDate' => $startDateMinOne,
+                    'startDateF' => date("jS F, Y", strtotime($startDateMinOne)),
                     'endDate' => $nimusOnePushEndDate,
                     'endDateF' => date("jS F, Y", strtotime($nimusOnePushEndDate))
                 ]
