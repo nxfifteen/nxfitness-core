@@ -117,7 +117,7 @@ test:phpcpd:
     - wget https://phar.phpunit.de/phpcpd.phar -O ./binaries/phpcpd.phar
     - chmod +x ./binaries/phpcpd.phar
   script:
-  - ./binaries/phpcpd.phar ./
+  - ./binaries/phpcpd.phar ./lib
   only:
     - branches
   except:
