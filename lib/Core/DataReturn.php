@@ -2650,35 +2650,35 @@ class DataReturn
         $taskerDataArray['streak'] = $this->returnUserRecordGoalStreak();
 
         $taskerDataArray['journeys'] = [];
-        $returnUserRecordJourneysState = $this->returnUserRecordJourneysState();
+        $journeysState = $this->returnUserRecordJourneysState();
         if (array_key_exists("msg",
-                $returnUserRecordJourneysState) && $returnUserRecordJourneysState['msg'] == "Not on any jounry"
+                $journeysState) && $journeysState['msg'] == "Not on any jounry"
         ) {
             $taskerDataArray['journeys']['name'] = "Not on any journey";
         } else {
-            if (is_array($returnUserRecordJourneysState) && count($returnUserRecordJourneysState) >= 1) {
-                $returnUserRecordJourneysState = $returnUserRecordJourneysState[1];
-                $taskerDataArray['journeys']['name'] = $returnUserRecordJourneysState['name'];
-                $taskerDataArray['journeys']['blurb'] = $returnUserRecordJourneysState['blurb'];
-                $taskerDataArray['journeys']['start_date'] = $returnUserRecordJourneysState['start_date'];
+            if (is_array($journeysState) && count($journeysState) >= 1) {
+                $journeysState = $journeysState[1];
+                $taskerDataArray['journeys']['name'] = $journeysState['name'];
+                $taskerDataArray['journeys']['blurb'] = $journeysState['blurb'];
+                $taskerDataArray['journeys']['start_date'] = $journeysState['start_date'];
                 $journeysArray = $this->returnUserRecordJourneys();
                 $journeysArray = $journeysArray[1];
                 $taskerDataArray['journeys']['progress'] = $journeysArray['legs_progress'][1];
 
                 $taskerDataArray['journeys']['legs'] = [
                     "last" => [
-                        "name" => $returnUserRecordJourneysState['legs']['last']['legs_names'],
-                        "miles" => $returnUserRecordJourneysState['legs']['last']['miles'],
-                        "miles_off" => $returnUserRecordJourneysState['legs']['last']['miles_off'],
-                        "subtitle" => $returnUserRecordJourneysState['legs']['last']['subtitle'],
-                        "narrative" => $returnUserRecordJourneysState['legs']['last']['narrative']
+                        "name" => $journeysState['legs']['last']['legs_names'],
+                        "miles" => $journeysState['legs']['last']['miles'],
+                        "miles_off" => $journeysState['legs']['last']['miles_off'],
+                        "subtitle" => $journeysState['legs']['last']['subtitle'],
+                        "narrative" => $journeysState['legs']['last']['narrative']
                     ],
                     "next" => [
-                        "name" => $returnUserRecordJourneysState['legs']['next']['legs_names'],
-                        "miles" => $returnUserRecordJourneysState['legs']['next']['miles'],
-                        "miles_off" => $returnUserRecordJourneysState['legs']['next']['miles_off'],
-                        "subtitle" => $returnUserRecordJourneysState['legs']['next']['subtitle'],
-                        "narrative" => $returnUserRecordJourneysState['legs']['next']['narrative']
+                        "name" => $journeysState['legs']['next']['legs_names'],
+                        "miles" => $journeysState['legs']['next']['miles'],
+                        "miles_off" => $journeysState['legs']['next']['miles_off'],
+                        "subtitle" => $journeysState['legs']['next']['subtitle'],
+                        "narrative" => $journeysState['legs']['next']['narrative']
                     ]
                 ];
             }
