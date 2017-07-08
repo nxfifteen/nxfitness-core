@@ -601,7 +601,7 @@ class Core
      * @param string $user_fitbit_id Fitbit user ID
      * @param bool $validate
      *
-     * @return bool
+     * @return array|bool
      */
     public function getUserOAuthTokens($user_fitbit_id, $validate = true)
     {
