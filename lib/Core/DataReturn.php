@@ -410,35 +410,9 @@ class DataReturn
     }
 
     /**
-     * @return bool
-     */
-    public function isUser()
-    {
-        return $this->getAppClass()->isUser((String)$this->getUserID());
-    }
-
-    /**
-     * @return String
-     */
-    public function getUserID()
-    {
-        return $this->UserID;
-    }
-
-    /**
-     * @param String $UserID
-     *
-
-     */
-    public function setUserID($UserID)
-    {
-        $this->UserID = $UserID;
-    }
-
-    /**
      * @return array
      */
-    public function returnUserRecordAboutMe()
+    private function returnUserRecordAboutMe()
     {
         $dbSteps = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
@@ -482,7 +456,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordGeoSecure()
+    private function returnUserRecordGeoSecure()
     {
         if (
             (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != $_GET['user']) || !array_key_exists('_nx_fb_usr', $_COOKIE)
@@ -496,7 +470,7 @@ class DataReturn
     /**
      * @return bool
      */
-    public function returnUserRecordActivity()
+    private function returnUserRecordActivity()
     {
         $userActivity = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "activity",
@@ -509,105 +483,11 @@ class DataReturn
     }
 
     /**
-     * @param int $limit
-     * @param string $tableName
-     *
-     * @return array
-     */
-    public function dbWhere($limit = 1, $tableName = '')
-    {
-        if ($limit < 1) {
-            $limit = 1;
-        }
-        if ($tableName != "") {
-            $tableName = $tableName . ".";
-        }
-
-        if ($this->getParamPeriod() == "single") {
-            return [
-                "AND" => [
-                    $tableName . "user" => $this->getUserID(),
-                    $tableName . "date" => $this->getParamDate()
-                ]
-            ];
-        } else if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
-            $days = $this->getParamPeriod();
-            $days = str_ireplace("last", "", $days);
-            $then = date('Y-m-d', strtotime($this->getParamDate() . " -" . $days . " day"));
-
-            return [
-                "AND" => [
-                    $tableName . "user" => $this->getUserID(),
-                    $tableName . "date[<=]" => $this->getParamDate(),
-                    $tableName . "date[>=]" => $then
-                ],
-                "ORDER" => [$tableName . "date" => "DESC"],
-                "LIMIT" => $days
-            ];
-        } else {
-            return [
-                $tableName . "user" => $this->getUserID(),
-                "ORDER" => $tableName . "date DESC",
-                "LIMIT" => $limit
-            ];
-        }
-    }
-
-    /**
-     * @return String
-     */
-    public function getParamPeriod()
-    {
-        if (is_null($this->paramPeriod)) {
-            $this->paramPeriod = "single";
-        } else if ($this->paramPeriod == "all") {
-            $dbUserFirstSeen = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
-                    null, false) . "users", 'seen', ["fuid" => $this->getUserID()]);
-            $now = time(); // or your date as well
-            $your_date = strtotime($dbUserFirstSeen);
-            $datediff = $now - $your_date;
-            $this->paramPeriod = "last" . floor($datediff / (60 * 60 * 24));
-        }
-
-        return $this->paramPeriod;
-    }
-
-    /**
-     *
-     * @param String $paramPeriod
-     */
-    public function setParamPeriod($paramPeriod)
-    {
-        $this->paramPeriod = $paramPeriod;
-    }
-
-    /**
-     * @return String
-     */
-    public function getParamDate()
-    {
-        if (is_null($this->paramDate) || $this->paramDate == "latest") {
-            $this->paramDate = date('Y-m-d');
-        }
-
-        return $this->paramDate;
-    }
-
-    /**
-     *
-     * @param String $paramDate
-     */
-    public function setParamDate($paramDate)
-    {
-        $this->paramDate = $paramDate;
-    }
-
-    /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return array
      */
-    public function returnUserRecordActivityHistory()
+    private function returnUserRecordActivityHistory()
     {
         if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
             $days = $this->getParamPeriod();
@@ -798,7 +678,7 @@ class DataReturn
      *
      * @return array
      */
-    public function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null)
+    private function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null)
     {
         if (is_null($tcxFileName)) {
             if (array_key_exists("tcx", $_GET)) {
@@ -1017,7 +897,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordBadges()
+    private function returnUserRecordBadges()
     {
         $userBadges = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "bages_user", [
@@ -1064,7 +944,7 @@ class DataReturn
     /**
      * @return array|bool
      */
-    public function returnUserRecordBody()
+    private function returnUserRecordBody()
     {
         $return = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "body",
@@ -1096,7 +976,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordChallenger()
+    private function returnUserRecordChallenger()
     {
         return $this->returnUserRecordPush();
     }
@@ -1104,7 +984,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordPush()
+    private function returnUserRecordPush()
     {
         $userPushLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
         $userPushStartString = $this->getAppClass()->getUserSetting($this->getUserID(), "push",
@@ -1270,7 +1150,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordPushCalendar()
+    private function returnUserRecordPushCalendar()
     {
         // Short-circuit if the client did not give us a date range.
         if (!isset($_GET['start']) || !isset($_GET['end'])) {
@@ -1341,7 +1221,7 @@ class DataReturn
      *
      * @return array
      */
-    public function returnUserRecordConky()
+    private function returnUserRecordConky()
     {
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
@@ -1466,7 +1346,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordJourneysState()
+    private function returnUserRecordJourneysState()
     {
         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "journeys_travellers", ["fuid" => $this->getUserID()])
@@ -1641,42 +1521,9 @@ class DataReturn
     }
 
     /**
-     * @param string $start_date
-     *
-     * @return bool|int
-     */
-    public function getUserMilesSince($start_date)
-    {
-        $dbMiles = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null,
-                false) . "steps",
-            ['distance'],
-            ["AND" => ["user" => $this->getUserID(), "date[>=]" => $start_date]]);
-
-        return $dbMiles;
-    }
-
-    /**
-     * @return UserAnalytics
-     */
-    public function getTracking()
-    {
-        return $this->tracking;
-    }
-
-    /**
-     * @param UserAnalytics $tracking
-     *
-
-     */
-    public function setTracking($tracking)
-    {
-        $this->tracking = $tracking;
-    }
-
-    /**
      * @return array
      */
-    public function returnUserRecordDashboard()
+    private function returnUserRecordDashboard()
     {
         // Achivment
         $dbSteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
@@ -1740,7 +1587,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordLeaderboard()
+    private function returnUserRecordLeaderboard()
     {
         $leaderboard = $this->getAppClass()->getUserSetting($this->getUserID(), "leaderboard", "none");
 
@@ -1782,7 +1629,7 @@ class DataReturn
      *
      * @return array
      */
-    public function returnUserRecordFoodDiary()
+    private function returnUserRecordFoodDiary()
     {
         $returnArray = [];
 
@@ -1922,7 +1769,7 @@ class DataReturn
      *
      * @return array
      */
-    public function returnUserRecordKeyPoints()
+    private function returnUserRecordKeyPoints()
     {
         // Get Users Gender and leaderboard ranking
         $dbUsers = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
@@ -2149,7 +1996,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordSleep()
+    private function returnUserRecordSleep()
     {
         $dbSleepRecords = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "sleep", [
@@ -2213,7 +2060,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordSteps()
+    private function returnUserRecordSteps()
     {
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
@@ -2288,7 +2135,7 @@ class DataReturn
     /**
      * @return array|bool
      */
-    public function returnUserRecordStepsGoal()
+    private function returnUserRecordStepsGoal()
     {
         $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps_goals",
@@ -2311,7 +2158,7 @@ class DataReturn
     /**
      * @return array|bool
      */
-    public function returnUserRecordTrackerHistoryChart()
+    private function returnUserRecordTrackerHistoryChart()
     {
         $convertedOutput = $this->returnUserRecordTrackerHistory();
 
@@ -2379,7 +2226,7 @@ class DataReturn
     /**
      * @return array|bool
      */
-    public function returnUserRecordTrackerHistory()
+    private function returnUserRecordTrackerHistory()
     {
         $dbGoals = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
@@ -2425,7 +2272,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordInbox()
+    private function returnUserRecordInbox()
     {
         $returnArray = [];
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
@@ -2483,7 +2330,7 @@ class DataReturn
      *
      * @return array
      */
-    public function returnUserRecordPendingRewards()
+    private function returnUserRecordPendingRewards()
     {
         $returnArray = [];
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
@@ -2564,7 +2411,7 @@ class DataReturn
      *
      * @return array
      */
-    public function returnUserRecordTasker()
+    private function returnUserRecordTasker()
     {
         $taskerDataArray = [];
 
@@ -2823,7 +2670,7 @@ class DataReturn
     /**
      * @return array|bool
      */
-    public function returnUserRecordWater()
+    private function returnUserRecordWater()
     {
         $dbWater = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "water",
@@ -2862,7 +2709,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordFood()
+    private function returnUserRecordFood()
     {
         $dbFoodLog = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "food",
@@ -2902,7 +2749,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordDevices()
+    private function returnUserRecordDevices()
     {
         $dbDevices = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "devices", [
@@ -2968,7 +2815,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordGoalStreak()
+    private function returnUserRecordGoalStreak()
     {
         $taskerDataArray = [
             "avg" => [
@@ -3083,7 +2930,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordJourneys()
+    private function returnUserRecordJourneys()
     {
         if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "journeys_travellers", ["fuid" => $this->getUserID()])
@@ -3211,7 +3058,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordAccount()
+    private function returnUserRecordAccount()
     {
         $supported = $this->getAppClass()->supportedApi();
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
@@ -3302,55 +3149,9 @@ class DataReturn
     }
 
     /**
-     * @param string $trigger
-     *
-     * @return bool|string
-     */
-    public function isAllowed($trigger)
-    {
-        $usrConfig = $this->getAppClass()->getUserSetting($this->getUserID(), 'scope_' . $trigger, true);
-        if (!is_null($usrConfig) AND $usrConfig != 1) {
-            return false;
-        }
-
-        $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, true);
-        if ($sysConfig != 1) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @return bool|string
-     */
-    public function isUserAuthorised() {
-
-        if ( array_key_exists('HTTP_REFERER', $_SERVER) ) {
-            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getSetting("http/")) !== false) {
-                return "hostdomain";
-            }
-            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getUserSetting($this->getUserID(), 'safe_domain', null)) !== false) {
-                return "safedomain";
-            }
-        }
-
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $apiKey = $this->getAppClass()->getDatabase()->get($db_prefix . "users", "api", ["fuid" => $this->getUserID()]);
-
-        if ( array_key_exists('api', $_GET) && $apiKey == $_GET['api'] ) {
-            return "apikey";
-        } else if ( array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] == $_GET['user'] ) {
-            return "cookieish";
-        }
-
-        return false;
-    }
-
-    /**
      * @return array
      */
-    public function returnUserRecordXp()
+    private function returnUserRecordXp()
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
@@ -3377,7 +3178,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordTopBadges()
+    private function returnUserRecordTopBadges()
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $userBadges = $this->getAppClass()->getDatabase()->select($db_prefix . "bages_user",
@@ -3428,7 +3229,7 @@ class DataReturn
      *
      * @return array
      */
-    public function returnUserRecordTracked()
+    private function returnUserRecordTracked()
     {
         $dbSteps = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps';
         $dbStepsGoals = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps_goals';
@@ -3562,7 +3363,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordStepGoal()
+    private function returnUserRecordStepGoal()
     {
         $lastMonday = date('Y-m-d', strtotime('last sunday'));
         $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
@@ -3608,7 +3409,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordFloorGoal()
+    private function returnUserRecordFloorGoal()
     {
         $lastMonday = date('Y-m-d', strtotime('last sunday'));
         $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
@@ -3654,7 +3455,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordActiveGoal()
+    private function returnUserRecordActiveGoal()
     {
         $lastMonday = date('Y-m-d', strtotime('last sunday'));
         $oneWeek = date('Y-m-d', strtotime($lastMonday . ' -6 days'));
@@ -3703,7 +3504,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordTrend()
+    private function returnUserRecordTrend()
     {
         $trendArray = [];
 
@@ -3747,7 +3548,7 @@ class DataReturn
     /**
      * @return array|bool
      */
-    public function returnUserRecordWeightLossForcast()
+    private function returnUserRecordWeightLossForcast()
     {
         $return = array();
 
@@ -3777,7 +3578,7 @@ class DataReturn
     /**
      * @return array|bool
      */
-    public function returnUserRecordWeekPedometer()
+    private function returnUserRecordWeekPedometer()
     {
         $userActivity = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "steps",
@@ -3799,7 +3600,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordSyncState()
+    private function returnUserRecordSyncState()
     {
         $timeToday = strtotime(date("Y-m-d H:i:s")) - (1 * 60 * 60);
         $userFirstSeenDb = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
@@ -3846,7 +3647,7 @@ class DataReturn
      *
      * @return array
      */
-    public function returnUserRecordWeight()
+    private function returnUserRecordWeight()
     {
         $days = 7;
         $returnWeight = [];
@@ -4130,104 +3931,9 @@ class DataReturn
     }
 
     /**
-     * @param array $get
-     *
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     *
      * @return array
      */
-    public function returnUserRecords($get)
-    {
-        if (array_key_exists("period", $get)) {
-            $this->setParamPeriod($get['period']);
-        }
-
-        if (array_key_exists("date", $get)) {
-            $this->setParamDate($get['date']);
-        }
-
-        $functionName = 'returnUserRecord' . $get['data'];
-        if (method_exists($this, $functionName)) {
-            $dbUserName = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
-                    null, false) . "users", 'name', ["fuid" => $this->getUserID()]);
-            $resultsArray = [
-                "error" => "false",
-                "user" => $this->getUserID(),
-                'username' => $dbUserName,
-                "cache" => true,
-                "data" => $get['data'],
-                "time" => 0,
-                "period" => $this->getParamPeriod(),
-                "date" => $this->getParamDate()
-            ];
-
-            $authorised = $this->isUserAuthorised();
-            if (!is_string($authorised)) {
-                $resultsArray[ 'authorised' ] = "failed";
-                $resultsArray[ 'results' ] = [];
-            } else {
-                $resultsArray[ 'authorised' ] = $authorised;
-                $resultsArray['results'] = $this->$functionName();
-            }
-
-            if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
-                $resultsArray = $resultsArray['results']['return'];
-            } else {
-                $resultsArray['cache'] = $this->getForCache();
-            }
-
-            if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
-                $resultsArray['dbLog'] = $this->getAppClass()->getDatabase()->log();
-                foreach ($resultsArray['dbLog'] as $key => $value) {
-                    $resultsArray['dbLog'][$key] = str_ireplace("\"", "`", $value);
-                }
-            }
-
-            if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
-                    $_SERVER)
-            ) {
-                $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
-            }
-
-            return $resultsArray;
-        } else {
-            if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
-                    $_SERVER)
-            ) {
-                $this->getTracking()->track("Error", 103);
-                $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
-            }
-
-            return ["error" => "true", "code" => 103, "msg" => "Unknown dataset: " . $functionName];
-        }
-    }
-
-    /**
-     * @return int
-     */
-    public function getForCache()
-    {
-        if ($this->forCache) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * @param bool $forCache
-     *
-
-     */
-    public function setForCache($forCache)
-    {
-        $this->forCache = $forCache;
-    }
-
-    /**
-     * @return array
-     */
-    public function returnUserRecordNomie()
+    private function returnUserRecordNomie()
     {
         $returnArray = [];
         $returnArray['score'] = $this->returnUserRecordNomieScore()[0];
@@ -4240,7 +3946,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordNomieScore()
+    private function returnUserRecordNomieScore()
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         return [$this->getAppClass()->getDatabase()->sum($db_prefix . "nomie_events",'score', ["fuid" => $this->getUserID(), "datestamp[~]" => $this->getParamDate() . ' %'])];
@@ -4249,7 +3955,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordNomieDashboard()
+    private function returnUserRecordNomieDashboard()
     {
         $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
@@ -4322,7 +4028,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordNomieTrackers()
+    private function returnUserRecordNomieTrackers()
     {
         $dbTrackers = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                 null, false) . "nomie_trackers",
@@ -4441,7 +4147,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordNomieGPS()
+    private function returnUserRecordNomieGPS()
     {
         if (array_key_exists('tracker', $_GET)) {
             $searchTracker = $_GET['tracker'];
@@ -4576,7 +4282,7 @@ class DataReturn
     /**
      * @return array
      */
-    public function returnUserRecordNomieScoreGraph()
+    private function returnUserRecordNomieScoreGraph()
     {
         $days = 30;
         $returnAr = [];
@@ -4636,5 +4342,299 @@ class DataReturn
         }
 
         return $returnAr;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUser()
+    {
+        return $this->getAppClass()->isUser((String)$this->getUserID());
+    }
+
+    /**
+     * @return String
+     */
+    public function getUserID()
+    {
+        return $this->UserID;
+    }
+
+    /**
+     * @param String $UserID
+     *
+
+     */
+    public function setUserID($UserID)
+    {
+        $this->UserID = $UserID;
+    }
+
+    /**
+     * @param int $limit
+     * @param string $tableName
+     *
+     * @return array
+     */
+    public function dbWhere($limit = 1, $tableName = '')
+    {
+        if ($limit < 1) {
+            $limit = 1;
+        }
+        if ($tableName != "") {
+            $tableName = $tableName . ".";
+        }
+
+        if ($this->getParamPeriod() == "single") {
+            return [
+                "AND" => [
+                    $tableName . "user" => $this->getUserID(),
+                    $tableName . "date" => $this->getParamDate()
+                ]
+            ];
+        } else if (substr($this->getParamPeriod(), 0, strlen("last")) === "last") {
+            $days = $this->getParamPeriod();
+            $days = str_ireplace("last", "", $days);
+            $then = date('Y-m-d', strtotime($this->getParamDate() . " -" . $days . " day"));
+
+            return [
+                "AND" => [
+                    $tableName . "user" => $this->getUserID(),
+                    $tableName . "date[<=]" => $this->getParamDate(),
+                    $tableName . "date[>=]" => $then
+                ],
+                "ORDER" => [$tableName . "date" => "DESC"],
+                "LIMIT" => $days
+            ];
+        } else {
+            return [
+                $tableName . "user" => $this->getUserID(),
+                "ORDER" => $tableName . "date DESC",
+                "LIMIT" => $limit
+            ];
+        }
+    }
+
+    /**
+     * @return String
+     */
+    public function getParamPeriod()
+    {
+        if (is_null($this->paramPeriod)) {
+            $this->paramPeriod = "single";
+        } else if ($this->paramPeriod == "all") {
+            $dbUserFirstSeen = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
+                    null, false) . "users", 'seen', ["fuid" => $this->getUserID()]);
+            $now = time(); // or your date as well
+            $your_date = strtotime($dbUserFirstSeen);
+            $datediff = $now - $your_date;
+            $this->paramPeriod = "last" . floor($datediff / (60 * 60 * 24));
+        }
+
+        return $this->paramPeriod;
+    }
+
+    /**
+     *
+     * @param String $paramPeriod
+     */
+    public function setParamPeriod($paramPeriod)
+    {
+        $this->paramPeriod = $paramPeriod;
+    }
+
+    /**
+     * @return String
+     */
+    public function getParamDate()
+    {
+        if (is_null($this->paramDate) || $this->paramDate == "latest") {
+            $this->paramDate = date('Y-m-d');
+        }
+
+        return $this->paramDate;
+    }
+
+    /**
+     *
+     * @param String $paramDate
+     */
+    public function setParamDate($paramDate)
+    {
+        $this->paramDate = $paramDate;
+    }
+
+    /**
+     * @param string $start_date
+     *
+     * @return bool|int
+     */
+    public function getUserMilesSince($start_date)
+    {
+        $dbMiles = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null,
+                false) . "steps",
+            ['distance'],
+            ["AND" => ["user" => $this->getUserID(), "date[>=]" => $start_date]]);
+
+        return $dbMiles;
+    }
+
+    /**
+     * @return UserAnalytics
+     */
+    public function getTracking()
+    {
+        return $this->tracking;
+    }
+
+    /**
+     * @param UserAnalytics $tracking
+     *
+
+     */
+    public function setTracking($tracking)
+    {
+        $this->tracking = $tracking;
+    }
+
+    /**
+     * @param string $trigger
+     *
+     * @return bool|string
+     */
+    public function isAllowed($trigger)
+    {
+        $usrConfig = $this->getAppClass()->getUserSetting($this->getUserID(), 'scope_' . $trigger, true);
+        if (!is_null($usrConfig) AND $usrConfig != 1) {
+            return false;
+        }
+
+        $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, true);
+        if ($sysConfig != 1) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function isUserAuthorised() {
+
+        if ( array_key_exists('HTTP_REFERER', $_SERVER) ) {
+            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getSetting("http/")) !== false) {
+                return "hostdomain";
+            }
+            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getUserSetting($this->getUserID(), 'safe_domain', null)) !== false) {
+                return "safedomain";
+            }
+        }
+
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $apiKey = $this->getAppClass()->getDatabase()->get($db_prefix . "users", "api", ["fuid" => $this->getUserID()]);
+
+        if ( array_key_exists('api', $_GET) && $apiKey == $_GET['api'] ) {
+            return "apikey";
+        } else if ( array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] == $_GET['user'] ) {
+            return "cookieish";
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array $get
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
+     * @return array
+     */
+    public function returnUserRecords($get)
+    {
+        if (array_key_exists("period", $get)) {
+            $this->setParamPeriod($get['period']);
+        }
+
+        if (array_key_exists("date", $get)) {
+            $this->setParamDate($get['date']);
+        }
+
+        $functionName = 'returnUserRecord' . $get['data'];
+        if (method_exists($this, $functionName)) {
+            $dbUserName = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
+                    null, false) . "users", 'name', ["fuid" => $this->getUserID()]);
+            $resultsArray = [
+                "error" => "false",
+                "user" => $this->getUserID(),
+                'username' => $dbUserName,
+                "cache" => true,
+                "data" => $get['data'],
+                "time" => 0,
+                "period" => $this->getParamPeriod(),
+                "date" => $this->getParamDate()
+            ];
+
+            $authorised = $this->isUserAuthorised();
+            if (!is_string($authorised)) {
+                $resultsArray[ 'authorised' ] = "failed";
+                $resultsArray[ 'results' ] = [];
+            } else {
+                $resultsArray[ 'authorised' ] = $authorised;
+                $resultsArray['results'] = $this->$functionName();
+            }
+
+            if (array_key_exists("sole", $resultsArray['results']) && $resultsArray['results']['sole']) {
+                $resultsArray = $resultsArray['results']['return'];
+            } else {
+                $resultsArray['cache'] = $this->getForCache();
+            }
+
+            if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
+                $resultsArray['dbLog'] = $this->getAppClass()->getDatabase()->log();
+                foreach ($resultsArray['dbLog'] as $key => $value) {
+                    $resultsArray['dbLog'][$key] = str_ireplace("\"", "`", $value);
+                }
+            }
+
+            if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
+                    $_SERVER)
+            ) {
+                $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+            }
+
+            return $resultsArray;
+        } else {
+            if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
+                    $_SERVER)
+            ) {
+                $this->getTracking()->track("Error", 103);
+                $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
+            }
+
+            return ["error" => "true", "code" => 103, "msg" => "Unknown dataset: " . $functionName];
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getForCache()
+    {
+        if ($this->forCache) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * @param bool $forCache
+     *
+
+     */
+    public function setForCache($forCache)
+    {
+        $this->forCache = $forCache;
     }
 }
