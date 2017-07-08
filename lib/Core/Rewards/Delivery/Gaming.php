@@ -36,68 +36,6 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class Gaming extends Delivery
 {
-    private $blancing = [];
-
-    /**
-     * @param array $rewardProfile Array holding details of award that has been issued
-     * @param string $state State of award - Issued/Pending
-     * @param string $rewardKey Reward Key
-     * @return array
-     */
-    public function deliver($rewardProfile, $state, $rewardKey)
-    {
-        nxr(4, "Awarding Gaming Rewards");
-
-        if (!array_key_exists("description", $rewardProfile)) {
-            $rewardProfile['description'] = "Un Described";
-        }
-
-        if (array_key_exists("reward", $rewardProfile) && $this->isJson($rewardProfile["reward"])) {
-            $rewardJson = json_decode($rewardProfile["reward"], true);
-        } else {
-            $rewardJson = $rewardProfile;
-        }
-
-        if (!$this->getAppClass()->getDatabase()->has($this->dbPrefix . "users_xp", ['fuid' => $this->getUserID()])) {
-            $this->getAppClass()->getDatabase()->insert($this->dbPrefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100, "fuid" => $this->getUserID()]);
-            $dbCurrent = ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100];
-        } else {
-            $dbCurrent = $this->getAppClass()->getDatabase()->get($this->dbPrefix . "users_xp", ['class', 'xp', 'mana', 'health'], ["fuid" => $this->getUserID()]);
-        }
-
-        $balancingRules = $this->get(["class" => $dbCurrent['class'], "skill" => $rewardJson['skill']], ["xp" => 1, "mana" => 1, "health" => 1]);
-        $healthMulipiler = $dbCurrent['health'] / 100;
-
-        $updatedValues = [];
-        $recordReward = "Gave ";
-        if (array_key_exists("xp", $rewardJson)) {
-            $updatedValues['xp'] = round($dbCurrent['xp'] + (($rewardJson['xp'] * $healthMulipiler) * $balancingRules['xp']), 0, PHP_ROUND_HALF_DOWN);
-            if ($updatedValues['xp'] < 0) $updatedValues['xp'] = 0;
-            $recordReward .= (($rewardJson['xp'] * $healthMulipiler) * $balancingRules['xp']) . " XP, ";
-        }
-        $xpLevel = $this->calculateXP($updatedValues['xp']);
-        if (array_key_exists("mana", $rewardJson)) {
-            $updatedValues['mana'] = round($dbCurrent['mana'] + (($rewardJson['mana'] * $healthMulipiler) * $balancingRules['mana']), 0, PHP_ROUND_HALF_DOWN);
-            if ($updatedValues['mana'] < 0) $updatedValues['mana'] = 0;
-            $recordReward .= (($rewardJson['mana'] * $healthMulipiler) * $balancingRules['mana']) . " Mana, ";
-        }
-        if (array_key_exists("health", $rewardJson)) {
-            $updatedValues['health'] = $this->maxHealth(round($dbCurrent['health'] + $rewardJson['health'] * $balancingRules['health'], 0, PHP_ROUND_HALF_DOWN), $xpLevel['level']);
-            if ($updatedValues['health'] < 0) $updatedValues['health'] = 0;
-            $recordReward .= $rewardJson['health'] * $balancingRules['health'] . " HP, ";
-        }
-
-        $updatedValues['percent'] = $xpLevel['percent'];
-        $updatedValues['level'] = $xpLevel['level'];
-
-        $this->getAppClass()->getDatabase()->update($this->dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getUserID()]);
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-
-        $this->recordDevlivery([], "delivered", $rewardKey);
-
-        return [$rewardProfile['description']];
-    }
-
     /**
      * Return setting value
      * Main function called to query settings for value. Default value can be provided, if not NULL is returned.
@@ -219,5 +157,65 @@ class Gaming extends Delivery
         }
 
         return $health;
+    }
+
+    /**
+     * @param array $rewardProfile Array holding details of award that has been issued
+     * @param string $state State of award - Issued/Pending
+     * @param string $rewardKey Reward Key
+     * @return array
+     */
+    public function deliver($rewardProfile, $state, $rewardKey)
+    {
+        nxr(4, "Awarding Gaming Rewards");
+
+        if (!array_key_exists("description", $rewardProfile)) {
+            $rewardProfile['description'] = "Un Described";
+        }
+
+        if (array_key_exists("reward", $rewardProfile) && $this->isJson($rewardProfile["reward"])) {
+            $rewardJson = json_decode($rewardProfile["reward"], true);
+        } else {
+            $rewardJson = $rewardProfile;
+        }
+
+        if (!$this->getAppClass()->getDatabase()->has($this->dbPrefix . "users_xp", ['fuid' => $this->getUserID()])) {
+            $this->getAppClass()->getDatabase()->insert($this->dbPrefix . "users_xp", ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100, "fuid" => $this->getUserID()]);
+            $dbCurrent = ["class" => "Rebel", "xp" => 0, "mana" => 0, "health" => 100];
+        } else {
+            $dbCurrent = $this->getAppClass()->getDatabase()->get($this->dbPrefix . "users_xp", ['class', 'xp', 'mana', 'health'], ["fuid" => $this->getUserID()]);
+        }
+
+        $balancingRules = $this->get(["class" => $dbCurrent['class'], "skill" => $rewardJson['skill']], ["xp" => 1, "mana" => 1, "health" => 1]);
+        $healthMulipiler = $dbCurrent['health'] / 100;
+
+        $updatedValues = [];
+        $recordReward = "Gave ";
+        if (array_key_exists("xp", $rewardJson)) {
+            $updatedValues['xp'] = round($dbCurrent['xp'] + (($rewardJson['xp'] * $healthMulipiler) * $balancingRules['xp']), 0, PHP_ROUND_HALF_DOWN);
+            if ($updatedValues['xp'] < 0) $updatedValues['xp'] = 0;
+            $recordReward .= (($rewardJson['xp'] * $healthMulipiler) * $balancingRules['xp']) . " XP, ";
+        }
+        $xpLevel = $this->calculateXP($updatedValues['xp']);
+        if (array_key_exists("mana", $rewardJson)) {
+            $updatedValues['mana'] = round($dbCurrent['mana'] + (($rewardJson['mana'] * $healthMulipiler) * $balancingRules['mana']), 0, PHP_ROUND_HALF_DOWN);
+            if ($updatedValues['mana'] < 0) $updatedValues['mana'] = 0;
+            $recordReward .= (($rewardJson['mana'] * $healthMulipiler) * $balancingRules['mana']) . " Mana, ";
+        }
+        if (array_key_exists("health", $rewardJson)) {
+            $updatedValues['health'] = $this->maxHealth(round($dbCurrent['health'] + $rewardJson['health'] * $balancingRules['health'], 0, PHP_ROUND_HALF_DOWN), $xpLevel['level']);
+            if ($updatedValues['health'] < 0) $updatedValues['health'] = 0;
+            $recordReward .= $rewardJson['health'] * $balancingRules['health'] . " HP, ";
+        }
+
+        $updatedValues['percent'] = $xpLevel['percent'];
+        $updatedValues['level'] = $xpLevel['level'];
+
+        $this->getAppClass()->getDatabase()->update($this->dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getUserID()]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+
+        $this->recordDevlivery([], "delivered", $rewardKey);
+
+        return [$rewardProfile['description']];
     }
 }
