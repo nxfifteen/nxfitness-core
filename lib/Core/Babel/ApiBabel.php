@@ -1274,10 +1274,10 @@ class ApiBabel {
                     }
 
                     if ( empty( $usr_foodplan->personalized ) ) {
-                        $usr_foodplan_personalized = "false";
-                        $fallback                  = true;
+                        $usrFoodPersonal = "false";
+                        $fallback        = true;
                     } else {
-                        $usr_foodplan_personalized = (string)$usr_foodplan->personalized;
+                        $usrFoodPersonal = (string)$usr_foodplan->personalized;
                     }
 
                     if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", null,
@@ -1293,7 +1293,7 @@ class ApiBabel {
                             'calories'      => $usr_goals_calories,
                             'intensity'     => $usr_foodplan_intensity,
                             'estimatedDate' => $usr_foodplan_estimatedDate,
-                            'personalized'  => $usr_foodplan_personalized,
+                            'personalized'  => $usrFoodPersonal,
                         ], [
                             "AND" => [
                                 "user" => $this->getActiveUser(),
@@ -1313,7 +1313,7 @@ class ApiBabel {
                             'calories'      => $usr_goals_calories,
                             'intensity'     => $usr_foodplan_intensity,
                             'estimatedDate' => $usr_foodplan_estimatedDate,
-                            'personalized'  => $usr_foodplan_personalized,
+                            'personalized'  => $usrFoodPersonal,
                         ] );
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
                             [
