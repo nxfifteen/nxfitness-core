@@ -110,6 +110,7 @@ class Core
 
     /**
      * @param string $installedVersion
+     * @SuppressWarnings(PHPMD.ExitExpression)
      */
     private function updateCore( $installedVersion ) {
         nxr( 0, "Installed version $installedVersion and should be " . APP_VERSION );

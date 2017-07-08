@@ -630,6 +630,7 @@ class ApiBabel {
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExitExpression)
      * @return AccessToken
      */
     private function getAccessToken() {
@@ -673,6 +674,8 @@ class ApiBabel {
      * @param string $subId Subscription Id
      * @param string $path  Subscription resource path (beginning with slash). Omit to subscribe to all user updates.
      * @param string $subscriberId
+     *
+     * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return mixed
      */
@@ -2081,6 +2084,8 @@ class ApiBabel {
      * @param string|array $pushObject
      * @param bool         $returnObject
      *
+     * @SuppressWarnings(PHPMD.ExitExpression)
+     *
      * @return mixed
      */
     private function pushBabel( $path, $pushObject, $returnObject = false ) {
@@ -3486,6 +3491,8 @@ class ApiBabel {
      * @param string $trigger
      * @param bool   $return
      *
+     * @SuppressWarnings(PHPMD.ExitExpression)
+     *
      * @return mixed|null|SimpleXMLElement|string
      */
     public function pull( $user, $trigger, $return = false ) {
@@ -3835,6 +3842,8 @@ class ApiBabel {
      * @param bool   $returnObject
      * @param bool   $debugOutput
      * @param bool   $supportFailures
+     *
+     * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return mixed
      */
