@@ -135,7 +135,7 @@ test:unit_7.0.18:
 
 # This tool check syntax of PHP files faster than serial check with fancier output.
 test:lint:
-  stage: test
+  stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
   script:
@@ -144,6 +144,7 @@ test:lint:
     - branches
   except:
     - master
+    - develop
 
 # PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standard
 test:phpcs:
@@ -153,9 +154,7 @@ test:phpcs:
   script:
     - bash ./dev/phpcs_cbf.sh
   only:
-    - branches
-  except:
-    - master
+    - develop
 
 # A tool for quickly measuring the size of a PHP project.
 test:phploc:
