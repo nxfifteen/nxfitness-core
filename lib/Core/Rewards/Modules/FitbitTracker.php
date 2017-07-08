@@ -117,7 +117,7 @@ class FitbitTracker extends Modules
 
         $sysRewards = $this->getRewardsClass()->getCatRewards('fitbit_tracker');
 
-        foreach ($sysRewards['steps'] as $score => $sysReward) {
+        foreach (array_keys($sysRewards['steps']) as $score) {
             $scoreRange = explode(":", $score);
             if ($eventDetails['value'] >= $scoreRange[0]) {
                 if (!$this->getRewardsClass()->alreadyAwarded($eventDetails['trigger'] . $eventDetails['date'] . $score)) {
