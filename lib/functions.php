@@ -26,8 +26,6 @@ if (!function_exists("nxr")) {
      * and when run from a command line output is displayed on screen as
      * well
      *
-     * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
-     *
      * @param integer $indentation Log line indenation
      * @param string|array|object $msg String input to be displayed in logs files
      * @param bool $includeDate If true appends datetime stamp
