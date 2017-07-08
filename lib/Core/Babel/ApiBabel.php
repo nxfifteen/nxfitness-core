@@ -1619,13 +1619,13 @@ class ApiBabel {
                     }
 
                     if ( count( $heartRateValues[ 'activities-heart-intraday' ][ 'dataset' ] ) > 0 ) {
-                        $activitiesHeartIntraday = $heartRateValues[ 'activities-heart-intraday' ][ 'dataset' ];
-                        $activitiesHeartIntraday = json_encode( $activitiesHeartIntraday );
+                        $activitiesHeart = $heartRateValues[ 'activities-heart-intraday' ][ 'dataset' ];
+                        $activitiesHeart = json_encode( $activitiesHeart );
 
                         $dbStorage = [
                             "user"  => $this->activeUser,
                             "logId" => $activity->logId,
-                            "json"  => $activitiesHeartIntraday
+                            "json"  => $activitiesHeart
                         ];
 
                         if ( ! $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix",
