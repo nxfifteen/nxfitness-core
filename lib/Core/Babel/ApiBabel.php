@@ -23,10 +23,8 @@ require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
 
 use Core\Core;
 use Core\Rewards\Delivery\Habitica;
-use Core\Rewards\Rewards;
 use Core\Rewards\RewardsSystem;
 use couchClient;
-use couchNotFoundException;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -204,10 +202,10 @@ class ApiBabel {
 
                     try {
                         $trackerGroups = json_decode( json_encode( $couchClient->getDoc( 'hyperStorage-groups' ) ), true );
-                    } catch ( couchNotFoundException $e ) {
+                    } catch ( Exception $e ) {
                         try {
                             $trackerGroups = json_decode( json_encode( $couchClient->getDoc( 'groups' ) ), true );
-                        } catch ( couchNotFoundException $e ) {
+                        } catch ( Exception $e ) {
                             $this->setLastrun( "nomie_trackers", null, true );
 
                             return "-144";
@@ -251,7 +249,7 @@ class ApiBabel {
                             nxr( 0, ".", false, false );
                             try {
                                 $doc = $couchClient->getDoc( $tracker );
-                            } catch ( couchNotFoundException $e ) {
+                            } catch ( Exception $e ) {
                                 $this->getAppClass()->getErrorRecording()->captureException( $e, [
                                     'extra' => [
                                         'php_version'  => phpversion(),
@@ -630,6 +628,7 @@ class ApiBabel {
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExitExpression)
      * @return AccessToken
      */
     private function getAccessToken() {
@@ -673,6 +672,8 @@ class ApiBabel {
      * @param string $subId Subscription Id
      * @param string $path  Subscription resource path (beginning with slash). Omit to subscribe to all user updates.
      * @param string $subscriberId
+     *
+     * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return mixed
      */
@@ -2081,6 +2082,8 @@ class ApiBabel {
      * @param string|array $pushObject
      * @param bool         $returnObject
      *
+     * @SuppressWarnings(PHPMD.ExitExpression)
+     *
      * @return mixed
      */
     private function pushBabel( $path, $pushObject, $returnObject = false ) {
@@ -3088,36 +3091,6 @@ class ApiBabel {
                     $habiticaInstalled = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_installed', false );
                     if ( ! $habiticaInstalled ) {
                         nxr( 4, "Installing Habitica" );
-                        $rewardClasss = new Rewards( $this->getAppClass(), $this->getActiveUser() );
-                        $sysRewards   = $rewardClasss->getSystemRewards( 'habitica' );
-
-                        $nomieUser = $this->getAppClass()->getUserSetting( $this->activeUser, "nomie_key", null );
-
-                        $installRewards = [];
-                        foreach ( $sysRewards as $sysReward ) {
-                            if ( array_key_exists( "install", $sysReward ) && ( $sysReward[ 'install' ] == "global" || $sysReward[ 'install' ] == $this->getActiveUser() ) ) {
-                                if ( array_key_exists( "source", $sysReward ) && $sysReward[ 'source' ] == "nomie" && ! is_null( $nomieUser ) ) {
-                                    $installRewards[] = $sysReward;
-                                } else if ( array_key_exists( "source", $sysReward ) && $sysReward[ 'source' ] == "fitbit" ) {
-                                    $installRewards[] = $sysReward;
-                                } else if ( ! array_key_exists( "source", $sysReward ) ) {
-                                    $installRewards[] = $sysReward;
-                                }
-                            }
-                        }
-
-                        if ( $installRewards > 0 ) {
-                            foreach ( $installRewards as $installReward ) {
-                                if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_hatch', false ) ) {
-                                    $rewardJson            = json_decode( $installReward[ "reward" ], true );
-                                    $rewardJson[ 'alias' ] = sha1( "nx" . $installReward[ 'name' ] );
-
-                                    $habiticaClass->_create( $rewardJson[ 'type' ], $installReward[ 'name' ], $rewardJson );
-                                    nxr( 5, "Created new " . $rewardJson[ 'type' ] . " " . $installReward[ 'name' ] );
-                                }
-                            }
-                        }
-
                         if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_hatch', false ) ) {
                             $habiticaClass->getHabitRPHPG()->_request( "post", "user/webhook", [
                                 "url"     => $this->getAppClass()->getSetting( 'http/' ) . "/habitica/",
@@ -3486,6 +3459,8 @@ class ApiBabel {
      * @param string $trigger
      * @param bool   $return
      *
+     * @SuppressWarnings(PHPMD.ExitExpression)
+     *
      * @return mixed|null|SimpleXMLElement|string
      */
     public function pull( $user, $trigger, $return = false ) {
@@ -3835,6 +3810,8 @@ class ApiBabel {
      * @param bool   $returnObject
      * @param bool   $debugOutput
      * @param bool   $supportFailures
+     *
+     * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return mixed
      */

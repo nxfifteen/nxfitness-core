@@ -16,6 +16,8 @@
  * @link        https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core Git Repo
  * @copyright   2017 Stuart McCulloch Anderson
  * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
+ *
+ * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
  */
 
 if (!function_exists("nxr")) {
@@ -29,6 +31,7 @@ if (!function_exists("nxr")) {
      * @param bool $includeDate If true appends datetime stamp
      * @param bool $newline If true adds a new line character
      * @param bool $echoLine Print a new line or not
+     *
      */
     function nxr($indentation, $msg, $includeDate = true, $newline = true, $echoLine = true)
     {

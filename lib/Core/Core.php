@@ -85,19 +85,7 @@ class Core
 
         $installedVersion = $this->getSetting("version", "0.0.0.1", true);
         if ($installedVersion != APP_VERSION) {
-            nxr(0, "Installed version $installedVersion and should be " . APP_VERSION);
-            $dataReturnClass = new Upgrade($this);
-
-            echo "Upgrading from " . $dataReturnClass->getInstallVersion() . " to " . $dataReturnClass->getInstallingVersion() . ". ";
-            echo $dataReturnClass->getNumUpdates() . " updates outstanding\n";
-
-            if ($dataReturnClass->getNumUpdates() > 0) {
-                $dataReturnClass->runUpdates();
-            }
-
-            unset($dataReturnClass);
-            nxr(0, "Update completed, please re-run the command");
-            die();
+            $this->updateCore( $installedVersion );
         }
 
         $this->errorRecording = new ErrorRecording($this);
@@ -118,6 +106,26 @@ class Core
     private function setDatabase($database)
     {
         $this->database = $database;
+    }
+
+    /**
+     * @param string $installedVersion
+     * @SuppressWarnings(PHPMD.ExitExpression)
+     */
+    private function updateCore( $installedVersion ) {
+        nxr( 0, "Installed version $installedVersion and should be " . APP_VERSION );
+        $dataReturnClass = new Upgrade( $this );
+
+        echo "Upgrading from " . $dataReturnClass->getInstallVersion() . " to " . $dataReturnClass->getInstallingVersion() . ". ";
+        echo $dataReturnClass->getNumUpdates() . " updates outstanding\n";
+
+        if ( $dataReturnClass->getNumUpdates() > 0 ) {
+            $dataReturnClass->runUpdates();
+        }
+
+        unset( $dataReturnClass );
+        nxr( 0, "Update completed, please re-run the command" );
+        die();
     }
 
     /**
