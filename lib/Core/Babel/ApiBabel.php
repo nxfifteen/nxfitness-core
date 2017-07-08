@@ -670,13 +670,13 @@ class ApiBabel {
     /**
      * Add subscription
      *
-     * @param string $id   Subscription Id
-     * @param string $path Subscription resource path (beginning with slash). Omit to subscribe to all user updates.
+     * @param string $subId Subscription Id
+     * @param string $path  Subscription resource path (beginning with slash). Omit to subscribe to all user updates.
      * @param string $subscriberId
      *
      * @return mixed
      */
-    private function pushBabelSubscription( $id, $path = null, $subscriberId = null ) {
+    private function pushBabelSubscription( $subId, $path = null, $subscriberId = null ) {
         try {
             // Try to get an access token using the authorization code grant.
             $accessToken = $this->getAccessToken();
@@ -696,7 +696,7 @@ class ApiBabel {
             }
 
             $request = $this->getLibrary()->getAuthenticatedRequest( 'POST',
-                FITBIT_COM . "/1/user/-" . $path . "/apiSubscriptions/" . $id . ".json", $accessToken,
+                FITBIT_COM . "/1/user/-" . $path . "/apiSubscriptions/" . $subId . ".json", $accessToken,
                 [ "headers" => $userHeaders ] );
             // Make the authenticated API request and get the response.
 
