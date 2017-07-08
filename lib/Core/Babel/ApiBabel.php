@@ -25,7 +25,6 @@ use Core\Core;
 use Core\Rewards\Delivery\Habitica;
 use Core\Rewards\RewardsSystem;
 use couchClient;
-use couchNotFoundException;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -203,10 +202,10 @@ class ApiBabel {
 
                     try {
                         $trackerGroups = json_decode( json_encode( $couchClient->getDoc( 'hyperStorage-groups' ) ), true );
-                    } catch ( couchNotFoundException $e ) {
+                    } catch ( Exception $e ) {
                         try {
                             $trackerGroups = json_decode( json_encode( $couchClient->getDoc( 'groups' ) ), true );
-                        } catch ( couchNotFoundException $e ) {
+                        } catch ( Exception $e ) {
                             $this->setLastrun( "nomie_trackers", null, true );
 
                             return "-144";
@@ -250,7 +249,7 @@ class ApiBabel {
                             nxr( 0, ".", false, false );
                             try {
                                 $doc = $couchClient->getDoc( $tracker );
-                            } catch ( couchNotFoundException $e ) {
+                            } catch ( Exception $e ) {
                                 $this->getAppClass()->getErrorRecording()->captureException( $e, [
                                     'extra' => [
                                         'php_version'  => phpversion(),
