@@ -1786,20 +1786,20 @@ class DataReturn
             'gender'
         ], ["fuid" => $this->getUserID()]);
         if (array_key_exists("personal", $_GET) and $_GET['personal'] == "true") {
-            $he = "I";
-            $is = "am";
-            $hes = "I've";
-            $his = "my";
+            $hePronoun = "I";
+            $isPronoun = "am";
+            $hesPronoun = "I've";
+            $hisPronoun = "my";
         } else {
-            $is = "is";
+            $isPronoun = "is";
             if ($dbUsers['gender'] == "MALE") {
-                $he = "he";
-                $hes = "he's";
-                $his = "his";
+                $hePronoun = "he";
+                $hesPronoun = "he's";
+                $hisPronoun = "his";
             } else {
-                $he = "she";
-                $hes = "she's";
-                $his = "her";
+                $hePronoun = "she";
+                $hesPronoun = "she's";
+                $hisPronoun = "her";
             }
         }
 
@@ -1834,12 +1834,12 @@ class DataReturn
             "max" => [],
             "friends" => []
         ];
-        $returnStats["friends"] = $hes . " " . $dbUsers['friends'] . " friends ";
+        $returnStats["friends"] = $hesPronoun . " " . $dbUsers['friends'] . " friends ";
         if ($dbUsers['rank'] > 1) {
-            $returnStats["friends"] .= "and " . $is . " currently ranked " . $this->ordinalSuffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'],
-                    0) . " steps " . $he . " could take " . $this->ordinalSuffix($dbUsers['rank'] - 1) . " place.";
+            $returnStats["friends"] .= "and " . $isPronoun . " currently ranked " . $this->ordinalSuffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'],
+                    0) . " steps " . $hePronoun . " could take " . $this->ordinalSuffix($dbUsers['rank'] - 1) . " place.";
         } else {
-            $returnStats["friends"] .= "and " . $is . " proudly at the top of the leaderboard.";
+            $returnStats["friends"] .= "and " . $isPronoun . " proudly at the top of the leaderboard.";
         }
 
         /**
@@ -1852,7 +1852,7 @@ class DataReturn
         foreach ($keyPoints['distance'] as $values) {
             if ($dbDistanceAllTime < $values['value']) {
                 array_push($less, number_format(($values['value'] - $dbDistanceAllTime),
-                        0) . " miles until " . $hes . " walked " . $values['less']);
+                        0) . " miles until " . $hesPronoun . " walked " . $values['less']);
             } else if ($dbDistanceAllTime > $values['value']) {
                 $times = number_format($dbDistanceAllTime / $values['value'], 0);
                 if ($times == 1) {
@@ -1863,9 +1863,9 @@ class DataReturn
                     $times = $times . " times";
                 }
                 if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
-                    $msg = $hes . " walked " . $values['more'] . " " . $times;
+                    $msg = $hesPronoun . " walked " . $values['more'] . " " . $times;
                 } else {
-                    $msg = $hes . " walked " . $values['less'] . " " . $times;
+                    $msg = $hesPronoun . " walked " . $values['less'] . " " . $times;
                 }
                 if ($times > 1) {
                     $msg .= "s";
@@ -1905,7 +1905,7 @@ class DataReturn
         foreach ($keyPoints['elevation'] as $values) {
             if ($dbFloorsAllTime < $values['value']) {
                 array_push($less, number_format(($values['value'] - $dbFloorsAllTime),
-                        0) . " meters more until " . $hes . " climbed " . $values['less']);
+                        0) . " meters more until " . $hesPronoun . " climbed " . $values['less']);
             } else if ($dbFloorsAllTime > $values['value']) {
                 $times = number_format($dbFloorsAllTime / $values['value'], 0);
                 if ($times == 1) {
@@ -1916,9 +1916,9 @@ class DataReturn
                     $times = $times . " times";
                 }
                 if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
-                    $msg = $hes . " climbed " . $values['more'] . " " . $times;
+                    $msg = $hesPronoun . " climbed " . $values['more'] . " " . $times;
                 } else {
-                    $msg = $hes . " climbed " . $values['less'] . " " . $times;
+                    $msg = $hesPronoun . " climbed " . $values['less'] . " " . $times;
                 }
                 if ($times > 1) {
                     $msg .= "s";
@@ -1956,7 +1956,7 @@ class DataReturn
             'date'
         ], ["user" => $this->getUserID(), "ORDER" => ["steps" => "DESC"]]);
         array_push($returnStats["max"],
-            $his . " highest step count, totalling " . number_format($dbMaxSteps['steps'],
+            $hisPronoun . " highest step count, totalling " . number_format($dbMaxSteps['steps'],
                 0) . ", for a day was on " . date("jS F, Y", strtotime($dbMaxSteps['date'])) . ".");
 
         $dbMaxDistance = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
@@ -1969,7 +1969,7 @@ class DataReturn
                     0) . " miles.";
         } else {
             array_push($returnStats["max"],
-                $he . " traveled the furthest, " . number_format($dbMaxDistance['distance'],
+                $hePronoun . " traveled the furthest, " . number_format($dbMaxDistance['distance'],
                     0) . " miles, on " . date("jS F, Y", strtotime($dbMaxDistance['date'])) . ".");
         }
 
@@ -1979,7 +1979,7 @@ class DataReturn
             'date'
         ], ["user" => $this->getUserID(), "ORDER" => ["floors" => "DESC"]]);
         array_push($returnStats["max"],
-            $he . " walked up, " . number_format($dbMaxFloors['floors'], 0) . " floors, on " . date("jS F, Y",
+            $hePronoun . " walked up, " . number_format($dbMaxFloors['floors'], 0) . " floors, on " . date("jS F, Y",
                 strtotime($dbMaxFloors['date'])) . ".");
 
         $dbMaxElevation = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
@@ -1991,7 +1991,7 @@ class DataReturn
             $returnStats["max"][(count($returnStats["max"]) - 1)] .= " That's a total of " . number_format($dbMaxElevation['elevation'],
                     2) . " meters.";
         } else {
-            array_push($returnStats["max"], $he . " climed the highest on " . date("jS F, Y",
+            array_push($returnStats["max"], $hePronoun . " climed the highest on " . date("jS F, Y",
                     strtotime($dbMaxElevation['date'])) . ", a total of " . number_format($dbMaxElevation['elevation'],
                     2) . " meters.");
         }
