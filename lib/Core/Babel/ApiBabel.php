@@ -123,313 +123,6 @@ class ApiBabel
     }
 
     /**
-     * @param Fitbit $fitbitapi
-     *
-
-     */
-    public function setLibrary($fitbitapi)
-    {
-        $this->fitbitapi = $fitbitapi;
-    }
-
-    /**
-     * @param mixed $userAccessToken
-     *
-
-     */
-    public function setUserAccessToken($userAccessToken)
-    {
-        $this->userAccessToken = $userAccessToken;
-    }
-
-    /**
-     * @param string $user
-     * @param string $trigger
-     * @param bool $return
-     *
-     * @return mixed|null|SimpleXMLElement|string
-     */
-    public function pull($user, $trigger, $return = false)
-    {
-        $this->setActiveUser($user);
-        $xml = null;
-
-        // Check we have a valid user
-        if ($this->getAppClass()->isUser($user)) {
-            nxr(1, "Checking $user for minecraft reward support");
-
-            nxr(2, "Reward system ready");
-            $this->RewardsSystem = new RewardsSystem($user);
-
-            $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
-            if ($trigger != "habitica" && $trigger != "nomie_trackers" && strtotime($userCoolDownTime) >= date("U")) {
-                nxr(0,
-                    "User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that.");
-                die();
-            }
-
-            // PULL - users profile
-            if ($trigger == "all" || $trigger == "nomie_trackers") {
-                $pull = $this->pullNomieTrackers();
-                if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                    nxr(2, "Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
-                }
-            }
-
-            // Check this user has valid access to the Fitbit AIP
-            if ($this->getAppClass()->valdidateOAuth($this->getAppClass()->getUserOAuthTokens($user, false))) {
-
-                // If we've asked for a complete update then don't abide by cooldown times
-                if ($trigger == "all") {
-                    $this->forceSync = true;
-                }
-
-                // PULL - users profile
-                if ($trigger == "all" || $trigger == "profile") {
-                    $pull = $this->pullBabelProfile();
-                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(2, "Error profile: " . $this->getAppClass()->lookupErrorCode($pull));
-                    }
-                }
-
-                // PULL - Devices
-                if ($trigger == "all" || $trigger == "devices") {
-                    $pull = $this->pullBabelDevices();
-                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(2, "Error devices: " . $this->getAppClass()->lookupErrorCode($pull));
-                    }
-                }
-
-                // PULL - Badges
-                if ($trigger == "all" || $trigger == "badges") {
-                    $pull = $this->pullBabelBadges();
-                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(2, "Error badges: " . $this->getAppClass()->lookupErrorCode($pull));
-                    }
-                }
-
-                if ($trigger == "all" || $trigger == "leaderboard") {
-                    $pull = $this->pullBabelLeaderboard();
-                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(2, "Error leaderboard: " . $this->getAppClass()->lookupErrorCode($pull));
-                    }
-                }
-
-                if ($trigger == "all" || $trigger == "foods" || $trigger == "goals_calories") {
-                    $pull = $this->pullBabelCaloriesGoals();
-                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(2, "Error goals_calories: " . $this->getAppClass()->lookupErrorCode($pull));
-                    }
-                }
-
-                if ($trigger == "all" || $trigger == "activity_log") {
-                    $pull = $this->pullBabelActivityLogs();
-                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(2, "Error activity_log: " . $this->getAppClass()->lookupErrorCode($pull));
-                    }
-                }
-
-                if ($trigger == "all" || $trigger == "goals") {
-                    nxr(0, ' Downloading Goals');
-                    $pull = $this->pullBabelUserGoals();
-                    if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                        nxr(2, "Error goals: " . $this->getAppClass()->lookupErrorCode($pull));
-                    }
-                }
-
-                // Set variables require bellow
-                $currentDate = new DateTime ('now');
-                $interval = DateInterval::createFromDateString('1 day');
-
-                if ($trigger == "all" || $trigger == "heart") {
-                    // Check we're allowed to pull these records here rather than at each loop
-                    $isAllowed = $this->isAllowed("heart");
-                    if (!is_numeric($isAllowed)) {
-                        if ($this->isTriggerCooled("heart")) {
-                            $period = new DatePeriod ($this->getLastCleanRun("heart"), $interval, $currentDate);
-                            /** @var DateTime $dt */
-                            foreach ($period as $dt) {
-                                nxr(0, ' Downloading Heart Logs for ' . $dt->format("l jS M Y"));
-                                $pull = $this->pullBabelHeartRateSeries($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(2, "Error Heart: " . $this->getAppClass()->lookupErrorCode($pull));
-                                }
-                            }
-                        } else {
-                            if (!IS_CRON_RUN) {
-                                nxr(2, "Error Heart: " . $this->getAppClass()->lookupErrorCode(-143));
-                            }
-                        }
-                    }
-                }
-
-                if ($trigger == "all" || $trigger == "water" || $trigger == "foods") {
-                    // Check we're allowed to pull these records here rather than at each loop
-                    $isAllowed = $this->isAllowed("water");
-                    if (!is_numeric($isAllowed)) {
-                        if ($this->isTriggerCooled("water")) {
-                            $period = new DatePeriod ($this->getLastCleanRun("water"), $interval, $currentDate);
-                            /**
-                             * @var DateTime $dt
-                             */
-                            foreach ($period as $dt) {
-                                nxr(0, ' Downloading Water Logs for ' . $dt->format("l jS M Y"));
-                                $pull = $this->pullBabelWater($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(2, "Error water: " . $this->getAppClass()->lookupErrorCode($pull));
-                                }
-                            }
-                        } else {
-                            if (!IS_CRON_RUN) {
-                                nxr(2, "Error water: " . $this->getAppClass()->lookupErrorCode(-143));
-                            }
-                        }
-                    }
-                }
-
-                if ($trigger == "all" || $trigger == "sleep") {
-                    $isAllowed = $this->isAllowed("sleep");
-                    if (!is_numeric($isAllowed)) {
-                        if ($this->isTriggerCooled("sleep")) {
-                            $period = new DatePeriod ($this->getLastCleanRun("sleep"), $interval, $currentDate);
-                            /**
-                             * @var DateTime $dt
-                             */
-                            foreach ($period as $dt) {
-                                nxr(0, ' Downloading Sleep Logs for ' . $dt->format("l jS M Y"));
-                                $pull = $this->pullBabelSleep($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(2, "Error sleep: " . $this->getAppClass()->lookupErrorCode($pull));
-                                }
-                            }
-                        } else {
-                            if (!IS_CRON_RUN) {
-                                nxr(2, "Error sleep: " . $this->getAppClass()->lookupErrorCode(-143));
-                            }
-                        }
-                    }
-                }
-
-                if ($trigger == "all" || $trigger == "body") {
-                    $isAllowed = $this->isAllowed("body");
-                    if (!is_numeric($isAllowed)) {
-                        if ($this->isTriggerCooled("body")) {
-                            $period = new DatePeriod ($this->getLastCleanRun("body"), $interval, $currentDate);
-                            /**
-                             * @var DateTime $dt
-                             */
-                            foreach ($period as $dt) {
-                                nxr(0, ' Downloading Body Logs for ' . $dt->format("l jS M Y"));
-                                $pull = $this->pullBabelBody($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(2, "Error body: " . $this->getAppClass()->lookupErrorCode($pull));
-                                }
-                            }
-                        } else {
-                            if (!IS_CRON_RUN) {
-                                nxr(2, "Error body: " . $this->getAppClass()->lookupErrorCode(-143));
-                            }
-                        }
-                    }
-                }
-
-                if ($trigger == "all" || $trigger == "foods") {
-                    $isAllowed = $this->isAllowed("foods");
-                    if (!is_numeric($isAllowed)) {
-                        if ($this->isTriggerCooled("foods")) {
-                            $period = new DatePeriod ($this->getLastCleanRun("foods"), $interval, $currentDate);
-                            /**
-                             * @var DateTime $dt
-                             */
-                            foreach ($period as $dt) {
-                                nxr(0, ' Downloading Foods Logs for ' . $dt->format("l jS M Y"));
-                                $pull = $this->pullBabelMeals($dt->format("Y-m-d"));
-                                if ($this->isApiError($pull) && !IS_CRON_RUN) {
-                                    nxr(2, "Error foods: " . $this->getAppClass()->lookupErrorCode($pull));
-                                }
-                            }
-                        } else {
-                            if (!IS_CRON_RUN) {
-                                nxr(2, "Error foods: " . $this->getAppClass()->lookupErrorCode(-143));
-                            }
-                        }
-                    }
-                }
-
-                $timeSeries = [
-                    "steps" => "300",
-                    "distance" => "300",
-                    "floors" => "300",
-                    "elevation" => "300",
-                    "minutesSedentary" => "1800",
-                    "minutesLightlyActive" => "1800",
-                    "minutesFairlyActive" => "1800",
-                    "minutesVeryActive" => "1800",
-                    "caloriesOut" => "1800"
-                ];
-                if ($trigger == "all" || $trigger == "activities") {
-                    $isAllowed = $this->isAllowed("activities");
-                    if (!is_numeric($isAllowed)) {
-                        if ($this->isTriggerCooled("activities")) {
-                            nxr(1, "Downloading Series Info");
-                            foreach ($timeSeries as $activity => $timeout) {
-                                $this->pullBabelTimeSeries($activity, true);
-                            }
-                            if (isset($this->holdingVar)) {
-                                unset($this->holdingVar);
-                            }
-                            $this->setLastrun("activities", null, true);
-                        }
-                    }
-                } else if (array_key_exists($trigger, $timeSeries)) {
-                    $isAllowed = $this->isAllowed($trigger);
-                    if (!is_numeric($isAllowed)) {
-                        $this->pullBabelTimeSeries($trigger);
-                    }
-                }
-
-                if ($trigger == "all") {
-                    $this->getAppClass()->getDatabase()->update($this->getAppClass()->getSetting("db_prefix", null,
-                            false) . "users", [
-                        "lastrun" => $currentDate->format("Y-m-d H:i:s")
-                    ], ["fuid" => $this->getActiveUser()]);
-                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
-                        [
-                            "METHOD" => __METHOD__,
-                            "LINE" => __LINE__
-                        ]);
-                }
-
-                // PULL - users profile
-                if ($trigger == "all" || $trigger == "habitica") {
-                    nxr(2, "habitica");
-                    $this->pullHabitica();
-                }
-
-            } else {
-                nxr(0, "User has not yet authenticated with Fitbit");
-            }
-
-        }
-
-        if ($return) {
-            return $xml;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * @param mixed $activeUser
-     *
-
-     */
-    public function setActiveUser($activeUser)
-    {
-        $this->activeUser = $activeUser;
-    }
-
-    /**
      * @return Core
      */
     private function getAppClass()
@@ -745,66 +438,11 @@ class ApiBabel
     }
 
     /**
-     * @param string $trigger
-     * @param bool $quiet
-     *
-     * @return bool|string
-     */
-    public function isAllowed($trigger, $quiet = false)
-    {
-        if ($trigger == "profile") {
-            return true;
-        }
-
-        $usrConfig = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'scope_' . $trigger, true);
-        if (!is_null($usrConfig) AND $usrConfig != 1) {
-            if (!$quiet) {
-                nxr(1, "Aborted $trigger disabled in user config");
-            }
-
-            return "-145";
-        }
-
-        $sysConfig = $this->getAppClass()->getSetting('scope_' . $trigger, true);
-        if ($sysConfig != 1) {
-            if (!$quiet) {
-                nxr(1, "Aborted $trigger disabled in system config");
-            }
-
-            return "-146";
-        }
-
-        return true;
-    }
-
-    /**
      * @return mixed
      */
     private function getActiveUser()
     {
         return $this->activeUser;
-    }
-
-    /**
-     * @param string $trigger
-     * @param bool $reset
-     *
-     * @return bool
-     */
-    public function isTriggerCooled($trigger, $reset = false)
-    {
-        if ($this->forceSync) {
-            return true;
-        } else {
-            $currentDate = new DateTime ('now');
-            $coolDownTill = $this->getCoolDown($trigger, $reset);
-
-            if ($coolDownTill->format("U") < $currentDate->format("U")) {
-                return true;
-            } else {
-                return false;
-            }
-        }
     }
 
     /**
@@ -927,20 +565,6 @@ class ApiBabel
     }
 
     /**
-     * @param string|int $xml
-     *
-     * @return bool
-     */
-    public function isApiError($xml)
-    {
-        if (is_numeric($xml) AND $xml < 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * @return mixed|null|SimpleXMLElement|string
      */
     private function pullBabelProfile()
@@ -1016,101 +640,6 @@ class ApiBabel
     }
 
     /**
-     * @param string $path
-     * @param bool $returnObject
-     * @param bool $debugOutput
-     * @param bool $supportFailures
-     *
-     * @return mixed
-     */
-    public function pullBabel($path, $returnObject = false, $debugOutput = false, $supportFailures = false)
-    {
-        //$getRateRemaining = $this->getLibrary()->getRateRemaining();
-        //if (is_numeric($getRateRemaining) && $getRateRemaining <= 2) {
-        //    $restMinutes = round($this->getLibrary()->getRateReset() / 60, 0);
-        //    nxr(1, "*** Rate limit reached. Please try again in about " . $restMinutes . " minutes ***");
-        //
-        //    $currentDate = new DateTime();
-        //    $currentDate = $currentDate->modify("+" . ($restMinutes + 5) . " minutes");
-        //    $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate);
-        //
-        //    die();
-        //} else if (is_numeric($getRateRemaining) && $getRateRemaining < 50) {
-        //    nxr(1, "*** Down to your last " . $getRateRemaining . " calls ***");
-        //}
-
-        try {
-            // Try to get an access token using the authorization code grant.
-            $accessToken = $this->getAccessToken();
-
-            $path = str_replace(FITBIT_COM . "/1/", "", $path);
-
-            $request = $this->getLibrary()->getAuthenticatedRequest('GET', FITBIT_COM . "/1/" . $path,
-                $accessToken);
-            // Make the authenticated API request and get the response.
-            $response = $this->getLibrary()->getParsedResponse($request);
-
-            if ($returnObject) {
-                $response = json_decode(json_encode($response), false);
-            }
-
-            if ($debugOutput) {
-                nxr(0, $request);
-                nxr(0, $response);
-            }
-
-            return $response;
-        } catch (IdentityProviderException $e) {
-            // Failed to get the access token or user details.
-
-            if ($e->getCode() == 429) {
-                nxr(1, "Rate limit reached. Please try again later");
-
-                $currentDate = new DateTime();
-                $currentDate = $currentDate->modify("+1 hours");
-                $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate->format("Y-m-d H:05:00"));
-
-                $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-                $this->getAppClass()->getDatabase()->insert($db_prefix . "inbox",
-                    [
-                        "fuid" => $this->activeUser,
-                        "expires" => $currentDate->format("Y-m-d H:05:30"),
-                        "ico" => "icon-cloud-download",
-                        "icoColour" => "bg-danger",
-                        "subject" => "Rate limit reached",
-                        "body" => "Please try again after " . $currentDate->format("Y-m-d H:05:00"),
-                        "bold" => "API Error"
-                    ]
-                );
-
-                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-
-                die();
-            } else if ($e->getMessage() == "401") {
-                nxr(0, "ERR401: '" . $e->getMessage() . "'");
-                die();
-            } else {
-                $this->getAppClass()->getErrorRecording()->captureException($e, array(
-                    'level' => 'error',
-                    'extra' => array(
-                        'api_path' => $path,
-                        'user' => $this->activeUser,
-                        'php_version' => phpversion(),
-                        'core_version' => $this->getAppClass()->getSetting("version", "0.0.0.1", TRUE),
-                        'error_code' => $e->getCode(),
-                        'error_message' => $e->getMessage()
-                    ),
-                ));
-                if ($supportFailures) {
-                    return $e->getCode();
-                } else {
-                    return null;
-                }
-            }
-        }
-    }
-
-    /**
      * @return AccessToken
      */
     private function getAccessToken()
@@ -1147,14 +676,6 @@ class ApiBabel
         } else {
             return $this->userAccessToken;
         }
-    }
-
-    /**
-     * @return Fitbit
-     */
-    public function getLibrary()
-    {
-        return $this->fitbitapi;
     }
 
     /**
@@ -2059,6 +1580,8 @@ class ApiBabel
 
     /**
      * @param string $activity
+     *
+     * @return bool|string
      */
     private function pullBabelHeartIntraday($activity)
     {
@@ -2160,8 +1683,12 @@ class ApiBabel
                     nxr(3,
                         "Activity Heart Rate Skipped. Unable to process across dates. Activity started on " . $startDate . " and ended on " . $endDate);
                 }
+
+                return true;
             }
         }
+
+        return $isAllowed;
     }
 
     /**
@@ -3022,31 +2549,6 @@ class ApiBabel
     }
 
     /**
-     * @param string $user
-     * @param string $string
-     *
-     * @return bool|int
-     */
-    public function getDBCurrentBody($user, $string)
-    {
-        if (!$user) {
-            return "No default user selected";
-        }
-
-        $return = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null,
-                false) . "body", $string, [
-            "user" => $user,
-            "ORDER" => ["date" => "DESC"]
-        ]);
-
-        if (!is_numeric($return)) {
-            return 0;
-        } else {
-            return $return;
-        }
-    }
-
-    /**
      * @param string $targetDate
      *
      * @return mixed
@@ -3330,141 +2832,6 @@ class ApiBabel
     }
 
     /**
-     * Launch TimeSeries requests
-     * Allowed types are:
-     *            'caloriesIn', 'water'
-     *            'caloriesOut', 'steps', 'distance', 'floors', 'elevation'
-     *            'minutesSedentary', 'minutesLightlyActive', 'minutesFairlyActive', 'minutesVeryActive',
-     *            'activityCalories',
-     *            'tracker_caloriesOut', 'tracker_steps', 'tracker_distance', 'tracker_floors', 'tracker_elevation'
-     *            'startTime', 'timeInBed', 'minutesAsleep', 'minutesAwake', 'awakeningsCount',
-     *            'minutesToFallAsleep', 'minutesAfterWakeup',
-     *            'efficiency'
-     *            'weight', 'bmi', 'fat'
-     *
-     * @param string $type
-     * @param string|DateTime $baseDate DateTime or 'today', to_period
-     * @param string|DateTime $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
-     *
-     * @return array|boolean
-     */
-    public function getTimeSeries($type, $baseDate, $to_period)
-    {
-        switch ($type) {
-            case 'caloriesIn':
-                $path = '/foods/log/caloriesIn';
-                break;
-            case 'water':
-                $path = '/foods/log/water';
-                break;
-
-            case 'caloriesOut':
-                $path = '/activities/calories';
-                break;
-            case 'steps':
-                $path = '/activities/steps';
-                break;
-            case 'distance':
-                $path = '/activities/distance';
-                break;
-            case 'floors':
-                $path = '/activities/floors';
-                break;
-            case 'elevation':
-                $path = '/activities/elevation';
-                break;
-            case 'minutesSedentary':
-                $path = '/activities/minutesSedentary';
-                break;
-            case 'minutesLightlyActive':
-                $path = '/activities/minutesLightlyActive';
-                break;
-            case 'minutesFairlyActive':
-                $path = '/activities/minutesFairlyActive';
-                break;
-            case 'minutesVeryActive':
-                $path = '/activities/minutesVeryActive';
-                break;
-            case 'activityCalories':
-                $path = '/activities/activityCalories';
-                break;
-
-            case 'tracker_caloriesOut':
-                $path = '/activities/log/tracker/calories';
-                break;
-            case 'tracker_steps':
-                $path = '/activities/log/tracker/steps';
-                break;
-            case 'tracker_distance':
-                $path = '/activities/log/tracker/distance';
-                break;
-            case 'tracker_floors':
-                $path = '/activities/log/tracker/floors';
-                break;
-            case 'tracker_elevation':
-                $path = '/activities/log/tracker/elevation';
-                break;
-
-            case 'startTime':
-                $path = '/sleep/startTime';
-                break;
-            case 'timeInBed':
-                $path = '/sleep/timeInBed';
-                break;
-            case 'minutesAsleep':
-                $path = '/sleep/minutesAsleep';
-                break;
-            case 'awakeningsCount':
-                $path = '/sleep/awakeningsCount';
-                break;
-            case 'minutesAwake':
-                $path = '/sleep/minutesAwake';
-                break;
-            case 'minutesToFallAsleep':
-                $path = '/sleep/minutesToFallAsleep';
-                break;
-            case 'minutesAfterWakeup':
-                $path = '/sleep/minutesAfterWakeup';
-                break;
-            case 'efficiency':
-                $path = '/sleep/efficiency';
-                break;
-
-            case 'weight':
-                $path = '/body/weight';
-                break;
-            case 'bmi':
-                $path = '/body/bmi';
-                break;
-            case 'fat':
-                $path = '/body/fat';
-                break;
-
-            default:
-                return false;
-        }
-
-        $response = $this->pullBabel('user/' . $this->getActiveUser() . $path . '/date/' . (is_string($baseDate) ? $baseDate : $baseDate->format('Y-m-d')) . "/" . (is_string($to_period) ? $to_period : $to_period->format('Y-m-d')) . '.json',
-            true);
-        if (is_null($response)) {
-            return "-141";
-        }
-
-        switch ($type) {
-            case 'caloriesOut':
-                $objectKey = "activities-calories";
-                break;
-            default:
-                $objectKey = "activities-" . $type;
-                break;
-        }
-
-        $response = $response->$objectKey;
-
-        return $response;
-    }
-
-    /**
      * @param string $dateTime
      * @param string $goal
      * @param boolean $value
@@ -3671,7 +3038,6 @@ class ApiBabel
             }
 
             $FirstSeen = $this->getUserFirstSeen()->format("Y-m-d");
-            $todaysDate = new DateTime ('now');
             foreach ($userTimeSeries as $series) {
                 if (strtotime($series->dateTime) >= strtotime($FirstSeen)) {
                     nxr(4,
@@ -3756,9 +3122,7 @@ class ApiBabel
 
                     $habiticaClass = new Habitica($this->getAppClass(), $this->getActiveUser());
                     $habiticaInstalled = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_installed', false);
-                    if ($habiticaInstalled) {
-                        nxr(4, "Habitica Already Installed");
-                    } else {
+                    if ( ! $habiticaInstalled ) {
                         nxr(4, "Installing Habitica");
                         $rewardClasss = new Rewards($this->getAppClass(), $this->getActiveUser());
                         $sysRewards = $rewardClasss->getSystemRewards('habitica');
@@ -3824,14 +3188,20 @@ class ApiBabel
                     }
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
-                    $avatarFolder = dirname(__FILE__) . "/../../../images/avatars/";
-                    if (file_exists($avatarFolder) AND is_writable($avatarFolder)) {
-                        nxr(4, "Updating User Habitica Avatar");
-                        if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
-                            //file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("http://10.1.1.1:3000/export/avatar-" . $user['id'] . ".png"));
-                        } else {
-                            file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
+                    if ( $this->isTriggerCooled( "habitica_avatar", false, false ) ) {
+                        $avatarFolder = dirname( __FILE__ ) . "/../../../images/avatars/";
+                        if ( file_exists( $avatarFolder ) AND is_writable( $avatarFolder ) ) {
+                            nxr( 4, "Updating User Habitica Avatar" );
+                            if ( defined( 'ENVIRONMENT' ) && ENVIRONMENT == "develop" ) {
+                                //file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("http://10.1.1.1:3000/export/avatar-" . $user['id'] . ".png"));
+                            } else {
+                                file_put_contents( $avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents( "https://habitica.com/export/avatar-" . $user[ 'id' ] . ".png" ) );
+                            }
                         }
+
+                        $this->setLastrun( "habitica_avatar", null, true );
+                    } else {
+                        nxr( 4, "Avatar still too hot" );
                     }
 
                     $pets = [];
@@ -3843,144 +3213,168 @@ class ApiBabel
                     }
 
                     if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_hatch', false)) {
-                        nxr( 4, "Hatching your Pets" );
-                        $eggs            = $user[ 'items' ][ 'eggs' ];
-                        $hatchingPotions = $user[ 'items' ][ 'hatchingPotions' ];
-                        if ( count( $hatchingPotions ) > 0 ) {
-                            if ( count( $eggs ) > 0 ) {
-                                foreach ( $eggs as $egg => $count ) {
-                                    if ( $count > 0 ) {
-                                        $eggHatched = false;
-                                        nxr( 5, "You have $count $egg eggs" );
-                                        for ( $i = 1; $i <= $count; $i++ ) {
-                                            foreach ( $hatchingPotions as $potion => $potionCount ) {
-                                                if ( $potionCount > 0 && ! array_key_exists( $egg . "-" . $potion, $pets ) ) {
-                                                    if(in_array($egg . "-" . $potion, $habiticaClass->getHabitRPHPG()->pet_types)) {
-                                                        nxr( 6, "You dont yet have a $potion $egg pet - hatching ($potionCount)" );
-                                                        $pets[ $egg . "-" . $potion ] = 5;
-                                                        $hatchingPotions[ $potion ]   = $hatchingPotions[ $potion ] - 1;
-                                                        $habiticaClass->getHabitRPHPG()->hatch( $egg, $potion, false );
-                                                        $eggHatched = true;
-                                                        break;
+                        if ( $this->isTriggerCooled( "habitica_hatch", false, false ) ) {
+                            nxr( 4, "Hatching your Pets" );
+                            $eggs            = $user[ 'items' ][ 'eggs' ];
+                            $hatchingPotions = $user[ 'items' ][ 'hatchingPotions' ];
+                            if ( count( $hatchingPotions ) > 0 ) {
+                                if ( count( $eggs ) > 0 ) {
+                                    foreach ( $eggs as $egg => $count ) {
+                                        if ( $count > 0 ) {
+                                            $eggHatched = false;
+                                            nxr( 5, "You have $count $egg eggs" );
+                                            for ( $i = 1; $i <= $count; $i++ ) {
+                                                foreach ( $hatchingPotions as $potion => $potionCount ) {
+                                                    if ( $potionCount > 0 && ! array_key_exists( $egg . "-" . $potion, $pets ) ) {
+                                                        if ( in_array( $egg . "-" . $potion, $habiticaClass->getHabitRPHPG()->pet_types ) ) {
+                                                            nxr( 6, "You dont yet have a $potion $egg pet - hatching ($potionCount)" );
+                                                            $pets[ $egg . "-" . $potion ] = 5;
+                                                            $hatchingPotions[ $potion ]   = $hatchingPotions[ $potion ] - 1;
+                                                            $habiticaClass->getHabitRPHPG()->hatch( $egg, $potion, false );
+                                                            $eggHatched = true;
+                                                            break;
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
 
-                                        if (!$eggHatched && $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_eggs', true)) {
-                                            if ($count > $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)) {
-                                                nxr( 6, "No eggs hatched, selling off your spare $egg" );
-                                                nxr(7, ".", true, false);
-                                                for ( $i = 0; $i <= ($count - $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_max_eggs', 10)); $i++ ) {
-                                                    nxr(0, ".", false, false);
-                                                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/eggs/$egg", [] );
+                                            if ( ! $eggHatched && $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_sell_eggs', true ) ) {
+                                                if ( $count > $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_eggs', 10 ) ) {
+                                                    nxr( 6, "No eggs hatched, selling off your spare $egg" );
+                                                    nxr( 7, ".", true, false );
+                                                    for ( $i = 0; $i <= ( $count - $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_eggs', 10 ) ); $i++ ) {
+                                                        nxr( 0, ".", false, false );
+                                                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/eggs/$egg", [] );
+                                                    }
+                                                    nxr( 0, " [SOLD]", false );
                                                 }
-                                                nxr(0, " [SOLD]", false);
                                             }
                                         }
                                     }
                                 }
-                            }
 
-                            if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_sell_potions', false)) {
-                                foreach ( $hatchingPotions as $potion => $potionCount ) {
-                                    if ( $potionCount > $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ) {
-                                        nxr( 5, "You've got more $potion than needed" );
-                                        nxr(6, ".", true, false);
-                                        for ( $i = 0; $i <= ( $potionCount - $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ); $i++ ) {
-                                            nxr(0, ".", false, false);
-                                            $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/hatchingPotions/$potion", [] );
+                                if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_sell_potions', false ) ) {
+                                    foreach ( $hatchingPotions as $potion => $potionCount ) {
+                                        if ( $potionCount > $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ) {
+                                            nxr( 5, "You've got more $potion than needed" );
+                                            nxr( 6, ".", true, false );
+                                            for ( $i = 0; $i <= ( $potionCount - $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_max_potions', 50 ) ); $i++ ) {
+                                                nxr( 0, ".", false, false );
+                                                $habiticaClass->getHabitRPHPG()->_request( "post", "user/sell/hatchingPotions/$potion", [] );
+                                            }
+                                            nxr( 0, " [SOLD]", false );
                                         }
-                                        nxr(0, " [SOLD]", false);
                                     }
                                 }
                             }
+
+                            $this->setLastrun( "habitica_hatch", null, true );
+                        } else {
+                            nxr( 4, "Hatching still too hot" );
                         }
                     }
 
                     if (count($pets) > 0) {
                         if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_feed', false)) {
-                            nxr( 4, "Feeding your Pets" );
-                            $foodPrefernce = [
-                                "Base"            => "Meat",
-                                "White"           => "Milk",
-                                "Desert"          => "Potatoe",
-                                "Red"             => "Strawberry",
-                                "Shade"           => "Chocolate",
-                                "Skeleton"        => "Fish",
-                                "Zombie"          => "RottenMeat",
-                                "CottonCandyPink" => "CottonCandyPink",
-                                "CottonCandyBlue" => "CottonCandyBlue",
-                                "Golden"          => "Honey",
-                            ];
-                            asort( $pets );
-                            $foods     = $user[ 'items' ][ 'food' ];
-                            $petsMagic = [];
-                            if ( count( $foods ) > 0 ) {
-                                nxr( 5, "Feeding your normal Pets" );
-                                $fedAnyPets = false;
-                                foreach ( $pets as $pet => $petHealth ) {
-                                    if ( $petHealth > 0 ) {
-                                        $petString = explode( "-", $pet );
-                                        if ( array_key_exists( $petString[ 1 ], $foodPrefernce ) ) {
-                                            if ( array_key_exists( $foodPrefernce[ $petString[ 1 ] ], $foods ) && $foods[ $foodPrefernce[ $petString[ 1 ] ] ] > 0 ) {
-                                                nxr( 6, "Feeding some " . $foodPrefernce[ $petString[ 1 ] ] . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
-                                                $habiticaClass->getHabitRPHPG()->feed($foodPrefernce[ $petString[ 1 ] ], $pet, false);
-                                                $foods[ $foodPrefernce[ $petString[ 1 ] ] ] = $foods[ $foodPrefernce[ $petString[ 1 ] ] ] - 1;
-                                                $fedAnyPets                                 = true;
+                            if ( $this->isTriggerCooled( "habitica_feed", false, false ) ) {
+                                nxr( 4, "Feeding your Pets" );
+                                $foodPrefernce = [
+                                    "Base"            => "Meat",
+                                    "White"           => "Milk",
+                                    "Desert"          => "Potatoe",
+                                    "Red"             => "Strawberry",
+                                    "Shade"           => "Chocolate",
+                                    "Skeleton"        => "Fish",
+                                    "Zombie"          => "RottenMeat",
+                                    "CottonCandyPink" => "CottonCandyPink",
+                                    "CottonCandyBlue" => "CottonCandyBlue",
+                                    "Golden"          => "Honey",
+                                ];
+                                asort( $pets );
+                                $foods     = $user[ 'items' ][ 'food' ];
+                                $petsMagic = [];
+                                if ( count( $foods ) > 0 ) {
+                                    nxr( 5, "Feeding your normal Pets" );
+                                    $fedAnyPets = false;
+                                    foreach ( $pets as $pet => $petHealth ) {
+                                        if ( $petHealth > 0 ) {
+                                            $petString = explode( "-", $pet );
+                                            if ( array_key_exists( $petString[ 1 ], $foodPrefernce ) ) {
+                                                if ( array_key_exists( $foodPrefernce[ $petString[ 1 ] ], $foods ) && $foods[ $foodPrefernce[ $petString[ 1 ] ] ] > 0 ) {
+                                                    nxr( 6, "Feeding some " . $foodPrefernce[ $petString[ 1 ] ] . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
+                                                    $habiticaClass->getHabitRPHPG()->feed( $foodPrefernce[ $petString[ 1 ] ], $pet, false );
+                                                    $foods[ $foodPrefernce[ $petString[ 1 ] ] ] = $foods[ $foodPrefernce[ $petString[ 1 ] ] ] - 1;
+                                                    $fedAnyPets                                 = true;
+                                                }
+                                            } else {
+                                                $petsMagic[] = $pet;
                                             }
-                                        } else {
-                                            $petsMagic[] = $pet;
                                         }
                                     }
-                                }
 
-                                if ( $fedAnyPets ) {
-                                    if ( count( $petsMagic ) > 0 ) {
-                                        nxr( 5, "Feeding your magical Pets" );
-                                        arsort( $foods );
-                                        $petLoop = 0;
-                                        foreach ( $foods as $food => $spareFood ) {
-                                            if ( $petLoop < count( $petsMagic ) ) {
-                                                if ( $spareFood > 0 ) {
-                                                    $petString = explode( "-", $petsMagic[ $petLoop ] );
-                                                    nxr( 6, "Feeding some " . $food . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
-                                                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/feed/" . $petsMagic[ $petLoop ] . "/$food", [] );
-                                                    $petLoop = $petLoop + 1;
+                                    if ( $fedAnyPets ) {
+                                        if ( count( $petsMagic ) > 0 ) {
+                                            nxr( 5, "Feeding your magical Pets" );
+                                            arsort( $foods );
+                                            $petLoop = 0;
+                                            foreach ( $foods as $food => $spareFood ) {
+                                                if ( $petLoop < count( $petsMagic ) ) {
+                                                    if ( $spareFood > 0 ) {
+                                                        $petString = explode( "-", $petsMagic[ $petLoop ] );
+                                                        nxr( 6, "Feeding some " . $food . " to your " . $petString[ 1 ] . " " . $petString[ 0 ] );
+                                                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/feed/" . $petsMagic[ $petLoop ] . "/$food", [] );
+                                                        $petLoop = $petLoop + 1;
+                                                    }
                                                 }
                                             }
                                         }
+                                    } else {
+                                        nxr( 5, "Noone else got get so not feeding your magical Pets" );
                                     }
-                                } else {
-                                    nxr( 5, "Noone else got get so not feeding your magical Pets" );
+
                                 }
 
+                                $this->setLastrun( "habitica_feed", null, true );
+                            } else {
+                                nxr( 4, "Feeder still too hot" );
                             }
                         }
 
                         if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_rand_pet', false)) {
-                            nxr( 4, "Randomizing your pet" );
-                            $petNames = array_keys( $pets );
-                            shuffle( $petNames );
-                            $newPet = array_pop( $petNames );
-                            if ($pets[$newPet] > 0) {
-                                nxr( 5, "The winning pet is $newPet" );
-                                $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/pet/$newPet", [] );
+                            if ( $this->isTriggerCooled( "habitica_rand_pet", false, false ) ) {
+                                nxr( 4, "Randomizing your pet" );
+                                $petNames = array_keys( $pets );
+                                shuffle( $petNames );
+                                $newPet = array_pop( $petNames );
+                                if ( $pets[ $newPet ] > 0 ) {
+                                    nxr( 5, "The winning pet is $newPet" );
+                                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/pet/$newPet", [] );
+                                }
+
+                                $this->setLastrun( "habitica_rand_pet", null, true );
+                            } else {
+                                nxr( 4, "Pet Selector still too hot" );
                             }
                         }
                     }
 
                     if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_rand_mount', false)) {
-                        $mounts = $user[ 'items' ][ 'mounts' ];
-                        if ( count( $mounts ) > 1 ) {
-                            nxr( 4, "Randomizing your mount" );
-                            $mountNames = array_keys( $mounts );
-                            shuffle( $mountNames );
-                            $mountPet = array_pop( $mountNames );
-                            if ($mounts[$mountPet] > 0) {
-                                nxr( 5, "The winning mount is $mountPet" );
-                                $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/mount/$mountPet", [] );
+                        if ( $this->isTriggerCooled( "habitica_rand_mount", false, false ) ) {
+                            $mounts = $user[ 'items' ][ 'mounts' ];
+                            if ( count( $mounts ) > 1 ) {
+                                nxr( 4, "Randomizing your mount" );
+                                $mountNames = array_keys( $mounts );
+                                shuffle( $mountNames );
+                                $mountPet = array_pop( $mountNames );
+                                if ( $mounts[ $mountPet ] > 0 ) {
+                                    nxr( 5, "The winning mount is $mountPet" );
+                                    $habiticaClass->getHabitRPHPG()->_request( "post", "user/equip/mount/$mountPet", [] );
+                                }
                             }
+
+                            $this->setLastrun( "habitica_rand_mount", null, true );
+                        } else {
+                            nxr( 4, "Mount Selector still too hot" );
                         }
                     }
 
@@ -4001,6 +3395,7 @@ class ApiBabel
                                 }
 
                                 for ($i=0; $i < $availableGems; $i++) {
+                                    /** @noinspection PhpUnusedLocalVariableInspection */
                                     $gemPurchase = $habiticaClass->getHabitRPHPG()->_request( "post", "user/purchase/gems/gem", [], true );
                                     //nxr(6, $gemPurchase);
                                 }
@@ -4020,6 +3415,7 @@ class ApiBabel
 
                     $this->setLastrun("habitica", null, true);
                 } else {
+                    nxr( 4, "Habitica still too hot" );
                     return "-143";
                 }
 
@@ -4029,6 +3425,628 @@ class ApiBabel
         }
 
         return $isAllowed;
+    }
+
+    /**
+     * @param Fitbit $fitbitapi
+     */
+    public function setLibrary( $fitbitapi ) {
+        $this->fitbitapi = $fitbitapi;
+    }
+
+    /**
+     * @param mixed $userAccessToken
+     */
+    public function setUserAccessToken( $userAccessToken ) {
+        $this->userAccessToken = $userAccessToken;
+    }
+
+    /**
+     * @param string $user
+     * @param string $trigger
+     * @param bool   $return
+     *
+     * @return mixed|null|SimpleXMLElement|string
+     */
+    public function pull( $user, $trigger, $return = false ) {
+        $this->setActiveUser( $user );
+        $xml = null;
+
+        // Check we have a valid user
+        if ( $this->getAppClass()->isUser( $user ) ) {
+            nxr( 1, "Checking $user for minecraft reward support" );
+
+            nxr( 2, "Reward system ready" );
+            $this->RewardsSystem = new RewardsSystem( $user );
+
+            $userCoolDownTime = $this->getAppClass()->getUserCooldown( $this->activeUser );
+            if ( $trigger != "habitica" && $trigger != "nomie_trackers" && strtotime( $userCoolDownTime ) >= date( "U" ) ) {
+                nxr( 0,
+                    "User Cooldown in place. Cooldown will be lift at " . $userCoolDownTime . " please try again after that." );
+                die();
+            }
+
+            // PULL - users profile
+            if ( $trigger == "all" || $trigger == "nomie_trackers" ) {
+                $pull = $this->pullNomieTrackers();
+                if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                    nxr( 2, "Error profile: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                }
+            }
+
+            // Check this user has valid access to the Fitbit AIP
+            if ( $this->getAppClass()->valdidateOAuth( $this->getAppClass()->getUserOAuthTokens( $user, false ) ) ) {
+
+                // If we've asked for a complete update then don't abide by cooldown times
+                if ( $trigger == "all" ) {
+                    $this->forceSync = true;
+                }
+
+                // PULL - users profile
+                if ( $trigger == "all" || $trigger == "profile" ) {
+                    $pull = $this->pullBabelProfile();
+                    if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                        nxr( 2, "Error profile: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                    }
+                }
+
+                // PULL - Devices
+                if ( $trigger == "all" || $trigger == "devices" ) {
+                    $pull = $this->pullBabelDevices();
+                    if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                        nxr( 2, "Error devices: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                    }
+                }
+
+                // PULL - Badges
+                if ( $trigger == "all" || $trigger == "badges" ) {
+                    $pull = $this->pullBabelBadges();
+                    if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                        nxr( 2, "Error badges: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                    }
+                }
+
+                if ( $trigger == "all" || $trigger == "leaderboard" ) {
+                    $pull = $this->pullBabelLeaderboard();
+                    if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                        nxr( 2, "Error leaderboard: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                    }
+                }
+
+                if ( $trigger == "all" || $trigger == "foods" || $trigger == "goals_calories" ) {
+                    $pull = $this->pullBabelCaloriesGoals();
+                    if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                        nxr( 2, "Error goals_calories: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                    }
+                }
+
+                if ( $trigger == "all" || $trigger == "activity_log" ) {
+                    $pull = $this->pullBabelActivityLogs();
+                    if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                        nxr( 2, "Error activity_log: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                    }
+                }
+
+                if ( $trigger == "all" || $trigger == "goals" ) {
+                    nxr( 0, ' Downloading Goals' );
+                    $pull = $this->pullBabelUserGoals();
+                    if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                        nxr( 2, "Error goals: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                    }
+                }
+
+                // Set variables require bellow
+                $currentDate = new DateTime ( 'now' );
+                $interval    = DateInterval::createFromDateString( '1 day' );
+
+                if ( $trigger == "all" || $trigger == "heart" ) {
+                    // Check we're allowed to pull these records here rather than at each loop
+                    $isAllowed = $this->isAllowed( "heart" );
+                    if ( ! is_numeric( $isAllowed ) ) {
+                        if ( $this->isTriggerCooled( "heart" ) ) {
+                            $period = new DatePeriod ( $this->getLastCleanRun( "heart" ), $interval, $currentDate );
+                            /** @var DateTime $dt */
+                            foreach ( $period as $dt ) {
+                                nxr( 0, ' Downloading Heart Logs for ' . $dt->format( "l jS M Y" ) );
+                                $pull = $this->pullBabelHeartRateSeries( $dt->format( "Y-m-d" ) );
+                                if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                                    nxr( 2, "Error Heart: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                                }
+                            }
+                        } else {
+                            if ( ! IS_CRON_RUN ) {
+                                nxr( 2, "Error Heart: " . $this->getAppClass()->lookupErrorCode( -143 ) );
+                            }
+                        }
+                    }
+                }
+
+                if ( $trigger == "all" || $trigger == "water" || $trigger == "foods" ) {
+                    // Check we're allowed to pull these records here rather than at each loop
+                    $isAllowed = $this->isAllowed( "water" );
+                    if ( ! is_numeric( $isAllowed ) ) {
+                        if ( $this->isTriggerCooled( "water" ) ) {
+                            $period = new DatePeriod ( $this->getLastCleanRun( "water" ), $interval, $currentDate );
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ( $period as $dt ) {
+                                nxr( 0, ' Downloading Water Logs for ' . $dt->format( "l jS M Y" ) );
+                                $pull = $this->pullBabelWater( $dt->format( "Y-m-d" ) );
+                                if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                                    nxr( 2, "Error water: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                                }
+                            }
+                        } else {
+                            if ( ! IS_CRON_RUN ) {
+                                nxr( 2, "Error water: " . $this->getAppClass()->lookupErrorCode( -143 ) );
+                            }
+                        }
+                    }
+                }
+
+                if ( $trigger == "all" || $trigger == "sleep" ) {
+                    $isAllowed = $this->isAllowed( "sleep" );
+                    if ( ! is_numeric( $isAllowed ) ) {
+                        if ( $this->isTriggerCooled( "sleep" ) ) {
+                            $period = new DatePeriod ( $this->getLastCleanRun( "sleep" ), $interval, $currentDate );
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ( $period as $dt ) {
+                                nxr( 0, ' Downloading Sleep Logs for ' . $dt->format( "l jS M Y" ) );
+                                $pull = $this->pullBabelSleep( $dt->format( "Y-m-d" ) );
+                                if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                                    nxr( 2, "Error sleep: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                                }
+                            }
+                        } else {
+                            if ( ! IS_CRON_RUN ) {
+                                nxr( 2, "Error sleep: " . $this->getAppClass()->lookupErrorCode( -143 ) );
+                            }
+                        }
+                    }
+                }
+
+                if ( $trigger == "all" || $trigger == "body" ) {
+                    $isAllowed = $this->isAllowed( "body" );
+                    if ( ! is_numeric( $isAllowed ) ) {
+                        if ( $this->isTriggerCooled( "body" ) ) {
+                            $period = new DatePeriod ( $this->getLastCleanRun( "body" ), $interval, $currentDate );
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ( $period as $dt ) {
+                                nxr( 0, ' Downloading Body Logs for ' . $dt->format( "l jS M Y" ) );
+                                $pull = $this->pullBabelBody( $dt->format( "Y-m-d" ) );
+                                if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                                    nxr( 2, "Error body: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                                }
+                            }
+                        } else {
+                            if ( ! IS_CRON_RUN ) {
+                                nxr( 2, "Error body: " . $this->getAppClass()->lookupErrorCode( -143 ) );
+                            }
+                        }
+                    }
+                }
+
+                if ( $trigger == "all" || $trigger == "foods" ) {
+                    $isAllowed = $this->isAllowed( "foods" );
+                    if ( ! is_numeric( $isAllowed ) ) {
+                        if ( $this->isTriggerCooled( "foods" ) ) {
+                            $period = new DatePeriod ( $this->getLastCleanRun( "foods" ), $interval, $currentDate );
+                            /**
+                             * @var DateTime $dt
+                             */
+                            foreach ( $period as $dt ) {
+                                nxr( 0, ' Downloading Foods Logs for ' . $dt->format( "l jS M Y" ) );
+                                $pull = $this->pullBabelMeals( $dt->format( "Y-m-d" ) );
+                                if ( $this->isApiError( $pull ) && ! IS_CRON_RUN ) {
+                                    nxr( 2, "Error foods: " . $this->getAppClass()->lookupErrorCode( $pull ) );
+                                }
+                            }
+                        } else {
+                            if ( ! IS_CRON_RUN ) {
+                                nxr( 2, "Error foods: " . $this->getAppClass()->lookupErrorCode( -143 ) );
+                            }
+                        }
+                    }
+                }
+
+                $timeSeries = [
+                    "steps"                => "300",
+                    "distance"             => "300",
+                    "floors"               => "300",
+                    "elevation"            => "300",
+                    "minutesSedentary"     => "1800",
+                    "minutesLightlyActive" => "1800",
+                    "minutesFairlyActive"  => "1800",
+                    "minutesVeryActive"    => "1800",
+                    "caloriesOut"          => "1800"
+                ];
+                if ( $trigger == "all" || $trigger == "activities" ) {
+                    $isAllowed = $this->isAllowed( "activities" );
+                    if ( ! is_numeric( $isAllowed ) ) {
+                        if ( $this->isTriggerCooled( "activities" ) ) {
+                            nxr( 1, "Downloading Series Info" );
+                            foreach ( $timeSeries as $activity => $timeout ) {
+                                $this->pullBabelTimeSeries( $activity, true );
+                            }
+                            if ( isset( $this->holdingVar ) ) {
+                                unset( $this->holdingVar );
+                            }
+                            $this->setLastrun( "activities", null, true );
+                        }
+                    }
+                } else if ( array_key_exists( $trigger, $timeSeries ) ) {
+                    $isAllowed = $this->isAllowed( $trigger );
+                    if ( ! is_numeric( $isAllowed ) ) {
+                        $this->pullBabelTimeSeries( $trigger );
+                    }
+                }
+
+                if ( $trigger == "all" ) {
+                    $this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix", null,
+                            false ) . "users", [
+                        "lastrun" => $currentDate->format( "Y-m-d H:i:s" )
+                    ], [ "fuid" => $this->getActiveUser() ] );
+                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
+                        [
+                            "METHOD" => __METHOD__,
+                            "LINE"   => __LINE__
+                        ] );
+                }
+
+                // PULL - users profile
+                if ( $trigger == "all" || $trigger == "habitica" ) {
+                    $this->pullHabitica();
+                }
+
+            } else {
+                nxr( 0, "User has not yet authenticated with Fitbit" );
+            }
+
+        }
+
+        if ( $return ) {
+            return $xml;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @param mixed $activeUser
+     */
+    public function setActiveUser( $activeUser ) {
+        $this->activeUser = $activeUser;
+    }
+
+    /**
+     * @param string $trigger
+     * @param bool   $quiet
+     *
+     * @return bool|string
+     */
+    public function isAllowed( $trigger, $quiet = false ) {
+        if ( $trigger == "profile" ) {
+            return true;
+        }
+
+        $usrConfig = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'scope_' . $trigger, true );
+        if ( ! is_null( $usrConfig ) AND $usrConfig != 1 ) {
+            if ( ! $quiet ) {
+                nxr( 1, "Aborted $trigger disabled in user config" );
+            }
+
+            return "-145";
+        }
+
+        $sysConfig = $this->getAppClass()->getSetting( 'scope_' . $trigger, true );
+        if ( $sysConfig != 1 ) {
+            if ( ! $quiet ) {
+                nxr( 1, "Aborted $trigger disabled in system config" );
+            }
+
+            return "-146";
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $trigger
+     * @param bool   $reset
+     * @param bool   $canForce
+     *
+     * @return bool
+     */
+    public function isTriggerCooled( $trigger, $reset = false, $canForce = true ) {
+        if ( $canForce && $this->forceSync ) {
+            return true;
+        } else {
+            $currentDate  = new DateTime ( 'now' );
+            $coolDownTill = $this->getCoolDown( $trigger, $reset );
+
+            if ( $coolDownTill->format( "U" ) < $currentDate->format( "U" ) ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * @param string|int $xml
+     *
+     * @return bool
+     */
+    public function isApiError( $xml ) {
+        if ( is_numeric( $xml ) AND $xml < 0 ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param bool   $returnObject
+     * @param bool   $debugOutput
+     * @param bool   $supportFailures
+     *
+     * @return mixed
+     */
+    public function pullBabel( $path, $returnObject = false, $debugOutput = false, $supportFailures = false ) {
+        //$getRateRemaining = $this->getLibrary()->getRateRemaining();
+        //if (is_numeric($getRateRemaining) && $getRateRemaining <= 2) {
+        //    $restMinutes = round($this->getLibrary()->getRateReset() / 60, 0);
+        //    nxr(1, "*** Rate limit reached. Please try again in about " . $restMinutes . " minutes ***");
+        //
+        //    $currentDate = new DateTime();
+        //    $currentDate = $currentDate->modify("+" . ($restMinutes + 5) . " minutes");
+        //    $this->getAppClass()->setUserCooldown($this->activeUser, $currentDate);
+        //
+        //    die();
+        //} else if (is_numeric($getRateRemaining) && $getRateRemaining < 50) {
+        //    nxr(1, "*** Down to your last " . $getRateRemaining . " calls ***");
+        //}
+
+        try {
+            // Try to get an access token using the authorization code grant.
+            $accessToken = $this->getAccessToken();
+
+            $path = str_replace( FITBIT_COM . "/1/", "", $path );
+
+            $request = $this->getLibrary()->getAuthenticatedRequest( 'GET', FITBIT_COM . "/1/" . $path,
+                $accessToken );
+            // Make the authenticated API request and get the response.
+            $response = $this->getLibrary()->getParsedResponse( $request );
+
+            if ( $returnObject ) {
+                $response = json_decode( json_encode( $response ), false );
+            }
+
+            if ( $debugOutput ) {
+                nxr( 0, $request );
+                nxr( 0, $response );
+            }
+
+            return $response;
+        } catch ( IdentityProviderException $e ) {
+            // Failed to get the access token or user details.
+
+            if ( $e->getCode() == 429 ) {
+                nxr( 1, "Rate limit reached. Please try again later" );
+
+                $currentDate = new DateTime();
+                $currentDate = $currentDate->modify( "+1 hours" );
+                $this->getAppClass()->setUserCooldown( $this->activeUser, $currentDate->format( "Y-m-d H:05:00" ) );
+
+                $db_prefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+                $this->getAppClass()->getDatabase()->insert( $db_prefix . "inbox",
+                    [
+                        "fuid"      => $this->activeUser,
+                        "expires"   => $currentDate->format( "Y-m-d H:05:30" ),
+                        "ico"       => "icon-cloud-download",
+                        "icoColour" => "bg-danger",
+                        "subject"   => "Rate limit reached",
+                        "body"      => "Please try again after " . $currentDate->format( "Y-m-d H:05:00" ),
+                        "bold"      => "API Error"
+                    ]
+                );
+
+                $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ] );
+
+                die();
+            } else if ( $e->getMessage() == "401" ) {
+                nxr( 0, "ERR401: '" . $e->getMessage() . "'" );
+                die();
+            } else {
+                $this->getAppClass()->getErrorRecording()->captureException( $e, [
+                    'level' => 'error',
+                    'extra' => [
+                        'api_path'      => $path,
+                        'user'          => $this->activeUser,
+                        'php_version'   => phpversion(),
+                        'core_version'  => $this->getAppClass()->getSetting( "version", "0.0.0.1", TRUE ),
+                        'error_code'    => $e->getCode(),
+                        'error_message' => $e->getMessage()
+                    ],
+                ] );
+                if ( $supportFailures ) {
+                    return $e->getCode();
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    /**
+     * @return Fitbit
+     */
+    public function getLibrary() {
+        return $this->fitbitapi;
+    }
+
+    /**
+     * @param string $user
+     * @param string $string
+     *
+     * @return bool|int
+     */
+    public function getDBCurrentBody( $user, $string ) {
+        if ( ! $user ) {
+            return "No default user selected";
+        }
+
+        $return = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix", null,
+                false ) . "body", $string, [
+            "user"  => $user,
+            "ORDER" => [ "date" => "DESC" ]
+        ] );
+
+        if ( ! is_numeric( $return ) ) {
+            return 0;
+        } else {
+            return $return;
+        }
+    }
+
+    /**
+     * Launch TimeSeries requests
+     * Allowed types are:
+     *            'caloriesIn', 'water'
+     *            'caloriesOut', 'steps', 'distance', 'floors', 'elevation'
+     *            'minutesSedentary', 'minutesLightlyActive', 'minutesFairlyActive', 'minutesVeryActive',
+     *            'activityCalories',
+     *            'tracker_caloriesOut', 'tracker_steps', 'tracker_distance', 'tracker_floors', 'tracker_elevation'
+     *            'startTime', 'timeInBed', 'minutesAsleep', 'minutesAwake', 'awakeningsCount',
+     *            'minutesToFallAsleep', 'minutesAfterWakeup',
+     *            'efficiency'
+     *            'weight', 'bmi', 'fat'
+     *
+     * @param string          $type
+     * @param string|DateTime $baseDate  DateTime or 'today', to_period
+     * @param string|DateTime $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
+     *
+     * @return array|boolean
+     */
+    public function getTimeSeries( $type, $baseDate, $to_period ) {
+        switch ( $type ) {
+            case 'caloriesIn':
+                $path = '/foods/log/caloriesIn';
+                break;
+            case 'water':
+                $path = '/foods/log/water';
+                break;
+
+            case 'caloriesOut':
+                $path = '/activities/calories';
+                break;
+            case 'steps':
+                $path = '/activities/steps';
+                break;
+            case 'distance':
+                $path = '/activities/distance';
+                break;
+            case 'floors':
+                $path = '/activities/floors';
+                break;
+            case 'elevation':
+                $path = '/activities/elevation';
+                break;
+            case 'minutesSedentary':
+                $path = '/activities/minutesSedentary';
+                break;
+            case 'minutesLightlyActive':
+                $path = '/activities/minutesLightlyActive';
+                break;
+            case 'minutesFairlyActive':
+                $path = '/activities/minutesFairlyActive';
+                break;
+            case 'minutesVeryActive':
+                $path = '/activities/minutesVeryActive';
+                break;
+            case 'activityCalories':
+                $path = '/activities/activityCalories';
+                break;
+
+            case 'tracker_caloriesOut':
+                $path = '/activities/log/tracker/calories';
+                break;
+            case 'tracker_steps':
+                $path = '/activities/log/tracker/steps';
+                break;
+            case 'tracker_distance':
+                $path = '/activities/log/tracker/distance';
+                break;
+            case 'tracker_floors':
+                $path = '/activities/log/tracker/floors';
+                break;
+            case 'tracker_elevation':
+                $path = '/activities/log/tracker/elevation';
+                break;
+
+            case 'startTime':
+                $path = '/sleep/startTime';
+                break;
+            case 'timeInBed':
+                $path = '/sleep/timeInBed';
+                break;
+            case 'minutesAsleep':
+                $path = '/sleep/minutesAsleep';
+                break;
+            case 'awakeningsCount':
+                $path = '/sleep/awakeningsCount';
+                break;
+            case 'minutesAwake':
+                $path = '/sleep/minutesAwake';
+                break;
+            case 'minutesToFallAsleep':
+                $path = '/sleep/minutesToFallAsleep';
+                break;
+            case 'minutesAfterWakeup':
+                $path = '/sleep/minutesAfterWakeup';
+                break;
+            case 'efficiency':
+                $path = '/sleep/efficiency';
+                break;
+
+            case 'weight':
+                $path = '/body/weight';
+                break;
+            case 'bmi':
+                $path = '/body/bmi';
+                break;
+            case 'fat':
+                $path = '/body/fat';
+                break;
+
+            default:
+                return false;
+        }
+
+        $response = $this->pullBabel( 'user/' . $this->getActiveUser() . $path . '/date/' . ( is_string( $baseDate ) ? $baseDate : $baseDate->format( 'Y-m-d' ) ) . "/" . ( is_string( $to_period ) ? $to_period : $to_period->format( 'Y-m-d' ) ) . '.json',
+            true );
+        if ( is_null( $response ) ) {
+            return "-141";
+        }
+
+        switch ( $type ) {
+            case 'caloriesOut':
+                $objectKey = "activities-calories";
+                break;
+            default:
+                $objectKey = "activities-" . $type;
+                break;
+        }
+
+        $response = $response->$objectKey;
+
+        return $response;
     }
 
     /**
