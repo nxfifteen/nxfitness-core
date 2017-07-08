@@ -189,9 +189,7 @@ deploy_review:
     name: review/$CI_COMMIT_REF_NAME
     url: http://docs.core.itsabeta.nx/$CI_COMMIT_REF_NAME
   only:
-    - branches
-  except:
-    - master
+    - develop
 
 deploy_staging:
   stage: stage
@@ -204,9 +202,7 @@ deploy_staging:
     name: staging
     url: http://core.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
   only:
-    - branches
-  except:
-    - master
+    - develop
 
 deploy_prod:
   stage: deploy
