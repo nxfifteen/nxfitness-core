@@ -102,7 +102,7 @@ class ApiBabel {
 
         nxr( 0, "clientId: " . $fitbitApp->getSetting( "api_clientId" . $personal, null, false ) . " used" );
 
-        $this->forceSync = false;
+        $this->setForceSync( false );
 
         if ( ! defined( 'IS_CRON_RUN' ) ) {
             define( 'IS_CRON_RUN', false );
@@ -3494,7 +3494,7 @@ class ApiBabel {
 
                 // If we've asked for a complete update then don't abide by cooldown times
                 if ( $trigger == "all" ) {
-                    $this->forceSync = true;
+                    $this->setForceSync( true );
                 }
 
                 // PULL - users profile
@@ -3778,7 +3778,7 @@ class ApiBabel {
      * @return bool
      */
     public function isTriggerCooled( $trigger, $reset = false, $canForce = true ) {
-        if ( $canForce && $this->forceSync ) {
+        if ( $canForce && $this->isForceSync() ) {
             return true;
         } else {
             $currentDate  = new DateTime ( 'now' );
@@ -4069,7 +4069,7 @@ class ApiBabel {
      * @return bool
      * @internal param bool $forceSync
      */
-    public function getForceSync() {
+    public function isForceSync() {
         return $this->forceSync;
     }
 
