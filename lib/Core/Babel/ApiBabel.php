@@ -3279,13 +3279,15 @@ class ApiBabel {
 
         foreach ( $user[ 'items' ][ 'pets' ] as $pet => $health ) {
             if ( $health > 0 ) {
-                $pets[ $pet ] = $health;
+                if ( ! array_key_exists( $pet, $user[ 'items' ][ 'mounts' ] ) ) {
+                    $pets[ $pet ] = $health;
+                }
             }
         }
 
         if ( count( $pets ) > 0 ) {
             if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_feed', false ) ) {
-                if ( $this->isTriggerCooled( "habitica_feed", false, false ) ) {
+                if ( $this->isTriggerCooled( "habitica_feed", false, true ) ) {
                     nxr( 4, "Feeding your Pets" );
                     $foodPrefernce = [
                         "Base"            => "Meat",
