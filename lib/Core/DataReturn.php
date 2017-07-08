@@ -3299,19 +3299,19 @@ class DataReturn
      */
     public function returnUserRecordTracked()
     {
-        $nx_fitbit_steps = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps';
-        $nx_fitbit_steps_goals = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps_goals';
+        $dbSteps = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps';
+        $dbStepsGoals = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps_goals';
 
         $days = $this->getParamPeriod();
         $days = str_ireplace("last", "", $days);
         $then = date('Y-m-d', strtotime($this->getParamDate() . " -" . $days . " day"));
 
         $dbSteps = $this->getAppClass()->getDatabase()->query(
-            "SELECT `$nx_fitbit_steps`.`date`,`$nx_fitbit_steps`.`floors`,`$nx_fitbit_steps`.`steps`,`$nx_fitbit_steps_goals`.`floors` AS `floors_g`,`$nx_fitbit_steps_goals`.`steps` AS `steps_g`"
-            . " FROM `$nx_fitbit_steps`"
-            . " JOIN `$nx_fitbit_steps_goals` ON (`$nx_fitbit_steps`.`date` = `$nx_fitbit_steps_goals`.`date`) AND (`$nx_fitbit_steps`.`user` = `$nx_fitbit_steps_goals`.`user`)"
-            . " WHERE `$nx_fitbit_steps`.`user` = '" . $this->getUserID() . "' AND `$nx_fitbit_steps`.`date` <= '" . $this->getParamDate() . "' AND `$nx_fitbit_steps`.`date` >= '$then' "
-            . " ORDER BY `$nx_fitbit_steps`.`date` DESC LIMIT $days");
+            "SELECT `$dbSteps`.`date`,`$dbSteps`.`floors`,`$dbSteps`.`steps`,`$dbStepsGoals`.`floors` AS `floors_g`,`$dbStepsGoals`.`steps` AS `steps_g`"
+            . " FROM `$dbSteps`"
+            . " JOIN `$dbStepsGoals` ON (`$dbSteps`.`date` = `$dbStepsGoals`.`date`) AND (`$dbSteps`.`user` = `$dbStepsGoals`.`user`)"
+            . " WHERE `$dbSteps`.`user` = '" . $this->getUserID() . "' AND `$dbSteps`.`date` <= '" . $this->getParamDate() . "' AND `$dbSteps`.`date` >= '$then' "
+            . " ORDER BY `$dbSteps`.`date` DESC LIMIT $days");
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
