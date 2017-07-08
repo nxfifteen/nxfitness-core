@@ -100,6 +100,314 @@ class DataReturn
     }
 
     /**
+     * Calculates the great-circle distance between two points, with
+     * the Haversine formula.
+     *
+     * @param double $lat1
+     * @param double $lon1
+     * @param double $lat2
+     * @param double $lon2
+     * @param string $unit
+     *
+     * @return float Distance between points in [m] (same as earthRadius)
+     * @internal param float $latitudeFrom Latitude of start point in [deg decimal]
+     * @internal param float $longitudeFrom Longitude of start point in [deg decimal]
+     * @internal param float $latitudeTo Latitude of target point in [deg decimal]
+     * @internal param float $longitudeTo Longitude of target point in [deg decimal]
+     * @internal param float $earthRadius Mean earth radius in [m]
+     */
+    private function haversineGreatCircleDistance( $lat1, $lon1, $lat2, $lon2, $unit ) {
+        $theta = $lon1 - $lon2;
+        $dist  = sin( deg2rad( $lat1 ) ) * sin( deg2rad( $lat2 ) ) + cos( deg2rad( $lat1 ) ) * cos( deg2rad( $lat2 ) ) * cos( deg2rad( $theta ) );
+        $dist  = acos( $dist );
+        $dist  = rad2deg( $dist );
+        $miles = $dist * 60 * 1.1515;
+        $unit  = strtoupper( $unit );
+
+        if ( $unit == "K" ) {
+            return ( $miles * 1.609344 );
+        } else if ( $unit == "M" ) {
+            return ( $miles * 1609.34 );
+        } else if ( $unit == "N" ) {
+            return ( $miles * 0.8684 );
+        } else {
+            return $miles;
+        }
+    }
+
+    /**
+     * @param string   $userPushStartDate
+     * @param string   $userPushEndDate
+     * @param DateTime $range_start
+     *
+     * @return array
+     */
+    private function calculatePushDays( $userPushStartDate, $userPushEndDate, $range_start ) {
+        $userPushTrgSteps    = $this->getAppClass()->getUserSetting( $this->getUserID(), "push_steps", '10000' );
+        $userPushTrgDistance = $this->getAppClass()->getUserSetting( $this->getUserID(), "push_distance", '5' );
+        $userPushTrgUnit     = $this->getAppClass()->getUserSetting( $this->getUserID(), "push_unit", 'km' );
+        $userPushTrgActivity = $this->getAppClass()->getUserSetting( $this->getUserID(), "push_activity", '30' );
+
+        $db_steps    = $this->getAppClass()->getSetting( "db_prefix", null, false ) . "steps";
+        $db_activity = $this->getAppClass()->getSetting( "db_prefix", null, false ) . "activity";
+
+        $dbEvents = $this->getAppClass()->getDatabase()->query(
+            "SELECT `$db_steps`.`date`,`$db_steps`.`distance`,`$db_steps`.`steps`,`$db_activity`.`fairlyactive`,`$db_activity`.`veryactive`"
+            . " FROM `$db_steps`"
+            . " JOIN `$db_activity` ON (`$db_steps`.`date` = `$db_activity`.`date`) AND (`$db_steps`.`user` = `$db_activity`.`user`)"
+            . " WHERE `$db_steps`.`user` = '" . $this->getUserID() . "' AND `$db_steps`.`date` <= '" . $userPushEndDate . "' AND `$db_steps`.`date` >= '$userPushStartDate' "
+            . " ORDER BY `$db_steps`.`date` DESC" );
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
+            "METHOD" => __METHOD__,
+            "LINE"   => __LINE__
+        ] );
+
+        $days             = 0;
+        $score            = 0;
+        $scoreDistance    = 0;
+        $scoreVeryactive  = 0;
+        $scoreSteps       = 0;
+        $startDateCovered = false;
+        $calenderEvents   = [];
+        foreach ( $dbEvents as $dbEvent ) {
+            if ( strtotime( $dbEvent[ 'date' ] ) >= strtotime( $userPushStartDate ) && strtotime( $dbEvent[ 'date' ] ) <= strtotime( $userPushEndDate ) ) {
+                $days += 1;
+
+                if ( $userPushTrgUnit == "km" ) {
+                    $dbEvent[ 'distance' ] = $dbEvent[ 'distance' ] * 1.609344;
+                }
+                if ( strtotime( $dbEvent[ 'date' ] ) == strtotime( $userPushStartDate ) ) {
+                    $startDateCovered = true;
+                }
+
+                $dbEvent[ 'veryactive' ] = $dbEvent[ 'fairlyactive' ] + $dbEvent[ 'veryactive' ];
+
+                $scoreVeryactive += $dbEvent[ 'veryactive' ];
+                $scoreDistance   += $dbEvent[ 'distance' ];
+                $scoreSteps      += $dbEvent[ 'steps' ];
+
+                if ( strtotime( $dbEvent[ 'date' ] ) == strtotime( date( "Y-m-d" ) ) ) {
+                    if ( $days > 0 ) {
+                        $score = round( ( $score / $days ) * 100, 2 );
+                    } else {
+                        $score = 0;
+                    }
+                    array_push( $calenderEvents, [
+                        'id'       => $days,
+                        "title"    => $dbEvent[ 'steps' ] . " steps"
+                                      . "\n" . $dbEvent[ 'veryactive' ] . " min"
+                                      . "\n" . number_format( $dbEvent[ 'distance' ], 2 ) . $userPushTrgUnit,
+                        "start"    => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        "end"      => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        'class'    => 'event-info',
+                        'distance' => round( $dbEvent[ 'distance' ], 2 ),
+                        'active'   => $dbEvent[ 'veryactive' ],
+                        'steps'    => $dbEvent[ 'steps' ]
+                    ] );
+                } else if ( $dbEvent[ 'steps' ] >= $userPushTrgSteps ) {
+                    $score = $score + 1;
+                    array_push( $calenderEvents, [
+                        'id'    => $days,
+                        "title" => "Past!\nSteps: " . number_format( $dbEvent[ 'steps' ], 0 ),
+                        "start" => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        "end"   => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        'class' => 'event-success'
+                    ] );
+                } else if ( $dbEvent[ 'veryactive' ] >= $userPushTrgActivity ) {
+                    $score = $score + 1;
+                    array_push( $calenderEvents, [
+                        'id'    => $days,
+                        "title" => "Past!\nActivity: " . $dbEvent[ 'veryactive' ] . " min",
+                        "start" => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        "end"   => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        'class' => 'event-success'
+                    ] );
+                } else if ( $dbEvent[ 'distance' ] >= $userPushTrgDistance ) {
+                    $score = $score + 1;
+                    array_push( $calenderEvents, [
+                        'id'    => $days,
+                        "title" => "Past!\nDistance: " . number_format( $dbEvent[ 'distance' ],
+                                2 ) . $userPushTrgUnit,
+                        "start" => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        "end"   => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        'class' => 'event-success'
+                    ] );
+                } else {
+                    array_push( $calenderEvents, [
+                        'id'    => $days,
+                        "title" => "Steps: " . number_format( $dbEvent[ 'steps' ], 0 )
+                                   . "\nDistance: " . number_format( $dbEvent[ 'distance' ], 2 ) . $userPushTrgUnit
+                                   . "\nActivity: " . $dbEvent[ 'veryactive' ] . " min",
+                        "start" => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        "end"   => strtotime( $dbEvent[ 'date' ] ) . '000',
+                        'class' => 'event-important'
+                    ] );
+                }
+
+            }
+        }
+
+        if ( ! $startDateCovered ) {
+            array_push( $calenderEvents, [
+                "title"     => "Push " . $range_start->format( "Y" ) . "\nStart!",
+                "start"     => $userPushStartDate,
+                'className' => 'label-nopush'
+            ] );
+        }
+
+        if ( $days > 0 ) {
+            $score = round( ( $score / $days ) * 100, 2 );
+        } else {
+            $score = 0;
+        }
+
+        return [
+            'score'      => $score,
+            'veryactive' => $scoreVeryactive,
+            'steps'      => $scoreSteps,
+            'distance'   => $scoreDistance,
+            'events'     => $calenderEvents
+        ];
+    }
+
+    /**
+     * @param int $input_num
+     *
+     * @return string
+     */
+    private function ordinalSuffix( $input_num ) {
+        $num = $input_num % 100; // protect against large numbers
+        if ( $num < 11 || $num > 13 ) {
+            switch ( $num % 10 ) {
+                case 1:
+                    return $input_num . 'st';
+                case 2:
+                    return $input_num . 'nd';
+                case 3:
+                    return $input_num . 'rd';
+            }
+        }
+
+        return $input_num . 'th';
+    }
+
+    /**
+     * @param double|array $inputWeight
+     * @param string       $convertUnits
+     *
+     * @return array|float
+     */
+    private function convertWeight( $inputWeight, $convertUnits ) {
+        $conversationUnit = 1;
+
+        if ( $convertUnits == "kg" ) {
+            return $inputWeight;
+        } else if ( $convertUnits == "lb" ) {
+            $conversationUnit = 2.20462;
+        }
+
+        if ( ! is_array( $inputWeight ) ) {
+            return round( $inputWeight * $conversationUnit, 2 );
+        } else {
+            foreach ( $inputWeight as $key => $value ) {
+                $inputWeight[ $key ] = round( $value * $conversationUnit, 2 );
+            }
+        }
+
+        return $inputWeight;
+    }
+
+    /**
+     * @param null $scope
+     *
+     * @return DateTime
+     */
+    private function getOldestScope( $scope = null ) {
+        if ( is_null( $scope ) ) {
+            if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", null,
+                    false ) . "runlog", [ "user" => $this->getUserID() ] )
+            ) {
+                return new DateTime ( $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
+                        null, false ) . "runlog", "lastrun", [
+                    "user"  => $this->getUserID(),
+                    "ORDER" => [ "lastrun" => "ASC" ]
+                ] ) );
+            }
+        } else {
+            if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", null,
+                    false ) . "runlog", [
+                "AND" => [
+                    "user"     => $this->getUserID(),
+                    "activity" => $scope
+                ]
+            ] )
+            ) {
+                $returnTime = new DateTime ( $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
+                        null, false ) . "runlog", "lastrun", [
+                    "AND"   => [
+                        "user"     => $this->getUserID(),
+                        "activity" => $scope
+                    ],
+                    "ORDER" => [ "lastrun" => "ASC" ]
+                ] ) );
+
+                return $returnTime;
+            }
+        }
+
+        return new DateTime ( "1970-01-01" );
+    }
+
+    /**
+     * @param array      $returnWeight
+     * @param array      $arrayOfMissingDays
+     * @param array|NULL $lastRecord
+     * @param array      $nextRecord
+     *
+     * @return array
+     */
+    private function fillMissingBodyRecords( $returnWeight, $arrayOfMissingDays, $lastRecord, $nextRecord ) {
+        $xDistance = count( $arrayOfMissingDays ) + 1;
+
+        $yStartWeight      = $lastRecord[ 'weight' ];
+        $yEndWeight        = $nextRecord[ 'weight' ];
+        $dailyChangeWeight = ( $yEndWeight - $yStartWeight ) / $xDistance;
+
+        $yStartWeightAvg      = $lastRecord[ 'weightAvg' ];
+        $yEndWeightAvg        = $nextRecord[ 'weightAvg' ];
+        $dailyChangeWeightAvg = ( $yEndWeightAvg - $yStartWeightAvg ) / $xDistance;
+
+        $yStartFat      = $lastRecord[ 'fat' ];
+        $yEndFat        = $nextRecord[ 'fat' ];
+        $dailyChangeFat = ( $yEndFat - $yStartFat ) / $xDistance;
+
+        $yStartFatAvg      = $lastRecord[ 'fatAvg' ];
+        $yEndFatAvg        = $nextRecord[ 'fatAvg' ];
+        $dailyChangeFatAvg = ( $yEndFatAvg - $yStartFatAvg ) / $xDistance;
+
+        $dayNumber = 0;
+        foreach ( $arrayOfMissingDays as $date ) {
+            $dayNumber             = $dayNumber + 1;
+            $calcWeight            = (String)round( ( $dailyChangeWeight * $dayNumber ) + $yStartWeight, 2 );
+            $calcWeightAvg         = (String)round( ( $dailyChangeWeightAvg * $dayNumber ) + $yStartWeightAvg, 2 );
+            $calcFat               = (String)round( ( $dailyChangeFat * $dayNumber ) + $yStartFat, 2 );
+            $calcFatAvg            = (String)round( ( $dailyChangeFatAvg * $dayNumber ) + $yStartFatAvg, 2 );
+            $returnWeight[ $date ] = [
+                "date"       => $date,
+                "weight"     => $calcWeight,
+                "weightAvg"  => $calcWeightAvg,
+                "weightGoal" => $nextRecord[ 'weightGoal' ],
+                "fat"        => $calcFat,
+                "fatAvg"     => $calcFatAvg,
+                "fatGoal"    => $nextRecord[ 'fatGoal' ],
+                "source"     => "CalcDeviation"
+            ];
+        }
+
+        return $returnWeight;
+    }
+
+    /**
      * @return bool
      */
     public function isUser()
@@ -622,9 +930,9 @@ class DataReturn
                 $gpx .= "\n </trk>";
                 $gpx .= "\n</gpx>";
 
-                $fh = fopen(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . '_' . $this->getUserID() . '_' . $tcxFileName . '.gpx', 'w');
-                fwrite($fh, $gpx);
-                fclose($fh);
+                $fileHandler = fopen( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . '_' . $this->getUserID() . '_' . $tcxFileName . '.gpx', 'w' );
+                fwrite( $fileHandler, $gpx );
+                fclose( $fileHandler );
 
                 $gpxMeta['meta']['owner'] = $this->getUserID();
                 $gpxMeta['meta']['visibility'] = "public";
@@ -642,10 +950,10 @@ class DataReturn
                     }
                 }
 
-                $fh = fopen(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . '_' . $this->getUserID() . '_' . $tcxFileName . '_laps.json',
+                $fileHandler = fopen( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . '_' . $this->getUserID() . '_' . $tcxFileName . '_laps.json',
                     'w');
-                fwrite($fh, json_encode($gpxMeta));
-                fclose($fh);
+                fwrite( $fileHandler, json_encode( $gpxMeta ) );
+                fclose( $fileHandler );
 
                 if (!file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . '_' . $this->getUserID() . '_' . $tcxFileName . '.gpx')) {
                     $gpxFileName = "none";
@@ -697,43 +1005,6 @@ class DataReturn
                     "gpx" => "none"
                 ]
             ];
-        }
-    }
-
-    /**
-     * Calculates the great-circle distance between two points, with
-     * the Haversine formula.
-     *
-     * @param double $lat1
-     * @param double $lon1
-     * @param double $lat2
-     * @param double $lon2
-     * @param string $unit
-     *
-     * @return float Distance between points in [m] (same as earthRadius)
-     * @internal param float $latitudeFrom Latitude of start point in [deg decimal]
-     * @internal param float $longitudeFrom Longitude of start point in [deg decimal]
-     * @internal param float $latitudeTo Latitude of target point in [deg decimal]
-     * @internal param float $longitudeTo Longitude of target point in [deg decimal]
-     * @internal param float $earthRadius Mean earth radius in [m]
-     */
-    private function haversineGreatCircleDistance($lat1, $lon1, $lat2, $lon2, $unit)
-    {
-        $theta = $lon1 - $lon2;
-        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-        $dist = acos($dist);
-        $dist = rad2deg($dist);
-        $miles = $dist * 60 * 1.1515;
-        $unit = strtoupper($unit);
-
-        if ($unit == "K") {
-            return ($miles * 1.609344);
-        } else if ($unit == "M") {
-            return ($miles * 1609.34);
-        } else if ($unit == "N") {
-            return ($miles * 0.8684);
-        } else {
-            return $miles;
         }
     }
 
@@ -956,15 +1227,15 @@ class DataReturn
             ];
         } else if ($today < strtotime($userPushStartDate)) {
 
-            $nimusOnePushStartDate = date("Y-m-d",
+            $startDateMinOne = date("Y-m-d",
                 strtotime((date("Y") - 1) . '-' . $userPushStartString)); // Default to last Sunday in March
             $nimusOnePushEndDate = date("Y-m-d",
-                strtotime($nimusOnePushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
+                strtotime($startDateMinOne . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
             return [
                 'pushActive' => 'future',
                 'pushLength' => $userPushLength,
-                'showDate' => $nimusOnePushStartDate,
+                'showDate' => $startDateMinOne,
                 'scores' => $dbPush,
                 'goals' => [
                     'Activity' => $userPushTrgActivity,
@@ -979,8 +1250,8 @@ class DataReturn
                     'endDateF' => date("jS F, Y", strtotime($userPushEndDate))
                 ],
                 'last' => [
-                    'startDate' => $nimusOnePushStartDate,
-                    'startDateF' => date("jS F, Y", strtotime($nimusOnePushStartDate)),
+                    'startDate' => $startDateMinOne,
+                    'startDateF' => date("jS F, Y", strtotime($startDateMinOne)),
                     'endDate' => $nimusOnePushEndDate,
                     'endDateF' => date("jS F, Y", strtotime($nimusOnePushEndDate))
                 ]
@@ -988,142 +1259,6 @@ class DataReturn
         }
 
         return [];
-    }
-
-    /**
-     * @param string $userPushStartDate
-     * @param string $userPushEndDate
-     * @param DateTime $range_start
-     *
-     * @return array
-     */
-    private function calculatePushDays($userPushStartDate, $userPushEndDate, $range_start)
-    {
-        $userPushTrgSteps = $this->getAppClass()->getUserSetting($this->getUserID(), "push_steps", '10000');
-        $userPushTrgDistance = $this->getAppClass()->getUserSetting($this->getUserID(), "push_distance", '5');
-        $userPushTrgUnit = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
-        $userPushTrgActivity = $this->getAppClass()->getUserSetting($this->getUserID(), "push_activity", '30');
-
-        $db_steps = $this->getAppClass()->getSetting("db_prefix", null, false) . "steps";
-        $db_activity = $this->getAppClass()->getSetting("db_prefix", null, false) . "activity";
-
-        $dbEvents = $this->getAppClass()->getDatabase()->query(
-            "SELECT `$db_steps`.`date`,`$db_steps`.`distance`,`$db_steps`.`steps`,`$db_activity`.`fairlyactive`,`$db_activity`.`veryactive`"
-            . " FROM `$db_steps`"
-            . " JOIN `$db_activity` ON (`$db_steps`.`date` = `$db_activity`.`date`) AND (`$db_steps`.`user` = `$db_activity`.`user`)"
-            . " WHERE `$db_steps`.`user` = '" . $this->getUserID() . "' AND `$db_steps`.`date` <= '" . $userPushEndDate . "' AND `$db_steps`.`date` >= '$userPushStartDate' "
-            . " ORDER BY `$db_steps`.`date` DESC");
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
-            "METHOD" => __METHOD__,
-            "LINE" => __LINE__
-        ]);
-
-        $days = 0;
-        $score = 0;
-        $scoreDistance = 0;
-        $scoreVeryactive = 0;
-        $scoreSteps = 0;
-        $startDateCovered = false;
-        $calenderEvents = [];
-        foreach ($dbEvents as $dbEvent) {
-            if (strtotime($dbEvent['date']) >= strtotime($userPushStartDate) && strtotime($dbEvent['date']) <= strtotime($userPushEndDate)) {
-                $days += 1;
-
-                if ($userPushTrgUnit == "km") {
-                    $dbEvent['distance'] = $dbEvent['distance'] * 1.609344;
-                }
-                if (strtotime($dbEvent['date']) == strtotime($userPushStartDate)) {
-                    $startDateCovered = true;
-                }
-
-                $dbEvent['veryactive'] = $dbEvent['fairlyactive'] + $dbEvent['veryactive'];
-
-                $scoreVeryactive += $dbEvent['veryactive'];
-                $scoreDistance += $dbEvent['distance'];
-                $scoreSteps += $dbEvent['steps'];
-
-                if (strtotime($dbEvent['date']) == strtotime(date("Y-m-d"))) {
-                    if ($days > 0) {
-                        $score = round(($score / $days) * 100, 2);
-                    } else {
-                        $score = 0;
-                    }
-                    array_push($calenderEvents, [
-                        'id' => $days,
-                        "title" => $dbEvent['steps'] . " steps"
-                            . "\n" . $dbEvent['veryactive'] . " min"
-                            . "\n" . number_format($dbEvent['distance'], 2) . $userPushTrgUnit,
-                        "start" => strtotime($dbEvent['date']).'000',
-                        "end" => strtotime($dbEvent['date']).'000',
-                        'class' => 'event-info',
-                        'distance' => round($dbEvent['distance'], 2),
-                        'active' => $dbEvent['veryactive'],
-                        'steps' => $dbEvent['steps']
-                    ]);
-                } else if ($dbEvent['steps'] >= $userPushTrgSteps) {
-                    $score = $score + 1;
-                    array_push($calenderEvents, [
-                        'id' => $days,
-                        "title" => "Past!\nSteps: " . number_format($dbEvent['steps'], 0),
-                        "start" => strtotime($dbEvent['date']).'000',
-                        "end" => strtotime($dbEvent['date']).'000',
-                        'class' => 'event-success'
-                    ]);
-                } else if ($dbEvent['veryactive'] >= $userPushTrgActivity) {
-                    $score = $score + 1;
-                    array_push($calenderEvents, [
-                        'id' => $days,
-                        "title" => "Past!\nActivity: " . $dbEvent['veryactive'] . " min",
-                        "start" => strtotime($dbEvent['date']).'000',
-                        "end" => strtotime($dbEvent['date']).'000',
-                        'class' => 'event-success'
-                    ]);
-                } else if ($dbEvent['distance'] >= $userPushTrgDistance) {
-                    $score = $score + 1;
-                    array_push($calenderEvents, [
-                        'id' => $days,
-                        "title" => "Past!\nDistance: " . number_format($dbEvent['distance'],
-                                2) . $userPushTrgUnit,
-                        "start" => strtotime($dbEvent['date']).'000',
-                        "end" => strtotime($dbEvent['date']).'000',
-                        'class' => 'event-success'
-                    ]);
-                } else {
-                    array_push($calenderEvents, [
-                        'id' => $days,
-                        "title" => "Steps: " . number_format($dbEvent['steps'], 0)
-                            . "\nDistance: " . number_format($dbEvent['distance'], 2) . $userPushTrgUnit
-                            . "\nActivity: " . $dbEvent['veryactive'] . " min",
-                        "start" => strtotime($dbEvent['date']).'000',
-                        "end" => strtotime($dbEvent['date']).'000',
-                        'class' => 'event-important'
-                    ]);
-                }
-
-            }
-        }
-
-        if (!$startDateCovered) {
-            array_push($calenderEvents, [
-                "title" => "Push " . $range_start->format("Y") . "\nStart!",
-                "start" => $userPushStartDate,
-                'className' => 'label-nopush'
-            ]);
-        }
-
-        if ($days > 0) {
-            $score = round(($score / $days) * 100, 2);
-        } else {
-            $score = 0;
-        }
-
-        return [
-            'score' => $score,
-            'veryactive' => $scoreVeryactive,
-            'steps' => $scoreSteps,
-            'distance' => $scoreDistance,
-            'events' => $calenderEvents
-        ];
     }
 
     /**
@@ -1786,20 +1921,20 @@ class DataReturn
             'gender'
         ], ["fuid" => $this->getUserID()]);
         if (array_key_exists("personal", $_GET) and $_GET['personal'] == "true") {
-            $he = "I";
-            $is = "am";
-            $hes = "I've";
-            $his = "my";
+            $hePronoun = "I";
+            $isPronoun = "am";
+            $hesPronoun = "I've";
+            $hisPronoun = "my";
         } else {
-            $is = "is";
+            $isPronoun = "is";
             if ($dbUsers['gender'] == "MALE") {
-                $he = "he";
-                $hes = "he's";
-                $his = "his";
+                $hePronoun = "he";
+                $hesPronoun = "he's";
+                $hisPronoun = "his";
             } else {
-                $he = "she";
-                $hes = "she's";
-                $his = "her";
+                $hePronoun = "she";
+                $hesPronoun = "she's";
+                $hisPronoun = "her";
             }
         }
 
@@ -1834,12 +1969,12 @@ class DataReturn
             "max" => [],
             "friends" => []
         ];
-        $returnStats["friends"] = $hes . " " . $dbUsers['friends'] . " friends ";
+        $returnStats["friends"] = $hesPronoun . " " . $dbUsers['friends'] . " friends ";
         if ($dbUsers['rank'] > 1) {
-            $returnStats["friends"] .= "and " . $is . " currently ranked " . $this->ordinalSuffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'],
-                    0) . " steps " . $he . " could take " . $this->ordinalSuffix($dbUsers['rank'] - 1) . " place.";
+            $returnStats["friends"] .= "and " . $isPronoun . " currently ranked " . $this->ordinalSuffix($dbUsers['rank']) . ", with another " . number_format($dbUsers['distance'],
+                    0) . " steps " . $hePronoun . " could take " . $this->ordinalSuffix($dbUsers['rank'] - 1) . " place.";
         } else {
-            $returnStats["friends"] .= "and " . $is . " proudly at the top of the leaderboard.";
+            $returnStats["friends"] .= "and " . $isPronoun . " proudly at the top of the leaderboard.";
         }
 
         /**
@@ -1852,7 +1987,7 @@ class DataReturn
         foreach ($keyPoints['distance'] as $values) {
             if ($dbDistanceAllTime < $values['value']) {
                 array_push($less, number_format(($values['value'] - $dbDistanceAllTime),
-                        0) . " miles until " . $hes . " walked " . $values['less']);
+                        0) . " miles until " . $hesPronoun . " walked " . $values['less']);
             } else if ($dbDistanceAllTime > $values['value']) {
                 $times = number_format($dbDistanceAllTime / $values['value'], 0);
                 if ($times == 1) {
@@ -1863,9 +1998,9 @@ class DataReturn
                     $times = $times . " times";
                 }
                 if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
-                    $msg = $hes . " walked " . $values['more'] . " " . $times;
+                    $msg = $hesPronoun . " walked " . $values['more'] . " " . $times;
                 } else {
-                    $msg = $hes . " walked " . $values['less'] . " " . $times;
+                    $msg = $hesPronoun . " walked " . $values['less'] . " " . $times;
                 }
                 if ($times > 1) {
                     $msg .= "s";
@@ -1905,7 +2040,7 @@ class DataReturn
         foreach ($keyPoints['elevation'] as $values) {
             if ($dbFloorsAllTime < $values['value']) {
                 array_push($less, number_format(($values['value'] - $dbFloorsAllTime),
-                        0) . " meters more until " . $hes . " climbed " . $values['less']);
+                        0) . " meters more until " . $hesPronoun . " climbed " . $values['less']);
             } else if ($dbFloorsAllTime > $values['value']) {
                 $times = number_format($dbFloorsAllTime / $values['value'], 0);
                 if ($times == 1) {
@@ -1916,9 +2051,9 @@ class DataReturn
                     $times = $times . " times";
                 }
                 if (array_key_exists("more", $values) && !is_null($values['more']) && $values['more'] != "") {
-                    $msg = $hes . " climbed " . $values['more'] . " " . $times;
+                    $msg = $hesPronoun . " climbed " . $values['more'] . " " . $times;
                 } else {
-                    $msg = $hes . " climbed " . $values['less'] . " " . $times;
+                    $msg = $hesPronoun . " climbed " . $values['less'] . " " . $times;
                 }
                 if ($times > 1) {
                     $msg .= "s";
@@ -1956,7 +2091,7 @@ class DataReturn
             'date'
         ], ["user" => $this->getUserID(), "ORDER" => ["steps" => "DESC"]]);
         array_push($returnStats["max"],
-            $his . " highest step count, totalling " . number_format($dbMaxSteps['steps'],
+            $hisPronoun . " highest step count, totalling " . number_format($dbMaxSteps['steps'],
                 0) . ", for a day was on " . date("jS F, Y", strtotime($dbMaxSteps['date'])) . ".");
 
         $dbMaxDistance = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
@@ -1969,7 +2104,7 @@ class DataReturn
                     0) . " miles.";
         } else {
             array_push($returnStats["max"],
-                $he . " traveled the furthest, " . number_format($dbMaxDistance['distance'],
+                $hePronoun . " traveled the furthest, " . number_format($dbMaxDistance['distance'],
                     0) . " miles, on " . date("jS F, Y", strtotime($dbMaxDistance['date'])) . ".");
         }
 
@@ -1979,7 +2114,7 @@ class DataReturn
             'date'
         ], ["user" => $this->getUserID(), "ORDER" => ["floors" => "DESC"]]);
         array_push($returnStats["max"],
-            $he . " walked up, " . number_format($dbMaxFloors['floors'], 0) . " floors, on " . date("jS F, Y",
+            $hePronoun . " walked up, " . number_format($dbMaxFloors['floors'], 0) . " floors, on " . date("jS F, Y",
                 strtotime($dbMaxFloors['date'])) . ".");
 
         $dbMaxElevation = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
@@ -1991,34 +2126,12 @@ class DataReturn
             $returnStats["max"][(count($returnStats["max"]) - 1)] .= " That's a total of " . number_format($dbMaxElevation['elevation'],
                     2) . " meters.";
         } else {
-            array_push($returnStats["max"], $he . " climed the highest on " . date("jS F, Y",
+            array_push($returnStats["max"], $hePronoun . " climed the highest on " . date("jS F, Y",
                     strtotime($dbMaxElevation['date'])) . ", a total of " . number_format($dbMaxElevation['elevation'],
                     2) . " meters.");
         }
 
         return $returnStats;
-    }
-
-    /**
-     * @param int $input_num
-     *
-     * @return string
-     */
-    private function ordinalSuffix($input_num)
-    {
-        $num = $input_num % 100; // protect against large numbers
-        if ($num < 11 || $num > 13) {
-            switch ($num % 10) {
-                case 1:
-                    return $input_num . 'st';
-                case 2:
-                    return $input_num . 'nd';
-                case 3:
-                    return $input_num . 'rd';
-            }
-        }
-
-        return $input_num . 'th';
     }
 
     /**
@@ -2505,10 +2618,10 @@ class DataReturn
 
         $taskerDataArray['snapshot'] = [];
 
-        $returnUserRecordWater = $this->returnUserRecordWater();
-        $taskerDataArray['snapshot']['today']['water'] = round(($returnUserRecordWater[0]['liquid'] / $returnUserRecordWater[0]['goal']) * 100,
+        $waterReturn = $this->returnUserRecordWater();
+        $taskerDataArray['snapshot']['today']['water'] = round(($waterReturn[0]['liquid'] / $waterReturn[0]['goal']) * 100,
             0);
-        $taskerDataArray['snapshot']['cheer']['water'] = $returnUserRecordWater[0]['cheer'];
+        $taskerDataArray['snapshot']['cheer']['water'] = $waterReturn[0]['cheer'];
 
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps", [
@@ -2650,35 +2763,35 @@ class DataReturn
         $taskerDataArray['streak'] = $this->returnUserRecordGoalStreak();
 
         $taskerDataArray['journeys'] = [];
-        $returnUserRecordJourneysState = $this->returnUserRecordJourneysState();
+        $journeysState = $this->returnUserRecordJourneysState();
         if (array_key_exists("msg",
-                $returnUserRecordJourneysState) && $returnUserRecordJourneysState['msg'] == "Not on any jounry"
+                $journeysState) && $journeysState['msg'] == "Not on any jounry"
         ) {
             $taskerDataArray['journeys']['name'] = "Not on any journey";
         } else {
-            if (is_array($returnUserRecordJourneysState) && count($returnUserRecordJourneysState) >= 1) {
-                $returnUserRecordJourneysState = $returnUserRecordJourneysState[1];
-                $taskerDataArray['journeys']['name'] = $returnUserRecordJourneysState['name'];
-                $taskerDataArray['journeys']['blurb'] = $returnUserRecordJourneysState['blurb'];
-                $taskerDataArray['journeys']['start_date'] = $returnUserRecordJourneysState['start_date'];
-                $returnUserRecordJourneys = $this->returnUserRecordJourneys();
-                $returnUserRecordJourneys = $returnUserRecordJourneys[1];
-                $taskerDataArray['journeys']['progress'] = $returnUserRecordJourneys['legs_progress'][1];
+            if (is_array($journeysState) && count($journeysState) >= 1) {
+                $journeysState = $journeysState[1];
+                $taskerDataArray['journeys']['name'] = $journeysState['name'];
+                $taskerDataArray['journeys']['blurb'] = $journeysState['blurb'];
+                $taskerDataArray['journeys']['start_date'] = $journeysState['start_date'];
+                $journeysArray = $this->returnUserRecordJourneys();
+                $journeysArray = $journeysArray[1];
+                $taskerDataArray['journeys']['progress'] = $journeysArray['legs_progress'][1];
 
                 $taskerDataArray['journeys']['legs'] = [
                     "last" => [
-                        "name" => $returnUserRecordJourneysState['legs']['last']['legs_names'],
-                        "miles" => $returnUserRecordJourneysState['legs']['last']['miles'],
-                        "miles_off" => $returnUserRecordJourneysState['legs']['last']['miles_off'],
-                        "subtitle" => $returnUserRecordJourneysState['legs']['last']['subtitle'],
-                        "narrative" => $returnUserRecordJourneysState['legs']['last']['narrative']
+                        "name" => $journeysState['legs']['last']['legs_names'],
+                        "miles" => $journeysState['legs']['last']['miles'],
+                        "miles_off" => $journeysState['legs']['last']['miles_off'],
+                        "subtitle" => $journeysState['legs']['last']['subtitle'],
+                        "narrative" => $journeysState['legs']['last']['narrative']
                     ],
                     "next" => [
-                        "name" => $returnUserRecordJourneysState['legs']['next']['legs_names'],
-                        "miles" => $returnUserRecordJourneysState['legs']['next']['miles'],
-                        "miles_off" => $returnUserRecordJourneysState['legs']['next']['miles_off'],
-                        "subtitle" => $returnUserRecordJourneysState['legs']['next']['subtitle'],
-                        "narrative" => $returnUserRecordJourneysState['legs']['next']['narrative']
+                        "name" => $journeysState['legs']['next']['legs_names'],
+                        "miles" => $journeysState['legs']['next']['miles'],
+                        "miles_off" => $journeysState['legs']['next']['miles_off'],
+                        "subtitle" => $journeysState['legs']['next']['subtitle'],
+                        "narrative" => $journeysState['legs']['next']['narrative']
                     ]
                 ];
             }
@@ -3299,19 +3412,19 @@ class DataReturn
      */
     public function returnUserRecordTracked()
     {
-        $nx_fitbit_steps = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps';
-        $nx_fitbit_steps_goals = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps_goals';
+        $dbSteps = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps';
+        $dbStepsGoals = $this->getAppClass()->getSetting("db_prefix", null, false) . 'steps_goals';
 
         $days = $this->getParamPeriod();
         $days = str_ireplace("last", "", $days);
         $then = date('Y-m-d', strtotime($this->getParamDate() . " -" . $days . " day"));
 
         $dbSteps = $this->getAppClass()->getDatabase()->query(
-            "SELECT `$nx_fitbit_steps`.`date`,`$nx_fitbit_steps`.`floors`,`$nx_fitbit_steps`.`steps`,`$nx_fitbit_steps_goals`.`floors` AS `floors_g`,`$nx_fitbit_steps_goals`.`steps` AS `steps_g`"
-            . " FROM `$nx_fitbit_steps`"
-            . " JOIN `$nx_fitbit_steps_goals` ON (`$nx_fitbit_steps`.`date` = `$nx_fitbit_steps_goals`.`date`) AND (`$nx_fitbit_steps`.`user` = `$nx_fitbit_steps_goals`.`user`)"
-            . " WHERE `$nx_fitbit_steps`.`user` = '" . $this->getUserID() . "' AND `$nx_fitbit_steps`.`date` <= '" . $this->getParamDate() . "' AND `$nx_fitbit_steps`.`date` >= '$then' "
-            . " ORDER BY `$nx_fitbit_steps`.`date` DESC LIMIT $days");
+            "SELECT `$dbSteps`.`date`,`$dbSteps`.`floors`,`$dbSteps`.`steps`,`$dbStepsGoals`.`floors` AS `floors_g`,`$dbStepsGoals`.`steps` AS `steps_g`"
+            . " FROM `$dbSteps`"
+            . " JOIN `$dbStepsGoals` ON (`$dbSteps`.`date` = `$dbStepsGoals`.`date`) AND (`$dbSteps`.`user` = `$dbStepsGoals`.`user`)"
+            . " WHERE `$dbSteps`.`user` = '" . $this->getUserID() . "' AND `$dbSteps`.`date` <= '" . $this->getParamDate() . "' AND `$dbSteps`.`date` >= '$then' "
+            . " ORDER BY `$dbSteps`.`date` DESC LIMIT $days");
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
@@ -3644,33 +3757,6 @@ class DataReturn
     }
 
     /**
-     * @param double|array $inputWeight
-     * @param string $convertUnits
-     *
-     * @return array|float
-     */
-    private function convertWeight($inputWeight, $convertUnits)
-    {
-        $conversationUnit = 1;
-
-        if ($convertUnits == "kg") {
-            return $inputWeight;
-        } else if ($convertUnits == "lb") {
-            $conversationUnit = 2.20462;
-        }
-
-        if (!is_array($inputWeight)) {
-            return round($inputWeight * $conversationUnit, 2);
-        } else {
-            foreach ($inputWeight as $key => $value) {
-                $inputWeight[$key] = round($value * $conversationUnit, 2);
-            }
-        }
-
-        return $inputWeight;
-    }
-
-    /**
      * @return array|bool
      */
     public function returnUserRecordWeekPedometer()
@@ -3734,48 +3820,6 @@ class DataReturn
             "SyncProgress" => round(($totalProgress / (100 * count($allowed_triggers))) * 100, 1),
             "SyncProgressScopes" => $allowed_triggers
         ];
-    }
-
-    /**
-     * @param null $scope
-     *
-     * @return DateTime
-     */
-    private function getOldestScope($scope = null)
-    {
-        if (is_null($scope)) {
-            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
-                    false) . "runlog", ["user" => $this->getUserID()])
-            ) {
-                return new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
-                        null, false) . "runlog", "lastrun", [
-                    "user" => $this->getUserID(),
-                    "ORDER" => ["lastrun" => "ASC"]
-                ]));
-            }
-        } else {
-            if ($this->getAppClass()->getDatabase()->has($this->getAppClass()->getSetting("db_prefix", null,
-                    false) . "runlog", [
-                "AND" => [
-                    "user" => $this->getUserID(),
-                    "activity" => $scope
-                ]
-            ])
-            ) {
-                $returnTime = new DateTime ($this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
-                        null, false) . "runlog", "lastrun", [
-                    "AND" => [
-                        "user" => $this->getUserID(),
-                        "activity" => $scope
-                    ],
-                    "ORDER" => ["lastrun" => "ASC"]
-                ]));
-
-                return $returnTime;
-            }
-        }
-
-        return new DateTime ("1970-01-01");
     }
 
     /**
@@ -4062,56 +4106,6 @@ class DataReturn
             'loss_rate_weight' => $this->convertWeight($loss["weight"], $userWeightUnits),
             'weight_units' => $userWeightUnits
         ];
-    }
-
-    /**
-     * @param array $returnWeight
-     * @param array $arrayOfMissingDays
-     * @param array|NULL $lastRecord
-     * @param array $nextRecord
-     *
-     * @return array
-     */
-    private function fillMissingBodyRecords($returnWeight, $arrayOfMissingDays, $lastRecord, $nextRecord)
-    {
-        $xDistance = count($arrayOfMissingDays) + 1;
-
-        $yStartWeight = $lastRecord['weight'];
-        $yEndWeight = $nextRecord['weight'];
-        $dailyChangeWeight = ($yEndWeight - $yStartWeight) / $xDistance;
-
-        $yStartWeightAvg = $lastRecord['weightAvg'];
-        $yEndWeightAvg = $nextRecord['weightAvg'];
-        $dailyChangeWeightAvg = ($yEndWeightAvg - $yStartWeightAvg) / $xDistance;
-
-        $yStartFat = $lastRecord['fat'];
-        $yEndFat = $nextRecord['fat'];
-        $dailyChangeFat = ($yEndFat - $yStartFat) / $xDistance;
-
-        $yStartFatAvg = $lastRecord['fatAvg'];
-        $yEndFatAvg = $nextRecord['fatAvg'];
-        $dailyChangeFatAvg = ($yEndFatAvg - $yStartFatAvg) / $xDistance;
-
-        $dayNumber = 0;
-        foreach ($arrayOfMissingDays as $date) {
-            $dayNumber = $dayNumber + 1;
-            $calcWeight = (String)round(($dailyChangeWeight * $dayNumber) + $yStartWeight, 2);
-            $calcWeightAvg = (String)round(($dailyChangeWeightAvg * $dayNumber) + $yStartWeightAvg, 2);
-            $calcFat = (String)round(($dailyChangeFat * $dayNumber) + $yStartFat, 2);
-            $calcFatAvg = (String)round(($dailyChangeFatAvg * $dayNumber) + $yStartFatAvg, 2);
-            $returnWeight[$date] = [
-                "date" => $date,
-                "weight" => $calcWeight,
-                "weightAvg" => $calcWeightAvg,
-                "weightGoal" => $nextRecord['weightGoal'],
-                "fat" => $calcFat,
-                "fatAvg" => $calcFatAvg,
-                "fatGoal" => $nextRecord['fatGoal'],
-                "source" => "CalcDeviation"
-            ];
-        }
-
-        return $returnWeight;
     }
 
     /**

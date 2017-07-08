@@ -1,19 +1,128 @@
 stages:
   - test
+  - codestyle
+  - messdetector
+  - stats
   - stage
   - deploy
 
-# Run our tests
+# PHP Docblock Checker
 test:docblock:
-  stage: test
+  stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
     - sh ./dev/build_dev_env_docblock.sh
   script:
-  - ./binaries/php-docblock-checker-1.3.4/phpdoccheck -d ./lib --no-interaction
+  - ./binaries/php-docblock-checker/phpdoccheck -d ./lib --no-interaction
   only:
-  - develop
-  #allow_failure: true
+    - branches
+  except:
+    - master
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_cleancode:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text cleancode
+  only:
+    - branches
+  except:
+    - master
+  allow_failure: true
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_codesize:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text codesize
+  only:
+    - branches
+  except:
+    - master
+  allow_failure: true
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_controversial:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text controversial
+  only:
+    - branches
+  except:
+    - master
+  allow_failure: true
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_design:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text design
+  only:
+    - branches
+  except:
+    - master
+  allow_failure: true
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_naming:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text naming
+  only:
+    - branches
+  except:
+    - master
+  allow_failure: true
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_unusedcode:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text unusedcode
+  only:
+    - branches
+  except:
+    - master
+  allow_failure: true
+
+# PHP Copy/Paste Detector (PHPCPD)
+test:phpcpd:
+  stage: codestyle
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget https://phar.phpunit.de/phpcpd.phar -O ./binaries/phpcpd.phar
+    - chmod +x ./binaries/phpcpd.phar
+  script:
+  - ./binaries/phpcpd.phar ./lib
+  only:
+    - branches
+  except:
+    - master
+  allow_failure: true
 
 test:unit_7.0.18:
   stage: test
@@ -23,54 +132,51 @@ test:unit_7.0.18:
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   script:
   - php ./binaries/phpunit.phar -c phpunit.xml
-  #allow_failure: true
 
-# Run our tests
+# This tool check syntax of PHP files faster than serial check with fancier output.
 test:lint:
-  stage: test
+  stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
   script:
   - ./bundle/vendor/bin/parallel-lint --exclude library --exclude vendor --exclude binaries --exclude bundle/vendor --blame -e php .
   only:
-  - branches
-  only:
-  - develop
-  #allow_failure: true
+    - branches
+  except:
+    - master
+    - develop
 
-# Run our tests
+# PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standard
 test:phpcs:
-  stage: test
+  stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
   script:
-  - bash ./dev/phpcs_cbf.sh
+    - bash ./dev/phpcs_cbf.sh
   only:
-  - develop
-  #allow_failure: true
+    - develop
 
-# Run our tests
+# A tool for quickly measuring the size of a PHP project.
 test:phploc:
-  stage: test
+  stage: stats
   before_script:
     - sh ./dev/build_dev_env.sh
-    - sh ./dev/build_dev_env_docblock.sh
+    - wget https://phar.phpunit.de/phploc.phar -O ./binaries/phploc.phar
+    - chmod +x ./binaries/phploc.phar
   script:
-  - ./binaries/php-docblock-checker-1.3.4/vendor/bin/phploc lib
+    - ./binaries/phploc.phar lib
   only:
-  - develop
-  #allow_failure: true
+    - develop
 
 # Run our tests
 test:dependancies:
-  stage: test
+  stage: stats
   before_script:
     - sh ./dev/build_dev_env.sh
   script:
   - php ./dev/dependCheck.php
   only:
   - develop
-  #allow_failure: true
 
 deploy_review:
   stage: stage

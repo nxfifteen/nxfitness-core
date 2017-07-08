@@ -65,10 +65,16 @@ class ErrorRecording
     public function __construct($appClass)
     {
         if (defined('SENTRY_DSN')) {
-            Raven_Autoloader::register();
-
             $this->appClass = $appClass;
+            $this->registerRaven();
         }
+    }
+
+    /**
+     *
+     */
+    private function registerRaven() {
+        Raven_Autoloader::register();
     }
 
     /**

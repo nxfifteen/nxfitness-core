@@ -48,9 +48,9 @@ if (!function_exists("nxr")) {
         }
 
         if (is_writable(dirname(__FILE__) . "/../fitbit.log")) {
-            $fh = fopen(dirname(__FILE__) . "/../fitbit.log", "a");
-            fwrite($fh, $msg);
-            fclose($fh);
+            $logFileName = fopen(dirname(__FILE__) . "/../fitbit.log", "a");
+            fwrite($logFileName, $msg);
+            fclose($logFileName);
         }
 
         if ((!defined('TEST_SUITE') || TEST_SUITE == false) && $echoLine !== false && (!defined('IS_CRON_RUN') || !IS_CRON_RUN) && php_sapi_name() == "cli") {

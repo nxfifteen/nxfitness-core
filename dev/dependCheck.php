@@ -19,7 +19,7 @@
  * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
  */
 
-$composerInstalledFiles = file_get_contents( dirname( __FILE__ ) . '/../bundle/vendor/composer.lock' );
+$composerInstalledFiles = file_get_contents( dirname( __FILE__ ) . '/../composer.lock' );
 $composerInstalledFiles = json_decode( $composerInstalledFiles, true );
 
 foreach ( $composerInstalledFiles[ 'packages' ] as $package ) {
