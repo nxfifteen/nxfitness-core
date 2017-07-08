@@ -70,6 +70,9 @@ class ErrorRecording
         }
     }
 
+    /**
+     *
+     */
     private function registerRaven() {
         Raven_Autoloader::register();
     }
