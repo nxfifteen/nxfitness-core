@@ -167,7 +167,7 @@ class Gaming extends Delivery
      */
     public function deliver($rewardProfile, $state, $rewardKey)
     {
-        nxr(4, "Awarding Gaming Rewards");
+        nxr(4, "Awarding Gaming Rewards " . $state);
 
         if (!array_key_exists("description", $rewardProfile)) {
             $rewardProfile['description'] = "Un Described";
