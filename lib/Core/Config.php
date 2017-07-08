@@ -34,6 +34,8 @@ use Medoo\Medoo;
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Config
 {
@@ -69,6 +71,22 @@ class Config
                 $_SESSION['core_config'] = $config;
                 $this->settings = $_SESSION['core_config'];
             }
+        }
+    }
+
+    /**
+     * @param array $error
+     *
+     * @return bool
+     */
+    private function wasMySQLError($error)
+    {
+        if (is_null($error[2])) {
+            return false;
+        } else {
+            print_r($error);
+
+            return true;
         }
     }
 
@@ -299,22 +317,6 @@ class Config
                 }
             }
         } else {
-            return true;
-        }
-    }
-
-    /**
-     * @param array $error
-     *
-     * @return bool
-     */
-    private function wasMySQLError($error)
-    {
-        if (is_null($error[2])) {
-            return false;
-        } else {
-            print_r($error);
-
             return true;
         }
     }

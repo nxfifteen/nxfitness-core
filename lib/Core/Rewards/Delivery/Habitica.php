@@ -35,6 +35,8 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Habitica extends Delivery
 {
@@ -66,6 +68,39 @@ class Habitica extends Delivery
     }
 
     /**
+     * @param HabitRPHPG $HabitRPHPG
+     */
+    private function setHabitRPHPG($HabitRPHPG)
+    {
+        $this->HabitRPHPG = $HabitRPHPG;
+    }
+
+    /**
+     * @param string $task_string Name of habit to find
+     * @return mixed
+     * @internal param $alias
+     */
+    private function _searchTasks($task_string)
+    {
+        $apiValues = $this->getHabitRPHPG()->getTags();
+        if (count($apiValues) > 0) {
+
+            foreach ($apiValues as $apiValue) {
+                if ($apiValue['name'] == $task_string) {
+                    return $apiValue['id'];
+                }
+            }
+
+            $this->getHabitRPHPG()->clearTags();
+            $newTag = $this->getHabitRPHPG()->_request("post", "tags", array('name' => $task_string));
+
+            return $newTag['id'];
+        } else {
+            return NULL;
+        }
+    }
+
+    /**
      * @return bool
      */
     public function isValidUser()
@@ -75,14 +110,6 @@ class Habitica extends Delivery
         } else {
             return false;
         }
-    }
-
-    /**
-     * @param HabitRPHPG $HabitRPHPG
-     */
-    private function setHabitRPHPG($HabitRPHPG)
-    {
-        $this->HabitRPHPG = $HabitRPHPG;
     }
 
     /**
@@ -242,31 +269,6 @@ class Habitica extends Delivery
             }
         } else {
             return false;
-        }
-    }
-
-    /**
-     * @param string $task_string Name of habit to find
-     * @return mixed
-     * @internal param $alias
-     */
-    private function _searchTasks($task_string)
-    {
-        $apiValues = $this->getHabitRPHPG()->getTags();
-        if (count($apiValues) > 0) {
-
-            foreach ($apiValues as $apiValue) {
-                if ($apiValue['name'] == $task_string) {
-                    return $apiValue['id'];
-                }
-            }
-
-            $this->getHabitRPHPG()->clearTags();
-            $newTag = $this->getHabitRPHPG()->_request("post", "tags", array('name' => $task_string));
-
-            return $newTag['id'];
-        } else {
-            return NULL;
         }
     }
 

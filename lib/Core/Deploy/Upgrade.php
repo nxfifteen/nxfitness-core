@@ -42,6 +42,8 @@ require_once(dirname(__FILE__) . "/../../../config/config.def.dist.php");
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Upgrade
 {
