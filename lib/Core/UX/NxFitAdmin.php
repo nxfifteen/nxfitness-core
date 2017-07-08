@@ -309,6 +309,9 @@ class NxFitAdmin
     }
 
     /**
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return string
      */
     public function getLocalWeatherImage()

@@ -322,6 +322,7 @@ class Upgrade
 
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function updateRun4()
     {
@@ -537,6 +538,7 @@ class Upgrade
 
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function updateRun8()
     {
@@ -891,6 +893,7 @@ class Upgrade
 
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function updateRun2000000()
     {

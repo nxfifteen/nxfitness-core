@@ -98,6 +98,7 @@ class RewardsSystem
      * @param null|string $rewardKey
      *
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return array|bool
      */

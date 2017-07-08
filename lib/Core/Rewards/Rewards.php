@@ -17,6 +17,7 @@
  * @link        https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core Git Repo
  * @copyright   2017 Stuart McCulloch Anderson
  * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 
 namespace Core\Rewards;
@@ -98,16 +99,6 @@ class Rewards
     }
 
     /**
-     * @param string $rewardKey Unique RewardKey
-     * @return bool
-     */
-    public function alreadyAwarded($rewardKey)
-    {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        return $this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", ["AND" => ['fuid' => $this->getUserID(), 'rkey[~]' => sha1($rewardKey)]]);
-    }
-
-    /**
      * @return Core
      */
     private function getAppClass()
@@ -121,6 +112,16 @@ class Rewards
     private function getUserID()
     {
         return $this->UserID;
+    }
+
+    /**
+     * @param string $rewardKey Unique RewardKey
+     * @return bool
+     */
+    public function alreadyAwarded($rewardKey)
+    {
+        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        return $this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", ["AND" => ['fuid' => $this->getUserID(), 'rkey[~]' => sha1($rewardKey)]]);
     }
 
     /**

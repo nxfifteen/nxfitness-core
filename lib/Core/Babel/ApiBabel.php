@@ -123,6 +123,8 @@ class ApiBabel {
     }
 
     /**
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @return bool|array
      */
     private function pullNomieTrackers() {
@@ -554,6 +556,8 @@ class ApiBabel {
     }
 
     /**
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @return mixed|null|SimpleXMLElement|string
      */
     private function pullBabelProfile() {
@@ -720,6 +724,8 @@ class ApiBabel {
 
     /**
      * Download information about devices associated with the users account. This is then stored in the database
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -905,6 +911,8 @@ class ApiBabel {
 
     /**
      * Download information of badges the user has aquired
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
@@ -1100,6 +1108,9 @@ class ApiBabel {
     }
 
     /**
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
      */
@@ -1342,6 +1353,9 @@ class ApiBabel {
 
     /**
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @internal param $targetDate
      */
     private function pullBabelActivityLogs() {
@@ -1725,6 +1739,9 @@ class ApiBabel {
 
     /**
      * @return mixed
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @internal param $targetDate
      */
     private function pullBabelUserGoals() {
@@ -2381,6 +2398,8 @@ class ApiBabel {
     /**
      * @param string $targetDate
      *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return mixed
      */
     private function pullBabelBody( $targetDate ) {
@@ -2690,6 +2709,8 @@ class ApiBabel {
      * @param string        $daysSince
      * @param DateTime|null $lastrun
      *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return string|bool
      */
     private function pullBabelTimeSeriesForSteps( $trigger, $daysSince, $lastrun = null ) {
@@ -2946,6 +2967,8 @@ class ApiBabel {
      * @param string        $daysSince
      * @param DateTime|null $lastrun
      *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return bool
      */
     private function pullBabelTimeSeriesForActivity( $trigger, $daysSince, $lastrun = null ) {
@@ -3076,7 +3099,7 @@ class ApiBabel {
     }
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function pullHabitica() {
         $isAllowed = $this->isAllowed( "habitica" );
@@ -3181,6 +3204,8 @@ class ApiBabel {
     /**
      * @param Habitica $habiticaClass
      * @param array    $user
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function funHabiticaHatcher( $habiticaClass, $user ) {
         if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_hatch', false ) ) {
@@ -3263,6 +3288,8 @@ class ApiBabel {
     /**
      * @param Habitica $habiticaClass
      * @param array    $user
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function funHabiticaFeeder( $habiticaClass, $user ) {
         $pets = [];
@@ -3460,6 +3487,7 @@ class ApiBabel {
      * @param bool   $return
      *
      * @SuppressWarnings(PHPMD.ExitExpression)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -3948,6 +3976,8 @@ class ApiBabel {
      * @param string          $type
      * @param string|DateTime $baseDate  DateTime or 'today', to_period
      * @param string|DateTime $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return array|boolean
      */

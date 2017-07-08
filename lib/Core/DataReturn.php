@@ -601,6 +601,8 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return array
      */
     public function returnUserRecordActivityHistory()
@@ -789,6 +791,8 @@ class DataReturn
     /**
      * @param null $tcxFileName
      * @param null $tcxTrackName
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return array
      */
@@ -1331,6 +1335,8 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return array
      */
     public function returnUserRecordConky()
@@ -1770,6 +1776,8 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return array
      */
     public function returnUserRecordFoodDiary()
@@ -1908,6 +1916,8 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return array
      */
     public function returnUserRecordKeyPoints()
@@ -2467,6 +2477,8 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return array
      */
     public function returnUserRecordPendingRewards()
@@ -2546,6 +2558,8 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return array
      */
     public function returnUserRecordTasker()
@@ -3408,6 +3422,8 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return array
      */
     public function returnUserRecordTracked()
@@ -3823,6 +3839,9 @@ class DataReturn
     }
 
     /**
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return array
      */
     public function returnUserRecordWeight()
@@ -4110,6 +4129,8 @@ class DataReturn
 
     /**
      * @param array $get
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return array
      */
