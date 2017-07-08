@@ -2505,10 +2505,10 @@ class DataReturn
 
         $taskerDataArray['snapshot'] = [];
 
-        $returnUserRecordWater = $this->returnUserRecordWater();
-        $taskerDataArray['snapshot']['today']['water'] = round(($returnUserRecordWater[0]['liquid'] / $returnUserRecordWater[0]['goal']) * 100,
+        $waterReturn = $this->returnUserRecordWater();
+        $taskerDataArray['snapshot']['today']['water'] = round(($waterReturn[0]['liquid'] / $waterReturn[0]['goal']) * 100,
             0);
-        $taskerDataArray['snapshot']['cheer']['water'] = $returnUserRecordWater[0]['cheer'];
+        $taskerDataArray['snapshot']['cheer']['water'] = $waterReturn[0]['cheer'];
 
         $dbSteps = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps", [
