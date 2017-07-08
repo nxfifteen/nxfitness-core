@@ -1267,10 +1267,10 @@ class ApiBabel {
 
                     $currentDate = new DateTime ( 'now' );
                     if ( empty( $usr_foodplan->estimatedDate ) ) {
-                        $usr_foodplan_estimatedDate = $currentDate->format( "Y-m-d" );
-                        $fallback                   = true;
+                        $usrFoodEstDate = $currentDate->format( "Y-m-d" );
+                        $fallback       = true;
                     } else {
-                        $usr_foodplan_estimatedDate = (string)$usr_foodplan->estimatedDate;
+                        $usrFoodEstDate = (string)$usr_foodplan->estimatedDate;
                     }
 
                     if ( empty( $usr_foodplan->personalized ) ) {
@@ -1292,7 +1292,7 @@ class ApiBabel {
                                 null, false ) . "food_goals", [
                             'calories'      => $usr_goals_calories,
                             'intensity'     => $usrFoodIntensity,
-                            'estimatedDate' => $usr_foodplan_estimatedDate,
+                            'estimatedDate' => $usrFoodEstDate,
                             'personalized'  => $usrFoodPersonal,
                         ], [
                             "AND" => [
@@ -1312,7 +1312,7 @@ class ApiBabel {
                             'date'          => $currentDate->format( "Y-m-d" ),
                             'calories'      => $usr_goals_calories,
                             'intensity'     => $usrFoodIntensity,
-                            'estimatedDate' => $usr_foodplan_estimatedDate,
+                            'estimatedDate' => $usrFoodEstDate,
                             'personalized'  => $usrFoodPersonal,
                         ] );
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
