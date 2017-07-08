@@ -303,14 +303,12 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
     $data = json_decode( $payload, TRUE );
 
     nxr( 2, "Hook for user ID: " . $data['user']['_id'] );
-    $config = [];
-    require(dirname(__FILE__) . "/config/config.inc.php");
-    if (in_array($data['user']['_id'], $config)) {
 
-        $fitbitApp = new Core();
-        $db_prefix = $fitbitApp->getSetting( "db_prefix", null,false );
+    $fitbitApp = new Core();
+    $db_prefix = $fitbitApp->getSetting( "db_prefix", null, false );
+
+    if ( $fitbitApp->getDatabase()->has( $db_prefix . "settings_users", [ "AND" => [ "var" => "habitica_user_id", "data" => $data[ 'user' ][ '_id' ] ] ] ) ) {
         $coreUserId = $fitbitApp->getDatabase()->get( $db_prefix . "settings_users", "fuid", [ "AND" => [ "var" => "habitica_user_id", "data" => $data['user']['_id'] ] ] );
-
         if ( $fitbitApp->isUser( $coreUserId ) ) {
             if ( $fitbitApp->getDatabase()->has( $db_prefix . "runlog", [
                 "AND" => [

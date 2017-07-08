@@ -133,11 +133,9 @@ class HabitRPHPG {
                     nxr( 0, "******************************************************************" );
                     $fitbitApp = new Core();
                     $db_prefix = $fitbitApp->getSetting( "db_prefix", null, false );
-
-                    $config = [];
-                    require( dirname( __FILE__ ) . "/../config/config.inc.php" );
-                    if ( in_array( $this->user_id, $config ) || $fitbitApp->getDatabase()->has( $db_prefix . "settings_users", [ "AND" => [ "var" => "habitica_user_id", "data" => $this->user_id ] ] ) ) {
+                    if ( $fitbitApp->getDatabase()->has( $db_prefix . "settings_users", [ "AND" => [ "var" => "habitica_user_id", "data" => $this->user_id ] ] ) ) {
                         $coreUserId = $fitbitApp->getDatabase()->get( $db_prefix . "settings_users", "fuid", [ "AND" => [ "var" => "habitica_user_id", "data" => $this->user_id ] ] );
+
                         $fitbitApp->setUserSetting( $coreUserId, 'scope_habitica', false );
 
                         $cacheFile = '../cache' . DIRECTORY_SEPARATOR . '_' . $coreUserId . '_Account';
