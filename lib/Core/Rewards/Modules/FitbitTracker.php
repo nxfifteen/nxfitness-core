@@ -38,78 +38,6 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class FitbitTracker extends Modules
 {
-
-    private $debug = false;
-
-    /**
-     * @param array $eventDetails Array holding details of award to issue
-     */
-    public function trigger($eventDetails)
-    {
-        $this->setEventDetails($eventDetails);
-        $eventDetails = $this->getEventDetails();
-
-        $goalsToCheck = ["steps", "floors", "distance"];
-
-        if (in_array($eventDetails['trigger'], $goalsToCheck)) {
-            if (date('Y-m-d') == $eventDetails['date']) {
-                // Crushed Step Goal
-                if (!$this->crushedGoal($eventDetails['trigger'], $eventDetails['value'])) {
-                    // Smashed Step Goal
-                    if (!$this->smashedGoal($eventDetails['trigger'], $eventDetails['value'])) {
-                        // Reached Step Goal
-                        if ($this->reachedGoal($eventDetails['trigger'], $eventDetails['value'])) {
-                            $this->checkDB("goal", $eventDetails['trigger'], "reached", date('Y-m-d') . $eventDetails['trigger'] . "reached");
-                        }
-                    } else {
-                        $this->checkDB("goal", $eventDetails['trigger'], "smashed", date('Y-m-d') . $eventDetails['trigger'] . "smashed");
-                    }
-                } else {
-                    $this->checkDB("goal", $eventDetails['trigger'], "crushed", date('Y-m-d') . $eventDetails['trigger'] . "crushed");
-                }
-
-                if ($eventDetails['trigger'] == "steps") {
-                    $this->triggerSteps();
-                } else {
-
-                    $yesterday = date('Y-m-d', strtotime('-1 days'));
-                    $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-                    $eventDetails['value'] = $this->getAppClass()->getDatabase()->get($db_prefix . "steps", $eventDetails['trigger'], ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
-
-                    if ($eventDetails['trigger'] == "distance") {
-                        $divider = 10;
-                        $cutOff = 10;
-                    } else if ($eventDetails['trigger'] == "floors") {
-                        $divider = 10;
-                        $cutOff = 20;
-                    } else {
-                        $divider = 10;
-                        $cutOff = 0;
-                    }
-
-                    if ($eventDetails['value'] > $cutOff) {
-                        $yesterdaySteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps_goals",
-                            $eventDetails['trigger'], [
-                                "AND" => [
-                                    "user" => $this->getUserID(),
-                                    "date" => $yesterday
-                                ]
-                            ]);
-
-                        $recordedValue = round($yesterdaySteps, 3);
-                        $hundredth = round($recordedValue / $divider, 0);
-
-                        $rewardKey = sha1($yesterday . $eventDetails['trigger'] . $hundredth);
-
-                        if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
-                            $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey . "db"));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * @param array $eventDetails
      */
@@ -197,6 +125,75 @@ class FitbitTracker extends Modules
                     $this->checkDB("fitbit_tracker", "steps", $score, $eventDetails['trigger'] . $eventDetails['date'] . $score);
                 } else {
                     nxr(3, "Already rewarded " . $eventDetails['trigger'] . " " . $eventDetails['date'] . " " . $score);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $eventDetails Array holding details of award to issue
+     */
+    public function trigger($eventDetails)
+    {
+        $this->setEventDetails($eventDetails);
+        $eventDetails = $this->getEventDetails();
+
+        $goalsToCheck = ["steps", "floors", "distance"];
+
+        if (in_array($eventDetails['trigger'], $goalsToCheck)) {
+            if (date('Y-m-d') == $eventDetails['date']) {
+                // Crushed Step Goal
+                if (!$this->crushedGoal($eventDetails['trigger'], $eventDetails['value'])) {
+                    // Smashed Step Goal
+                    if (!$this->smashedGoal($eventDetails['trigger'], $eventDetails['value'])) {
+                        // Reached Step Goal
+                        if ($this->reachedGoal($eventDetails['trigger'], $eventDetails['value'])) {
+                            $this->checkDB("goal", $eventDetails['trigger'], "reached", date('Y-m-d') . $eventDetails['trigger'] . "reached");
+                        }
+                    } else {
+                        $this->checkDB("goal", $eventDetails['trigger'], "smashed", date('Y-m-d') . $eventDetails['trigger'] . "smashed");
+                    }
+                } else {
+                    $this->checkDB("goal", $eventDetails['trigger'], "crushed", date('Y-m-d') . $eventDetails['trigger'] . "crushed");
+                }
+
+                if ($eventDetails['trigger'] == "steps") {
+                    $this->triggerSteps();
+                } else {
+
+                    $yesterday = date('Y-m-d', strtotime('-1 days'));
+                    $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                    $eventDetails['value'] = $this->getAppClass()->getDatabase()->get($db_prefix . "steps", $eventDetails['trigger'], ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
+
+                    if ($eventDetails['trigger'] == "distance") {
+                        $divider = 10;
+                        $cutOff = 10;
+                    } else if ($eventDetails['trigger'] == "floors") {
+                        $divider = 10;
+                        $cutOff = 20;
+                    } else {
+                        $divider = 10;
+                        $cutOff = 0;
+                    }
+
+                    if ($eventDetails['value'] > $cutOff) {
+                        $yesterdaySteps = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix", null, false) . "steps_goals",
+                            $eventDetails['trigger'], [
+                                "AND" => [
+                                    "user" => $this->getUserID(),
+                                    "date" => $yesterday
+                                ]
+                            ]);
+
+                        $recordedValue = round($yesterdaySteps, 3);
+                        $hundredth = round($recordedValue / $divider, 0);
+
+                        $rewardKey = sha1($yesterday . $eventDetails['trigger'] . $hundredth);
+
+                        if (!$this->getRewardsClass()->alreadyAwarded(sha1($rewardKey . "db"))) {
+                            $this->checkDB("hundredth", $eventDetails['trigger'], $hundredth, sha1($rewardKey . "db"));
+                        }
+                    }
                 }
             }
         }

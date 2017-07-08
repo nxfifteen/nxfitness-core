@@ -38,40 +38,6 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class FitbitBadgeAwarded extends Modules
 {
-
-    private $debug = false;
-
-    /**
-     * @param array $eventDetails Array holding details of award to issue
-     */
-    public function trigger($eventDetails)
-    {
-        $this->setEventDetails($eventDetails);
-        $badge = $this->getEventDetails();
-
-        if ($badge->category == "Challenge" && $badge->description == "Challenge") {
-            $this->triggerChallenge($badge);
-        } else if ($badge->category == "Challenge" && $badge->description == "Adventure") {
-            $this->triggerAdventure($badge);
-        } else if (date("Y-m-d") == $badge->dateTime) {
-            $rewardKey = sha1($badge->dateTime . $badge->encodedId . $badge->timesAchieved . $badge->name);
-
-            if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-                nxr(2, "Awarding " . $badge->name);
-                $habitica = new Habitica($this->getAppClass(), $this->getUserID());
-                $habitica->deliver([
-                    "name" => "Earn A " . $badge->category . " Badge",
-                    "system" => "habitica",
-                    "source" => "nomie",
-                    "description" => $badge->marketingDescription,
-                    "reward" => '{"type": "habit", "tags": ["Health Wellness", "Exercise"], "priority": 1, "up": true, "down": false, "score": "up", "attribute": "per"}'
-                ], 'pending', $rewardKey);
-            } else {
-                nxr(2, "Already rewarded " . $badge->name);
-            }
-        }
-    }
-
     /**
      * @param array $eventDetails Array holding details of award to issue
      */
@@ -121,6 +87,37 @@ class FitbitBadgeAwarded extends Modules
             ], 'pending', $rewardKey);
         } else {
             nxr(2, "Already rewarded Adventure Badge " . $badge->name);
+        }
+    }
+
+    /**
+     * @param array $eventDetails Array holding details of award to issue
+     */
+    public function trigger($eventDetails)
+    {
+        $this->setEventDetails($eventDetails);
+        $badge = $this->getEventDetails();
+
+        if ($badge->category == "Challenge" && $badge->description == "Challenge") {
+            $this->triggerChallenge($badge);
+        } else if ($badge->category == "Challenge" && $badge->description == "Adventure") {
+            $this->triggerAdventure($badge);
+        } else if (date("Y-m-d") == $badge->dateTime) {
+            $rewardKey = sha1($badge->dateTime . $badge->encodedId . $badge->timesAchieved . $badge->name);
+
+            if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+                nxr(2, "Awarding " . $badge->name);
+                $habitica = new Habitica($this->getAppClass(), $this->getUserID());
+                $habitica->deliver([
+                    "name" => "Earn A " . $badge->category . " Badge",
+                    "system" => "habitica",
+                    "source" => "nomie",
+                    "description" => $badge->marketingDescription,
+                    "reward" => '{"type": "habit", "tags": ["Health Wellness", "Exercise"], "priority": 1, "up": true, "down": false, "score": "up", "attribute": "per"}'
+                ], 'pending', $rewardKey);
+            } else {
+                nxr(2, "Already rewarded " . $badge->name);
+            }
         }
     }
 }

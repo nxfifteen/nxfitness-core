@@ -38,8 +38,13 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class FitbitLoggedActivity extends Modules
 {
-
-    private $debug = false;
+    /**
+     * @param mixed $eventDetails
+     */
+    private function setEventDetails($eventDetails)
+    {
+        $this->eventDetails = $eventDetails;
+    }
 
     /**
      * @param array $eventDetails Array holding details of award to issue
@@ -110,13 +115,5 @@ class FitbitLoggedActivity extends Modules
                 if (!$awardMade) $this->checkDB("activity", 'other', "other", $activity->logId);
             }
         }
-    }
-
-    /**
-     * @param mixed $eventDetails
-     */
-    private function setEventDetails($eventDetails)
-    {
-        $this->eventDetails = $eventDetails;
     }
 }

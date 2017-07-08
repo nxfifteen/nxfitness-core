@@ -37,8 +37,13 @@ require_once(dirname(__FILE__) . "/../../../autoloader.php");
  */
 class RecordedWater extends Modules
 {
-
-    private $debug = false;
+    /**
+     * @param mixed $eventDetails
+     */
+    private function setEventDetails($eventDetails)
+    {
+        $this->eventDetails = $eventDetails;
+    }
 
     /**
      * @param array $eventDetails Array holding details of award to issue
@@ -61,13 +66,5 @@ class RecordedWater extends Modules
             }
         }
 
-    }
-
-    /**
-     * @param mixed $eventDetails
-     */
-    private function setEventDetails($eventDetails)
-    {
-        $this->eventDetails = $eventDetails;
     }
 }
