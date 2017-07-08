@@ -1743,7 +1743,7 @@ class DataReturn
         $leaderboard = json_decode($leaderboard, true);
         $totalFriends = count($leaderboard);
 
-        foreach ($leaderboard as $encodedId => $friend) {
+        foreach (array_keys($leaderboard) as $encodedId) {
             if (!array_key_exists("stepsSum", $leaderboard[$encodedId])) {
                 unset($leaderboard[$encodedId]);
             } else {
@@ -2242,7 +2242,7 @@ class DataReturn
             $dbGoals[0]['distance'] = (String)round($dbGoals[0]['distance'], 2);
 
             $cheer = ["distance" => 0, "floors" => 0, "steps" => 0];
-            foreach ($cheer as $key => $value) {
+            foreach (array_keys($cheer) as $key) {
                 if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 3) {
                     $cheer[$key] = 7;
                 } else if ($dbSteps[0][$key] >= $dbGoals[0][$key] * 2.5) {
@@ -2319,7 +2319,7 @@ class DataReturn
         $steps = [];
         $stepsGoal = [];
 
-        foreach ($convertedOutput['tracked'] as $key => $value) {
+        foreach (array_keys($convertedOutput['tracked']) as $key) {
             $date[] = $convertedOutput['tracked'][$key]['day'];
             $distance[] = $convertedOutput['tracked'][$key]['distance'];
             $floors[] = $convertedOutput['tracked'][$key]['floors'];
@@ -2382,7 +2382,7 @@ class DataReturn
         $distanceSteps = 0;
         $floorsSteps = 0;
 
-        foreach ($dbGoals as $key => $value) {
+        foreach (array_keys($dbGoals) as $key) {
             $totalsSteps += $dbGoals[$key]['steps'];
             $floorsSteps += $dbGoals[$key]['floors'];
             $distanceSteps += $dbGoals[$key]['distance'];
@@ -2689,7 +2689,7 @@ class DataReturn
         }
 
         $cheer = ["distance" => 0, "floors" => 0, "steps" => 0];
-        foreach ($cheer as $key => $value) {
+        foreach (array_keys($cheer) as $key) {
             $taskerDataArray['snapshot']['raw'][$key] = round($dbSteps[0][$key], 2);
 
             if (count($dbGoals) > 0 && $dbGoals[0][$key] > 0) {
@@ -2908,7 +2908,7 @@ class DataReturn
             "LINE" => __LINE__
         ]);
 
-        foreach ($dbDevices as $key => $dev) {
+        foreach (array_keys($dbDevices) as $key) {
             $dbDevices[$key]['image'] = 'images/devices/' . str_ireplace(" ", "",
                     $dbDevices[$key]['deviceVersion']) . ".png";
             $dbDevices[$key]['imageSmall'] = 'images/devices/' . str_ireplace(" ", "",
@@ -3790,7 +3790,7 @@ class DataReturn
 
         $totalProgress = 0;
         $allowed_triggers = [];
-        foreach ($this->getAppClass()->supportedApi() as $key => $name) {
+        foreach (array_keys($this->getAppClass()->supportedApi()) as $key) {
             if ($this->getAppClass()->getSetting('scope_' . $key) && $this->getAppClass()->getUserSetting($this->getUserID(),
                     'scope_' . $key) && $key != "all"
             ) {
@@ -3854,7 +3854,7 @@ class DataReturn
         ]);
 
         $latestDate = 0;
-        foreach ($dbWeight as $key => $daysWeight) {
+        foreach ($dbWeight as $daysWeight) {
             if (strtotime($daysWeight['date']) > strtotime($latestDate)) {
                 $latestDate = $daysWeight['date'];
             }
