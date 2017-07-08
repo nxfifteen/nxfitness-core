@@ -29,6 +29,7 @@ if (!function_exists("nxr")) {
      * @param bool $includeDate If true appends datetime stamp
      * @param bool $newline If true adds a new line character
      * @param bool $echoLine Print a new line or not
+     * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
      */
     function nxr($indentation, $msg, $includeDate = true, $newline = true, $echoLine = true)
     {
