@@ -1259,10 +1259,10 @@ class ApiBabel {
                     }
 
                     if ( empty( $usr_foodplan->intensity ) ) {
-                        $usr_foodplan_intensity = "Unset";
-                        $fallback               = true;
+                        $usrFoodIntensity = "Unset";
+                        $fallback         = true;
                     } else {
-                        $usr_foodplan_intensity = (string)$usr_foodplan->intensity;
+                        $usrFoodIntensity = (string)$usr_foodplan->intensity;
                     }
 
                     $currentDate = new DateTime ( 'now' );
@@ -1291,7 +1291,7 @@ class ApiBabel {
                         $this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix",
                                 null, false ) . "food_goals", [
                             'calories'      => $usr_goals_calories,
-                            'intensity'     => $usr_foodplan_intensity,
+                            'intensity'     => $usrFoodIntensity,
                             'estimatedDate' => $usr_foodplan_estimatedDate,
                             'personalized'  => $usrFoodPersonal,
                         ], [
@@ -1311,7 +1311,7 @@ class ApiBabel {
                             'user'          => $this->getActiveUser(),
                             'date'          => $currentDate->format( "Y-m-d" ),
                             'calories'      => $usr_goals_calories,
-                            'intensity'     => $usr_foodplan_intensity,
+                            'intensity'     => $usrFoodIntensity,
                             'estimatedDate' => $usr_foodplan_estimatedDate,
                             'personalized'  => $usrFoodPersonal,
                         ] );
