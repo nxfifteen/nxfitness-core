@@ -12,7 +12,9 @@ test:docblock:
   script:
   - ./binaries/php-docblock-checker-1.3.4/phpdoccheck -d ./lib --no-interaction
   only:
-  - develop
+    - branches
+  except:
+    - master
   #allow_failure: true
 
 test:unit_7.0.18:
@@ -33,9 +35,9 @@ test:lint:
   script:
   - ./bundle/vendor/bin/parallel-lint --exclude library --exclude vendor --exclude binaries --exclude bundle/vendor --blame -e php .
   only:
-  - branches
-  only:
-  - develop
+    - branches
+  except:
+    - master
   #allow_failure: true
 
 # Run our tests
@@ -46,7 +48,9 @@ test:phpcs:
   script:
   - bash ./dev/phpcs_cbf.sh
   only:
-  - develop
+    - branches
+  except:
+    - master
   #allow_failure: true
 
 # Run our tests
@@ -58,7 +62,9 @@ test:phploc:
   script:
   - ./binaries/php-docblock-checker-1.3.4/vendor/bin/phploc lib
   only:
-  - develop
+    - branches
+  except:
+    - master
   #allow_failure: true
 
 # Run our tests
