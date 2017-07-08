@@ -1,11 +1,14 @@
 stages:
   - test
+  - codestyle
+  - messdetector
+  - stats
   - stage
   - deploy
 
 # PHP Docblock Checker
 test:docblock:
-  stage: test
+  stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
     - sh ./dev/build_dev_env_docblock.sh
@@ -18,7 +21,7 @@ test:docblock:
 
 # PHP Mess Detector (PHPMD)
 test:phpmd_cleancode:
-  stage: test
+  stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
     - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
@@ -29,10 +32,11 @@ test:phpmd_cleancode:
     - branches
   except:
     - master
+  allow_failure: true
 
 # PHP Mess Detector (PHPMD)
 test:phpmd_codesize:
-  stage: test
+  stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
     - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
@@ -43,10 +47,11 @@ test:phpmd_codesize:
     - branches
   except:
     - master
+  allow_failure: true
 
 # PHP Mess Detector (PHPMD)
 test:phpmd_controversial:
-  stage: test
+  stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
     - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
@@ -57,10 +62,11 @@ test:phpmd_controversial:
     - branches
   except:
     - master
+  allow_failure: true
 
 # PHP Mess Detector (PHPMD)
 test:phpmd_design:
-  stage: test
+  stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
     - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
@@ -71,10 +77,11 @@ test:phpmd_design:
     - branches
   except:
     - master
+  allow_failure: true
 
 # PHP Mess Detector (PHPMD)
 test:phpmd_naming:
-  stage: test
+  stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
     - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
@@ -85,10 +92,11 @@ test:phpmd_naming:
     - branches
   except:
     - master
+  allow_failure: true
 
 # PHP Mess Detector (PHPMD)
 test:phpmd_unusedcode:
-  stage: test
+  stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
     - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
@@ -99,10 +107,11 @@ test:phpmd_unusedcode:
     - branches
   except:
     - master
+  allow_failure: true
 
 # PHP Copy/Paste Detector (PHPCPD)
 test:phpcpd:
-  stage: test
+  stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
     - wget https://phar.phpunit.de/phpcpd.phar -O ./binaries/phpcpd.phar
@@ -113,6 +122,7 @@ test:phpcpd:
     - branches
   except:
     - master
+  allow_failure: true
 
 test:unit_7.0.18:
   stage: test
@@ -137,7 +147,7 @@ test:lint:
 
 # PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standard
 test:phpcs:
-  stage: test
+  stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
   script:
@@ -149,7 +159,7 @@ test:phpcs:
 
 # A tool for quickly measuring the size of a PHP project.
 test:phploc:
-  stage: test
+  stage: stats
   before_script:
     - sh ./dev/build_dev_env.sh
     - wget https://phar.phpunit.de/phploc.phar -O ./binaries/phploc.phar
@@ -161,7 +171,7 @@ test:phploc:
 
 # Run our tests
 test:dependancies:
-  stage: test
+  stage: stats
   before_script:
     - sh ./dev/build_dev_env.sh
   script:

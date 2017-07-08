@@ -3430,9 +3430,7 @@ class ApiBabel {
                     }
 
                     for ( $i = 0; $i < $availableGems; $i++ ) {
-                        /** @noinspection PhpUnusedLocalVariableInspection */
-                        $gemPurchase = $habiticaClass->getHabitRPHPG()->_request( "post", "user/purchase/gems/gem", [], true );
-                        //nxr(6, $gemPurchase);
+                        $habiticaClass->getHabitRPHPG()->_request( "post", "user/purchase/gems/gem", [], true );
                     }
 
                 } else {
@@ -3672,22 +3670,22 @@ class ApiBabel {
                 }
 
                 $timeSeries = [
-                    "steps"                => "300",
-                    "distance"             => "300",
-                    "floors"               => "300",
-                    "elevation"            => "300",
-                    "minutesSedentary"     => "1800",
-                    "minutesLightlyActive" => "1800",
-                    "minutesFairlyActive"  => "1800",
-                    "minutesVeryActive"    => "1800",
-                    "caloriesOut"          => "1800"
+                    "steps",
+                    "distance",
+                    "floors",
+                    "elevation",
+                    "minutesSedentary",
+                    "minutesLightlyActive",
+                    "minutesFairlyActive",
+                    "minutesVeryActive",
+                    "caloriesOut"
                 ];
                 if ( $trigger == "all" || $trigger == "activities" ) {
                     $isAllowed = $this->isAllowed( "activities" );
                     if ( ! is_numeric( $isAllowed ) ) {
                         if ( $this->isTriggerCooled( "activities" ) ) {
                             nxr( 1, "Downloading Series Info" );
-                            foreach ( $timeSeries as $activity => $timeout ) {
+                            foreach ( $timeSeries as $activity ) {
                                 $this->pullBabelTimeSeries( $activity, true );
                             }
                             if ( isset( $this->holdingVar ) ) {
@@ -3696,7 +3694,7 @@ class ApiBabel {
                             $this->setLastrun( "activities", null, true );
                         }
                     }
-                } else if ( array_key_exists( $trigger, $timeSeries ) ) {
+                } else if ( array_search( $trigger, $timeSeries ) ) {
                     $isAllowed = $this->isAllowed( $trigger );
                     if ( ! is_numeric( $isAllowed ) ) {
                         $this->pullBabelTimeSeries( $trigger );
