@@ -208,13 +208,13 @@ class Rewards
     }
 
     /**
-     * @param integer $xp XP to award
+     * @param integer $userXp XP to award
      * @param string $rewardKey Reward Key
      */
-    public function giveUserXp($xp, $rewardKey)
+    public function giveUserXp($userXp, $rewardKey)
     {
-        $wp = new Wordpress($this->getAppClass(), $this->getUserID());
-        $wp->deliver(['reward' => $xp], $rewardKey, "pending");
+        $wordpress = new Wordpress($this->getAppClass(), $this->getUserID());
+        $wordpress->deliver(['reward' => $userXp], $rewardKey, "pending");
     }
 
     /**
