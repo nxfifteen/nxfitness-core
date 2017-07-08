@@ -410,6 +410,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordAboutMe()
@@ -454,6 +455,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordGeoSecure()
@@ -468,6 +470,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return bool
      */
     private function returnUserRecordActivity()
@@ -484,6 +487,7 @@ class DataReturn
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -675,6 +679,7 @@ class DataReturn
      * @param null $tcxTrackName
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -895,6 +900,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordBadges()
@@ -942,6 +948,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array|bool
      */
     private function returnUserRecordBody()
@@ -974,6 +981,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordChallenger()
@@ -982,6 +990,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordPush()
@@ -1148,6 +1157,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordPushCalendar()
@@ -1218,6 +1228,7 @@ class DataReturn
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -1344,6 +1355,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordJourneysState()
@@ -1521,6 +1533,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordDashboard()
@@ -1585,6 +1598,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordLeaderboard()
@@ -1626,6 +1640,7 @@ class DataReturn
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -1766,6 +1781,7 @@ class DataReturn
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -1994,6 +2010,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordSleep()
@@ -2058,6 +2075,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordSteps()
@@ -2133,6 +2151,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array|bool
      */
     private function returnUserRecordStepsGoal()
@@ -2156,6 +2175,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array|bool
      */
     private function returnUserRecordTrackerHistoryChart()
@@ -2224,6 +2244,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array|bool
      */
     private function returnUserRecordTrackerHistory()
@@ -2270,6 +2291,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordInbox()
@@ -2327,6 +2349,7 @@ class DataReturn
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -2408,6 +2431,7 @@ class DataReturn
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -2668,6 +2692,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array|bool
      */
     private function returnUserRecordWater()
@@ -2707,6 +2732,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordFood()
@@ -2747,6 +2773,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordDevices()
@@ -2813,6 +2840,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordGoalStreak()
@@ -2928,6 +2956,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordJourneys()
@@ -3056,6 +3085,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordAccount()
@@ -3149,6 +3179,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordXp()
@@ -3176,6 +3207,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordTopBadges()
@@ -3226,6 +3258,7 @@ class DataReturn
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -3361,6 +3394,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordStepGoal()
@@ -3407,6 +3441,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordFloorGoal()
@@ -3453,6 +3488,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordActiveGoal()
@@ -3502,6 +3538,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordTrend()
@@ -3546,6 +3583,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array|bool
      */
     private function returnUserRecordWeightLossForcast()
@@ -3576,6 +3614,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array|bool
      */
     private function returnUserRecordWeekPedometer()
@@ -3598,6 +3637,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordSyncState()
@@ -3644,6 +3684,7 @@ class DataReturn
     /**
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return array
      */
@@ -3931,6 +3972,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordNomie()
@@ -3944,6 +3986,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordNomieScore()
@@ -3953,6 +3996,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordNomieDashboard()
@@ -4026,6 +4070,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordNomieTrackers()
@@ -4145,6 +4190,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordNomieGPS()
@@ -4280,6 +4326,7 @@ class DataReturn
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @return array
      */
     private function returnUserRecordNomieScoreGraph()
