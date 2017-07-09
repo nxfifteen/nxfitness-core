@@ -2807,23 +2807,24 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @todo Duplicate from 1232-1262
      * @return array
      */
     private function returnUserRecordJourneys() {
-        $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+        $dbPrefixVal = $this->getAppClass()->getSetting( "db_prefix", null, false );
 
-        if ( $this->getAppClass()->getDatabase()->has( $dbPrefix . "journeys_travellers", [ "fuid" => $this->getUserID() ] )
+        if ( $this->getAppClass()->getDatabase()->has( $dbPrefixVal . "journeys_travellers", [ "fuid" => $this->getUserID() ] )
         ) {
-            $dbJourneys = $this->getAppClass()->getDatabase()->select( $dbPrefix . "journeys_travellers", [
-                "[>]" . $dbPrefix . "journeys" => [ "jid" => "jid" ]
+            $dbJourneys = $this->getAppClass()->getDatabase()->select( $dbPrefixVal . "journeys_travellers", [
+                "[>]" . $dbPrefixVal . "journeys" => [ "jid" => "jid" ]
             ],
                 [
-                    $dbPrefix . 'journeys.jid',
-                    $dbPrefix . 'journeys.name',
-                    $dbPrefix . 'journeys.blurb',
-                    $dbPrefix . 'journeys_travellers.start_date',
+                    $dbPrefixVal . 'journeys.jid',
+                    $dbPrefixVal . 'journeys.name',
+                    $dbPrefixVal . 'journeys.blurb',
+                    $dbPrefixVal . 'journeys_travellers.start_date',
                 ], [
-                    $dbPrefix . "journeys_travellers.fuid" => $this->getUserID()
+                    $dbPrefixVal . "journeys_travellers.fuid" => $this->getUserID()
                 ] );
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
                 "METHOD" => __METHOD__,
@@ -2834,18 +2835,18 @@ class DataReturn {
             foreach ( $dbJourneys as $dbJourney ) {
                 $milesTravelled = $this->getUserMilesSince( $dbJourney[ 'start_date' ] );
 
-                $dbLegs = $this->getAppClass()->getDatabase()->select( $dbPrefix . "journeys_legs", [
-                    "[>]" . $dbPrefix . "journeys" => [ "jid" => "jid" ]
+                $dbLegs = $this->getAppClass()->getDatabase()->select( $dbPrefixVal . "journeys_legs", [
+                    "[>]" . $dbPrefixVal . "journeys" => [ "jid" => "jid" ]
                 ],
                     [
-                        $dbPrefix . 'journeys_legs.lid',
-                        $dbPrefix . 'journeys_legs.name',
-                        $dbPrefix . 'journeys_legs.end_mile',
+                        $dbPrefixVal . 'journeys_legs.lid',
+                        $dbPrefixVal . 'journeys_legs.name',
+                        $dbPrefixVal . 'journeys_legs.end_mile',
                     ], [
                         "AND" => [
-                            $dbPrefix . "journeys.jid"                 => $dbJourney[ 'jid' ],
-                            $dbPrefix . "journeys_legs.start_mile[<=]" => $milesTravelled,
-                            $dbPrefix . "journeys_legs.end_mile[>=]"   => $milesTravelled
+                            $dbPrefixVal . "journeys.jid"                 => $dbJourney[ 'jid' ],
+                            $dbPrefixVal . "journeys_legs.start_mile[<=]" => $milesTravelled,
+                            $dbPrefixVal . "journeys_legs.end_mile[>=]"   => $milesTravelled
                         ]
                     ] );
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
@@ -2859,17 +2860,17 @@ class DataReturn {
                 $legsProgress = [];
                 foreach ( $dbLegs as $dbLeg ) {
                     // Get all narative items the user has completed
-                    $dbNarratives = $this->getAppClass()->getDatabase()->select( $dbPrefix . "journeys_narrative", [
-                        "[>]" . $dbPrefix . "journeys_legs" => [ "lid" => "lid" ]
+                    $dbNarratives = $this->getAppClass()->getDatabase()->select( $dbPrefixVal . "journeys_narrative", [
+                        "[>]" . $dbPrefixVal . "journeys_legs" => [ "lid" => "lid" ]
                     ],
                         [
-                            $dbPrefix . 'journeys_narrative.nid',
-                            $dbPrefix . 'journeys_narrative.miles',
-                            $dbPrefix . 'journeys_narrative.subtitle',
-                            $dbPrefix . 'journeys_narrative.narrative',
+                            $dbPrefixVal . 'journeys_narrative.nid',
+                            $dbPrefixVal . 'journeys_narrative.miles',
+                            $dbPrefixVal . 'journeys_narrative.subtitle',
+                            $dbPrefixVal . 'journeys_narrative.narrative',
                         ], [
                             "AND" => [
-                                $dbPrefix . "journeys_narrative.lid" => $dbLeg[ 'lid' ]
+                                $dbPrefixVal . "journeys_narrative.lid" => $dbLeg[ 'lid' ]
                             ]
                         ] );
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
