@@ -22,7 +22,7 @@ $(function () {
                 listGroup += '<div class="list-group">';
                 $.each(data.results[1].legs[1], function (index, leg) {
                     if (leg.miles_off === 0) {
-                        listGroup += ' <button type="button" style="width:100%;" class="list-group-item list-group-item-action" disabled>' + leg.subtitle + ', ' + leg.miles + ' miles travelled</button>';
+                        //listGroup += ' <button type="button" style="width:100%;" class="list-group-item list-group-item-action" disabled>' + leg.subtitle + ', ' + leg.miles + ' miles travelled</button>';
                     } else {
                         listGroup += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start';
                         if (nextLeg) {
