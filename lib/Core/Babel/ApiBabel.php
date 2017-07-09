@@ -47,6 +47,7 @@ define( "FITBIT_COM", "https://api.fitbit.com" );
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ElseExpression)
  */
 class ApiBabel {
 

@@ -30,6 +30,7 @@ use Medoo\Medoo;
 /**
  * Class NxFitAdmin
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ElseExpression)
  */
 class NxFitAdmin {
 

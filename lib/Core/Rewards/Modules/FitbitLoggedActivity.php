@@ -34,6 +34,7 @@ require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+ * @SuppressWarnings(PHPMD.ElseExpression)
  */
 class FitbitLoggedActivity extends Modules {
 

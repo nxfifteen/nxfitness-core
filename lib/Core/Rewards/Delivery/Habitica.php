@@ -35,6 +35,7 @@ require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ElseExpression)
  */
 class Habitica extends Delivery {
 
