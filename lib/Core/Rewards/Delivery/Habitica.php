@@ -44,56 +44,56 @@ class Habitica extends Delivery
     /**
      * @var HabitRPHPG
      */
-    private $HabitRPHPG;
-    private $user_id;
-    private $api_key;
+    private $habitRPHPG;
+    private $userId;
+    private $apiKey;
     private $cache = true;
     private $apiStatus = null;
 
     /**
      * Delivery constructor.
-     * @param Core $AppClass Core API Class
-     * @param string $UserID Fitbit user ID
+     * @param Core $appClass Core API Class
+     * @param string $userID Fitbit user ID
      */
-    public function __construct($AppClass, $UserID)
+    public function __construct($appClass, $userID)
     {
-        parent::__construct($AppClass, $UserID);
+        parent::__construct($appClass, $userID);
 
-        $this->user_id = $this->getAppClass()->getUserSetting($UserID, 'habitica_user_id', NULL);
-        $this->api_key = $this->getAppClass()->getUserSetting($UserID, 'habitica_api_key', NULL);
+        $this->userId = $this->getAppClass()->getUserSetting($userID, 'habitica_user_id', NULL);
+        $this->apiKey = $this->getAppClass()->getUserSetting($userID, 'habitica_api_key', NULL);
 
         if ($this->isValidUser()) {
-            $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
+            $this->setHabitRPHPG(new HabitRPHPG($this->userId, $this->apiKey));
         }
 
     }
 
     /**
-     * @param HabitRPHPG $HabitRPHPG
+     * @param HabitRPHPG $habitRPHPG
      */
-    private function setHabitRPHPG($HabitRPHPG)
+    private function setHabitRPHPG($habitRPHPG)
     {
-        $this->HabitRPHPG = $HabitRPHPG;
+        $this->habitRPHPG = $habitRPHPG;
     }
 
     /**
-     * @param string $task_string Name of habit to find
+     * @param string $taskSearchName Name of habit to find
      * @return mixed
      * @internal param $alias
      */
-    private function _searchTasks($task_string)
+    private function searchTags($taskSearchName)
     {
         $apiValues = $this->getHabitRPHPG()->getTags();
         if (count($apiValues) > 0) {
 
             foreach ($apiValues as $apiValue) {
-                if ($apiValue['name'] == $task_string) {
+                if ($apiValue['name'] == $taskSearchName) {
                     return $apiValue['id'];
                 }
             }
 
             $this->getHabitRPHPG()->clearTags();
-            $newTag = $this->getHabitRPHPG()->_request("post", "tags", array('name' => $task_string));
+            $newTag = $this->getHabitRPHPG()->_request("post", "tags", array('name' => $taskSearchName));
 
             return $newTag['id'];
         } else {
@@ -106,7 +106,7 @@ class Habitica extends Delivery
      */
     public function isValidUser()
     {
-        if (!is_null($this->user_id) && !is_null($this->api_key)) {
+        if ( !is_null($this->userId) && !is_null($this->apiKey)) {
             return true;
         } else {
             return false;
@@ -135,10 +135,10 @@ class Habitica extends Delivery
                 return ["Failed"];
             }
 
-            $tasks = $this->_search($rewardJson['alias'], $rewardProfile['name'], '', false, true);
+            $tasks = $this->searchTasks($rewardJson['alias'], $rewardProfile['name'], '', false, true);
 
             if (is_null($tasks)) {
-                $tasks = $this->_create($rewardJson['type'], $rewardProfile['name'], $rewardJson);
+                $tasks = $this->createNewTask($rewardJson['type'], $rewardProfile['name'], $rewardJson);
                 $tasks = $tasks['id'];
             }
 
@@ -207,25 +207,25 @@ class Habitica extends Delivery
      */
     public function getHabitRPHPG()
     {
-        return $this->HabitRPHPG;
+        return $this->habitRPHPG;
     }
 
     /**
      * @param string $alias Alias of habit to find
-     * @param string $task_string Name of habit to find
+     * @param string $taskSearchName Name of habit to find
      * @param string $type Type of habbit to find
      * @param bool $returnObject Return full item object
      * @param bool $skipCache Skip the cache and search the API
      * @return mixed
      */
-    public function _search($alias, $task_string, $type = '', $returnObject = false, $skipCache = false)
+    public function searchTasks($alias, $taskSearchName, $type = '', $returnObject = false, $skipCache = false)
     {
         $dbValue = null;
         if (!$skipCache && !$returnObject) {
             $dbValue = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_' . $alias, NULL, true);
         }
         if (is_null($dbValue) || !$this->cache) {
-            $apiValue = $this->getHabitRPHPG()->findTask($task_string, $type);
+            $apiValue = $this->getHabitRPHPG()->findTask($taskSearchName, $type);
             if ($returnObject) {
                 return $apiValue;
             } else {
@@ -247,16 +247,16 @@ class Habitica extends Delivery
      * @param array $options Array of habbit options
      * @return mixed
      */
-    public function _create($type, $name, $options)
+    public function createNewTask($type, $name, $options)
     {
         if ($this->isValidUser() && $this->getStatus() == 'up') {
             $options['alias'] = sha1("nx" . $name);
-            $searchResults = $this->_search($options['alias'], $name, '', false, true);
+            $searchResults = $this->searchTasks($options['alias'], $name, '', false, true);
             if (is_null($searchResults)) {
 
                 if (array_key_exists("tags", $options)) {
                     foreach ($options['tags'] as $id => $tag) {
-                        $tagId = $this->_searchTasks($tag);
+                        $tagId = $this->searchTags($tag);
                         $options['tags'][$id] = $tagId;
                     }
                 }
@@ -277,26 +277,11 @@ class Habitica extends Delivery
      * @param string $name Name of habit to delete
      * @return mixed
      */
-    public function _deleteIfIncomplete($name)
-    {
-        if ($this->isValidUser() && $this->getStatus() == 'up') {
-            $apiValue = $this->getHabitRPHPG()->findTask($name);
-            if (count($apiValue) == 1) {
-                print_r($apiValue);
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @param string $name Name of habit to delete
-     * @return mixed
-     */
-    public function _delete($name)
+    public function deleteTask($name)
     {
         if ($this->isValidUser() && $this->getStatus() == 'up') {
             $alias = sha1("nx" . $name);
-            $searchTask = $this->_search($alias, $name);
+            $searchTask = $this->searchTasks($alias, $name);
             if (is_null($searchTask)) {
                 return true;
             } else {
@@ -323,9 +308,9 @@ class Habitica extends Delivery
             }
         }
 
-        $user_id_old = $this->user_id;
+        $userIdOld = $this->userId;
         if ($this->switchToAdmin()) {
-            $this->getHabitRPHPG()->_request( "post", "groups/$guildUuid/invite", [ 'uuids' => [ $user_id_old ] ] );
+            $this->getHabitRPHPG()->_request( "post", "groups/$guildUuid/invite", [ 'uuids' => [ $userIdOld ] ] );
             $this->switchToUser();
         }
 
@@ -336,11 +321,11 @@ class Habitica extends Delivery
      * @return bool
      */
     public function switchToUser() {
-        $this->user_id = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_user_id', NULL, false);
-        $this->api_key = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_api_key', NULL, false);
+        $this->userId = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_user_id', NULL, false);
+        $this->apiKey = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_api_key', NULL, false);
 
         if ($this->isValidUser()) {
-            $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
+            $this->setHabitRPHPG(new HabitRPHPG($this->userId, $this->apiKey));
         }
     }
 
@@ -356,23 +341,23 @@ class Habitica extends Delivery
             return false;
         }
 
-        if ($habiticaAdmin == $this->user_id) {
+        if ($habiticaAdmin == $this->userId) {
             nxr(0, "Current user is already the guild master");
             return false;
         }
 
-        $user_id_old = $this->user_id;
-        $api_key_old = $this->api_key;
+        $userIdOld = $this->userId;
+        $apiKeyOld = $this->apiKey;
 
-        $this->user_id = $habiticaAdmin;
-        $this->api_key = $habiticaKey;
+        $this->userId = $habiticaAdmin;
+        $this->apiKey = $habiticaKey;
 
         if ($this->isValidUser()) {
-            $this->setHabitRPHPG(new HabitRPHPG($this->user_id, $this->api_key));
+            $this->setHabitRPHPG(new HabitRPHPG($this->userId, $this->apiKey));
             return true;
         } else {
-            $this->user_id = $user_id_old;
-            $this->api_key = $api_key_old;
+            $this->userId = $userIdOld;
+            $this->apiKey = $apiKeyOld;
             return false;
         }
     }
