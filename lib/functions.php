@@ -14,11 +14,11 @@
  * @link        https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core Git Repo
  * @copyright   2017 Stuart McCulloch Anderson
  * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
- * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
  */
 
 /**
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
  */
 if ( ! function_exists( "nxr" ) ) {
     /**
