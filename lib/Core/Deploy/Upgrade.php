@@ -42,6 +42,7 @@ require_once( dirname( __FILE__ ) . "/../../../config/config.def.dist.php" );
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ElseExpression)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class Upgrade {
 
@@ -206,6 +207,7 @@ class Upgrade {
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function updateRun3() {
         $dbPrefix = $this->getSetting( "db_prefix", false );
@@ -886,6 +888,7 @@ class Upgrade {
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function updateRun2000000() {
         $dbPrefix = $this->getSetting( "db_prefix", false );

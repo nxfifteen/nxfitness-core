@@ -48,6 +48,7 @@ define( "FITBIT_COM", "https://api.fitbit.com" );
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ElseExpression)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class ApiBabel {
 
@@ -130,6 +131,7 @@ class ApiBabel {
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return bool|array
      */
     private function pullNomieTrackers() {
@@ -736,6 +738,7 @@ class ApiBabel {
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -924,6 +927,7 @@ class ApiBabel {
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
@@ -1121,6 +1125,7 @@ class ApiBabel {
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
@@ -1258,6 +1263,7 @@ class ApiBabel {
      * @return mixed|null|SimpleXMLElement|string
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @internal param $user
      */
     private function pullBabelCaloriesGoals() {
@@ -1369,6 +1375,7 @@ class ApiBabel {
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @internal param $targetDate
      */
     private function pullBabelActivityLogs() {
@@ -1590,6 +1597,7 @@ class ApiBabel {
      * @param string $activity
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return bool|string
      */
@@ -1758,6 +1766,7 @@ class ApiBabel {
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @internal param $targetDate
      */
     private function pullBabelUserGoals() {
@@ -1903,6 +1912,7 @@ class ApiBabel {
      * @param int    $currentGoal
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return float|int|string
      * @internal param $user
@@ -2422,6 +2432,7 @@ class ApiBabel {
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed
      */
@@ -2739,6 +2750,7 @@ class ApiBabel {
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return string|bool
      */
@@ -2857,6 +2869,7 @@ class ApiBabel {
      * @param boolean $value
      * @SuppressWarnings(PHPMD.StaticAccess)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function checkGoalStreak( $dateTime, $goal, $value ) {
         //$todaysDate = new DateTime ( 'now' );
@@ -2999,6 +3012,7 @@ class ApiBabel {
      * @param DateTime|null $lastrun
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return bool
      */
@@ -3523,6 +3537,7 @@ class ApiBabel {
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      * @SuppressWarnings(PHPMD.StaticAccess)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -4016,6 +4031,7 @@ class ApiBabel {
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return array|boolean
      */

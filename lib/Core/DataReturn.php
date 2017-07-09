@@ -40,6 +40,7 @@ use DateTime;
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ElseExpression)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class DataReturn {
 
@@ -138,6 +139,7 @@ class DataReturn {
      * @param DateTime $rangeStart
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return array
      */
@@ -485,6 +487,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordActivityHistory() {
@@ -673,6 +676,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return array
      */
@@ -984,6 +988,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordPush() {
@@ -1223,6 +1228,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordConky() {
@@ -1348,6 +1354,7 @@ class DataReturn {
 
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordJourneysState() {
@@ -1634,6 +1641,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordFoodDiary() {
@@ -1775,6 +1783,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordKeyPoints() {
@@ -2427,6 +2436,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordTasker() {
@@ -2831,6 +2841,7 @@ class DataReturn {
 
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordGoalStreak() {
@@ -2946,6 +2957,7 @@ class DataReturn {
 
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordJourneys() {
@@ -3249,6 +3261,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordTracked() {
@@ -3671,6 +3684,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.StaticAccess)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordWeight() {
@@ -4055,6 +4069,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordNomieTrackers() {
@@ -4175,6 +4190,7 @@ class DataReturn {
     /* @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordNomieGPS() {

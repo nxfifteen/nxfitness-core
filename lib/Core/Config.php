@@ -93,6 +93,7 @@ class Config {
      * @param string $activityName Activity key name
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return array String array of cache files names
      */
