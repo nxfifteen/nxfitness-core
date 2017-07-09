@@ -79,7 +79,7 @@ class DataReturn
         $this->setUserID($userFid);
         $this->setForCache(true);
 
-        if (is_array($_SERVER) && array_key_exists("SERVER_NAME", $_SERVER)) {
+        if (filter_input(INPUT_SERVER, 'SERVER_NAME', FILTER_SANITIZE_STRING)) {
             $this->setTracking(new UserAnalytics($this->getAppClass()->getSetting("trackingId"),
                 $this->getAppClass()->getSetting("trackingPath")));
         }
@@ -460,9 +460,7 @@ class DataReturn
      */
     private function returnUserRecordGeoSecure()
     {
-        if (
-            (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != $_GET['user']) || !array_key_exists('_nx_fb_usr', $_COOKIE)
-        ) {
+        if (!$this->isUserAuthorised()) {
             return array();
         } else {
             return json_decode($this->getAppClass()->getUserSetting($this->getUserID(), "geo_private", array()), true);
@@ -500,19 +498,20 @@ class DataReturn
             $sqlLimit = 1;
         }
 
-        // AND `startDate` >= '2016-06-24' AND `startDate` <= '2016-06-26'
-
         $sqlQueryString = "SELECT `activityName` as `name`,`logId`,`startDate`,`startTime`,`calories`,`activeDuration` as `duration`,`steps`, "
             . "`activityLevelSedentary` as `sedentary`, `activityLevelLightly` as `lightly`, `activityLevelFairly` as `fairly`, `activityLevelVery` as `very`, `sourceType`, `sourceName` "
             . "FROM `" . $this->getAppClass()->getSetting("db_prefix", null, false) . "activity_log` "
             . "WHERE `user` = '" . $this->getUserID() . "' AND `sourceType` IS NOT NULL ";
 
-        if (is_array($_GET) && array_key_exists("start", $_GET) && array_key_exists("end", $_GET)) {
-            $sqlQueryString .= "AND `startDate` >= '" . $_GET['start'] . "' AND `startDate` <= '" . $_GET['end'] . "' ";
-        } else if (is_array($_GET) && array_key_exists("start", $_GET)) {
-            $sqlQueryString .= "AND `startDate` >= '" . $_GET['start'] . "' ";
-        } else if (is_array($_GET) && array_key_exists("end", $_GET)) {
-            $sqlQueryString .= "AND `startDate` <= '" . $_GET['end'] . "' ";
+        $getStartDate = filter_input(INPUT_GET, 'start', FILTER_SANITIZE_STRING);
+        $getEndDate = filter_input(INPUT_GET, 'end', FILTER_SANITIZE_STRING);
+
+        if ($getStartDate && $getEndDate) {
+            $sqlQueryString .= "AND `startDate` >= '" . $getStartDate . "' AND `startDate` <= '" . $getEndDate . "' ";
+        } else if ($getStartDate) {
+            $sqlQueryString .= "AND `startDate` >= '" . $getStartDate . "' ";
+        } else if ($getEndDate) {
+            $sqlQueryString .= "AND `startDate` <= '" . $getEndDate . "' ";
         }
 
         $sqlQueryString .= "ORDER BY `startDate` DESC, `startTime` DESC LIMIT " . $sqlLimit;
@@ -660,10 +659,7 @@ class DataReturn
                     $record['visibility'] = "unknown";
                 }
 
-                if (
-                    (array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] != $_GET['user']) ||
-                    (!array_key_exists('_nx_fb_usr', $_COOKIE) && $record['visibility'] != "public")
-                ) {
+                if (!$this->isUserAuthorised()) {
                     $record['gpx'] = "none";
                 }
             }
@@ -686,8 +682,8 @@ class DataReturn
     private function returnUserRecordActivityTCX($tcxFileName = null, $tcxTrackName = null)
     {
         if (is_null($tcxFileName)) {
-            if (array_key_exists("tcx", $_GET)) {
-                $tcxFileName = $_GET['tcx'];
+            if (filter_input(INPUT_GET, 'tcx', FILTER_SANITIZE_STRING)) {
+                $tcxFileName = filter_input(INPUT_GET, 'tcx', FILTER_SANITIZE_STRING);
             }
         }
 
@@ -1163,12 +1159,12 @@ class DataReturn
     private function returnUserRecordPushCalendar()
     {
         // Short-circuit if the client did not give us a date range.
-        if (!isset($_GET['start']) || !isset($_GET['end'])) {
+        if (!filter_input(INPUT_GET, 'start', FILTER_SANITIZE_STRING) || !filter_input(INPUT_GET, 'end', FILTER_SANITIZE_STRING)) {
             return ["error" => "true", "code" => 105, "msg" => "No start or end date given"];
         }
 
-        $rangeStart = new DateTime($_GET['start']);
-        $rangeEnd = new DateTime($_GET['end']);
+        $rangeStart = new DateTime(filter_input(INPUT_GET, 'start', FILTER_SANITIZE_STRING));
+        $rangeEnd = new DateTime(filter_input(INPUT_GET, 'end', FILTER_SANITIZE_STRING));
 
         $userPushLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
         $userPushStartDate = $this->getAppClass()->getUserSetting($this->getUserID(), "push",
@@ -1198,7 +1194,7 @@ class DataReturn
 
             if (!$dbPush) {
                 $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $rangeStart);
-                if (!array_key_exists("debug", $_GET) or $_GET['debug'] != "true") {
+                if (!filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_BOOLEAN)) {
                     $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null,
                             false) . "push", [
                         'user' => $this->getUserID(),
@@ -1795,7 +1791,7 @@ class DataReturn
             'distance',
             'gender'
         ], ["fuid" => $this->getUserID()]);
-        if (array_key_exists("personal", $_GET) and $_GET['personal'] == "true") {
+        if (filter_input(INPUT_GET, 'personal', FILTER_VALIDATE_BOOLEAN)) {
             $hePronoun = "I";
             $isPronoun = "am";
             $hesPronoun = "I've";
@@ -4195,8 +4191,8 @@ class DataReturn
      */
     private function returnUserRecordNomieGPS()
     {
-        if (array_key_exists('tracker', $_GET)) {
-            $searchTracker = $_GET['tracker'];
+        if (filter_input(INPUT_GET, 'tracker', FILTER_SANITIZE_STRING)) {
+            $searchTracker = filter_input(INPUT_GET, 'tracker', FILTER_SANITIZE_STRING);
         } else {
             return [];
         }
@@ -4569,11 +4565,11 @@ class DataReturn
      */
     public function isUserAuthorised() {
 
-        if ( array_key_exists('HTTP_REFERER', $_SERVER) ) {
-            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getSetting("http/")) !== false) {
+        if ( filter_input(INPUT_SERVER, 'HTTP_REFERER', FILTER_SANITIZE_STRING) ) {
+            if (strpos(filter_input(INPUT_SERVER, 'HTTP_REFERER', FILTER_SANITIZE_STRING), $this->getAppClass()->getSetting("http/")) !== false) {
                 return "hostdomain";
             }
-            if (strpos($_SERVER['HTTP_REFERER'], $this->getAppClass()->getUserSetting($this->getUserID(), 'safe_domain', null)) !== false) {
+            if (strpos(filter_input(INPUT_SERVER, 'HTTP_REFERER', FILTER_SANITIZE_STRING), $this->getAppClass()->getUserSetting($this->getUserID(), 'safe_domain', null)) !== false) {
                 return "safedomain";
             }
         }
@@ -4581,9 +4577,9 @@ class DataReturn
         $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         $apiKey = $this->getAppClass()->getDatabase()->get($dbPrefix . "users", "api", ["fuid" => $this->getUserID()]);
 
-        if ( array_key_exists('api', $_GET) && $apiKey == $_GET['api'] ) {
+        if ( $apiKey == filter_input(INPUT_GET, 'api', FILTER_SANITIZE_STRING) ) {
             return "apikey";
-        } else if ( array_key_exists('_nx_fb_usr', $_COOKIE) && $_COOKIE['_nx_fb_usr'] == $_GET['user'] ) {
+        } else if ( filter_input(INPUT_COOKIE, '_nx_fb_usr', FILTER_SANITIZE_STRING) == filter_input(INPUT_GET, 'user', FILTER_SANITIZE_STRING) ) {
             return "cookieish";
         }
 
@@ -4637,24 +4633,20 @@ class DataReturn
                 $resultsArray['cache'] = $this->getForCache();
             }
 
-            if (array_key_exists("debug", $_GET) and $_GET['debug'] == "true") {
+            if (filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_BOOLEAN)) {
                 $resultsArray['dbLog'] = $this->getAppClass()->getDatabase()->log();
                 foreach ($resultsArray['dbLog'] as $key => $value) {
                     $resultsArray['dbLog'][$key] = str_ireplace("\"", "`", $value);
                 }
             }
 
-            if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
-                    $_SERVER)
-            ) {
+            if (!is_null($this->getTracking()) && filter_input(INPUT_SERVER, 'SERVER_NAME', FILTER_SANITIZE_STRING) ) {
                 $this->getTracking()->endEvent('JSON/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
             }
 
             return $resultsArray;
         } else {
-            if (!is_null($this->getTracking()) && is_array($_SERVER) && array_key_exists("SERVER_NAME",
-                    $_SERVER)
-            ) {
+            if (!is_null($this->getTracking()) && filter_input(INPUT_SERVER, 'SERVER_NAME', FILTER_SANITIZE_STRING) ) {
                 $this->getTracking()->track("Error", 103);
                 $this->getTracking()->endEvent('Error/' . $this->getUserID() . '/' . $this->getParamDate() . '/' . $get['data']);
             }
