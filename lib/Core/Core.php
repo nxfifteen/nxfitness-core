@@ -140,13 +140,13 @@ class Core
      *
      * @param string $key Settings key to return
      * @param null $default Default value, if nothing already held in settings
-     * @param bool $query_db Should the DB be checked
+     * @param bool $rawQueryBb Should the DB be checked
      *
      * @return string
      */
-    public function getSetting($key, $default = null, $query_db = true)
+    public function getSetting($key, $default = null, $rawQueryBb = true)
     {
-        return $this->getSettings()->get($key, $default, $query_db);
+        return $this->getSettings()->get($key, $default, $rawQueryBb);
     }
 
     /**
@@ -171,13 +171,13 @@ class Core
      * @param string $fuid
      * @param string $key
      * @param null $default
-     * @param bool $query_db
+     * @param bool $rawQueryBb
      *
      * @return string
      */
-    public function getUserSetting($fuid, $key, $default = null, $query_db = true)
+    public function getUserSetting($fuid, $key, $default = null, $rawQueryBb = true)
     {
-        return $this->getSettings()->getUser($fuid, $key, $default, $query_db);
+        return $this->getSettings()->getUser($fuid, $key, $default, $rawQueryBb);
     }
 
     /**
@@ -188,7 +188,7 @@ class Core
      * @return string
      *
      * @internal param null $default
-     * @internal param bool $query_db
+     * @internal param bool $rawQueryBb
      */
     public function delUserSetting($fuid, $key)
     {
@@ -202,22 +202,22 @@ class Core
     /**
      * Add new cron jobs to queue
      *
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      * @param string $trigger Trigger ID to add to cron
      * @param bool $force Should we honnor hot API
      */
-    public function addCronJob($user_fitbit_id, $trigger, $force = false)
+    public function addCronJob($userFUID, $trigger, $force = false)
     {
         if ($force || $this->getSetting('scope_' . $trigger . '_cron', false)) {
             if (!$this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", [
                 "AND" => [
-                    "user" => $user_fitbit_id,
+                    "user" => $userFUID,
                     "trigger" => $trigger
                 ]
             ])
             ) {
                 $this->getDatabase()->insert($this->getSetting("db_prefix", null, false) . "queue", [
-                    "user" => $user_fitbit_id,
+                    "user" => $userFUID,
                     "trigger" => $trigger,
                     "date" => date("Y-m-d H:i:s")
                 ]);
@@ -248,21 +248,21 @@ class Core
     /**
      * Delete cron jobs from queue
      *
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      * @param string $trigger Trigger ID to add to cron
      */
-    public function delCronJob($user_fitbit_id, $trigger)
+    public function delCronJob($userFUID, $trigger)
     {
         if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", [
             "AND" => [
-                "user" => $user_fitbit_id,
+                "user" => $userFUID,
                 "trigger" => $trigger
             ]
         ])
         ) {
             if (!$this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", [
                 "AND" => [
-                    "user" => $user_fitbit_id,
+                    "user" => $userFUID,
                     "trigger" => $trigger
                 ]
             ])
@@ -325,35 +325,35 @@ class Core
      */
 
     /**
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      * @param string|DateTime $datetime DataTime the cooldown will end
      *
      * @return array|int
      */
-    public function setUserCooldown($user_fitbit_id, $datetime)
+    public function setUserCooldown($userFUID, $datetime)
     {
-        if ($this->isUser($user_fitbit_id)) {
+        if ($this->isUser($userFUID)) {
             if (is_string($datetime)) {
                 $datetime = new DateTime ($datetime);
             }
 
             return $this->getDatabase()->update($this->getSetting("db_prefix", null, false) . "users", [
                 'cooldown' => $datetime->format("Y-m-d H:i:s")
-            ], ["AND" => ['fuid' => $user_fitbit_id]]);
+            ], ["AND" => ['fuid' => $userFUID]]);
         } else {
             return 0;
         }
     }
 
     /**
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      *
      * @return bool
      */
-    public function isUser($user_fitbit_id)
+    public function isUser($userFUID)
     {
         if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users",
-            ["fuid" => $user_fitbit_id])
+            ["fuid" => $userFUID])
         ) {
             return true;
         } else {
@@ -362,25 +362,25 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      *
      * @return int|array
      */
-    public function getUserCooldown($user_fitbit_id)
+    public function getUserCooldown($userFUID)
     {
-        if ($this->isUser($user_fitbit_id)) {
+        if ($this->isUser($userFUID)) {
             return $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "cooldown",
-                ["fuid" => $user_fitbit_id]);
+                ["fuid" => $userFUID]);
         } else {
             return 0;
         }
     }
 
     /**
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      * @param AccessToken $accessToken
      */
-    public function setUserOAuthTokens($user_fitbit_id, $accessToken)
+    public function setUserOAuthTokens($userFUID, $accessToken)
     {
         $this->getDatabase()->update(
             $this->getSetting("db_prefix", false) . "users",
@@ -388,46 +388,46 @@ class Core
                 'tkn_access' => $accessToken->getToken(),
                 'tkn_refresh' => $accessToken->getRefreshToken(),
                 'tkn_expires' => $accessToken->getExpires()
-            ], ["fuid" => $user_fitbit_id]);
+            ], ["fuid" => $userFUID]);
     }
 
     /**
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      */
-    public function delUserOAuthTokens($user_fitbit_id)
+    public function delUserOAuthTokens($userFUID)
     {
         $this->getDatabase()->update($this->getSetting("db_prefix", false) . "users",
             [
                 'tkn_access' => '',
                 'tkn_refresh' => '',
                 'tkn_expires' => 0
-            ], ["fuid" => $user_fitbit_id]);
+            ], ["fuid" => $userFUID]);
     }
 
     /**
-     * @param string $user_fitbit_id Fitbit user ID
-     * @param string $user_fitbit_password
+     * @param string $userFUID Fitbit user ID
+     * @param string $userPassword
      *
      * @return bool
      */
-    public function isUserValid($user_fitbit_id, $user_fitbit_password)
+    public function isUserValid($userFUID, $userPassword)
     {
-        if (strpos($user_fitbit_id, '@') !== false) {
-            $user_fitbit_id = $this->isUserValidEml($user_fitbit_id);
+        if (strpos($userFUID, '@') !== false) {
+            $userFUID = $this->isUserValidEml($userFUID);
         }
 
-        if ($this->isUser($user_fitbit_id)) {
+        if ($this->isUser($userFUID)) {
             if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", [
                 "AND" => [
-                    "fuid" => $user_fitbit_id,
-                    "password" => $user_fitbit_password
+                    "fuid" => $userFUID,
+                    "password" => $userPassword
                 ]
             ])
             ) {
-                return $user_fitbit_id;
+                return $userFUID;
             } else if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", [
                 "AND" => [
-                    "fuid" => $user_fitbit_id,
+                    "fuid" => $userFUID,
                     "password" => ''
                 ]
             ])
@@ -442,21 +442,21 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      *
      * @return bool
      */
-    public function isUserValidEml($user_fitbit_id)
+    public function isUserValidEml($inputEmail)
     {
         if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users",
-            ["eml" => $user_fitbit_id])
+            ["eml" => $inputEmail])
         ) {
-            $user_fuid = $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "fuid",
-                ["eml" => $user_fitbit_id]);
+            $userFUID = $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "fuid",
+                ["eml" => $inputEmail]);
 
-            return $user_fuid;
+            return $userFUID;
         } else {
-            return $user_fitbit_id;
+            return $inputEmail;
         }
     }
 
@@ -500,13 +500,13 @@ class Core
      *
      * @param string $key
      * @param string $value
-     * @param bool $query_db
+     * @param bool $rawQueryBb
      *
      * @return bool
      */
-    public function setSetting($key, $value, $query_db = true)
+    public function setSetting($key, $value, $rawQueryBb = true)
     {
-        return $this->getSettings()->set($key, $value, $query_db);
+        return $this->getSettings()->set($key, $value, $rawQueryBb);
     }
 
     /**
@@ -532,7 +532,7 @@ class Core
      */
     public function supportedApi($key = null)
     {
-        $database_array = [
+        $supportedApis = [
             'all' => 'Everything',
             'floors' => 'Floors Climed',
             'foods' => 'Calorie Intake',
@@ -559,13 +559,13 @@ class Core
             'nomie_trackers' => "Nomie Trackers",
             'habitica' => "Habitica"
         ];
-        ksort($database_array);
+        ksort($supportedApis);
 
         if (is_null($key)) {
-            return $database_array;
+            return $supportedApis;
         } else {
-            if (array_key_exists($key, $database_array)) {
-                return $database_array[$key];
+            if (array_key_exists($key, $supportedApis)) {
+                return $supportedApis[$key];
             } else {
                 return $key;
             }
@@ -573,19 +573,19 @@ class Core
     }
 
     /**
-     * @param string $_nx_fb_usr
+     * @param string $userFUID
      *
      * @return bool
      */
-    public function isUserOAuthAuthorised($_nx_fb_usr)
+    public function isUserOAuthAuthorised($userFUID)
     {
-        if (array_key_exists("userIsOAuth_" . $_nx_fb_usr,
-                $_SESSION) && is_bool($_SESSION['userIsOAuth_' . $_nx_fb_usr]) && $_SESSION['userIsOAuth_' . $_nx_fb_usr] !== false
+        if (array_key_exists("userIsOAuth_" . $userFUID,
+                $_SESSION) && is_bool($_SESSION['userIsOAuth_' . $userFUID]) && $_SESSION['userIsOAuth_' . $userFUID] !== false
         ) {
-            return $_SESSION['userIsOAuth_' . $_nx_fb_usr];
+            return $_SESSION['userIsOAuth_' . $userFUID];
         } else {
-            if ($this->valdidateOAuth($this->getUserOAuthTokens($_nx_fb_usr, false))) {
-                $_SESSION['userIsOAuth_' . $_nx_fb_usr] = true;
+            if ($this->valdidateOAuth($this->getUserOAuthTokens($userFUID, false))) {
+                $_SESSION['userIsOAuth_' . $userFUID] = true;
 
                 return true;
             } else {
@@ -609,18 +609,18 @@ class Core
     }
 
     /**
-     * @param string $user_fitbit_id Fitbit user ID
+     * @param string $userFUID Fitbit user ID
      * @param bool $validate
      *
      * @return array|bool
      */
-    public function getUserOAuthTokens($user_fitbit_id, $validate = true)
+    public function getUserOAuthTokens($userFUID, $validate = true)
     {
         $userArray = $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", [
             'tkn_access',
             'tkn_refresh',
             'tkn_expires'
-        ], ["fuid" => $user_fitbit_id]);
+        ], ["fuid" => $userFUID]);
         if (is_array($userArray)) {
             if ($validate && $this->valdidateOAuth($userArray)) {
                 return $userArray;
