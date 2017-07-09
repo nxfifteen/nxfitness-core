@@ -48,12 +48,12 @@ class DataReturn
     /**
      * @var Core
      */
-    protected $AppClass;
+    protected $appClass;
 
     /**
      * @var String
      */
-    protected $UserID;
+    protected $userID;
     protected $forCache;
     /**
      * @var String
@@ -140,25 +140,25 @@ class DataReturn
     /**
      * @param string   $userPushStartDate
      * @param string   $userPushEndDate
-     * @param DateTime $range_start
+     * @param DateTime $rangeStart
      *
      * @return array
      */
-    private function calculatePushDays( $userPushStartDate, $userPushEndDate, $range_start ) {
+    private function calculatePushDays( $userPushStartDate, $userPushEndDate, $rangeStart ) {
         $userPushTrgSteps    = $this->getAppClass()->getUserSetting( $this->getUserID(), "push_steps", '10000' );
         $userPushTrgDistance = $this->getAppClass()->getUserSetting( $this->getUserID(), "push_distance", '5' );
         $userPushTrgUnit     = $this->getAppClass()->getUserSetting( $this->getUserID(), "push_unit", 'km' );
         $userPushTrgActivity = $this->getAppClass()->getUserSetting( $this->getUserID(), "push_activity", '30' );
 
-        $db_steps    = $this->getAppClass()->getSetting( "db_prefix", null, false ) . "steps";
-        $db_activity = $this->getAppClass()->getSetting( "db_prefix", null, false ) . "activity";
+        $dbSteps    = $this->getAppClass()->getSetting( "db_prefix", null, false ) . "steps";
+        $dbActivity = $this->getAppClass()->getSetting( "db_prefix", null, false ) . "activity";
 
         $dbEvents = $this->getAppClass()->getDatabase()->query(
-            "SELECT `$db_steps`.`date`,`$db_steps`.`distance`,`$db_steps`.`steps`,`$db_activity`.`fairlyactive`,`$db_activity`.`veryactive`"
-            . " FROM `$db_steps`"
-            . " JOIN `$db_activity` ON (`$db_steps`.`date` = `$db_activity`.`date`) AND (`$db_steps`.`user` = `$db_activity`.`user`)"
-            . " WHERE `$db_steps`.`user` = '" . $this->getUserID() . "' AND `$db_steps`.`date` <= '" . $userPushEndDate . "' AND `$db_steps`.`date` >= '$userPushStartDate' "
-            . " ORDER BY `$db_steps`.`date` DESC" );
+            "SELECT `$dbSteps`.`date`,`$dbSteps`.`distance`,`$dbSteps`.`steps`,`$dbActivity`.`fairlyactive`,`$dbActivity`.`veryactive`"
+            . " FROM `$dbSteps`"
+            . " JOIN `$dbActivity` ON (`$dbSteps`.`date` = `$dbActivity`.`date`) AND (`$dbSteps`.`user` = `$dbActivity`.`user`)"
+            . " WHERE `$dbSteps`.`user` = '" . $this->getUserID() . "' AND `$dbSteps`.`date` <= '" . $userPushEndDate . "' AND `$dbSteps`.`date` >= '$userPushStartDate' "
+            . " ORDER BY `$dbSteps`.`date` DESC" );
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE"   => __LINE__
@@ -251,7 +251,7 @@ class DataReturn
 
         if ( ! $startDateCovered ) {
             array_push( $calenderEvents, [
-                "title"     => "Push " . $range_start->format( "Y" ) . "\nStart!",
+                "title"     => "Push " . $rangeStart->format( "Y" ) . "\nStart!",
                 "start"     => $userPushStartDate,
                 'className' => 'label-nopush'
             ] );
@@ -273,24 +273,24 @@ class DataReturn
     }
 
     /**
-     * @param int $input_num
+     * @param int $inputNum
      *
      * @return string
      */
-    private function ordinalSuffix( $input_num ) {
-        $num = $input_num % 100; // protect against large numbers
+    private function ordinalSuffix( $inputNum ) {
+        $num = $inputNum % 100; // protect against large numbers
         if ( $num < 11 || $num > 13 ) {
             switch ( $num % 10 ) {
                 case 1:
-                    return $input_num . 'st';
+                    return $inputNum . 'st';
                 case 2:
-                    return $input_num . 'nd';
+                    return $inputNum . 'nd';
                 case 3:
-                    return $input_num . 'rd';
+                    return $inputNum . 'rd';
             }
         }
 
-        return $input_num . 'th';
+        return $inputNum . 'th';
     }
 
     /**
@@ -581,14 +581,14 @@ class DataReturn
             if (!array_key_exists($record['startDate'], $daysStats)) {
                 $daysStats[$record['startDate']] = [];
 
-                $db_steps = $this->getAppClass()->getSetting("db_prefix", null, false) . "steps";
-                $db_activity = $this->getAppClass()->getSetting("db_prefix", null, false) . "activity";
+                $dbSteps = $this->getAppClass()->getSetting("db_prefix", null, false) . "steps";
+                $dbActivity = $this->getAppClass()->getSetting("db_prefix", null, false) . "activity";
                 $dbDaysStatsDb = $this->getAppClass()->getDatabase()->query(
-                    "SELECT `$db_steps`.`caloriesOut`,`$db_steps`.`steps`,`$db_activity`.`fairlyactive`,`$db_activity`.`veryactive`"
-                    . " FROM `$db_steps`"
-                    . " JOIN `$db_activity` ON (`$db_steps`.`date` = `$db_activity`.`date`) AND (`$db_steps`.`user` = `$db_activity`.`user`)"
-                    . " WHERE `$db_activity`.`user` = '" . $this->getUserID() . "' AND `$db_activity`.`date` = '" . $record['startDate'] . "'"
-                    . " ORDER BY `$db_activity`.`date` DESC");
+                    "SELECT `$dbSteps`.`caloriesOut`,`$dbSteps`.`steps`,`$dbActivity`.`fairlyactive`,`$dbActivity`.`veryactive`"
+                    . " FROM `$dbSteps`"
+                    . " JOIN `$dbActivity` ON (`$dbSteps`.`date` = `$dbActivity`.`date`) AND (`$dbSteps`.`user` = `$dbActivity`.`user`)"
+                    . " WHERE `$dbActivity`.`user` = '" . $this->getUserID() . "' AND `$dbActivity`.`date` = '" . $record['startDate'] . "'"
+                    . " ORDER BY `$dbActivity`.`date` DESC");
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
                     [
                         "METHOD" => __METHOD__,
@@ -762,12 +762,12 @@ class DataReturn
                 $endLatitude = 0;
                 $endLongitude = 0;
 
-                foreach ($items->Activities->Activity->Lap as $Laps) {
+                foreach ($items->Activities->Activity->Lap as $activityLaps) {
                     $trackCount = 0;
                     $totalHeartRate = 0;
                     $startLatitude = 0;
                     $startLongitude = 0;
-                    foreach ($Laps->Track->Trackpoint as $trkpt) {
+                    foreach ($activityLaps->Track->Trackpoint as $trkpt) {
                         $trackCount++;
                         $gpx .= "\n   <trkpt lat=\"" . $trkpt->Position->LatitudeDegrees . "\" lon=\"" . $trkpt->Position->LongitudeDegrees . "\">";
                         $gpx .= "\n    <time>" . $trkpt->Time . "</time>";
@@ -802,18 +802,18 @@ class DataReturn
                         $endLongitude = (Float)$trkpt->Position->LongitudeDegrees;
                     }
 
-                    /** @var \SimpleXMLElement $Laps */
-                    $attributes = json_decode(json_encode($Laps->attributes()), true);
+                    /** @var \SimpleXMLElement $activityLaps */
+                    $attributes = json_decode(json_encode($activityLaps->attributes()), true);
                     /** @noinspection PhpUndefinedFieldInspection */
                     $gpxMeta['laps'][] = [
                         "startTime" => $attributes['@attributes']['StartTime'],
-                        "elapsedTime" => (Float)$Laps->TotalTimeSeconds,
+                        "elapsedTime" => (Float)$activityLaps->TotalTimeSeconds,
                         "startPoint" => [$startLatitude, $startLongitude],
                         "endPoint" => [$endLatitude, $endLongitude],
-                        "calories" => (Integer)$Laps->Calories,
-                        "distance" => (Float)$Laps->DistanceMeters,
+                        "calories" => (Integer)$activityLaps->Calories,
+                        "distance" => (Float)$activityLaps->DistanceMeters,
                         "AverageHeartRateBpm" => number_format(($totalHeartRate / $trackCount), 2),
-                        "intensity" => (String)$Laps->Intensity,
+                        "intensity" => (String)$activityLaps->Intensity,
                     ];
                 }
 
@@ -827,10 +827,10 @@ class DataReturn
 
                 $gpxMeta['meta']['owner'] = $this->getUserID();
                 $gpxMeta['meta']['visibility'] = "public";
-                $geo_private = json_decode($this->getAppClass()->getUserSetting($this->getUserID(), "geo_private", array()), true);
+                $privateGeos = json_decode($this->getAppClass()->getUserSetting($this->getUserID(), "geo_private", array()), true);
 
-                if (is_array($geo_private) && count($geo_private) > 0) {
-                    foreach ($geo_private as $geoSpot) {
+                if (is_array($privateGeos) && count($privateGeos) > 0) {
+                    foreach ($privateGeos as $geoSpot) {
                         if ($gpxMeta['meta']['visibility'] == "public") {
                             $gpxMeta['meta']['distance_start'] = round($this->haversineGreatCircleDistance($geoSpot['lat'], $geoSpot['lon'], $startLatitudeVery, $startLongitudeVery, "M"), 2);
                             $gpxMeta['meta']['distance_end'] = round($this->haversineGreatCircleDistance($geoSpot['lat'], $geoSpot['lon'], $endLatitude, $endLongitude, "M"), 2);
@@ -936,12 +936,12 @@ class DataReturn
 
         $badges = [];
         foreach ($userBadges as $userBadge) {
-            $badge_key = $userBadge['category'];
-            if (!array_key_exists($badge_key, $badges)) {
-                $badges[$badge_key] = [];
+            $badgeKey = $userBadge['category'];
+            if (!array_key_exists($badgeKey, $badges)) {
+                $badges[$badgeKey] = [];
             }
 
-            array_push($badges[$badge_key], $userBadge);
+            array_push($badges[$badgeKey], $userBadge);
         }
 
         return ["images" => "images/badges/", "badges" => $badges];
@@ -1167,14 +1167,14 @@ class DataReturn
             return ["error" => "true", "code" => 105, "msg" => "No start or end date given"];
         }
 
-        $range_start = new DateTime($_GET['start']);
-        $range_end = new DateTime($_GET['end']);
+        $rangeStart = new DateTime($_GET['start']);
+        $rangeEnd = new DateTime($_GET['end']);
 
         $userPushLength = $this->getAppClass()->getUserSetting($this->getUserID(), "push_length", '50');
         $userPushStartDate = $this->getAppClass()->getUserSetting($this->getUserID(), "push",
             '03-31 last sunday'); // Default to last Sunday in March
         $userPushStartDate = date("Y-m-d",
-            strtotime($range_end->format("Y") . '-' . $userPushStartDate)); // Default to last Sunday in March
+            strtotime($rangeEnd->format("Y") . '-' . $userPushStartDate)); // Default to last Sunday in March
         $userPushEndDate = date("Y-m-d",
             strtotime($userPushStartDate . ' +' . $userPushLength . ' day')); // Default to last Sunday in March
 
@@ -1197,7 +1197,7 @@ class DataReturn
             ]);
 
             if (!$dbPush) {
-                $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $range_start);
+                $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $rangeStart);
                 if (!array_key_exists("debug", $_GET) or $_GET['debug'] != "true") {
                     $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null,
                             false) . "push", [
@@ -1220,7 +1220,7 @@ class DataReturn
                 $calenderEvents['events'] = json_decode($dbPush[0]);
             }
         } else {
-            $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $range_start);
+            $calenderEvents = $this->calculatePushDays($userPushStartDate, $userPushEndDate, $rangeStart);
         }
 
         return ['sole' => true, 'return' => array('success' => 1, 'result' => $calenderEvents['events'])];
@@ -1384,7 +1384,7 @@ class DataReturn
 
             $journeys = [];
             foreach ($dbJourneys as $dbJourney) {
-                $user_miles_travelled = $this->getUserMilesSince($dbJourney['start_date']);
+                $milesTravelled = $this->getUserMilesSince($dbJourney['start_date']);
 
                 $dbLegs = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                         null, false) . "journeys_legs", [
@@ -1399,9 +1399,9 @@ class DataReturn
                             $this->getAppClass()->getSetting("db_prefix", null,
                                 false) . "journeys.jid" => $dbJourney['jid'],
                             $this->getAppClass()->getSetting("db_prefix", null,
-                                false) . "journeys_legs.start_mile[<=]" => $user_miles_travelled,
+                                false) . "journeys_legs.start_mile[<=]" => $milesTravelled,
                             $this->getAppClass()->getSetting("db_prefix", null,
-                                false) . "journeys_legs.end_mile[>=]" => $user_miles_travelled
+                                false) . "journeys_legs.end_mile[>=]" => $milesTravelled
                         ]
                     ]);
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
@@ -1430,7 +1430,7 @@ class DataReturn
                                 $this->getAppClass()->getSetting("db_prefix", null,
                                     false) . "journeys_narrative.lid" => $dbLeg['lid'],
                                 $this->getAppClass()->getSetting("db_prefix", null,
-                                    false) . "journeys_narrative.miles[<=]" => $user_miles_travelled
+                                    false) . "journeys_narrative.miles[<=]" => $milesTravelled
                             ],
                             "LIMIT" => 1,
                             "ORDER" => [
@@ -1457,8 +1457,8 @@ class DataReturn
                         ];
                         $prevNarrativeMiles = $dbNarrative['miles'];
 
-                        if ($dbNarrative['miles'] > $user_miles_travelled) {
-                            $narrativeArray["miles_off"] = number_format($dbNarrative['miles'] - $user_miles_travelled,
+                        if ($dbNarrative['miles'] > $milesTravelled) {
+                            $narrativeArray["miles_off"] = number_format($dbNarrative['miles'] - $milesTravelled,
                                 2);
                         }
 
@@ -1482,7 +1482,7 @@ class DataReturn
                                 $this->getAppClass()->getSetting("db_prefix", null,
                                     false) . "journeys_narrative.lid" => $dbLeg['lid'],
                                 $this->getAppClass()->getSetting("db_prefix", null,
-                                    false) . "journeys_narrative.miles[>=]" => $user_miles_travelled
+                                    false) . "journeys_narrative.miles[>=]" => $milesTravelled
                             ],
                             "LIMIT" => 1,
                             "ORDER" => [
@@ -1508,8 +1508,8 @@ class DataReturn
                         ];
                         $prevNarrativeMiles = $dbNarrative['miles'];
 
-                        if ($dbNarrative['miles'] > $user_miles_travelled) {
-                            $narrativeArray["miles_off"] = number_format($dbNarrative['miles'] - $user_miles_travelled,
+                        if ($dbNarrative['miles'] > $milesTravelled) {
+                            $narrativeArray["miles_off"] = number_format($dbNarrative['miles'] - $milesTravelled,
                                 2);
                         }
 
@@ -2297,9 +2297,9 @@ class DataReturn
     private function returnUserRecordInbox()
     {
         $returnArray = [];
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        $dbInbox = $this->getAppClass()->getDatabase()->select($db_prefix . "inbox",
+        $dbInbox = $this->getAppClass()->getDatabase()->select($dbPrefix . "inbox",
             [
                 'date',
                 'ico',
@@ -2356,25 +2356,25 @@ class DataReturn
     private function returnUserRecordPendingRewards()
     {
         $returnArray = [];
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        $dbRewards = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_queue", [
-            "[>]" . $db_prefix . "reward_map" => ["rmid" => "rmid"],
-            "[>]" . $db_prefix . "rewards" => ["reward" => "rid"]
+        $dbRewards = $this->getAppClass()->getDatabase()->select($dbPrefix . "reward_queue", [
+            "[>]" . $dbPrefix . "reward_map" => ["rmid" => "rmid"],
+            "[>]" . $dbPrefix . "rewards" => ["reward" => "rid"]
         ],
             [
-                $db_prefix . 'reward_queue.rqid',
-                $db_prefix . 'reward_queue.date',
-                $db_prefix . 'reward_queue.state',
-                $db_prefix . 'reward_map.cat',
-                $db_prefix . 'reward_map.event',
-                $db_prefix . 'reward_map.rule',
-                $db_prefix . 'reward_map.xp',
-                $db_prefix . 'reward_map.name',
-                $db_prefix . 'rewards.description',
+                $dbPrefix . 'reward_queue.rqid',
+                $dbPrefix . 'reward_queue.date',
+                $dbPrefix . 'reward_queue.state',
+                $dbPrefix . 'reward_map.cat',
+                $dbPrefix . 'reward_map.event',
+                $dbPrefix . 'reward_map.rule',
+                $dbPrefix . 'reward_map.xp',
+                $dbPrefix . 'reward_map.name',
+                $dbPrefix . 'rewards.description',
             ], [
-                $db_prefix . "reward_queue.fuid" => $this->getUserID(),
-                "ORDER" => [$db_prefix . 'reward_queue.date' => "DESC"],
+                $dbPrefix . "reward_queue.fuid" => $this->getUserID(),
+                "ORDER" => [$dbPrefix . 'reward_queue.date' => "DESC"],
                 "LIMIT" => 13
             ]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
@@ -2985,7 +2985,7 @@ class DataReturn
 
             $journeys = [];
             foreach ($dbJourneys as $dbJourney) {
-                $user_miles_travelled = $this->getUserMilesSince($dbJourney['start_date']);
+                $milesTravelled = $this->getUserMilesSince($dbJourney['start_date']);
 
                 $dbLegs = $this->getAppClass()->getDatabase()->select($this->getAppClass()->getSetting("db_prefix",
                         null, false) . "journeys_legs", [
@@ -3001,9 +3001,9 @@ class DataReturn
                             $this->getAppClass()->getSetting("db_prefix", null,
                                 false) . "journeys.jid" => $dbJourney['jid'],
                             $this->getAppClass()->getSetting("db_prefix", null,
-                                false) . "journeys_legs.start_mile[<=]" => $user_miles_travelled,
+                                false) . "journeys_legs.start_mile[<=]" => $milesTravelled,
                             $this->getAppClass()->getSetting("db_prefix", null,
-                                false) . "journeys_legs.end_mile[>=]" => $user_miles_travelled
+                                false) . "journeys_legs.end_mile[>=]" => $milesTravelled
                         ]
                     ]);
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(),
@@ -3053,15 +3053,15 @@ class DataReturn
                         ];
                         $prevNarrativeMiles = $dbNarrative['miles'];
 
-                        if ($dbNarrative['miles'] > $user_miles_travelled) {
-                            $narrativeArray["miles_off"] = number_format($dbNarrative['miles'] - $user_miles_travelled,
+                        if ($dbNarrative['miles'] > $milesTravelled) {
+                            $narrativeArray["miles_off"] = number_format($dbNarrative['miles'] - $milesTravelled,
                                 2);
                         }
 
                         array_push($narrative, $narrativeArray);
                     }
 
-                    $legsProgress[$dbLeg['lid']] = number_format((($user_miles_travelled / $dbLeg['end_mile']) * 100),
+                    $legsProgress[$dbLeg['lid']] = number_format((($milesTravelled / $dbLeg['end_mile']) * 100),
                         2);
                     $legsNames[$dbLeg['lid']] = $dbLeg['name'];
                     $legs[$dbLeg['lid']] = $narrative;
@@ -3091,12 +3091,12 @@ class DataReturn
     private function returnUserRecordAccount()
     {
         $supported = $this->getAppClass()->supportedApi();
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        $returnBabels = $this->getAppClass()->getDatabase()->get($db_prefix . "users", ['eml', 'api', 'name', 'fuid'], ["fuid" => $this->getUserID()]);
+        $returnBabels = $this->getAppClass()->getDatabase()->get($dbPrefix . "users", ['eml', 'api', 'name', 'fuid'], ["fuid" => $this->getUserID()]);
 
         $returnBabels['tweak'] = [];
-        $returnBabels['tweak']['current_steps'] = $this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", "steps", ["user" => $this->getUserID(), "ORDER" => ["date" => "DESC"]]);
+        $returnBabels['tweak']['current_steps'] = $this->getAppClass()->getDatabase()->get($dbPrefix . "steps_goals", "steps", ["user" => $this->getUserID(), "ORDER" => ["date" => "DESC"]]);
         $returnBabels['tweak']['desire_steps'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps", 0);
         $returnBabels['tweak']['desire_steps_min'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_min", 0);
         $returnBabels['tweak']['desire_steps_max'] = $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps_max", 0);
@@ -3110,12 +3110,12 @@ class DataReturn
         $returnBabels['push']['push_passmark'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_passmark", 95);
         $returnBabels['push']['push_unit'] = $this->getAppClass()->getUserSetting($this->getUserID(), "push_unit", 'km');
 
-        $user_id = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_user_id', NULL);
-        $api_key = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_api_key', NULL);
-        if (!is_null($user_id) && !is_null($api_key)) {
+        $habiticaUserId = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_user_id', NULL);
+        $habiticaUserKey = $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_api_key', NULL);
+        if (!is_null($habiticaUserId) && !is_null($habiticaUserKey)) {
             $returnBabels[ 'habitica' ] = [
-                'habitica_user_id' => $user_id,
-                'habitica_api_key' => $api_key,
+                'habitica_user_id' => $habiticaUserId,
+                'habitica_api_key' => $habiticaUserKey,
                 'habitica_challenge_join' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_challenge_join', false),
                 'habitica_bye_gems' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_bye_gems', false),
                 'habitica_min_gold' => $this->getAppClass()->getUserSetting($this->getUserID(), 'habitica_min_gold', 100),
@@ -3153,7 +3153,7 @@ class DataReturn
             $returnBabels[ 'habitica' ] = [];
         }
 
-        $dbJourney = $this->getAppClass()->getDatabase()->select($db_prefix . "journeys_travellers", [ 'jid', 'start_date' ], ["fuid" => $this->getUserID(), "LIMIT" => 1]);
+        $dbJourney = $this->getAppClass()->getDatabase()->select($dbPrefix . "journeys_travellers", [ 'jid', 'start_date' ], ["fuid" => $this->getUserID(), "LIMIT" => 1]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
         if (count($dbJourney) > 0) {
             $returnBabels[ 'journey' ] = $dbJourney[ 0 ];
@@ -3161,7 +3161,7 @@ class DataReturn
             $returnBabels[ 'journey' ] = [];
         }
 
-        $dbJourneys = $this->getAppClass()->getDatabase()->select($db_prefix . "journeys", [ 'jid', 'name', 'blurb' ]);
+        $dbJourneys = $this->getAppClass()->getDatabase()->select($dbPrefix . "journeys", [ 'jid', 'name', 'blurb' ]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ]);
         $returnBabels['journeys'] = $dbJourneys;
 
@@ -3184,12 +3184,12 @@ class DataReturn
      */
     private function returnUserRecordXp()
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        if (!$this->getAppClass()->getDatabase()->has($db_prefix . "users_xp", ['fuid' => $this->getUserID()])) {
+        if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "users_xp", ['fuid' => $this->getUserID()])) {
             $return = ["class" => "Rebel", "xp" => 0, "mana" => 0, "level" => 0, "percent" => 0, "gold" => 0, "health" => 100];
         } else {
-            $return = $this->getAppClass()->getDatabase()->get($db_prefix . "users_xp", ['class', 'xp', 'mana', 'health', 'gold', 'level', 'percent'], ["fuid" => $this->getUserID()]);
+            $return = $this->getAppClass()->getDatabase()->get($dbPrefix . "users_xp", ['class', 'xp', 'mana', 'health', 'gold', 'level', 'percent'], ["fuid" => $this->getUserID()]);
         }
 
         $currancy = explode('.', $return['gold']);
@@ -3212,11 +3212,11 @@ class DataReturn
      */
     private function returnUserRecordTopBadges()
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $userBadges = $this->getAppClass()->getDatabase()->select($db_prefix . "bages_user",
-            ["[>]" . $db_prefix . "bages" => ["badgeid" => "encodedId"]],
-            [$db_prefix . 'bages.badgeType', $db_prefix . 'bages.value', $db_prefix . 'bages_user.dateTime', $db_prefix . 'bages_user.timesAchieved'],
-            [$db_prefix . 'bages_user.fuid' => $this->getUserID()]);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $userBadges = $this->getAppClass()->getDatabase()->select($dbPrefix . "bages_user",
+            ["[>]" . $dbPrefix . "bages" => ["badgeid" => "encodedId"]],
+            [$dbPrefix . 'bages.badgeType', $dbPrefix . 'bages.value', $dbPrefix . 'bages_user.dateTime', $dbPrefix . 'bages_user.timesAchieved'],
+            [$dbPrefix . 'bages_user.fuid' => $this->getUserID()]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
@@ -3283,35 +3283,35 @@ class DataReturn
         ]);
 
         $returnDate = null;
-        $graph_floors = [];
-        $graph_floors_g = [];
-        $graph_floors_min = 0;
-        $graph_floors_max = 0;
-        $graph_steps = [];
-        $graph_steps_g = [];
-        $graph_steps_min = 0;
-        $graph_steps_max = 0;
+        $graphFloors = [];
+        $graphFloorsGoal = [];
+        $graphFloorsMin = 0;
+        $graphFloorsMax = 0;
+        $graphSteps = [];
+        $graphStepsGoal = [];
+        $graphStepsMin = 0;
+        $graphStepsMax = 0;
         foreach ($dbSteps as $dbValue) {
             if (is_null($returnDate)) {
                 $returnDate = explode("-", $dbValue['date']);
             }
 
-            array_push($graph_floors, (String)round($dbValue['floors'], 0));
-            array_push($graph_floors_g, (String)round($dbValue['floors_g'], 0));
-            if ($dbValue['floors'] < $graph_floors_min || $graph_floors_min == 0) {
-                $graph_floors_min = $dbValue['floors'];
+            array_push($graphFloors, (String)round($dbValue['floors'], 0));
+            array_push($graphFloorsGoal, (String)round($dbValue['floors_g'], 0));
+            if ($dbValue['floors'] < $graphFloorsMin || $graphFloorsMin == 0) {
+                $graphFloorsMin = $dbValue['floors'];
             }
-            if ($dbValue['floors'] > $graph_floors_max || $graph_floors_max == 0) {
-                $graph_floors_max = $dbValue['floors'];
+            if ($dbValue['floors'] > $graphFloorsMax || $graphFloorsMax == 0) {
+                $graphFloorsMax = $dbValue['floors'];
             }
 
-            array_push($graph_steps, (String)round($dbValue['steps'], 0));
-            array_push($graph_steps_g, (String)round($dbValue['steps_g'], 0));
-            if ($dbValue['steps'] < $graph_steps_min || $graph_steps_min == 0) {
-                $graph_steps_min = $dbValue['steps'];
+            array_push($graphSteps, (String)round($dbValue['steps'], 0));
+            array_push($graphStepsGoal, (String)round($dbValue['steps_g'], 0));
+            if ($dbValue['steps'] < $graphStepsMin || $graphStepsMin == 0) {
+                $graphStepsMin = $dbValue['steps'];
             }
-            if ($dbValue['steps'] > $graph_steps_max || $graph_steps_max == 0) {
-                $graph_steps_max = $dbValue['steps'];
+            if ($dbValue['steps'] > $graphStepsMax || $graphStepsMax == 0) {
+                $graphStepsMax = $dbValue['steps'];
             }
         }
 
@@ -3335,20 +3335,20 @@ class DataReturn
             "LINE" => __LINE__
         ]);
 
-        $graph_active = [];
-        $graph_active_g = [];
-        $graph_active_min = 0;
-        $graph_active_max = 0;
+        $graphActive = [];
+        $graphActiveGoal = [];
+        $graphActiveMin = 0;
+        $graphActiveMax = 0;
 
         foreach ($dbActive as $dbValue) {
-            array_push($graph_active, (String)round($dbValue['fairlyactive'] + $dbValue['veryactive'], 0));
-            array_push($graph_active_g, (String)round($dbValue['target'], 0));
+            array_push($graphActive, (String)round($dbValue['fairlyactive'] + $dbValue['veryactive'], 0));
+            array_push($graphActiveGoal, (String)round($dbValue['target'], 0));
 
-            if (($dbValue['fairlyactive'] + $dbValue['veryactive']) < $graph_active_min) {
-                $graph_active_min = $dbValue['fairlyactive'] + $dbValue['veryactive'];
+            if (($dbValue['fairlyactive'] + $dbValue['veryactive']) < $graphActiveMin) {
+                $graphActiveMin = $dbValue['fairlyactive'] + $dbValue['veryactive'];
             }
-            if (($dbValue['fairlyactive'] + $dbValue['veryactive']) > $graph_active_max) {
-                $graph_active_max = $dbValue['fairlyactive'] + $dbValue['veryactive'];
+            if (($dbValue['fairlyactive'] + $dbValue['veryactive']) > $graphActiveMax) {
+                $graphActiveMax = $dbValue['fairlyactive'] + $dbValue['veryactive'];
             }
         }
 
@@ -3359,20 +3359,20 @@ class DataReturn
         return [
             'returnDate' => $returnDate,
 
-            'graph_steps' => $graph_steps,
-            'graph_steps_g' => $graph_steps_g,
-            'graph_steps_min' => $graph_steps_min,
-            'graph_steps_max' => $graph_steps_max,
+            'graph_steps' => $graphSteps,
+            'graph_steps_g' => $graphStepsGoal,
+            'graph_steps_min' => $graphStepsMin,
+            'graph_steps_max' => $graphStepsMax,
             'imp_steps' => $this->getAppClass()->getUserSetting($this->getUserID(), "desire_steps", 10) . "%",
             'avg_steps' => number_format($goalCalcSteps['newTargetSteps'], 0),
             'newgoal_steps' => number_format($goalCalcSteps['plusTargetSteps'], 0),
             'maxgoal_steps' => number_format($this->getAppClass()->getUserSetting($this->getUserID(),
                 "desire_steps_max", 10000), 0),
 
-            'graph_floors' => $graph_floors,
-            'graph_floors_g' => $graph_floors_g,
-            'graph_floors_min' => $graph_floors_min,
-            'graph_floors_max' => $graph_floors_max,
+            'graph_floors' => $graphFloors,
+            'graph_floors_g' => $graphFloorsGoal,
+            'graph_floors_min' => $graphFloorsMin,
+            'graph_floors_max' => $graphFloorsMax,
             'imp_floors' => $this->getAppClass()->getUserSetting($this->getUserID(), "desire_floors",
                     10) . "%",
             'avg_floors' => number_format($goalCalcFloors['newTargetFloors'], 0),
@@ -3380,10 +3380,10 @@ class DataReturn
             'maxgoal_floors' => number_format($this->getAppClass()->getUserSetting($this->getUserID(),
                 "desire_floors_max", 20), 0),
 
-            'graph_active' => $graph_active,
-            'graph_active_g' => $graph_active_g,
-            'graph_active_min' => $graph_active_min,
-            'graph_active_max' => $graph_active_max,
+            'graph_active' => $graphActive,
+            'graph_active_g' => $graphActiveGoal,
+            'graph_active_min' => $graphActiveMin,
+            'graph_active_max' => $graphActiveMax,
             'imp_active' => $this->getAppClass()->getUserSetting($this->getUserID(), "desire_active",
                     10) . "%",
             'avg_active' => number_format($goalCalcActive['newTargetFloors'], 0),
@@ -3648,12 +3648,12 @@ class DataReturn
         $timeFirstSeen = strtotime($userFirstSeenDb . ' 00:00:00');
 
         $totalProgress = 0;
-        $allowed_triggers = [];
+        $allowedTriggers = [];
         foreach (array_keys($this->getAppClass()->supportedApi()) as $key) {
             if ($this->getAppClass()->getSetting('scope_' . $key) && $this->getAppClass()->getUserSetting($this->getUserID(),
                     'scope_' . $key) && $key != "all"
             ) {
-                $allowed_triggers[$key]['name'] = $this->getAppClass()->supportedApi($key);
+                $allowedTriggers[$key]['name'] = $this->getAppClass()->supportedApi($key);
 
                 $oldestScope = $this->getOldestScope($key);
                 $timeLastRun = strtotime($oldestScope->format("Y-m-d H:i:s"));
@@ -3668,16 +3668,16 @@ class DataReturn
                     $precentageCompleted = 100;
                 }
 
-                $allowed_triggers[$key]['precentage'] = $precentageCompleted;
+                $allowedTriggers[$key]['precentage'] = $precentageCompleted;
                 $totalProgress += $precentageCompleted;
             }
         }
 
-        ksort($allowed_triggers);
+        ksort($allowedTriggers);
 
         return [
-            "SyncProgress" => round(($totalProgress / (100 * count($allowed_triggers))) * 100, 1),
-            "SyncProgressScopes" => $allowed_triggers
+            "SyncProgress" => round(($totalProgress / (100 * count($allowedTriggers))) * 100, 1),
+            "SyncProgressScopes" => $allowedTriggers
         ];
     }
 
@@ -3936,13 +3936,13 @@ class DataReturn
         $interval = DateInterval::createFromDateString('1 week');
         $daterange = new DatePeriod($begin, $interval, $end);
 
-        $WeighInArray = [];
-        $FatInArray = [];
+        $weighInArray = [];
+        $fatInArray = [];
         /** @var DateTime $date */
         foreach ($daterange as $date) {
             if (array_key_exists($date->format("Y-m-d"), $returnWeight)) {
-                $FatInArray[$date->format("Y-m-d")] = $returnWeight[$date->format("Y-m-d")]['weight'];
-                $WeighInArray[$date->format("Y-m-d")] = $returnWeight[$date->format("Y-m-d")]['fat'];
+                $fatInArray[$date->format("Y-m-d")] = $returnWeight[$date->format("Y-m-d")]['weight'];
+                $weighInArray[$date->format("Y-m-d")] = $returnWeight[$date->format("Y-m-d")]['fat'];
             }
         }
 
@@ -3950,8 +3950,8 @@ class DataReturn
 
         return [
             'returnDate' => explode("-", $this->getParamDate()),
-            'WeighInArray' => $WeighInArray,
-            'FatInArray' => $FatInArray,
+            'weighInArray' => $weighInArray,
+            'FatInArray' => $fatInArray,
             'graph_fat' => $fat,
             'graph_fat_max' => $fatMax,
             'graph_fat_min' => $fatMin,
@@ -3991,8 +3991,8 @@ class DataReturn
      */
     private function returnUserRecordNomieScore()
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        return [$this->getAppClass()->getDatabase()->sum($db_prefix . "nomie_events",'score', ["fuid" => $this->getUserID(), "datestamp[~]" => $this->getParamDate() . ' %'])];
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        return [$this->getAppClass()->getDatabase()->sum($dbPrefix . "nomie_events",'score', ["fuid" => $this->getUserID(), "datestamp[~]" => $this->getParamDate() . ' %'])];
     }
 
     /**
@@ -4001,19 +4001,19 @@ class DataReturn
      */
     private function returnUserRecordNomieDashboard()
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         $returnArray = [];
         $returnArray['dashboard'] = [];
 
-        $returnArray['dashboard']['trackers'] = $this->getAppClass()->getDatabase()->count($db_prefix . "nomie_trackers",
+        $returnArray['dashboard']['trackers'] = $this->getAppClass()->getDatabase()->count($dbPrefix . "nomie_trackers",
             'id', ["fuid" => $this->getUserID()]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
             "LINE" => __LINE__
         ]);
 
-        $returnArray['dashboard']['events'] = $this->getAppClass()->getDatabase()->count($db_prefix . "nomie_events",
+        $returnArray['dashboard']['events'] = $this->getAppClass()->getDatabase()->count($dbPrefix . "nomie_events",
             'id', ["fuid" => $this->getUserID()]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
@@ -4025,7 +4025,7 @@ class DataReturn
         $returnArray['dashboard']['spread'] = [];
         $returnArray['dashboard']['spread']['events'] = [];
 
-        $returnArray['dashboard']['spread']['events']['positive'] = $this->getAppClass()->getDatabase()->count($db_prefix . "nomie_events",
+        $returnArray['dashboard']['spread']['events']['positive'] = $this->getAppClass()->getDatabase()->count($dbPrefix . "nomie_events",
             'id', [
                 "AND" => [
                     "fuid" => $this->getUserID(),
@@ -4037,7 +4037,7 @@ class DataReturn
             "LINE" => __LINE__
         ]);
 
-        $returnArray['dashboard']['spread']['events']['negative'] = $this->getAppClass()->getDatabase()->count($db_prefix . "nomie_events",
+        $returnArray['dashboard']['spread']['events']['negative'] = $this->getAppClass()->getDatabase()->count($dbPrefix . "nomie_events",
             'id', [
                 "AND" => [
                     "fuid" => $this->getUserID(),
@@ -4049,7 +4049,7 @@ class DataReturn
             "LINE" => __LINE__
         ]);
 
-        $returnArray['dashboard']['spread']['events']['netural'] = $this->getAppClass()->getDatabase()->count($db_prefix . "nomie_events",
+        $returnArray['dashboard']['spread']['events']['netural'] = $this->getAppClass()->getDatabase()->count($dbPrefix . "nomie_events",
             'id', [
                 "AND" => [
                     "fuid" => $this->getUserID(),
@@ -4092,8 +4092,8 @@ class DataReturn
             unset($dbEventCount);
             unset($dbEventFirst);
             unset($dbEventLast);
-            unset($days_between);
-            unset($months_between);
+            unset($daysBetween);
+            unset($monthsBetween);
 
             $dayAvg = 0;
             $monthAvg = 0;
@@ -4128,10 +4128,10 @@ class DataReturn
 
                     if ($dbEventLast != "0000-00-00 00:00:00") {
                         $dateTimeFirst = new DateTime ($dbEventFirst);
-                        $days_between = $dateTimeFirst->diff(new DateTime ($dbEventLast))->format("%a");
-                        $days_between = (int)$days_between + 1;
-                        $months_between = $dateTimeFirst->diff(new DateTime ($dbEventLast))->format("%m");
-                        $months_between = (int)$months_between + 1;
+                        $daysBetween = $dateTimeFirst->diff(new DateTime ($dbEventLast))->format("%a");
+                        $daysBetween = (int)$daysBetween + 1;
+                        $monthsBetween = $dateTimeFirst->diff(new DateTime ($dbEventLast))->format("%m");
+                        $monthsBetween = (int)$monthsBetween + 1;
                     }
                 }
 
@@ -4139,16 +4139,16 @@ class DataReturn
                     $dbEventLast = "0000-00-00 00:00:00";
                 }
 
-                if (!isset($days_between)) {
-                    $days_between = 0;
+                if (!isset($daysBetween)) {
+                    $daysBetween = 0;
                 } else {
-                    $dayAvg = round($dbEventCount / $days_between, 2);
+                    $dayAvg = round($dbEventCount / $daysBetween, 2);
                 }
 
-                if (!isset($months_between)) {
-                    $months_between = 0;
+                if (!isset($monthsBetween)) {
+                    $monthsBetween = 0;
                 } else {
-                    $monthAvg = round($dbEventCount / $months_between, 2);
+                    $monthAvg = round($dbEventCount / $monthsBetween, 2);
                 }
 
                 $dateTimeFirst = new DateTime ($dbEventFirst);
@@ -4202,25 +4202,25 @@ class DataReturn
         }
 
         $eventLimit = 500;
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        $dbTrackers = $this->getAppClass()->getDatabase()->select($db_prefix . "nomie_events", [
-            "[>]" . $db_prefix . "nomie_trackers" => ["id" => "id"]
+        $dbTrackers = $this->getAppClass()->getDatabase()->select($dbPrefix . "nomie_events", [
+            "[>]" . $dbPrefix . "nomie_trackers" => ["id" => "id"]
         ], [
-            $db_prefix . 'nomie_events.datestamp',
-            $db_prefix . 'nomie_trackers.type',
-            $db_prefix . 'nomie_trackers.math',
-            $db_prefix . 'nomie_trackers.uom',
-            $db_prefix . 'nomie_events.value',
-            $db_prefix . 'nomie_events.score',
-            $db_prefix . 'nomie_events.geo_lat',
-            $db_prefix . 'nomie_events.geo_lon'
+            $dbPrefix . 'nomie_events.datestamp',
+            $dbPrefix . 'nomie_trackers.type',
+            $dbPrefix . 'nomie_trackers.math',
+            $dbPrefix . 'nomie_trackers.uom',
+            $dbPrefix . 'nomie_events.value',
+            $dbPrefix . 'nomie_events.score',
+            $dbPrefix . 'nomie_events.geo_lat',
+            $dbPrefix . 'nomie_events.geo_lon'
         ], [
             "AND" => [
-                $db_prefix . "nomie_events.fuid" => $this->getUserID(),
-                $db_prefix . "nomie_events.id" => $searchTracker,
-                $db_prefix . "nomie_events.geo_lat[!]" => "",
-                $db_prefix . "nomie_events.geo_lon[!]" => ""
+                $dbPrefix . "nomie_events.fuid" => $this->getUserID(),
+                $dbPrefix . "nomie_events.id" => $searchTracker,
+                $dbPrefix . "nomie_events.geo_lat[!]" => "",
+                $dbPrefix . "nomie_events.geo_lon[!]" => ""
             ],
             "ORDER" => ["datestamp" => "DESC"],
             "LIMIT" => $eventLimit
@@ -4231,12 +4231,12 @@ class DataReturn
         ]);
 
         if ($dbTrackers[0]['type'] == "numeric") {
-            $sum = $this->getAppClass()->getDatabase()->sum($db_prefix . "nomie_events", 'value', [
+            $sum = $this->getAppClass()->getDatabase()->sum($dbPrefix . "nomie_events", 'value', [
                 "AND" => [
-                    $db_prefix . "nomie_events.fuid" => $this->getUserID(),
-                    $db_prefix . "nomie_events.id" => $searchTracker,
-                    $db_prefix . "nomie_events.geo_lat[!]" => "",
-                    $db_prefix . "nomie_events.geo_lon[!]" => ""
+                    $dbPrefix . "nomie_events.fuid" => $this->getUserID(),
+                    $dbPrefix . "nomie_events.id" => $searchTracker,
+                    $dbPrefix . "nomie_events.geo_lat[!]" => "",
+                    $dbPrefix . "nomie_events.geo_lon[!]" => ""
                 ],
                 "ORDER" => ["datestamp" => "DESC"],
                 "LIMIT" => $eventLimit
@@ -4246,12 +4246,12 @@ class DataReturn
                 "LINE" => __LINE__
             ]);
 
-            $avg = $this->getAppClass()->getDatabase()->avg($db_prefix . "nomie_events", 'value', [
+            $avg = $this->getAppClass()->getDatabase()->avg($dbPrefix . "nomie_events", 'value', [
                 "AND" => [
-                    $db_prefix . "nomie_events.fuid" => $this->getUserID(),
-                    $db_prefix . "nomie_events.id" => $searchTracker,
-                    $db_prefix . "nomie_events.geo_lat[!]" => "",
-                    $db_prefix . "nomie_events.geo_lon[!]" => ""
+                    $dbPrefix . "nomie_events.fuid" => $this->getUserID(),
+                    $dbPrefix . "nomie_events.id" => $searchTracker,
+                    $dbPrefix . "nomie_events.geo_lat[!]" => "",
+                    $dbPrefix . "nomie_events.geo_lon[!]" => ""
                 ],
                 "ORDER" => ["datestamp" => "DESC"],
                 "LIMIT" => $eventLimit
@@ -4283,7 +4283,7 @@ class DataReturn
             $avg = 0;
         }
 
-        $lat = $this->getAppClass()->getDatabase()->avg($db_prefix . "nomie_events", 'geo_lat', [
+        $lat = $this->getAppClass()->getDatabase()->avg($dbPrefix . "nomie_events", 'geo_lat', [
             "AND" => [
                 "fuid" => $this->getUserID(),
                 "id" => $searchTracker,
@@ -4298,7 +4298,7 @@ class DataReturn
             "LINE" => __LINE__
         ]);
 
-        $long = $this->getAppClass()->getDatabase()->avg($db_prefix . "nomie_events", 'geo_lon', [
+        $long = $this->getAppClass()->getDatabase()->avg($dbPrefix . "nomie_events", 'geo_lon', [
             "AND" => [
                 "fuid" => $this->getUserID(),
                 "id" => $searchTracker,
@@ -4408,13 +4408,13 @@ class DataReturn
     }
 
     /**
-     * @param String $UserID
+     * @param String $userID
      *
 
      */
-    public function setUserID($UserID)
+    public function setUserID($userID)
     {
-        $this->UserID = $UserID;
+        $this->UserID = $userID;
     }
 
     /**
@@ -4473,8 +4473,8 @@ class DataReturn
             $dbUserFirstSeen = $this->getAppClass()->getDatabase()->get($this->getAppClass()->getSetting("db_prefix",
                     null, false) . "users", 'seen', ["fuid" => $this->getUserID()]);
             $now = time(); // or your date as well
-            $your_date = strtotime($dbUserFirstSeen);
-            $datediff = $now - $your_date;
+            $firstSeenTime = strtotime($dbUserFirstSeen);
+            $datediff = $now - $firstSeenTime;
             $this->paramPeriod = "last" . floor($datediff / (60 * 60 * 24));
         }
 
@@ -4512,16 +4512,16 @@ class DataReturn
     }
 
     /**
-     * @param string $start_date
+     * @param string $startDate
      *
      * @return bool|int
      */
-    public function getUserMilesSince($start_date)
+    public function getUserMilesSince($startDate)
     {
         $dbMiles = $this->getAppClass()->getDatabase()->sum($this->getAppClass()->getSetting("db_prefix", null,
                 false) . "steps",
             ['distance'],
-            ["AND" => ["user" => $this->getUserID(), "date[>=]" => $start_date]]);
+            ["AND" => ["user" => $this->getUserID(), "date[>=]" => $startDate]]);
 
         return $dbMiles;
     }
@@ -4578,8 +4578,8 @@ class DataReturn
             }
         }
 
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $apiKey = $this->getAppClass()->getDatabase()->get($db_prefix . "users", "api", ["fuid" => $this->getUserID()]);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $apiKey = $this->getAppClass()->getDatabase()->get($dbPrefix . "users", "api", ["fuid" => $this->getUserID()]);
 
         if ( array_key_exists('api', $_GET) && $apiKey == $_GET['api'] ) {
             return "apikey";
