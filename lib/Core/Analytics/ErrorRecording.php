@@ -68,7 +68,7 @@ class ErrorRecording {
     }
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     private function registerRaven() {
         Raven_Autoloader::register();

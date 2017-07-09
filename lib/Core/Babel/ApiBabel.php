@@ -128,6 +128,8 @@ class ApiBabel {
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
      * @return bool|array
      */
     private function pullNomieTrackers() {
@@ -1738,7 +1740,10 @@ class ApiBabel {
 
     /**
      * @return mixed
+     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
      * @internal param $targetDate
      */
     private function pullBabelUserGoals() {
@@ -2824,6 +2829,8 @@ class ApiBabel {
      * @param string  $dateTime
      * @param string  $goal
      * @param boolean $value
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     private function checkGoalStreak( $dateTime, $goal, $value ) {
         //$todaysDate = new DateTime ( 'now' );
@@ -3484,6 +3491,8 @@ class ApiBabel {
      * @SuppressWarnings(PHPMD.ExitExpression)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
