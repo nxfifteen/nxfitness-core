@@ -60,7 +60,7 @@ class RecordedMeal extends Modules {
     }
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function checkMealHealthynessLogged() {
         $meal = $this->getEventDetails();

@@ -124,6 +124,8 @@ class Rewards {
      * @param string $event Reward Event
      * @param string $score Reward Score
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return array|\PDOStatement
      */
     public function getDBAwards( $cat, $event, $score ) {

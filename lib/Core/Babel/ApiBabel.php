@@ -126,6 +126,8 @@ class ApiBabel {
     }
 
     /**
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
      * @return bool|array
@@ -481,6 +483,8 @@ class ApiBabel {
      * @param string $activity
      * @param null   $cronDelay
      * @param bool   $clean
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @internal param $username
@@ -561,6 +565,8 @@ class ApiBabel {
     }
 
     /**
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -727,6 +733,8 @@ class ApiBabel {
 
     /**
      * Download information about devices associated with the users account. This is then stored in the database
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
@@ -913,6 +921,8 @@ class ApiBabel {
 
     /**
      * Download information of badges the user has aquired
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
@@ -1109,7 +1119,9 @@ class ApiBabel {
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
      */
@@ -1244,6 +1256,8 @@ class ApiBabel {
 
     /**
      * @return mixed|null|SimpleXMLElement|string
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @internal param $user
      */
     private function pullBabelCaloriesGoals() {
@@ -1352,6 +1366,8 @@ class ApiBabel {
 
     /**
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @internal param $targetDate
      */
@@ -1573,6 +1589,8 @@ class ApiBabel {
     /**
      * @param string $activity
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return bool|string
      */
     private function pullBabelHeartIntraday( $activity ) {
@@ -1736,6 +1754,8 @@ class ApiBabel {
 
     /**
      * @return mixed
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
      * @internal param $targetDate
@@ -1881,6 +1901,8 @@ class ApiBabel {
     /**
      * @param string $string
      * @param int    $currentGoal
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return float|int|string
      * @internal param $user
@@ -2143,6 +2165,8 @@ class ApiBabel {
     /**
      * @param string $lastCleanRun
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return bool|mixed|string
      */
     private function pullBabelHeartRateSeries( $lastCleanRun ) {
@@ -2301,6 +2325,8 @@ class ApiBabel {
     /**
      * @param string $targetDate
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return mixed|null|SimpleXMLElement|string
      */
     private function pullBabelSleep( $targetDate ) {
@@ -2393,6 +2419,8 @@ class ApiBabel {
 
     /**
      * @param string $targetDate
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed
@@ -2626,6 +2654,8 @@ class ApiBabel {
     /**
      * @param string $trigger
      * @param bool   $force
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string|bool
@@ -2678,6 +2708,8 @@ class ApiBabel {
      * @param string        $daysSince
      * @param DateTime|null $lastrun
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return string|bool
      */
     private function pullBabelTimeSeriesByTrigger( $trigger, $daysSince, $lastrun = null ) {
@@ -2704,6 +2736,8 @@ class ApiBabel {
      * @param string        $trigger
      * @param string        $daysSince
      * @param DateTime|null $lastrun
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return string|bool
@@ -2822,6 +2856,7 @@ class ApiBabel {
      * @param string  $goal
      * @param boolean $value
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function checkGoalStreak( $dateTime, $goal, $value ) {
         //$todaysDate = new DateTime ( 'now' );
@@ -2963,6 +2998,7 @@ class ApiBabel {
      * @param string        $daysSince
      * @param DateTime|null $lastrun
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return bool
      */
@@ -3095,6 +3131,7 @@ class ApiBabel {
 
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function pullHabitica() {
         $isAllowed = $this->isAllowed( "habitica" );
@@ -3200,6 +3237,7 @@ class ApiBabel {
      * @param Habitica $habiticaClass
      * @param array    $user
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function funHabiticaHatcher( $habiticaClass, $user ) {
         if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_hatch', false ) ) {
@@ -3283,6 +3321,7 @@ class ApiBabel {
      * @param Habitica $habiticaClass
      * @param array    $user
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function funHabiticaFeeder( $habiticaClass, $user ) {
         $pets = [];
@@ -3478,10 +3517,12 @@ class ApiBabel {
      * @param string $user
      * @param string $trigger
      * @param bool   $return
+     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -3972,7 +4013,9 @@ class ApiBabel {
      * @param string          $type
      * @param string|DateTime $baseDate DateTime or 'today', to_period
      * @param string|DateTime $toPeriod DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
+     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return array|boolean
      */

@@ -114,6 +114,8 @@ class Habitica extends Delivery {
      * @param string $state         State of award - Issued/Pending
      * @param string $rewardKey     Reward Key
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return array
      */
     public function deliver( $rewardProfile, $state, $rewardKey ) {

@@ -19,6 +19,7 @@
 /**
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 if ( ! function_exists( "nxr" ) ) {
     /**

@@ -92,6 +92,8 @@ class Config {
      *
      * @param string $activityName Activity key name
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return array String array of cache files names
      */
     public function getRelatedCacheNames( $activityName ) {

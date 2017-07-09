@@ -80,6 +80,8 @@ class Modules {
      * @param string      $score     Reward Score
      * @param null|string $rewardKey Reward Key
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return bool
      */
     protected function checkDB( $cat, $event, $score, $rewardKey = null ) {

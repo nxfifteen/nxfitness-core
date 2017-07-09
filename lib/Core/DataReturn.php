@@ -137,6 +137,8 @@ class DataReturn {
      * @param string   $userPushEndDate
      * @param DateTime $rangeStart
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return array
      */
     private function calculatePushDays( $userPushStartDate, $userPushEndDate, $rangeStart ) {
@@ -482,6 +484,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordActivityHistory() {
@@ -669,6 +672,7 @@ class DataReturn {
      * @param null $tcxTrackName
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return array
      */
@@ -979,6 +983,7 @@ class DataReturn {
 
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordPush() {
@@ -1217,6 +1222,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordConky() {
@@ -1627,6 +1633,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordFoodDiary() {
@@ -1767,6 +1774,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordKeyPoints() {
@@ -2060,6 +2068,7 @@ class DataReturn {
     /* @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordSteps() {
@@ -2275,6 +2284,7 @@ class DataReturn {
     /* @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordInbox() {
@@ -2332,6 +2342,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordPendingRewards() {
@@ -2415,6 +2426,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordTasker() {
@@ -3236,6 +3248,7 @@ class DataReturn {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordTracked() {
@@ -3657,6 +3670,7 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordWeight() {
@@ -4040,6 +4054,7 @@ class DataReturn {
 
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @return array
      */
     private function returnUserRecordNomieTrackers() {
@@ -4543,6 +4558,7 @@ class DataReturn {
     /**
      * @param array $get
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return array
      */

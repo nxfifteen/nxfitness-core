@@ -205,6 +205,7 @@ class Upgrade {
     /* @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function updateRun3() {
         $dbPrefix = $this->getSetting( "db_prefix", false );
@@ -317,6 +318,7 @@ class Upgrade {
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function updateRun4() {
         $dbPrefix = $this->getSetting( "db_prefix", false );
@@ -533,6 +535,7 @@ class Upgrade {
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function updateRun8() {
         $dbPrefix = $this->getSetting( "db_prefix", false );
@@ -882,6 +885,7 @@ class Upgrade {
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function updateRun2000000() {
         $dbPrefix = $this->getSetting( "db_prefix", false );
