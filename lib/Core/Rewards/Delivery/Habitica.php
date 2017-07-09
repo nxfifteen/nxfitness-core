@@ -160,7 +160,6 @@ class Habitica extends Delivery {
 
     /**
      * @param bool $quiet
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool|string
@@ -213,7 +212,6 @@ class Habitica extends Delivery {
      * @param string $type           Type of habbit to find
      * @param bool   $returnObject   Return full item object
      * @param bool   $skipCache      Skip the cache and search the API
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return mixed

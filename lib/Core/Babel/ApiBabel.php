@@ -88,7 +88,6 @@ class ApiBabel {
      *
      * @param Core $fitbitApp
      * @param bool $personal
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function __construct( $fitbitApp, $personal = false ) {
@@ -129,7 +128,6 @@ class ApiBabel {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
-     *
      * @return bool|array
      */
     private function pullNomieTrackers() {
@@ -446,7 +444,6 @@ class ApiBabel {
     /**
      * @param string $activity
      * @param bool   $reset
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return DateTime
@@ -484,7 +481,6 @@ class ApiBabel {
      * @param string $activity
      * @param null   $cronDelay
      * @param bool   $clean
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @internal param $username
@@ -1740,10 +1736,8 @@ class ApiBabel {
 
     /**
      * @return mixed
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
-     *
      * @internal param $targetDate
      */
     private function pullBabelUserGoals() {
@@ -2100,7 +2094,6 @@ class ApiBabel {
      * @param string       $path
      * @param string|array $pushObject
      * @param bool         $returnObject
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
@@ -2633,7 +2626,6 @@ class ApiBabel {
     /**
      * @param string $trigger
      * @param bool   $force
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string|bool
@@ -2829,7 +2821,6 @@ class ApiBabel {
      * @param string  $dateTime
      * @param string  $goal
      * @param boolean $value
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     private function checkGoalStreak( $dateTime, $goal, $value ) {
@@ -3487,11 +3478,9 @@ class ApiBabel {
      * @param string $user
      * @param string $trigger
      * @param bool   $return
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @return mixed|null|SimpleXMLElement|string
@@ -3774,7 +3763,6 @@ class ApiBabel {
     /**
      * @param string $trigger
      * @param bool   $quiet
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool|string
@@ -3809,7 +3797,6 @@ class ApiBabel {
      * @param string $trigger
      * @param bool   $reset
      * @param bool   $canForce
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool
@@ -3847,7 +3834,6 @@ class ApiBabel {
      * @param bool   $returnObject
      * @param bool   $debugOutput
      * @param bool   $supportFailures
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *

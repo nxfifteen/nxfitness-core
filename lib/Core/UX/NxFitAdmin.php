@@ -115,7 +115,6 @@ class NxFitAdmin {
      * @param string $key
      * @param null   $default
      * @param bool   $rawQueryBb
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string

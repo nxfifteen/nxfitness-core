@@ -3657,7 +3657,6 @@ class DataReturn {
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.StaticAccess)
-     *
      * @return array
      */
     private function returnUserRecordWeight() {

@@ -224,7 +224,6 @@ class Config {
      *
      * @param string $key        Setting to query
      * @param bool   $rawQueryBb Boolean to store in database or not
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool was data stored correctly
@@ -256,7 +255,6 @@ class Config {
      * @param string $key        Setting to query
      * @param string $default    Default value to return
      * @param bool   $rawQueryBb Boolean to search database or not
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string Setting value, or default as per defined
@@ -287,7 +285,6 @@ class Config {
      * @param string $key        Setting to query
      * @param string $value      Value to store
      * @param bool   $rawQueryBb Boolean to store in database or not
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool was data stored correctly
@@ -328,7 +325,6 @@ class Config {
      * @param string $key        Setting to query
      * @param string $default    Default value to return
      * @param bool   $rawQueryBb Boolean to search database or not
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string Setting value, or default as per defined

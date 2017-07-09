@@ -44,7 +44,6 @@ class Gaming extends Delivery {
      * @param array $key        Setting to query
      * @param array $default    Default value to return
      * @param bool  $rawQueryBb Boolean to search database or not
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return array Setting value, or default as per defined

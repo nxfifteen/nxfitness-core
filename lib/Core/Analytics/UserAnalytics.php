@@ -125,7 +125,6 @@ class UserAnalytics {
      * @param string|bool $name     (optional) The Event's object Name (a particular Movie name, or Song name, or
      *                              File name...)
      * @param float|bool  $value    (optional) The Event's value
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return mixed Response string or true if using bulk requests.

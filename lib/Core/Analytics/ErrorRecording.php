@@ -180,7 +180,6 @@ class ErrorRecording {
      * @param array  $data    Additional attributes to pass with this event (see Sentry docs).
      * @param bool   $stack
      * @param null   $vars
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return int|null

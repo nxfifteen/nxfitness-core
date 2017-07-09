@@ -1147,7 +1147,6 @@ class Upgrade {
      * @param string $key
      * @param null   $default
      * @param bool   $rawQueryBb
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string
@@ -1163,7 +1162,6 @@ class Upgrade {
      * @param string $key
      * @param string $value
      * @param bool   $rawQueryBb
-     *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool
