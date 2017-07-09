@@ -65,7 +65,7 @@ class FitbitStreak extends Modules
         $this->setEventDetails($eventDetails);
         $eventDetails = $this->getEventDetails();
 
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         $rewardKey = sha1($eventDetails['goal'] . $eventDetails['streak_start'] . $eventDetails['days_between']);
 
@@ -74,16 +74,16 @@ class FitbitStreak extends Modules
         }
 
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-            $avg = round($this->getAppClass()->getDatabase()->avg($db_prefix . "streak_goal", ['length'], ["fuid" => $this->getUserID()]), 0);
-            $max = round($this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => $eventDetails['goal'], "end_date[!]" => null], "ORDER" => ["length" => "DESC"]]), 0);
-            $last = round($this->getAppClass()->getDatabase()->get($db_prefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => $eventDetails['goal'], "end_date[!]" => null], "ORDER" => ["start_date" => "DESC"]]), 0);
+            $avg = round($this->getAppClass()->getDatabase()->avg($dbPrefix . "streak_goal", ['length'], ["fuid" => $this->getUserID()]), 0);
+            $max = round($this->getAppClass()->getDatabase()->get($dbPrefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => $eventDetails['goal'], "end_date[!]" => null], "ORDER" => ["length" => "DESC"]]), 0);
+            $last = round($this->getAppClass()->getDatabase()->get($dbPrefix . "streak_goal", 'length', ["AND" => ["fuid" => $this->getUserID(), "goal" => $eventDetails['goal'], "end_date[!]" => null], "ORDER" => ["start_date" => "DESC"]]), 0);
 
             $habitica = new Habitica($this->getAppClass(), $this->getUserID());
             if ($habitica->isValidUser() && $habitica->getStatus() == 'up') {
                 if ($this->eventDetails["streak_ended"]) {
-                    $habitica->_delete(":mans_shoe: Beat Your Last Streak");
-                    $habitica->_delete(":mans_shoe: Beat Your Average Streak");
-                    $habitica->_delete(":mans_shoe: Beat Your Longest Streak");
+                    $habitica->deleteTask(":mans_shoe: Beat Your Last Streak");
+                    $habitica->deleteTask(":mans_shoe: Beat Your Average Streak");
+                    $habitica->deleteTask(":mans_shoe: Beat Your Longest Streak");
                 } else if ($eventDetails['days_between'] == $max) {
                     $habitica->deliver([
                         "name" => ":mans_shoe: Beat Your Longest Streak",
@@ -106,7 +106,7 @@ class FitbitStreak extends Modules
                         "reward" => '{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "up": true, "down": false, "score": "up"}'
                     ], "pending", $rewardKey);
                 } else if ($eventDetails['days_between'] > 0 && !$this->eventDetails["streak_ended"]) {
-                    $tasks = $habitica->_create("todo", ":mans_shoe: Beat Your Last Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1, "notes": "Your last streak was ' . $last . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $last . ' days')) . '"}', true));
+                    $tasks = $habitica->createNewTask("todo", ":mans_shoe: Beat Your Last Streak", json_decode( '{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1, "notes": "Your last streak was ' . $last . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime( $eventDetails['streak_start'] . ' +' . $last . ' days')) . '"}', true));
                     if (is_array($tasks)) {
                         $tasks = $tasks['_id'];
                         for ($i = 1; $i < $last; $i++) {
@@ -114,7 +114,7 @@ class FitbitStreak extends Modules
                         }
                     }
 
-                    $tasks = $habitica->_create("todo", ":mans_shoe: Beat Your Average Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "notes": "Your average streak is ' . $avg . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $avg . ' days')) . '"}', true));
+                    $tasks = $habitica->createNewTask("todo", ":mans_shoe: Beat Your Average Streak", json_decode( '{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "notes": "Your average streak is ' . $avg . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime( $eventDetails['streak_start'] . ' +' . $avg . ' days')) . '"}', true));
                     if (is_array($tasks)) {
                         $tasks = $tasks['_id'];
                         for ($i = 1; $i < $avg; $i++) {
@@ -122,7 +122,7 @@ class FitbitStreak extends Modules
                         }
                     }
 
-                    $tasks = $habitica->_create("todo", ":mans_shoe: Beat Your Longest Streak", json_decode('{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 2, "notes": "Your longest streak was ' . $max . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $max . ' days')) . '"}', true));
+                    $tasks = $habitica->createNewTask("todo", ":mans_shoe: Beat Your Longest Streak", json_decode( '{"type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 2, "notes": "Your longest streak was ' . $max . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime( $eventDetails['streak_start'] . ' +' . $max . ' days')) . '"}', true));
                     if (is_array($tasks)) {
                         $tasks = $tasks['_id'];
                         for ($i = 1; $i < $max; $i++) {

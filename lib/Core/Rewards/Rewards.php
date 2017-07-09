@@ -44,12 +44,12 @@ class Rewards
     /**
      * @var String
      */
-    private $UserID;
+    private $userID;
 
     /**
      * @var Core
      */
-    private $AppClass;
+    private $appClass;
 
     /**
      * @var Core
@@ -64,17 +64,17 @@ class Rewards
     /**
      * @var string
      */
-    private $RewardReason;
+    private $rewardReason;
 
     /**
      * Modules constructor.
-     * @param Core $AppClass Core API Class
-     * @param string $UserID Fitbit user ID
+     * @param Core $appClass Core API Class
+     * @param string $userID Fitbit user ID
      */
-    public function __construct($AppClass, $UserID)
+    public function __construct($appClass, $userID)
     {
-        $this->setAppClass($AppClass);
-        $this->setUserID($UserID);
+        $this->setAppClass($appClass);
+        $this->setUserID($userID);
         if (file_exists(dirname(__FILE__) . "/../../../config/rewards.dist.php")) {
             $rules = [];
             require(dirname(__FILE__) . "/../../../config/rewards.dist.php");
@@ -83,19 +83,19 @@ class Rewards
     }
 
     /**
-     * @param Core $AppClass
+     * @param Core $appClass
      */
-    private function setAppClass($AppClass)
+    private function setAppClass($appClass)
     {
-        $this->AppClass = $AppClass;
+        $this->AppClass = $appClass;
     }
 
     /**
-     * @param String $UserID
+     * @param String $userID
      */
-    private function setUserID($UserID)
+    private function setUserID($userID)
     {
-        $this->UserID = $UserID;
+        $this->UserID = $userID;
     }
 
     /**
@@ -120,8 +120,8 @@ class Rewards
      */
     public function alreadyAwarded($rewardKey)
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        return $this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", ["AND" => ['fuid' => $this->getUserID(), 'rkey[~]' => sha1($rewardKey)]]);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        return $this->getAppClass()->getDatabase()->has($dbPrefix . "reward_queue", ["AND" => ['fuid' => $this->getUserID(), 'rkey[~]' => sha1($rewardKey)]]);
     }
 
     /**
@@ -133,8 +133,8 @@ class Rewards
     public function getDBAwards($cat, $event, $score)
     {
         $returnRewards = [];
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $rewards = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_map", [
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $rewards = $this->getAppClass()->getDatabase()->select($dbPrefix . "reward_map", [
             "rmid",
             "xp",
             "reward(rid)",
@@ -188,8 +188,8 @@ class Rewards
      */
     public function hasDBAwards($awardWhere)
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_map", $awardWhere)) {
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        if ($this->getAppClass()->getDatabase()->has($dbPrefix . "reward_map", $awardWhere)) {
             return true;
         } else {
             $cat = strtolower($awardWhere['AND']['cat']);
@@ -254,19 +254,19 @@ class Rewards
      */
     public function nukeConflictingAwards($rid)
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $nukeOne = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'rid', ["AND" => ["nukeid" => $rid, "directional" => "true"]]);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $nukeOne = $this->getAppClass()->getDatabase()->select($dbPrefix . "reward_nuke", 'rid', ["AND" => ["nukeid" => $rid, "directional" => "true"]]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
         if (count($nukeOne) > 0) {
             foreach ($nukeOne as $nukeId) {
-                if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", [
+                if ($this->getAppClass()->getDatabase()->has($dbPrefix . "reward_queue", [
                     "AND" => [
                         'fuid' => $this->getUserID(),
                         'reward' => $nukeId
                     ]
                 ])
                 ) {
-                    $this->getAppClass()->getDatabase()->delete($db_prefix . "reward_queue", [
+                    $this->getAppClass()->getDatabase()->delete($dbPrefix . "reward_queue", [
                         "AND" => [
                             'fuid' => $this->getUserID(),
                             'reward' => $nukeId
@@ -277,18 +277,18 @@ class Rewards
             }
         }
 
-        $nukeTwo = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'nukeid', ["AND" => ["rid" => $rid, "directional" => "false"]]);
+        $nukeTwo = $this->getAppClass()->getDatabase()->select($dbPrefix . "reward_nuke", 'nukeid', ["AND" => ["rid" => $rid, "directional" => "false"]]);
         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
         if (count($nukeTwo) > 0) {
             foreach ($nukeTwo as $nukeId) {
-                if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", [
+                if ($this->getAppClass()->getDatabase()->has($dbPrefix . "reward_queue", [
                     "AND" => [
                         'fuid' => $this->getUserID(),
                         'reward' => $nukeId
                     ]
                 ])
                 ) {
-                    $this->getAppClass()->getDatabase()->delete($db_prefix . "reward_queue", [
+                    $this->getAppClass()->getDatabase()->delete($dbPrefix . "reward_queue", [
                         "AND" => [
                             'fuid' => $this->getUserID(),
                             'reward' => $nukeId
@@ -307,8 +307,8 @@ class Rewards
      */
     public function createDBAwards($cat, $event, $score)
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_map", [
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $this->getAppClass()->getDatabase()->insert($dbPrefix . "reward_map", [
             "cat" => $cat,
             "event" => $event,
             "rule" => $score
@@ -328,11 +328,11 @@ class Rewards
     }
 
     /**
-     * @param string $RewardReason
+     * @param string $rewardReason
      */
-    public function setRewardReason($RewardReason)
+    public function setRewardReason($rewardReason)
     {
-        $this->RewardReason = $RewardReason;
+        $this->RewardReason = $rewardReason;
     }
 
     /**

@@ -81,18 +81,18 @@ class FitbitLoggedActivity extends Modules
         if ($activity->activityName != "auto_detected" && in_array($activity->activityName, $checkForThese) && !$this->getRewardsClass()->alreadyAwarded($activity->logId)) {
             $currentDate = new DateTime ('now');
             $currentDate = $currentDate->format("Y-m-d");
-            $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+            $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-            $sql_search = [
+            $sqlSearch = [
                 "user" => $this->getUserID(),
                 "activityName[~]" => $activity->activityName,
                 "startDate" => $currentDate,
                 "logType[!]" => 'auto_detected'
             ];
             $minMaxAvg = [];
-            $minMaxAvg['min'] = ($this->getAppClass()->getDatabase()->min($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
-            $minMaxAvg['avg'] = ($this->getAppClass()->getDatabase()->avg($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
-            $minMaxAvg['max'] = ($this->getAppClass()->getDatabase()->max($db_prefix . "activity_log", "activeDuration", ["AND" => $sql_search]) / 1000) / 60;
+            $minMaxAvg['min'] = ($this->getAppClass()->getDatabase()->min($dbPrefix . "activity_log", "activeDuration", ["AND" => $sqlSearch]) / 1000) / 60;
+            $minMaxAvg['avg'] = ($this->getAppClass()->getDatabase()->avg($dbPrefix . "activity_log", "activeDuration", ["AND" => $sqlSearch]) / 1000) / 60;
+            $minMaxAvg['max'] = ($this->getAppClass()->getDatabase()->max($dbPrefix . "activity_log", "activeDuration", ["AND" => $sqlSearch]) / 1000) / 60;
 
             $minMaxAvg['min2avg'] = (($minMaxAvg['avg'] - $minMaxAvg['min']) / 2) + $minMaxAvg['min'];
             $minMaxAvg['avg2max'] = (($minMaxAvg['max'] - $minMaxAvg['avg']) / 2) + $minMaxAvg['avg'];

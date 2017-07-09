@@ -228,17 +228,17 @@ class Config
      * Function to store/change setting values. Values can be stored in the database or held in memory.
      *
      * @param string $key Setting to query
-     * @param bool $query_db Boolean to store in database or not
+     * @param bool $rawQueryBb Boolean to store in database or not
      *
      * @return bool was data stored correctly
      */
-    public function del($key, $query_db = true)
+    public function del($key, $rawQueryBb = true)
     {
         if (array_key_exists($key, $this->settings)) {
             unset($this->settings[$key]);
         }
 
-        if ($query_db) {
+        if ($rawQueryBb) {
             if ($this->database->has($this->get("db_prefix", false) . "settings", ["var" => $key])) {
                 $dbAction = $this->database->delete($this->get("db_prefix", false) . "settings", ["var" => $key]);
                 if ($this->wasMySQLError($dbAction->errorInfo())) {
@@ -259,15 +259,15 @@ class Config
      *
      * @param string $key Setting to query
      * @param string $default Default value to return
-     * @param bool $query_db Boolean to search database or not
+     * @param bool $rawQueryBb Boolean to search database or not
      *
      * @return string Setting value, or default as per defined
      */
-    public function get($key, $default = null, $query_db = true)
+    public function get($key, $default = null, $rawQueryBb = true)
     {
         if (is_array($this->settings) && array_key_exists($key, $this->settings)) {
             return $this->settings[$key];
-        } else if ($query_db && $this->database->has($this->get("db_prefix", null, false) . "settings",
+        } else if ($rawQueryBb && $this->database->has($this->get("db_prefix", null, false) . "settings",
                 ["var" => $key])
         ) {
             $this->settings[$key] = $this->database->get($this->get("db_prefix", null, false) . "settings", "data",
@@ -275,7 +275,7 @@ class Config
 
             return $this->settings[$key];
         } else {
-            if ($query_db && !is_null($default)) {
+            if ($rawQueryBb && !is_null($default)) {
                 $this->set($key, $default);
             }
 
@@ -289,14 +289,14 @@ class Config
      *
      * @param string $key Setting to query
      * @param string $value Value to store
-     * @param bool $query_db Boolean to store in database or not
+     * @param bool $rawQueryBb Boolean to store in database or not
      *
      * @return bool was data stored correctly
      */
-    public function set($key, $value, $query_db = true)
+    public function set($key, $value, $rawQueryBb = true)
     {
         $this->settings[$key] = $value;
-        if ($query_db) {
+        if ($rawQueryBb) {
             if ($this->database->has($this->get("db_prefix", false) . "settings", ["var" => $key])) {
                 $dbAction = $this->database->update($this->get("db_prefix", false) . "settings", ["data" => $value],
                     ["var" => $key]);
@@ -329,15 +329,15 @@ class Config
      * @param string $fuid User fuid
      * @param string $key Setting to query
      * @param string $default Default value to return
-     * @param bool $query_db Boolean to search database or not
+     * @param bool $rawQueryBb Boolean to search database or not
      *
      * @return string Setting value, or default as per defined
      */
-    public function getUser($fuid, $key, $default = null, $query_db = true)
+    public function getUser($fuid, $key, $default = null, $rawQueryBb = true)
     {
         if (array_key_exists($key . "_" . $fuid, $this->settings)) {
             return $this->settings[$key . "_" . $fuid];
-        } else if ($query_db && $this->database->has($this->get("db_prefix", null, false) . "settings_users", [
+        } else if ($rawQueryBb && $this->database->has($this->get("db_prefix", null, false) . "settings_users", [
                 "AND" => [
                     "fuid" => $fuid,
                     "var" => $key

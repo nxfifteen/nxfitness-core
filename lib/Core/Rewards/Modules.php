@@ -46,27 +46,27 @@ class Modules
     /**
      * @var String
      */
-    protected $UserID;
+    protected $userID;
     /**
      * @var Rewards
      */
-    protected $RewardsClass;
+    protected $rewardsClass;
     private $createNewAwards = false;
     /**
      * @var Core
      */
-    private $AppClass;
+    private $appClass;
 
     /**
      * Modules constructor.
-     * @param Core $AppClass Core API Class
-     * @param string $UserID Fitbit user ID
+     * @param Core $appClass Core API Class
+     * @param string $userID Fitbit user ID
      */
-    public function __construct($AppClass, $UserID)
+    public function __construct($appClass, $userID)
     {
-        $this->setAppClass($AppClass);
-        $this->setUserID($UserID);
-        $this->setRewardsClass(new Rewards($AppClass, $UserID));
+        $this->setAppClass($appClass);
+        $this->setUserID($userID);
+        $this->setRewardsClass(new Rewards($appClass, $userID));
     }
 
     /**
@@ -86,7 +86,7 @@ class Modules
      */
     protected function checkDB($cat, $event, $score, $rewardKey = null)
     {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         if (is_null($rewardKey)) {
             $currentDate = new DateTime ('now');
@@ -111,7 +111,7 @@ class Modules
                             $delivery = "Default";
 
                             if (array_key_exists("rid", $recordReward) && $recordReward['rid'] != "") {
-                                $dbReward = $this->getAppClass()->getDatabase()->get($db_prefix . "rewards", ["description", "system", "reward"], ["rid" => $recordReward['rid']]);
+                                $dbReward = $this->getAppClass()->getDatabase()->get($dbPrefix . "rewards", ["description", "system", "reward"], ["rid" => $recordReward['rid']]);
 
                                 $recordReward['descriptionRid'] = $dbReward['description'];
                                 $recordReward['reward'] = $dbReward['reward'];
@@ -169,11 +169,11 @@ class Modules
     }
 
     /**
-     * @param Core $AppClass
+     * @param Core $appClass
      */
-    protected function setAppClass($AppClass)
+    protected function setAppClass($appClass)
     {
-        $this->AppClass = $AppClass;
+        $this->AppClass = $appClass;
     }
 
     /**
@@ -185,11 +185,11 @@ class Modules
     }
 
     /**
-     * @param Rewards $RewardsClass
+     * @param Rewards $rewardsClass
      */
-    protected function setRewardsClass($RewardsClass)
+    protected function setRewardsClass($rewardsClass)
     {
-        $this->RewardsClass = $RewardsClass;
+        $this->RewardsClass = $rewardsClass;
     }
 
     /**
@@ -216,11 +216,11 @@ class Modules
 
     /**
      *
-     * @param String $UserID
+     * @param String $userID
      */
-    protected function setUserID($UserID)
+    protected function setUserID($userID)
     {
-        $this->UserID = $UserID;
+        $this->UserID = $userID;
     }
 
 }

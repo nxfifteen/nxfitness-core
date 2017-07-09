@@ -73,10 +73,10 @@ class FitbitTracker extends Modules
     {
         $currentDate = new DateTime ('now');
         $currentDate = $currentDate->format("Y-m-d");
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
         if ($value >= 1) {
             $recordedValue = $value;
-            $recordedTarget = round($this->getAppClass()->getDatabase()->get($db_prefix . "steps_goals", $goal,
+            $recordedTarget = round($this->getAppClass()->getDatabase()->get($dbPrefix . "steps_goals", $goal,
                 [
                     "AND" => [
                         "user" => $this->getUserID(),
@@ -163,8 +163,8 @@ class FitbitTracker extends Modules
                 } else {
 
                     $yesterday = date('Y-m-d', strtotime('-1 days'));
-                    $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-                    $eventDetails['value'] = $this->getAppClass()->getDatabase()->get($db_prefix . "steps", $eventDetails['trigger'], ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
+                    $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+                    $eventDetails['value'] = $this->getAppClass()->getDatabase()->get($dbPrefix . "steps", $eventDetails['trigger'], ["AND" => ["user" => $this->getUserID(), "date" => $yesterday]]);
 
                     if ($eventDetails['trigger'] == "distance") {
                         $divider = 10;

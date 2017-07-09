@@ -41,21 +41,21 @@ class Delivery
     /**
      * @var Core
      */
-    private $AppClass;
+    private $appClass;
     /**
      * @var String
      */
-    private $UserID;
+    private $userID;
 
     /**
      * Delivery constructor.
-     * @param Core $AppClass Core API Class
-     * @param string $UserID Fitbit user ID
+     * @param Core $appClass Core API Class
+     * @param string $userID Fitbit user ID
      */
-    public function __construct($AppClass, $UserID)
+    public function __construct($appClass, $userID)
     {
-        $this->setAppClass($AppClass);
-        $this->setUserID($UserID);
+        $this->setAppClass($appClass);
+        $this->setUserID($userID);
         $this->dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
     }
 
@@ -68,11 +68,11 @@ class Delivery
     }
 
     /**
-     * @param Core $AppClass Core API Class
+     * @param Core $appClass Core API Class
      */
-    protected function setAppClass($AppClass)
+    protected function setAppClass($appClass)
     {
-        $this->AppClass = $AppClass;
+        $this->AppClass = $appClass;
     }
 
     /**
@@ -118,11 +118,11 @@ class Delivery
     }
 
     /**
-     * @param String $UserID
+     * @param String $userID
      */
-    protected function setUserID($UserID)
+    protected function setUserID($userID)
     {
-        $this->UserID = $UserID;
+        $this->UserID = $userID;
     }
 
     /**

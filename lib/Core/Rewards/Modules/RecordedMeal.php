@@ -70,17 +70,17 @@ class RecordedMeal extends Modules
 
         $rewardKey = $meal->loggedFood->name . "healthy" . $meal->logDate;
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
-            $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+            $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
             $mealKey = strtolower(str_ireplace(" Summary", "", $meal->loggedFood->name)) . "_healthy";
 
             if ($meal->loggedFood->name == "Breakfast Summary") {
-                if (date("H") > 11 || $this->getAppClass()->getDatabase()->has($db_prefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])) {
+                if (date("H") > 11 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])) {
                     if ($this->wasMealHealthy()) {
                         $this->checkDB("meals", "logged", $mealKey, $rewardKey);
                     }
                 }
             } else if ($meal->loggedFood->name == "Lunch Summary") {
-                if (date("H") > 14 || $this->getAppClass()->getDatabase()->has($db_prefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])) {
+                if (date("H") > 14 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])) {
                     if ($this->wasMealHealthy()) {
                         $this->checkDB("meals", "logged", $mealKey, $rewardKey);
                     }
@@ -98,7 +98,7 @@ class RecordedMeal extends Modules
      */
     private function wasMealHealthy() {
         $meal = $this->getEventDetails();
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
         $mealKey = strtolower(str_ireplace(" Summary", "", $meal->loggedFood->name));
 
@@ -106,30 +106,30 @@ class RecordedMeal extends Modules
 
         $mealQuota = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_by_$mealKey", 33);
 
-        $calories = $this->getAppClass()->getDatabase()->sum($db_prefix . "food_goals", 'calories', ["AND" => ["date" => $meal->logDate, "user" => $this->getUserID()]]);
-        $calories_per = round(($totalCalories / $calories) * 100, 0);
+        $calories = $this->getAppClass()->getDatabase()->sum($dbPrefix . "food_goals", 'calories', ["AND" => ["date" => $meal->logDate, "user" => $this->getUserID()]]);
+        $caloriesPer = round(($totalCalories / $calories) * 100, 0);
         $carbs = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_carbs", 310);
-        $carbs_per = round(($meal->nutritionalValues->carbs / $carbs) * 100, 0);
+        $carbsPer = round(($meal->nutritionalValues->carbs / $carbs) * 100, 0);
         $fat = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_fat", 70);
-        $fat_per = round(($meal->nutritionalValues->fat / $fat) * 100, 0);
+        $fatPer = round(($meal->nutritionalValues->fat / $fat) * 100, 0);
         $sodium = $this->getAppClass()->getUserSetting($this->getUserID(), "goal_food_sodium", 2300);
-        $sodium_per = round(($meal->nutritionalValues->sodium / $sodium) * 100, 0);
+        $sodiumPer = round(($meal->nutritionalValues->sodium / $sodium) * 100, 0);
 
         //if ($meal->loggedFood->name == "Lunch Summary") nxr(4, "New Healthy ($mealKey, quotoa $mealQuota) - " . $meal->loggedFood->name);
-        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_calories " . $calories_per);
-        if ($calories_per > $mealQuota) {
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_calories " . $caloriesPer);
+        if ($caloriesPer > $mealQuota) {
             return false;
         }
-        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_carbs    " . $carbs_per);
-        if ($carbs_per > $mealQuota) {
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_carbs    " . $carbsPer);
+        if ($carbsPer > $mealQuota) {
             return false;
         }
-        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_fat      " . $fat_per);
-        if ($fat_per > $mealQuota) {
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_fat      " . $fatPer);
+        if ($fatPer > $mealQuota) {
             return false;
         }
-        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_sodium   " . $sodium_per);
-        if ($sodium_per > $mealQuota) {
+        //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "goal_food_sodium   " . $sodiumPer);
+        if ($sodiumPer > $mealQuota) {
             return false;
         }
 
