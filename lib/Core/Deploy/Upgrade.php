@@ -243,50 +243,50 @@ class Upgrade
             }
 
             $streak = false;
-            $streak_start = "";
-            $streak_prevdate = "";
+            $streakStartDate = "";
+            $streakPrevDate = "";
             foreach ($steps as $step) {
                 echo "   - " . $step['date'] . " " . $step['steps'] . "/" . $step['step_goal'];
 
                 if ($step['steps'] >= $step['step_goal']) {
                     if (!$streak) {
                         $streak = true;
-                        $streak_start = $step['date'];
+                        $streakStartDate = $step['date'];
 
                         echo "\tnew streak started";
                     }
-                    $streak_prevdate = $step['date'];
+                    $streakPrevDate = $step['date'];
                 } else {
                     if ($streak) {
                         $streak = false;
-                        $streak_end = $streak_prevdate;
+                        $streakEndDate = $streakPrevDate;
 
-                        $date1 = new DateTime($streak_end);
-                        $date2 = new DateTime($streak_start);
+                        $date1 = new DateTime($streakEndDate);
+                        $date2 = new DateTime($streakStartDate);
 
-                        $days_between = $date2->diff($date1)->format("%a");
-                        $days_between = (int)$days_between + 1;
+                        $daysBetween = $date2->diff($date1)->format("%a");
+                        $daysBetween = (int)$daysBetween + 1;
 
-                        echo "\tnew streak broken. " . $streak_start . " to " . $streak_end . " (" . $days_between . ")";
+                        echo "\tnew streak broken. " . $streakStartDate . " to " . $streakEndDate . " (" . $daysBetween . ")";
 
-                        if ($days_between > 1) {
+                        if ($daysBetween > 1) {
                             if ($this->getDatabase()->has($dbPrefix . "streak_goal", [
                                 "AND" => [
                                     "fuid" => $user,
                                     "goal" => "steps",
-                                    "start_date" => $streak_start
+                                    "start_date" => $streakStartDate
                                 ]
                             ])
                             ) {
                                 $this->getDatabase()->update($dbPrefix . "streak_goal", [
-                                    "end_date" => $streak_end,
-                                    "length" => $days_between
+                                    "end_date" => $streakEndDate,
+                                    "length" => $daysBetween
                                 ],
                                     [
                                         "AND" => [
                                             "fuid" => $user,
                                             "goal" => "steps",
-                                            "start_date" => $streak_start
+                                            "start_date" => $streakStartDate
                                         ]
                                     ]
                                 );
@@ -299,9 +299,9 @@ class Upgrade
                                 $this->getDatabase()->insert($dbPrefix . "streak_goal", [
                                     "fuid" => $user,
                                     "goal" => "steps",
-                                    "start_date" => $streak_start,
-                                    "end_date" => $streak_end,
-                                    "length" => $days_between
+                                    "start_date" => $streakStartDate,
+                                    "end_date" => $streakEndDate,
+                                    "length" => $daysBetween
                                 ]);
                                 if ($this->wasMySQLError($this->getDatabase()->error())) {
                                     print_r($this->getDatabase()->log());
