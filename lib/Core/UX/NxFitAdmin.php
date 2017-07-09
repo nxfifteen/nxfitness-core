@@ -173,7 +173,6 @@ class NxFitAdmin {
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     *
      * @return float
      */
     public function getSyncStatus() {
@@ -304,7 +303,6 @@ class NxFitAdmin {
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     *
      * @return string
      */
     public function getLocalWeatherImage() {

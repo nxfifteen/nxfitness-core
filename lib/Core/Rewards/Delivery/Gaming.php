@@ -128,7 +128,6 @@ class Gaming extends Delivery {
     /**
      * @param integer $health Current Health
      * @param integer $level  Current Level
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return int
@@ -187,7 +186,6 @@ class Gaming extends Delivery {
      * @param array  $rewardProfile Array holding details of award that has been issued
      * @param string $state         State of award - Issued/Pending
      * @param string $rewardKey     Reward Key
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *

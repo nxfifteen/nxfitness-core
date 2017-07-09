@@ -91,7 +91,6 @@ class Config {
      * Takes an activity name and returns an array of all cache files generated when activity is queried
      *
      * @param string $activityName Activity key name
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *

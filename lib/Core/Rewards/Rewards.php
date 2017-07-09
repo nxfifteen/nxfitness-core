@@ -123,7 +123,6 @@ class Rewards {
      * @param string $cat   Reward Category
      * @param string $event Reward Event
      * @param string $score Reward Score
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return array|\PDOStatement

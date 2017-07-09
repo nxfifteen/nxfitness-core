@@ -57,7 +57,6 @@ class FitbitStreak extends Modules {
 
     /**
      * @param array $eventDetails Array holding details of award to issue
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function trigger( $eventDetails ) {

@@ -79,7 +79,6 @@ class Modules {
      * @param string      $event     Reward Event
      * @param string      $score     Reward Score
      * @param null|string $rewardKey Reward Key
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return bool

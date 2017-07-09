@@ -104,7 +104,6 @@ class RewardsSystem {
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     *
      * @return array
      */
     public function queryMinecraftRewards() {

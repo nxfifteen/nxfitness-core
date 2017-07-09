@@ -138,7 +138,6 @@ class DataReturn {
      * @param string   $userPushStartDate
      * @param string   $userPushEndDate
      * @param DateTime $rangeStart
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *

@@ -128,7 +128,6 @@ class ApiBabel {
     }
 
     /**
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -486,7 +485,6 @@ class ApiBabel {
      * @param string $activity
      * @param null   $cronDelay
      * @param bool   $clean
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
@@ -568,7 +566,6 @@ class ApiBabel {
     }
 
     /**
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @return mixed|null|SimpleXMLElement|string
@@ -736,7 +733,6 @@ class ApiBabel {
 
     /**
      * Download information about devices associated with the users account. This is then stored in the database
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -925,7 +921,6 @@ class ApiBabel {
 
     /**
      * Download information of badges the user has aquired
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -1127,7 +1122,6 @@ class ApiBabel {
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
      */
@@ -1262,7 +1256,6 @@ class ApiBabel {
 
     /**
      * @return mixed|null|SimpleXMLElement|string
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @internal param $user
@@ -1373,7 +1366,6 @@ class ApiBabel {
 
     /**
      * @return bool
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -1596,7 +1588,6 @@ class ApiBabel {
 
     /**
      * @param string $activity
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
@@ -1763,7 +1754,6 @@ class ApiBabel {
 
     /**
      * @return mixed
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -1911,7 +1901,6 @@ class ApiBabel {
     /**
      * @param string $string
      * @param int    $currentGoal
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
@@ -2175,7 +2164,6 @@ class ApiBabel {
 
     /**
      * @param string $lastCleanRun
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return bool|mixed|string
@@ -2335,7 +2323,6 @@ class ApiBabel {
 
     /**
      * @param string $targetDate
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
@@ -2430,7 +2417,6 @@ class ApiBabel {
 
     /**
      * @param string $targetDate
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -2666,7 +2652,6 @@ class ApiBabel {
     /**
      * @param string $trigger
      * @param bool   $force
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
@@ -2719,7 +2704,6 @@ class ApiBabel {
      * @param string        $trigger
      * @param string        $daysSince
      * @param DateTime|null $lastrun
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return string|bool
@@ -2748,7 +2732,6 @@ class ApiBabel {
      * @param string        $trigger
      * @param string        $daysSince
      * @param DateTime|null $lastrun
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -3532,7 +3515,6 @@ class ApiBabel {
      * @param string $user
      * @param string $trigger
      * @param bool   $return
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -4029,7 +4011,6 @@ class ApiBabel {
      * @param string          $type
      * @param string|DateTime $baseDate DateTime or 'today', to_period
      * @param string|DateTime $toPeriod DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
