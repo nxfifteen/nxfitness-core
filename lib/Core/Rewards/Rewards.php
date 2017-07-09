@@ -1,9 +1,7 @@
 <?php
 /**
  * This file is part of NxFIFTEEN Fitness Core.
- *
  * Copyright (c) 2017. Stuart McCulloch Anderson
- *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
@@ -17,6 +15,7 @@
  * @link        https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core Git Repo
  * @copyright   2017 Stuart McCulloch Anderson
  * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 
 namespace Core\Rewards;
@@ -24,7 +23,7 @@ namespace Core\Rewards;
 use Core\Core;
 use Core\Rewards\Delivery\Wordpress;
 
-require_once(dirname(__FILE__) . "/../../autoloader.php");
+require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
 
 /**
  * Rewards
@@ -36,19 +35,19 @@ require_once(dirname(__FILE__) . "/../../autoloader.php");
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+ * @SuppressWarnings(PHPMD.ElseExpression)
  */
-class Rewards
-{
+class Rewards {
 
     /**
      * @var String
      */
-    private $UserID;
+    private $userID;
 
     /**
      * @var Core
      */
-    private $AppClass;
+    private $appClass;
 
     /**
      * @var Core
@@ -63,118 +62,116 @@ class Rewards
     /**
      * @var string
      */
-    private $RewardReason;
+    private $rewardReason;
 
     /**
      * Modules constructor.
-     * @param Core $AppClass Core API Class
-     * @param string $UserID Fitbit user ID
+     *
+     * @param Core   $appClass Core API Class
+     * @param string $userID   Fitbit user ID
      */
-    public function __construct($AppClass, $UserID)
-    {
-        $this->setAppClass($AppClass);
-        $this->setUserID($UserID);
-        if (file_exists(dirname(__FILE__) . "/../../../config/rewards.dist.php")) {
+    public function __construct( $appClass, $userID ) {
+        $this->setAppClass( $appClass );
+        $this->setUserID( $userID );
+        if ( file_exists( dirname( __FILE__ ) . "/../../../config/rewards.dist.php" ) ) {
             $rules = [];
-            require(dirname(__FILE__) . "/../../../config/rewards.dist.php");
+            require( dirname( __FILE__ ) . "/../../../config/rewards.dist.php" );
             $this->FileRewards = $rules;
         }
     }
 
     /**
-     * @param Core $AppClass
+     * @param Core $appClass
      */
-    private function setAppClass($AppClass)
-    {
-        $this->AppClass = $AppClass;
+    private function setAppClass( $appClass ) {
+        $this->appClass = $appClass;
     }
 
     /**
-     * @param String $UserID
+     * @param String $userID
      */
-    private function setUserID($UserID)
-    {
-        $this->UserID = $UserID;
-    }
-
-    /**
-     * @param string $rewardKey Unique RewardKey
-     * @return bool
-     */
-    public function alreadyAwarded($rewardKey)
-    {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        return $this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", ["AND" => ['fuid' => $this->getUserID(), 'rkey[~]' => sha1($rewardKey)]]);
+    private function setUserID( $userID ) {
+        $this->userID = $userID;
     }
 
     /**
      * @return Core
      */
-    private function getAppClass()
-    {
-        return $this->AppClass;
+    private function getAppClass() {
+        return $this->appClass;
     }
 
     /**
      * @return String
      */
-    private function getUserID()
-    {
-        return $this->UserID;
+    private function getUserID() {
+        return $this->userID;
     }
 
     /**
-     * @param string $cat Reward Category
+     * @param string $rewardKey Unique RewardKey
+     *
+     * @return bool
+     */
+    public function alreadyAwarded( $rewardKey ) {
+        $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+
+        return $this->getAppClass()->getDatabase()->has( $dbPrefix . "reward_queue", [ "AND" => [ 'fuid' => $this->getUserID(), 'rkey[~]' => sha1( $rewardKey ) ] ] );
+    }
+
+    /**
+     * @param string $cat   Reward Category
      * @param string $event Reward Event
      * @param string $score Reward Score
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return array|\PDOStatement
      */
-    public function getDBAwards($cat, $event, $score)
-    {
+    public function getDBAwards( $cat, $event, $score ) {
         $returnRewards = [];
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $rewards = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_map", [
+        $dbPrefix      = $this->getAppClass()->getSetting( "db_prefix", null, false );
+        $rewards       = $this->getAppClass()->getDatabase()->select( $dbPrefix . "reward_map", [
             "rmid",
             "xp",
             "reward(rid)",
             "name",
         ], [
             "AND" => [
-                "cat" => $cat,
+                "cat"   => $cat,
                 "event" => $event,
-                "rule" => $score
+                "rule"  => $score
             ]
-        ]);
+        ] );
 
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
-            "LINE" => __LINE__
-        ]);
-        if (is_array($rewards) && count($rewards) > 0) {
+            "LINE"   => __LINE__
+        ] );
+        if ( is_array( $rewards ) && count( $rewards ) > 0 ) {
 
-            foreach ($rewards as $reward) {
-                if ((is_numeric($reward['xp']) && $reward['xp'] <> 0) || $reward['rid'] != "") {
-                    array_push($returnRewards, $reward);
+            foreach ( $rewards as $reward ) {
+                if ( ( is_numeric( $reward[ 'xp' ] ) && $reward[ 'xp' ] <> 0 ) || $reward[ 'rid' ] != "" ) {
+                    array_push( $returnRewards, $reward );
                 }
             }
 
         }
 
-        $cat = strtolower($cat);
-        $event = strtolower($event);
-        $rule = strtolower($score);
+        $cat   = strtolower( $cat );
+        $event = strtolower( $event );
+        $rule  = strtolower( $score );
 
         if (
-            array_key_exists($cat, $this->FileRewards) &&
-            array_key_exists($event, $this->FileRewards[$cat]) &&
-            array_key_exists($rule, $this->FileRewards[$cat][$event])
+            array_key_exists( $cat, $this->FileRewards ) &&
+            array_key_exists( $event, $this->FileRewards[ $cat ] ) &&
+            array_key_exists( $rule, $this->FileRewards[ $cat ][ $event ] )
         ) {
-            foreach ($this->FileRewards[$cat][$event][$rule] as $fileReward) {
-                array_push($returnRewards, $fileReward);
+            foreach ( $this->FileRewards[ $cat ][ $event ][ $rule ] as $fileReward ) {
+                array_push( $returnRewards, $fileReward );
             }
         }
 
-        if (is_array($returnRewards) && count($returnRewards) > 0) {
+        if ( is_array( $returnRewards ) && count( $returnRewards ) > 0 ) {
             return $returnRewards;
         } else {
             return [];
@@ -183,22 +180,22 @@ class Rewards
 
     /**
      * @param array $awardWhere Medoo style where search clause
+     *
      * @return bool
      */
-    public function hasDBAwards($awardWhere)
-    {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_map", $awardWhere)) {
+    public function hasDBAwards( $awardWhere ) {
+        $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+        if ( $this->getAppClass()->getDatabase()->has( $dbPrefix . "reward_map", $awardWhere ) ) {
             return true;
         } else {
-            $cat = strtolower($awardWhere['AND']['cat']);
-            $event = strtolower($awardWhere['AND']['event']);
-            $rule = strtolower($awardWhere['AND']['rule']);
+            $cat   = strtolower( $awardWhere[ 'AND' ][ 'cat' ] );
+            $event = strtolower( $awardWhere[ 'AND' ][ 'event' ] );
+            $rule  = strtolower( $awardWhere[ 'AND' ][ 'rule' ] );
 
             if (
-                array_key_exists($cat, $this->FileRewards) &&
-                array_key_exists($event, $this->FileRewards[$cat]) &&
-                array_key_exists($rule, $this->FileRewards[$cat][$event])
+                array_key_exists( $cat, $this->FileRewards ) &&
+                array_key_exists( $event, $this->FileRewards[ $cat ] ) &&
+                array_key_exists( $rule, $this->FileRewards[ $cat ][ $event ] )
             ) {
                 return true;
             } else {
@@ -208,144 +205,138 @@ class Rewards
     }
 
     /**
-     * @param integer $userXp XP to award
-     * @param string $rewardKey Reward Key
+     * @param integer $userXp    XP to award
+     * @param string  $rewardKey Reward Key
      */
-    public function giveUserXp($userXp, $rewardKey)
-    {
-        $wordpress = new Wordpress($this->getAppClass(), $this->getUserID());
-        $wordpress->deliver(['reward' => $userXp], $rewardKey, "pending");
+    public function giveUserXp( $userXp, $rewardKey ) {
+        $wordpress = new Wordpress( $this->getAppClass(), $this->getUserID() );
+        $wordpress->deliver( [ 'reward' => $userXp ], $rewardKey, "pending" );
     }
 
     /**
-     * @param array $recordReward
+     * @param array  $recordReward
      * @param string $rewardKey
      * @param string $state
      * @param string $delivery
      */
-    public function issueAwards($recordReward, $rewardKey, $state = "pending", $delivery = "Default")
-    {
-        $className = "Core\\Rewards\\Delivery";
-        $includePath = dirname(__FILE__);
+    public function issueAwards( $recordReward, $rewardKey, $state = "pending", $delivery = "Default" ) {
+        $className   = "Core\\Rewards\\Delivery";
+        $includePath = dirname( __FILE__ );
         $includeFile = $includePath . DIRECTORY_SEPARATOR . "Delivery.php";
 
-        if ($delivery != "Default") {
-            $delivery = ucwords($delivery);
+        if ( $delivery != "Default" ) {
+            $delivery = ucwords( $delivery );
 
-            if (file_exists($includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR . $delivery . ".php")) {
+            if ( file_exists( $includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR . $delivery . ".php" ) ) {
                 $includeFile = $includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR . $delivery . ".php";
-                $className = "Core\\Rewards\\Delivery\\" . $delivery;
+                $className   = "Core\\Rewards\\Delivery\\" . $delivery;
             } else {
-                nxr(2, "Create a new class 'Core\\Rewards\\Delivery\\$delivery' in " . $includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR);
+                nxr( 2, "Create a new class 'Core\\Rewards\\Delivery\\$delivery' in " . $includePath . DIRECTORY_SEPARATOR . "Delivery" . DIRECTORY_SEPARATOR );
             }
         }
 
         /** @noinspection PhpIncludeInspection */
-        require_once($includeFile);
-        $rewardSystem = new $className($this->getAppClass(), $this->getUserID());
+        require_once( $includeFile );
+        $rewardSystem = new $className( $this->getAppClass(), $this->getUserID() );
         /** @noinspection PhpUndefinedMethodInspection */
-        $deliveryReturn = $rewardSystem->deliver($recordReward, $state, $rewardKey);
-        $this->RewardsIssued = array_merge($this->RewardsIssued, $deliveryReturn);
+        $deliveryReturn      = $rewardSystem->deliver( $recordReward, $state, $rewardKey );
+        $this->RewardsIssued = array_merge( $this->RewardsIssued, $deliveryReturn );
     }
 
     /**
      * @param integer $rid Reward ID
      */
-    public function nukeConflictingAwards($rid)
-    {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $nukeOne = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'rid', ["AND" => ["nukeid" => $rid, "directional" => "true"]]);
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-        if (count($nukeOne) > 0) {
-            foreach ($nukeOne as $nukeId) {
-                if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", [
+    public function nukeConflictingAwards( $rid ) {
+        $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+        $nukeOne  = $this->getAppClass()->getDatabase()->select( $dbPrefix . "reward_nuke", 'rid', [ "AND" => [ "nukeid" => $rid, "directional" => "true" ] ] );
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ] );
+        if ( count( $nukeOne ) > 0 ) {
+            foreach ( $nukeOne as $nukeId ) {
+                if ( $this->getAppClass()->getDatabase()->has( $dbPrefix . "reward_queue", [
                     "AND" => [
-                        'fuid' => $this->getUserID(),
+                        'fuid'   => $this->getUserID(),
                         'reward' => $nukeId
                     ]
-                ])
+                ] )
                 ) {
-                    $this->getAppClass()->getDatabase()->delete($db_prefix . "reward_queue", [
+                    $this->getAppClass()->getDatabase()->delete( $dbPrefix . "reward_queue", [
                         "AND" => [
-                            'fuid' => $this->getUserID(),
+                            'fuid'   => $this->getUserID(),
                             'reward' => $nukeId
                         ]
-                    ]);
-                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+                    ] );
+                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ] );
                 }
             }
         }
 
-        $nukeTwo = $this->getAppClass()->getDatabase()->select($db_prefix . "reward_nuke", 'nukeid', ["AND" => ["rid" => $rid, "directional" => "false"]]);
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
-        if (count($nukeTwo) > 0) {
-            foreach ($nukeTwo as $nukeId) {
-                if ($this->getAppClass()->getDatabase()->has($db_prefix . "reward_queue", [
+        $nukeTwo = $this->getAppClass()->getDatabase()->select( $dbPrefix . "reward_nuke", 'nukeid', [ "AND" => [ "rid" => $rid, "directional" => "false" ] ] );
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ] );
+        if ( count( $nukeTwo ) > 0 ) {
+            foreach ( $nukeTwo as $nukeId ) {
+                if ( $this->getAppClass()->getDatabase()->has( $dbPrefix . "reward_queue", [
                     "AND" => [
-                        'fuid' => $this->getUserID(),
+                        'fuid'   => $this->getUserID(),
                         'reward' => $nukeId
                     ]
-                ])
+                ] )
                 ) {
-                    $this->getAppClass()->getDatabase()->delete($db_prefix . "reward_queue", [
+                    $this->getAppClass()->getDatabase()->delete( $dbPrefix . "reward_queue", [
                         "AND" => [
-                            'fuid' => $this->getUserID(),
+                            'fuid'   => $this->getUserID(),
                             'reward' => $nukeId
                         ]
-                    ]);
-                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+                    ] );
+                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ] );
                 }
             }
         }
     }
 
     /**
-     * @param string $cat Reward Category
+     * @param string $cat   Reward Category
      * @param string $event Reward Event
      * @param string $score Reward Score
      */
-    public function createDBAwards($cat, $event, $score)
-    {
-        $db_prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-        $this->getAppClass()->getDatabase()->insert($db_prefix . "reward_map", [
-            "cat" => $cat,
+    public function createDBAwards( $cat, $event, $score ) {
+        $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+        $this->getAppClass()->getDatabase()->insert( $dbPrefix . "reward_map", [
+            "cat"   => $cat,
             "event" => $event,
-            "rule" => $score
-        ]);
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
+            "rule"  => $score
+        ] );
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
-            "LINE" => __LINE__
-        ]);
+            "LINE"   => __LINE__
+        ] );
     }
 
     /**
      * @return array
      */
-    public function getRewardReason()
-    {
-        return explode("|", $this->RewardReason);
+    public function getRewardReason() {
+        return explode( "|", $this->rewardReason );
     }
 
     /**
-     * @param string $RewardReason
+     * @param string $rewardReason
      */
-    public function setRewardReason($RewardReason)
-    {
-        $this->RewardReason = $RewardReason;
+    public function setRewardReason( $rewardReason ) {
+        $this->rewardReason = $rewardReason;
     }
 
     /**
      * @param string $string Name of reward system to return
+     *
      * @return array
      */
-    public function getSystemRewards($string)
-    {
+    public function getSystemRewards( $string ) {
         $returnRewards = [];
-        foreach ($this->FileRewards as $fileRewardCat) {
-            foreach ($fileRewardCat as $fileRewardEvent) {
-                foreach ($fileRewardEvent as $fileRewardScore) {
-                    foreach ($fileRewardScore as $fileReward) {
-                        if (strtolower($fileReward['system']) == strtolower($string)) {
+        foreach ( $this->FileRewards as $fileRewardCat ) {
+            foreach ( $fileRewardCat as $fileRewardEvent ) {
+                foreach ( $fileRewardEvent as $fileRewardScore ) {
+                    foreach ( $fileRewardScore as $fileReward ) {
+                        if ( strtolower( $fileReward[ 'system' ] ) == strtolower( $string ) ) {
                             $returnRewards[] = $fileReward;
                         }
                     }
@@ -358,12 +349,12 @@ class Rewards
 
     /**
      * @param string $string Reward category
+     *
      * @return array
      */
-    public function getCatRewards($string)
-    {
-        if (array_key_exists($string, $this->FileRewards)) {
-            return $this->FileRewards[$string];
+    public function getCatRewards( $string ) {
+        if ( array_key_exists( $string, $this->FileRewards ) ) {
+            return $this->FileRewards[ $string ];
         }
 
         return [];
@@ -372,15 +363,14 @@ class Rewards
     /**
      * @param string $rewardKey Reward Key
      */
-    public function recordAwarded($rewardKey)
-    {
-        $this->getAppClass()->getDatabase()->insert($this->getAppClass()->getSetting("db_prefix", null, false) . "reward_queue", [
-            "fuid" => $this->getUserID(),
-            "state" => 'recorded',
-            "rmid" => NULL,
-            "reward" => NULL,
-            "rkey" => sha1($rewardKey)
-        ]);
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+    public function recordAwarded( $rewardKey ) {
+        $this->getAppClass()->getDatabase()->insert( $this->getAppClass()->getSetting( "db_prefix", null, false ) . "reward_queue", [
+            "fuid"   => $this->getUserID(),
+            "state"  => 'recorded',
+            "rmid"   => null,
+            "reward" => null,
+            "rkey"   => sha1( $rewardKey )
+        ] );
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ] );
     }
 }

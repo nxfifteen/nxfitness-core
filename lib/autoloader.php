@@ -1,9 +1,7 @@
 <?php
 /**
  * This file is part of NxFIFTEEN Fitness Core.
- *
  * Copyright (c) 2017. Stuart McCulloch Anderson
- *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
@@ -18,22 +16,22 @@
  * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
  */
 
-require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "functions.php");
+require_once( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . "functions.php" );
 
-spl_autoload_register(function ($className) {
-    if ($className == "HabitRPHPG") {
-        $class = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'bundle' . DIRECTORY_SEPARATOR . "{$className}.php";
+spl_autoload_register( function ( $className ) {
+    if ( $className == "HabitRPHPG" ) {
+        $class = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'bundle' . DIRECTORY_SEPARATOR . "{$className}.php";
     } else {
-        $namespace = str_replace("\\", DIRECTORY_SEPARATOR, __NAMESPACE__);
-        $className = str_replace("\\", DIRECTORY_SEPARATOR, $className);
-        $class = dirname(__FILE__) . DIRECTORY_SEPARATOR . (empty($namespace) ? "" : $namespace . DIRECTORY_SEPARATOR) . "{$className}.php";
+        $namespace = str_replace( "\\", DIRECTORY_SEPARATOR, __NAMESPACE__ );
+        $className = str_replace( "\\", DIRECTORY_SEPARATOR, $className );
+        $class     = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . ( empty( $namespace ) ? "" : $namespace . DIRECTORY_SEPARATOR ) . "{$className}.php";
     }
 
-    if (file_exists($class)) {
+    if ( file_exists( $class ) ) {
         /** @noinspection PhpIncludeInspection */
-        require_once($class);
+        require_once( $class );
     }
 
-});
+} );
 
-require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "bundle" . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php");
+require_once( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "bundle" . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php" );

@@ -46,13 +46,17 @@ define( "FITBIT_COM", "https://api.fitbit.com" );
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ElseExpression)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ApiBabel {
 
     /**
      * @var Core
      */
-    protected $AppClass;
+    protected $appClass;
     /**
      * @var RewardsSystem
      */
@@ -86,6 +90,7 @@ class ApiBabel {
      *
      * @param Core $fitbitApp
      * @param bool $personal
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function __construct( $fitbitApp, $personal = false ) {
         $this->setAppClass( $fitbitApp );
@@ -109,85 +114,89 @@ class ApiBabel {
     }
 
     /**
-     * @param Core $AppClass
+     * @param Core $appClass
      */
-    private function setAppClass( $AppClass ) {
-        $this->AppClass = $AppClass;
+    private function setAppClass( $appClass ) {
+        $this->appClass = $appClass;
     }
 
     /**
      * @return Core
      */
     private function getAppClass() {
-        return $this->AppClass;
+        return $this->appClass;
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return bool|array
      */
     private function pullNomieTrackers() {
         $isAllowed = $this->isAllowed( "nomie_trackers" );
         if ( ! is_numeric( $isAllowed ) ) {
             if ( $this->isTriggerCooled( "nomie_trackers" ) ) {
-                $nomie_user_key = $this->getAppClass()->getUserSetting( $this->activeUser, "nomie_key", null );
+                $nomieUserKey = $this->getAppClass()->getUserSetting( $this->activeUser, "nomie_key", null );
 
-                if ( ! is_null( $nomie_user_key ) ) {
+                if ( ! is_null( $nomieUserKey ) ) {
 
                     nxr( 1, "Connecting to CouchDB" );
 
-                    $nomie_username = $this->getAppClass()->getSetting( "db_nomie_username", null, false );
-                    $nomie_password = $this->getAppClass()->getSetting( "db_nomie_password", null, false );
-                    $nomie_protocol = $this->getAppClass()->getSetting( "db_nomie_protocol", 'http', false );
-                    $nomie_host     = $this->getAppClass()->getSetting( "db_nomie_host", 'localhost', false );
-                    $nomie_port     = $this->getAppClass()->getSetting( "db_nomie_port", '5984', false );
+                    $nomieUsername = $this->getAppClass()->getSetting( "db_nomie_username", null, false );
+                    $nomiePassword = $this->getAppClass()->getSetting( "db_nomie_password", null, false );
+                    $nomieProtocol = $this->getAppClass()->getSetting( "db_nomie_protocol", 'http', false );
+                    $nomieHost     = $this->getAppClass()->getSetting( "db_nomie_host", 'localhost', false );
+                    $nomiePort     = $this->getAppClass()->getSetting( "db_nomie_port", '5984', false );
 
-                    if ( is_null( $nomie_username ) ) {
+                    if ( is_null( $nomieUsername ) ) {
                         nxr( 2, "Nomie credentials missing" );
 
                         return [ "error" => "true", "code" => 105, "msg" => "Nomie is not setup correctly" ];
                     }
 
-                    $nomie_url = $nomie_protocol . '://' . $nomie_username . ':' . $nomie_password . '@' . $nomie_host . ':' . $nomie_port;
+                    $nomieUrl = $nomieProtocol . '://' . $nomieUsername . ':' . $nomiePassword . '@' . $nomieHost . ':' . $nomiePort;
 
                     try {
-                        $couchClient = new couchClient ( $nomie_url, $nomie_user_key . '_meta', [
+                        $couchClient = new couchClient ( $nomieUrl, $nomieUserKey . '_meta', [
                             "cookie_auth" => "true"
                         ] );
                     } catch ( Exception $e ) {
-                        nxr( 4, $nomie_url );
-                        $parts = parse_url( $nomie_url );
+                        nxr( 4, $nomieUrl );
+                        $parts = parse_url( $nomieUrl );
                         nxr( 0, $parts );
 
-                        if ( ! isset( $nomie_username ) ) {
-                            $was_username_set = "false";
+                        if ( ! isset( $nomieUsername ) ) {
+                            $wasUsernameSet = "false";
                         } else {
-                            $was_username_set = "true";
+                            $wasUsernameSet = "true";
                         }
-                        if ( ! isset( $nomie_password ) ) {
-                            $was_id_set = "false";
+                        if ( ! isset( $nomiePassword ) ) {
+                            $wasIdSet = "false";
                         } else {
-                            $was_id_set = "true";
+                            $wasIdSet = "true";
                         }
-                        if ( ! isset( $nomie_host ) ) {
-                            $was_host_set = "false";
+                        if ( ! isset( $nomieHost ) ) {
+                            $wasHostSet = "false";
                         } else {
-                            $was_host_set = "true";
+                            $wasHostSet = "true";
                         }
-                        if ( ! isset( $nomie_port ) ) {
-                            $was_port_set = "false";
+                        if ( ! isset( $nomiePort ) ) {
+                            $wasPortSet = "false";
                         } else {
-                            $was_port_set = "true";
+                            $wasPortSet = "true";
                         }
 
                         $this->getAppClass()->getErrorRecording()->captureException( $e, [
                             'extra' => [
                                 'php_version'       => phpversion(),
                                 'core_version'      => $this->getAppClass()->getSetting( "version", "0.0.0.1", true ),
-                                'nomie_protocol'    => $nomie_protocol,
-                                'nomie_username'    => $was_username_set,
-                                'nomie_username_id' => $was_id_set,
-                                'nomie_host'        => $was_host_set,
-                                'nomie_port'        => $was_port_set,
+                                'nomie_protocol'    => $nomieProtocol,
+                                'nomie_username'    => $wasUsernameSet,
+                                'nomie_username_id' => $wasIdSet,
+                                'nomie_host'        => $wasHostSet,
+                                'nomie_port'        => $wasPortSet,
                             ],
                         ] );
 
@@ -234,7 +243,7 @@ class ApiBabel {
                             $trackerGroups = $trackerGroups[ 'All' ];
                         }
 
-                        $couchClient->useDatabase( $nomie_user_key . '_trackers' );
+                        $couchClient->useDatabase( $nomieUserKey . '_trackers' );
                         if ( ! $couchClient->databaseExists() ) {
                             nxr( 2, "Nomie Tracker table missing" );
 
@@ -243,7 +252,7 @@ class ApiBabel {
 
                         $trackedTrackers = [];
                         $indexedTrackers = [];
-                        $db_prefix       = $this->getAppClass()->getSetting( "db_prefix", null, false );
+                        $dbPrefix        = $this->getAppClass()->getSetting( "db_prefix", null, false );
                         nxr( 2, ".", true, false );
                         foreach ( $trackerGroups as $tracker ) {
                             nxr( 0, ".", false, false );
@@ -281,14 +290,14 @@ class ApiBabel {
                                     $dbStorage[ 'uom' ] = $doc->config->uom;
                                 }
 
-                                if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_trackers", [
+                                if ( ! $this->getAppClass()->getDatabase()->has( $dbPrefix . "nomie_trackers", [
                                     "AND" => [
                                         "fuid" => $this->activeUser,
                                         "id"   => $tracker
                                     ]
                                 ] )
                                 ) {
-                                    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_trackers",
+                                    $this->getAppClass()->getDatabase()->insert( $dbPrefix . "nomie_trackers",
                                         $dbStorage );
                                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
                                         [
@@ -296,7 +305,7 @@ class ApiBabel {
                                             "LINE"   => __LINE__
                                         ] );
                                 } else {
-                                    $this->getAppClass()->getDatabase()->update( $db_prefix . "nomie_trackers",
+                                    $this->getAppClass()->getDatabase()->update( $dbPrefix . "nomie_trackers",
                                         $dbStorage, [
                                             "AND" => [
                                                 "fuid" => $this->activeUser,
@@ -313,7 +322,7 @@ class ApiBabel {
                         }
                         nxr( 1, "[DONE]", false );
 
-                        $couchClient->useDatabase( $nomie_user_key . '_events' );
+                        $couchClient->useDatabase( $nomieUserKey . '_events' );
                         if ( ! $couchClient->databaseExists() ) {
                             nxr( 2, "Nomie Tracker table missing" );
 
@@ -347,7 +356,7 @@ class ApiBabel {
                                         ] );
                                 }
 
-                                if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "nomie_events", [
+                                if ( ! $this->getAppClass()->getDatabase()->has( $dbPrefix . "nomie_events", [
                                     "AND" => [
                                         "fuid"      => $this->activeUser,
                                         "id"        => $event[ 2 ],
@@ -374,7 +383,7 @@ class ApiBabel {
                                         $event[ 8 ]             = $document[ 'geo' ][ 1 ];
                                     }
 
-                                    $this->getAppClass()->getDatabase()->insert( $db_prefix . "nomie_events",
+                                    $this->getAppClass()->getDatabase()->insert( $dbPrefix . "nomie_events",
                                         $dbStorage );
                                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
                                         [
@@ -387,25 +396,25 @@ class ApiBabel {
                         }
 
                         if ( ! is_null( $this->RewardsSystem ) ) {
-                            $db_prefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+                            $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
 
-                            $dbEvents = $this->getAppClass()->getDatabase()->select( $db_prefix . "nomie_events", [
-                                "[>]" . $db_prefix . "nomie_trackers" => "id"
+                            $dbEvents = $this->getAppClass()->getDatabase()->select( $dbPrefix . "nomie_events", [
+                                "[>]" . $dbPrefix . "nomie_trackers" => "id"
                             ], [
-                                $db_prefix . "nomie_trackers.label(tracker)",
-                                $db_prefix . "nomie_trackers.id(trackerId)",
-                                $db_prefix . "nomie_trackers.type(action)",
-                                $db_prefix . "nomie_events.score",
-                                $db_prefix . "nomie_events.datestamp(datetime)",
-                                $db_prefix . "nomie_events.value",
-                                $db_prefix . "nomie_events.geo_lat",
-                                $db_prefix . "nomie_events.geo_lon"
+                                $dbPrefix . "nomie_trackers.label(tracker)",
+                                $dbPrefix . "nomie_trackers.id(trackerId)",
+                                $dbPrefix . "nomie_trackers.type(action)",
+                                $dbPrefix . "nomie_events.score",
+                                $dbPrefix . "nomie_events.datestamp(datetime)",
+                                $dbPrefix . "nomie_events.value",
+                                $dbPrefix . "nomie_events.geo_lat",
+                                $dbPrefix . "nomie_events.geo_lon"
                             ], [
                                 "AND"   => [
-                                    $db_prefix . "nomie_events.fuid"          => $this->activeUser,
-                                    $db_prefix . "nomie_events.datestamp[>=]" => date( "Y-m-d H:i:s", strtotime( '-24 hours' ) )
+                                    $dbPrefix . "nomie_events.fuid"          => $this->activeUser,
+                                    $dbPrefix . "nomie_events.datestamp[>=]" => date( "Y-m-d H:i:s", strtotime( '-24 hours' ) )
                                 ],
-                                "ORDER" => [ $db_prefix . "nomie_events.datestamp" => "ASC" ]
+                                "ORDER" => [ $dbPrefix . "nomie_events.datestamp" => "ASC" ]
                             ] );
 
                             foreach ( $dbEvents as $event ) {
@@ -439,6 +448,7 @@ class ApiBabel {
     /**
      * @param string $activity
      * @param bool   $reset
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return DateTime
      * @internal param $username
@@ -473,15 +483,17 @@ class ApiBabel {
 
     /**
      * @param string $activity
-     * @param null   $cron_delay
+     * @param null   $cronDelay
      * @param bool   $clean
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @internal param $username
      */
-    private function setLastrun( $activity, $cron_delay = null, $clean = false ) {
-        if ( is_null( $cron_delay ) ) {
-            $cron_delay_holder = 'scope_' . $activity . '_timeout';
-            $cron_delay        = $this->getAppClass()->getSetting( $cron_delay_holder, 5400 );
+    private function setLastrun( $activity, $cronDelay = null, $clean = false ) {
+        if ( is_null( $cronDelay ) ) {
+            $cronDelayHolder = 'scope_' . $activity . '_timeout';
+            $cronDelay       = $this->getAppClass()->getSetting( $cronDelayHolder, 5400 );
         }
 
         if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", null,
@@ -494,7 +506,7 @@ class ApiBabel {
         ) {
             $fields = [
                 "date"     => date( "Y-m-d H:i:s" ),
-                "cooldown" => date( "Y-m-d H:i:s", time() + $cron_delay )
+                "cooldown" => date( "Y-m-d H:i:s", time() + $cronDelay )
             ];
             if ( $clean ) {
                 $fields[ 'lastrun' ] = date( "Y-m-d H:i:s" );
@@ -516,7 +528,7 @@ class ApiBabel {
                 "user"     => $this->getActiveUser(),
                 "activity" => $activity,
                 "date"     => date( "Y-m-d H:i:s" ),
-                "cooldown" => date( "Y-m-d H:i:s", time() + $cron_delay )
+                "cooldown" => date( "Y-m-d H:i:s", time() + $cronDelay )
             ];
             if ( $clean ) {
                 $fields[ 'lastrun' ] = date( "Y-m-d H:i:s" );
@@ -530,10 +542,10 @@ class ApiBabel {
             ] );
         }
 
-        $cache_dir   = dirname( __FILE__ ) . '/../../../' . 'cache' . DIRECTORY_SEPARATOR;
-        $cache_files = scandir( $cache_dir );
-        foreach ( $cache_files as $file ) {
-            if ( file_exists( $cache_dir . $file ) && is_writable( $cache_dir . $file ) && substr( $file, 0,
+        $cacheDir   = dirname( __FILE__ ) . '/../../../' . 'cache' . DIRECTORY_SEPARATOR;
+        $cacheFiles = scandir( $cacheDir );
+        foreach ( $cacheFiles as $file ) {
+            if ( file_exists( $cacheDir . $file ) && is_writable( $cacheDir . $file ) && substr( $file, 0,
                     strlen( $this->getActiveUser() ) + 1 ) === "_" . $this->getActiveUser()
             ) {
                 $cacheNames = $this->getAppClass()->getSettings()->getRelatedCacheNames( $activity );
@@ -542,9 +554,9 @@ class ApiBabel {
                         if ( substr( $file, 0,
                                 strlen( $this->getActiveUser() ) + strlen( $cacheName ) + 2 ) === "_" . $this->getActiveUser() . "_" . $cacheName
                         ) {
-                            if ( file_exists( $cache_dir . $file ) && is_writable( $cache_dir . $file ) ) {
+                            if ( file_exists( $cacheDir . $file ) && is_writable( $cacheDir . $file ) ) {
                                 nxr( 2, "$file cache file was deleted" );
-                                unlink( $cache_dir . $file );
+                                unlink( $cacheDir . $file );
                             }
                         }
                     }
@@ -554,6 +566,8 @@ class ApiBabel {
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @return mixed|null|SimpleXMLElement|string
      */
     private function pullBabelProfile() {
@@ -610,10 +624,10 @@ class ApiBabel {
                 }
                 if ( count( $subscriptions->apiSubscriptions ) == 0 ) {
                     nxr( 1, $this->getActiveUser() . " is not subscribed to the site" );
-                    $user_db_id = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
+                    $userDbId = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
                             null, false ) . "users", 'uid', [ "fuid" => $this->getActiveUser() ] );
-                    $this->pushBabelSubscription( $user_db_id );
-                    nxr( 1, $this->getActiveUser() . " subscription confirmed with ID: $user_db_id" );
+                    $this->pushBabelSubscription( $userDbId );
+                    nxr( 1, $this->getActiveUser() . " subscription confirmed with ID: $userDbId" );
                 } else {
                     nxr( 1, $this->getActiveUser() . " subscription is still valid" );
                 }
@@ -672,7 +686,6 @@ class ApiBabel {
      * @param string $subId Subscription Id
      * @param string $path  Subscription resource path (beginning with slash). Omit to subscribe to all user updates.
      * @param string $subscriberId
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return mixed
@@ -720,6 +733,9 @@ class ApiBabel {
 
     /**
      * Download information about devices associated with the users account. This is then stored in the database
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -738,7 +754,7 @@ class ApiBabel {
                         if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix",
                                 null, false ) . "devices", [ "AND" => [ "id" => (String)$device->id ] ] )
                         ) {
-                            $current_battery = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
+                            $currentBattery = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
                                     null, false ) . "devices", "battery", [ "id" => (String)$device->id ] );
 
                             $this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix",
@@ -752,12 +768,12 @@ class ApiBabel {
                                     "LINE"   => __LINE__
                                 ] );
 
-                            if ( $device->battery != $current_battery ) {
+                            if ( $device->battery != $currentBattery ) {
                                 $charged = 0;
                                 if (
-                                    ( $current_battery == "Empty" && ( $device->battery == "Low" || $device->battery == "Medium" || $device->battery == "High" || $device->battery == "Full" ) )
-                                    || ( $current_battery == "Low" && ( $device->battery == "Medium" || $device->battery == "High" || $device->battery == "Full" ) )
-                                    || ( $current_battery == "Medium" && ( $device->battery == "High" || $device->battery == "Full" ) )
+                                    ( $currentBattery == "Empty" && ( $device->battery == "Low" || $device->battery == "Medium" || $device->battery == "High" || $device->battery == "Full" ) )
+                                    || ( $currentBattery == "Low" && ( $device->battery == "Medium" || $device->battery == "High" || $device->battery == "Full" ) )
+                                    || ( $currentBattery == "Medium" && ( $device->battery == "High" || $device->battery == "Full" ) )
                                 ) {
                                     $charged = 1;
                                 }
@@ -905,6 +921,9 @@ class ApiBabel {
 
     /**
      * Download information of badges the user has aquired
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
@@ -1100,6 +1119,9 @@ class ApiBabel {
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
      */
@@ -1234,6 +1256,8 @@ class ApiBabel {
 
     /**
      * @return mixed|null|SimpleXMLElement|string
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @internal param $user
      */
     private function pullBabelCaloriesGoals() {
@@ -1248,37 +1272,37 @@ class ApiBabel {
                 if ( isset( $userCaloriesGoals ) && isset( $userCaloriesGoals->goals ) && isset( $userCaloriesGoals->foodPlan ) ) {
                     $fallback = false;
 
-                    $usr_goals = $userCaloriesGoals->goals;
+                    $usrGoals = $userCaloriesGoals->goals;
 
-                    $usr_foodplan = $userCaloriesGoals->foodPlan;
+                    $usrFoodPlan = $userCaloriesGoals->foodPlan;
 
-                    if ( empty( $usr_goals->calories ) ) {
-                        $usr_goals_calories = 0;
-                        $fallback           = true;
+                    if ( empty( $usrGoals->calories ) ) {
+                        $usrGoalsCalories = 0;
+                        $fallback         = true;
                     } else {
-                        $usr_goals_calories = (int)$usr_goals->calories;
+                        $usrGoalsCalories = (int)$usrGoals->calories;
                     }
 
-                    if ( empty( $usr_foodplan->intensity ) ) {
+                    if ( empty( $usrFoodPlan->intensity ) ) {
                         $usrFoodIntensity = "Unset";
                         $fallback         = true;
                     } else {
-                        $usrFoodIntensity = (string)$usr_foodplan->intensity;
+                        $usrFoodIntensity = (string)$usrFoodPlan->intensity;
                     }
 
                     $currentDate = new DateTime ( 'now' );
-                    if ( empty( $usr_foodplan->estimatedDate ) ) {
+                    if ( empty( $usrFoodPlan->estimatedDate ) ) {
                         $usrFoodEstDate = $currentDate->format( "Y-m-d" );
                         $fallback       = true;
                     } else {
-                        $usrFoodEstDate = (string)$usr_foodplan->estimatedDate;
+                        $usrFoodEstDate = (string)$usrFoodPlan->estimatedDate;
                     }
 
-                    if ( empty( $usr_foodplan->personalized ) ) {
+                    if ( empty( $usrFoodPlan->personalized ) ) {
                         $usrFoodPersonal = "false";
                         $fallback        = true;
                     } else {
-                        $usrFoodPersonal = (string)$usr_foodplan->personalized;
+                        $usrFoodPersonal = (string)$usrFoodPlan->personalized;
                     }
 
                     if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", null,
@@ -1291,7 +1315,7 @@ class ApiBabel {
                     ) {
                         $this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix",
                                 null, false ) . "food_goals", [
-                            'calories'      => $usr_goals_calories,
+                            'calories'      => $usrGoalsCalories,
                             'intensity'     => $usrFoodIntensity,
                             'estimatedDate' => $usrFoodEstDate,
                             'personalized'  => $usrFoodPersonal,
@@ -1311,7 +1335,7 @@ class ApiBabel {
                                 null, false ) . "food_goals", [
                             'user'          => $this->getActiveUser(),
                             'date'          => $currentDate->format( "Y-m-d" ),
-                            'calories'      => $usr_goals_calories,
+                            'calories'      => $usrGoalsCalories,
                             'intensity'     => $usrFoodIntensity,
                             'estimatedDate' => $usrFoodEstDate,
                             'personalized'  => $usrFoodPersonal,
@@ -1342,6 +1366,9 @@ class ApiBabel {
 
     /**
      * @return bool
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @internal param $targetDate
      */
     private function pullBabelActivityLogs() {
@@ -1561,6 +1588,8 @@ class ApiBabel {
 
     /**
      * @param string $activity
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return bool|string
      */
@@ -1725,6 +1754,10 @@ class ApiBabel {
 
     /**
      * @return mixed
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @internal param $targetDate
      */
     private function pullBabelUserGoals() {
@@ -1738,59 +1771,59 @@ class ApiBabel {
 
                 if ( isset( $userGoals ) && isset( $userGoals->goals ) ) {
                     $currentDate = new DateTime();
-                    $usr_goals   = $userGoals->goals;
-                    if ( is_object( $usr_goals ) ) {
+                    $usrGoals    = $userGoals->goals;
+                    if ( is_object( $usrGoals ) ) {
                         $fallback = false;
 
-                        if ( ! isset( $usr_goals->caloriesOut ) OR ! isset( $usr_goals->distance ) OR ! isset( $usr_goals->floors ) OR ! isset( $usr_goals->activeMinutes ) OR ! isset( $usr_goals->steps ) OR $usr_goals->caloriesOut == "" OR $usr_goals->distance == "" OR $usr_goals->floors == "" OR $usr_goals->activeMinutes == "" OR $usr_goals->steps == "" ) {
+                        if ( ! isset( $usrGoals->caloriesOut ) OR ! isset( $usrGoals->distance ) OR ! isset( $usrGoals->floors ) OR ! isset( $usrGoals->activeMinutes ) OR ! isset( $usrGoals->steps ) OR $usrGoals->caloriesOut == "" OR $usrGoals->distance == "" OR $usrGoals->floors == "" OR $usrGoals->activeMinutes == "" OR $usrGoals->steps == "" ) {
                             $this->getAppClass()->addCronJob( $this->getActiveUser(), "goals" );
 
-                            if ( ! isset( $usr_goals->caloriesOut ) OR $usr_goals->caloriesOut == "" ) {
-                                $usr_goals->caloriesOut = -1;
+                            if ( ! isset( $usrGoals->caloriesOut ) OR $usrGoals->caloriesOut == "" ) {
+                                $usrGoals->caloriesOut = -1;
                             }
 
-                            if ( ! isset( $usr_goals->distance ) OR $usr_goals->distance == "" ) {
-                                $usr_goals->distance = -1;
+                            if ( ! isset( $usrGoals->distance ) OR $usrGoals->distance == "" ) {
+                                $usrGoals->distance = -1;
                             }
 
-                            if ( ! isset( $usr_goals->floors ) OR $usr_goals->floors == "" ) {
-                                $usr_goals->floors = -1;
+                            if ( ! isset( $usrGoals->floors ) OR $usrGoals->floors == "" ) {
+                                $usrGoals->floors = -1;
                             }
 
-                            if ( ! isset( $usr_goals->activeMinutes ) OR $usr_goals->activeMinutes == "" ) {
-                                $usr_goals->activeMinutes = -1;
+                            if ( ! isset( $usrGoals->activeMinutes ) OR $usrGoals->activeMinutes == "" ) {
+                                $usrGoals->activeMinutes = -1;
                             }
 
-                            if ( ! isset( $usr_goals->steps ) OR $usr_goals->steps == "" ) {
-                                $usr_goals->steps = -1;
+                            if ( ! isset( $usrGoals->steps ) OR $usrGoals->steps == "" ) {
+                                $usrGoals->steps = -1;
                             }
 
                             $fallback = true;
                         }
 
-                        if ( $usr_goals->steps > 1 ) {
-                            $newGoal = $this->thisWeeksGoal( "steps", $usr_goals->steps );
-                            if ( $newGoal > 0 && $usr_goals->steps != $newGoal ) {
+                        if ( $usrGoals->steps > 1 ) {
+                            $newGoal = $this->thisWeeksGoal( "steps", $usrGoals->steps );
+                            if ( $newGoal > 0 && $usrGoals->steps != $newGoal ) {
                                 nxr( 0,
-                                    "  Returned steps target was " . $usr_goals->steps . " but I think it should be " . $newGoal );
+                                    "  Returned steps target was " . $usrGoals->steps . " but I think it should be " . $newGoal );
                                 $this->pushBabel( 'user/-/activities/goals/daily.json', [ 'steps' => $newGoal ] );
                             } else if ( $newGoal > 0 ) {
                                 nxr( 0,
-                                    "  Returned steps target was " . $usr_goals->steps . " which is right for this week goal of " . $newGoal );
+                                    "  Returned steps target was " . $usrGoals->steps . " which is right for this week goal of " . $newGoal );
                             }
 
                             $this->getAppClass()->getUserSetting( $this->getActiveUser(), "goal_steps", $newGoal );
                         }
 
-                        if ( $usr_goals->floors > 1 ) {
-                            $newGoal = $this->thisWeeksGoal( "floors", $usr_goals->floors );
-                            if ( $newGoal > 0 && $usr_goals->floors != $newGoal ) {
+                        if ( $usrGoals->floors > 1 ) {
+                            $newGoal = $this->thisWeeksGoal( "floors", $usrGoals->floors );
+                            if ( $newGoal > 0 && $usrGoals->floors != $newGoal ) {
                                 nxr( 0,
-                                    "  Returned floor target was " . $usr_goals->floors . " but I think it should be " . $newGoal );
+                                    "  Returned floor target was " . $usrGoals->floors . " but I think it should be " . $newGoal );
                                 $this->pushBabel( 'user/-/activities/goals/daily.json', [ 'floors' => $newGoal ] );
                             } else if ( $newGoal > 0 ) {
                                 nxr( 0,
-                                    "  Returned floor target was " . $usr_goals->floors . " which is right for this week goal of " . $newGoal );
+                                    "  Returned floor target was " . $usrGoals->floors . " which is right for this week goal of " . $newGoal );
                             }
                         }
 
@@ -1810,11 +1843,11 @@ class ApiBabel {
                             ) {
                                 $this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix",
                                         null, false ) . "steps_goals", [
-                                    'caloriesOut'   => (String)$usr_goals->caloriesOut,
-                                    'distance'      => (String)$usr_goals->distance,
-                                    'floors'        => (String)$usr_goals->floors,
-                                    'activeMinutes' => (String)$usr_goals->activeMinutes,
-                                    'steps'         => (String)$usr_goals->steps,
+                                    'caloriesOut'   => (String)$usrGoals->caloriesOut,
+                                    'distance'      => (String)$usrGoals->distance,
+                                    'floors'        => (String)$usrGoals->floors,
+                                    'activeMinutes' => (String)$usrGoals->activeMinutes,
+                                    'steps'         => (String)$usrGoals->steps,
                                     'syncd'         => date( "Y-m-d H:i:s" )
                                 ], [
                                     "AND" => [
@@ -1832,11 +1865,11 @@ class ApiBabel {
                                         null, false ) . "steps_goals", [
                                     'user'          => $this->getActiveUser(),
                                     'date'          => $dt->format( "Y-m-d" ),
-                                    'caloriesOut'   => (String)$usr_goals->caloriesOut,
-                                    'distance'      => (String)$usr_goals->distance,
-                                    'floors'        => (String)$usr_goals->floors,
-                                    'activeMinutes' => (String)$usr_goals->activeMinutes,
-                                    'steps'         => (String)$usr_goals->steps,
+                                    'caloriesOut'   => (String)$usrGoals->caloriesOut,
+                                    'distance'      => (String)$usrGoals->distance,
+                                    'floors'        => (String)$usrGoals->floors,
+                                    'activeMinutes' => (String)$usrGoals->activeMinutes,
+                                    'steps'         => (String)$usrGoals->steps,
                                     'syncd'         => date( "Y-m-d H:i:s" )
                                 ] );
                                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
@@ -1867,12 +1900,14 @@ class ApiBabel {
 
     /**
      * @param string $string
-     * @param int    $current_goal
+     * @param int    $currentGoal
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return float|int|string
      * @internal param $user
      */
-    private function thisWeeksGoal( $string, $current_goal = 0 ) {
+    private function thisWeeksGoal( $string, $currentGoal = 0 ) {
         $lastMonday      = date( 'Y-m-d', strtotime( 'last sunday' ) );
         $oneWeek         = date( 'Y-m-d', strtotime( $lastMonday . ' -6 days' ) );
         $plusTargetSteps = -1;
@@ -1924,23 +1959,23 @@ class ApiBabel {
                             "desire_steps_max", 10000 );
                         $minTargetSteps   = $this->getAppClass()->getUserSetting( $this->getActiveUser(),
                             "desire_steps_min", ( $maxTargetSteps * 0.66 ) );
-                        $LastWeeksSteps   = round( $totalSteps / count( $dbSteps ), 0 );
-                        $ProposedNextWeek = $LastWeeksSteps + round( $LastWeeksSteps * ( $improvment / 100 ), 0 );
+                        $lastWeeksSteps   = round( $totalSteps / count( $dbSteps ), 0 );
+                        $proposedNextWeek = $lastWeeksSteps + round( $lastWeeksSteps * ( $improvment / 100 ), 0 );
 
                         nxr( 0,
-                            "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek );
+                            "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $lastWeeksSteps . " ProposedNextWeek: " . $proposedNextWeek );
 
-                        if ( $ProposedNextWeek >= $maxTargetSteps ) {
+                        if ( $proposedNextWeek >= $maxTargetSteps ) {
                             $plusTargetSteps = $maxTargetSteps;
-                        } else if ( $ProposedNextWeek <= $minTargetSteps ) {
+                        } else if ( $proposedNextWeek <= $minTargetSteps ) {
                             $plusTargetSteps = $minTargetSteps;
                         } else {
-                            $plusTargetSteps = $ProposedNextWeek;
+                            $plusTargetSteps = $proposedNextWeek;
                         }
                     }
                 } else {
-                    $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_steps_max", $current_goal );
-                    $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_steps_min", $current_goal );
+                    $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_steps_max", $currentGoal );
+                    $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_steps_min", $currentGoal );
                 }
             }
         } else if ( $string == "floors" ) {
@@ -1979,23 +2014,23 @@ class ApiBabel {
                         "desire_floors_max", 10 );
                     $minTargetSteps   = $this->getAppClass()->getUserSetting( $this->getActiveUser(),
                         "desire_floors_min", ( $maxTargetSteps * 0.66 ) );
-                    $LastWeeksSteps   = round( $totalSteps / count( $dbSteps ), 0 );
-                    $ProposedNextWeek = $LastWeeksSteps + round( $LastWeeksSteps * ( $improvment / 100 ), 0 );
+                    $lastWeeksSteps   = round( $totalSteps / count( $dbSteps ), 0 );
+                    $proposedNextWeek = $lastWeeksSteps + round( $lastWeeksSteps * ( $improvment / 100 ), 0 );
 
                     nxr( 0,
-                        "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $LastWeeksSteps . " ProposedNextWeek: " . $ProposedNextWeek );
+                        "  * Min: " . $minTargetSteps . " Max: " . $maxTargetSteps . " LastWeeksSteps: " . $lastWeeksSteps . " ProposedNextWeek: " . $proposedNextWeek );
 
-                    if ( $LastWeeksSteps >= $maxTargetSteps ) {
+                    if ( $lastWeeksSteps >= $maxTargetSteps ) {
                         $plusTargetSteps = $maxTargetSteps;
-                    } else if ( $LastWeeksSteps <= $minTargetSteps ) {
+                    } else if ( $lastWeeksSteps <= $minTargetSteps ) {
                         $plusTargetSteps = $minTargetSteps;
                     } else {
-                        $plusTargetSteps = $ProposedNextWeek;
+                        $plusTargetSteps = $proposedNextWeek;
                     }
                 }
             } else {
-                $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_floors_max", $current_goal );
-                $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_floors_min", $current_goal );
+                $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_floors_max", $currentGoal );
+                $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_floors_min", $currentGoal );
             }
         } else if ( $string == "activeMinutes" ) {
             $userPushLength      = $this->getAppClass()->getUserSetting( $this->getActiveUser(), "push_length",
@@ -2051,25 +2086,25 @@ class ApiBabel {
                             "desire_active_max", 30 );
                         $minTargetActive  = $this->getAppClass()->getUserSetting( $this->getActiveUser(),
                             "desire_active_min", ( $maxTargetActive * 0.66 ) );
-                        $LastWeeksActive  = round( $totalMinutes / count( $dbActiveMinutes ), 0 );
-                        $ProposedNextWeek = $LastWeeksActive + round( $LastWeeksActive * ( $improvment / 100 ), 0 );
+                        $lastWeeksActive  = round( $totalMinutes / count( $dbActiveMinutes ), 0 );
+                        $proposedNextWeek = $lastWeeksActive + round( $lastWeeksActive * ( $improvment / 100 ), 0 );
 
                         nxr( 4,
-                            "* Min: " . $minTargetActive . " Max: " . $maxTargetActive . " LastWeeksSteps: " . $LastWeeksActive . " ProposedNextWeek: " . $ProposedNextWeek );
+                            "* Min: " . $minTargetActive . " Max: " . $maxTargetActive . " LastWeeksSteps: " . $lastWeeksActive . " ProposedNextWeek: " . $proposedNextWeek );
 
-                        if ( $ProposedNextWeek >= $maxTargetActive ) {
+                        if ( $proposedNextWeek >= $maxTargetActive ) {
                             $plusTargetSteps = $maxTargetActive;
-                        } else if ( $ProposedNextWeek <= $minTargetActive ) {
+                        } else if ( $proposedNextWeek <= $minTargetActive ) {
                             $plusTargetSteps = $minTargetActive;
                         } else {
-                            $plusTargetSteps = $ProposedNextWeek;
+                            $plusTargetSteps = $proposedNextWeek;
                         }
                     }
                 } else {
                     $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_active_max",
-                        $current_goal );
+                        $currentGoal );
                     $this->getAppClass()->setUserSetting( $this->getActiveUser(), "desire_active_min",
-                        $current_goal );
+                        $currentGoal );
                 }
             }
         }
@@ -2081,8 +2116,8 @@ class ApiBabel {
      * @param string       $path
      * @param string|array $pushObject
      * @param bool         $returnObject
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return mixed
      */
@@ -2129,6 +2164,7 @@ class ApiBabel {
 
     /**
      * @param string $lastCleanRun
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return bool|mixed|string
      */
@@ -2287,6 +2323,7 @@ class ApiBabel {
 
     /**
      * @param string $targetDate
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -2380,6 +2417,9 @@ class ApiBabel {
 
     /**
      * @param string $targetDate
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed
      */
@@ -2436,16 +2476,16 @@ class ApiBabel {
                     $goalsfat = (float)$userBodyLog->goals->fat;
                 }
 
-                $user_height = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
+                $userHeight = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
                         null, false ) . "users", "height", [ "fuid" => $this->getActiveUser() ] );
-                if ( is_numeric( $user_height ) AND $user_height > 0 ) {
-                    $user_height = $user_height / 100;
-                    $bmi         = round( $weight / ( $user_height * $user_height ), 2 );
+                if ( is_numeric( $userHeight ) AND $userHeight > 0 ) {
+                    $userHeight = $userHeight / 100;
+                    $bmi        = round( $weight / ( $userHeight * $userHeight ), 2 );
                 } else {
                     $bmi = "0.0";
                 }
 
-                $db_insetArray = [
+                $dbInsertArray = [
                     "weight"     => $weight,
                     "weightGoal" => $goalsweight,
                     "fat"        => $fat,
@@ -2456,15 +2496,15 @@ class ApiBabel {
                 $lastWeight = $this->getDBCurrentBody( $this->getActiveUser(), "weight" );
                 $lastFat    = $this->getDBCurrentBody( $this->getActiveUser(), "fat" );
                 if ( $lastWeight != $weight ) {
-                    $db_insetArray[ 'weightAvg' ] = round( ( $weight - $lastWeight ) / 10, 1,
+                    $dbInsertArray[ 'weightAvg' ] = round( ( $weight - $lastWeight ) / 10, 1,
                             PHP_ROUND_HALF_UP ) + $lastWeight;
                 } else {
-                    $db_insetArray[ 'weightAvg' ] = $this->getDBCurrentBody( $this->getActiveUser(), "weightAvg" );
+                    $dbInsertArray[ 'weightAvg' ] = $this->getDBCurrentBody( $this->getActiveUser(), "weightAvg" );
                 }
                 if ( $lastFat != $fat ) {
-                    $db_insetArray[ 'fatAvg' ] = round( ( $fat - $lastFat ) / 10, 1, PHP_ROUND_HALF_UP ) + $lastFat;
+                    $dbInsertArray[ 'fatAvg' ] = round( ( $fat - $lastFat ) / 10, 1, PHP_ROUND_HALF_UP ) + $lastFat;
                 } else {
-                    $db_insetArray[ 'fatAvg' ] = $this->getDBCurrentBody( $this->getActiveUser(), "fatAvg" );
+                    $dbInsertArray[ 'fatAvg' ] = $this->getDBCurrentBody( $this->getActiveUser(), "fatAvg" );
                 }
 
                 if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", null,
@@ -2476,7 +2516,7 @@ class ApiBabel {
                 ] )
                 ) {
                     $this->getAppClass()->getDatabase()->update( $this->getAppClass()->getSetting( "db_prefix", null,
-                            false ) . "body", $db_insetArray, [
+                            false ) . "body", $dbInsertArray, [
                         "AND" => [
                             'user' => $this->getActiveUser(),
                             'date' => $targetDate
@@ -2488,10 +2528,10 @@ class ApiBabel {
                             "LINE"   => __LINE__
                         ] );
                 } else {
-                    $db_insetArray[ 'user' ] = $this->getActiveUser();
-                    $db_insetArray[ 'date' ] = $targetDate;
+                    $dbInsertArray[ 'user' ] = $this->getActiveUser();
+                    $dbInsertArray[ 'date' ] = $targetDate;
                     $this->getAppClass()->getDatabase()->insert( $this->getAppClass()->getSetting( "db_prefix", null,
-                            false ) . "body", $db_insetArray );
+                            false ) . "body", $dbInsertArray );
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
                         [
                             "METHOD" => __METHOD__,
@@ -2612,6 +2652,8 @@ class ApiBabel {
     /**
      * @param string $trigger
      * @param bool   $force
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string|bool
      */
@@ -2662,6 +2704,7 @@ class ApiBabel {
      * @param string        $trigger
      * @param string        $daysSince
      * @param DateTime|null $lastrun
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return string|bool
      */
@@ -2689,6 +2732,9 @@ class ApiBabel {
      * @param string        $trigger
      * @param string        $daysSince
      * @param DateTime|null $lastrun
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return string|bool
      */
@@ -2704,10 +2750,10 @@ class ApiBabel {
         $userTimeSeries = $this->getTimeSeries( $trigger, $currentDate, $daysSince );
 
         if ( isset( $userTimeSeries ) and is_array( $userTimeSeries ) ) {
-            $FirstSeen = $this->getUserFirstSeen()->format( "Y-m-d" );
+            $firstSeen = $this->getUserFirstSeen()->format( "Y-m-d" );
 
             foreach ( $userTimeSeries as $steps ) {
-                if ( strtotime( $steps->dateTime ) >= strtotime( $FirstSeen ) ) {
+                if ( strtotime( $steps->dateTime ) >= strtotime( $firstSeen ) ) {
                     if ( $steps->value == 0 ) {
                         $currentDate      = new DateTime();
                         $daysSinceReading = ( strtotime( $currentDate->format( "Y-m-d" ) ) - strtotime( $steps->dateTime ) ) / ( 60 * 60 * 24 );
@@ -2730,7 +2776,7 @@ class ApiBabel {
                     ];
 
                     if ( $trigger == "steps" || $trigger == "floors" || $trigger == "distance" ) {
-                        $steps_goals = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
+                        $stepGoals = $this->getAppClass()->getDatabase()->get( $this->getAppClass()->getSetting( "db_prefix",
                                 null, false ) . "steps_goals",
                             [ $trigger, "date" ], [
                                 "AND" => [
@@ -2739,19 +2785,19 @@ class ApiBabel {
                                 ]
                             ] );
 
-                        if ( ! is_numeric( $steps_goals[ $trigger ] ) ) {
-                            $steps_goals = $this->getAppClass()->getUserSetting( $this->getActiveUser(),
+                        if ( ! is_numeric( $stepGoals[ $trigger ] ) ) {
+                            $stepGoals = $this->getAppClass()->getUserSetting( $this->getActiveUser(),
                                 "goal_" . $trigger );
                         } else {
-                            $steps_goals = $steps_goals[ $trigger ];
+                            $stepGoals = $stepGoals[ $trigger ];
                         }
 
-                        if ( $steps->value >= $steps_goals ) {
+                        if ( $steps->value >= $stepGoals ) {
                             $dbValues[ $trigger . '_g' ] = 1;
                             if ( $trigger == "steps" ) {
                                 $this->checkGoalStreak( $steps->dateTime, $trigger, true );
                             }
-                        } else if ( $steps->value < $steps_goals && strtotime( $currentDate->format( "Y-m-d" ) ) > strtotime( $steps->dateTime ) ) {
+                        } else if ( $steps->value < $stepGoals && strtotime( $currentDate->format( "Y-m-d" ) ) > strtotime( $steps->dateTime ) ) {
                             $dbValues[ $trigger . '_g' ] = 0;
                             if ( $trigger == "steps" ) {
                                 $this->checkGoalStreak( $steps->dateTime, $trigger, false );
@@ -2805,14 +2851,17 @@ class ApiBabel {
      * @param string  $dateTime
      * @param string  $goal
      * @param boolean $value
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function checkGoalStreak( $dateTime, $goal, $value ) {
         //$todaysDate = new DateTime ( 'now' );
         $dateTime = new DateTime ( $dateTime );
 
-        $db_prefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+        $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
 
-        if ( $this->getAppClass()->getDatabase()->has( $db_prefix . "streak_goal", [
+        if ( $this->getAppClass()->getDatabase()->has( $dbPrefix . "streak_goal", [
             "AND" => [
                 "fuid"     => $this->getActiveUser(),
                 "goal"     => $goal,
@@ -2820,8 +2869,8 @@ class ApiBabel {
             ]
         ] )
         ) {
-            $streak       = true;
-            $streak_start = $this->getAppClass()->getDatabase()->get( $db_prefix . "streak_goal", "start_date",
+            $streak      = true;
+            $streakStart = $this->getAppClass()->getDatabase()->get( $dbPrefix . "streak_goal", "start_date",
                 [
                     "AND" => [
                         "fuid"     => $this->getActiveUser(),
@@ -2830,24 +2879,24 @@ class ApiBabel {
                     ]
                 ] );
         } else {
-            $streak       = false;
-            $streak_start = $dateTime->format( "Y-m-d" );
+            $streak      = false;
+            $streakStart = $dateTime->format( "Y-m-d" );
         }
 
-        if ( strtotime( $dateTime->format( "Y-m-d" ) ) >= strtotime( $streak_start ) ) {
+        if ( strtotime( $dateTime->format( "Y-m-d" ) ) >= strtotime( $streakStart ) ) {
             if ( $streak ) {
-                $dateTimeStart = new DateTime ( $streak_start );
-                $days_between  = $dateTimeStart->diff( $dateTime )->format( "%a" );
+                $dateTimeStart = new DateTime ( $streakStart );
+                $daysBetween   = $dateTimeStart->diff( $dateTime )->format( "%a" );
 
                 if ( $value ) {
-                    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", [
-                        "length" => $days_between
+                    $this->getAppClass()->getDatabase()->update( $dbPrefix . "streak_goal", [
+                        "length" => $daysBetween
                     ],
                         [
                             "AND" => [
                                 "fuid"       => $this->getActiveUser(),
                                 "goal"       => $goal,
-                                "start_date" => $streak_start
+                                "start_date" => $streakStart
                             ]
                         ]
                     );
@@ -2857,27 +2906,27 @@ class ApiBabel {
                             "LINE"   => __LINE__
                         ] );
 
-                    if ( strtotime( $dateTime->format( "Y-m-d" ) ) >= strtotime( $streak_start ) ) {
+                    if ( strtotime( $dateTime->format( "Y-m-d" ) ) >= strtotime( $streakStart ) ) {
                         if ( ! is_null( $this->RewardsSystem ) ) {
-                            $this->RewardsSystem->eventTrigger( 'FitbitStreak', [ $goal, $days_between, $streak_start ] );
+                            $this->RewardsSystem->eventTrigger( 'FitbitStreak', [ $goal, $daysBetween, $streakStart ] );
                         }
                     }
 
-                    nxr( 5, "Steak started on $streak_start ($days_between) on will continue" );
+                    nxr( 5, "Steak started on $streakStart ($daysBetween) on will continue" );
                 } else {
                     $dateTimeEnd = $dateTime;
                     $dateTimeEnd->add( DateInterval::createFromDateString( 'yesterday' ) );
-                    $streak_end = $dateTimeEnd->format( 'Y-m-d' );
+                    $streakEnd = $dateTimeEnd->format( 'Y-m-d' );
 
-                    $this->getAppClass()->getDatabase()->update( $db_prefix . "streak_goal", [
-                        "end_date" => $streak_end,
-                        "length"   => $days_between
+                    $this->getAppClass()->getDatabase()->update( $dbPrefix . "streak_goal", [
+                        "end_date" => $streakEnd,
+                        "length"   => $daysBetween
                     ],
                         [
                             "AND" => [
                                 "fuid"       => $this->getActiveUser(),
                                 "goal"       => $goal,
-                                "start_date" => $streak_start
+                                "start_date" => $streakStart
                             ]
                         ]
                     );
@@ -2887,14 +2936,14 @@ class ApiBabel {
                     ] );
 
                     if ( ! is_null( $this->RewardsSystem ) ) {
-                        $this->RewardsSystem->eventTrigger( 'FitbitStreak', [ $goal, $days_between, $streak_start, true ] );
+                        $this->RewardsSystem->eventTrigger( 'FitbitStreak', [ $goal, $daysBetween, $streakStart, true ] );
                     }
 
-                    nxr( 5, "Steak started on $streak_start, but as ended after $days_between days on " . $streak_end );
+                    nxr( 5, "Steak started on $streakStart, but as ended after $daysBetween days on " . $streakEnd );
                 }
             } else {
                 if ( $value ) {
-                    if ( ! $this->getAppClass()->getDatabase()->has( $db_prefix . "streak_goal", [
+                    if ( ! $this->getAppClass()->getDatabase()->has( $dbPrefix . "streak_goal", [
                         "AND" => [
                             "fuid"       => $this->getActiveUser(),
                             "goal"       => $goal,
@@ -2902,7 +2951,7 @@ class ApiBabel {
                         ]
                     ] )
                     ) {
-                        $this->getAppClass()->getDatabase()->insert( $db_prefix . "streak_goal", [
+                        $this->getAppClass()->getDatabase()->insert( $dbPrefix . "streak_goal", [
                             "fuid"       => $this->getActiveUser(),
                             "goal"       => $goal,
                             "start_date" => $dateTime->format( "Y-m-d" ),
@@ -2915,15 +2964,15 @@ class ApiBabel {
                                 "LINE"   => __LINE__
                             ] );
 
-                        if ( strtotime( $dateTime->format( "Y-m-d" ) ) >= strtotime( $streak_start ) ) {
+                        if ( strtotime( $dateTime->format( "Y-m-d" ) ) >= strtotime( $streakStart ) ) {
                             if ( ! is_null( $this->RewardsSystem ) ) {
-                                $this->RewardsSystem->eventTrigger( 'FitbitStreak', [ $goal, 1, $streak_start ] );
+                                $this->RewardsSystem->eventTrigger( 'FitbitStreak', [ $goal, 1, $streakStart ] );
                             }
                         }
 
                         nxr( 5, "No running streak, but a new one has started" );
                     } else {
-                        $end_date = $this->getAppClass()->getDatabase()->get( $db_prefix . "streak_goal", "end_date", [
+                        $endDate = $this->getAppClass()->getDatabase()->get( $dbPrefix . "streak_goal", "end_date", [
                             "AND" => [
                                 "fuid"        => $this->getActiveUser(),
                                 "goal"        => $goal,
@@ -2932,7 +2981,7 @@ class ApiBabel {
                             ]
                         ] );
 
-                        nxr( 5, "Streak already recoreded between $streak_start and $end_date" );
+                        nxr( 5, "Streak already recoreded between $streakStart and $endDate" );
                     }
 
                 }
@@ -2945,6 +2994,9 @@ class ApiBabel {
      * @param string        $trigger
      * @param string        $daysSince
      * @param DateTime|null $lastrun
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return bool
      */
@@ -3005,9 +3057,9 @@ class ApiBabel {
                 }
             }
 
-            $FirstSeen = $this->getUserFirstSeen()->format( "Y-m-d" );
+            $firstSeen = $this->getUserFirstSeen()->format( "Y-m-d" );
             foreach ( $userTimeSeries as $series ) {
-                if ( strtotime( $series->dateTime ) >= strtotime( $FirstSeen ) ) {
+                if ( strtotime( $series->dateTime ) >= strtotime( $firstSeen ) ) {
                     nxr( 4,
                         $this->getAppClass()->supportedApi( $trigger ) . " " . $series->dateTime . " is " . $series->value );
 
@@ -3076,14 +3128,15 @@ class ApiBabel {
     }
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function pullHabitica() {
         $isAllowed = $this->isAllowed( "habitica" );
         if ( ! is_numeric( $isAllowed ) ) {
-            $user_id = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_user_id', null );
-            $api_key = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_api_key', null );
-            if ( ! is_null( $user_id ) && ! is_null( $api_key ) ) {
+            $userId = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_user_id', null );
+            $apiKey = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_api_key', null );
+            if ( ! is_null( $userId ) && ! is_null( $apiKey ) ) {
                 if ( $this->isTriggerCooled( "habitica" ) ) {
                     nxr( 3, "Habitica credentials okay" );
 
@@ -3113,8 +3166,8 @@ class ApiBabel {
                     }
 
                     nxr( 4, "Updating User Habitica Stats" );
-                    $dbPrefix      = $this->getAppClass()->getSetting( "db_prefix", null, false );
-                    $user          = $habiticaClass->getHabitRPHPG()->user();
+                    $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+                    $user     = $habiticaClass->getHabitRPHPG()->user();
                     if ( ! is_array( $user ) ) {
                         return false;
                     }
@@ -3181,6 +3234,8 @@ class ApiBabel {
     /**
      * @param Habitica $habiticaClass
      * @param array    $user
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function funHabiticaHatcher( $habiticaClass, $user ) {
         if ( $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_hatch', false ) ) {
@@ -3263,6 +3318,8 @@ class ApiBabel {
     /**
      * @param Habitica $habiticaClass
      * @param array    $user
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function funHabiticaFeeder( $habiticaClass, $user ) {
         $pets = [];
@@ -3458,8 +3515,12 @@ class ApiBabel {
      * @param string $user
      * @param string $trigger
      * @param bool   $return
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -3741,6 +3802,7 @@ class ApiBabel {
     /**
      * @param string $trigger
      * @param bool   $quiet
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool|string
      */
@@ -3774,6 +3836,7 @@ class ApiBabel {
      * @param string $trigger
      * @param bool   $reset
      * @param bool   $canForce
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool
      */
@@ -3810,8 +3873,8 @@ class ApiBabel {
      * @param bool   $returnObject
      * @param bool   $debugOutput
      * @param bool   $supportFailures
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return mixed
      */
@@ -3861,8 +3924,8 @@ class ApiBabel {
                 $currentDate = $currentDate->modify( "+1 hours" );
                 $this->getAppClass()->setUserCooldown( $this->activeUser, $currentDate->format( "Y-m-d H:05:00" ) );
 
-                $db_prefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
-                $this->getAppClass()->getDatabase()->insert( $db_prefix . "inbox",
+                $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+                $this->getAppClass()->getDatabase()->insert( $dbPrefix . "inbox",
                     [
                         "fuid"      => $this->activeUser,
                         "expires"   => $currentDate->format( "Y-m-d H:05:30" ),
@@ -3946,12 +4009,15 @@ class ApiBabel {
      *            'weight', 'bmi', 'fat'
      *
      * @param string          $type
-     * @param string|DateTime $baseDate  DateTime or 'today', to_period
-     * @param string|DateTime $to_period DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
+     * @param string|DateTime $baseDate DateTime or 'today', to_period
+     * @param string|DateTime $toPeriod DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return array|boolean
      */
-    public function getTimeSeries( $type, $baseDate, $to_period ) {
+    public function getTimeSeries( $type, $baseDate, $toPeriod ) {
         switch ( $type ) {
             case 'caloriesIn':
                 $path = '/foods/log/caloriesIn';
@@ -4046,7 +4112,7 @@ class ApiBabel {
                 return false;
         }
 
-        $response = $this->pullBabel( 'user/' . $this->getActiveUser() . $path . '/date/' . ( is_string( $baseDate ) ? $baseDate : $baseDate->format( 'Y-m-d' ) ) . "/" . ( is_string( $to_period ) ? $to_period : $to_period->format( 'Y-m-d' ) ) . '.json',
+        $response = $this->pullBabel( 'user/' . $this->getActiveUser() . $path . '/date/' . ( is_string( $baseDate ) ? $baseDate : $baseDate->format( 'Y-m-d' ) ) . "/" . ( is_string( $toPeriod ) ? $toPeriod : $toPeriod->format( 'Y-m-d' ) ) . '.json',
             true );
         if ( is_null( $response ) ) {
             return "-141";
@@ -4083,22 +4149,22 @@ class ApiBabel {
     }
 
     /**
-     * @param string $_nx_fb_usr
+     * @param string $usrFUID
      *
      * @return bool
      */
-    public function validateOAuth( $_nx_fb_usr ) {
-        $this->setActiveUser( $_nx_fb_usr );
+    public function validateOAuth( $usrFUID ) {
+        $this->setActiveUser( $usrFUID );
 
         try {
             // Try to get an access token using the authorization code grant.
             $accessToken = $this->getAccessToken();
 
             $request = $this->getLibrary()->getResourceOwner( $accessToken );
-            if ( $request->getId() == $_nx_fb_usr ) {
+            if ( $request->getId() == $usrFUID ) {
                 return true;
             } else {
-                nxr( 1, "User miss match " . $request->getId() . " should equal " . $_nx_fb_usr );
+                nxr( 1, "User miss match " . $request->getId() . " should equal " . $usrFUID );
 
                 return false;
             }
@@ -4113,7 +4179,7 @@ class ApiBabel {
             ] );
             nxr( 1, "User validation test failed: " . print_r( $e->getMessage(), true ) );
             if ( $e->getCode() == 400 ) {
-                $this->getAppClass()->delUserOAuthTokens( $_nx_fb_usr );
+                $this->getAppClass()->delUserOAuthTokens( $usrFUID );
             }
 
             return false;
