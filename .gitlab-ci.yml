@@ -29,9 +29,94 @@ test:phpmd_cleancode:
   script:
   - ./binaries/phpmd.phar ./lib text cleancode
   only:
+    - develop
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_codesize:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text codesize
+  only:
+    - develop
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_controversial:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text controversial
+  only:
+    - develop
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_design:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text design
+  only:
+    - develop
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_naming:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text naming
+  only:
+    - develop
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_unusedcode:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text unusedcode
+  only:
+    - develop
+
+# PHP Copy/Paste Detector (PHPCPD)
+test:phpcpd:
+  stage: codestyle
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget https://phar.phpunit.de/phpcpd.phar -O ./binaries/phpcpd.phar
+    - chmod +x ./binaries/phpcpd.phar
+  script:
+  - ./binaries/phpcpd.phar ./lib
+  only:
+    - develop
+
+# PHP Mess Detector (PHPMD)
+test:phpmd_cleancode:
+  stage: messdetector
+  before_script:
+    - sh ./dev/build_dev_env.sh
+    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - chmod +x ./binaries/phpmd.phar
+  script:
+  - ./binaries/phpmd.phar ./lib text cleancode
+  only:
     - branches
   except:
     - master
+    - develop
   allow_failure: true
 
 # PHP Mess Detector (PHPMD)
@@ -47,6 +132,7 @@ test:phpmd_codesize:
     - branches
   except:
     - master
+    - develop
   allow_failure: true
 
 # PHP Mess Detector (PHPMD)
@@ -62,6 +148,7 @@ test:phpmd_controversial:
     - branches
   except:
     - master
+    - develop
   allow_failure: true
 
 # PHP Mess Detector (PHPMD)
@@ -77,6 +164,7 @@ test:phpmd_design:
     - branches
   except:
     - master
+    - develop
   allow_failure: true
 
 # PHP Mess Detector (PHPMD)
@@ -92,6 +180,7 @@ test:phpmd_naming:
     - branches
   except:
     - master
+    - develop
   allow_failure: true
 
 # PHP Mess Detector (PHPMD)
@@ -107,6 +196,7 @@ test:phpmd_unusedcode:
     - branches
   except:
     - master
+    - develop
   allow_failure: true
 
 # PHP Copy/Paste Detector (PHPCPD)
@@ -122,6 +212,7 @@ test:phpcpd:
     - branches
   except:
     - master
+    - develop
   allow_failure: true
 
 test:unit_7.0.18:
