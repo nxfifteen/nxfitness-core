@@ -46,6 +46,12 @@ $config['scope_pedomitor_timeout'] = (3 * 60 * 60);
 $config['scope_profile_timeout'] = (3 * 24 * 60 * 60);
 $config['scope_sleep_timeout'] = (20 * 60 * 60);
 $config['scope_water_timeout'] = (2 * 60 * 60);
+$config[ 'scope_habitica_timeout' ] = ( 10 * 60 );
+$config[ 'scope_habitica_hatch_timeout' ] = ( 30 * 60 );
+$config[ 'scope_habitica_feed_timeout' ] = ( 20 * 60 );
+$config[ 'scope_habitica_rand_pet_timeout' ] = ( 45 * 60 );
+$config[ 'scope_habitica_rand_mount_timeout' ] = ( 45 * 60 );
+$config[ 'scope_habitica_avatar_timeout' ] = ( 60 * 60 );
 
 /*
  * Personal settings will therefor overright settings above

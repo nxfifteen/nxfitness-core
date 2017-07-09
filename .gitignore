@@ -141,3 +141,4 @@ config/config.inc.php
 /bundle/bower/bootstrap-calendar/index.html
 /bundle/bower/bootstrap-calendar/web.config
 /bundle/bower/underscore/underscore-min.map
+/bundle/bower/bootstrap/js/src/

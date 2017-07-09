@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  ******************************************************************************/
+use Core\Core;
 
 /**
  * HabitRPHPG
@@ -14,6 +15,9 @@
  * https://github.com/binnyva/habitrphpg
  */
 class HabitRPHPG {
+
+    public $pet_types = [];
+    public $tags = [];
     private $user_id = '';
     private $api_key = '';
     private $base_url = 'https://habitica.com/';
@@ -31,10 +35,9 @@ class HabitRPHPG {
     );
     private $hatch_types = array('Base','White','Desert','Red','Shade','Skeleton','Zombie','CottonCandyPink','CottonCandyBlue','Golden');
     private $food_types = array('Meat','Milk','Potatoe','Strawberry','Chocolate','Fish','RottenMeat','CottonCandyPink','CottonCandyBlue','Cake_Skeleton','Cake_Base','Honey','Saddle');
-    public $pet_types = array();
-    public $tags = array();
 
     ///Constructor
+
     function __construct($user_id, $api_key) {
         if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
             nxr(0, "** Connecting to development habitica");
@@ -126,6 +129,24 @@ class HabitRPHPG {
             if($return['success']) {
                 if(isset($return['data'])) $tasks = $return['data'];
             } else {
+                if ( $return[ 'error' ] == "NotAuthorized" && strpos( $return[ 'message' ], 'Account has been suspended' ) !== false ) {
+                    nxr( 0, "******************************************************************" );
+                    $fitbitApp = new Core();
+                    $db_prefix = $fitbitApp->getSetting( "db_prefix", null, false );
+                    if ( $fitbitApp->getDatabase()->has( $db_prefix . "settings_users", [ "AND" => [ "var" => "habitica_user_id", "data" => $this->user_id ] ] ) ) {
+                        $coreUserId = $fitbitApp->getDatabase()->get( $db_prefix . "settings_users", "fuid", [ "AND" => [ "var" => "habitica_user_id", "data" => $this->user_id ] ] );
+
+                        $fitbitApp->setUserSetting( $coreUserId, 'scope_habitica', false );
+
+                        $cacheFile = '../cache' . DIRECTORY_SEPARATOR . '_' . $coreUserId . '_Account';
+                        if ( file_exists( $cacheFile ) ) {
+                            unlink( $cacheFile );
+                        }
+                    }
+
+                    unset( $fitbitApp );
+                }
+
                 if ($returnError) {
                     return $return;
                 } else {

@@ -1,9 +1,7 @@
 <?php
 /**
  * This file is part of NxFIFTEEN Fitness Core.
- *
  * Copyright (c) 2017. Stuart McCulloch Anderson
- *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
@@ -21,7 +19,7 @@
 
 namespace Core\Analytics;
 
-require_once(dirname(__FILE__) . "/../../autoloader.php");
+require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
 
 /**
  * tracking
@@ -33,9 +31,9 @@ require_once(dirname(__FILE__) . "/../../autoloader.php");
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
+ * @SuppressWarnings(PHPMD.ElseExpression)
  */
-class UserAnalytics
-{
+class UserAnalytics {
 
     /**
      * @var \PiwikTracker
@@ -52,42 +50,41 @@ class UserAnalytics
      *
      * @codeCoverageIgnore
      *
-     * @param int $trackingId Id site to be tracked
-     * @param string $api_url "http://example.org/piwik/" or "http://piwik.example.org/"
+     * @param int    $trackingId Id site to be tracked
+     * @param string $apiUrl     "http://example.org/piwik/" or "http://piwik.example.org/"
      *                           If set, will overwrite PiwikTracker::$URL
-     * @param null $server_name
-     * @param null $request_uri
+     * @param null   $serverName
+     * @param null   $requestUrl
      */
-    public function __construct($trackingId, $api_url, $server_name = null, $request_uri = null)
-    {
-        if (is_null($server_name)) {
-            $server_name = $_SERVER['SERVER_NAME'];
+    public function __construct( $trackingId, $apiUrl, $serverName = null, $requestUrl = null ) {
+        if ( is_null( $serverName ) ) {
+            $serverName = filter_input( INPUT_SERVER, 'SERVER_NAME', FILTER_SANITIZE_STRING );
         }
-        if (is_null($request_uri)) {
-            $request_uri = $_SERVER['REQUEST_URI'];
+        if ( is_null( $requestUrl ) ) {
+            $requestUrl = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_STRING );
         }
 
-        $this->setSiteId($trackingId);
+        $this->setSiteId( $trackingId );
 
-        $this->PiwikTracker = new \PiwikTracker($this->getSiteId(), $api_url);
+        $this->PiwikTracker = new \PiwikTracker( $this->getSiteId(), $apiUrl );
 
-        if (array_key_exists("HTTPS", $_SERVER) && $_SERVER["HTTPS"] == "on") {
+        if ( filter_input( INPUT_SERVER, 'HTTPS', FILTER_SANITIZE_STRING ) == "on" ) {
             $protocol = "https://";
         } else {
             $protocol = "http://";
         }
-        $this->PiwikTracker->setUrl($protocol . $server_name . $request_uri);
+        $this->PiwikTracker->setUrl( $protocol . $serverName . $requestUrl );
 
         //Sets the Browser language.
-        if (array_key_exists("HTTP_ACCEPT_LANGUAGE", $_SERVER)) {
-            $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-            $lang = explode(',', $lang);
-            $this->PiwikTracker->setBrowserLanguage($lang[0]);
+        if ( filter_input( INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE', FILTER_SANITIZE_STRING ) ) {
+            $lang = filter_input( INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE', FILTER_SANITIZE_STRING );
+            $lang = explode( ',', $lang );
+            $this->PiwikTracker->setBrowserLanguage( $lang[ 0 ] );
         }
 
         //Sets the user agent, used to detect OS and browser.
-        if (array_key_exists("HTTP_USER_AGENT", $_SERVER)) {
-            $this->PiwikTracker->setUserAgent($_SERVER['HTTP_USER_AGENT']);
+        if ( filter_input( INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING ) ) {
+            $this->PiwikTracker->setUserAgent( filter_input( INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING ) );
         }
     }
 
@@ -96,8 +93,7 @@ class UserAnalytics
      *
      * @param string $siteId
      */
-    private function setSiteId($siteId)
-    {
+    private function setSiteId( $siteId ) {
         $this->siteId = $siteId;
     }
 
@@ -105,8 +101,7 @@ class UserAnalytics
      * @codeCoverageIgnore
      * @return string
      */
-    private function getSiteId()
-    {
+    private function getSiteId() {
         return $this->siteId;
     }
 
@@ -117,25 +112,24 @@ class UserAnalytics
      *
      * @return mixed Response string or true if using bulk requests.
      */
-    public function endEvent($documentTitle)
-    {
-        return $this->PiwikTracker->doTrackPageView($documentTitle);
+    public function endEvent( $documentTitle ) {
+        return $this->PiwikTracker->doTrackPageView( $documentTitle );
     }
 
     /**
      * Tracks an event
      *
-     * @param string $category The Event Category (Videos, Music, Games...)
-     * @param string $action The Event's Action (Play, Pause, Duration, Add Playlist, Downloaded,
+     * @param string      $category The Event Category (Videos, Music, Games...)
+     * @param string      $action   The Event's Action (Play, Pause, Duration, Add Playlist, Downloaded,
      *                              Clicked...)
-     * @param string|bool $name (optional) The Event's object Name (a particular Movie name, or Song name, or
+     * @param string|bool $name     (optional) The Event's object Name (a particular Movie name, or Song name, or
      *                              File name...)
-     * @param float|bool $value (optional) The Event's value
+     * @param float|bool  $value    (optional) The Event's value
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return mixed Response string or true if using bulk requests.
      */
-    public function track($category, $action, $name = false, $value = false)
-    {
-        return $this->PiwikTracker->doTrackEvent($category, $action, $name, $value);
+    public function track( $category, $action, $name = false, $value = false ) {
+        return $this->PiwikTracker->doTrackEvent( $category, $action, $name, $value );
     }
 }
