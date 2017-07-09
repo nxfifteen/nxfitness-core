@@ -154,20 +154,20 @@ class ErrorRecording
     public function postDatabaseQuery($medoo, $parameters)
     {
         if (defined('SENTRY_DSN')) {
-            $medoo_error = $medoo->error();
-            if ($medoo_error[0] != 0000) {
-                $medoo_info = $medoo->info();
+            $medooError = $medoo->error();
+            if ($medooError[0] != 0000) {
+                $medooInfo = $medoo->info();
 
-                return $this->captureMessage($medoo_error[2], ['database'], [
+                return $this->captureMessage($medooError[2], ['database'], [
                     'level' => 'error',
                     'extra' => [
                         'method' => $parameters['METHOD'],
                         'method_line' => $parameters['LINE'],
-                        'sql_server' => $medoo_info['server'],
-                        'sql_client' => $medoo_info['client'],
-                        'sql_driver' => $medoo_info['driver'],
-                        'sql_version' => $medoo_info['version'],
-                        'sql_connection' => $medoo_info['connection'],
+                        'sql_server' => $medooInfo['server'],
+                        'sql_client' => $medooInfo['client'],
+                        'sql_driver' => $medooInfo['driver'],
+                        'sql_version' => $medooInfo['version'],
+                        'sql_connection' => $medooInfo['connection'],
                         'sql_last_query' => $medoo->last(),
                         'php_version' => phpversion(),
                         'core_version' => $this->appClass->getSetting("version", "0.0.0.1", true)
