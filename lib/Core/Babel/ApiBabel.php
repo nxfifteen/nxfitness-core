@@ -87,6 +87,8 @@ class ApiBabel {
      *
      * @param Core $fitbitApp
      * @param bool $personal
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function __construct( $fitbitApp, $personal = false ) {
         $this->setAppClass( $fitbitApp );
@@ -442,6 +444,8 @@ class ApiBabel {
      * @param string $activity
      * @param bool   $reset
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @return DateTime
      * @internal param $username
      */
@@ -477,6 +481,8 @@ class ApiBabel {
      * @param string $activity
      * @param null   $cronDelay
      * @param bool   $clean
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @internal param $username
      */
@@ -2088,7 +2094,9 @@ class ApiBabel {
      * @param string       $path
      * @param string|array $pushObject
      * @param bool         $returnObject
+     *
      * @SuppressWarnings(PHPMD.ExitExpression)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return mixed
      */
@@ -2619,6 +2627,8 @@ class ApiBabel {
     /**
      * @param string $trigger
      * @param bool   $force
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string|bool
      */
@@ -3469,8 +3479,10 @@ class ApiBabel {
      * @param string $user
      * @param string $trigger
      * @param bool   $return
+     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -3753,6 +3765,8 @@ class ApiBabel {
      * @param string $trigger
      * @param bool   $quiet
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @return bool|string
      */
     public function isAllowed( $trigger, $quiet = false ) {
@@ -3785,6 +3799,8 @@ class ApiBabel {
      * @param string $trigger
      * @param bool   $reset
      * @param bool   $canForce
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool
      */
@@ -3821,7 +3837,9 @@ class ApiBabel {
      * @param bool   $returnObject
      * @param bool   $debugOutput
      * @param bool   $supportFailures
+     *
      * @SuppressWarnings(PHPMD.ExitExpression)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return mixed
      */

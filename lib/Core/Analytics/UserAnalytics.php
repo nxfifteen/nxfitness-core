@@ -125,6 +125,8 @@ class UserAnalytics {
      *                              File name...)
      * @param float|bool  $value    (optional) The Event's value
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @return mixed Response string or true if using bulk requests.
      */
     public function track( $category, $action, $name = false, $value = false ) {

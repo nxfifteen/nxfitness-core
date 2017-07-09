@@ -17,6 +17,9 @@
  * @SuppressWarnings(PHPMD.DevelopmentCodeFragment)
  */
 
+/**
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
 if ( ! function_exists( "nxr" ) ) {
     /**
      * NXR is a helper function. Past strings are recorded in a text file

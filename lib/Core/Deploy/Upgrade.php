@@ -1140,13 +1140,14 @@ class Upgrade {
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
-
     /**
      * Get settings from config class
      *
      * @param string $key
      * @param null   $default
      * @param bool   $rawQueryBb
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string
      */
@@ -1155,13 +1156,14 @@ class Upgrade {
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
-
     /**
      * Set value in database/config class
      *
      * @param string $key
      * @param string $value
      * @param bool   $rawQueryBb
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool
      */
@@ -1170,7 +1172,6 @@ class Upgrade {
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
-
     /**
      * @return array
      */
@@ -1183,7 +1184,6 @@ class Upgrade {
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
-
     /**
      * @return array
      */
@@ -1196,7 +1196,6 @@ class Upgrade {
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
-
     /**
      * @return bool
      */

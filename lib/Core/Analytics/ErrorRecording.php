@@ -180,6 +180,8 @@ class ErrorRecording {
      * @param bool   $stack
      * @param null   $vars
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @return int|null
      */
     public function captureMessage( $message, $params = [], $data = [], $stack = false, $vars = null ) {

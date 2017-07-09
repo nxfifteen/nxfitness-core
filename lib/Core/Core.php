@@ -136,6 +136,8 @@ class Core {
      * @param null   $default    Default value, if nothing already held in settings
      * @param bool   $rawQueryBb Should the DB be checked
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @return string
      */
     public function getSetting( $key, $default = null, $rawQueryBb = true ) {
@@ -163,6 +165,8 @@ class Core {
      * @param string $key
      * @param null   $default
      * @param bool   $rawQueryBb
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return string
      */
@@ -194,6 +198,8 @@ class Core {
      * @param string $userFUID Fitbit user ID
      * @param string $trigger  Trigger ID to add to cron
      * @param bool   $force    Should we honnor hot API
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function addCronJob( $userFUID, $trigger, $force = false ) {
         if ( $force || $this->getSetting( 'scope_' . $trigger . '_cron', false ) ) {
@@ -281,6 +287,8 @@ class Core {
     /**
      * @param string $userFitbitId
      * @param bool   $reset
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return ApiBabel
      */
@@ -477,6 +485,8 @@ class Core {
      * @param string $value
      * @param bool   $rawQueryBb
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @return bool
      */
     public function setSetting( $key, $value, $rawQueryBb = true ) {
@@ -580,6 +590,8 @@ class Core {
     /**
      * @param string $userFUID Fitbit user ID
      * @param bool   $validate
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return array|bool
      */

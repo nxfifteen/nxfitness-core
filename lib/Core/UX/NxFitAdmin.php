@@ -115,6 +115,8 @@ class NxFitAdmin {
      * @param null   $default
      * @param bool   $rawQueryBb
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @return string
      */
     public function getApiSetting( $key = "", $default = null, $rawQueryBb = true ) {
