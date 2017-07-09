@@ -279,7 +279,7 @@ class RewardsSystem
      */
     public function queryMinecraftRewards()
     {
-        $wmcKeyProvided = $_GET['wmc_key'];
+        $wmcKeyProvided = filter_input(INPUT_GET, 'wmc_key', FILTER_SANITIZE_STRING);
         $wmcKeyCorrect = $this->getAppClass()->getSetting("wmc_key", null, true);
         nxr(0, "Minecraft rewards Check");
 
@@ -291,7 +291,7 @@ class RewardsSystem
 
         $databaseTable = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        if ($_SERVER['REQUEST_METHOD'] == "GET") {
+        if (filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING) == "GET") {
             $rewards = $this->getAppClass()->getDatabase()->select($databaseTable . "minecraft",
                 [
                     'mcrid',
@@ -319,12 +319,12 @@ class RewardsSystem
 
             return ["success" => true, "data" => $data];
 
-        } else if ($_SERVER['REQUEST_METHOD'] == "POST" && array_key_exists("processedOrders", $_POST)) {
+        } else if (filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING) == "POST" && filter_input(INPUT_POST, 'processedOrders', FILTER_SANITIZE_STRING)) {
 
-            $_POST['processedOrders'] = json_decode($_POST['processedOrders']);
+            $processedOrders = json_decode(filter_input(INPUT_POST, 'processedOrders', FILTER_SANITIZE_STRING));
 
-            if (is_array($_POST['processedOrders'])) {
-                foreach ($_POST['processedOrders'] as $processedOrder) {
+            if (is_array($processedOrders)) {
+                foreach ($processedOrders as $processedOrder) {
                     if ($this->getAppClass()->getDatabase()->has($databaseTable . "minecraft", ["mcrid" => $processedOrder])) {
                         $this->getAppClass()->getDatabase()->update($databaseTable . "minecraft", ["delivery" => "delivered"], ["mcrid" => $processedOrder]);
                         $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
