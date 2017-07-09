@@ -2,7 +2,7 @@
   "name": "nxfiftness-core",
   "version": "0.0.0.8",
   "dependencies": {
-    "bootstrap": "3.3.7",
+    "bootstrap": "4.0.0-alpha.6",
     "tether": "latest",
     "jquery": "^3.0.0",
     "fontawesome": "latest",
