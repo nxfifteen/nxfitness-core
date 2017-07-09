@@ -58,13 +58,14 @@ class Config
      * Class constructor
      *
      * @codeCoverageIgnore
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __construct()
     {
-        if (isset($_SESSION) && is_array($_SESSION) && array_key_exists("core_config",
-                $_SESSION) && count($_SESSION['core_config']) > 0
-        ) {
-            $this->settings = $_SESSION['core_config'];
+        $sessionCoreConfig = filter_input(INPUT_SERVER, 'core_config', FILTER_UNSAFE_RAW);
+
+        if ($sessionCoreConfig && count($sessionCoreConfig) > 0 ) {
+            $this->settings = $sessionCoreConfig;
         } else {
             require_once(dirname(__FILE__) . "/../../config/config.dist.php");
             if (isset($config)) {
