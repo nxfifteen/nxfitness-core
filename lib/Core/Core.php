@@ -579,13 +579,12 @@ class Core
      */
     public function isUserOAuthAuthorised($userFUID)
     {
-        if (array_key_exists("userIsOAuth_" . $userFUID,
-                $_SESSION) && is_bool($_SESSION['userIsOAuth_' . $userFUID]) && $_SESSION['userIsOAuth_' . $userFUID] !== false
-        ) {
-            return $_SESSION['userIsOAuth_' . $userFUID];
+        $session = new SessionObject();
+        if ($session->getVar("userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN) && $session->getVar("userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN) !== false) {
+            return $session->getVar("userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN);
         } else {
             if ($this->valdidateOAuth($this->getUserOAuthTokens($userFUID, false))) {
-                $_SESSION['userIsOAuth_' . $userFUID] = true;
+                $session->setVar('userIsOAuth_' . $userFUID, true);
 
                 return true;
             } else {
