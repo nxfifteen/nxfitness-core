@@ -61,17 +61,17 @@ class UserAnalytics
     public function __construct($trackingId, $apiUrl, $serverName = null, $requestUrl = null)
     {
         if (is_null($serverName)) {
-            $serverName = $_SERVER['SERVER_NAME'];
+            $serverName = filter_input(INPUT_SERVER, 'SERVER_NAME', FILTER_SANITIZE_STRING);
         }
         if (is_null($requestUrl)) {
-            $requestUrl = $_SERVER['REQUEST_URI'];
+            $requestUrl = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_STRING);
         }
 
         $this->setSiteId($trackingId);
 
         $this->PiwikTracker = new \PiwikTracker($this->getSiteId(), $apiUrl);
 
-        if (array_key_exists("HTTPS", $_SERVER) && $_SERVER["HTTPS"] == "on") {
+        if (filter_input(INPUT_SERVER, 'HTTPS', FILTER_SANITIZE_STRING) == "on") {
             $protocol = "https://";
         } else {
             $protocol = "http://";
@@ -79,15 +79,15 @@ class UserAnalytics
         $this->PiwikTracker->setUrl($protocol . $serverName . $requestUrl);
 
         //Sets the Browser language.
-        if (array_key_exists("HTTP_ACCEPT_LANGUAGE", $_SERVER)) {
-            $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        if (filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE', FILTER_SANITIZE_STRING)) {
+            $lang = filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE', FILTER_SANITIZE_STRING);
             $lang = explode(',', $lang);
             $this->PiwikTracker->setBrowserLanguage($lang[0]);
         }
 
         //Sets the user agent, used to detect OS and browser.
-        if (array_key_exists("HTTP_USER_AGENT", $_SERVER)) {
-            $this->PiwikTracker->setUserAgent($_SERVER['HTTP_USER_AGENT']);
+        if (filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING)) {
+            $this->PiwikTracker->setUserAgent(filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING));
         }
     }
 
