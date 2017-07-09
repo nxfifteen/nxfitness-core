@@ -46,7 +46,6 @@ define( "FITBIT_COM", "https://api.fitbit.com" );
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
- *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ApiBabel {
@@ -125,7 +124,6 @@ class ApiBabel {
     }
 
     /**
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @return bool|array
      */
@@ -247,7 +245,7 @@ class ApiBabel {
 
                         $trackedTrackers = [];
                         $indexedTrackers = [];
-                        $dbPrefix       = $this->getAppClass()->getSetting( "db_prefix", null, false );
+                        $dbPrefix        = $this->getAppClass()->getSetting( "db_prefix", null, false );
                         nxr( 2, ".", true, false );
                         foreach ( $trackerGroups as $tracker ) {
                             nxr( 0, ".", false, false );
@@ -485,7 +483,7 @@ class ApiBabel {
     private function setLastrun( $activity, $cronDelay = null, $clean = false ) {
         if ( is_null( $cronDelay ) ) {
             $cronDelayHolder = 'scope_' . $activity . '_timeout';
-            $cronDelay        = $this->getAppClass()->getSetting( $cronDelayHolder, 5400 );
+            $cronDelay       = $this->getAppClass()->getSetting( $cronDelayHolder, 5400 );
         }
 
         if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", null,
@@ -558,7 +556,6 @@ class ApiBabel {
     }
 
     /**
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @return mixed|null|SimpleXMLElement|string
      */
@@ -678,7 +675,6 @@ class ApiBabel {
      * @param string $subId Subscription Id
      * @param string $path  Subscription resource path (beginning with slash). Omit to subscribe to all user updates.
      * @param string $subscriberId
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return mixed
@@ -726,7 +722,6 @@ class ApiBabel {
 
     /**
      * Download information about devices associated with the users account. This is then stored in the database
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
@@ -913,7 +908,6 @@ class ApiBabel {
 
     /**
      * Download information of badges the user has aquired
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed|null|SimpleXMLElement|string
@@ -1110,9 +1104,7 @@ class ApiBabel {
     }
 
     /**
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     *
      * @return mixed|null|SimpleXMLElement|string
      * @internal param $user
      */
@@ -1267,7 +1259,7 @@ class ApiBabel {
 
                     if ( empty( $usrGoals->calories ) ) {
                         $usrGoalsCalories = 0;
-                        $fallback           = true;
+                        $fallback         = true;
                     } else {
                         $usrGoalsCalories = (int)$usrGoals->calories;
                     }
@@ -1355,9 +1347,7 @@ class ApiBabel {
 
     /**
      * @return bool
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     *
      * @internal param $targetDate
      */
     private function pullBabelActivityLogs() {
@@ -1741,9 +1731,7 @@ class ApiBabel {
 
     /**
      * @return mixed
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     *
      * @internal param $targetDate
      */
     private function pullBabelUserGoals() {
@@ -1757,7 +1745,7 @@ class ApiBabel {
 
                 if ( isset( $userGoals ) && isset( $userGoals->goals ) ) {
                     $currentDate = new DateTime();
-                    $usrGoals   = $userGoals->goals;
+                    $usrGoals    = $userGoals->goals;
                     if ( is_object( $usrGoals ) ) {
                         $fallback = false;
 
@@ -2100,7 +2088,6 @@ class ApiBabel {
      * @param string       $path
      * @param string|array $pushObject
      * @param bool         $returnObject
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return mixed
@@ -2399,7 +2386,6 @@ class ApiBabel {
 
     /**
      * @param string $targetDate
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return mixed
@@ -2461,7 +2447,7 @@ class ApiBabel {
                         null, false ) . "users", "height", [ "fuid" => $this->getActiveUser() ] );
                 if ( is_numeric( $userHeight ) AND $userHeight > 0 ) {
                     $userHeight = $userHeight / 100;
-                    $bmi         = round( $weight / ( $userHeight * $userHeight ), 2 );
+                    $bmi        = round( $weight / ( $userHeight * $userHeight ), 2 );
                 } else {
                     $bmi = "0.0";
                 }
@@ -2710,7 +2696,6 @@ class ApiBabel {
      * @param string        $trigger
      * @param string        $daysSince
      * @param DateTime|null $lastrun
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return string|bool
@@ -2843,7 +2828,7 @@ class ApiBabel {
             ]
         ] )
         ) {
-            $streak       = true;
+            $streak      = true;
             $streakStart = $this->getAppClass()->getDatabase()->get( $dbPrefix . "streak_goal", "start_date",
                 [
                     "AND" => [
@@ -2853,14 +2838,14 @@ class ApiBabel {
                     ]
                 ] );
         } else {
-            $streak       = false;
+            $streak      = false;
             $streakStart = $dateTime->format( "Y-m-d" );
         }
 
         if ( strtotime( $dateTime->format( "Y-m-d" ) ) >= strtotime( $streakStart ) ) {
             if ( $streak ) {
                 $dateTimeStart = new DateTime ( $streakStart );
-                $daysBetween  = $dateTimeStart->diff( $dateTime )->format( "%a" );
+                $daysBetween   = $dateTimeStart->diff( $dateTime )->format( "%a" );
 
                 if ( $value ) {
                     $this->getAppClass()->getDatabase()->update( $dbPrefix . "streak_goal", [
@@ -2968,7 +2953,6 @@ class ApiBabel {
      * @param string        $trigger
      * @param string        $daysSince
      * @param DateTime|null $lastrun
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return bool
@@ -3138,8 +3122,8 @@ class ApiBabel {
                     }
 
                     nxr( 4, "Updating User Habitica Stats" );
-                    $dbPrefix      = $this->getAppClass()->getSetting( "db_prefix", null, false );
-                    $user          = $habiticaClass->getHabitRPHPG()->user();
+                    $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+                    $user     = $habiticaClass->getHabitRPHPG()->user();
                     if ( ! is_array( $user ) ) {
                         return false;
                     }
@@ -3206,7 +3190,6 @@ class ApiBabel {
     /**
      * @param Habitica $habiticaClass
      * @param array    $user
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function funHabiticaHatcher( $habiticaClass, $user ) {
@@ -3290,7 +3273,6 @@ class ApiBabel {
     /**
      * @param Habitica $habiticaClass
      * @param array    $user
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function funHabiticaFeeder( $habiticaClass, $user ) {
@@ -3487,7 +3469,6 @@ class ApiBabel {
      * @param string $user
      * @param string $trigger
      * @param bool   $return
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
@@ -3840,7 +3821,6 @@ class ApiBabel {
      * @param bool   $returnObject
      * @param bool   $debugOutput
      * @param bool   $supportFailures
-     *
      * @SuppressWarnings(PHPMD.ExitExpression)
      *
      * @return mixed
@@ -3976,9 +3956,8 @@ class ApiBabel {
      *            'weight', 'bmi', 'fat'
      *
      * @param string          $type
-     * @param string|DateTime $baseDate  DateTime or 'today', to_period
+     * @param string|DateTime $baseDate DateTime or 'today', to_period
      * @param string|DateTime $toPeriod DateTime or '1d, 7d, 30d, 1w, 1m, 3m, 6m, 1y, max'
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return array|boolean

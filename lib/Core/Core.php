@@ -18,11 +18,10 @@
  * @license     https://nxfifteen.me.uk/api/license/mit/2015-2017 MIT
  */
 
-
 namespace Core;
 
-require_once(dirname(__FILE__) . "/../autoloader.php");
-require_once(dirname(__FILE__) . "/../../config/config.def.dist.php");
+require_once( dirname( __FILE__ ) . "/../autoloader.php" );
+require_once( dirname( __FILE__ ) . "/../../config/config.def.dist.php" );
 
 use Core\Analytics\ErrorRecording;
 use Core\Babel\ApiBabel;
@@ -31,8 +30,8 @@ use DateTime;
 use League\OAuth2\Client\Token\AccessToken as AccessToken;
 use Medoo\Medoo;
 
-date_default_timezone_set('Europe/London');
-error_reporting(E_ALL);
+date_default_timezone_set( 'Europe/London' );
+error_reporting( E_ALL );
 
 /**
  * Main app class
@@ -44,12 +43,10 @@ error_reporting(E_ALL);
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
- *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class Core
-{
+class Core {
 
     /**
      * @var Medoo
@@ -71,43 +68,40 @@ class Core
     /**
      * Create the core Core class, storing child classes as required
      */
-    public function __construct()
-    {
-        $this->setSettings(new Config());
+    public function __construct() {
+        $this->setSettings( new Config() );
 
-        $this->setDatabase(new medoo([
+        $this->setDatabase( new medoo( [
             'database_type' => 'mysql',
-            'database_name' => $this->getSetting("db_name"),
-            'server' => $this->getSetting("db_server"),
-            'username' => $this->getSetting("db_username"),
-            'password' => $this->getSetting("db_password"),
-            'charset' => 'utf8'
-        ]));
+            'database_name' => $this->getSetting( "db_name" ),
+            'server'        => $this->getSetting( "db_server" ),
+            'username'      => $this->getSetting( "db_username" ),
+            'password'      => $this->getSetting( "db_password" ),
+            'charset'       => 'utf8'
+        ] ) );
 
-        $this->getSettings()->setDatabase($this->getDatabase());
+        $this->getSettings()->setDatabase( $this->getDatabase() );
 
-        $installedVersion = $this->getSetting("version", "0.0.0.1", true);
-        if ($installedVersion != APP_VERSION) {
+        $installedVersion = $this->getSetting( "version", "0.0.0.1", true );
+        if ( $installedVersion != APP_VERSION ) {
             $this->updateCore( $installedVersion );
         }
 
-        $this->errorRecording = new ErrorRecording($this);
+        $this->errorRecording = new ErrorRecording( $this );
 
     }
 
     /**
      * @param Config $settings
      */
-    private function setSettings($settings)
-    {
+    private function setSettings( $settings ) {
         $this->settings = $settings;
     }
 
     /**
      * @param Medoo $database
      */
-    private function setDatabase($database)
-    {
+    private function setDatabase( $database ) {
         $this->database = $database;
     }
 
@@ -138,30 +132,27 @@ class Core
     /**
      * Get settings from config class
      *
-     * @param string $key Settings key to return
-     * @param null $default Default value, if nothing already held in settings
-     * @param bool $rawQueryBb Should the DB be checked
+     * @param string $key        Settings key to return
+     * @param null   $default    Default value, if nothing already held in settings
+     * @param bool   $rawQueryBb Should the DB be checked
      *
      * @return string
      */
-    public function getSetting($key, $default = null, $rawQueryBb = true)
-    {
-        return $this->getSettings()->get($key, $default, $rawQueryBb);
+    public function getSetting( $key, $default = null, $rawQueryBb = true ) {
+        return $this->getSettings()->get( $key, $default, $rawQueryBb );
     }
 
     /**
      * @return Config
      */
-    public function getSettings()
-    {
+    public function getSettings() {
         return $this->settings;
     }
 
     /**
      * @return Medoo
      */
-    public function getDatabase()
-    {
+    public function getDatabase() {
         return $this->database;
     }
 
@@ -170,29 +161,27 @@ class Core
      *
      * @param string $fuid
      * @param string $key
-     * @param null $default
-     * @param bool $rawQueryBb
+     * @param null   $default
+     * @param bool   $rawQueryBb
      *
      * @return string
      */
-    public function getUserSetting($fuid, $key, $default = null, $rawQueryBb = true)
-    {
-        return $this->getSettings()->getUser($fuid, $key, $default, $rawQueryBb);
+    public function getUserSetting( $fuid, $key, $default = null, $rawQueryBb = true ) {
+        return $this->getSettings()->getUser( $fuid, $key, $default, $rawQueryBb );
     }
 
     /**
      * Get settings from config class
      *
      * @param string $fuid Fitbit user ID
-     * @param string $key Trigger ID to add to cron
-     * @return string
+     * @param string $key  Trigger ID to add to cron
      *
+     * @return string
      * @internal param null $default
      * @internal param bool $rawQueryBb
      */
-    public function delUserSetting($fuid, $key)
-    {
-        return $this->getSettings()->delUser($fuid, $key);
+    public function delUserSetting( $fuid, $key ) {
+        return $this->getSettings()->delUser( $fuid, $key );
     }
 
     /**
@@ -203,41 +192,39 @@ class Core
      * Add new cron jobs to queue
      *
      * @param string $userFUID Fitbit user ID
-     * @param string $trigger Trigger ID to add to cron
-     * @param bool $force Should we honnor hot API
+     * @param string $trigger  Trigger ID to add to cron
+     * @param bool   $force    Should we honnor hot API
      */
-    public function addCronJob($userFUID, $trigger, $force = false)
-    {
-        if ($force || $this->getSetting('scope_' . $trigger . '_cron', false)) {
-            if (!$this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", [
+    public function addCronJob( $userFUID, $trigger, $force = false ) {
+        if ( $force || $this->getSetting( 'scope_' . $trigger . '_cron', false ) ) {
+            if ( ! $this->getDatabase()->has( $this->getSetting( "db_prefix", null, false ) . "queue", [
                 "AND" => [
-                    "user" => $userFUID,
+                    "user"    => $userFUID,
                     "trigger" => $trigger
                 ]
-            ])
+            ] )
             ) {
-                $this->getDatabase()->insert($this->getSetting("db_prefix", null, false) . "queue", [
-                    "user" => $userFUID,
+                $this->getDatabase()->insert( $this->getSetting( "db_prefix", null, false ) . "queue", [
+                    "user"    => $userFUID,
                     "trigger" => $trigger,
-                    "date" => date("Y-m-d H:i:s")
-                ]);
-                $this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), [
+                    "date"    => date( "Y-m-d H:i:s" )
+                ] );
+                $this->getErrorRecording()->postDatabaseQuery( $this->getDatabase(), [
                     "METHOD" => __METHOD__,
-                    "LINE" => __LINE__
-                ]);
+                    "LINE"   => __LINE__
+                ] );
             } /*else {
                 nxr(0, "Cron job already present");
             }*/
         } else {
-            nxr(0, "I am not allowed to queue $trigger");
+            nxr( 0, "I am not allowed to queue $trigger" );
         }
     }
 
     /**
      * @return ErrorRecording
      */
-    public function getErrorRecording()
-    {
+    public function getErrorRecording() {
         return $this->errorRecording;
     }
 
@@ -249,36 +236,35 @@ class Core
      * Delete cron jobs from queue
      *
      * @param string $userFUID Fitbit user ID
-     * @param string $trigger Trigger ID to add to cron
+     * @param string $trigger  Trigger ID to add to cron
      */
-    public function delCronJob($userFUID, $trigger)
-    {
-        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "queue", [
+    public function delCronJob( $userFUID, $trigger ) {
+        if ( $this->getDatabase()->has( $this->getSetting( "db_prefix", null, false ) . "queue", [
             "AND" => [
-                "user" => $userFUID,
+                "user"    => $userFUID,
                 "trigger" => $trigger
             ]
-        ])
+        ] )
         ) {
-            if (!$this->getDatabase()->delete($this->getSetting("db_prefix", null, false) . "queue", [
+            if ( ! $this->getDatabase()->delete( $this->getSetting( "db_prefix", null, false ) . "queue", [
                 "AND" => [
-                    "user" => $userFUID,
+                    "user"    => $userFUID,
                     "trigger" => $trigger
                 ]
-            ])
+            ] )
             ) {
-                $this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), [
+                $this->getErrorRecording()->postDatabaseQuery( $this->getDatabase(), [
                     "METHOD" => __METHOD__,
-                    "LINE" => __LINE__
-                ]);
-                nxr(0, "Failed to delete $trigger Cron job");
+                    "LINE"   => __LINE__
+                ] );
+                nxr( 0, "Failed to delete $trigger Cron job" );
             }
         } else {
-            $this->getErrorRecording()->postDatabaseQuery($this->getDatabase(), [
+            $this->getErrorRecording()->postDatabaseQuery( $this->getDatabase(), [
                 "METHOD" => __METHOD__,
-                "LINE" => __LINE__
-            ]);
-            nxr(0, "Failed to delete $trigger Cron job");
+                "LINE"   => __LINE__
+            ] );
+            nxr( 0, "Failed to delete $trigger Cron job" );
         }
     }
 
@@ -287,25 +273,23 @@ class Core
      *
      * @return array|bool
      */
-    public function getCronJobs()
-    {
-        return $this->getDatabase()->select($this->getSetting("db_prefix", null, false) . "queue", "*",
-            ["ORDER" => ["date" => "ASC"]]);
+    public function getCronJobs() {
+        return $this->getDatabase()->select( $this->getSetting( "db_prefix", null, false ) . "queue", "*",
+            [ "ORDER" => [ "date" => "ASC" ] ] );
     }
 
     /**
      * @param string $userFitbitId
-     * @param bool $reset
+     * @param bool   $reset
      *
      * @return ApiBabel
      */
-    public function getFitbitAPI($userFitbitId = "", $reset = false)
-    {
-        if (is_null($this->fitbitapi) || $reset) {
-            if ($userFitbitId == $this->getSetting("ownerFuid", null, false)) {
-                $this->fitbitapi = new ApiBabel($this, true);
+    public function getFitbitAPI( $userFitbitId = "", $reset = false ) {
+        if ( is_null( $this->fitbitapi ) || $reset ) {
+            if ( $userFitbitId == $this->getSetting( "ownerFuid", null, false ) ) {
+                $this->fitbitapi = new ApiBabel( $this, true );
             } else {
-                $this->fitbitapi = new ApiBabel($this, false);
+                $this->fitbitapi = new ApiBabel( $this, false );
             }
         }
 
@@ -315,8 +299,7 @@ class Core
     /**
      * @param ApiBabel $fitbitapi
      */
-    public function setFitbitapi($fitbitapi)
-    {
+    public function setFitbitapi( $fitbitapi ) {
         $this->fitbitapi = $fitbitapi;
     }
 
@@ -325,21 +308,20 @@ class Core
      */
 
     /**
-     * @param string $userFUID Fitbit user ID
+     * @param string          $userFUID Fitbit user ID
      * @param string|DateTime $datetime DataTime the cooldown will end
      *
      * @return array|int
      */
-    public function setUserCooldown($userFUID, $datetime)
-    {
-        if ($this->isUser($userFUID)) {
-            if (is_string($datetime)) {
-                $datetime = new DateTime ($datetime);
+    public function setUserCooldown( $userFUID, $datetime ) {
+        if ( $this->isUser( $userFUID ) ) {
+            if ( is_string( $datetime ) ) {
+                $datetime = new DateTime ( $datetime );
             }
 
-            return $this->getDatabase()->update($this->getSetting("db_prefix", null, false) . "users", [
-                'cooldown' => $datetime->format("Y-m-d H:i:s")
-            ], ["AND" => ['fuid' => $userFUID]]);
+            return $this->getDatabase()->update( $this->getSetting( "db_prefix", null, false ) . "users", [
+                'cooldown' => $datetime->format( "Y-m-d H:i:s" )
+            ], [ "AND" => [ 'fuid' => $userFUID ] ] );
         } else {
             return 0;
         }
@@ -350,10 +332,9 @@ class Core
      *
      * @return bool
      */
-    public function isUser($userFUID)
-    {
-        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users",
-            ["fuid" => $userFUID])
+    public function isUser( $userFUID ) {
+        if ( $this->getDatabase()->has( $this->getSetting( "db_prefix", null, false ) . "users",
+            [ "fuid" => $userFUID ] )
         ) {
             return true;
         } else {
@@ -366,42 +347,39 @@ class Core
      *
      * @return int|array
      */
-    public function getUserCooldown($userFUID)
-    {
-        if ($this->isUser($userFUID)) {
-            return $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "cooldown",
-                ["fuid" => $userFUID]);
+    public function getUserCooldown( $userFUID ) {
+        if ( $this->isUser( $userFUID ) ) {
+            return $this->getDatabase()->get( $this->getSetting( "db_prefix", null, false ) . "users", "cooldown",
+                [ "fuid" => $userFUID ] );
         } else {
             return 0;
         }
     }
 
     /**
-     * @param string $userFUID Fitbit user ID
+     * @param string      $userFUID Fitbit user ID
      * @param AccessToken $accessToken
      */
-    public function setUserOAuthTokens($userFUID, $accessToken)
-    {
+    public function setUserOAuthTokens( $userFUID, $accessToken ) {
         $this->getDatabase()->update(
-            $this->getSetting("db_prefix", false) . "users",
+            $this->getSetting( "db_prefix", false ) . "users",
             [
-                'tkn_access' => $accessToken->getToken(),
+                'tkn_access'  => $accessToken->getToken(),
                 'tkn_refresh' => $accessToken->getRefreshToken(),
                 'tkn_expires' => $accessToken->getExpires()
-            ], ["fuid" => $userFUID]);
+            ], [ "fuid" => $userFUID ] );
     }
 
     /**
      * @param string $userFUID Fitbit user ID
      */
-    public function delUserOAuthTokens($userFUID)
-    {
-        $this->getDatabase()->update($this->getSetting("db_prefix", false) . "users",
+    public function delUserOAuthTokens( $userFUID ) {
+        $this->getDatabase()->update( $this->getSetting( "db_prefix", false ) . "users",
             [
-                'tkn_access' => '',
+                'tkn_access'  => '',
                 'tkn_refresh' => '',
                 'tkn_expires' => 0
-            ], ["fuid" => $userFUID]);
+            ], [ "fuid" => $userFUID ] );
     }
 
     /**
@@ -410,27 +388,26 @@ class Core
      *
      * @return bool
      */
-    public function isUserValid($userFUID, $userPassword)
-    {
-        if (strpos($userFUID, '@') !== false) {
-            $userFUID = $this->isUserValidEml($userFUID);
+    public function isUserValid( $userFUID, $userPassword ) {
+        if ( strpos( $userFUID, '@' ) !== false ) {
+            $userFUID = $this->isUserValidEml( $userFUID );
         }
 
-        if ($this->isUser($userFUID)) {
-            if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", [
+        if ( $this->isUser( $userFUID ) ) {
+            if ( $this->getDatabase()->has( $this->getSetting( "db_prefix", null, false ) . "users", [
                 "AND" => [
-                    "fuid" => $userFUID,
+                    "fuid"     => $userFUID,
                     "password" => $userPassword
                 ]
-            ])
+            ] )
             ) {
                 return $userFUID;
-            } else if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users", [
+            } else if ( $this->getDatabase()->has( $this->getSetting( "db_prefix", null, false ) . "users", [
                 "AND" => [
-                    "fuid" => $userFUID,
+                    "fuid"     => $userFUID,
                     "password" => ''
                 ]
-            ])
+            ] )
             ) {
                 return -1;
             } else {
@@ -442,17 +419,16 @@ class Core
     }
 
     /**
-     * @param string $userFUID Fitbit user ID
+     * @param string $inputEmail Fitbit user ID
      *
      * @return bool
      */
-    public function isUserValidEml($inputEmail)
-    {
-        if ($this->getDatabase()->has($this->getSetting("db_prefix", null, false) . "users",
-            ["eml" => $inputEmail])
+    public function isUserValidEml( $inputEmail ) {
+        if ( $this->getDatabase()->has( $this->getSetting( "db_prefix", null, false ) . "users",
+            [ "eml" => $inputEmail ] )
         ) {
-            $userFUID = $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", "fuid",
-                ["eml" => $inputEmail]);
+            $userFUID = $this->getDatabase()->get( $this->getSetting( "db_prefix", null, false ) . "users", "fuid",
+                [ "eml" => $inputEmail ] );
 
             return $userFUID;
         } else {
@@ -462,13 +438,12 @@ class Core
 
     /**
      * @param string|int $errCode
-     * @param null $user
+     * @param null       $user
      *
      * @return string
      */
-    public function lookupErrorCode($errCode, $user = null)
-    {
-        switch ($errCode) {
+    public function lookupErrorCode( $errCode, $user = null ) {
+        switch ( $errCode ) {
             case "-146":
                 return "Disabled in user config.";
             case "-145":
@@ -482,11 +457,11 @@ class Core
             case "-141":
                 return "Fitbit API Error";
             case "429":
-                if (!is_null($user)) {
-                    $hour = date("H") + 1;
-                    $this->getDatabase()->update($this->getSetting("db_prefix", null, false) . "users", [
-                        'cooldown' => date("Y-m-d " . $hour . ":01:00"),
-                    ], ['fuid' => $user]);
+                if ( ! is_null( $user ) ) {
+                    $hour = date( "H" ) + 1;
+                    $this->getDatabase()->update( $this->getSetting( "db_prefix", null, false ) . "users", [
+                        'cooldown' => date( "Y-m-d " . $hour . ":01:00" ),
+                    ], [ 'fuid' => $user ] );
                 }
 
                 return "Either you hit the rate limiting quota for the client or for the viewer";
@@ -500,13 +475,12 @@ class Core
      *
      * @param string $key
      * @param string $value
-     * @param bool $rawQueryBb
+     * @param bool   $rawQueryBb
      *
      * @return bool
      */
-    public function setSetting($key, $value, $rawQueryBb = true)
-    {
-        return $this->getSettings()->set($key, $value, $rawQueryBb);
+    public function setSetting( $key, $value, $rawQueryBb = true ) {
+        return $this->getSettings()->set( $key, $value, $rawQueryBb );
     }
 
     /**
@@ -518,9 +492,8 @@ class Core
      *
      * @return string
      */
-    public function setUserSetting($fuid, $key, $value)
-    {
-        return $this->getSettings()->setUser($fuid, $key, $value);
+    public function setUserSetting( $fuid, $key, $value ) {
+        return $this->getSettings()->setUser( $fuid, $key, $value );
     }
 
     /**
@@ -530,42 +503,41 @@ class Core
      *
      * @return array|null|string
      */
-    public function supportedApi($key = null)
-    {
+    public function supportedApi( $key = null ) {
         $supportedApis = [
-            'all' => 'Everything',
-            'floors' => 'Floors Climed',
-            'foods' => 'Calorie Intake',
-            'badges' => 'Badges',
-            'sleep' => 'Sleep Records',
-            'body' => 'Weight & Body Fat Records',
-            'goals' => 'Personal Goals',
-            'water' => 'Water Intake',
-            'activities' => 'Pedomitor & Activities',
-            'leaderboard' => 'Friends',
-            'devices' => 'Device Status',
-            'caloriesOut' => 'Calories Out',
-            'goals_calories' => 'Calorie Goals',
-            'minutesVeryActive' => 'Minutes Very Active',
-            'minutesFairlyActive' => 'Minutes Fairly Active',
+            'all'                  => 'Everything',
+            'floors'               => 'Floors Climed',
+            'foods'                => 'Calorie Intake',
+            'badges'               => 'Badges',
+            'sleep'                => 'Sleep Records',
+            'body'                 => 'Weight & Body Fat Records',
+            'goals'                => 'Personal Goals',
+            'water'                => 'Water Intake',
+            'activities'           => 'Pedomitor & Activities',
+            'leaderboard'          => 'Friends',
+            'devices'              => 'Device Status',
+            'caloriesOut'          => 'Calories Out',
+            'goals_calories'       => 'Calorie Goals',
+            'minutesVeryActive'    => 'Minutes Very Active',
+            'minutesFairlyActive'  => 'Minutes Fairly Active',
             'minutesLightlyActive' => 'Minutes Lightly Active',
-            'minutesSedentary' => 'Minutes Sedentary',
-            'elevation' => 'Elevation',
-            'distance' => 'Distance Traveled',
-            'steps' => 'Steps Taken',
-            'profile' => 'User Profile',
-            'heart' => 'Heart Rates',
-            'activity_log' => 'Activities',
-            'nomie_trackers' => "Nomie Trackers",
-            'habitica' => "Habitica"
+            'minutesSedentary'     => 'Minutes Sedentary',
+            'elevation'            => 'Elevation',
+            'distance'             => 'Distance Traveled',
+            'steps'                => 'Steps Taken',
+            'profile'              => 'User Profile',
+            'heart'                => 'Heart Rates',
+            'activity_log'         => 'Activities',
+            'nomie_trackers'       => "Nomie Trackers",
+            'habitica'             => "Habitica"
         ];
-        ksort($supportedApis);
+        ksort( $supportedApis );
 
-        if (is_null($key)) {
+        if ( is_null( $key ) ) {
             return $supportedApis;
         } else {
-            if (array_key_exists($key, $supportedApis)) {
-                return $supportedApis[$key];
+            if ( array_key_exists( $key, $supportedApis ) ) {
+                return $supportedApis[ $key ];
             } else {
                 return $key;
             }
@@ -577,14 +549,13 @@ class Core
      *
      * @return bool
      */
-    public function isUserOAuthAuthorised($userFUID)
-    {
+    public function isUserOAuthAuthorised( $userFUID ) {
         $session = new SessionObject();
-        if ($session->getVar("userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN) && $session->getVar("userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN) !== false) {
-            return $session->getVar("userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN);
+        if ( $session->getVar( "userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN ) && $session->getVar( "userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN ) !== false ) {
+            return $session->getVar( "userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN );
         } else {
-            if ($this->valdidateOAuth($this->getUserOAuthTokens($userFUID, false))) {
-                $session->setVar('userIsOAuth_' . $userFUID, true);
+            if ( $this->valdidateOAuth( $this->getUserOAuthTokens( $userFUID, false ) ) ) {
+                $session->setVar( 'userIsOAuth_' . $userFUID, true );
 
                 return true;
             } else {
@@ -598,9 +569,8 @@ class Core
      *
      * @return bool
      */
-    public function valdidateOAuth($userArray)
-    {
-        if ($userArray['tkn_access'] == "" || $userArray['tkn_refresh'] == "" || $userArray['tkn_expires'] == "") {
+    public function valdidateOAuth( $userArray ) {
+        if ( $userArray[ 'tkn_access' ] == "" || $userArray[ 'tkn_refresh' ] == "" || $userArray[ 'tkn_expires' ] == "" ) {
             return false;
         } else {
             return true;
@@ -609,21 +579,20 @@ class Core
 
     /**
      * @param string $userFUID Fitbit user ID
-     * @param bool $validate
+     * @param bool   $validate
      *
      * @return array|bool
      */
-    public function getUserOAuthTokens($userFUID, $validate = true)
-    {
-        $userArray = $this->getDatabase()->get($this->getSetting("db_prefix", null, false) . "users", [
+    public function getUserOAuthTokens( $userFUID, $validate = true ) {
+        $userArray = $this->getDatabase()->get( $this->getSetting( "db_prefix", null, false ) . "users", [
             'tkn_access',
             'tkn_refresh',
             'tkn_expires'
-        ], ["fuid" => $userFUID]);
-        if (is_array($userArray)) {
-            if ($validate && $this->valdidateOAuth($userArray)) {
+        ], [ "fuid" => $userFUID ] );
+        if ( is_array( $userArray ) ) {
+            if ( $validate && $this->valdidateOAuth( $userArray ) ) {
                 return $userArray;
-            } else if (!$validate) {
+            } else if ( ! $validate ) {
                 return $userArray;
             }
         }

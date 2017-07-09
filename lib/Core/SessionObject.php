@@ -1,9 +1,7 @@
 <?php
 /*******************************************************************************
  * This file is part of NxFIFTEEN Fitness Core.
- *
  * Copyright (c) 2017. Stuart McCulloch Anderson
- *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
@@ -20,7 +18,7 @@
 
 namespace Core;
 
-require_once(dirname(__FILE__) . "/../autoloader.php");
+require_once( dirname( __FILE__ ) . "/../autoloader.php" );
 
 /**
  * Session helper class
@@ -33,10 +31,10 @@ require_once(dirname(__FILE__) . "/../autoloader.php");
  * @link      https://nxfifteen.me.uk NxFIFTEEN
  * @copyright 2017 Stuart McCulloch Anderson
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
- *
  * @SuppressWarnings(PHPMD.Superglobals)
  */
 class SessionObject {
+
     public $vars;
 
     /**
@@ -48,13 +46,13 @@ class SessionObject {
 
     /**
      * @param string $variableName
-     * @param int  $filter
-     * @param null $options
+     * @param int    $filter
+     * @param null   $options
      *
      * @return mixed
      */
     public function getVar( $variableName, $filter = FILTER_DEFAULT, $options = null ) {
-        return filter_var($this->vars[$variableName], $filter, $options);
+        return filter_var( $this->vars[ $variableName ], $filter, $options );
     }
 
     /**
@@ -62,6 +60,6 @@ class SessionObject {
      * @param $variableValue
      */
     public function setVar( $variableName, $variableValue ) {
-        $this->vars[$variableName] = $variableValue;
+        $this->vars[ $variableName ] = $variableValue;
     }
 }
