@@ -45,17 +45,17 @@ class Gaming extends Delivery
      *
      * @param array $key Setting to query
      * @param array $default Default value to return
-     * @param bool $query_db Boolean to search database or not
+     * @param bool $rawQueryBb Boolean to search database or not
      *
      * @return array Setting value, or default as per defined
      */
-    private function get($key, $default = null, $query_db = true)
+    private function get($key, $default = null, $rawQueryBb = true)
     {
-        if ($query_db && $this->getAppClass()->getDatabase()->has($this->dbPrefix . "blancing", $key)) {
+        if ($rawQueryBb && $this->getAppClass()->getDatabase()->has($this->dbPrefix . "blancing", $key)) {
             $dbResults = $this->getAppClass()->getDatabase()->get($this->dbPrefix . "blancing", ['xp', 'mana', 'health'], $key);
             return $dbResults;
         } else {
-            if ($query_db && !is_null($default)) {
+            if ($rawQueryBb && !is_null($default)) {
                 $this->set($key, $default);
             }
 
