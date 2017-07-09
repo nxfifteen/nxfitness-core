@@ -53,30 +53,30 @@ class UserAnalytics
      * @codeCoverageIgnore
      *
      * @param int $trackingId Id site to be tracked
-     * @param string $api_url "http://example.org/piwik/" or "http://piwik.example.org/"
+     * @param string $apiUrl "http://example.org/piwik/" or "http://piwik.example.org/"
      *                           If set, will overwrite PiwikTracker::$URL
-     * @param null $server_name
-     * @param null $request_uri
+     * @param null $serverName
+     * @param null $requestUrl
      */
-    public function __construct($trackingId, $api_url, $server_name = null, $request_uri = null)
+    public function __construct($trackingId, $apiUrl, $serverName = null, $requestUrl = null)
     {
-        if (is_null($server_name)) {
-            $server_name = $_SERVER['SERVER_NAME'];
+        if (is_null($serverName)) {
+            $serverName = $_SERVER['SERVER_NAME'];
         }
-        if (is_null($request_uri)) {
-            $request_uri = $_SERVER['REQUEST_URI'];
+        if (is_null($requestUrl)) {
+            $requestUrl = $_SERVER['REQUEST_URI'];
         }
 
         $this->setSiteId($trackingId);
 
-        $this->PiwikTracker = new \PiwikTracker($this->getSiteId(), $api_url);
+        $this->PiwikTracker = new \PiwikTracker($this->getSiteId(), $apiUrl);
 
         if (array_key_exists("HTTPS", $_SERVER) && $_SERVER["HTTPS"] == "on") {
             $protocol = "https://";
         } else {
             $protocol = "http://";
         }
-        $this->PiwikTracker->setUrl($protocol . $server_name . $request_uri);
+        $this->PiwikTracker->setUrl($protocol . $serverName . $requestUrl);
 
         //Sets the Browser language.
         if (array_key_exists("HTTP_ACCEPT_LANGUAGE", $_SERVER)) {
