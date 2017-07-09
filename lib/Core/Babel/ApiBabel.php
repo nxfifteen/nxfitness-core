@@ -49,6 +49,7 @@ define( "FITBIT_COM", "https://api.fitbit.com" );
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ElseExpression)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ApiBabel {
 
