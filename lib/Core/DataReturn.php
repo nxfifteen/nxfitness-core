@@ -1223,157 +1223,25 @@ class DataReturn {
         return [ 'sole' => true, 'return' => [ 'success' => 1, 'result' => $calenderEvents[ 'events' ] ] ];
     }
 
-    /* @noinspection PhpUnusedPrivateMethodInspection */
-    /**
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
-     */
-    private function returnUserRecordConky() {
-        $dbSteps = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix", null,
-                false ) . "steps",
-            [ 'distance', 'floors', 'steps' ],
-            $this->dbWhere() );
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
-            "METHOD" => __METHOD__,
-            "LINE"   => __LINE__
-        ] );
-
-        if ( count( $dbSteps ) > 0 ) {
-            $dbGoals = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix",
-                    null, false ) . "steps_goals",
-                [ 'distance', 'floors', 'steps' ],
-                $this->dbWhere() );
-            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
-                "METHOD" => __METHOD__,
-                "LINE"   => __LINE__
-            ] );
-            if ( count( $dbGoals ) == 0 ) {
-                // If todays goals are missing download the most recent goals
-                $dbGoals = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix",
-                        null, false ) . "steps_goals",
-                    [ 'distance', 'floors', 'steps' ],
-                    [ "user" => $this->getUserID(), "ORDER" => [ "date" => "DESC" ] ] );
-                $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
-                    [
-                        "METHOD" => __METHOD__,
-                        "LINE"   => __LINE__
-                    ] );
-            }
-
-            $dbActiveMinutes = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix",
-                    null, false ) . "activity",
-                [
-                    'target',
-                    'fairlyactive',
-                    'veryactive'
-                ],
-                [
-                    "AND"   => [
-                        "user" => $this->getUserID(),
-                        "date" => date( "Y-m-d" )
-                    ],
-                    "ORDER" => [ "date" => "ASC" ]
-                ] );
-            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
-                "METHOD" => __METHOD__,
-                "LINE"   => __LINE__
-            ] );
-
-            $dbActiveMinutes            = array_pop( $dbActiveMinutes );
-            $dbGoals[ 0 ][ 'activity' ] = (String)round( $dbActiveMinutes[ 'target' ], 2 );
-            $dbActiveMinutes            = $dbActiveMinutes[ 'fairlyactive' ] + $dbActiveMinutes[ 'veryactive' ];
-
-            $dbSteps[ 0 ][ 'activity' ] = $dbActiveMinutes;
-
-            $dbSteps[ 0 ][ 'activity_p' ] = ( $dbActiveMinutes / $dbGoals[ 0 ][ 'activity' ] ) * 100;
-            $dbSteps[ 0 ][ 'steps_p' ]    = ( $dbSteps[ 0 ][ 'steps' ] / $dbGoals[ 0 ][ 'steps' ] ) * 100;
-            $dbSteps[ 0 ][ 'floors_p' ]   = ( $dbSteps[ 0 ][ 'floors' ] / $dbGoals[ 0 ][ 'floors' ] ) * 100;
-            $dbSteps[ 0 ][ 'distance_p' ] = ( $dbSteps[ 0 ][ 'distance' ] / $dbGoals[ 0 ][ 'distance' ] ) * 100;
-
-            if ( $dbSteps[ 0 ][ 'activity_p' ] > 100 ) {
-                $dbSteps[ 0 ][ 'activity_p' ] = 100;
-            }
-            if ( $dbSteps[ 0 ][ 'steps_p' ] > 100 ) {
-                $dbSteps[ 0 ][ 'steps_p' ] = 100;
-            }
-            if ( $dbSteps[ 0 ][ 'floors_p' ] > 100 ) {
-                $dbSteps[ 0 ][ 'floors_p' ] = 100;
-            }
-            if ( $dbSteps[ 0 ][ 'distance_p' ] > 100 ) {
-                $dbSteps[ 0 ][ 'distance_p' ] = 100;
-            }
-
-            $dbSteps[ 0 ][ 'distance' ] = (String)round( $dbSteps[ 0 ][ 'distance' ], 2 );
-            $dbGoals[ 0 ][ 'distance' ] = (String)round( $dbGoals[ 0 ][ 'distance' ], 2 );
-
-            $challange = $this->returnUserRecordPush();
-            $challange = [
-                "active"     => $challange[ 'pushActive' ],
-                "startDateF" => $challange[ 'next' ][ 'startDateF' ],
-                "endDateF"   => $challange[ 'next' ][ 'endDateF' ],
-                "activity"   => ( $challange[ 'current' ][ 'active' ] / $challange[ 'current' ][ 'active_g' ] ) * 100,
-                "distance"   => ( $challange[ 'current' ][ 'distance' ] / $challange[ 'current' ][ 'distance_g' ] ) * 100,
-                "steps"      => ( $challange[ 'current' ][ 'steps' ] / $challange[ 'current' ][ 'steps_g' ] ) * 100
-            ];
-
-            if ( $challange[ 'activity' ] > 100 ) {
-                $challange[ 'activity' ] = 100;
-            }
-            if ( $challange[ 'distance' ] > 100 ) {
-                $challange[ 'distance' ] = 100;
-            }
-            if ( $challange[ 'steps' ] > 100 ) {
-                $challange[ 'steps' ] = 100;
-            }
-
-            $journeys = $this->returnUserRecordJourneysState();
-            $journeys = array_pop( $journeys );
-            $journeys = [
-                "name"  => $journeys[ 'name' ],
-                "blurb" => $journeys[ 'blurb' ],
-            ];
-
-            if ( ! is_null( $this->getTracking() ) ) {
-                $this->getTracking()->track( "JSON Get", $this->getUserID(), "Steps" );
-                $this->getTracking()->track( "JSON Goal", $this->getUserID(), "Steps" );
-            }
-
-            return [
-                'recorded'  => $dbSteps[ 0 ],
-                'goal'      => $dbGoals[ 0 ],
-                'challange' => $challange,
-                'journeys'  => $journeys
-            ];
-        } else {
-            return [ "error" => "true", "code" => 104, "msg" => "No results for given date" ];
-        }
-    }
-
     /**
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     private function returnUserRecordJourneysState() {
-        if ( $this->getAppClass()->getDatabase()->has( $this->getAppClass()->getSetting( "db_prefix", null,
-                false ) . "journeys_travellers", [ "fuid" => $this->getUserID() ] )
+        $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+        if ( $this->getAppClass()->getDatabase()->has( $dbPrefix . "journeys_travellers", [ "fuid" => $this->getUserID() ] )
         ) {
-            $dbJourneys = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix",
-                    null, false ) . "journeys_travellers", [
-                "[>]" . $this->getAppClass()->getSetting( "db_prefix", null,
-                    false ) . "journeys" => [ "jid" => "jid" ]
+            $dbJourneys = $this->getAppClass()->getDatabase()->select( $dbPrefix . "journeys_travellers", [
+                "[>]" . $dbPrefix . "journeys" => [ "jid" => "jid" ]
             ],
                 [
-                    $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys.jid',
-                    $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys.name',
-                    $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys.blurb',
-                    $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys_travellers.start_date',
+                    $dbPrefix . 'journeys.jid',
+                    $dbPrefix . 'journeys.name',
+                    $dbPrefix . 'journeys.blurb',
+                    $dbPrefix . 'journeys_travellers.start_date',
                 ], [
-                    $this->getAppClass()->getSetting( "db_prefix", null,
-                        false ) . "journeys_travellers.fuid" => $this->getUserID()
+                    $dbPrefix . "journeys_travellers.fuid" => $this->getUserID()
                 ] );
             $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
                 "METHOD" => __METHOD__,
@@ -1384,22 +1252,17 @@ class DataReturn {
             foreach ( $dbJourneys as $dbJourney ) {
                 $milesTravelled = $this->getUserMilesSince( $dbJourney[ 'start_date' ] );
 
-                $dbLegs = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix",
-                        null, false ) . "journeys_legs", [
-                    "[>]" . $this->getAppClass()->getSetting( "db_prefix", null,
-                        false ) . "journeys" => [ "jid" => "jid" ]
+                $dbLegs = $this->getAppClass()->getDatabase()->select( $dbPrefix . "journeys_legs", [
+                    "[>]" . $dbPrefix . "journeys" => [ "jid" => "jid" ]
                 ],
                     [
-                        $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys_legs.lid',
-                        $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys_legs.name',
+                        $dbPrefix . 'journeys_legs.lid',
+                        $dbPrefix . 'journeys_legs.name',
                     ], [
                         "AND" => [
-                            $this->getAppClass()->getSetting( "db_prefix", null,
-                                false ) . "journeys.jid"                 => $dbJourney[ 'jid' ],
-                            $this->getAppClass()->getSetting( "db_prefix", null,
-                                false ) . "journeys_legs.start_mile[<=]" => $milesTravelled,
-                            $this->getAppClass()->getSetting( "db_prefix", null,
-                                false ) . "journeys_legs.end_mile[>=]"   => $milesTravelled
+                            $dbPrefix . "journeys.jid"                 => $dbJourney[ 'jid' ],
+                            $dbPrefix . "journeys_legs.start_mile[<=]" => $milesTravelled,
+                            $dbPrefix . "journeys_legs.end_mile[>=]"   => $milesTravelled
                         ]
                     ] );
                 $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
@@ -1411,29 +1274,22 @@ class DataReturn {
                 $legs = [];
                 foreach ( $dbLegs as $dbLeg ) {
                     // Get all narative items the user has completed
-                    $dbNarratives = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix",
-                            null, false ) . "journeys_narrative", [
-                        "[>]" . $this->getAppClass()->getSetting( "db_prefix", null,
-                            false ) . "journeys_legs" => [ "lid" => "lid" ]
+                    $dbNarratives = $this->getAppClass()->getDatabase()->select( $dbPrefix . "journeys_narrative", [
+                        "[>]" . $dbPrefix . "journeys_legs" => [ "lid" => "lid" ]
                     ],
                         [
-                            $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys_narrative.nid',
-                            $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys_narrative.miles',
-                            $this->getAppClass()->getSetting( "db_prefix", null,
-                                false ) . 'journeys_narrative.subtitle',
-                            $this->getAppClass()->getSetting( "db_prefix", null,
-                                false ) . 'journeys_narrative.narrative',
+                            $dbPrefix . 'journeys_narrative.nid',
+                            $dbPrefix . 'journeys_narrative.miles',
+                            $dbPrefix . 'journeys_narrative.subtitle',
+                            $dbPrefix . 'journeys_narrative.narrative',
                         ], [
                             "AND"   => [
-                                $this->getAppClass()->getSetting( "db_prefix", null,
-                                    false ) . "journeys_narrative.lid"       => $dbLeg[ 'lid' ],
-                                $this->getAppClass()->getSetting( "db_prefix", null,
-                                    false ) . "journeys_narrative.miles[<=]" => $milesTravelled
+                                $dbPrefix . "journeys_narrative.lid"       => $dbLeg[ 'lid' ],
+                                $dbPrefix . "journeys_narrative.miles[<=]" => $milesTravelled
                             ],
                             "LIMIT" => 1,
                             "ORDER" => [
-                                $this->getAppClass()->getSetting( "db_prefix", null,
-                                    false ) . "journeys_narrative.miles" => "DESC"
+                                $dbPrefix . "journeys_narrative.miles" => "DESC"
                             ]
                         ] );
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
@@ -1463,29 +1319,22 @@ class DataReturn {
                         $legs[ 'last' ] = $narrativeArray;
                     }
 
-                    $dbNarrativeNext = $this->getAppClass()->getDatabase()->select( $this->getAppClass()->getSetting( "db_prefix",
-                            null, false ) . "journeys_narrative", [
-                        "[>]" . $this->getAppClass()->getSetting( "db_prefix", null,
-                            false ) . "journeys_legs" => [ "lid" => "lid" ]
+                    $dbNarrativeNext = $this->getAppClass()->getDatabase()->select( $dbPrefix . "journeys_narrative", [
+                        "[>]" . $dbPrefix . "journeys_legs" => [ "lid" => "lid" ]
                     ],
                         [
-                            $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys_narrative.nid',
-                            $this->getAppClass()->getSetting( "db_prefix", null, false ) . 'journeys_narrative.miles',
-                            $this->getAppClass()->getSetting( "db_prefix", null,
-                                false ) . 'journeys_narrative.subtitle',
-                            $this->getAppClass()->getSetting( "db_prefix", null,
-                                false ) . 'journeys_narrative.narrative',
+                            $dbPrefix . 'journeys_narrative.nid',
+                            $dbPrefix . 'journeys_narrative.miles',
+                            $dbPrefix . 'journeys_narrative.subtitle',
+                            $dbPrefix . 'journeys_narrative.narrative',
                         ], [
                             "AND"   => [
-                                $this->getAppClass()->getSetting( "db_prefix", null,
-                                    false ) . "journeys_narrative.lid"       => $dbLeg[ 'lid' ],
-                                $this->getAppClass()->getSetting( "db_prefix", null,
-                                    false ) . "journeys_narrative.miles[>=]" => $milesTravelled
+                                $dbPrefix . "journeys_narrative.lid"       => $dbLeg[ 'lid' ],
+                                $dbPrefix . "journeys_narrative.miles[>=]" => $milesTravelled
                             ],
                             "LIMIT" => 1,
                             "ORDER" => [
-                                $this->getAppClass()->getSetting( "db_prefix", null,
-                                    false ) . "journeys_narrative.miles" => "ASC"
+                                $dbPrefix . "journeys_narrative.miles" => "ASC"
                             ]
                         ] );
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
@@ -3031,8 +2880,7 @@ class DataReturn {
                                 false ) . 'journeys_narrative.narrative',
                         ], [
                             "AND" => [
-                                $this->getAppClass()->getSetting( "db_prefix", null,
-                                    false ) . "journeys_narrative.lid" => $dbLeg[ 'lid' ]
+                                $dbPrefix . "journeys_narrative.lid" => $dbLeg[ 'lid' ]
                             ]
                         ] );
                     $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(),
