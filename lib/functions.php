@@ -62,11 +62,15 @@ if (!function_exists("nxr")) {
     }
 }
 
+/**
+ * @SuppressWarnings(PHPMD.Superglobals)
+ */
 if (!function_exists("nxr_destroy_session")) {
+
     function nxr_destroy_session()
     {
         // Unset all of the session variables.
-        $_SESSION = [];
+        unset($_SESSION);
 
         // If it's desired to kill the session, also delete the session cookie.
         // Note: This will destroy the session, and not just the session data!
