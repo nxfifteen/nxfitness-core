@@ -30,6 +30,7 @@ use Medoo\Medoo;
  * Class NxFitAdmin
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ElseExpression)
+ * @SuppressWarnings(PHPMD.Superglobals)
  */
 class NxFitAdmin {
 
@@ -184,12 +185,12 @@ class NxFitAdmin {
             $timeFirstSeen = strtotime($this->getUserProfile()['seen'] . ' 00:00:00');
 
             $totalProgress = 0;
-            $allowed_triggers = [];
+            $allowedTriggers = [];
             foreach (array_keys($this->getNxFit()->supportedApi()) as $key) {
                 if ($this->getApiSetting('scope_' . $key) && $this->getNxFit()->getUserSetting($_COOKIE['_nx_fb_usr'],
                         'scope_' . $key) && $key != "all"
                 ) {
-                    $allowed_triggers[$key]['name'] = $this->getNxFit()->supportedApi($key);
+                    $allowedTriggers[$key]['name'] = $this->getNxFit()->supportedApi($key);
 
                     /** @var \DateTime $oldestScope */
                     $oldestScope = $this->getOldestScope($key);
@@ -205,13 +206,13 @@ class NxFitAdmin {
                         $precentageCompleted = 100;
                     }
 
-                    $allowed_triggers[$key]['precentage'] = $precentageCompleted;
+                    $allowedTriggers[$key]['precentage'] = $precentageCompleted;
                     $totalProgress += $precentageCompleted;
                 }
             }
 
-            $_SESSION['SyncProgressScopes'] = $allowed_triggers;
-            $_SESSION['SyncProgress'] = round(($totalProgress / (100 * count($allowed_triggers))) * 100, 1);
+            $_SESSION['SyncProgressScopes'] = $allowedTriggers;
+            $_SESSION['SyncProgress'] = round(($totalProgress / (100 * count($allowedTriggers))) * 100, 1);
 
         }
 

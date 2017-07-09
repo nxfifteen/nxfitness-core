@@ -46,6 +46,7 @@ error_reporting( E_ALL );
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ElseExpression)
+ * @SuppressWarnings(PHPMD.Superglobals)
  */
 class Core {
 
