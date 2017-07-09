@@ -23,7 +23,6 @@ require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
 
 use Core\Config;
 use Core\Core;
-use Core\SessionObject;
 use DateTime;
 use Medoo\Medoo;
 
@@ -68,16 +67,14 @@ class NxFitAdmin {
      * Create the admin UX class, parent class to Code with additonal UX methods
      */
     public function __construct() {
-        $sessionObject = new SessionObject();
-        $adminConfig   = $sessionObject->getVar( 'admin_config', FILTER_UNSAFE_RAW );
-
-        if ( $adminConfig && is_array( $adminConfig ) && count( $adminConfig ) > 0
+        if (isset($_SESSION) && array_key_exists("admin_config",
+                $_SESSION) && is_array($_SESSION['admin_config']) && count($_SESSION['admin_config']) > 0
         ) {
-            $this->setConfig( $adminConfig );
+            $this->setConfig($_SESSION['admin_config']);
         } else {
-            if ( isset( $config ) ) {
-                $sessionObject->setVar( 'admin_config', $config );
-                $this->setConfig( $config );
+            if (isset($config)) {
+                $_SESSION['admin_config'] = $config;
+                $this->setConfig($_SESSION['admin_config']);
             }
         }
 
@@ -95,18 +92,21 @@ class NxFitAdmin {
         $this->getApiSettingClass()->setDatabase( $this->getDatabase() );
 
         if ( ! filter_input( INPUT_COOKIE, '_nx_fb_usr', FILTER_SANITIZE_STRING ) || ! filter_input( INPUT_COOKIE, '_nx_fb_key', FILTER_SANITIZE_STRING ) ) {
+            //nxr(0, "DEBUG(204):" . __LINE__);
             header( "Location: " . $this->getConfig( 'url' ) . $this->getConfig( '/admin' ) . "/login" );
         } else if ( filter_input( INPUT_COOKIE, '_nx_fb_key', FILTER_SANITIZE_STRING ) != hash( "sha256",
                 $this->getApiSetting( "salt" ) .
                 filter_input( INPUT_COOKIE, '_nx_fb_usr', FILTER_SANITIZE_STRING ) .
                 filter_input( INPUT_SERVER, 'SERVER_NAME', FILTER_SANITIZE_STRING ) .
                 filter_input( INPUT_SERVER, 'SERVER_ADDR', FILTER_SANITIZE_STRING ) .
-                filter_input( INPUT_SERVER, 'SERVER_ADDR', FILTER_SANITIZE_STRING )
+                filter_input( INPUT_SERVER, 'REMOTE_ADDR', FILTER_SANITIZE_STRING )
             )
         ) {
+            //nxr(0, "DEBUG(204):" . __LINE__);
             header( "Location: " . $this->getConfig( 'url' ) . $this->getConfig( '/admin' ) . "/login" );
         }
 
+        //nxr(0, "DEBUG(204):" . __LINE__);
         $this->setActiveUser( filter_input( INPUT_COOKIE, '_nx_fb_usr', FILTER_SANITIZE_STRING ) );
 
     }
@@ -176,46 +176,47 @@ class NxFitAdmin {
      * @return float
      */
     public function getSyncStatus() {
-        $sessionObject      = new SessionObject();
-        $syncProgress       = $sessionObject->getVar( 'SyncProgress', FILTER_VALIDATE_INT );
-        $syncProgressScopes = $sessionObject->getVar( 'SyncProgressScopes', FILTER_UNSAFE_RAW );
+        if (!array_key_exists("SyncProgress",
+                $_SESSION) || !is_numeric($_SESSION['SyncProgress']) || $_SESSION['SyncProgress'] < 0 || $_SESSION['SyncProgress'] > 100 ||
+            !array_key_exists("SyncProgressScopes", $_SESSION) || !is_array($_SESSION['SyncProgressScopes'])
+        ) {
+            $timeToday = strtotime(date("Y-m-d H:i:s"));
+            $timeFirstSeen = strtotime($this->getUserProfile()['seen'] . ' 00:00:00');
 
-        if ( ! $syncProgress || $syncProgress < 0 || $syncProgress > 100 || ! $syncProgressScopes || ! is_array( $syncProgressScopes ) ) {
-            $timeToday     = strtotime( date( "Y-m-d H:i:s" ) );
-            $timeFirstSeen = strtotime( $this->getUserProfile()[ 'seen' ] . ' 00:00:00' );
-
-            $totalProgress   = 0;
-            $allowedTriggers = [];
-            foreach ( array_keys( $this->getNxFit()->supportedApi() ) as $key ) {
-                if ( $this->getApiSetting( 'scope_' . $key ) && $this->getNxFit()->getUserSetting( filter_input( INPUT_COOKIE, '_nx_fb_usr', FILTER_SANITIZE_STRING ),
-                        'scope_' . $key ) && $key != "all"
+            $totalProgress = 0;
+            $allowed_triggers = [];
+            foreach ($this->getNxFit()->supportedApi() as $key => $name) {
+                if ($this->getApiSetting('scope_' . $key) && $this->getNxFit()->getUserSetting($_COOKIE['_nx_fb_usr'],
+                        'scope_' . $key) && $key != "all"
                 ) {
-                    $allowedTriggers[ $key ][ 'name' ] = $this->getNxFit()->supportedApi( $key );
+                    $allowed_triggers[$key]['name'] = $this->getNxFit()->supportedApi($key);
 
                     /** @var \DateTime $oldestScope */
-                    $oldestScope = $this->getOldestScope( $key );
-                    $timeLastRun = strtotime( $oldestScope->format( "Y-m-d H:i:s" ) );
+                    $oldestScope = $this->getOldestScope($key);
+                    $timeLastRun = strtotime($oldestScope->format("Y-m-d H:i:s"));
 
-                    $differenceLastRun   = $timeLastRun - $timeToday;
+                    $differenceLastRun = $timeLastRun - $timeToday;
                     $differenceFirstSeen = $timeFirstSeen - $timeToday;
-                    $precentageCompleted = round( ( 100 - ( $differenceLastRun / $differenceFirstSeen ) * 100 ), 1 );
-                    if ( $precentageCompleted < 0 ) {
+                    $precentageCompleted = round((100 - ($differenceLastRun / $differenceFirstSeen) * 100), 1);
+                    if ($precentageCompleted < 0) {
                         $precentageCompleted = 0;
                     }
-                    if ( $precentageCompleted > 100 ) {
+                    if ($precentageCompleted > 100) {
                         $precentageCompleted = 100;
                     }
 
-                    $allowedTriggers[ $key ][ 'precentage' ] = $precentageCompleted;
-                    $totalProgress                           += $precentageCompleted;
+                    $allowed_triggers[$key]['precentage'] = $precentageCompleted;
+                    $totalProgress += $precentageCompleted;
                 }
             }
 
-            $sessionObject->setVar( 'SyncProgressScopes', $allowedTriggers );
-            $sessionObject->setVar( 'SyncProgress', round( ( $totalProgress / ( 100 * count( $allowedTriggers ) ) ) * 100, 1 ) );
+            $_SESSION['SyncProgressScopes'] = $allowed_triggers;
+            $_SESSION['SyncProgress'] = round(($totalProgress / (100 * count($allowed_triggers))) * 100, 1);
+
         }
 
-        return $sessionObject->getVar( 'SyncProgress', FILTER_VALIDATE_INT );
+        return $_SESSION['SyncProgress'];
+
     }
 
     /**

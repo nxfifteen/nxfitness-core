@@ -58,15 +58,15 @@ class Config {
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __construct() {
-        $sessionCoreConfig = filter_input( INPUT_SERVER, 'core_config', FILTER_UNSAFE_RAW );
-
-        if ( $sessionCoreConfig && count( $sessionCoreConfig ) > 0 ) {
-            $this->settings = $sessionCoreConfig;
+        if (isset($_SESSION) && is_array($_SESSION) && array_key_exists("core_config",
+                $_SESSION) && count($_SESSION['core_config']) > 0
+        ) {
+            $this->settings = $_SESSION['core_config'];
         } else {
-            require_once( dirname( __FILE__ ) . "/../../config/config.dist.php" );
-            if ( isset( $config ) ) {
-                $_SESSION[ 'core_config' ] = $config;
-                $this->settings            = $_SESSION[ 'core_config' ];
+            require_once(dirname(__FILE__) . "/../../config/config.dist.php");
+            if (isset($config)) {
+                $_SESSION['core_config'] = $config;
+                $this->settings = $_SESSION['core_config'];
             }
         }
     }

@@ -42,6 +42,7 @@ class SessionObject {
      */
     public function __construct() {
         $this->vars = &$_SESSION; //this will still trigger a phpmd warning
+        //nxr(0, $this->vars);
     }
 
     /**

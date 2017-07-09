@@ -30,7 +30,6 @@ header('Cache-Control: post-check=0, pre-check=0', false);
 header('Pragma: no-cache');
 
 $fitbitApp = new Core();
-
 if (array_key_exists("fuid", $_POST)) {
     $valid = $fitbitApp->isUserValid($_POST['fuid'],
         hash("sha256", $fitbitApp->getSetting("salt") . $_POST['password']));
@@ -44,7 +43,7 @@ if (array_key_exists("fuid", $_POST)) {
         $fitbitApp->getDatabase()->update($fitbitApp->getSetting("db_prefix", null, false) . "users", $newUserArray,
             ['fuid' => $_POST['fuid']]);
 
-        nxr(0, "DEBUG(205):" . __LINE__);
+        //nxr(0, "DEBUG(205):" . __LINE__);
         setcookie('_nx_fb_usr', $_POST['fuid'], false, '/', $_SERVER['SERVER_NAME']);
         setcookie('_nx_fb_key', gen_cookie_hash($fitbitApp, $_POST['fuid']), false, '/', $_SERVER['SERVER_NAME']);
 
@@ -57,13 +56,13 @@ if (array_key_exists("fuid", $_POST)) {
         if ($valid != -1 and is_string($valid)) {
             if (isset($_POST['remember'])) {
                 /* Set cookie to last 1 year */
-                nxr(0, "DEBUG(205):" . __LINE__);
+                //nxr(0, "DEBUG(205):" . __LINE__);
                 setcookie('_nx_fb_usr', $valid, time() + 60 * 60 * 24 * 365, '/', $_SERVER['SERVER_NAME']);
                 setcookie('_nx_fb_key', gen_cookie_hash($fitbitApp, $valid), time() + 60 * 60 * 24 * 365, '/',
                     $_SERVER['SERVER_NAME']);
             } else {
                 /* Cookie expires when browser closes */
-                nxr(0, "DEBUG(205):" . __LINE__);
+                //nxr(0, "DEBUG(205):" . __LINE__);
                 setcookie('_nx_fb_usr', $valid, false, '/', $_SERVER['SERVER_NAME']);
                 setcookie('_nx_fb_key', gen_cookie_hash($fitbitApp, $valid), false, '/', $_SERVER['SERVER_NAME']);
             }

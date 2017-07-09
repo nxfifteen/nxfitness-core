@@ -72,15 +72,16 @@ class Core {
     public function __construct() {
         $this->setSettings( new Config() );
 
-        $this->setDatabase( new medoo( [
+        $newMedoClass = new medoo( [
             'database_type' => 'mysql',
             'database_name' => $this->getSetting( "db_name" ),
             'server'        => $this->getSetting( "db_server" ),
             'username'      => $this->getSetting( "db_username" ),
             'password'      => $this->getSetting( "db_password" ),
             'charset'       => 'utf8'
-        ] ) );
+        ] );
 
+        $this->setDatabase( $newMedoClass );
         $this->getSettings()->setDatabase( $this->getDatabase() );
 
         $installedVersion = $this->getSetting( "version", "0.0.0.1", true );
@@ -556,12 +557,13 @@ class Core {
      * @return bool
      */
     public function isUserOAuthAuthorised( $userFUID ) {
-        $session = new SessionObject();
-        if ( $session->getVar( "userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN ) && $session->getVar( "userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN ) !== false ) {
-            return $session->getVar( "userIsOAuth_" . $userFUID, FILTER_VALIDATE_BOOLEAN );
+        if (array_key_exists("userIsOAuth_" . $userFUID,
+                $_SESSION) && is_bool($_SESSION['userIsOAuth_' . $userFUID]) && $_SESSION['userIsOAuth_' . $userFUID] !== false
+        ) {
+            return $_SESSION['userIsOAuth_' . $userFUID];
         } else {
-            if ( $this->valdidateOAuth( $this->getUserOAuthTokens( $userFUID, false ) ) ) {
-                $session->setVar( 'userIsOAuth_' . $userFUID, true );
+            if ($this->valdidateOAuth($this->getUserOAuthTokens($userFUID, false))) {
+                $_SESSION['userIsOAuth_' . $userFUID] = true;
 
                 return true;
             } else {

@@ -44,6 +44,7 @@ if (!array_key_exists("timeout", $_SESSION) || !is_numeric($_SESSION['timeout'])
     $_SESSION['timeout'] = time() + 60 * 5;
 } else if ($_SESSION['timeout'] < time()) {
     nxr_destroy_session();
+    //nxr(0, "DEBUG(206):" . __LINE__);
     header("Location: ./");
 }
 
@@ -63,10 +64,9 @@ if (is_array($_GET) && array_key_exists("err", $_GET)) {
     }
     nxr_destroy_session();
     header("Location: ./views/pages/500.html");
-} else if (array_key_exists("REDIRECT_URL",
-        $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/login"
-) {
+} else if (array_key_exists("REDIRECT_URL", $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/login") {
 
+    //nxr(0, "DEBUG(206):" . __LINE__);
     header("Location: ./views/pages/login.php");
 } else if (array_key_exists("REDIRECT_URL",
         $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/refresh"
@@ -78,6 +78,7 @@ if (is_array($_GET) && array_key_exists("err", $_GET)) {
         $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/login/redirect"
 ) {
 
+    //nxr(0, "DEBUG(206):" . __LINE__);
     require_once("_class/UserLogin.php");
 } else if (array_key_exists("REDIRECT_URL",
         $_SERVER) && $_SERVER['REDIRECT_URL'] == $_SESSION['admin_config']['/admin'] . "/views/pages/register"
@@ -95,12 +96,15 @@ if (is_array($_GET) && array_key_exists("err", $_GET)) {
 
     nxr_destroy_session();
 
+    //nxr(0, "DEBUG(206):" . __LINE__);
     header("Location: " . $path . '/views/pages/login.php');
 } else if (!is_array($_COOKIE) || !array_key_exists("_nx_fb_usr", $_COOKIE)) {
 
+    //nxr(0, "DEBUG(206):" . __LINE__);
     header("Location: ./views/pages/login.php");
 } else {
 
+    //nxr(0, "DEBUG(206):" . __LINE__);
     $_SESSION['CORE_PROJECT_ROOT'] = CORE_PROJECT_ROOT;
     $_SESSION['CORE_UX'] = CORE_UX;
     $_SESSION['CORE_ROOT'] = CORE_ROOT;
