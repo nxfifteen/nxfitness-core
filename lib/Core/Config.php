@@ -212,6 +212,11 @@ class Config {
             case "water":
                 $cacheNames = [ 'water', 'tasker' ];
                 break;
+            case "habitica":
+            case "habitica_hatch":
+            case "habitica_avatar":
+                $cacheNames = [ 'xp', 'account' ];
+                break;
             default:
                 nxr( 0, "Unknown cache file for $activityName" );
                 break;
