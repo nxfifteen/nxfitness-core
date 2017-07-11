@@ -350,7 +350,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
 
             if ($data['direction'] == "up") {
                 $icoColour = "bg-success";
-            } else if ($data['type'] == "reward") {
+            } else if ($data['task']['type'] == "reward") {
                 $icoColour = "bg-info";
             } else {
                 $icoColour = "bg-danger";
@@ -375,6 +375,17 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
                 ]
             );
 
+            if ($data['task']['type'] == 'reward') {
+                nxr(0, $data['task']);
+                $fitbitApp->getDatabase()->insert( $db_prefix . "reward_queue", [
+                    "fuid"   => $coreUserId,
+                    "state"  => 'habitica',
+                    "date"  => date("Y-m-d H:i:s", strtotime($data['task']['updatedAt'])),
+                    "rmid"   => null,
+                    "reward" => null,
+                    "rkey"   => $data['task']['text']
+                ] );
+            }
 
         } else {
             nxr( 2, "Not a valid database user" );
