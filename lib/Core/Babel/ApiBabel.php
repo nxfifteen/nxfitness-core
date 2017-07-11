@@ -2550,8 +2550,7 @@ class ApiBabel {
             } else {
                 $currentDate      = new DateTime();
                 $daysSinceReading = ( strtotime( $currentDate->format( "Y-m-d" ) ) - strtotime( $targetDateTime->format( 'Y-m-d' ) ) ) / ( 60 * 60 * 24 );
-                nxr( 3,
-                    "No recorded data for " . $targetDateTime->format( 'Y-m-d' ) . " " . $daysSinceReading . " days ago" );
+                //nxr( 3, "No recorded data for " . $targetDateTime->format( 'Y-m-d' ) . " " . $daysSinceReading . " days ago" );
                 if ( $daysSinceReading > 7 ) {
                     $this->setLastCleanRun( "body", new DateTime ( $targetDate ) );
                 }
@@ -2638,8 +2637,7 @@ class ApiBabel {
             } else {
                 $currentDate      = new DateTime();
                 $daysSinceReading = ( strtotime( $currentDate->format( "Y-m-d" ) ) - strtotime( $targetDateTime->format( 'Y-m-d' ) ) ) / ( 60 * 60 * 24 );
-                nxr( 3,
-                    "No recorded data for " . $targetDateTime->format( 'Y-m-d' ) . " " . $daysSinceReading . " days ago" );
+                //nxr( 3,"No recorded data for " . $targetDateTime->format( 'Y-m-d' ) . " " . $daysSinceReading . " days ago" );
                 if ( $daysSinceReading > 7 ) {
                     $this->setLastCleanRun( "foods", $targetDateTime );
                 }
@@ -2757,7 +2755,7 @@ class ApiBabel {
                     if ( $steps->value == 0 ) {
                         $currentDate      = new DateTime();
                         $daysSinceReading = ( strtotime( $currentDate->format( "Y-m-d" ) ) - strtotime( $steps->dateTime ) ) / ( 60 * 60 * 24 );
-                        nxr( 4, "No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago" );
+                        //nxr( 4, "No recorded data for " . $steps->dateTime . " " . $daysSinceReading . " days ago" );
                         if ( $daysSinceReading > 180 ) {
                             $this->setLastCleanRun( $trigger, new DateTime ( $steps->dateTime ) );
                         }
