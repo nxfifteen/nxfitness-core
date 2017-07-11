@@ -376,7 +376,6 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
             );
 
             if ($data['task']['type'] == 'reward') {
-                nxr(0, $data['task']);
                 $fitbitApp->getDatabase()->insert( $db_prefix . "reward_queue", [
                     "fuid"   => $coreUserId,
                     "state"  => 'habitica',
