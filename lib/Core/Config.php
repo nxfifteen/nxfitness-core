@@ -216,6 +216,8 @@ class Config {
             case "habitica_hatch":
             case "habitica_avatar":
             case "habitica_feed":
+            case "habitica_rand_mount":
+            case "habitica_rand_pet":
                 $cacheNames = [ 'xp', 'account' ];
                 break;
             default:
