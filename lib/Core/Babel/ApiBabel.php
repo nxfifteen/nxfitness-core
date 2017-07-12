@@ -3495,6 +3495,9 @@ class ApiBabel {
         }
     }
 
+    /**
+     *
+     */
     private function pullCron() {
         $this->getAppClass()->setUserSetting( $this->getActiveUser(), 'cron_last', strtotime('-2 days') );
 
@@ -3514,6 +3517,9 @@ class ApiBabel {
         }
     }
 
+    /**
+     *
+     */
     private function cronHabitica() {
         $isAllowed = $this->isAllowed( "habitica" );
         if ( ! is_numeric( $isAllowed ) ) {
