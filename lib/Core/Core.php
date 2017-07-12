@@ -514,6 +514,7 @@ class Core {
     public function supportedApi( $key = null ) {
         $supportedApis = [
             'all'                  => 'Everything',
+            'cron'                 => 'Cron',
             'floors'               => 'Floors Climed',
             'foods'                => 'Calorie Intake',
             'badges'               => 'Badges',
