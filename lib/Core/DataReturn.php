@@ -2906,13 +2906,13 @@ class DataReturn {
                 }
 
                 $now = time(); // or your date as well
-                $your_date = strtotime($dbJourney[ 'start_date' ]);
-                $datediff = $now - $your_date;
+                $journeyStartDate = strtotime($dbJourney[ 'start_date' ]);
+                $dateDiff = $now - $journeyStartDate;
 
                 $journeys[ $dbJourney[ 'jid' ] ] = [
                     "name"          => $dbJourney[ 'name' ],
                     "start_date"    => $dbJourney[ 'start_date' ],
-                    "days_run"      => floor($datediff / (60 * 60 * 24)),
+                    "days_run"      => floor($dateDiff / (60 * 60 * 24)),
                     "usrMiles"      => number_format( $this->getUserMilesSince( $dbJourney[ 'start_date' ] ), 2 ),
                     "blurb"         => $dbJourney[ 'blurb' ],
                     "legs_names"    => $legsNames,
