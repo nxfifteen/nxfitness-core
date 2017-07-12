@@ -3495,6 +3495,38 @@ class ApiBabel {
         }
     }
 
+    private function pullCron() {
+        $this->getAppClass()->setUserSetting( $this->getActiveUser(), 'cron_last', strtotime('-2 days') );
+
+        $userLastCron = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron_last', strtotime('-1 days') );
+        $userCronTime = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron', '00:00:00' );
+        $userCron = date("Y-m-d " . $userCronTime);
+        if (strtotime($userCron) < $userLastCron) {
+            $userCron = date("Y-m-d " . $userCronTime, strtotime('+1 days'));
+            nxr(2, "Cron has run, your next cron will be $userCron");
+        } else {
+            nxr(2, "Your cron is due $userCron");
+            if ($this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron_habitica', true )) {
+                $this->cronHabitica();
+            }
+
+            $this->getAppClass()->setUserSetting( $this->getActiveUser(), 'cron_last', strtotime('now') );
+        }
+    }
+
+    private function cronHabitica() {
+        $isAllowed = $this->isAllowed( "habitica" );
+        if ( ! is_numeric( $isAllowed ) ) {
+            $userId = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_user_id', null );
+            $apiKey = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_api_key', null );
+            if ( ! is_null( $userId ) && ! is_null( $apiKey ) ) {
+                nxr( 3, "Habitica credentials okay" );
+                $habiticaClass = new Habitica( $this->getAppClass(), $this->getActiveUser() );
+                $habiticaClass->getHabitRPHPG()->_request("post", "cron", []);
+            }
+        }
+    }
+
     /**
      * @param Fitbit $fitbitapi
      */
@@ -3528,8 +3560,6 @@ class ApiBabel {
 
         // Check we have a valid user
         if ( $this->getAppClass()->isUser( $user ) ) {
-            nxr( 1, "Checking $user for minecraft reward support" );
-
             nxr( 2, "Reward system ready" );
             $this->RewardsSystem = new RewardsSystem( $user );
 
@@ -3776,6 +3806,8 @@ class ApiBabel {
                 if ( $trigger == "all" || $trigger == "habitica" ) {
                     $this->pullHabitica();
                 }
+
+                $this->pullCron();
 
             } else {
                 nxr( 0, "User has not yet authenticated with Fitbit" );
