@@ -349,10 +349,13 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
             nxr(1, "New API request: " . $coreUserId);
 
             if ($data['direction'] == "up") {
+                $ico = "fa fa-arrow-up";
                 $icoColour = "bg-success";
             } else if ($data['task']['type'] == "reward") {
+                $ico = "fa fa-shopping-cart";
                 $icoColour = "bg-info";
             } else {
+                $ico = "fa fa-arrow-down";
                 $icoColour = "bg-danger";
             }
 
@@ -367,7 +370,7 @@ if ( $url_namespace == "register" && ! array_key_exists( "_nx_fb_usr", $_COOKIE 
                 [
                     "fuid" => $coreUserId,
                     "expires" => date("Y-m-d H:i:s", strtotime('+6 hours')),
-                    "ico" => 'fa fa-rebel',
+                    "ico" => $ico,
                     "icoColour" => $icoColour,
                     "subject" => $data['task']['text'],
                     "body" => $data['task']['updatedAt'],
