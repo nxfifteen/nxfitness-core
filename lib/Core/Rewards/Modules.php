@@ -49,7 +49,7 @@ class Modules {
      * @var Rewards
      */
     protected $rewardsClass;
-    private $createNewAwards = false;
+    private $createNewAwards = true;
     /**
      * @var Core
      */
@@ -96,6 +96,7 @@ class Modules {
                 $rewards = $this->getRewardsClass()->getDBAwards( $cat, $event, $score );
 
                 if ( count( $rewards ) > 0 ) {
+                    $dbAwardIssued = false;
                     foreach ( $rewards as $recordReward ) {
 
                         if ( array_key_exists( "system", $recordReward ) ) {
@@ -136,12 +137,18 @@ class Modules {
                             }
 
                             if ( $state != "noaward" ) {
+                                $dbAwardIssued = true;
                                 $this->getRewardsClass()->issueAwards( $recordReward, $rewardKey, $state, $delivery );
                                 $this->getRewardsClass()->setRewardReason( $recordReward[ 'name' ] . "|" . $recordReward[ 'description' ] );
 
                                 nxr( 3, "DB Award Processed '" . $recordReward[ 'name' ] . "', " . $recordReward[ 'description' ] );
                             }
                         }
+                    }
+
+                    if ( $this->createNewAwards && !$dbAwardIssued ) {
+                        $this->getRewardsClass()->createDBAwards( $cat, $event, $score );
+                        nxr( 3, "Award Created for $cat, $event - $score" );
                     }
 
                     return true;
