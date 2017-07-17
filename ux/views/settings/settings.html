@@ -17,7 +17,7 @@
 <div class="animated fadeIn">
 
     <div class="row">
-        <div class="col-8">
+        <div class="col-12 col-md-8">
 
             <div class="row">
                 <div class="col-12">
@@ -30,18 +30,18 @@
 
                                 <input type="hidden" name="formId" value="desireStep">
 
-                                <div class="col-2">
+                                <div class="col-12 col-md-2">
                                     <label for="minimumSteps">Minimum Steps a Day</label>
                                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                                         <div class="input-group-addon">-</div>
                                         <input type="text" class="form-control" id="minimumSteps" name="minimumSteps" placeholder="Username">
                                     </div>
                                 </div>
-                                <div class="col-8">
+                                <div class="col-12 col-md-8">
                                     <label for="desireSteps">Weekly Goal Increase</label>
                                     <input id="ex2" style="width: 95%" name="desireSteps" id="desireSteps" />
                                 </div>
-                                <div class="col-2">
+                                <div class="col-12 col-md-2">
                                     <label for="maximumSteps">Final Daily Steps Goal</label>
                                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                                         <div class="input-group-addon">+</div>
@@ -84,7 +84,7 @@
             </div>
 
         </div>
-        <div class="col-4">
+        <div class="col-12 col-md-4">
 
             <form id="journeySelector">
                 <div class="card">
@@ -93,14 +93,16 @@
                     </div>
                     <div class="card-block">
                         <div class="row">
-                            <div class="col-8">
+                            <div class="col-12">
                                 <input type="hidden" name="formId" value="journeySelector">
                                 <select class="selectedJourney" id="selectedJourney" name="selectedJourney">
                                     <option selected>Select a new Journey</option>
                                 </select>
                             </div>
-                            <div class="col-4">
-                                <button type="submit" class="btn btn-sm btn-primary">Start Your Jounrey</button>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-sm btn-primary pull-right">Start Your Jounrey</button>
                             </div>
                         </div>
                     </div>
@@ -116,7 +118,7 @@
                     </div>
                     <div class="card-block">
                         <div class="row">
-                            <div class="col-8">
+                            <div class="col-12">
                                 <label for="push">Start Date</label>
                                 <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                                     <div class="input-group-addon">+</div>
@@ -135,8 +137,10 @@
                                     <input type="text" class="form-control" id="push_length" name="push_length" placeholder="Length">
                                 </div>
                             </div>
-                            <div class="col-4">
-                                <button type="submit" class="btn btn-sm btn-primary">Schedual A Push</button>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-sm btn-primary pull-right">Schedual A Push</button>
                             </div>
                         </div>
                     </div>
@@ -157,7 +161,7 @@
                 <div class="card-block">
                     <div class="row">
                         <div class="col-12 col-md-7">
-                            <img src="img/habitica.png"/>
+                            <img src="img/habitica.png" class="hidden-sm-down"/>
 
                             <hr />
 
@@ -166,7 +170,7 @@
                                 <div id="habiticaSwitches"></div>
                             </form>
                         </div>
-                        <div class="col-6 col-md-2">
+                        <div class="col-12 col-md-2">
                             <form class="form-signin" id="habiticaMaxItems">
                                 <input type="hidden" name="formId" value="habiticaMaxItems">
 
@@ -187,7 +191,7 @@
                                 <button type="submit" class="btn btn-block btn-success">Update Settings</button>
                             </form>
                         </div>
-                        <div class="col-6 col-md-3">
+                        <div class="col-12 col-md-3">
                             <form class="form-signin" id="habiticaConnect">
                                 <input type="hidden" name="formId" value="habiticaKeyUpdate">
                                 <p class="text-muted">Connect your account by providing your User ID and API Token from <a target="_blank" href="https://habitica.com/#/options/settings/api">Settings -> API</a></p>
@@ -212,21 +216,21 @@
                         <div class="col-12">
                             <form class="form-signin" id="habiticaBuyGems">
                                 <div class="row">
-                                    <div class="col-4">
+                                    <div class="col-6 col-md-4">
                                         <label for="habitica_max_gems">Maximum Gems To Hold</label>
                                         <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                                             <div class="input-group-addon">Gems</div>
                                             <input type="text" class="form-control" id="habitica_max_gems" name="habitica_max_gems" placeholder="0">
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-6 col-md-4">
                                         <label for="habitica_min_gold">Minimum Gold To Hold</label>
                                         <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                                             <input type="text" class="form-control" id="habitica_min_gold" name="habitica_min_gold" placeholder="0">
                                             <div class="input-group-addon">Gold</div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-12 col-md-4">
                                         <hr />
                                         <input type="hidden" name="formId" value="habiticaBuyGems">
                                         <button type="submit" class="btn btn-block btn-success">Update Settings</button>

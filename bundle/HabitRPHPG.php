@@ -67,7 +67,11 @@ class HabitRPHPG {
 
         if(is_array($data)) {
             $options['encoding'] = true;
-            $data_sting = json_encode($data);
+            if (count($data) > 0) {
+                $data_sting = json_encode( $data );
+            } else {
+                $data_sting = '';
+            }
         } else {
             $data_sting = $data;
         }
@@ -82,11 +86,12 @@ class HabitRPHPG {
             }
         }
 
+        //nxr(0, __LINE__);
         if ($response == '') {
             curl_setopt($ch, CURLOPT_URL, $url) or die("Invalid cURL Handle Resouce");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //Just return the data - not print the whole thing.
             //curl_setopt($ch, CURLOPT_HEADER, true); //We need the headers
-            if (isset($options['encoding'])) curl_setopt($ch, CURLOPT_ENCODING, "application/json");
+            //if (isset($options['encoding'])) curl_setopt($ch, CURLOPT_ENCODING, "application/json");
 
             if ($method == 'post') {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -99,8 +104,9 @@ class HabitRPHPG {
                 "x-api-user: {$this->user_id}",
                 "x-api-key: {$this->api_key}",
                 "Content-Type: application/json",
-                "Content-Type: " . strlen($data_sting),
+                "Content-Length: " . strlen($data_sting),
             );
+            //nxr(1, $custom_headers);
 
             curl_setopt($ch, CURLOPT_HTTPHEADER, $custom_headers);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -110,6 +116,8 @@ class HabitRPHPG {
             $response = curl_exec($ch);
             // output error message if an error is occured
             if ($response === false) die(curl_error($ch)); // more verbose output
+            //nxr(1, $response);
+            //nxr(1, curl_error($ch));
             curl_close($ch);
 
             if ($this->options['debug']) {
@@ -150,7 +158,12 @@ class HabitRPHPG {
                 if ($returnError) {
                     return $return;
                 } else {
-                    nxr(0, $return['error'] . ": " . $return['message']);
+                    nxr(1, "HAB ERROR: '" . $url . "'");
+                    if ( isset( $custom_headers ) ) {
+                        nxr(1, $custom_headers);
+                    }
+                    nxr(1, $response);
+                    nxr(1, $data_sting);
                     return false;
                 }
             }
@@ -266,6 +279,7 @@ class HabitRPHPG {
      */
     function doTask($task_id, $direction) {
         return $this->_request("post", "tasks/$task_id/score/$direction", array('apiToken'=>$this->api_key));
+        //return $this->_request("post", "tasks/$task_id/score/$direction", array());
     }
 
     /**
