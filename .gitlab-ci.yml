@@ -269,31 +269,31 @@ test:phpcpd_flow:
     - develop
   allow_failure: true
 
-deploy_review:
-  stage: stage
-  script:
-    - echo "Deploy a review app"
-    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_review
-    - bash /tmp/deploy "$REVIEW_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
-    - rm -f /tmp/deploy
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    url: http://docs.core.itsabeta.nx/$CI_COMMIT_REF_NAME
-  only:
-    - develop
-
-deploy_staging:
-  stage: stage
-  script:
-    - echo "Deploy to staging server"
-    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_staging
-    - bash /tmp/deploy "$STAGING_PATH/$CI_ENVIRONMENT_SLUG" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
-    - rm -f /tmp/deploy
-  environment:
-    name: staging
-    url: http://core.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
-  only:
-    - develop
+#deploy_review:
+#  stage: stage
+#  script:
+#    - echo "Deploy a review app"
+#    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_review
+#    - bash /tmp/deploy "$REVIEW_PATH" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+#    - rm -f /tmp/deploy
+#  environment:
+#    name: review/$CI_COMMIT_REF_NAME
+#    url: http://docs.core.itsabeta.nx/$CI_COMMIT_REF_NAME
+#  only:
+#    - develop
+#
+#deploy_staging:
+#  stage: stage
+#  script:
+#    - echo "Deploy to staging server"
+#    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_staging
+#    - bash /tmp/deploy "$STAGING_PATH/$CI_ENVIRONMENT_SLUG" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+#    - rm -f /tmp/deploy
+#  environment:
+#    name: staging
+#    url: http://core.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
+#  only:
+#    - develop
 
 deploy_prod:
   stage: deploy
