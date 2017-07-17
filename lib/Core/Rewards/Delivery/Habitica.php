@@ -249,7 +249,11 @@ class Habitica extends Delivery {
      */
     public function createNewTask( $type, $name, $options ) {
         if ( $this->isValidUser() && $this->getStatus() == 'up' ) {
-            $options[ 'alias' ] = sha1( "nx" . $name );
+            if ( array_key_exists( "alias", $options ) ) {
+                $rewardJson[ 'alias' ] = sha1( "nx" . $options[ 'alias' ] );
+            } else {
+                $rewardJson[ 'alias' ] = sha1( "nx" . $options[ 'name' ] );
+            }
             $searchResults      = $this->searchTasks( $options[ 'alias' ], $name, '', false, true );
             if ( is_null( $searchResults ) ) {
 
