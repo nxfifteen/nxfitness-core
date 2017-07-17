@@ -3499,8 +3499,6 @@ class ApiBabel {
      *
      */
     private function pullCron() {
-        $this->getAppClass()->setUserSetting( $this->getActiveUser(), 'cron_last', strtotime('-2 days') );
-
         $userLastCron = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron_last', strtotime('-1 days') );
         $userCronTime = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron', '00:00:00' );
         $userCron = date("Y-m-d " . $userCronTime);
