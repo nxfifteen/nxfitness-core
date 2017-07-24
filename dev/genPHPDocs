@@ -61,3 +61,5 @@ rsync -vhru --delete-after ./ /var/www/dev/development/
 #ssh-add /home/nxad/.ssh/id_rsa_wiki
 #
 #git push
+
+killall -9 ssh-agent

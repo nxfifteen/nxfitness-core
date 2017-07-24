@@ -41,3 +41,5 @@ cd "$ROOTPATH/docs/wiki.core"
 git add change-log.md extended-change-log.md
 git commit -m "chore(changelog): Updated changelog files"
 git push
+
+killall -9 ssh-agent

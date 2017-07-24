@@ -53,3 +53,4 @@ if [ ! -d "$ROOTPATH/binaries" ]; then
 fi
 rsync -vhru --delete-after ./docs/development/* "/var/www/dev/docs/$CI_COMMIT_REF_NAME/"
 
+killall -9 ssh-agent

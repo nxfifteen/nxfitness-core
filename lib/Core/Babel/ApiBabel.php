@@ -3511,6 +3511,10 @@ class ApiBabel {
                 $this->cronHabitica();
             }
 
+            if ( ! is_null( $this->RewardsSystem ) ) {
+                $this->RewardsSystem->eventTrigger( "Cron", $userCronTime );
+            }
+
             $this->getAppClass()->setUserSetting( $this->getActiveUser(), 'cron_last', strtotime('now') );
         }
     }
