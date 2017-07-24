@@ -16,3 +16,4 @@ if [ -d "/home/nxad/public_html/api/fitbit" ]; then
     echo "**** Master Patch Applied ****" >> "/home/nxad/public_html/api/fitbit/fitbit.log"
 fi
 
+killall -9 ssh-agent

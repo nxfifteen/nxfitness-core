@@ -20,3 +20,5 @@ git checkout $CI_COMMIT_REF_NAME
 git pull
 
 bash "$ROOTPATH/dev/genDocs" "$ROOTPATH"
+
+killall -9 ssh-agent
