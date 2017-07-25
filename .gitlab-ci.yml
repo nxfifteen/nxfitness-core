@@ -300,6 +300,7 @@ deploy_prod:
   script:
     - echo "Deploy to production server"
     - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY"
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
     - scp ./dev/deploy_prod nxad@nxfifteen.me.uk:/home/nxad/homes/gitrepos/deploy_prod
     - ssh nxad@nxfifteen.me.uk chmod 755 /home/nxad/homes/gitrepos/deploy_prod
