@@ -301,11 +301,13 @@ deploy_prod:
     - echo "Deploy to production server"
     - eval $(ssh-agent -s)
     - ssh-add /home/gitlab-runner/id_rsa_nxcore
-    - whoami
-#    - scp ./dev/deploy_prod nxad@nxfifteen.me.uk:/home/nxad/homes/gitrepos/deploy_prod
-#    - ssh nxad@nxfifteen.me.uk chmod 755 /home/nxad/homes/gitrepos/deploy_prod
-#    - ssh nxad@nxfifteen.me.uk /home/nxad/homes/gitrepos/deploy_prod
-    - killall -9 ssh-agent
+    - scp ./dev/deploy_prod nxad@nxfifteen.me.uk:/home/nxad/homes/gitrepos/deploy_prod
+    - ssh nxad@nxfifteen.me.uk chmod 755 /home/nxad/homes/gitrepos/deploy_prod
+    - ssh nxad@nxfifteen.me.uk /home/nxad/homes/gitrepos/deploy_prod
+    - ssh-add -D
+    - ssh-agent -k
+    - unset SSH_AGENT_PID
+    - unset SSH_AUTH_SOCK
   environment:
     name: production
     url: https://nxfifteen.me.uk/api/fitbit/
