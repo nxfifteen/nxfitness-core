@@ -4,6 +4,8 @@ ROOTPATH="$1"
 eval $(ssh-agent -s)
 ssh-add /home/gitlab-runner/id_rsa_nxcore
 
+echo "Generating documentation in $ROOTPATH"
+
 if [ ! -d "$ROOTPATH/binaries" ]; then
     echo "creating binaries"
     mkdir "$ROOTPATH/binaries"

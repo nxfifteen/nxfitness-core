@@ -6,6 +6,8 @@ CI_ENVIRONMENT_SLUG="$3"
 eval $(ssh-agent -s)
 ssh-add /home/gitlab-runner/id_rsa_nxcore
 
+echo "Reviewing $CI_COMMIT_REF_NAME in $ROOTPATH"
+
 if [ ! -d "$ROOTPATH" ]; then
     mkdir -p "$ROOTPATH"
     cd "$ROOTPATH"
