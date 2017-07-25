@@ -3,7 +3,13 @@ ROOTPATH="$1"
 CI_COMMIT_REF_NAME="$2"
 CI_ENVIRONMENT_SLUG="$3"
 
-eval $(ssh-agent -s)
+SSHAGENT=`which ssh-agent`
+SSHAGENTARGS="-s"
+if [ -z "$SSH_AUTH_SOCK" -a -x "$SSHAGENT" ]; then
+    eval `$SSHAGENT $SSHAGENTARGS`
+    trap "kill $SSH_AGENT_PID" 0
+fi
+
 ssh-add /home/gitlab-runner/id_rsa_nxcore
 
 echo "Staging $CI_COMMIT_REF_NAME in $ROOTPATH"
@@ -17,10 +23,16 @@ else
 fi
 
 cd "$ROOTPATH"
-git checkout .
+git clean -df
+git checkout -- .
 git checkout $CI_COMMIT_REF_NAME
 git pull
 
 bash "$ROOTPATH/dev/genDocs" "$ROOTPATH"
 
-killall -9 ssh-agent
+if [ ${SSH_AGENT_PID+1} == 1 ]; then
+    ssh-add -D
+    ssh-agent -k > /dev/null 2>&1
+    unset SSH_AGENT_PID
+    unset SSH_AUTH_SOCK
+fi

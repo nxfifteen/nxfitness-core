@@ -2,7 +2,12 @@
 CI_COMMIT_REF_NAME="$1"
 CI_ENVIRONMENT_SLUG="$2"
 
-eval $(ssh-agent -s)
+SSHAGENT=`which ssh-agent`
+SSHAGENTARGS="-s"
+if [ -z "$SSH_AUTH_SOCK" -a -x "$SSHAGENT" ]; then
+    eval `$SSHAGENT $SSHAGENTARGS`
+    trap "kill $SSH_AGENT_PID" 0
+fi
 ssh-add /home/nxad/.ssh/id_rsa_deploy
 
 if [ -d "/home/nxad/public_html/api/fitbit" ]; then
@@ -16,4 +21,9 @@ if [ -d "/home/nxad/public_html/api/fitbit" ]; then
     echo "**** Master Patch Applied ****" >> "/home/nxad/public_html/api/fitbit/fitbit.log"
 fi
 
-killall -9 ssh-agent
+if [ ${SSH_AGENT_PID+1} == 1 ]; then
+    ssh-add -D
+    ssh-agent -k > /dev/null 2>&1
+    unset SSH_AGENT_PID
+    unset SSH_AUTH_SOCK
+fi

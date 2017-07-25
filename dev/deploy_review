@@ -4,7 +4,13 @@ CI_COMMIT_REF_NAME="$2"
 CI_ENVIRONMENT_SLUG="$3"
 USERNAME=`whoami`
 
-eval $(ssh-agent -s)
+SSHAGENT=`which ssh-agent`
+SSHAGENTARGS="-s"
+if [ -z "$SSH_AUTH_SOCK" -a -x "$SSHAGENT" ]; then
+    eval `$SSHAGENT $SSHAGENTARGS`
+    trap "kill $SSH_AGENT_PID" 0
+fi
+
 ssh-add /home/gitlab-runner/id_rsa_nxcore
 
 echo "Reviewing $CI_COMMIT_REF_NAME in $ROOTPATH"
@@ -67,4 +73,9 @@ if [ ! -d "$ROOTPATH/binaries" ]; then
 fi
 rsync -hru --delete-after ./docs/development/* "/var/www/dev/docs/$CI_COMMIT_REF_NAME/"
 
-killall -9 ssh-agent
+if [ ${SSH_AGENT_PID+1} == 1 ]; then
+    ssh-add -D
+    ssh-agent -k > /dev/null 2>&1
+    unset SSH_AGENT_PID
+    unset SSH_AUTH_SOCK
+fi

@@ -286,10 +286,9 @@ deploy_staging:
   stage: stage
   script:
     - echo "Deploy to staging server"
-    - whoami
-#    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_staging
-#    - bash /tmp/deploy "/var/www/dev/core/staging" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
-#    - rm -f /tmp/deploy
+    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_staging
+    - bash /tmp/deploy "/var/www/dev/core/staging" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    - rm -f /tmp/deploy
   environment:
     name: staging
     url: http://core.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
