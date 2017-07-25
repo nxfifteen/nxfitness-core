@@ -5,10 +5,17 @@ DWVERSION='1.3.4'
 
 echo "# Working in $WORKINGDIR"
 
+if [ ! -f "$ROOTPATH/binaries/composer.phar" ]; then
+    echo "***downloading composer"
+    cd "$ROOTPATH/binaries"
+    cp /home/gitlab-runner/tools/composer.phar ./
+    cd "$ROOTPATH"
+fi
+
 if [ ! -d "php-docblock-checker" ]; then
     echo "### Downloading php-docblock-checker"
     cd "$WORKINGDIR/binaries"
-    wget https://github.com/Block8/php-docblock-checker/archive/$DWVERSION.zip -O "$WORKINGDIR/binaries/$DWVERSION.zip" >/dev/null 2>&1
+    cp /home/gitlab-runner/tools/$DWVERSION.zip ./
     unzip "$WORKINGDIR/binaries/$DWVERSION.zip" >/dev/null 2>&1
     rm "$WORKINGDIR/binaries/$DWVERSION.zip"
     mv "$WORKINGDIR/binaries/php-docblock-checker-$DWVERSION" "$WORKINGDIR/binaries/php-docblock-checker"

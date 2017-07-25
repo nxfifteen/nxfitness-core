@@ -16,10 +16,10 @@ if [ ! -d "binaries" ]; then
     mkdir "$WORKINGDIR/binaries"
 fi
 
-if [ ! -f "composer.phar" ]; then
+if [ ! -f "$WORKINGDIR/binaries/composer.phar" ]; then
     echo "### Downloading Composer"
     cd "$WORKINGDIR/binaries"
-    curl -sS https://getcomposer.org/installer | php >/dev/null 2>&1
+    cp /home/gitlab-runner/tools/composer.phar ./
     cd "$WORKINGDIR/"
 fi
 

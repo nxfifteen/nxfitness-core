@@ -56,7 +56,7 @@ test:phploc:
   stage: stats
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget https://phar.phpunit.de/phploc.phar -O ./binaries/phploc.phar
+    - cp /home/gitlab-runner/tools/phploc.phar ./binaries/
     - chmod +x ./binaries/phploc.phar
   script:
     - ./binaries/phploc.phar lib
@@ -78,7 +78,7 @@ test:phpmd_cleancode_develop:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text cleancode
@@ -90,7 +90,7 @@ test:phpmd_codesize_develop:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text codesize
@@ -102,7 +102,7 @@ test:phpmd_controversial_develop:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text controversial
@@ -114,7 +114,7 @@ test:phpmd_design_develop:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text design
@@ -126,7 +126,7 @@ test:phpmd_naming_develop:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text naming
@@ -138,7 +138,7 @@ test:phpmd_unusedcode_develop:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text unusedcode
@@ -150,7 +150,7 @@ test:phpcpd_develop:
   stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget https://phar.phpunit.de/phpcpd.phar -O ./binaries/phpcpd.phar
+    - cp /home/gitlab-runner/tools/phpcpd.phar ./binaries/
     - chmod +x ./binaries/phpcpd.phar
   script:
   - ./binaries/phpcpd.phar ./lib
@@ -162,7 +162,7 @@ test:phpmd_cleancode_flow:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text cleancode
@@ -178,7 +178,7 @@ test:phpmd_codesize_flow:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text codesize
@@ -194,7 +194,7 @@ test:phpmd_controversial_flow:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text controversial
@@ -210,7 +210,7 @@ test:phpmd_design_flow:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text design
@@ -226,7 +226,7 @@ test:phpmd_naming_flow:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text naming
@@ -242,7 +242,7 @@ test:phpmd_unusedcode_flow:
   stage: messdetector
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget http://static.phpmd.org/php/latest/phpmd.phar -O ./binaries/phpmd.phar
+    - cp /home/gitlab-runner/tools/phpmd.phar ./binaries/
     - chmod +x ./binaries/phpmd.phar
   script:
   - ./binaries/phpmd.phar ./lib text unusedcode
@@ -258,7 +258,7 @@ test:phpcpd_flow:
   stage: codestyle
   before_script:
     - sh ./dev/build_dev_env.sh
-    - wget https://phar.phpunit.de/phpcpd.phar -O ./binaries/phpcpd.phar
+    - cp /home/gitlab-runner/tools/phpcpd.phar ./binaries/
     - chmod +x ./binaries/phpcpd.phar
   script:
   - ./binaries/phpcpd.phar ./lib
@@ -274,7 +274,7 @@ deploy_review:
   script:
     - echo "Deploy a review app"
     - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_review
-    - bash /tmp/deploy "/var/www/dev/core/review" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    - bash /tmp/deploy "/home/gitlab-runner/review.nxfitness-core" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
     - rm -f /tmp/deploy
   environment:
     name: review/$CI_COMMIT_REF_NAME
@@ -287,7 +287,7 @@ deploy_staging:
   script:
     - echo "Deploy to staging server"
     - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_staging
-    - bash /tmp/deploy "/var/www/dev/core/staging/$CI_ENVIRONMENT_SLUG" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    - bash /tmp/deploy "/var/www/dev/core/staging" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
     - rm -f /tmp/deploy
   environment:
     name: staging
