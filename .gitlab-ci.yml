@@ -273,10 +273,9 @@ deploy_review:
   stage: stage
   script:
     - echo "Deploy a review app"
-    - whoami
-    #- wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_review
-    #- bash /tmp/deploy "/home/gitlab-runner/review.nxfitness-core" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
-    #- rm -f /tmp/deploy
+    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_review
+    - bash /tmp/deploy "/home/gitlab-runner/review.nxfitness-core" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    - rm -f /tmp/deploy
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: http://docs.core.itsabeta.nx/$CI_COMMIT_REF_NAME

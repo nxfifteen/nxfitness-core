@@ -2,6 +2,7 @@
 ROOTPATH="$1"
 CI_COMMIT_REF_NAME="$2"
 CI_ENVIRONMENT_SLUG="$3"
+USERNAME=`whoami`
 
 eval $(ssh-agent -s)
 ssh-add /home/gitlab-runner/id_rsa_nxcore
@@ -16,15 +17,25 @@ else
     cd "$ROOTPATH"
 fi
 
+echo "Working in $ROOTPATH as $USERNAME"
 cd "$ROOTPATH"
+
+echo "Clearing changes"
+git clean -df
+echo "Checking out source"
+git checkout -- .
+echo "Checking out $CI_COMMIT_REF_NAME"
 git checkout $CI_COMMIT_REF_NAME
+echo "Making sure we're up-to-date"
 git pull
 
+echo "Checking Binaries"
 if [ ! -d "$ROOTPATH/binaries" ]; then
     echo "***creating binaries"
     mkdir "$ROOTPATH/binaries"
 fi
 
+echo "Checking Composer"
 cp "$ROOTPATH/composer_dev.json" "$ROOTPATH/composer.json"
 
 if [ ! -f "$ROOTPATH/binaries/composer.phar" ]; then
@@ -40,6 +51,7 @@ else
     php "$ROOTPATH/binaries/composer.phar" update --dev >/dev/null 2>&1
 fi
 
+echo "Checking phpDocumentor"
 if [ ! -f "$ROOTPATH/binaries/phpDocumentor.phar" ]; then
     echo "***downloading phpDocumentor"
     cd "$ROOTPATH/binaries"
@@ -47,11 +59,12 @@ if [ ! -f "$ROOTPATH/binaries/phpDocumentor.phar" ]; then
     cd "$ROOTPATH"
 fi
 
+echo "Running phpDocumentor"
 cd "$ROOTPATH"
 php "$ROOTPATH/binaries/phpDocumentor.phar"  >/dev/null 2>&1
 if [ ! -d "$ROOTPATH/binaries" ]; then
     mkdir -p "/var/www/dev/docs/$CI_COMMIT_REF_NAME"
 fi
-rsync -vhru --delete-after ./docs/development/* "/var/www/dev/docs/$CI_COMMIT_REF_NAME/"
+rsync -hru --delete-after ./docs/development/* "/var/www/dev/docs/$CI_COMMIT_REF_NAME/"
 
 killall -9 ssh-agent
