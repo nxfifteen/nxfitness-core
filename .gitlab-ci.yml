@@ -273,9 +273,10 @@ deploy_review:
   stage: stage
   script:
     - echo "Deploy a review app"
-    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_review
-    - bash /tmp/deploy "/home/gitlab-runner/review.nxfitness-core" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
-    - rm -f /tmp/deploy
+    - whoami
+    #- wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_review
+    #- bash /tmp/deploy "/home/gitlab-runner/review.nxfitness-core" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+    #- rm -f /tmp/deploy
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: http://docs.core.itsabeta.nx/$CI_COMMIT_REF_NAME
@@ -286,9 +287,10 @@ deploy_staging:
   stage: stage
   script:
     - echo "Deploy to staging server"
-    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_staging
-    - bash /tmp/deploy "/var/www/dev/core/staging" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
-    - rm -f /tmp/deploy
+    - whoami
+#    - wget -O /tmp/deploy https://nxfifteen.me.uk/gitlab/nx-fitness/nxfitness-core/raw/$CI_COMMIT_REF_NAME/dev/deploy_staging
+#    - bash /tmp/deploy "/var/www/dev/core/staging" $CI_COMMIT_REF_NAME $CI_ENVIRONMENT_SLUG
+#    - rm -f /tmp/deploy
   environment:
     name: staging
     url: http://core.itsabeta.nx/$CI_ENVIRONMENT_SLUG/ux/
@@ -301,9 +303,10 @@ deploy_prod:
     - echo "Deploy to production server"
     - eval $(ssh-agent -s)
     - ssh-add /home/gitlab-runner/id_rsa_nxcore
-    - scp ./dev/deploy_prod nxad@nxfifteen.me.uk:/home/nxad/homes/gitrepos/deploy_prod
-    - ssh nxad@nxfifteen.me.uk chmod 755 /home/nxad/homes/gitrepos/deploy_prod
-    - ssh nxad@nxfifteen.me.uk /home/nxad/homes/gitrepos/deploy_prod
+    - whoami
+#    - scp ./dev/deploy_prod nxad@nxfifteen.me.uk:/home/nxad/homes/gitrepos/deploy_prod
+#    - ssh nxad@nxfifteen.me.uk chmod 755 /home/nxad/homes/gitrepos/deploy_prod
+#    - ssh nxad@nxfifteen.me.uk /home/nxad/homes/gitrepos/deploy_prod
     - killall -9 ssh-agent
   environment:
     name: production
