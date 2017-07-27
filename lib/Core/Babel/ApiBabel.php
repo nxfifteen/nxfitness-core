@@ -3502,7 +3502,7 @@ class ApiBabel {
         $userLastCron = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron_last', strtotime('-1 days') );
         $userCronTime = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron', '00:00:00' );
         $userCron = date("Y-m-d " . $userCronTime);
-        if (strtotime($userCron) > $userLastCron || $this->forceSync) {
+        if (strtotime($userCron) > $userLastCron) {
             nxr(2, "Your cron is due $userCron");
             $dbPrefix    = $this->getAppClass()->getSetting( "db_prefix", null, false );
 
