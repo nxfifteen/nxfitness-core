@@ -48,10 +48,26 @@ class Minecraft extends Delivery {
         $minecraftUsername = $this->getAppClass()->getUserSetting( $this->getUserID(), "minecraft_username", null );
 
         if ( ! is_null( $minecraftUsername ) && ! is_numeric( $minecraftUsername ) ) {
+            $prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
             $recordReward[ 'reward' ] = str_replace( "%s", $minecraftUsername, $recordReward[ 'reward' ] );
 
-            $this->getAppClass()->getDatabase()->insert( $this->getAppClass()->getSetting( "db_prefix", null, false ) . "minecraft", [ "username" => $minecraftUsername, "command" => $recordReward[ 'reward' ], "delivery" => "pending" ] );
-            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ] );
+            $processAward = true;
+            if (array_key_exists("unique", $recordReward) && $recordReward['unique']) {
+                if ($this->getAppClass()->getDatabase()->has($prefix . "minecraft", ["AND" => ["username" => $minecraftUsername, "command" => $recordReward['reward'], "delivery" => "pending"]])) {
+                    $processAward = false;
+                }
+            }
+
+            if (array_key_exists("nuke", $recordReward)) {
+                if ($this->getAppClass()->getDatabase()->has($prefix . "minecraft", ["AND" => ["username" => $minecraftUsername, "command[~]" => $recordReward['nuke'], "delivery" => "pending"]])) {
+                    $this->getAppClass()->getDatabase()->delete($prefix . "minecraft", ["AND" => ["username" => $minecraftUsername, "command[~]" => $recordReward['nuke'], "delivery" => "pending"]]);
+                }
+            }
+
+            if ($processAward) {
+                $this->getAppClass()->getDatabase()->insert($prefix . "minecraft", ["username" => $minecraftUsername, "command" => $recordReward['reward'], "delivery" => "pending"]);
+                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+            }
 
             $this->recordDevlivery( $recordReward, "delivered", $rewardKey );
 

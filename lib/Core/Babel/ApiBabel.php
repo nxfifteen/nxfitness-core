@@ -3506,18 +3506,18 @@ class ApiBabel {
             nxr(2, "Your cron is due $userCron");
             $dbPrefix    = $this->getAppClass()->getSetting( "db_prefix", null, false );
 
-            if ($this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron_habitica', true )) {
-                $this->cronHabitica();
-            }
-
-            $this->getAppClass()->getDatabase()->delete( $dbPrefix . "inbox", ["AND"   => [ "fuid" => $this->getActiveUser(), "expires[<]" => date( "Y-m-d H:i:s" ) ]] );
-            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE"   => __LINE__] );
-
-            $minecraftUsername = $this->getAppClass()->getUserSetting( $this->getActiveUser(), "minecraft_username", null );
-            if ( ! is_null( $minecraftUsername ) && ! is_numeric( $minecraftUsername ) ) {
-                $this->getAppClass()->getDatabase()->delete( $dbPrefix . "minecraft", ["AND"   => [ "username" => $minecraftUsername, "delivery" => "delivered" ]] );
-                $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE"   => __LINE__] );
-            }
+//            if ($this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron_habitica', true )) {
+//                $this->cronHabitica();
+//            }
+//
+//            $this->getAppClass()->getDatabase()->delete( $dbPrefix . "inbox", ["AND"   => [ "fuid" => $this->getActiveUser(), "expires[<]" => date( "Y-m-d H:i:s" ) ]] );
+//            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE"   => __LINE__] );
+//
+//            $minecraftUsername = $this->getAppClass()->getUserSetting( $this->getActiveUser(), "minecraft_username", null );
+//            if ( ! is_null( $minecraftUsername ) && ! is_numeric( $minecraftUsername ) ) {
+//                $this->getAppClass()->getDatabase()->delete( $dbPrefix . "minecraft", ["AND"   => [ "username" => $minecraftUsername, "delivery" => "delivered" ]] );
+//                $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE"   => __LINE__] );
+//            }
 
             if ( ! is_null( $this->RewardsSystem ) ) {
                 $this->RewardsSystem->eventTrigger( "Cron", [$userCronTime] );
