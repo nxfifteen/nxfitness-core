@@ -39,7 +39,7 @@ class Cron extends Modules {
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function trigger( $eventDetails ) {
-        $rewardKey = date("Y-m-d " . $eventDetails);
+        $rewardKey = date("Y-m-d " . $eventDetails[0]);
 
         if ( ! $this->getRewardsClass()->alreadyAwarded( sha1( $rewardKey ) ) ) {
             $this->checkDB( "system", "cron", "ran", sha1( $rewardKey ) );

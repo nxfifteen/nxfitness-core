@@ -3502,20 +3502,25 @@ class ApiBabel {
         $userLastCron = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron_last', strtotime('-1 days') );
         $userCronTime = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron', '00:00:00' );
         $userCron = date("Y-m-d " . $userCronTime);
-        if (strtotime($userCron) < $userLastCron) {
-            $userCron = date("Y-m-d " . $userCronTime, strtotime('+1 days'));
-            nxr(2, "Cron has run, your next cron will be $userCron");
-        } else {
+        if (strtotime($userCron) > $userLastCron || $this->forceSync) {
             nxr(2, "Your cron is due $userCron");
+            $dbPrefix    = $this->getAppClass()->getSetting( "db_prefix", null, false );
+
             if ($this->getAppClass()->getUserSetting( $this->getActiveUser(), 'cron_habitica', true )) {
                 $this->cronHabitica();
             }
 
+            $this->getAppClass()->getDatabase()->delete( $dbPrefix . "inbox", ["AND"   => [ "fuid" => $this->getActiveUser(), "expires[<]" => date( "Y-m-d H:i:s" ) ]] );
+            $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE"   => __LINE__] );
+
             if ( ! is_null( $this->RewardsSystem ) ) {
-                $this->RewardsSystem->eventTrigger( "Cron", $userCronTime );
+                $this->RewardsSystem->eventTrigger( "Cron", [$userCronTime] );
             }
 
             $this->getAppClass()->setUserSetting( $this->getActiveUser(), 'cron_last', strtotime('now') );
+        } else {
+            $userCron = date("Y-m-d " . $userCronTime, strtotime('+1 days'));
+            nxr(2, "Cron has run, your next cron will be $userCron");
         }
     }
 
