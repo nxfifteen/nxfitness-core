@@ -20,7 +20,7 @@
 
 use Core\Core;
 
-header( 'Access-Control-Allow-Origin: https://wp.dev.psi.nxfifteen.me.uk' );
+header( 'Access-Control-Allow-Origin: http://nxdev.dev.itsabeta.nx' );
 header( 'Cache-Control: no-cache, must-revalidate' );
 header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
 
