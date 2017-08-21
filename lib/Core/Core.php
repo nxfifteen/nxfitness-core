@@ -538,7 +538,8 @@ class Core {
             'heart'                => 'Heart Rates',
             'activity_log'         => 'Activities',
             'nomie_trackers'       => "Nomie Trackers",
-            'habitica'             => "Habitica"
+            'habitica'             => "Habitica",
+            'habitica_chat'        => "Habitica Chat"
         ];
         ksort( $supportedApis );
 

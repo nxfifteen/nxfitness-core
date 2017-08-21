@@ -3229,6 +3229,50 @@ class ApiBabel {
         return $isAllowed;
     }
 
+
+
+    /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    private function pullHabiticaChat() {
+        $isAllowed = $this->isAllowed( "habitica" );
+        if ( ! is_numeric( $isAllowed ) ) {
+            $userId = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_user_id', null );
+            $apiKey = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'habitica_api_key', null );
+            if ( ! is_null( $userId ) && ! is_null( $apiKey ) ) {
+                if ( $this->isTriggerCooled( "habiticaChat" ) ) {
+                    nxr( 3, "Habitica credentials okay" );
+
+                    $habiticaClass     = new Habitica( $this->getAppClass(), $this->getActiveUser() );
+                    $partyChat = $habiticaClass->getHabitRPHPG()->_request( "get", "groups/party/chat", [] );
+
+                    $lastMessage = ( $this->getLastCleanRun( "habiticaChat" )->format( "U" ) * 1000 );
+                    $joinApiKey = $this->getAppClass()->getUserSetting( $this->getActiveUser(), 'joinapi', null );
+                    $partyChat = array_reverse($partyChat);
+                    foreach ($partyChat as $chatObject) {
+                        if ( (!array_key_exists('uuid', $chatObject) || $chatObject['uuid'] != "system") && $chatObject['timestamp'] > $lastMessage) {
+                            nxr(0, $chatObject['user'] . " says: " . $chatObject['text']);
+                            if (!is_null($joinApiKey))
+                                msgApi($joinApiKey,"Habitica Chat", "[" . $chatObject['user'] . "]: " . $chatObject['text'], "https://s3.amazonaws.com/habitica-assets/assets/gryphon_logo_300x300.png");
+                        }
+                    }
+
+                    $this->setLastrun( "habiticaChat", null, true );
+                } else {
+                    nxr( 4, "Habitica still too hot" );
+
+                    return "-143";
+                }
+
+            } else {
+                nxr( 3, "Your not a Habitica user" );
+            }
+        }
+
+        return $isAllowed;
+    }
+
     /**
      * @param Habitica $habiticaClass
      * @param array    $user
@@ -3824,6 +3868,11 @@ class ApiBabel {
                 // PULL - users profile
                 if ( $trigger == "all" || $trigger == "habitica" ) {
                     $this->pullHabitica();
+                }
+
+                // PULL - users profile
+                if ( $trigger == "all" || $trigger == "habitica_chat" ) {
+                    $this->pullHabiticaChat();
                 }
 
                 $this->pullCron();
