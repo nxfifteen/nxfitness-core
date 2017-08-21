@@ -85,3 +85,24 @@ if ( ! function_exists( "nxr_destroy_session" ) ) {
         session_destroy();
     }
 }
+
+/**
+ * @SuppressWarnings(PHPMD.Superglobals)
+ */
+if ( ! function_exists( "msgApi" ) ) {
+    function msgApi($api, $title, $text, $icon) {
+        $urlBase = "https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush";
+
+        $url = $urlBase . "?deviceId=group.windows10&text=".urlencode($text)."&title=".urlencode($title)."&icon=".urlencode($icon)."&apikey=$api";
+        $response = json_decode(file_get_contents($url), true);
+        if ($response['success'] != "true") {
+            nxr(0, "Join Operation failed, invalid response received: $response");
+        }
+
+        $url = $urlBase . "?deviceId=group.phone&text=".urlencode($text)."&title=".urlencode($title)."&icon=".urlencode($icon)."&apikey=$api";
+        $response = json_decode(file_get_contents($url), true);
+        if ($response['success'] != "true") {
+            nxr(0, "Join Operation failed, invalid response received: $response");
+        }
+    }
+}
