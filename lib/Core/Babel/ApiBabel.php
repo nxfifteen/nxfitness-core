@@ -4256,7 +4256,7 @@ class ApiBabel
                         if ((!array_key_exists('uuid', $chatObject) || $chatObject['uuid'] != "system") && $chatObject['timestamp'] > $lastMessage) {
                             nxr(0, $chatObject['user'] . " says: " . $chatObject['text']);
                             if (!is_null($joinApiKey))
-                                msgApi($joinApiKey, "Habitica Chat", "[" . $chatObject['user'] . "]: " . $chatObject['text'], "https://s3.amazonaws.com/habitica-assets/assets/gryphon_logo_300x300.png");
+                                msgApi($joinApiKey, "Habitica Chat", "[" . $chatObject['user'] . "]: " . $chatObject['text'], "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-habitica.png");
                         }
                     }
 
@@ -4339,7 +4339,6 @@ class ApiBabel
      */
     private function pullCron()
     {
-
         $userLastCron = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'cron_last', strtotime('-1 days'));
         $userCronTime = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'cron', '00:00:00');
         $userCron = date("Y-m-d " . $userCronTime);
@@ -4369,6 +4368,15 @@ class ApiBabel
 
             $this->getAppClass()->setUserSetting($this->getActiveUser(), 'cron_last', strtotime('now'));
         }
+
+        $userLastFiveMinCron = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'cronFiveMin_last', strtotime('-10 minutes'));
+        $userCronFiveMin = date("U");
+        if ($userCronFiveMin > intval($userLastFiveMinCron) + (5 * 60)) {
+            nxr(3, "Five minute cron now due");
+            $this->pullCronMeals();
+        } else {
+            nxr(3, "Five minute cron okay");
+        }
     }
 
     /**
@@ -4387,6 +4395,48 @@ class ApiBabel
                 nxr(3, $debugCron);
             }
         }
+    }
+
+    private function pullCronMeals()
+    {
+        $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
+        if (!is_null($joinApiKey)) {
+            $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+            if (date("H") > 10) {
+                if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Breakfast Summary", "date" => date("Y-m-d"), "user" => $this->getActiveUser()]])) {
+                    nxr(3, "Breakfast hasn't been logged yet");
+                    $alertUsrBreakfast = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertBreakfast', 0);
+                    if ($alertUsrBreakfast < strtotime(date("Y-m-d 00:00:00"))) {
+                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your breakfast yet", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png");
+                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertBreakfast', strtotime(date("Y-m-d 00:00:00")));
+                    }
+                }
+            }
+
+            if (date("H") > 11) {
+                if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => date("Y-m-d"), "user" => $this->getActiveUser()]])) {
+                    nxr(3, "Lunch hasn't been logged yet");
+                    $alertUsrLunch = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertLunch', 0);
+                    if ($alertUsrLunch < strtotime(date("Y-m-d 00:00:00"))) {
+                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your lunch yet", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png");
+                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertLunch', strtotime(date("Y-m-d 00:00:00")));
+                    }
+                }
+            }
+
+            if (date("H") > 19) {
+                if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => date("Y-m-d"), "user" => $this->getActiveUser()]])) {
+                    nxr(3, "Dinner hasn't been logged yet");
+                    $alertUsrDinner = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertDinner', 0);
+                    if ($alertUsrDinner < strtotime(date("Y-m-d 00:00:00"))) {
+                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your dinner yet", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png");
+                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertDinner', strtotime(date("Y-m-d 00:00:00")));
+                    }
+                }
+            }
+        }
+
     }
 
     /**
