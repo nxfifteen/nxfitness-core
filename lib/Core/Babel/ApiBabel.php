@@ -411,10 +411,6 @@ class ApiBabel
                     $this->pullHabiticaChat();
                 }
 
-                if ($trigger == "accountable") {
-                    $this->userAccountable();
-                }
-
                 $this->pullCron();
 
             } else {
@@ -4276,65 +4272,6 @@ class ApiBabel
     }
 
     /**
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
-    private function userAccountable()
-    {
-        $this->userAccountableVideoGames();
-        return true;
-    }
-
-    /**
-     * @return bool|int
-     *
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
-    private function userAccountableVideoGames()
-    {
-        $isAllowedHabitica = $this->isAllowed("habitica");
-        $isAllowedNomie = $this->isAllowed("nomie_trackers");
-        if (!is_numeric($isAllowedHabitica) && !is_numeric($isAllowedNomie)) {
-            $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-
-            $nomieGame = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'nomieGame', "Minecraft");
-            $habiticaGame = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habiticaGame', "hour of video game");
-
-            $trackerId = $this->getAppClass()->getDatabase()->get($dbPrefix . "nomie_trackers", ["id", "uom"], ["AND" => ["label" => "Played " . $nomieGame, "fuid" => $this->getActiveUser()]]);
-            $trackedValue = $this->getAppClass()->getDatabase()->sum($dbPrefix . "nomie_events", "value", ["AND" => ["id" => $trackerId['id'], "fuid" => $this->getActiveUser(), "datestamp[>=]" => date("Y-m-d 00:00:00")]]);
-
-            if ($trackedValue == 0) {
-                return -1;
-            } else {
-                if ($trackerId['uom'] == "min") {
-                    $trackedValue = $trackedValue / 60;
-                } else if ($trackerId['uom'] == "sec") {
-                    $trackedValue = $trackedValue / 3600;
-                }
-                nxr(2, "Played $nomieGame for " . $trackedValue . " hours");
-
-                $videoGameTime = $this->getAppClass()->getDatabase()->count($dbPrefix . "reward_queue", ["AND" => ["date[>=]" => date("Y-m-d 00:00:00"), "fuid" => $this->getActiveUser(), "rkey" => $habiticaGame]]);
-                nxr(2, "You've payed for " . $videoGameTime . " hours");
-
-                if ($videoGameTime < $trackedValue) {
-                    $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
-
-                    nxr(2, "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours");
-                    msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
-
-                    return false;
-                } else {
-                    nxr(2, "You're in the black! You can still play for another " . round($videoGameTime - $trackedValue, 0, PHP_ROUND_HALF_UP) . " hours");
-                    return true;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
      *
      */
     private function pullCron()
@@ -4375,6 +4312,7 @@ class ApiBabel
             nxr(3, "Five minute cron now due");
             $this->pullCronMeals();
             $this->pullCronWater();
+            $this->userAccountableVideoGames();
         } else {
             nxr(3, "Five minute cron okay");
         }
@@ -4483,6 +4421,56 @@ class ApiBabel
 
         }
 
+    }
+
+    /**
+     * @return bool|int
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    private function userAccountableVideoGames()
+    {
+        $isAllowedHabitica = $this->isAllowed("habitica");
+        $isAllowedNomie = $this->isAllowed("nomie_trackers");
+        if (!is_numeric($isAllowedHabitica) && !is_numeric($isAllowedNomie)) {
+            $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+            $nomieGame = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'nomieGame', "Minecraft");
+            $habiticaGame = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habiticaGame', "hour of video game");
+
+            $trackerId = $this->getAppClass()->getDatabase()->get($dbPrefix . "nomie_trackers", ["id", "uom"], ["AND" => ["label" => "Played " . $nomieGame, "fuid" => $this->getActiveUser()]]);
+            $trackedValue = $this->getAppClass()->getDatabase()->sum($dbPrefix . "nomie_events", "value", ["AND" => ["id" => $trackerId['id'], "fuid" => $this->getActiveUser(), "datestamp[>=]" => date("Y-m-d 00:00:00")]]);
+
+            if ($trackedValue == 0) {
+                nxr(3, "You've not played any $nomieGame today");
+                return -1;
+            } else {
+                if ($trackerId['uom'] == "min") {
+                    $trackedValue = $trackedValue / 60;
+                } else if ($trackerId['uom'] == "sec") {
+                    $trackedValue = $trackedValue / 3600;
+                }
+                nxr(3, "Played $nomieGame for " . $trackedValue . " hours");
+
+                $videoGameTime = $this->getAppClass()->getDatabase()->count($dbPrefix . "reward_queue", ["AND" => ["date[>=]" => date("Y-m-d 00:00:00"), "fuid" => $this->getActiveUser(), "rkey" => $habiticaGame]]);
+                nxr(3, "You've payed for " . $videoGameTime . " hours");
+
+                if ($videoGameTime < $trackedValue) {
+                    $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
+
+                    nxr(3, "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours");
+                    msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
+
+                    return false;
+                } else {
+                    nxr(3, "You're in the black! You can still play for another " . round($videoGameTime - $trackedValue, 0, PHP_ROUND_HALF_UP) . " hours");
+                    return true;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
