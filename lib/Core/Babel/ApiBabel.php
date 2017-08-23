@@ -4398,6 +4398,9 @@ class ApiBabel
         }
     }
 
+    /**
+     *
+     */
     private function pullCronMeals()
     {
         $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
@@ -4440,6 +4443,9 @@ class ApiBabel
 
     }
 
+    /**
+     *
+     */
     private function pullCronWater()
     {
         $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
