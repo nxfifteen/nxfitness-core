@@ -439,6 +439,14 @@ class ApiBabel
     }
 
     /**
+     * @return Core
+     */
+    private function getAppClass()
+    {
+        return $this->appClass;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -785,6 +793,14 @@ class ApiBabel
     }
 
     /**
+     * @return mixed
+     */
+    private function getActiveUser()
+    {
+        return $this->activeUser;
+    }
+
+    /**
      * @param string $trigger
      * @param bool $reset
      * @param bool $canForce
@@ -861,22 +877,6 @@ class ApiBabel
         } else {
             return new DateTime ("1970-01-01");
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getActiveUser()
-    {
-        return $this->activeUser;
-    }
-
-    /**
-     * @return Core
-     */
-    private function getAppClass()
-    {
-        return $this->appClass;
     }
 
     /**
@@ -3849,64 +3849,19 @@ class ApiBabel
                     $habiticaClass = new Habitica($this->getAppClass(), $this->getActiveUser());
                     $habiticaInstalled = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_installed', false);
                     if (!$habiticaInstalled) {
-                        nxr(4, "Installing Habitica");
-                        if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_hatch', false)) {
-                            $habiticaClass->getHabitRPHPG()->_request("post", "user/webhook", [
-                                "url" => $this->getAppClass()->getSetting('http/') . "/habitica/",
-                                "label" => "NxFITNESS",
-                                "enabled" => true,
-                                "type" => "taskActivity",
-                            ]);
-                        }
-                        nxr(5, "Installed new Webhook " . $this->getAppClass()->getSetting('http/') . "/habitica/");
-
-                        $guildUuid = $this->getAppClass()->getSetting("habitica_guild", null);
-                        if (!is_null($guildUuid)) {
-                            if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_hatch', false)) {
-                                nxr(4, "Inviting User to Guild");
-                                $habiticaClass->inviteToGuild($guildUuid);
-                            }
-                        }
-
-                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habitica_installed', true);
+                        $this->funHabiticaInstaller($habiticaClass);
                     }
 
                     nxr(4, "Updating User Habitica Stats");
-                    $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
                     $user = $habiticaClass->getHabitRPHPG()->user();
                     if (!is_array($user)) {
                         return false;
                     }
 
-                    $updatedValues = [
-                        "class" => ucfirst($user['stats']['class']),
-                        "gold" => round($user['stats']['gp'], 2, PHP_ROUND_HALF_DOWN),
-                        "xp" => round($user['stats']['exp'], 0, PHP_ROUND_HALF_DOWN),
-                        "level" => $user['stats']['lvl'],
-                        "percent" => round($user['stats']['exp'] * (100 / $user['stats']['toNextLevel']), 0, PHP_ROUND_HALF_DOWN),
-                        "mana" => $user['stats']['mp'],
-                        "health" => round($user['stats']['hp'] * (100 / $user['stats']['maxHealth']), 0, PHP_ROUND_HALF_DOWN)
-                    ];
-
-                    if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "users_xp", ['fuid' => $this->getActiveUser()])) {
-                        $this->getAppClass()->getDatabase()->insert($dbPrefix . "users_xp", array_merge($updatedValues, ["fuid" => $this->getActiveUser()]));
-                    } else {
-                        $this->getAppClass()->getDatabase()->update($dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getActiveUser()]);
-                    }
-                    $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+                    $this->funHabiticaStats($user);
 
                     if ($this->isTriggerCooled("habitica_avatar", false, false)) {
-                        $avatarFolder = dirname(__FILE__) . "/../../../images/avatars/";
-                        if (file_exists($avatarFolder) AND is_writable($avatarFolder)) {
-                            nxr(4, "Updating User Habitica Avatar");
-                            if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
-                                //file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("http://10.1.1.1:3000/export/avatar-" . $user['id'] . ".png"));
-                            } else {
-                                file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
-                            }
-                        }
-
-                        $this->setLastrun("habitica_avatar", null, true);
+                        $this->funHabiticaUpdateAvatar($user);
                     } else {
                         nxr(4, "Avatar still too hot");
                     }
@@ -3935,6 +3890,75 @@ class ApiBabel
         }
 
         return $isAllowed;
+    }
+
+    /**
+     * @param Habitica $habiticaClass
+     */
+    private function funHabiticaInstaller($habiticaClass)
+    {
+        nxr(4, "Installing Habitica");
+        if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_hatch', false)) {
+            $habiticaClass->getHabitRPHPG()->_request("post", "user/webhook", [
+                "url" => $this->getAppClass()->getSetting('http/') . "/habitica/",
+                "label" => "NxFITNESS",
+                "enabled" => true,
+                "type" => "taskActivity",
+            ]);
+        }
+        nxr(5, "Installed new Webhook " . $this->getAppClass()->getSetting('http/') . "/habitica/");
+
+        $guildUuid = $this->getAppClass()->getSetting("habitica_guild", null);
+        if (!is_null($guildUuid)) {
+            if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'habitica_hatch', false)) {
+                nxr(4, "Inviting User to Guild");
+                $habiticaClass->inviteToGuild($guildUuid);
+            }
+        }
+
+        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habitica_installed', true);
+    }
+
+    /**
+     * @param array $user
+     */
+    private function funHabiticaStats($user)
+    {
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $updatedValues = [
+            "class" => ucfirst($user['stats']['class']),
+            "gold" => round($user['stats']['gp'], 2, PHP_ROUND_HALF_DOWN),
+            "xp" => round($user['stats']['exp'], 0, PHP_ROUND_HALF_DOWN),
+            "level" => $user['stats']['lvl'],
+            "percent" => round($user['stats']['exp'] * (100 / $user['stats']['toNextLevel']), 0, PHP_ROUND_HALF_DOWN),
+            "mana" => $user['stats']['mp'],
+            "health" => round($user['stats']['hp'] * (100 / $user['stats']['maxHealth']), 0, PHP_ROUND_HALF_DOWN)
+        ];
+
+        if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "users_xp", ['fuid' => $this->getActiveUser()])) {
+            $this->getAppClass()->getDatabase()->insert($dbPrefix . "users_xp", array_merge($updatedValues, ["fuid" => $this->getActiveUser()]));
+        } else {
+            $this->getAppClass()->getDatabase()->update($dbPrefix . "users_xp", $updatedValues, ["fuid" => $this->getActiveUser()]);
+        }
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
+    }
+
+    /**
+     * @param array $user
+     */
+    private function funHabiticaUpdateAvatar($user)
+    {
+        $avatarFolder = dirname(__FILE__) . "/../../../images/avatars/";
+        if (file_exists($avatarFolder) AND is_writable($avatarFolder)) {
+            nxr(4, "Updating User Habitica Avatar");
+            if (defined('ENVIRONMENT') && ENVIRONMENT == "develop") {
+                //file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("http://10.1.1.1:3000/export/avatar-" . $user['id'] . ".png"));
+            } else {
+                file_put_contents($avatarFolder . "/" . $this->activeUser . "_habitica.png", file_get_contents("https://habitica.com/export/avatar-" . $user['id'] . ".png"));
+            }
+        }
+
+        $this->setLastrun("habitica_avatar", null, true);
     }
 
     /**
@@ -4261,7 +4285,6 @@ class ApiBabel
         return true;
     }
 
-
     /**
      * @return bool|int
      *
@@ -4277,7 +4300,7 @@ class ApiBabel
             $trackerId = $this->getAppClass()->getDatabase()->get($dbPrefix . "nomie_trackers", ["id", "uom"], ["AND" => ["label" => "Played Minecraft", "fuid" => $this->getActiveUser()]]);
             $trackedValue = $this->getAppClass()->getDatabase()->sum($dbPrefix . "nomie_events", "value", ["AND" => ["id" => $trackerId['id'], "fuid" => $this->getActiveUser(), "datestamp[>=]" => date("Y-m-d 00:00:00")]]);
 
-            if ( $trackedValue == 0 ) {
+            if ($trackedValue == 0) {
                 return -1;
             } else {
                 if ($trackerId['uom'] == "min") {
