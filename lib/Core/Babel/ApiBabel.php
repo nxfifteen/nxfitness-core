@@ -4396,7 +4396,7 @@ class ApiBabel
             if (date("H") >= $goalWaterStart && date("H") <= $goalWaterEnd) {
                 $goalWater = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'goal_water', 200);
                 $totalWater = round($this->getAppClass()->getDatabase()->get($dbPrefix . "water", "liquid", ["AND" => ["date" => date("Y-m-d"), "user" => $this->getActiveUser()]]), 0);
-                nxr(3, "You've drank " . round($totalWater / $dbGlassMls, 0) . " class out of your " . round($goalWater / $dbGlassMls, 0) . " class goal");
+                nxr(3, "You've drank " . round($totalWater / $dbGlassMls, 0) . " class out of your " . round_up($goalWater / $dbGlassMls, 0) . " class goal");
 
                 $goalWaterWindow = $goalWaterEnd - $goalWaterStart;
                 $goalWaterHourPast = date("H") - $goalWaterStart;
