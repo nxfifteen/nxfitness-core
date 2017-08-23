@@ -4389,13 +4389,14 @@ class ApiBabel
         $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
         if (!is_null($joinApiKey)) {
             $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+            $dbGlassMls = $this->getAppClass()->getSetting("liquidGlassSize", 240);
 
             $goalWaterStart = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'waterAccStartTime', 9);
             $goalWaterEnd = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'waterAccEndTime', 22);
             if (date("H") >= $goalWaterStart && date("H") <= $goalWaterEnd) {
                 $goalWater = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'goal_water', 200);
                 $totalWater = round($this->getAppClass()->getDatabase()->get($dbPrefix . "water", "liquid", ["AND" => ["date" => date("Y-m-d"), "user" => $this->getActiveUser()]]), 0);
-                nxr(3, "You've drank $totalWater out of your $goalWater goal");
+                nxr(3, "You've drank " . round($totalWater / $dbGlassMls, 0) . " class out of your " . round($goalWater / $dbGlassMls, 0) . " class goal");
 
                 $goalWaterWindow = $goalWaterEnd - $goalWaterStart;
                 $goalWaterHourPast = date("H") - $goalWaterStart;
@@ -4403,7 +4404,7 @@ class ApiBabel
 
                 $hourlyDrink = $goalWater / $goalWaterWindow;
                 $shouldHaveDrank = $hourlyDrink * $goalWaterHourPast;
-                nxr(4, "Your aiming to drink " . round($hourlyDrink, 0) . " per hour, so you current target should be " . round($shouldHaveDrank, 0) . "");
+                nxr(4, "Your aiming to drink " . round($hourlyDrink, 0) . " ml's per hour, so you current target should be " . round($shouldHaveDrank, 0) . " ml's (" . round_up($shouldHaveDrank / $dbGlassMls, 0) . " classes)");
 
                 if ($totalWater >= $shouldHaveDrank) {
                     nxr(4, "You've drank enough");
@@ -4411,10 +4412,10 @@ class ApiBabel
                 } else {
                     $extraWater = $shouldHaveDrank - $totalWater;
 
-                    nxr(4, "You've only drank " . round($totalWater, 0) . " try drinking another " . round($extraWater, 0) . "");
+                    nxr(4, "You've only drank " . round($totalWater / $dbGlassMls, 0) . " classes try drinking another " . round($extraWater, 0) . " ml's (" . round_up($extraWater / $dbGlassMls, 0) . " classes)");
                     $alertUsrWater = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertWater', 0);
                     if ($alertUsrWater <> round($extraWater, 2)) {
-                        msgApi($joinApiKey, "Remember to drink", "You've only drank " . round($totalWater, 0) . "ml try drinking another " . round($extraWater, 0) . "ml's", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Item_Drop.mp3"]);
+                        msgApi($joinApiKey, "Remember to drink", "You've only drank " . round($totalWater / $dbGlassMls, 0) . " classes try drinking another " . round($extraWater, 0) . " ml's (" . round_up($extraWater / $dbGlassMls, 0) . " classes)", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Item_Drop.mp3"]);
                         $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertWater', round($extraWater, 2));
                     }
                 }
