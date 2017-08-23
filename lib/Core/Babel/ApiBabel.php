@@ -4399,7 +4399,7 @@ class ApiBabel
     }
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function pullCronMeals()
     {
