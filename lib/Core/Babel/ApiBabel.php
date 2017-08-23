@@ -4374,6 +4374,7 @@ class ApiBabel
         if ($userCronFiveMin > intval($userLastFiveMinCron) + (5 * 60)) {
             nxr(3, "Five minute cron now due");
             $this->pullCronMeals();
+            $this->pullCronWater();
         } else {
             nxr(3, "Five minute cron okay");
         }
@@ -4435,6 +4436,45 @@ class ApiBabel
                     }
                 }
             }
+        }
+
+    }
+
+    private function pullCronWater()
+    {
+        $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
+        if (!is_null($joinApiKey)) {
+            $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+
+            $goalWaterStart = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'waterAccStartTime', 9);
+            $goalWaterEnd = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'waterAccEndTime', 22);
+            if (date("H") >= $goalWaterStart && date("H") <= $goalWaterEnd) {
+                $goalWater = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'goal_water', 200);
+                $totalWater = round($this->getAppClass()->getDatabase()->get($dbPrefix . "water", "liquid", ["AND" => ["date" => date("Y-m-d"), "user" => $this->getActiveUser()]]), 0);
+                nxr(3, "You've drank $totalWater out of your $goalWater goal");
+
+                $goalWaterWindow = $goalWaterEnd - $goalWaterStart;
+                $goalWaterHourPast = date("H") - $goalWaterStart;
+                nxr(4, "Your $goalWaterHourPast hours into your $goalWaterWindow hour tracking window");
+
+                $hourlyDrink = $goalWater / $goalWaterWindow;
+                $shouldHaveDrank = $hourlyDrink * $goalWaterHourPast;
+                nxr(4, "Your aiming to drink " . round($hourlyDrink, 0) . " per hour, so you current target should be " . round($shouldHaveDrank, 0) . "");
+
+                if ($totalWater >= $shouldHaveDrank) {
+                    nxr(4, "You've drank enough");
+                } else {
+                    $extraWater = $shouldHaveDrank - $totalWater;
+
+                    nxr(4, "You've only drank " . round($totalWater, 0) . " try drinking another " . round($extraWater, 0) . "");
+                    $alertUsrWater = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertWater', 0);
+                    if ($alertUsrWater <> round($totalWater, 2)) {
+                        msgApi($joinApiKey, "Remember to drink", "You've only drank " . round($totalWater, 0) . "ml try drinking another " . round($extraWater, 0) . "ml's", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png");
+                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertWater', round($totalWater, 2));
+                    }
+                }
+            }
+
         }
 
     }
