@@ -90,16 +90,34 @@ if ( ! function_exists( "nxr_destroy_session" ) ) {
  * @SuppressWarnings(PHPMD.Superglobals)
  */
 if ( ! function_exists( "msgApi" ) ) {
-    function msgApi($api, $title, $text, $icon) {
+    /**
+     * @param string $api
+     * @param string $title
+     * @param string $text
+     * @param array $options
+     */
+    function msgApi($api, $title, $text, $options)
+    {
         $urlBase = "https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush";
 
-        $url = $urlBase . "?deviceId=group.windows10&text=".urlencode($text)."&title=".urlencode($title)."&icon=".urlencode($icon)."&apikey=$api";
+        if (array_key_exists("icon", $options)) {
+            $icon = "&icon=" . urlencode($options['icon']);
+        } else {
+            $icon = "";
+        }
+        if (array_key_exists("sound", $options)) {
+            $sound = "&sound=" . urlencode($options['sound']);
+        } else {
+            $sound = "";
+        }
+
+        $url = $urlBase . "?deviceId=group.windows10&text=" . urlencode($text) . "&title=" . urlencode($title) . $icon . $sound . "&apikey=$api";
         $response = json_decode(file_get_contents($url), true);
         if ($response['success'] != "true") {
             nxr(0, "Join Operation failed, invalid response received: $response");
         }
 
-        $url = $urlBase . "?deviceId=group.phone&text=".urlencode($text)."&title=".urlencode($title)."&icon=".urlencode($icon)."&apikey=$api";
+        $url = $urlBase . "?deviceId=group.phone&text=" . urlencode($text) . "&title=" . urlencode($title) . $icon . $sound . "&apikey=$api";
         $response = json_decode(file_get_contents($url), true);
         if ($response['success'] != "true") {
             nxr(0, "Join Operation failed, invalid response received: $response");

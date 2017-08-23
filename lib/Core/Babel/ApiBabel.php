@@ -4256,7 +4256,7 @@ class ApiBabel
                         if ((!array_key_exists('uuid', $chatObject) || $chatObject['uuid'] != "system") && $chatObject['timestamp'] > $lastMessage) {
                             nxr(0, $chatObject['user'] . " says: " . $chatObject['text']);
                             if (!is_null($joinApiKey))
-                                msgApi($joinApiKey, "Habitica Chat", "[" . $chatObject['user'] . "]: " . $chatObject['text'], "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-habitica.png");
+                                msgApi($joinApiKey, "Habitica Chat", "[" . $chatObject['user'] . "]: " . $chatObject['text'], ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-habitica.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Chat.mp3"]);
                         }
                     }
 
@@ -4321,7 +4321,7 @@ class ApiBabel
                     $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
 
                     nxr(2, "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours");
-                    msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png");
+                    msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
 
                     return false;
                 } else {
@@ -4412,7 +4412,7 @@ class ApiBabel
                     nxr(3, "Breakfast hasn't been logged yet");
                     $alertUsrBreakfast = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertBreakfast', 0);
                     if ($alertUsrBreakfast < strtotime(date("Y-m-d 00:00:00"))) {
-                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your breakfast yet", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png");
+                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your breakfast yet", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Plus_Habit.mp3"]);
                         $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertBreakfast', strtotime(date("Y-m-d 00:00:00")));
                     }
                 }
@@ -4423,7 +4423,7 @@ class ApiBabel
                     nxr(3, "Lunch hasn't been logged yet");
                     $alertUsrLunch = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertLunch', 0);
                     if ($alertUsrLunch < strtotime(date("Y-m-d 00:00:00"))) {
-                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your lunch yet", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png");
+                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your lunch yet", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Plus_Habit.mp3"]);
                         $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertLunch', strtotime(date("Y-m-d 00:00:00")));
                     }
                 }
@@ -4434,7 +4434,7 @@ class ApiBabel
                     nxr(3, "Dinner hasn't been logged yet");
                     $alertUsrDinner = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertDinner', 0);
                     if ($alertUsrDinner < strtotime(date("Y-m-d 00:00:00"))) {
-                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your dinner yet", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png");
+                        msgApi($joinApiKey, "Remember to log your meals", "Your haven't logged your dinner yet", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Plus_Habit.mp3"]);
                         $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertDinner', strtotime(date("Y-m-d 00:00:00")));
                     }
                 }
@@ -4475,7 +4475,7 @@ class ApiBabel
                     nxr(4, "You've only drank " . round($totalWater, 0) . " try drinking another " . round($extraWater, 0) . "");
                     $alertUsrWater = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertWater', 0);
                     if ($alertUsrWater <> round($totalWater, 2)) {
-                        msgApi($joinApiKey, "Remember to drink", "You've only drank " . round($totalWater, 0) . "ml try drinking another " . round($extraWater, 0) . "ml's", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png");
+                        msgApi($joinApiKey, "Remember to drink", "You've only drank " . round($totalWater, 0) . "ml try drinking another " . round($extraWater, 0) . "ml's", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Item_Drop.mp3"]);
                         $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertWater', round($totalWater, 2));
                     }
                 }
