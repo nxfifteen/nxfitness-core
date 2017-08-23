@@ -4471,7 +4471,7 @@ class ApiBabel
                 } else {
                     nxr(3, "You're in the black! You can still play for another " . ($extraTime * -1) . " hours");
                     if ($alertUsrPlayedTime > -1) {
-                        msgApi($joinApiKey, "You're Fully Paid up", "You've not payed for enough time, you need another " . ($extraTime * -1) . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
+                        msgApi($joinApiKey, "You're in the black!", "You can still play for another " . ($extraTime * -1) . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
                         $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habiticaGammingAlert', -1);
                     }
                     return true;
