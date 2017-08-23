@@ -100,15 +100,15 @@ if ( ! function_exists( "msgApi" ) ) {
     {
         $urlBase = "https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush";
 
+        $icon = "";
+        $sound = "";
+
         if (array_key_exists("icon", $options)) {
             $icon = "&icon=" . urlencode($options['icon']);
-        } else {
-            $icon = "";
         }
+
         if (array_key_exists("sound", $options)) {
             $sound = "&sound=" . urlencode($options['sound']);
-        } else {
-            $sound = "";
         }
 
         $url = $urlBase . "?deviceId=group.windows10&text=" . urlencode($text) . "&title=" . urlencode($title) . $icon . $sound . "&apikey=$api";
