@@ -159,7 +159,7 @@ class ApiBabel
 
         // Check we have a valid user
         if ($this->getAppClass()->isUser($user)) {
-            nxr(2, "Reward system ready");
+            nxr(2, "Reward system ready for " . $user);
             $this->RewardsSystem = new RewardsSystem($user);
 
             $userCoolDownTime = $this->getAppClass()->getUserCooldown($this->activeUser);
@@ -4291,13 +4291,17 @@ class ApiBabel
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function userAccountableVideoGames()
+    private function userAccountableVideoGames()
     {
         $isAllowedHabitica = $this->isAllowed("habitica");
         $isAllowedNomie = $this->isAllowed("nomie_trackers");
         if (!is_numeric($isAllowedHabitica) && !is_numeric($isAllowedNomie)) {
             $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
-            $trackerId = $this->getAppClass()->getDatabase()->get($dbPrefix . "nomie_trackers", ["id", "uom"], ["AND" => ["label" => "Played Minecraft", "fuid" => $this->getActiveUser()]]);
+
+            $nomieGame = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'nomieGame', "Minecraft");
+            $habiticaGame = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habiticaGame', "hour of video game");
+
+            $trackerId = $this->getAppClass()->getDatabase()->get($dbPrefix . "nomie_trackers", ["id", "uom"], ["AND" => ["label" => "Played " . $nomieGame, "fuid" => $this->getActiveUser()]]);
             $trackedValue = $this->getAppClass()->getDatabase()->sum($dbPrefix . "nomie_events", "value", ["AND" => ["id" => $trackerId['id'], "fuid" => $this->getActiveUser(), "datestamp[>=]" => date("Y-m-d 00:00:00")]]);
 
             if ($trackedValue == 0) {
@@ -4308,9 +4312,9 @@ class ApiBabel
                 } else if ($trackerId['uom'] == "sec") {
                     $trackedValue = $trackedValue / 3600;
                 }
-                nxr(2, "Played Minecraft for " . $trackedValue . " hours");
+                nxr(2, "Played $nomieGame for " . $trackedValue . " hours");
 
-                $videoGameTime = $this->getAppClass()->getDatabase()->count($dbPrefix . "reward_queue", ["AND" => ["date[>=]" => date("Y-m-d 00:00:00"), "fuid" => $this->getActiveUser(), "rkey" => "hour of video game"]]);
+                $videoGameTime = $this->getAppClass()->getDatabase()->count($dbPrefix . "reward_queue", ["AND" => ["date[>=]" => date("Y-m-d 00:00:00"), "fuid" => $this->getActiveUser(), "rkey" => $habiticaGame]]);
                 nxr(2, "You've payed for " . $videoGameTime . " hours");
 
                 if ($videoGameTime < $trackedValue) {
