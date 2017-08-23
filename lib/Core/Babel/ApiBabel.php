@@ -4457,13 +4457,11 @@ class ApiBabel
                 $videoGameTime = $this->getAppClass()->getDatabase()->count($dbPrefix . "reward_queue", ["AND" => ["date[>=]" => date("Y-m-d 00:00:00"), "fuid" => $this->getActiveUser(), "rkey" => $habiticaGame]]);
                 nxr(3, "You've payed for " . $videoGameTime . " hours");
 
+                $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
+                $alertUsrPlayedTime = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habiticaGammingAlert', 0);
+                $extraTime = round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP);
                 if ($videoGameTime < $trackedValue) {
-                    $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
-
-
-                    $extraTime = round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP);
                     nxr(3, "You've not payed for enough time, you need another " . $extraTime . " hours");
-                    $alertUsrPlayedTime = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habiticaGammingAlert', 0);
                     if ($alertUsrPlayedTime <> $extraTime) {
                         msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . $extraTime . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
                         $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habiticaGammingAlert', $extraTime);
@@ -4471,7 +4469,11 @@ class ApiBabel
 
                     return false;
                 } else {
-                    nxr(3, "You're in the black! You can still play for another " . round($videoGameTime - $trackedValue, 0, PHP_ROUND_HALF_UP) . " hours");
+                    nxr(3, "You're in the black! You can still play for another " . ($extraTime * -1) . " hours");
+                    if ($alertUsrPlayedTime > -1) {
+                        msgApi($joinApiKey, "You're Fully Paid up", "You've not payed for enough time, you need another " . ($extraTime * -1) . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
+                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habiticaGammingAlert', -1);
+                    }
                     return true;
                 }
             }
