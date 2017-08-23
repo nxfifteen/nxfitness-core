@@ -4321,7 +4321,7 @@ class ApiBabel
                     $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
 
                     nxr(2, "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours");
-                    msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours", "http://www.guvenleindir.net/image/cache/data/presimler2/minecraft-icon-500x500.png");
+                    msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours", "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png");
 
                     return false;
                 } else {
