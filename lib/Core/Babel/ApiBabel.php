@@ -4320,12 +4320,6 @@ class ApiBabel
             nxr(2, "Your cron is due $userCron");
             $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-            /*if ($this->userAccountableVideoGames()) {
-                nxr(3, "Video Game Okay");
-            } else {
-                nxr(3, "Video Game Failure");
-            }*/
-
             if ($this->getAppClass()->getUserSetting($this->getActiveUser(), 'cron_habitica', true)) {
                 nxr(3, "Habitica Cron Run");
                 $this->cronHabitica();
@@ -4347,9 +4341,6 @@ class ApiBabel
             }
 
             $this->getAppClass()->setUserSetting($this->getActiveUser(), 'cron_last', strtotime('now'));
-        } else {
-            $userCron = date("Y-m-d " . $userCronTime, strtotime('+1 days'));
-            nxr(2, "Cron has run, your next cron will be $userCron");
         }
     }
 
