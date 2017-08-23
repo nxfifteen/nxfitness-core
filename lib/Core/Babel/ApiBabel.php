@@ -4407,14 +4407,15 @@ class ApiBabel
 
                 if ($totalWater >= $shouldHaveDrank) {
                     nxr(4, "You've drank enough");
+                    $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertWater', 0);
                 } else {
                     $extraWater = $shouldHaveDrank - $totalWater;
 
                     nxr(4, "You've only drank " . round($totalWater, 0) . " try drinking another " . round($extraWater, 0) . "");
                     $alertUsrWater = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertWater', 0);
-                    if ($alertUsrWater <> round($totalWater, 2)) {
+                    if ($alertUsrWater <> round($extraWater, 2)) {
                         msgApi($joinApiKey, "Remember to drink", "You've only drank " . round($totalWater, 0) . "ml try drinking another " . round($extraWater, 0) . "ml's", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Item_Drop.mp3"]);
-                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertWater', round($totalWater, 2));
+                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'mealAlertWater', round($extraWater, 2));
                     }
                 }
             }
@@ -4459,8 +4460,14 @@ class ApiBabel
                 if ($videoGameTime < $trackedValue) {
                     $joinApiKey = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'joinapi', null);
 
-                    nxr(3, "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours");
-                    msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP) . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
+
+                    $extraTime = round($trackedValue - $videoGameTime, 1, PHP_ROUND_HALF_UP);
+                    nxr(3, "You've not payed for enough time, you need another " . $extraTime . " hours");
+                    $alertUsrPlayedTime = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'habiticaGammingAlert', 0);
+                    if ($alertUsrPlayedTime <> $extraTime) {
+                        msgApi($joinApiKey, "You've Played Too Long", "You've not payed for enough time, you need another " . $extraTime . " hours", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-minecraft.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Achievement_Unlocked.mp3"]);
+                        $this->getAppClass()->setUserSetting($this->getActiveUser(), 'habiticaGammingAlert', $extraTime);
+                    }
 
                     return false;
                 } else {
