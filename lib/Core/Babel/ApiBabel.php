@@ -4414,7 +4414,7 @@ class ApiBabel
                 }
             }
 
-            if (date("H") > 11) {
+            if (date("H") > 15) {
                 if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => date("Y-m-d"), "user" => $this->getActiveUser()]])) {
                     nxr(3, "Lunch hasn't been logged yet");
                     $alertUsrLunch = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertLunch', 0);
@@ -4425,7 +4425,7 @@ class ApiBabel
                 }
             }
 
-            if (date("H") > 19) {
+            if (date("H") > 21) {
                 if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => date("Y-m-d"), "user" => $this->getActiveUser()]])) {
                     nxr(3, "Dinner hasn't been logged yet");
                     $alertUsrDinner = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertDinner', 0);
