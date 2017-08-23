@@ -4312,7 +4312,7 @@ class ApiBabel
             nxr(3, "Five minute cron now due");
             $this->pullCronMeals();
             $this->pullCronWater();
-            $this->userAccountableVideoGames();
+            $this->pullCronVideoGames();
         } else {
             nxr(3, "Five minute cron okay");
         }
@@ -4430,7 +4430,7 @@ class ApiBabel
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    private function userAccountableVideoGames()
+    private function pullCronVideoGames()
     {
         $isAllowedHabitica = $this->isAllowed("habitica");
         $isAllowedNomie = $this->isAllowed("nomie_trackers");
