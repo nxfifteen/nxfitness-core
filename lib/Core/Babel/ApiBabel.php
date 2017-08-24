@@ -4445,7 +4445,7 @@ class ApiBabel
             $trackedValue = $this->getAppClass()->getDatabase()->sum($dbPrefix . "nomie_events", "value", ["AND" => ["id" => $trackerId['id'], "fuid" => $this->getActiveUser(), "datestamp[>=]" => date("Y-m-d 00:00:00")]]);
 
             if ($trackedValue == 0) {
-                nxr(3, "You've not played any $nomieGame today");
+                //nxr(3, "You've not played any $nomieGame today");
                 return -1;
             } else {
                 if ($trackerId['uom'] == "min") {
