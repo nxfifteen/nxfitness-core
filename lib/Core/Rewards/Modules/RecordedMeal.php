@@ -93,7 +93,7 @@ class RecordedMeal extends Modules
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
             } else if ($meal->loggedFood->name == "Lunch Summary" && (date("H") > 14 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]))) {
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
-            } else if ($meal->loggedFood->name == "Dinner Summary" && date("H") > 21) {
+            } else if ($meal->loggedFood->name == "Dinner Summary" && date("H") > 20) {
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
             } else if ($meal->loggedFood->name == "Snacks Summary" && date("H") > 21) {
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
