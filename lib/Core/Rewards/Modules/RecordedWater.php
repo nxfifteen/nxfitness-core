@@ -36,13 +36,6 @@ require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
 class RecordedWater extends Modules {
 
     /**
-     * @param mixed $eventDetails
-     */
-    private function setEventDetails( $eventDetails ) {
-        $this->eventDetails = $eventDetails;
-    }
-
-    /**
      * @param array $eventDetails Array holding details of award to issue
      */
     public function trigger( $eventDetails ) {
@@ -52,6 +45,7 @@ class RecordedWater extends Modules {
         $rewardKey = sha1( "waterRecordingFor" . $yesterday );
 
         $goal = $this->getAppClass()->getUserSetting( $this->getUserID(), "goal_water", '200' );
+        $dbGlassMls = $this->getAppClass()->getSetting("liquidGlassSize", 240);
 
         if ( ! $this->getRewardsClass()->alreadyAwarded( $rewardKey ) ) {
             $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
@@ -62,5 +56,34 @@ class RecordedWater extends Modules {
             }
         }
 
+        /** @noinspection PhpUndefinedFieldInspection */
+        $glassesDrank = round_down($eventDetails->summary->water / $dbGlassMls, 0);
+        nxr(3, "You've drank " . $glassesDrank . " classes of water");
+        $rewardKey = sha1("waterRecording" . date("Y-m-d"));
+        $lastRecordedDrinks = $this->getAppClass()->getUserSetting($this->getUserID(), "waterHabiticaRecorded", 0);
+        if ($lastRecordedDrinks > $glassesDrank) {
+            $lastRecordedDrinks = 0;
+        }
+        nxr(4, "Your were last rewarded for drinking " . $lastRecordedDrinks . " classes");
+
+        $outstandingRewards = $glassesDrank - $lastRecordedDrinks;
+        nxr(4, "You still need rewarded for drinking " . $outstandingRewards . " classes");
+
+        if ($outstandingRewards > 0) {
+
+            for ($i = 0; $i < $outstandingRewards; $i++) {
+                $this->checkDB("meals", "water", "drank water", $rewardKey . $i . $glassesDrank);
+            }
+            $this->getAppClass()->setUserSetting($this->getUserID(), "waterHabiticaRecorded", $glassesDrank);
+        }
+
+    }
+
+    /**
+     * @param mixed $eventDetails
+     */
+    private function setEventDetails($eventDetails)
+    {
+        $this->eventDetails = $eventDetails;
     }
 }
