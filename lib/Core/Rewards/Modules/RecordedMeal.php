@@ -108,17 +108,23 @@ class RecordedMeal extends Modules
     private function recordHealthyChoice($mealName, $rewardKey)
     {
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+
+            $nomieTag = "Meal";
+            if ($mealName == "Snacks" || $mealName == "Morning Break") {
+                $nomieTag = "Snack";
+            }
+
             $mealKey = strtolower($mealName) . "_healthy";
             $joinApiKey = $this->getAppClass()->getUserSetting($this->getUserID(), 'joinapi', null);
             $wasMealHealthy = $this->wasMealHealthy();
             if ($wasMealHealthy) {
                 $this->checkDB("meals", "logged", $mealKey, $rewardKey);
-                nomieRecord($this->getAppClass()->getUserSetting($this->getUserID(), "api_nomie", null), "action=track/label=Healthy Meal", $this->getAppClass()->getUserSetting($this->getUserID(), "api_autoremote", null));
+                nomieRecord($this->getAppClass()->getUserSetting($this->getUserID(), "api_nomie", null), "action=track/label=Healthy " . $nomieTag, $this->getAppClass()->getUserSetting($this->getUserID(), "api_autoremote", null));
                 msgApi($joinApiKey, "Healthy Meal Choice", "I've logged your healthy $mealName choice", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Item_Drop.mp3"]);
             }
 
             if (!$wasMealHealthy) {
-                nomieRecord($this->getAppClass()->getUserSetting($this->getUserID(), "api_nomie", null), "action=track/label=Unhealthy Meal", $this->getAppClass()->getUserSetting($this->getUserID(), "api_autoremote", null));
+                nomieRecord($this->getAppClass()->getUserSetting($this->getUserID(), "api_nomie", null), "action=track/label=Unhealthy " . $nomieTag, $this->getAppClass()->getUserSetting($this->getUserID(), "api_autoremote", null));
                 msgApi($joinApiKey, "Unhealthy Meal Choice", "I've logged your unhealthy $mealName choice", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Item_Drop.mp3"]);
             }
         }
