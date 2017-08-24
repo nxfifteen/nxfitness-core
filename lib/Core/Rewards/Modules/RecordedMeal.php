@@ -110,11 +110,14 @@ class RecordedMeal extends Modules
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
             $mealKey = strtolower($mealName) . "_healthy";
             $joinApiKey = $this->getAppClass()->getUserSetting($this->getUserID(), 'joinapi', null);
-            if ($this->wasMealHealthy()) {
+            $wasMealHealthy = $this->wasMealHealthy();
+            if ($wasMealHealthy) {
                 $this->checkDB("meals", "logged", $mealKey, $rewardKey);
                 nomieRecord($this->getAppClass()->getUserSetting($this->getUserID(), "api_nomie", null), "action=track/label=Healthy Meal", $this->getAppClass()->getUserSetting($this->getUserID(), "api_autoremote", null));
                 msgApi($joinApiKey, "Healthy Meal Choice", "I've logged your healthy $mealName choice", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Item_Drop.mp3"]);
-            } else {
+            }
+
+            if (!$wasMealHealthy) {
                 nomieRecord($this->getAppClass()->getUserSetting($this->getUserID(), "api_nomie", null), "action=track/label=Unhealthy Meal", $this->getAppClass()->getUserSetting($this->getUserID(), "api_autoremote", null));
                 msgApi($joinApiKey, "Unhealthy Meal Choice", "I've logged your unhealthy $mealName choice", ["icon" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/nxr-ico-myfitnesspal.png", "sound" => "https://nxfifteen.me.uk/wp-content/uploads/2017/08/Item_Drop.mp3"]);
             }
