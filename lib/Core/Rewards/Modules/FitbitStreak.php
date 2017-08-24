@@ -39,23 +39,6 @@ require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
 class FitbitStreak extends Modules {
 
     /**
-     * @param array $eventDetails
-     */
-    private function setEventDetails( $eventDetails ) {
-        $this->eventDetails = [
-            "goal"         => $eventDetails[ 0 ],
-            "days_between" => $eventDetails[ 1 ],
-            "streak_start" => $eventDetails[ 2 ]
-        ];
-
-        if ( count( $eventDetails ) == 4 ) {
-            $this->eventDetails[ "streak_ended" ] = $eventDetails[ 3 ];
-        } else {
-            $this->eventDetails[ "streak_ended" ] = false;
-        }
-    }
-
-    /**
      * @param array $eventDetails Array holding details of award to issue
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
@@ -87,24 +70,24 @@ class FitbitStreak extends Modules {
                         "name"        => ":mans_shoe: Beat Your Longest Streak",
                         "system"      => "habitica",
                         "description" => "Your Beat Your Longest Steak",
-                        "reward"      => '{"alias":":mans_shoe: Beat Your Longest Streak'.$eventDetails[ 'streak_start' ].'", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 2, "up": true, "down": false, "score": "up"}'
+                        "reward" => '{"alias":":mans_shoe: Beat Your Longest Streak", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 2, "up": true, "down": false, "score": "up"}'
                     ], "pending", $rewardKey );
                 } else if ( $eventDetails[ 'days_between' ] > $last ) {
                     $habitica->deliver( [
                         "name"        => ":mans_shoe: Beat Your Last Streak",
                         "system"      => "habitica",
                         "description" => "Your Beat Your Last Steak",
-                        "reward"      => '{"alias":":mans_shoe: Beat Your Last Streak'.$eventDetails[ 'streak_start' ].'", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1, "up": true, "down": false, "score": "up"}'
+                        "reward" => '{"alias":":mans_shoe: Beat Your Last Streak", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1, "up": true, "down": false, "score": "up"}'
                     ], "pending", $rewardKey );
                 } else if ( $eventDetails[ 'days_between' ] > $avg ) {
                     $habitica->deliver( [
                         "name"        => ":mans_shoe: Beat Your Average Streak",
                         "system"      => "habitica",
                         "description" => "Your Beat Your Average",
-                        "reward"      => '{"alias":":mans_shoe: Beat Your Average Streak'.$eventDetails[ 'streak_start' ].'", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "up": true, "down": false, "score": "up"}'
+                        "reward" => '{"alias":":mans_shoe: Beat Your Average Streak", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "up": true, "down": false, "score": "up"}'
                     ], "pending", $rewardKey );
                 } else if ( $eventDetails[ 'days_between' ] > 0 && ! $this->eventDetails[ "streak_ended" ] ) {
-                    $tasks = $habitica->createNewTask( "todo", ":mans_shoe: Beat Your Last Streak", json_decode( '{"alias":":mans_shoe: Beat Your Last Streak'.$eventDetails[ 'streak_start' ].'", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1, "notes": "Your last streak was ' . $last . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date( "m/d/Y 23:59:59", strtotime( $eventDetails[ 'streak_start' ] . ' +' . $last . ' days' ) ) . '"}', true ) );
+                    $tasks = $habitica->createNewTask("todo", ":mans_shoe: Beat Your Last Streak", json_decode('{"alias":":mans_shoe: Beat Your Last Streak", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1, "notes": "Your last streak was ' . $last . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $last . ' days')) . '"}', true));
                     if ( is_array( $tasks ) ) {
                         $tasks = $tasks[ '_id' ];
                         for ( $i = 1; $i < $last; $i++ ) {
@@ -112,7 +95,7 @@ class FitbitStreak extends Modules {
                         }
                     }
 
-                    $tasks = $habitica->createNewTask( "todo", ":mans_shoe: Beat Your Average Streak", json_decode( '{"alias":":mans_shoe: Beat Your Average Streak'.$eventDetails[ 'streak_start' ].'", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "notes": "Your average streak is ' . $avg . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date( "m/d/Y 23:59:59", strtotime( $eventDetails[ 'streak_start' ] . ' +' . $avg . ' days' ) ) . '"}', true ) );
+                    $tasks = $habitica->createNewTask("todo", ":mans_shoe: Beat Your Average Streak", json_decode('{"alias":":mans_shoe: Beat Your Average Streak", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 1.5, "notes": "Your average streak is ' . $avg . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $avg . ' days')) . '"}', true));
                     if ( is_array( $tasks ) ) {
                         $tasks = $tasks[ '_id' ];
                         for ( $i = 1; $i < $avg; $i++ ) {
@@ -120,7 +103,7 @@ class FitbitStreak extends Modules {
                         }
                     }
 
-                    $tasks = $habitica->createNewTask( "todo", ":mans_shoe: Beat Your Longest Streak", json_decode( '{"alias":":mans_shoe: Beat Your Longest Streak'.$eventDetails[ 'streak_start' ].'", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 2, "notes": "Your longest streak was ' . $max . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date( "m/d/Y 23:59:59", strtotime( $eventDetails[ 'streak_start' ] . ' +' . $max . ' days' ) ) . '"}', true ) );
+                    $tasks = $habitica->createNewTask("todo", ":mans_shoe: Beat Your Longest Streak", json_decode('{"alias":":mans_shoe: Beat Your Longest Streak", "type": "todo", "tags": ["Exercise", "Personal Goals"], "priority": 2, "notes": "Your longest streak was ' . $max . ' days, beat that!", "up": true, "down": false, "score": "up", "date": "' . date("m/d/Y 23:59:59", strtotime($eventDetails['streak_start'] . ' +' . $max . ' days')) . '"}', true));
                     if ( is_array( $tasks ) ) {
                         $tasks = $tasks[ '_id' ];
                         for ( $i = 1; $i < $max; $i++ ) {
@@ -129,6 +112,24 @@ class FitbitStreak extends Modules {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @param array $eventDetails
+     */
+    private function setEventDetails($eventDetails)
+    {
+        $this->eventDetails = [
+            "goal" => $eventDetails[0],
+            "days_between" => $eventDetails[1],
+            "streak_start" => $eventDetails[2]
+        ];
+
+        if (count($eventDetails) == 4) {
+            $this->eventDetails["streak_ended"] = $eventDetails[3];
+        } else {
+            $this->eventDetails["streak_ended"] = false;
         }
     }
 }

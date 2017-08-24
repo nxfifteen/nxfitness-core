@@ -539,7 +539,8 @@ class Core {
             'activity_log'         => 'Activities',
             'nomie_trackers'       => "Nomie Trackers",
             'habitica'             => "Habitica",
-            'habitica_chat'        => "Habitica Chat"
+            'habitica_chat'        => "Habitica Chat",
+            'accountable'        => "Accountable"
         ];
         ksort( $supportedApis );
 
