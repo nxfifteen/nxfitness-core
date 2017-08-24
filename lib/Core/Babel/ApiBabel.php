@@ -4308,7 +4308,7 @@ class ApiBabel
 
         $userLastFiveMinCron = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'cronFiveMin_last', strtotime('-10 minutes'));
         $userCronFiveMin = date("U");
-        if ($userCronFiveMin > intval($userLastFiveMinCron) + (5 * 60)) {
+        if ($this->forceSync || $userCronFiveMin > intval($userLastFiveMinCron) + (5 * 60)) {
             nxr(3, "Five minute cron now due");
             $this->pullCronMeals();
             $this->pullCronWater();
