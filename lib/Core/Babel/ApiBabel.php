@@ -4345,7 +4345,7 @@ class ApiBabel
         if (!is_null($joinApiKey)) {
             $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-            if (date("H") > 10) {
+            if (date("H") > 8) {
                 if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Breakfast Summary", "date" => date("Y-m-d"), "user" => $this->getActiveUser()]])) {
                     nxr(3, "Breakfast hasn't been logged yet");
                     $alertUsrBreakfast = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertBreakfast', 0);
@@ -4356,7 +4356,7 @@ class ApiBabel
                 }
             }
 
-            if (date("H") > 15) {
+            if (date("H") > 13) {
                 if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => date("Y-m-d"), "user" => $this->getActiveUser()]])) {
                     nxr(3, "Lunch hasn't been logged yet");
                     $alertUsrLunch = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertLunch', 0);
@@ -4367,7 +4367,7 @@ class ApiBabel
                 }
             }
 
-            if (date("H") > 21) {
+            if (date("H") > 19) {
                 if (!$this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => date("Y-m-d"), "user" => $this->getActiveUser()]])) {
                     nxr(3, "Dinner hasn't been logged yet");
                     $alertUsrDinner = $this->getAppClass()->getUserSetting($this->getActiveUser(), 'mealAlertDinner', 0);
