@@ -37,6 +37,20 @@ require_once( dirname( __FILE__ ) . "/../../../autoloader.php" );
 class RecordedMeal extends Modules {
 
     /**
+     * @param array $eventDetails Array holding details of award to issue
+     */
+    public function trigger($eventDetails)
+    {
+        $this->setEventDetails($eventDetails);
+        /** @noinspection PhpUndefinedFieldInspection */
+        if ($eventDetails->loggedFood->name != "Snacks Summary") {
+            $this->checkMealLogged();
+            $this->checkMealHealthynessLogged();
+        }
+
+    }
+
+    /**
      * @param mixed $eventDetails
      */
     private function setEventDetails( $eventDetails ) {
@@ -71,7 +85,11 @@ class RecordedMeal extends Modules {
             $mealKey  = strtolower( str_ireplace( " Summary", "", $meal->loggedFood->name ) ) . "_healthy";
 
             if ( $meal->loggedFood->name == "Breakfast Summary" ) {
-                if ( date( "H" ) > 11 || $this->getAppClass()->getDatabase()->has( $dbPrefix . "food", [ "AND" => [ "meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID() ] ] ) ) {
+                if (
+                    date("H") > 11 ||
+                    $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Morning Break Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]) ||
+                    $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]])
+                ) {
                     if ( $this->wasMealHealthy() ) {
                         $this->checkDB( "meals", "logged", $mealKey, $rewardKey );
                     }
@@ -133,19 +151,6 @@ class RecordedMeal extends Modules {
         //if ($meal->loggedFood->name == "Lunch Summary") nxr(5, "Happy");
 
         return true;
-    }
-
-    /**
-     * @param array $eventDetails Array holding details of award to issue
-     */
-    public function trigger( $eventDetails ) {
-        $this->setEventDetails( $eventDetails );
-        /** @noinspection PhpUndefinedFieldInspection */
-        if ( $eventDetails->loggedFood->name != "Snacks Summary" ) {
-            $this->checkMealLogged();
-            $this->checkMealHealthynessLogged();
-        }
-
     }
 
 }
