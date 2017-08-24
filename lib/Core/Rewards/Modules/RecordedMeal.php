@@ -101,6 +101,10 @@ class RecordedMeal extends Modules
         }
     }
 
+    /**
+     * @param string $mealName
+     * @param string $rewardKey
+     */
     private function recordHealthyChoice($mealName, $rewardKey)
     {
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
