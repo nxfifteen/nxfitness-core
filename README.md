@@ -51,7 +51,7 @@ And of course:
 * Copyright (c) 2014-2017 [Stuart McCulloch Anderson](https://nx15.at/whoami)
 
 
-## GPG/PGP
+## GPG/OpenPGP
 
 
 ## Development contributions from:
