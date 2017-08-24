@@ -57,4 +57,3 @@ And of course:
 
 
 ## GPG/OpenPGP
-
