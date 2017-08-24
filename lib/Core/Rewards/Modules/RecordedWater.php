@@ -70,9 +70,9 @@ class RecordedWater extends Modules {
         nxr(4, "You still need rewarded for drinking " . $outstandingRewards . " classes");
 
         if ($outstandingRewards > 0) {
-
             for ($i = 0; $i < $outstandingRewards; $i++) {
                 $this->checkDB("meals", "water", "drank water", $rewardKey . $i . $glassesDrank);
+                nomieRecord($this->getAppClass()->getUserSetting($this->getUserID(), "api_nomie", null), "action=track/label=Drank Water", $this->getAppClass()->getUserSetting($this->getUserID(), "api_autoremote", null));
             }
             $this->getAppClass()->setUserSetting($this->getUserID(), "waterHabiticaRecorded", $glassesDrank);
         }
