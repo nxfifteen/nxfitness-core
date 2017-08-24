@@ -23,7 +23,7 @@ namespace Core\Rewards;
 use Core\Core;
 use DateTime;
 
-require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
+require_once(dirname(__FILE__) . "/../../autoloader.php");
 
 /**
  * Modules
@@ -35,7 +35,8 @@ require_once( dirname( __FILE__ ) . "/../../autoloader.php" );
  * @license   https://nxfifteen.me.uk/api/license/mit/ MIT
  * @SuppressWarnings(PHPMD.ElseExpression)
  */
-class Modules {
+class Modules
+{
 
     /**
      * @var array
@@ -58,105 +59,110 @@ class Modules {
     /**
      * Modules constructor.
      *
-     * @param Core   $appClass Core API Class
-     * @param string $userID   Fitbit user ID
+     * @param Core $appClass Core API Class
+     * @param string $userID Fitbit user ID
      */
-    public function __construct( $appClass, $userID ) {
-        $this->setAppClass( $appClass );
-        $this->setUserID( $userID );
-        $this->setRewardsClass( new Rewards( $appClass, $userID ) );
+    public function __construct($appClass, $userID)
+    {
+        $this->setAppClass($appClass);
+        $this->setUserID($userID);
+        $this->setRewardsClass(new Rewards($appClass, $userID));
     }
 
     /**
      * @return array|string|object
      */
-    protected function getEventDetails() {
+    protected function getEventDetails()
+    {
         return $this->eventDetails;
     }
 
     /**
-     * @param string      $cat       Reward Category
-     * @param string      $event     Reward Event
-     * @param string      $score     Reward Score
+     * @param string $cat Reward Category
+     * @param string $event Reward Event
+     * @param string $score Reward Score
      * @param null|string $rewardKey Reward Key
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return bool
      */
-    protected function checkDB( $cat, $event, $score, $rewardKey = null ) {
-        $dbPrefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
+    protected function checkDB($cat, $event, $score, $rewardKey = null)
+    {
+        $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-        if ( is_null( $rewardKey ) ) {
-            $currentDate = new DateTime ( 'now' );
-            $rewardKey   = $cat . $event . $score . $currentDate->format( "Y-m-d" );
+        if (is_null($rewardKey)) {
+            $currentDate = new DateTime ('now');
+            $rewardKey = $cat . $event . $score . $currentDate->format("Y-m-d");
         }
 
-        if ( ! $this->getRewardsClass()->alreadyAwarded( $rewardKey ) ) {
-            if ( $this->getRewardsClass()->hasDBAwards( [ "AND" => [ 'cat' => $cat, 'event' => $event, 'rule' => $score ] ] ) ) {
-                $rewards = $this->getRewardsClass()->getDBAwards( $cat, $event, $score );
+        if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
+            if ($this->getRewardsClass()->hasDBAwards(["AND" => ['cat' => $cat, 'event' => $event, 'rule' => $score]])) {
+                $rewards = $this->getRewardsClass()->getDBAwards($cat, $event, $score);
 
-                if ( count( $rewards ) > 0 ) {
+                if (count($rewards) > 0) {
                     $dbAwardIssued = false;
-                    foreach ( $rewards as $recordReward ) {
+                    foreach ($rewards as $recordReward) {
 
-                        if ( array_key_exists( "system", $recordReward ) ) {
+                        if (array_key_exists("system", $recordReward)) {
 
-                            $this->getRewardsClass()->issueAwards( $recordReward, $rewardKey, "pending", $recordReward[ 'system' ] );
-                            $this->getRewardsClass()->setRewardReason( $recordReward[ 'name' ] . "|" . $recordReward[ 'description' ] );
+                            $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, "pending", $recordReward['system']);
+                            $this->getRewardsClass()->setRewardReason($recordReward['name'] . "|" . $recordReward['description']);
 
-                            nxr( 3, "File Award Processed '" . $recordReward[ 'name' ] . "', " . $recordReward[ 'description' ] );
+                            nxr(3, "File Award Processed '" . $recordReward['name'] . "', " . $recordReward['description']);
                         } else {
-                            $state    = 'noaward';
+                            $state = 'noaward';
                             $delivery = "Default";
 
-                            if ( array_key_exists( "rid", $recordReward ) && $recordReward[ 'rid' ] != "" ) {
-                                $dbReward = $this->getAppClass()->getDatabase()->get( $dbPrefix . "rewards", [ "description", "system", "reward" ], [ "rid" => $recordReward[ 'rid' ] ] );
+                            if (array_key_exists("rid", $recordReward) && $recordReward['rid'] != "") {
+                                $dbReward = $this->getAppClass()->getDatabase()->get($dbPrefix . "rewards", ["description", "system", "reward"], ["rid" => $recordReward['rid']]);
 
-                                $recordReward[ 'descriptionRid' ] = $dbReward[ 'description' ];
-                                $recordReward[ 'reward' ]         = $dbReward[ 'reward' ];
-                                $delivery                         = $dbReward[ 'system' ];
+                                $recordReward['descriptionRid'] = $dbReward['description'];
+                                $recordReward['reward'] = $dbReward['reward'];
+                                $delivery = $dbReward['system'];
 
-                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [ "METHOD" => __METHOD__, "LINE" => __LINE__ ] );
+                                $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), ["METHOD" => __METHOD__, "LINE" => __LINE__]);
 
-                                $this->getRewardsClass()->nukeConflictingAwards( $recordReward[ 'rid' ] );
+                                $this->getRewardsClass()->nukeConflictingAwards($recordReward['rid']);
 
                                 $state = 'pending';
                             } else {
-                                $recordReward[ 'rid' ]            = null;
-                                $recordReward[ 'descriptionRid' ] = "";
+                                $recordReward['rid'] = null;
+                                $recordReward['descriptionRid'] = "";
                             }
 
-                            if ( $recordReward[ 'descriptionRid' ] != "" ) {
-                                $recordReward[ 'description' ] = $recordReward[ 'descriptionRid' ];
+                            if ($recordReward['descriptionRid'] != "") {
+                                $recordReward['description'] = $recordReward['descriptionRid'];
                             } else {
-                                $recordReward[ 'description' ] = "";
+                                $recordReward['description'] = "";
                             }
 
-                            if ( $recordReward[ 'name' ] == "" ) {
-                                $recordReward[ 'name' ] = "$cat, $event - $score";
+                            if ($recordReward['name'] == "") {
+                                $recordReward['name'] = "$cat, $event - $score";
                             }
 
-                            if ( $state != "noaward" ) {
+                            if ($state != "noaward") {
                                 $dbAwardIssued = true;
-                                $this->getRewardsClass()->issueAwards( $recordReward, $rewardKey, $state, $delivery );
-                                $this->getRewardsClass()->setRewardReason( $recordReward[ 'name' ] . "|" . $recordReward[ 'description' ] );
+                                $this->getRewardsClass()->issueAwards($recordReward, $rewardKey, $state, $delivery);
+                                $this->getRewardsClass()->setRewardReason($recordReward['name'] . "|" . $recordReward['description']);
 
-                                nxr( 3, "DB Award Processed '" . $recordReward[ 'name' ] . "', " . $recordReward[ 'description' ] );
+                                nxr(3, "DB Award Processed '" . $recordReward['name'] . "', " . $recordReward['description']);
                             }
                         }
                     }
 
-                    if ( $this->createNewAwards && !$dbAwardIssued ) {
-                        $this->getRewardsClass()->createDBAwards( $cat, $event, $score );
-                        nxr( 3, "Award Created for $cat, $event - $score" );
+                    if ($this->createNewAwards && !$dbAwardIssued) {
+                        $this->getRewardsClass()->createDBAwards($cat, $event, $score);
+                        nxr(3, "Award Created for $cat, $event - $score");
                     }
 
                     return true;
+                } else {
+                    nxr(3, "No Rewards for $cat, $event - $score");
                 }
 
-            } else if ( $this->createNewAwards ) {
-                $this->getRewardsClass()->createDBAwards( $cat, $event, $score );
-                nxr( 3, "Award Created for $cat, $event - $score" );
+            } else if ($this->createNewAwards) {
+                $this->getRewardsClass()->createDBAwards($cat, $event, $score);
+                nxr(3, "Award Created for $cat, $event - $score");
             }
         } else {
             return true;
@@ -168,55 +174,62 @@ class Modules {
     /**
      * @return Core
      */
-    protected function getAppClass() {
+    protected function getAppClass()
+    {
         return $this->appClass;
     }
 
     /**
      * @param Core $appClass
      */
-    protected function setAppClass( $appClass ) {
+    protected function setAppClass($appClass)
+    {
         $this->appClass = $appClass;
     }
 
     /**
      * @return Rewards
      */
-    protected function getRewardsClass() {
+    protected function getRewardsClass()
+    {
         return $this->rewardsClass;
     }
 
     /**
      * @param Rewards $rewardsClass
      */
-    protected function setRewardsClass( $rewardsClass ) {
+    protected function setRewardsClass($rewardsClass)
+    {
         $this->rewardsClass = $rewardsClass;
     }
 
     /**
      *
      */
-    protected function cleanupQueue() {
-        $prefix = $this->getAppClass()->getSetting( "db_prefix", null, false );
-        $this->getAppClass()->getDatabase()->delete( $prefix . "reward_queue",
-            [ "AND" => [ "fuid" => $this->getUserID(), "state" => "delivered", "date[<]" => date( 'Y-m-d', strtotime( ' -14 days' ) ) ] ] );
-        $this->getAppClass()->getErrorRecording()->postDatabaseQuery( $this->getAppClass()->getDatabase(), [
+    protected function cleanupQueue()
+    {
+        $prefix = $this->getAppClass()->getSetting("db_prefix", null, false);
+        $this->getAppClass()->getDatabase()->delete($prefix . "reward_queue",
+            ["AND" => ["fuid" => $this->getUserID(), "state" => "delivered", "date[<]" => date('Y-m-d', strtotime(' -14 days'))]]);
+        $this->getAppClass()->getErrorRecording()->postDatabaseQuery($this->getAppClass()->getDatabase(), [
             "METHOD" => __METHOD__,
-            "LINE"   => __LINE__
-        ] );
+            "LINE" => __LINE__
+        ]);
     }
 
     /**
      * @return String
      */
-    protected function getUserID() {
+    protected function getUserID()
+    {
         return $this->userID;
     }
 
     /**
      * @param String $userID
      */
-    protected function setUserID( $userID ) {
+    protected function setUserID($userID)
+    {
         $this->userID = $userID;
     }
 
