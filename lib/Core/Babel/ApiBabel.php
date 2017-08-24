@@ -4313,8 +4313,8 @@ class ApiBabel
             $this->pullCronMeals();
             $this->pullCronWater();
             $this->pullCronVideoGames();
-        } else {
-            nxr(3, "Five minute cron okay");
+
+            $this->getAppClass()->setUserSetting($this->getActiveUser(), 'cronFiveMin_last', date("U"));
         }
     }
 
