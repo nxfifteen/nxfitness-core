@@ -141,17 +141,21 @@ if (!function_exists("nomieRecord")) {
     function nomieRecord($api, $event, $autoRemote)
     {
         if (!is_null($api)) {
-            nxr(0, "Nomie API");
             $url = "https://api.nomie.io/v2/push/$api/$event";
-            $response = file_get_contents($url);
-            nxr(1, $response);
+            $response = json_decode(file_get_contents($url), true);
+            if (!is_array($response) || !array_key_exists("name", $response)) {
+                nxr(0, "[ERROR] Nomie API");
+                nxr(1, $response);
+            }
         }
 
         if (!is_null($autoRemote)) {
-            nxr(0, "AutoRemote API");
             $url = "https://autoremotejoaomgcd.appspot.com/sendmessage?key=$autoRemote&message=nomie";
             $response = file_get_contents($url);
-            nxr(1, $response);
+            if ($response != "OK") {
+                nxr(0, "[ERROR] AutoRemote API");
+                nxr(1, $response);
+            }
         }
     }
 }
