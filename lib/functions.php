@@ -100,29 +100,62 @@ if (!function_exists("msgApi")) {
      */
     function msgApi($api, $title, $text, $options)
     {
-        $urlBase = "https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush";
+        if (!is_null($api)) {
+            $urlBase = "https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush";
 
-        $icon = "";
-        $sound = "";
+            $icon = "";
+            $sound = "";
 
-        if (array_key_exists("icon", $options)) {
-            $icon = "&icon=" . urlencode($options['icon']);
+            if (array_key_exists("icon", $options)) {
+                $icon = "&icon=" . urlencode($options['icon']);
+            }
+
+            if (array_key_exists("sound", $options)) {
+                $sound = "&sound=" . urlencode($options['sound']);
+            }
+
+            $url = $urlBase . "?deviceId=group.windows10&text=" . urlencode($text) . "&title=" . urlencode($title) . $icon . $sound . "&apikey=$api";
+            $response = json_decode(file_get_contents($url), true);
+            if ($response['success'] != "true") {
+                nxr(0, "Join Operation failed, invalid response received: $response");
+            }
+
+            $url = $urlBase . "?deviceId=group.phone&text=" . urlencode($text) . "&title=" . urlencode($title) . $icon . $sound . "&apikey=$api";
+            $response = json_decode(file_get_contents($url), true);
+            if ($response['success'] != "true") {
+                nxr(0, "Join Operation failed, invalid response received: $response");
+            }
+        }
+    }
+}
+
+/**
+ * @SuppressWarnings(PHPMD.Superglobals)
+ */
+if (!function_exists("nomieRecord")) {
+    /**
+     * @param string $api
+     * @param string $event
+     * @param string $autoRemote
+     */
+    function nomieRecord($api, $event, $autoRemote)
+    {
+        if (!is_null($api)) {
+            $url = "https://api.nomie.io/v2/push/$api/$event";
+            $response = json_decode(file_get_contents($url), true);
+            if (!is_array($response) || !array_key_exists("name", $response)) {
+                nxr(0, "[ERROR] Nomie API");
+                nxr(1, $response);
+            }
         }
 
-        if (array_key_exists("sound", $options)) {
-            $sound = "&sound=" . urlencode($options['sound']);
-        }
-
-        $url = $urlBase . "?deviceId=group.windows10&text=" . urlencode($text) . "&title=" . urlencode($title) . $icon . $sound . "&apikey=$api";
-        $response = json_decode(file_get_contents($url), true);
-        if ($response['success'] != "true") {
-            nxr(0, "Join Operation failed, invalid response received: $response");
-        }
-
-        $url = $urlBase . "?deviceId=group.phone&text=" . urlencode($text) . "&title=" . urlencode($title) . $icon . $sound . "&apikey=$api";
-        $response = json_decode(file_get_contents($url), true);
-        if ($response['success'] != "true") {
-            nxr(0, "Join Operation failed, invalid response received: $response");
+        if (!is_null($autoRemote)) {
+            $url = "https://autoremotejoaomgcd.appspot.com/sendmessage?key=$autoRemote&message=nomie";
+            $response = file_get_contents($url);
+            if ($response != "OK") {
+                nxr(0, "[ERROR] AutoRemote API");
+                nxr(1, $response);
+            }
         }
     }
 }

@@ -54,3 +54,8 @@ And of course:
 ## Development contributions from:
 
 * [nxad](https://nx15.at/whoami)
+
+
+## GPG/OpenPGP
+
+* [nxad](https://nx15.at/whoami)

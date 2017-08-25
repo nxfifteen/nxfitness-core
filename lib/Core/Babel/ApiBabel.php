@@ -4330,7 +4330,7 @@ class ApiBabel
             if (!is_null($userId) && !is_null($apiKey)) {
                 nxr(3, "Habitica credentials okay for cron");
                 $habiticaClass = new Habitica($this->getAppClass(), $this->getActiveUser());
-                $debugCron = $habiticaClass->getHabitRPHPG()->_request("post", "cron", []);
+                $debugCron = $habiticaClass->getHabitRPHPG()->_request("post", "cron", [], true);
                 nxr(3, $debugCron);
             }
         }
