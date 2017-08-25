@@ -87,15 +87,15 @@ class RecordedMeal extends Modules
         if (!$this->getRewardsClass()->alreadyAwarded($rewardKey)) {
             $dbPrefix = $this->getAppClass()->getSetting("db_prefix", null, false);
 
-            if ($meal->loggedFood->name == "Breakfast Summary" && (date("H") > 11 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Morning Break Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]) || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]))) {
+            if ($meal->loggedFood->name == "Breakfast Summary" && (date("H") >= 10 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Morning Break Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]) || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]))) {
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
-            } else if ($meal->loggedFood->name == "Morning Break Summary" && (date("H") > 13 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]))) {
+            } else if ($meal->loggedFood->name == "Morning Break Summary" && (date("H") >= 12 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Lunch Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]))) {
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
-            } else if ($meal->loggedFood->name == "Lunch Summary" && (date("H") > 14 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]))) {
+            } else if ($meal->loggedFood->name == "Lunch Summary" && (date("H") >= 14 || $this->getAppClass()->getDatabase()->has($dbPrefix . "food", ["AND" => ["meal" => "Dinner Summary", "date" => $meal->logDate, "user" => $this->getUserID()]]))) {
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
-            } else if ($meal->loggedFood->name == "Dinner Summary" && date("H") > 20) {
+            } else if ($meal->loggedFood->name == "Dinner Summary" && date("H") >= 20) {
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
-            } else if ($meal->loggedFood->name == "Snacks Summary" && date("H") > 21) {
+            } else if ($meal->loggedFood->name == "Snacks Summary" && date("H") >= 22) {
                 $this->recordHealthyChoice(str_ireplace(" Summary", "", $meal->loggedFood->name), $rewardKey);
             }
         }
